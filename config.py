@@ -1,12 +1,11 @@
 import configparser
 import os
-import logging
+from . import logger as logging
 import sys
 import re
 from typing import Any
 
-logger = logging.getLogger(__name__)  # Используем логгер модуля
-
+logger = logging.setup_logger(__name__, 'ERROR')
 
 def get_base_dir() -> str:
     # Определяем базовую директорию (где скрипт или exe)
@@ -139,6 +138,12 @@ def get_config_int(section: str, key: str, fallback: int = 0, config: dict[str, 
     """Получает целочисленное значение из конфигурации."""
     if config is None: config = load_config()
     return config.getint(section, key, fallback=fallback)
+
+
+def get_config_float(section: str, key: str, fallback: float = 0.0, config: dict[str, Any] = None) -> float:
+    """Получает дробное значение из конфигурации."""
+    if config is None: config = load_config()
+    return config.getfloat(section, key, fallback=fallback)
 
 
 def get_config_boolean(section: str, key: str, fallback: bool = False, config: dict[str, Any] = None) -> bool:
