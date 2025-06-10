@@ -1,11 +1,12 @@
 import configparser
 import os
-from . import logger as logging
+import logging
 import sys
 import re
 from typing import Any
 
-logger = logging.setup_logger(__name__, 'ERROR')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
 
 def get_base_dir() -> str:
     # Определяем базовую директорию (где скрипт или exe)
@@ -23,38 +24,38 @@ BASE_DIR = get_base_dir()
 CONFIG_FILE = os.path.join(BASE_DIR, "config.ini")
 
 
-def load_config(CONFIG_FILE: str = CONFIG_FILE) -> configparser.ConfigParser:
+def load_config(cfg_file: str = CONFIG_FILE) -> configparser.ConfigParser:
     """Загружает конфигурацию из файла config.ini."""
-    if not os.path.exists(CONFIG_FILE):
-        logger.critical(f"Файл конфигурации НЕ НАЙДЕН: {CONFIG_FILE}")
+    if not os.path.exists(cfg_file):
+        logger.critical(f"Файл конфигурации НЕ НАЙДЕН: {cfg_file}")
         return configparser.ConfigParser()
 
     config = configparser.ConfigParser()
     try:
-        config.read(CONFIG_FILE, encoding='utf-8')
-        logger.info(f"Конфигурация успешно загружена из {CONFIG_FILE}")
+        config.read(cfg_file, encoding='utf-8')
+        logger.info(f"Конфигурация успешно загружена из {cfg_file}")
         return config
     except configparser.Error as e:
-        logger.critical(f"Ошибка чтения файла конфигурации {CONFIG_FILE}: {e}")
+        logger.critical(f"Ошибка чтения файла конфигурации {cfg_file}: {e}")
         return configparser.ConfigParser()  # Возвращаем пустой объект в случае ошибки
 
 
-def save_config_value(section: str, key: str, value: str, CONFIG_FILE: str = CONFIG_FILE) -> bool:
+def save_config_value(section: str, key: str, value: str, cfg_file: str = CONFIG_FILE) -> bool:
     """
     Сохраняет ОДНО значение в конфигурационном файле,
     ПЫТАЯСЬ СОХРАНИТЬ КОММЕНТАРИИ и структуру.
     Изменяет только первую найденную строку с ключом в нужной секции.
     Не добавляет новые секции или ключи, если они не существуют.
     """
-    if not os.path.exists(CONFIG_FILE):
-        logger.error(f"Невозможно сохранить значение: файл конфигурации {CONFIG_FILE} не найден.")
+    if not os.path.exists(cfg_file):
+        logger.error(f"Невозможно сохранить значение: файл конфигурации {cfg_file} не найден.")
         return False
 
     try:
-        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+        with open(cfg_file, 'r', encoding='utf-8') as f:
             lines = f.readlines()
     except IOError as e:
-        logger.error(f"Ошибка чтения файла {CONFIG_FILE} для сохранения: {e}")
+        logger.error(f"Ошибка чтения файла {cfg_file} для сохранения: {e}")
         return False
 
     updated = False
@@ -91,29 +92,29 @@ def save_config_value(section: str, key: str, value: str, CONFIG_FILE: str = CON
                 key_found_in_section = True
                 updated = True
                 logger.info(
-                    f"Ключ '{key}' в секции '[{section}]' будет обновлен значением '{value}' в файле {CONFIG_FILE}")
+                    f"Ключ '{key}' в секции '[{section}]' будет обновлен значением '{value}' в файле {cfg_file}")
                 continue  # Переходим к следующей строке, пропуская добавление старой
 
         # Если строка не заголовок секции и не целевой ключ, добавляем ее как есть
         new_lines.append(line)
 
     if not section_found:
-        logger.warning(f"Секция '[{section}]' не найдена в файле {CONFIG_FILE}. Значение НЕ сохранено.")
+        logger.warning(f"Секция '[{section}]' не найдена в файле {cfg_file}. Значение НЕ сохранено.")
         return False
     if section_found and not key_found_in_section:
-        logger.warning(f"Ключ '{key}' не найден в секции '[{section}]' файла {CONFIG_FILE}. Значение НЕ сохранено.")
+        logger.warning(f"Ключ '{key}' не найден в секции '[{section}]' файла {cfg_file}. Значение НЕ сохранено.")
         # Если нужно добавлять ключ, если он не найден, логика будет здесь,
         # но текущая реализация только изменяет существующие.
         return False
 
     if updated:
         try:
-            with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+            with open(cfg_file, 'w', encoding='utf-8') as f:
                 f.writelines(new_lines)
-            logger.info(f"Файл конфигурации {CONFIG_FILE} успешно обновлен.")
+            logger.info(f"Файл конфигурации {cfg_file} успешно обновлен.")
             return True
         except IOError as e:
-            logger.error(f"Ошибка записи в файл {CONFIG_FILE} при сохранении: {e}")
+            logger.error(f"Ошибка записи в файл {cfg_file} при сохранении: {e}")
             return False
     else:
         # Это может произойти, если ключ или секция не были найдены
@@ -150,6 +151,47 @@ def get_config_boolean(section: str, key: str, fallback: bool = False, config: d
     """Получает булево значение из конфигурации."""
     if config is None: config = load_config()
     return config.getboolean(section, key, fallback=fallback)
+
+
+def get_config_list(
+        section: str,
+        key: str,
+        fallback: list = None,
+        config: configparser.ConfigParser = None
+    ) -> list[str]:
+    """
+    Получает многострочное значение из конфигурации и возвращает его в виде списка строк.
+
+    Идеально подходит для списков селекторов, URL и т.д.
+    - Разделяет значение по переносам строк.
+    - Удаляет пустые строки.
+    - Игнорирует строки, начинающиеся с '#' (комментарии).
+    - Удаляет лишние пробелы в начале и конце каждой строки.
+
+    Args:
+        section (str): Имя секции в .ini файле.
+        key (str): Ключ в секции.
+        fallback (list, optional): Значение по умолчанию, если ключ не найден. Defaults to None, что приведет к возврату [].
+        config (configparser.ConfigParser, optional): Предзагруженный объект конфигурации.
+
+    Returns:
+        list[str]: Список строк.
+    """
+    if fallback is None:
+        fallback = []
+
+    raw_value = get_config_value(section, key, fallback="", config=config)
+
+    if not raw_value:
+        return fallback
+
+    # Преобразуем многострочный текст в список, очищая его
+    lines = [
+        line.strip() for line in raw_value.splitlines()
+        if line.strip() and not line.strip().startswith('#')
+    ]
+
+    return lines
 
 
 # Получение нескольких значений
