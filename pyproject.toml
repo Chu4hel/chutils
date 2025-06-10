@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "oponents-processing"
+name = "chutils"
 version = "1.0.0"
 description = ""
 authors = ["Sergo <sergeiivanov636@gmail.com>"]
