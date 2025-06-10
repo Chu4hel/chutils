@@ -1,14 +1,14 @@
-[project]
-name = "chutils"
-version = "0.1.0"
+[tool.poetry]
+name = "oponents-processing"
+version = "1.0.0"
 description = ""
-authors = [
-    {name = "Серго",email = "sergeiivanov636@gmail.com"}
-]
+authors = ["Sergo <sergeiivanov636@gmail.com>"]
+license = "MIT"
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-]
+packages = [{include = "chutils", from = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.8"
 
 
 [build-system]
