@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chutils"
-version = "1.0.0"
+version = "2.0.0"
 description = ""
 authors = ["Sergo <sergeiivanov636@gmail.com>"]
 license = "MIT"
