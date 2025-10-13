@@ -58,6 +58,8 @@ class ChutilsLogger(logging.Logger):
             self._log(DEVDEBUG_LEVEL_NUM, message, args, **kws)
 
 
+logging.setLoggerClass(ChutilsLogger)
+
 # --- Глобальное состояние для "ленивой" инициализации ---
 
 # Кэш для пути к директории логов. Изначально пуст.
