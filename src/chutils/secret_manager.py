@@ -1,9 +1,10 @@
 import keyring
-import keyring.errors
+from keyring.errors import NoKeyringError, PasswordDeleteError
 from typing import Optional
 from . import logger as logging
 
 logger = logging.setup_logger(__name__)
+
 
 class SecretManager:
     """
@@ -39,7 +40,7 @@ class SecretManager:
             keyring.set_password(self.service_name, key, value)
             logger.devdebug(f"Секрет для ключа '{key}' успешно сохранен.")
             return True
-        except keyring.errors.NoKeyringError:
+        except NoKeyringError:
             logger.error("Ошибка: системное хранилище (keyring) не найдено. Секрет не сохранен.")
             return False
         except Exception as e:
@@ -60,7 +61,7 @@ class SecretManager:
             else:
                 logger.devdebug(f"Секрет для ключа '{key}' получен.")
             return value
-        except keyring.errors.NoKeyringError:
+        except NoKeyringError:
             logger.critical("Ошибка: системное хранилище (keyring) не найдено. Невозможно получить секрет.")
             return None
         except Exception as e:
@@ -82,10 +83,10 @@ class SecretManager:
             keyring.delete_password(self.service_name, key)
             logger.devdebug(f"Секрет для ключа '{key}' успешно удален.")
             return True
-        except keyring.errors.PasswordDeleteError:
+        except PasswordDeleteError:
             logger.error(f"Ошибка: не удалось удалить секрет для ключа '{key}'.")
             return False
-        except keyring.errors.NoKeyringError:
+        except NoKeyringError:
             logger.critical("Ошибка: системное хранилище (keyring) не найдено. Невозможно удалить секрет.")
             return False
         except Exception as e:
