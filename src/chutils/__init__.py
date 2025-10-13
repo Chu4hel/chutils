@@ -46,7 +46,7 @@ from .config import (
     get_config_int, get_config_float, get_config_boolean, get_config_list,
     get_multiple_config_values, get_config_section
 )
-from .logger import setup_logger
+from .logger import setup_logger, ChutilsLogger
 
 
 def init(base_dir: str):
@@ -101,4 +101,5 @@ __all__ = [
 
     # Функции из модуля logger
     'setup_logger',
+    'ChutilsLogger',
 ]

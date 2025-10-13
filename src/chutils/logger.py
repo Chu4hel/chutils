@@ -26,29 +26,44 @@ logging.addLevelName(MEDIUMDEBUG_LEVEL_NUM, MEDIUMDEBUG_LEVEL_NAME)
 logging.addLevelName(DEVDEBUG_LEVEL_NUM, DEVDEBUG_LEVEL_NAME)
 
 
-def mediumdebug(self, message, *args, **kws):
-    if self.isEnabledFor(MEDIUMDEBUG_LEVEL_NUM):
-        self._log(MEDIUMDEBUG_LEVEL_NUM, message, args, **kws)
+class ChutilsLogger(logging.Logger):
+    """
+    Кастомный класс логгера, который расширяет стандартный `logging.Logger`.
 
+    Основная цель этого класса — добавить поддержку пользовательских уровней
+    логирования (`devdebug` и `mediumdebug`), обеспечивая при этом
+    корректную работу статических анализаторов и автодополнения в IDE.
 
-def devdebug(self, message, *args, **kws):
-    if self.isEnabledFor(DEVDEBUG_LEVEL_NUM):
-        self._log(DEVDEBUG_LEVEL_NUM, message, args, **kws)
+    Вам не нужно создавать экземпляр этого класса напрямую. Используйте
+    функцию `setup_logger()`, которая автоматически вернет объект этого типа.
 
+    :Example:
+        from chutils.logger import setup_logger, ChutilsLogger
 
-# "Патчим" класс Logger, чтобы добавить наши кастомные методы
-if not hasattr(logging.Logger, MEDIUMDEBUG_LEVEL_NAME.lower()):
-    logging.Logger.mediumdebug = mediumdebug
+        # Используем наш класс для аннотации типа, чтобы IDE давала подсказки
+        logger: ChutilsLogger = setup_logger()
 
-if not hasattr(logging.Logger, DEVDEBUG_LEVEL_NAME.lower()):
-    logging.Logger.devdebug = devdebug
+        # Теперь IDE знает об этом методе и не будет показывать предупреждений
+        logger.mediumdebug("Это сообщение с автодополнением.")
+    """
+
+    def mediumdebug(self, message, *args, **kws):
+        """Логирует сообщение с уровнем MEDIUMDEBUG (15)."""
+        if self.isEnabledFor(MEDIUMDEBUG_LEVEL_NUM):
+            self._log(MEDIUMDEBUG_LEVEL_NUM, message, args, **kws)
+
+    def devdebug(self, message, *args, **kws):
+        """Логирует сообщение с уровнем DEVDEBUG (9)."""
+        if self.isEnabledFor(DEVDEBUG_LEVEL_NUM):
+            self._log(DEVDEBUG_LEVEL_NUM, message, args, **kws)
+
 
 # --- Глобальное состояние для "ленивой" инициализации ---
 
 # Кэш для пути к директории логов. Изначально пуст.
 _LOG_DIR: Optional[str] = None
 # Глобальный экземпляр основного логгера приложения
-_logger_instance: Optional[logging.Logger] = None
+_logger_instance: Optional[ChutilsLogger] = None
 # Флаг, чтобы сообщение об инициализации выводилось только один раз
 _initialization_message_shown = False
 
@@ -96,7 +111,7 @@ def _get_log_dir() -> Optional[str]:
     return _LOG_DIR
 
 
-def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> logging.Logger:
+def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> ChutilsLogger:
     """
     Настраивает и возвращает логгер с нужным именем.
 
@@ -118,7 +133,7 @@ def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> logging.L
     # Просто возвращаем его, чтобы не дублировать вывод.
     existing_logger = logging.getLogger(name)
     if existing_logger.hasHandlers():
-        return existing_logger
+        return existing_logger  # type: ignore
 
     # Если запрашивается основной логгер приложения и он уже есть в кэше.
     if name == 'app_logger' and _logger_instance:
@@ -167,7 +182,7 @@ def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> logging.L
 
             # Выводим информационное сообщение только один раз для всего приложения
             if not _initialization_message_shown:
-                logger.info(
+                logger.debug(
                     f"Логирование настроено. Уровень: {log_level_str}. "
                     f"Файл: {log_file_path}, ротация: {backup_count} дней."
                 )
@@ -183,4 +198,4 @@ def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> logging.L
     if name == 'app_logger':
         _logger_instance = logger
 
-    return logger
+    return logger  # type: ignore
