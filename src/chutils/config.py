@@ -1,8 +1,8 @@
 """
 Модуль для работы с конфигурацией.
 
-Обеспечивает автоматический поиск файла `config.ini` в корне проекта
-и предоставляет удобные функции для чтения и записи настроек.
+Обеспечивает автоматический поиск файла `config.yml`, `config.yaml` или `config.ini`
+в корне проекта и предоставляет удобные функции для чтения настроек.
 """
 
 import configparser
@@ -12,23 +12,22 @@ import re
 from pathlib import Path
 from typing import Any, Optional, List, Dict
 
+import yaml
+
 # Настраиваем логгер для этого модуля
 logger = logging.getLogger(__name__)
 
-# --- Глобальное состояние для хранения путей ---
-# Эти переменные инициализируются один раз при первом обращении к конфигурации.
-
+# --- Глобальное состояние для "ленивой" инициализации ---
 _BASE_DIR: Optional[str] = None
 _CONFIG_FILE_PATH: Optional[str] = None
 _paths_initialized = False
 
+_config_object: Optional[Dict] = None
+_config_loaded = False
+
 
 def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
-    """
-    Ищет корень проекта, двигаясь вверх по дереву каталогов от `start_path`.
-
-    Корень определяется наличием одного из файлов-маркеров (например, 'config.ini').
-    """
+    """Ищет корень проекта, двигаясь вверх по дереву каталогов."""
     current_path = start_path.resolve()
     # Идем вверх до тех пор, пока не достигнем корня файловой системы
     while current_path != current_path.parent:
@@ -42,25 +41,25 @@ def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
 
 
 def _initialize_paths():
-    """
-    Автоматически находит и устанавливает пути. Вызывается при первом доступе.
-    Это "сердце" автоматического обнаружения.
-    """
+    """Автоматически находит и кэширует пути к корню проекта и файлу конфигурации."""
     global _BASE_DIR, _CONFIG_FILE_PATH, _paths_initialized
     if _paths_initialized:
         return
 
-    # Ищем корень проекта, начиная от текущей рабочей директории.
-    # Приоритетный маркер — 'config.ini', запасной — 'pyproject.toml'.
-    project_root = find_project_root(Path.cwd(), markers=['config.ini', 'pyproject.toml'])
+    # Приоритет поиска: сначала YAML, потом INI, потом общий маркер проекта.
+    markers = ['config.yml', 'config.yaml', 'config.ini', 'pyproject.toml']
+    project_root = find_project_root(Path.cwd(), markers)
 
     if project_root:
         _BASE_DIR = str(project_root)
-        _CONFIG_FILE_PATH = os.path.join(_BASE_DIR, "config.ini")
+        # Находим, какой именно конфигурационный файл был найден
+        for marker in markers:
+            if (project_root / marker).is_file() and marker.startswith('config'):
+                _CONFIG_FILE_PATH = str(project_root / marker)
+                break
         logger.info(f"Корень проекта автоматически определен: {_BASE_DIR}")
     else:
-        # Если не нашли, оставляем пути пустыми. Функции ниже будут выбрасывать ошибку.
-        logger.warning("Не удалось автоматически найти корень проекта (отсутствуют config.ini или pyproject.toml).")
+        logger.warning("Не удалось автоматически найти корень проекта.")
 
     _paths_initialized = True
 
@@ -85,46 +84,74 @@ def _get_config_path(cfg_file: Optional[str] = None) -> str:
     if _CONFIG_FILE_PATH is None:
         raise FileNotFoundError(
             "Файл конфигурации не найден. Не удалось автоматически определить корень проекта. "
-            "Убедитесь, что в корне вашего проекта есть 'config.ini' или 'pyproject.toml', "
+            "Убедитесь, что в корне вашего проекта есть 'config.yml' или 'config.ini' или 'pyproject.toml', "
             "либо укажите путь к конфигу вручную через chutils.init(base_dir=...)"
         )
     return _CONFIG_FILE_PATH
 
 
-def load_config(cfg_file: Optional[str] = None) -> configparser.ConfigParser:
+def get_config() -> Dict:
     """
-    Загружает конфигурацию из .ini файла.
-
-    Args:
-        cfg_file (str, optional): Явный путь к файлу конфигурации.
-                                  Если не указан, будет использован автоматически найденный путь.
+    Загружает конфигурацию из файла (YAML или INI) и возвращает ее как словарь.
+    Результат кэшируется для последующих вызовов.
 
     Returns:
-        configparser.ConfigParser: Загруженный объект конфигурации.
+        Dict: Загруженный объект конфигурации.
     """
-    path = _get_config_path(cfg_file)
+    global _config_object, _config_loaded
+    if _config_loaded and _config_object is not None:
+        return _config_object
+
+    path = _get_config_path()
     if not os.path.exists(path):
         logger.critical(f"Файл конфигурации НЕ НАЙДЕН: {path}")
-        return configparser.ConfigParser()
+        _config_object = {}
+        _config_loaded = True
+        return _config_object
 
-    config = configparser.ConfigParser()
+    file_ext = Path(path).suffix.lower()
+
     try:
-        config.read(path, encoding='utf-8')
-        logger.info(f"Конфигурация успешно загружена из {path}")
-        return config
-    except configparser.Error as e:
+        with open(path, 'r', encoding='utf-8') as f:
+            if file_ext in ['.yml', '.yaml']:
+                _config_object = yaml.safe_load(f)
+                logger.info(f"Конфигурация успешно загружена из YAML: {path}")
+            elif file_ext == '.ini':
+                parser = configparser.ConfigParser()
+                parser.read_string(f.read())
+                # Преобразуем объект ConfigParser в словарь
+                _config_object = {s: dict(parser.items(s)) for s in parser.sections()}
+                logger.info(f"Конфигурация успешно загружена из INI: {path}")
+            else:
+                _config_object = {}
+                logger.warning(f"Неподдерживаемый формат файла конфигурации: {path}")
+
+    except (yaml.YAMLError, configparser.Error) as e:
         logger.critical(f"Ошибка чтения файла конфигурации {path}: {e}")
-        return configparser.ConfigParser()
+        _config_object = {}
+
+    if _config_object is None:
+        _config_object = {}
+
+    _config_loaded = True
+    return _config_object
 
 
 def save_config_value(section: str, key: str, value: str, cfg_file: Optional[str] = None) -> bool:
     """
-    Сохраняет одно значение в конфигурационном файле, пытаясь сохранить комментарии.
-
-    Изменяет только первую найденную строку с ключом в нужной секции.
-    Не добавляет новые секции или ключи, если они не существуют.
+    Сохраняет одно значение в конфигурационном файле.
+    ВАЖНО: Эта функция работает только для файлов `.ini` и спроектирована так,
+    чтобы сохранять комментарии и структуру исходного файла.
+    При работе с `.yml` файлами она вернет `False`.
     """
     path = _get_config_path(cfg_file)
+    file_ext = Path(path).suffix.lower()
+
+    # Защита: работаем только с .ini файлами
+    if file_ext != '.ini':
+        logger.warning(f"Сохранение поддерживается только для .ini файлов. Файл {path} не будет изменен.")
+        return False
+
     if not os.path.exists(path):
         logger.error(f"Невозможно сохранить значение: файл конфигурации {path} не найден.")
         return False
@@ -190,78 +217,61 @@ def save_config_value(section: str, key: str, value: str, cfg_file: Optional[str
         return False
 
 
-def get_config() -> configparser.ConfigParser:
-    """Возвращает полностью загруженный объект конфигурации."""
-    return load_config()
-
-
 # --- Функции-обертки для удобного получения значений ---
 
-def get_config_value(section: str, key: str, fallback: str = "", config: Optional[configparser.ConfigParser] = None) -> str:
-    """Получает строковое значение из конфигурации."""
-    if config is None: config = load_config()
-    return config.get(section, key, fallback=fallback)
+def get_config_value(section: str, key: str, fallback: Any = "", config: Optional[Dict] = None) -> Any:
+    """Получает значение из конфигурации."""
+    if config is None: config = get_config()
+    return config.get(section, {}).get(key, fallback)
 
 
-def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[configparser.ConfigParser] = None) -> int:
-    """Получает целочисленное значение из конфигурации."""
-    if config is None: config = load_config()
-    return config.getint(section, key, fallback=fallback)
-
-
-def get_config_float(section: str, key: str, fallback: float = 0.0, config: Optional[configparser.ConfigParser] = None) -> float:
-    """Получает дробное значение из конфигурации."""
-    if config is None: config = load_config()
-    return config.getfloat(section, key, fallback=fallback)
-
-
-def get_config_boolean(section: str, key: str, fallback: bool = False, config: Optional[configparser.ConfigParser] = None) -> bool:
-    """Получает булево значение из конфигурации."""
-    if config is None: config = load_config()
-    return config.getboolean(section, key, fallback=fallback)
-
-
-def get_config_list(section: str, key: str, fallback: Optional[List[str]] = None, config: Optional[configparser.ConfigParser] = None) -> List[str]:
-    """
-    Получает многострочное значение и возвращает его в виде списка очищенных строк.
-
-    Идеально подходит для списков:
-    - Разделяет значение по переносам строк.
-    - Удаляет пустые строки и лишние пробелы.
-    - Игнорирует строки, начинающиеся с '#' (комментарии).
-    """
-    if fallback is None:
-        fallback = []
-    raw_value = get_config_value(section, key, fallback="", config=config)
-    if not raw_value:
+def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[Dict] = None) -> int:
+    """Получает целочисленное значение."""
+    value = get_config_value(section, key, fallback, config)
+    try:
+        return int(value)
+    except (ValueError, TypeError):
         return fallback
 
-    lines = [line.strip() for line in raw_value.splitlines() if line.strip() and not line.strip().startswith('#')]
-    return lines
 
-
-def get_multiple_config_values(section: str, keys: List[str], config: Optional[configparser.ConfigParser] = None) -> Dict[str, Optional[str]]:
-    """Получает словарь значений для указанных ключей в секции."""
-    if config is None: config = load_config()
-    values = {}
-    if config.has_section(section):
-        for key in keys:
-            values[key] = config.get(section, key, fallback=None)
-    return values
-
-
-def get_config_section(section_name: str, fallback: Optional[Dict] = None, config: Optional[configparser.ConfigParser] = None) -> Dict[str, str]:
-    """
-    Получает всю секцию из конфигурации как словарь.
-    """
-    if fallback is None:
-        fallback = {}
-    if config is None:
-        config = load_config()
-
-    if config.has_section(section_name):
-        # Преобразуем секцию в обычный словарь
-        return dict(config.items(section_name))
-    else:
-        logger.warning(f"Секция '{section_name}' не найдена в конфигурации. Возвращен fallback.")
+def get_config_float(section: str, key: str, fallback: float = 0.0, config: Optional[Dict] = None) -> float:
+    """Получает дробное значение."""
+    value = get_config_value(section, key, fallback, config)
+    try:
+        return float(value)
+    except (ValueError, TypeError):
         return fallback
+
+
+def get_config_boolean(section: str, key: str, fallback: bool = False, config: Optional[Dict] = None) -> bool:
+    """Получает булево значение."""
+    value = get_config_value(section, key, fallback, config)
+    if isinstance(value, bool):
+        return value
+    if str(value).lower() in ['true', '1', 't', 'y', 'yes']:
+        return True
+    if str(value).lower() in ['false', '0', 'f', 'n', 'no']:
+        return False
+    return fallback
+
+
+def get_config_list(
+        section: str,
+        key: str,
+        fallback: Optional[List[Any]] = None,
+        config: Optional[Dict] = None) -> List[Any]:
+    """Получает значение как список."""
+    value = get_config_value(section, key, fallback, config)
+    if isinstance(value, list):
+        return value
+    if fallback is None:
+        return []
+    return fallback
+
+
+def get_config_section(section_name: str, fallback: Optional[Dict] = None, config: Optional[Dict] = None) -> Dict[
+    str,
+    Any]:
+    """Получает всю секцию как словарь."""
+    if config is None: config = get_config()
+    return config.get(section_name, fallback if fallback is not None else {})

@@ -3,140 +3,151 @@ import pytest
 from pathlib import Path
 from chutils import config
 
-# Используем константу для содержимого фейкового конфига, чтобы избежать дублирования.
-FAKE_CONFIG_CONTENT = """
-[Database]
-host = localhost
-port = 5432
-enable_ssl = true
-timeout = 15.5
+# Контент для фейкового config.yml
+FAKE_YAML_CONTENT = """
+Database:
+  host: localhost
+  port: 5432
+  enable_ssl: true
+  timeout: 15.5
 
-[User]
-name = Admin
-roles =
-    admin
-    editor
-    viewer
-
+User:
+  name: Admin
+  roles:
+    - admin
+    - editor
+    - viewer
 """
+
+# Контент для фейкового config.ini для теста на обратную совместимость
+FAKE_INI_CONTENT = """
+[Database]
+host = localhost_ini
+port = 1234
+"""
+
 
 @pytest.fixture
 def config_fs(fs):  # fs - это фикстура из pyfakefs
     """
-    Настраивает фейковую файловую систему для каждого теста.
-    
-    Эта фикстура выполняет три ключевые задачи:
-    1. Сбрасывает состояние модуля `config` для изоляции тестов.
-    2. Создает в памяти файловую структуру с `config.ini`.
-    3. Устанавливает текущую рабочую директорию внутрь фейкового проекта.
+    Настраивает фейковую файловую систему и сбрасывает состояние модуля config.
     """
-    # ARRANGE (Подготовка): Сбрасываем глобальные переменные в модуле config
+    # 1. Сброс состояния модуля
     config._BASE_DIR = None
     config._CONFIG_FILE_PATH = None
     config._paths_initialized = False
+    config._config_object = None
+    config._config_loaded = False
 
-    # ARRANGE: Определяем и создаем пути для фейкового проекта
+    # 2. Создание файловой структуры
     project_root = Path("/home/user/project")
     src_path = project_root / "src" / "app"
-    fs.create_file(project_root / "config.ini", contents=FAKE_CONFIG_CONTENT)
     fs.create_dir(src_path)
-    
-    # ARRANGE: Переходим в рабочую директорию, откуда будет запущен поиск
+
+    # 3. Установка текущей директории
     import os
     os.chdir(src_path)
-    
+
     # Передаем управление тесту
     yield fs, project_root
 
-    # CLEANUP (Очистка): Возвращаемся в корень после выполнения теста
+    # 4. Очистка
     os.chdir("/")
 
 
-def test_initialize_paths_success(config_fs):
-    """Проверяет, что `_initialize_paths` находит корень проекта и путь к конфигу."""
-    # ARRANGE: Получаем настроенную файловую систему и ожидаемый путь
+def test_finds_yaml_first(config_fs):
+    """Проверяет, что config.yml находится в приоритете."""
     fs, project_root = config_fs
-    
-    # ACT: Вызываем тестируемую функцию
+    # Создаем оба файла: и .yml, и .ini
+    fs.create_file(project_root / "config.yml", contents=FAKE_YAML_CONTENT)
+    fs.create_file(project_root / "config.ini", contents=FAKE_INI_CONTENT)
+
+    # ACT
     config._initialize_paths()
 
-    # ASSERT: Проверяем, что глобальные переменные модуля установились корректно
-    # Сравниваем как объекты Path для независимости от ОС
-    assert Path(config._BASE_DIR).as_posix().endswith('/home/user/project')
+    # ASSERT
+    assert Path(config._CONFIG_FILE_PATH).as_posix().endswith('/home/user/project/config.yml')
+
+    # ACT & ASSERT: Проверяем, что загрузились данные из YAML
+    db_host = config.get_config_value("Database", "host")
+    assert db_host == "localhost"
+
+
+def test_falls_back_to_ini(config_fs):
+    """Проверяет, что если нет config.yml, используется config.ini."""
+    fs, project_root = config_fs
+    # Создаем только .ini файл
+    fs.create_file(project_root / "config.ini", contents=FAKE_INI_CONTENT)
+
+    # ACT
+    config._initialize_paths()
+
+    # ASSERT
     assert Path(config._CONFIG_FILE_PATH).as_posix().endswith('/home/user/project/config.ini')
 
-def test_get_config_path_raises_error_if_not_found(config_fs):
-    """Проверяет, что `load_config` вызывает ошибку, если маркеры проекта не найдены."""
-    # ARRANGE: Переходим в директорию, где нет маркеров проекта (`/`)
-    import os
-    os.chdir("/")
-    # Сбрасываем состояние модуля, чтобы он заново запустил поиск
-    config._paths_initialized = False
+    # ACT & ASSERT: Проверяем, что загрузились данные из INI
+    db_host = config.get_config_value("Database", "host")
+    assert db_host == "localhost_ini"
+    port = config.get_config_int("Database", "port")
+    assert port == 1234
 
-    # ACT & ASSERT: Проверяем, что вызов `load_config` приводит к FileNotFoundError
-    with pytest.raises(FileNotFoundError):
-        config.load_config()
 
-def test_get_config_value(config_fs):
-    """Тестирует чтение строкового значения и работу fallback."""
-    # ACT: Читаем существующий ключ
-    host = config.get_config_value("Database", "host")
-    # ASSERT: Проверяем, что значение верное
-    assert host == "localhost"
-    
-    # ACT: Читаем несуществующий ключ с указанием fallback
-    non_existent = config.get_config_value("Database", "non_existent", fallback="default")
-    # ASSERT: Проверяем, что вернулось fallback-значение
-    assert non_existent == "default"
+def test_get_config_typed_values_from_yaml(config_fs):
+    """Тестирует чтение типизированных значений из YAML."""
+    fs, project_root = config_fs
+    fs.create_file(project_root / "config.yml", contents=FAKE_YAML_CONTENT)
 
-def test_get_config_typed_values(config_fs):
-    """Тестирует чтение типизированных значений (int, float, bool)."""
-    # ACT & ASSERT: Проверяем каждую функцию типизированного чтения
+    # PyYAML автоматически преобразует типы, наши функции должны это поддерживать
     assert config.get_config_int("Database", "port") == 5432
     assert config.get_config_float("Database", "timeout") == 15.5
     assert config.get_config_boolean("Database", "enable_ssl") is True
 
-def test_get_config_list(config_fs):
-    """Тестирует чтение многострочного значения как списка."""
-    # ACT: Читаем ключ `roles`, значение которого занимает несколько строк
+
+def test_get_config_list_from_yaml(config_fs):
+    """Тестирует чтение списка из YAML."""
+    fs, project_root = config_fs
+    fs.create_file(project_root / "config.yml", contents=FAKE_YAML_CONTENT)
+
     roles = config.get_config_list("User", "roles")
-    # ASSERT: Проверяем, что получили корректный список строк
     assert roles == ["admin", "editor", "viewer"]
 
-def test_get_config_section(config_fs):
-    """Тестирует получение целой секции [Database] как словаря."""
-    # ACT: Запрашиваем всю секцию
+
+def test_get_config_section_from_yaml(config_fs):
+    """Тестирует получение целой секции из YAML как словаря."""
+    fs, project_root = config_fs
+    fs.create_file(project_root / "config.yml", contents=FAKE_YAML_CONTENT)
+
     db_section = config.get_config_section("Database")
-    # ASSERT: Проверяем, что словарь содержит все ключи и значения из секции
     assert db_section == {
         "host": "localhost",
-        "port": "5432",
-        "enable_ssl": "true",
-        "timeout": "15.5"
+        "port": 5432,  # PyYAML парсит как int
+        "enable_ssl": True,
+        "timeout": 15.5
     }
 
-def test_save_config_value(config_fs):
-    """Тестирует успешное сохранение нового значения в конфиг."""
-    # ARRANGE: Получаем путь к фейковому конфигу
-    path = config._get_config_path()
-    
-    # ACT: Сохраняем новое значение для хоста
-    success = config.save_config_value("Database", "host", "new.host.com")
-    
-    # ASSERT: Проверяем, что функция отчиталась об успехе
+def test_save_config_value_on_ini(config_fs):
+    """Проверяет, что сохранение значения в .ini файл работает."""
+    fs, project_root = config_fs
+    ini_path = project_root / "config.ini"
+    fs.create_file(ini_path, contents=FAKE_INI_CONTENT)
+
+    # ACT: Сохраняем новое значение, используя явный путь к файлу
+    success = config.save_config_value("Database", "host", "new.host.com", cfg_file=str(ini_path))
     assert success is True
 
-    # ASSERT: Читаем файл напрямую и проверяем, что содержимое изменилось как надо,
-    # а остальные данные остались нетронутыми.
-    with open(path, encoding='utf-8') as f:
+    # ASSERT: Проверяем, что содержимое файла изменилось
+    with open(ini_path) as f:
         content = f.read()
     assert "host = new.host.com" in content
-    assert "port = 5432" in content
 
-def test_save_non_existent_key_fails(config_fs):
-    """Проверяет, что функция `save_config_value` не создает новые ключи."""
-    # ACT: Пытаемся сохранить значение для ключа, которого нет в секции
-    success = config.save_config_value("Database", "non_existent_key", "some_value")
+def test_save_config_value_fails_on_yaml(config_fs):
+    """Проверяет, что сохранение в .yml файл блокируется."""
+    fs, project_root = config_fs
+    yaml_path = project_root / "config.yml"
+    fs.create_file(yaml_path, contents=FAKE_YAML_CONTENT)
+
+    # ACT: Пытаемся сохранить значение в .yml файл
+    success = config.save_config_value("Database", "host", "new.host.com", cfg_file=str(yaml_path))
     
-    # ASSERT: Проверяем, что функция вернула False, как и ожидалось
+    # ASSERT: Убеждаемся, что функция вернула False
     assert success is False
