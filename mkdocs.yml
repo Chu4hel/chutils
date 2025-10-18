@@ -1,6 +1,7 @@
 site_name: chutils
 site_description: "Простые утилиты для конфигурации, логирования и секретов в Python."
 site_author: "Chu4hel"
+site_url: "https://Chu4hel.github.io/chutils/"
 
 theme:
   name: material
