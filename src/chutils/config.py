@@ -67,7 +67,7 @@ def _initialize_paths():
             if (project_root / marker).is_file() and marker.startswith('config'):
                 _CONFIG_FILE_PATH = str(project_root / marker)
                 break
-        logger.info(f"Корень проекта автоматически определен: {_BASE_DIR}")
+        logger.debug(f"Корень проекта автоматически определен: {_BASE_DIR}")
     else:
         logger.warning("Не удалось автоматически найти корень проекта.")
 
@@ -134,13 +134,13 @@ def get_config() -> Dict:
         with open(path, 'r', encoding='utf-8') as f:
             if file_ext in ['.yml', '.yaml']:
                 _config_object = yaml.safe_load(f)
-                logger.info(f"Конфигурация успешно загружена из YAML: {path}")
+                logger.debug(f"Конфигурация успешно загружена из YAML: {path}")
             elif file_ext == '.ini':
                 parser = configparser.ConfigParser()
                 parser.read_string(f.read())
                 # Преобразуем объект ConfigParser в словарь
                 _config_object = {s: dict(parser.items(s)) for s in parser.sections()}
-                logger.info(f"Конфигурация успешно загружена из INI: {path}")
+                logger.debug(f"Конфигурация успешно загружена из INI: {path}")
             else:
                 _config_object = {}
                 logger.warning(f"Неподдерживаемый формат файла конфигурации: {path}")
