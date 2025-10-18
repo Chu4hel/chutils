@@ -5,7 +5,8 @@
 ## Пакет `chutils`
 
 ::: chutils
-
+    options:
+      members: [init]
 ## Модуль `config`
 
 ::: chutils.config
