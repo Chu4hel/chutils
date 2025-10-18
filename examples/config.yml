@@ -1,0 +1,8 @@
+Database:
+  host: localhost
+  port: 5432
+  user: my_user
+
+Logging:
+  log_level: DEBUG
+  log_file_name: example_app.log
