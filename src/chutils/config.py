@@ -156,117 +156,152 @@ def get_config() -> Dict:
     return _config_object
 
 
-def save_config_value(section: str, key: str, value: str, cfg_file: Optional[str] = None) -> bool:
+def save_config_value(
+        section: str,
+        key: str,
+        value: Any,
+        cfg_file: Optional[str] = None
+) -> bool:
     """
     Сохраняет одно значение в конфигурационном файле.
 
     Warning:
-        Важно: Эта функция работает только для файлов `.ini` и спроектирована так,
-        чтобы сохранять комментарии и структуру исходного файла.
-        При работе с `.yml` файлами она вернет `False`.
+        Важно: При сохранении в `.yml` комментарии и форматирование будут утеряны.
+        При сохранении в `.ini` - сохраняются.
 
     Args:
-        section: Имя секции в `.ini` файле.
+        section: Имя секции.
         key: Имя ключа в секции.
         value: Новое значение для ключа.
-        cfg_file: Опциональный путь к файлу `.ini`. Если не указан, будет
+        cfg_file: Опциональный путь к файлу. Если не указан, будет
             использован автоматически найденный файл.
 
     Returns:
         True: Если значение было успешно обновлено и сохранено.
-        False: Если файл не `.ini`, не найден, или произошла ошибка.
+        False: Если файл не найден, или произошла ошибка.
     """
+    global _config_object, _config_loaded
+
     path = _get_config_path(cfg_file)
     file_ext = Path(path).suffix.lower()
 
-    # Защита: работаем только с .ini файлами
-    if file_ext != '.ini':
-        logger.warning(f"Сохранение поддерживается только для .ini файлов. Файл {path} не будет изменен.")
-        return False
+    if file_ext in ['.yml', '.yaml']:
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f) or {}
 
-    if not os.path.exists(path):
-        logger.error(f"Невозможно сохранить значение: файл конфигурации {path} не найден.")
-        return False
+            if section not in data:
+                data[section] = {}
+            data[section][key] = value
 
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-    except IOError as e:
-        logger.error(f"Ошибка чтения файла {path} для сохранения: {e}")
-        return False
+            with open(path, 'w', encoding='utf-8') as f:
+                yaml.dump(data, f, allow_unicode=True, sort_keys=False)
 
-    updated = False
-    in_target_section = False
-    section_found = False
-    key_found_in_section = False
-    section_pattern = re.compile(r'^\s*\[\s*(?P<section_name>[^]]+)\s*\]\s*')
-    key_pattern = re.compile(rf'^\s*({re.escape(key)})\s*=\s*(.*)', re.IGNORECASE)
+            if _config_loaded:
+                _config_object = data
 
-    new_lines = []
-    for line in lines:
-        section_match = section_pattern.match(line)
-        if section_match:
-            current_section_name = section_match.group('section_name').strip()
-            if current_section_name.lower() == section.lower():
-                in_target_section = True
-                section_found = True
-            else:
-                in_target_section = False
-            new_lines.append(line)
-            continue
+            logger.debug(f"Ключ '{key}' в секции '[{section}]' обновлен в файле {path}")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка при сохранении в YAML файл {path}: {e}")
+            return False
 
-        if in_target_section and not key_found_in_section:
-            key_match = key_pattern.match(line)
-            if key_match:
-                original_key = key_match.group(1)
-                new_line_content = f"{original_key} = {value}\n"
-                new_lines.append(new_line_content)
-                key_found_in_section = True
-                updated = True
-                logger.info(f"Ключ '{key}' в секции '[{section}]' будет обновлен на '{value}' в файле {path}")
-                continue
+    elif file_ext == '.ini':
+        if not os.path.exists(path):
+            logger.error(f"Невозможно сохранить значение: файл конфигурации {path} не найден.")
+            return False
 
-        new_lines.append(line)
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+        except IOError as e:
+            logger.error(f"Ошибка чтения файла {path} для сохранения: {e}")
+            return False
 
-    if not section_found:
-        logger.warning(f"Секция '[{section}]' не найдена в файле {path}. Значение НЕ сохранено.")
-        return False
-    if section_found and not key_found_in_section:
-        # Создаем новый ключ в конце секции, если он не найден
-        key_added = False
-        final_lines = []
-        in_target_section_for_add = False
-        for line in new_lines:
-            final_lines.append(line)
+        updated = False
+        in_target_section = False
+        section_found = False
+        key_found_in_section = False
+        section_pattern = re.compile(r'^\s*\[\s*(?P<section_name>[^]]+)\s*\]\s*')
+        key_pattern = re.compile(rf'^\s*({re.escape(key)})\s*=\s*(.*)', re.IGNORECASE)
+
+        new_lines = []
+        for line in lines:
             section_match = section_pattern.match(line)
             if section_match:
                 current_section_name = section_match.group('section_name').strip()
-                in_target_section_for_add = current_section_name.lower() == section.lower()
-            elif in_target_section_for_add and line.strip() == "" and not key_added:
-                # Если мы в нужной секции и дошли до следующей, вставляем ключ
-                is_next_section = section_pattern.match(
-                    lines[lines.index(line) + 1] if lines.index(line) + 1 < len(lines) else "")
-                if is_next_section or lines.index(line) == len(lines) - 1:
-                    final_lines.insert(-1, f"{key} = {value}\n")
+                if current_section_name.lower() == section.lower():
+                    in_target_section = True
+                    section_found = True
+                else:
+                    in_target_section = False
+                new_lines.append(line)
+                continue
+
+            if in_target_section and not key_found_in_section:
+                key_match = key_pattern.match(line)
+                if key_match:
+                    original_key = key_match.group(1)
+                    new_line_content = f"{original_key} = {value}\n"
+                    new_lines.append(new_line_content)
+                    key_found_in_section = True
+                    updated = True
+                    logger.debug(f"Ключ '{key}' в секции '[{section}]' будет обновлен на '{value}' в файле {path}")
+                    continue
+
+            new_lines.append(line)
+
+        if not section_found:
+            # Если секция не найдена, добавляем ее в конец файла
+            if new_lines and new_lines[-1].strip() != "":
+                new_lines.append('\n')  # Добавляем пустую строку для отступа
+            new_lines.append(f'[{section}]\n')
+            new_lines.append(f'{key} = {value}\n')
+            updated = True
+            logger.debug(f"Новая секция '[{section}]' с ключом '{key}' будет добавлена в файл {path}")
+
+        elif not key_found_in_section:  # `section_found` is implicitly True here
+            # Существующая логика для добавления ключа в существующую секцию
+            key_added = False
+            final_lines = []
+            in_target_section_for_add = False
+            for i, line in enumerate(new_lines):
+                final_lines.append(line)
+                section_match = section_pattern.match(line)
+                if section_match:
+                    current_section_name = section_match.group('section_name').strip()
+                    in_target_section_for_add = current_section_name.lower() == section.lower()
+
+                # Проверяем, является ли следующая строка началом новой секции или концом файла
+                is_last_line = i == len(new_lines) - 1
+                next_line_is_new_section = False
+                if not is_last_line:
+                    next_line_match = section_pattern.match(new_lines[i + 1])
+                    if next_line_match:
+                        next_line_is_new_section = True
+
+                if in_target_section_for_add and (is_last_line or next_line_is_new_section):
+                    # Вставляем ключ перед следующей секцией или в конце файла
+                    final_lines.append(f"{key} = {value}\n")
                     key_added = True
                     updated = True
-        if not key_added:  # Если ключ не был добавлен (например, секция в самом конце файла)
-            final_lines.append(f"{key} = {value}\n")
-            updated = True
+                    break  # Выходим из цикла, чтобы не добавлять ключ многократно
+            new_lines = final_lines
 
-        new_lines = final_lines
-
-    if updated:
-        try:
-            with open(path, 'w', encoding='utf-8') as f:
-                f.writelines(new_lines)
-            logger.info(f"Файл конфигурации {path} успешно обновлен.")
-            return True
-        except IOError as e:
-            logger.error(f"Ошибка записи в файл {path} при сохранении: {e}")
+        if updated:
+            try:
+                with open(path, 'w', encoding='utf-8') as f:
+                    f.writelines(new_lines)
+                logger.debug(f"Файл конфигурации {path} успешно обновлен.")
+                return True
+            except IOError as e:
+                logger.error(f"Ошибка записи в файл {path} при сохранении: {e}")
+                return False
+        else:
+            logger.debug(f"Обновление для ключа '{key}' в секции '[{section}]' не потребовалось.")
             return False
     else:
-        logger.debug(f"Обновление для ключа '{key}' в секции '[{section}]' не потребовалось.")
+        logger.warning(f"Сохранение для формата {file_ext} не поддерживается.")
         return False
 
 

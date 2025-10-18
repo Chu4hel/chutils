@@ -213,8 +213,8 @@ pip install -e .
 - `get_config_boolean(section, key, fallback=False)`: Получить булево значение.
 - `get_config_list(section, key, fallback=[])`: Получить список.
 - `get_config_section(section)`: Получить всю секцию как словарь.
-- `save_config_value(section, key, value)`: Сохранить значение. **Важно: работает только для `.ini` файлов** для
-  сохранения комментариев.
+- `save_config_value(section, key, value)`: Сохранить значение. Работает для `.yml` и `.ini`.
+  **Важно**: при сохранении в `.yml` комментарии и форматирование будут утеряны. При сохранении в `.ini` - сохраняются.
 
 ### Настройка логирования (`chutils.logger`)
 

@@ -142,17 +142,47 @@ def test_save_config_value_on_ini(config_fs):
     assert "host = new.host.com" in content
 
 
-def test_save_config_value_fails_on_yaml(config_fs):
-    """Проверяет, что сохранение в .yml файл блокируется."""
+def test_save_config_value_updates_yaml(config_fs):
+    """Проверяет, что сохранение в .yml файл обновляет существующий ключ."""
     fs, project_root = config_fs
     yaml_path = project_root / "config.yml"
     fs.create_file(yaml_path, contents=FAKE_YAML_CONTENT)
 
-    # ACT: Пытаемся сохранить значение в .yml файл
-    success = config.save_config_value("Database", "host", "new.host.com", cfg_file=str(yaml_path))
+    # ACT: Пытаемся обновить значение в .yml файле
+    success = config.save_config_value("Database", "host", "new.db.host.com", cfg_file=str(yaml_path))
+    assert success is True
 
-    # ASSERT: Убеждаемся, что функция вернула False
-    assert success is False
+    # ASSERT: Проверяем, что значение в файле изменилось
+    import yaml
+    with open(yaml_path) as f:
+        data = yaml.safe_load(f)
+
+    assert data["Database"]["host"] == "new.db.host.com"
+    # Убедимся, что другие данные не пострадали
+    assert data["Database"]["port"] == 5432
+
+
+def test_save_config_value_adds_to_yaml(config_fs):
+    """Проверяет, что сохранение в .yml файл добавляет новый ключ и секцию."""
+    fs, project_root = config_fs
+    yaml_path = project_root / "config.yml"
+    fs.create_file(yaml_path, contents=FAKE_YAML_CONTENT)
+
+    # ACT: Добавляем новый ключ в существующую секцию
+    success_add_key = config.save_config_value("Database", "new_key", "new_value", cfg_file=str(yaml_path))
+    assert success_add_key is True
+
+    # ACT: Добавляем новую секцию с ключом
+    success_add_section = config.save_config_value("NewSection", "some_key", True, cfg_file=str(yaml_path))
+    assert success_add_section is True
+
+    # ASSERT: Проверяем, что все данные корректно добавились
+    import yaml
+    with open(yaml_path) as f:
+        data = yaml.safe_load(f)
+
+    assert data["Database"]["new_key"] == "new_value"
+    assert data["NewSection"]["some_key"] is True
 
 
 def test_save_config_adds_new_key_to_ini(config_fs):
@@ -179,3 +209,25 @@ port = 1234
     assert "user = test_user" in file_content
     # Проверяем, что старые данные остались на месте
     assert "host = localhost_ini" in file_content
+
+
+def test_save_config_adds_new_section_to_ini(config_fs):
+    """Проверяет, что функция добавляет новую секцию в .ini файл, если она не существует."""
+    fs, project_root = config_fs
+    ini_path = project_root / "config.ini"
+    # Используем контент только с одной секцией
+    content = """[Database]
+host = localhost_ini
+"""
+    fs.create_file(ini_path, contents=content)
+
+    # ACT: Сохраняем ключ в новой, несуществующей секции 'Server'
+    success = config.save_config_value("Server", "ip", "192.168.1.1", cfg_file=str(ini_path))
+    assert success is True
+
+    # ASSERT: Проверяем, что в файле появилась новая секция и ключ
+    with open(ini_path) as f:
+        file_content = f.read()
+
+    assert "[Server]" in file_content
+    assert "ip = 192.168.1.1" in file_content
