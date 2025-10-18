@@ -227,7 +227,7 @@ pip install -e .
 
 ### Управление секретами (`chutils.secret_manager`)
 
-- `SecretManager(service_name)`: Создает менеджер, изолированный по имени сервиса.
+- `SecretManager(service_name, prefix="Chutils_")`: Создает менеджер, изолированный по имени сервиса.
 - `secrets.save_secret(key, value)`: Сохраняет секрет.
 - `secrets.get_secret(key)`: Получает секрет.
 - `secrets.delete_secret(key)`: Удаляет секрет.
