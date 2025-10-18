@@ -1,0 +1,34 @@
+site_name: chutils
+site_description: "Простые утилиты для конфигурации, логирования и секретов в Python."
+site_author: "Sergo"
+
+theme:
+  name: material
+  language: ru
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.copy
+    - navigation.tabs
+    - navigation.top
+
+nav:
+  - Главная: index.md
+  - Справочник API: api.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_root_heading: yes
+            show_source: no
