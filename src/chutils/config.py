@@ -232,8 +232,29 @@ def save_config_value(section: str, key: str, value: str, cfg_file: Optional[str
         logger.warning(f"Секция '[{section}]' не найдена в файле {path}. Значение НЕ сохранено.")
         return False
     if section_found and not key_found_in_section:
-        logger.warning(f"Ключ '{key}' не найден в секции '[{section}]' файла {path}. Значение НЕ сохранено.")
-        return False
+        # Создаем новый ключ в конце секции, если он не найден
+        key_added = False
+        final_lines = []
+        in_target_section_for_add = False
+        for line in new_lines:
+            final_lines.append(line)
+            section_match = section_pattern.match(line)
+            if section_match:
+                current_section_name = section_match.group('section_name').strip()
+                in_target_section_for_add = current_section_name.lower() == section.lower()
+            elif in_target_section_for_add and line.strip() == "" and not key_added:
+                # Если мы в нужной секции и дошли до следующей, вставляем ключ
+                is_next_section = section_pattern.match(
+                    lines[lines.index(line) + 1] if lines.index(line) + 1 < len(lines) else "")
+                if is_next_section or lines.index(line) == len(lines) - 1:
+                    final_lines.insert(-1, f"{key} = {value}\n")
+                    key_added = True
+                    updated = True
+        if not key_added:  # Если ключ не был добавлен (например, секция в самом конце файла)
+            final_lines.append(f"{key} = {value}\n")
+            updated = True
+
+        new_lines = final_lines
 
     if updated:
         try:
@@ -363,9 +384,11 @@ def get_config_list(
     return fallback
 
 
-def get_config_section(section_name: str, fallback: Optional[Dict] = None, config: Optional[Dict] = None) -> Dict[
-    str,
-    Any]:
+def get_config_section(
+        section_name: str,
+        fallback: Optional[Dict] = None,
+        config: Optional[Dict] = None
+) -> Dict[str, Any]:
     """
     Получает всю секцию конфигурации как словарь.
 

@@ -125,6 +125,7 @@ def test_get_config_section_from_yaml(config_fs):
         "timeout": 15.5
     }
 
+
 def test_save_config_value_on_ini(config_fs):
     """Проверяет, что сохранение значения в .ini файл работает."""
     fs, project_root = config_fs
@@ -140,6 +141,7 @@ def test_save_config_value_on_ini(config_fs):
         content = f.read()
     assert "host = new.host.com" in content
 
+
 def test_save_config_value_fails_on_yaml(config_fs):
     """Проверяет, что сохранение в .yml файл блокируется."""
     fs, project_root = config_fs
@@ -148,6 +150,32 @@ def test_save_config_value_fails_on_yaml(config_fs):
 
     # ACT: Пытаемся сохранить значение в .yml файл
     success = config.save_config_value("Database", "host", "new.host.com", cfg_file=str(yaml_path))
-    
+
     # ASSERT: Убеждаемся, что функция вернула False
     assert success is False
+
+
+def test_save_config_adds_new_key_to_ini(config_fs):
+    """Проверяет, что функция добавляет новый ключ в .ini файл, если он не существует."""
+    fs, project_root = config_fs
+    ini_path = project_root / "config.ini"
+    # Используем контент без ключа 'user'
+    content = """[Database]
+host = localhost_ini
+port = 1234
+
+[User]
+"""
+    fs.create_file(ini_path, contents=content)
+
+    # ACT: Сохраняем новый ключ 'user' в секцию 'Database'
+    success = config.save_config_value("Database", "user", "test_user", cfg_file=str(ini_path))
+    assert success is True
+
+    # ASSERT: Проверяем, что содержимое файла изменилось и новый ключ добавлен
+    with open(ini_path) as f:
+        file_content = f.read()
+
+    assert "user = test_user" in file_content
+    # Проверяем, что старые данные остались на месте
+    assert "host = localhost_ini" in file_content
