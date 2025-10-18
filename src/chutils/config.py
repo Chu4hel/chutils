@@ -27,7 +27,17 @@ _config_loaded = False
 
 
 def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
-    """Ищет корень проекта, двигаясь вверх по дереву каталогов."""
+    """Ищет корень проекта, двигаясь вверх по дереву каталогов.
+
+    Args:
+        start_path: Директория, с которой начинается поиск.
+        markers: Список имен файлов или папок (маркеров), наличие которых
+            в директории указывает на то, что это корень проекта.
+
+    Returns:
+        Объект Path, представляющий корневую директорию проекта
+        None: Если корень не был найден.
+    """
     current_path = start_path.resolve()
     # Идем вверх до тех пор, пока не достигнем корня файловой системы
     while current_path != current_path.parent:
@@ -69,8 +79,16 @@ def _get_config_path(cfg_file: Optional[str] = None) -> str:
     Внутренняя функция-шлюз для получения пути к файлу конфигурации.
 
     Если путь не был установлен, запускает автоматический поиск.
-    Если путь не передан явно и автоматический поиск не дал результатов,
-    выбрасывает исключение с понятным сообщением.
+
+    Args:
+        cfg_file: Опциональный путь к файлу конфигурации. Если указан,
+            используется он.
+
+    Returns:
+        Строка с путем к файлу конфигурации.
+
+    Raises:
+        FileNotFoundError: Если путь не передан явно и автоматический поиск не дал результатов.
     """
     # Если путь к файлу передан явно, используем его.
     if cfg_file:
@@ -96,7 +114,8 @@ def get_config() -> Dict:
     Результат кэшируется для последующих вызовов.
 
     Returns:
-        Dict: Загруженный объект конфигурации.
+        _config_object: Словарь с загруженной конфигурацией.
+        {}: Если файл не найден или произошла ошибка, возвращается пустой словарь.
     """
     global _config_object, _config_loaded
     if _config_loaded and _config_object is not None:
@@ -140,9 +159,22 @@ def get_config() -> Dict:
 def save_config_value(section: str, key: str, value: str, cfg_file: Optional[str] = None) -> bool:
     """
     Сохраняет одно значение в конфигурационном файле.
-    ВАЖНО: Эта функция работает только для файлов `.ini` и спроектирована так,
-    чтобы сохранять комментарии и структуру исходного файла.
-    При работе с `.yml` файлами она вернет `False`.
+
+    Warning:
+        Важно: Эта функция работает только для файлов `.ini` и спроектирована так,
+        чтобы сохранять комментарии и структуру исходного файла.
+        При работе с `.yml` файлами она вернет `False`.
+
+    Args:
+        section: Имя секции в `.ini` файле.
+        key: Имя ключа в секции.
+        value: Новое значение для ключа.
+        cfg_file: Опциональный путь к файлу `.ini`. Если не указан, будет
+            использован автоматически найденный файл.
+
+    Returns:
+        True: Если значение было успешно обновлено и сохранено.
+        False: Если файл не `.ini`, не найден, или произошла ошибка.
     """
     path = _get_config_path(cfg_file)
     file_ext = Path(path).suffix.lower()
@@ -220,13 +252,36 @@ def save_config_value(section: str, key: str, value: str, cfg_file: Optional[str
 # --- Функции-обертки для удобного получения значений ---
 
 def get_config_value(section: str, key: str, fallback: Any = "", config: Optional[Dict] = None) -> Any:
-    """Получает значение из конфигурации."""
+    """
+    Получает значение из конфигурации.
+
+    Args:
+        section: Имя секции.
+        key: Имя ключа.
+        fallback: Значение по умолчанию, если ключ не найден.
+        config: Опциональный, предварительно загруженный словарь конфигурации.
+
+    Returns:
+        Значение из конфигурации или `fallback`.
+    """
     if config is None: config = get_config()
     return config.get(section, {}).get(key, fallback)
 
 
 def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[Dict] = None) -> int:
-    """Получает целочисленное значение."""
+    """
+    Получает целочисленное значение из конфигурации.
+
+    Args:
+        section: Имя секции.
+        key: Имя ключа.
+        fallback: Значение по умолчанию, если ключ не найден или не может
+            быть преобразован в int.
+        config: Опциональный, предварительно загруженный словарь конфигурации.
+
+    Returns:
+        Целое число из конфигурации или `fallback`.
+    """
     value = get_config_value(section, key, fallback, config)
     try:
         return int(value)
@@ -235,7 +290,19 @@ def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[D
 
 
 def get_config_float(section: str, key: str, fallback: float = 0.0, config: Optional[Dict] = None) -> float:
-    """Получает дробное значение."""
+    """
+    Получает дробное значение из конфигурации.
+
+    Args:
+        section: Имя секции.
+        key: Имя ключа.
+        fallback: Значение по умолчанию, если ключ не найден или не может
+            быть преобразован в float.
+        config: Опциональный, предварительно загруженный словарь конфигурации.
+
+    Returns:
+        Дробное число из конфигурации или `fallback`.
+    """
     value = get_config_value(section, key, fallback, config)
     try:
         return float(value)
@@ -244,7 +311,22 @@ def get_config_float(section: str, key: str, fallback: float = 0.0, config: Opti
 
 
 def get_config_boolean(section: str, key: str, fallback: bool = False, config: Optional[Dict] = None) -> bool:
-    """Получает булево значение."""
+    """
+    Получает булево значение из конфигурации.
+
+    Распознает 'true', '1', 't', 'y', 'yes' как True и
+    'false', '0', 'f', 'n', 'no' как False (без учета регистра).
+
+    Args:
+        section: Имя секции.
+        key: Имя ключа.
+        fallback: Значение по умолчанию, если ключ не найден или не может
+            быть распознан как булево.
+        config: Опциональный, предварительно загруженный словарь конфигурации.
+
+    Returns:
+        Булево значение из конфигурации или `fallback`.
+    """
     value = get_config_value(section, key, fallback, config)
     if isinstance(value, bool):
         return value
@@ -260,7 +342,19 @@ def get_config_list(
         key: str,
         fallback: Optional[List[Any]] = None,
         config: Optional[Dict] = None) -> List[Any]:
-    """Получает значение как список."""
+    """
+    Получает значение как список из конфигурации.
+
+    Args:
+        section: Имя секции.
+        key: Имя ключа.
+        fallback: Значение по умолчанию, если ключ не найден.
+        config: Опциональный, предварительно загруженный словарь конфигурации.
+
+    Returns:
+        Список из конфигурации или `fallback`. Если `fallback` не указан,
+        возвращается пустой список.
+    """
     value = get_config_value(section, key, fallback, config)
     if isinstance(value, list):
         return value
@@ -272,6 +366,17 @@ def get_config_list(
 def get_config_section(section_name: str, fallback: Optional[Dict] = None, config: Optional[Dict] = None) -> Dict[
     str,
     Any]:
-    """Получает всю секцию как словарь."""
+    """
+    Получает всю секцию конфигурации как словарь.
+
+    Args:
+        section_name: Имя секции.
+        fallback: Значение по умолчанию, если секция не найдена.
+        config: Опциональный, предварительно загруженный словарь конфигурации.
+
+    Returns:
+        Словарь с содержимым секции или `fallback`. Если `fallback` не указан,
+        возвращается пустой словарь.
+    """
     if config is None: config = get_config()
     return config.get(section_name, fallback if fallback is not None else {})
