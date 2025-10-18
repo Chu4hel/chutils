@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "chutils"
 version = "2.0.0"
-description = ""
+description = "Набор простых и удобных утилит для Python, который избавляет от рутины при работе с конфигурацией и логированием в новых проектах."
 authors = ["Sergo <sergeiivanov636@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "chutils", from = "src"}]
+packages = [{ include = "chutils", from = "src" }]
 
 [tool.poetry.dependencies]
 python = ">=3.9"
