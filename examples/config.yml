@@ -1,8 +1,27 @@
+# -- Пример конфигурации для chutils --
+
+# Пользовательская секция для вашего приложения
 Database:
   host: localhost
   port: 5432
   user: my_user
+  # chutils может читать любые ваши данные
 
+# Секция 'Logging' используется модулем chutils.logger автоматически
 Logging:
+  # Уровень логирования.
+  # Возможные значения: DEVDEBUG, DEBUG, MEDIUMDEBUG, INFO, WARNING, ERROR, CRITICAL
   log_level: DEBUG
+
+  # Имя файла, в который будут сохраняться логи.
+  # Файл будет создан в папке /logs в корне проекта.
   log_file_name: example_app.log
+
+  # Количество дней, в течение которых нужно хранить старые файлы логов.
+  # Каждый день будет создаваться новый файл, а старые, превышающие этот лимит, будут удаляться.
+  log_backup_count: 7
+
+# Еще одна пользовательская секция
+API:
+  base_url: https://api.example.com/v1
+  timeout: 30
