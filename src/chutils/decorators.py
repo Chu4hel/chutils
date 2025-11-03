@@ -1,9 +1,19 @@
 import functools
+import logging
 import time
-from . import logger
+from typing import Optional
 
-# Настраиваем логгер для этого модуля
-log = logger.setup_logger(__name__)
+# Ленивая инициализация логгера
+_module_logger: Optional[logging.Logger] = None
+
+
+def _get_logger() -> logging.Logger:
+    """Получает лениво инициализированный логгер модуля."""
+    global _module_logger
+    if _module_logger is None:
+        from . import logger as chutils_logger
+        _module_logger = chutils_logger.setup_logger(__name__)
+    return _module_logger
 
 
 def log_function_details(func):
@@ -33,13 +43,13 @@ def log_function_details(func):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        log.devdebug(f"Вызов функции: {func.__name__}() с аргументами {args} и {kwargs}")
+        _get_logger().devdebug(f"Вызов функции: {func.__name__}() с аргументами {args} и {kwargs}")
         start_time = time.perf_counter()
         result = func(*args, **kwargs)
         end_time = time.perf_counter()
         run_time = end_time - start_time
-        log.devdebug(f"Функция {func.__name__}() завершилась за {run_time:.4f} с. "
-                     f"Возвращаемое значение: {result}")
+        _get_logger().devdebug(f"Функция {func.__name__}() завершилась за {run_time:.4f} с. "
+                               f"Возвращаемое значение: {result}")
         return result
 
     return wrapper

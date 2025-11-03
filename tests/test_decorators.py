@@ -10,9 +10,9 @@ def test_log_function_details(mocker):
     """
     Проверяет, что декоратор `log_function_details` корректно логирует вызов.
     """
-    # 1. Мокаем (подменяем) логгер, чтобы перехватить его вызовы
-    # Логгер в модуле decorators инициализируется с именем 'chutils.decorators'
-    mock_log_devdebug = mocker.patch("chutils.decorators.log.devdebug")
+    # 1. Создаем мок-логгер и подменяем геттер, чтобы он возвращал наш мок
+    mock_logger = mocker.Mock()
+    mocker.patch("chutils.decorators._get_logger", return_value=mock_logger)
 
     # 2. Мокаем time.perf_counter для предсказуемого времени выполнения
     mocker.patch("chutils.decorators.time.perf_counter", side_effect=[10.0, 12.5])
@@ -23,11 +23,11 @@ def test_log_function_details(mocker):
     # 4. Убеждаемся, что сама функция отработала правильно
     assert result == 15
 
-    # 5. Проверяем, что логгер был вызван дважды
-    assert mock_log_devdebug.call_count == 2
+    # 5. Проверяем, что метод devdebug нашего мок-логгера был вызван дважды
+    assert mock_logger.devdebug.call_count == 2
 
     # 6. Проверяем содержимое вызовов логгера
-    call_args_list = mock_log_devdebug.call_args_list
+    call_args_list = mock_logger.devdebug.call_args_list
 
     # Проверка первого вызова (информация о начале вызова)
     call_before_args = call_args_list[0].args[0]

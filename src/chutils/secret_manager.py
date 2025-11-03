@@ -1,9 +1,20 @@
+import logging
+from typing import Optional
+
 import keyring
 from keyring.errors import NoKeyringError, PasswordDeleteError
-from typing import Optional
-from . import logger as logging
 
-logger = logging.setup_logger(__name__)
+# Ленивая инициализация логгера
+_module_logger: Optional[logging.Logger] = None
+
+
+def _get_logger() -> logging.Logger:
+    """Получает лениво инициализированный логгер модуля."""
+    global _module_logger
+    if _module_logger is None:
+        from . import logger as chutils_logger
+        _module_logger = chutils_logger.setup_logger(__name__)
+    return _module_logger
 
 
 class SecretManager:
@@ -37,7 +48,7 @@ class SecretManager:
         if not service_name or not isinstance(service_name, str):
             raise ValueError("service_name должен быть непустой строкой.")
         self.service_name: str = prefix + service_name
-        logger.devdebug(f"Менеджер секретов инициализирован для сервиса: '{self.service_name}'")
+        _get_logger().devdebug(f"Менеджер секретов инициализирован для сервиса: '{self.service_name}'")
 
     def save_secret(self, key: str, value: str) -> bool:
         """
@@ -54,13 +65,13 @@ class SecretManager:
         """
         try:
             keyring.set_password(self.service_name, key, value)
-            logger.devdebug(f"Секрет для ключа '{key}' успешно сохранен.")
+            _get_logger().devdebug(f"Секрет для ключа '{key}' успешно сохранен.")
             return True
         except NoKeyringError:
-            logger.error("Ошибка: системное хранилище (keyring) не найдено. Секрет не сохранен.")
+            _get_logger().error("Ошибка: системное хранилище (keyring) не найдено. Секрет не сохранен.")
             return False
         except Exception as e:
-            logger.error(f"Произошла непредвиденная ошибка при сохранении секрета: {e}")
+            _get_logger().error(f"Произошла непредвиденная ошибка при сохранении секрета: {e}")
             return False
 
     def get_secret(self, key: str) -> Optional[str]:
@@ -77,15 +88,15 @@ class SecretManager:
         try:
             value = keyring.get_password(self.service_name, key)
             if value is None:
-                logger.devdebug(f"Секрет для ключа '{key}' не найден.")
+                _get_logger().devdebug(f"Секрет для ключа '{key}' не найден.")
             else:
-                logger.devdebug(f"Секрет для ключа '{key}' получен.")
+                _get_logger().devdebug(f"Секрет для ключа '{key}' получен.")
             return value
         except NoKeyringError:
-            logger.critical("Ошибка: системное хранилище (keyring) не найдено. Невозможно получить секрет.")
+            _get_logger().critical("Ошибка: системное хранилище (keyring) не найдено. Невозможно получить секрет.")
             return None
         except Exception as e:
-            logger.error(f"Произошла непредвиденная ошибка при получении секрета: {e}")
+            _get_logger().error(f"Произошла непредвиденная ошибка при получении секрета: {e}")
             return None
 
     def delete_secret(self, key: str) -> bool:
@@ -106,16 +117,16 @@ class SecretManager:
                 return True
 
             keyring.delete_password(self.service_name, key)
-            logger.devdebug(f"Секрет для ключа '{key}' успешно удален.")
+            _get_logger().devdebug(f"Секрет для ключа '{key}' успешно удален.")
             return True
         except PasswordDeleteError:
-            logger.error(f"Ошибка: не удалось удалить секрет для ключа '{key}'.")
+            _get_logger().error(f"Ошибка: не удалось удалить секрет для ключа '{key}'.")
             return False
         except NoKeyringError:
-            logger.critical("Ошибка: системное хранилище (keyring) не найдено. Невозможно удалить секрет.")
+            _get_logger().critical("Ошибка: системное хранилище (keyring) не найдено. Невозможно удалить секрет.")
             return False
         except Exception as e:
-            logger.error(f"Произошла непредвиденная ошибка при удалении секрета: {e}")
+            _get_logger().error(f"Произошла непредвиденная ошибка при удалении секрета: {e}")
             return False
 
     def update_secret(self, key: str, value: str) -> bool:
@@ -132,7 +143,7 @@ class SecretManager:
             True: Если секрет успешно обновлен.
             False: В случае возникновения ошибки.
         """
-        logger.devdebug(f"Обновление секрета для ключа '{key}'...")
+        _get_logger().devdebug(f"Обновление секрета для ключа '{key}'...")
         return self.save_secret(key, value)
 
 

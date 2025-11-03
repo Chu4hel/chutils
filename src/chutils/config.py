@@ -74,7 +74,7 @@ def _initialize_paths():
     _paths_initialized = True
 
 
-def _get_config_path(cfg_file: Optional[str] = None) -> str:
+def _get_config_path(cfg_file: Optional[str] = None) -> Optional[str]:
     """
     Внутренняя функция-шлюз для получения пути к файлу конфигурации.
 
@@ -85,10 +85,8 @@ def _get_config_path(cfg_file: Optional[str] = None) -> str:
             используется он.
 
     Returns:
-        Строка с путем к файлу конфигурации.
+        Строка с путем к файлу конфигурации или None, если файл не найден.
 
-    Raises:
-        FileNotFoundError: Если путь не передан явно и автоматический поиск не дал результатов.
     """
     # Если путь к файлу передан явно, используем его.
     if cfg_file:
@@ -98,13 +96,10 @@ def _get_config_path(cfg_file: Optional[str] = None) -> str:
     if not _paths_initialized:
         _initialize_paths()
 
-    # Если после инициализации путь все еще не определен, это ошибка.
+    # Если после инициализации путь все еще не определен, возвращаем None.
     if _CONFIG_FILE_PATH is None:
-        raise FileNotFoundError(
-            "Файл конфигурации не найден. Не удалось автоматически определить корень проекта. "
-            "Убедитесь, что в корне вашего проекта есть 'config.yml' или 'config.ini' или 'pyproject.toml', "
-            "либо укажите путь к конфигу вручную через chutils.init(base_dir=...)"
-        )
+        logger.debug("Файл конфигурации не найден, автоматический поиск не дал результатов.")
+        return None
     return _CONFIG_FILE_PATH
 
 
@@ -122,8 +117,8 @@ def get_config() -> Dict:
         return _config_object
 
     path = _get_config_path()
-    if not os.path.exists(path):
-        logger.critical(f"Файл конфигурации НЕ НАЙДЕН: {path}")
+    if path is None or not os.path.exists(path):
+        logger.debug("Файл конфигурации не найден или не указан. Возвращен пустой конфиг.")
         _config_object = {}
         _config_loaded = True
         return _config_object
