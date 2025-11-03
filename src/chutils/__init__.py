@@ -50,6 +50,7 @@ from .config import (
 )
 from .logger import setup_logger, ChutilsLogger
 from .secret_manager import SecretManager
+from .decorators import log_function_details
 
 
 def init(base_dir: str):
@@ -99,4 +100,7 @@ __all__ = [
 
     # Классы из модуля secret_manager
     'SecretManager',
+
+    # Декораторы
+    'log_function_details',
 ]
