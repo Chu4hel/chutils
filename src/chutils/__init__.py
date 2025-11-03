@@ -48,7 +48,7 @@ from .config import (
     get_config_list,
     get_config_section
 )
-from .logger import setup_logger, ChutilsLogger
+from .logger import setup_logger, ChutilsLogger, SafeTimedRotatingFileHandler
 from .secret_manager import SecretManager
 from .decorators import log_function_details
 
@@ -97,6 +97,7 @@ __all__ = [
     # Функции и классы из модуля logger
     'setup_logger',
     'ChutilsLogger',
+    'SafeTimedRotatingFileHandler',
 
     # Классы из модуля secret_manager
     'SecretManager',
