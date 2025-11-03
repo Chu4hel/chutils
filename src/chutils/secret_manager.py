@@ -20,20 +20,23 @@ class SecretManager:
 
     prefix: str = "Chutils_"
 
-    def __init__(self, service_name: str) -> None:
-        """
-        Инициализирует менеджер для конкретного сервиса (приложения).
+    def __init__(self, service_name: str, prefix: str = "Chutils_") -> None:
+        """Инициализирует менеджер для конкретного сервиса (приложения).
 
         Args:
             service_name: Уникальное имя для вашего приложения, например,
                 'my_super_app' или 'project_alpha_db'.
+            prefix: Опциональный префикс для имени сервиса. По умолчанию
+                используется "Chutils_", чтобы избежать конфликтов с другими
+                приложениями. Можно передать пустую строку, чтобы
+                использовать `service_name` без префикса.
 
         Raises:
             ValueError: Если `service_name` является пустой строкой.
         """
         if not service_name or not isinstance(service_name, str):
             raise ValueError("service_name должен быть непустой строкой.")
-        self.service_name: str = self.prefix + service_name
+        self.service_name: str = prefix + service_name
         logger.devdebug(f"Менеджер секретов инициализирован для сервиса: '{self.service_name}'")
 
     def save_secret(self, key: str, value: str) -> bool:
