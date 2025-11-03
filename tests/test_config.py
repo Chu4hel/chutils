@@ -252,3 +252,26 @@ Database:
     assert "Не удалось преобразовать" in caplog.text
     assert "'not-a-float'" in caplog.text
     assert "к типу float" in caplog.text
+
+def test_get_config_returns_empty_dict_when_no_file_found(config_fs, caplog):
+    """
+    Проверяет, что get_config() возвращает пустой словарь и не падает,
+    если файл конфигурации не найден.
+    """
+    fs, project_root = config_fs
+    # Создаем только маркер проекта, но не сам файл конфигурации
+    fs.create_file(project_root / "pyproject.toml")
+    import os
+    os.chdir(project_root)  # Убедимся, что мы в корне проекта
+
+    # ACT
+    with caplog.at_level(logging.DEBUG):
+        result = config.get_config()
+
+    # ASSERT
+    assert result == {}
+    # Проверяем, что было записано отладочное сообщение, а не ошибка
+    assert "Файл конфигурации не найден или не указан" in caplog.text
+    # Убедимся, что нет сообщений об ошибках уровня ERROR или CRITICAL
+    for record in caplog.records:
+        assert record.levelno < logging.ERROR
