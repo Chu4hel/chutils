@@ -26,6 +26,21 @@ logging.addLevelName(MEDIUMDEBUG_LEVEL_NUM, MEDIUMDEBUG_LEVEL_NAME)
 logging.addLevelName(DEVDEBUG_LEVEL_NUM, DEVDEBUG_LEVEL_NAME)
 
 
+class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
+    """
+    Надежный обработчик ротации логов, особенно для Windows.
+
+    Этот класс решает проблему `PermissionError` при ротации логов в Windows,
+    гарантируя, что файл будет закрыт перед переименованием.
+    Он явно закрывает файловый поток перед вызовом стандартной логики ротации.
+    """
+    def doRollover(self):
+        if self.stream:
+            self.stream.close()
+            self.stream = None
+        super().doRollover()
+
+
 class ChutilsLogger(logging.Logger):
     """
     Кастомный класс логгера, который расширяет стандартный `logging.Logger`.
@@ -195,7 +210,7 @@ def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> ChutilsLo
         log_file_path = os.path.join(log_dir, log_file_name)
         try:
             # Ротация каждый день ('D'), храним backup_count старых файлов
-            file_handler = logging.handlers.TimedRotatingFileHandler(
+            file_handler = SafeTimedRotatingFileHandler(
                 log_file_path,
                 when="D",
                 interval=1,
