@@ -342,6 +342,10 @@ def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[D
     try:
         return int(value)
     except (ValueError, TypeError):
+        logger.warning(
+            f"Не удалось преобразовать значение '{value}' для ключа '{key}' в секции '[{section}]' к типу int. "
+            f"Возвращено значение по умолчанию: {fallback}."
+        )
         return fallback
 
 
@@ -363,6 +367,10 @@ def get_config_float(section: str, key: str, fallback: float = 0.0, config: Opti
     try:
         return float(value)
     except (ValueError, TypeError):
+        logger.warning(
+            f"Не удалось преобразовать значение '{value}' для ключа '{key}' в секции '[{section}]' к типу float. "
+            f"Возвращено значение по умолчанию: {fallback}."
+        )
         return fallback
 
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import pytest
+import logging
 from pathlib import Path
+
 from chutils import config
 
 # Контент для фейкового config.yml
@@ -231,3 +232,51 @@ host = localhost_ini
 
     assert "[Server]" in file_content
     assert "ip = 192.168.1.1" in file_content
+
+
+def test_get_config_int_logs_warning_on_failure(config_fs, caplog):
+    """
+    Проверяет, что get_config_int логирует предупреждение при ошибке преобразования.
+    """
+    fs, project_root = config_fs
+    content = """
+Database:
+  port: "not-an-int"
+"""
+    fs.create_file(project_root / "config.yml", contents=content)
+
+    # ACT
+    with caplog.at_level(logging.WARNING):
+        result = config.get_config_int("Database", "port", fallback=999)
+
+    # ASSERT
+    assert result == 999
+    assert len(caplog.records) == 1
+    assert caplog.records[0].levelno == logging.WARNING
+    assert "Не удалось преобразовать" in caplog.text
+    assert "'not-an-int'" in caplog.text
+    assert "к типу int" in caplog.text
+
+
+def test_get_config_float_logs_warning_on_failure(config_fs, caplog):
+    """
+    Проверяет, что get_config_float логирует предупреждение при ошибке преобразования.
+    """
+    fs, project_root = config_fs
+    content = """
+Database:
+  timeout: "not-a-float"
+"""
+    fs.create_file(project_root / "config.yml", contents=content)
+
+    # ACT
+    with caplog.at_level(logging.WARNING):
+        result = config.get_config_float("Database", "timeout", fallback=99.9)
+
+    # ASSERT
+    assert result == 99.9
+    assert len(caplog.records) == 1
+    assert caplog.records[0].levelno == logging.WARNING
+    assert "Не удалось преобразовать" in caplog.text
+    assert "'not-a-float'" in caplog.text
+    assert "к типу float" in caplog.text
