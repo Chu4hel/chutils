@@ -28,34 +28,6 @@ port = 1234
 """
 
 
-@pytest.fixture
-def config_fs(fs):  # fs - это фикстура из pyfakefs
-    """
-    Настраивает фейковую файловую систему и сбрасывает состояние модуля config.
-    """
-    # 1. Сброс состояния модуля
-    config._BASE_DIR = None
-    config._CONFIG_FILE_PATH = None
-    config._paths_initialized = False
-    config._config_object = None
-    config._config_loaded = False
-
-    # 2. Создание файловой структуры
-    project_root = Path("/home/user/project")
-    src_path = project_root / "src" / "app"
-    fs.create_dir(src_path)
-
-    # 3. Установка текущей директории
-    import os
-    os.chdir(src_path)
-
-    # Передаем управление тесту
-    yield fs, project_root
-
-    # 4. Очистка
-    os.chdir("/")
-
-
 def test_finds_yaml_first(config_fs):
     """Проверяет, что config.yml находится в приоритете."""
     fs, project_root = config_fs
