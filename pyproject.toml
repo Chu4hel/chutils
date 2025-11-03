@@ -6,6 +6,21 @@ authors = ["Chu4hel <sergeiivanov636@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "chutils", from = "src" }]
+exclude = [
+    "tests/",
+    "examples/",
+    "docs/",
+    ".github/",
+    ".idea/",
+    "__pycache__/",
+    "*.pyc",
+    "*.log",
+    "*.egg-info/",
+    ".vscode/",
+    ".ruff_cache/",
+    "coverage.xml",
+    ".coverage",
+]
 
 [tool.poetry.dependencies]
 python = ">=3.9"
