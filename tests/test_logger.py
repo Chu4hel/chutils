@@ -431,3 +431,92 @@ def test_rotation_on_real_filesystem_is_working(monkeypatch):
 
         rotated_found = any(f.startswith("rotation_debug.log.") for f in actual_files)
         assert rotated_found, "Ротированные лог-файлы не найдены!"
+
+
+def test_size_based_rotation(config_fs, monkeypatch):
+    """
+    Проверяет, что ротация по размеру работает корректно.
+    """
+    fs, project_root = config_fs
+    logs_dir = project_root / "logs"
+    fs.create_dir(logs_dir)
+    fs.create_file(project_root / "pyproject.toml", contents="")
+
+    logging.shutdown()
+    from chutils import config as chutils_config
+    monkeypatch.setattr(chutils_config, '_paths_initialized', False)
+
+    os.chdir(project_root)
+
+    logger = setup_logger(
+        "size_rotation_logger",
+        log_file_name="size_rotation.log",
+        rotation_type='size',
+        max_bytes=100,
+        backup_count=2,
+        force_reconfigure=True
+    )
+
+    # Логируем сообщения, чтобы превысить max_bytes
+    for i in range(10):
+        logger.info(f"This is a log message number {i}")
+
+    logging.shutdown()
+
+    log_files = fs.listdir(logs_dir)
+    assert "size_rotation.log" in log_files
+    assert "size_rotation.log.1" in log_files
+
+
+def test_compression_on_rotation(tmp_path, monkeypatch):
+    """
+    Проверяет, что сжатие ротированных логов работает на реальной ФС.
+    """
+    project_root = tmp_path
+    logs_dir = project_root / "logs"
+    logs_dir.mkdir()
+    (project_root / "pyproject.toml").touch()
+
+    # Принудительно сбрасываем состояние модулей config и logger
+    # чтобы они переинициализировались с новыми путями
+    logging.shutdown()
+    from chutils import config as chutils_config
+    from chutils import logger as chutils_logger
+    monkeypatch.setattr(chutils_config, '_BASE_DIR', None)
+    monkeypatch.setattr(chutils_config, '_CONFIG_FILE_PATH', None)
+    monkeypatch.setattr(chutils_config, '_paths_initialized', False)
+    monkeypatch.setattr(chutils_logger, '_LOG_DIR', None)
+    monkeypatch.setattr(chutils_logger, '_logger_instance', None)
+    monkeypatch.setattr(chutils_logger, '_initialization_message_shown', False)
+
+    # Переходим в временную директорию, чтобы chutils нашел корень проекта
+    os.chdir(project_root)
+
+    logger = setup_logger(
+        "compression_logger",
+        log_file_name="compression.log",
+        rotation_type='size',
+        max_bytes=100,
+        backup_count=2,
+        compress=True,
+        force_reconfigure=True
+    )
+
+    # Логируем сообщения, чтобы вызвать несколько ротаций
+    for i in range(10):
+        logger.info(f"This is a log message number {i}")
+
+    # Закрываем все хендлеры, чтобы файлы были записаны на диск
+    logging.shutdown()
+
+    log_files = os.listdir(logs_dir)
+
+    # Проверяем, что основной лог на месте
+    assert "compression.log" in log_files
+
+    # Проверяем, что сжатые бэкапы существуют, а несжатые - удалены
+    for i in range(1, 3):  # backup_count=2
+        compressed_file = f"compression.log.{i}.gz"
+        uncompressed_file = f"compression.log.{i}"
+        assert compressed_file in log_files, f"Сжатый файл {compressed_file} не найден"
+        assert uncompressed_file not in log_files, f"Несжатый файл {uncompressed_file} не был удален"

@@ -8,6 +8,7 @@
 
 import logging
 import logging.handlers
+import os
 from enum import Enum
 from pathlib import Path
 from typing import Optional, Any
@@ -52,6 +53,103 @@ class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
             self.stream.close()
             self.stream = None
         super().doRollover()
+
+
+class CompressingRotatingFileHandler(logging.handlers.RotatingFileHandler):
+    """
+    Обработчик ротации по размеру с поддержкой сжатия, который корректно
+    обрабатывает существующие сжатые бэкапы.
+    """
+
+    def doRollover(self):
+        """
+        Выполняет ротацию логов:
+        1. Сдвигает существующие архивы (`log.1.gz` -> `log.2.gz`).
+        2. Переименовывает текущий лог в `log.1`.
+        3. Открывает новый пустой лог-файл для дальнейшей записи.
+        4. Сжимает `log.1` в `log.1.gz` и удаляет `log.1`.
+        """
+        # Закрываем текущий поток
+        if self.stream:
+            self.stream.close()
+            self.stream = None
+
+        # 1. Сдвигаем существующие сжатые бэкапы
+        if self.backupCount > 0:
+            for i in range(self.backupCount - 1, 0, -1):
+                sfn_gz = f"{self.baseFilename}.{i}.gz"
+                dfn_gz = f"{self.baseFilename}.{i + 1}.gz"
+                if os.path.exists(sfn_gz):
+                    if os.path.exists(dfn_gz):
+                        os.remove(dfn_gz)
+                    os.rename(sfn_gz, dfn_gz)
+
+        # 2. Ротируем текущий лог-файл в `basename.1`
+        dfn_uncompressed = f"{self.baseFilename}.1"
+        if os.path.exists(dfn_uncompressed):
+            os.remove(dfn_uncompressed)
+
+        dfn_compressed = f"{dfn_uncompressed}.gz"
+        if os.path.exists(dfn_compressed):
+            os.remove(dfn_compressed)
+
+        if os.path.exists(self.baseFilename):
+            os.rename(self.baseFilename, dfn_uncompressed)
+
+        # 3. Открываем новый поток (создает новый пустой лог-файл)
+        self.stream = self._open()
+
+        # 4. Сжимаем новый бэкап `basename.1`
+        if os.path.exists(dfn_uncompressed):
+            try:
+                import gzip
+                with open(dfn_uncompressed, 'rb') as f_in:
+                    with gzip.open(dfn_compressed, 'wb') as f_out:
+                        f_out.writelines(f_in)
+
+                import sys
+                if sys.platform == "win32":
+                    try:
+                        import ctypes
+                        ctypes.windll.kernel32.DeleteFileW(dfn_uncompressed)
+                    except (ImportError, AttributeError):
+                        os.remove(dfn_uncompressed)
+                else:
+                    os.remove(dfn_uncompressed)
+            except Exception as e:
+                self.handleError(f"Ошибка при сжатии или удалении {dfn_uncompressed}: {e}")
+
+
+class CompressingTimedRotatingFileHandler(SafeTimedRotatingFileHandler):
+    """
+    Обработчик ротации по времени с поддержкой сжатия.
+    """
+
+    def doRollover(self):
+        """
+        Выполняет ротацию и сжимает все старые лог-файлы.
+        """
+        # Вызываем стандартный doRollover, который переименует файлы
+        super().doRollover()
+
+        # Получаем список всех ротированных файлов, которые знает обработчик
+        # Этот метод идеально подходит, так как он возвращает именно те файлы,
+        # которые являются бэкапами.
+        files_to_compress = self.getFilesToDelete()
+
+        for source_file in files_to_compress:
+            dest_file = f"{source_file}.gz"
+
+            # Если исходный файл существует и сжатого еще нет
+            if os.path.exists(source_file) and not os.path.exists(dest_file):
+                try:
+                    import gzip
+                    with open(source_file, 'rb') as f_in:
+                        with gzip.open(dest_file, 'wb') as f_out:
+                            f_out.writelines(f_in)
+                    os.remove(source_file)  # Удаляем исходный несжатый файл
+                except Exception as e:
+                    self.handleError(f"Ошибка при сжатии файла {source_file}: {e}")
 
 
 class ChutilsLogger(logging.Logger):
@@ -177,7 +275,11 @@ def setup_logger(
         name: str = 'app_logger',
         log_level: Optional[LogLevel] = None,
         log_file_name: Optional[str] = None,
-        force_reconfigure: bool = False
+        force_reconfigure: bool = False,
+        rotation_type: str = 'time',
+        max_bytes: int = 0,
+        compress: bool = False,
+        backup_count: int = 3
 ) -> ChutilsLogger:
     """
     Настраивает и возвращает логгер с нужным именем.
@@ -198,6 +300,14 @@ def setup_logger(
             берется из конфигурационного файла ('Logging', 'log_file_name').
         force_reconfigure: Если True, принудительно удаляет все существующие
                            обработчики и настраивает логгер заново.
+        rotation_type: Тип ротации логов. Может быть 'time' (по умолчанию, ежедневная)
+                       или 'size' (по размеру файла).
+        max_bytes: Максимальный размер файла лога в байтах перед ротацией,
+                   если `rotation_type` установлен в 'size'. По умолчанию 0 (без лимита).
+        compress: Если True, ротированные файлы логов будут сжиматься в формат .gz.
+                  По умолчанию False.
+        backup_count: Количество хранимых ротированных файлов логов.
+                      Старые файлы будут удаляться. По умолчанию 3.
 
     Returns:
        logging.Logger: Настроенный экземпляр ChutilsLogger.
@@ -253,6 +363,10 @@ def setup_logger(
         log_file_name = config.get_config_value('Logging', 'log_file_name', 'app.log', cfg)
     logging.debug("Имя файла лога для '%s' определено как: %s", name, log_file_name)
 
+    # Определяем параметры ротации
+    rotation_type = config.get_config_value('Logging', 'rotation_type', rotation_type, cfg)
+    max_bytes = config.get_config_int('Logging', 'max_bytes', max_bytes, cfg)
+    compress = config.get_config_boolean('Logging', 'compress', compress, cfg)
     backup_count = config.get_config_int('Logging', 'log_backup_count', 3, cfg)
 
     # Создаем и настраиваем новый экземпляр логгера
@@ -260,13 +374,13 @@ def setup_logger(
     logger.setLevel(level_int)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    # 1. Обработчик для вывода в консоль (StreamHandler)
+    # Обработчик для вывода в консоль (StreamHandler)
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    # 2. Обработчик для записи в файл (TimedRotatingFileHandler)
-    #    Добавляем его, только если директория логов была успешно определена.
+    # Обработчик для записи в файл (TimedRotatingFileHandler)
+    # Добавляем его, только если директория логов была успешно определена.
     if log_dir and log_file_name:
         # ЕСЛИ ПУТЬ ПЕРЕДАН ЯВНО И ОН АБСОЛЮТНЫЙ, ИСПОЛЬЗУЕМ ЕГО
         # Это нужно для нашего отладочного теста, который работает во временной папке
@@ -276,24 +390,35 @@ def setup_logger(
             log_file_path = Path(log_dir) / log_file_name
         logging.debug("Попытка настроить файловый обработчик для %s в %s", name, log_file_path)
         try:
-            # Ротация каждый день ('D'), храним backup_count старых файлов
-            file_handler = SafeTimedRotatingFileHandler(
-                log_file_path,
-                when="D",
-                interval=1,
-                backupCount=backup_count,
-                encoding='utf-8'
-            )
-            file_handler.setFormatter(formatter)
-            logger.addHandler(file_handler)
-
-            # Выводим информационное сообщение только один раз для всего приложения
-            if not _initialization_message_shown:
-                logger.debug(
-                    "Логирование настроено. Уровень: %s. Файл: %s, ротация: %s дней.",
-                    log_level.value, log_file_path, backup_count
+            file_handler: Optional[logging.FileHandler] = None
+            if rotation_type == 'size':
+                handler_class = CompressingRotatingFileHandler if compress else logging.handlers.RotatingFileHandler
+                file_handler = handler_class(
+                    log_file_path,
+                    maxBytes=max_bytes,
+                    backupCount=backup_count,
+                    encoding='utf-8'
                 )
-                _initialization_message_shown = True
+            else:  # 'time'
+                handler_class = CompressingTimedRotatingFileHandler if compress else SafeTimedRotatingFileHandler
+                file_handler = handler_class(
+                    log_file_path,
+                    when="D",
+                    interval=1,
+                    backupCount=backup_count,
+                    encoding='utf-8'
+                )
+
+            if file_handler:
+                file_handler.setFormatter(formatter)
+                logger.addHandler(file_handler)
+
+                if not _initialization_message_shown:
+                    logger.debug(
+                        "Логирование настроено. Уровень: %s. Файл: %s, ротация: %s, сжатие: %s.",
+                        log_level.value, log_file_path, rotation_type, compress
+                    )
+                    _initialization_message_shown = True
         except Exception as e:
             logger.error("Не удалось настроить файловый обработчик логов для %s: %s", log_file_path, e)
     else:
