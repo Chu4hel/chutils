@@ -10,6 +10,58 @@
 ## Модуль `config`
 
 ::: chutils.config
+    options:
+      members:
+        - get_config
+        - get_config_value
+        - get_config_int
+        - get_config_float
+        - get_config_boolean
+        - get_config_list
+        - get_config_section
+        - save_config_value
+
+### Переопределение конфигурации локальным файлом
+
+Функция `get_config()` теперь автоматически ищет и загружает локальный файл конфигурации (например, `config.local.yml` или `config.local.ini`) в той же директории, что и основной файл (`config.yml` или `config.ini`). Значения из локального файла **переопределяют** соответствующие значения из основного файла.
+
+Это позволяет удобно управлять чувствительными или специфичными для разработчика настройками, не коммитя их в репозиторий.
+
+**Пример:**
+
+Если `config.yml` содержит:
+```yaml
+# config.yml
+Database:
+  host: production_db.com
+  port: 5432
+App:
+  debug: false
+```
+А `config.local.yml` содержит:
+```yaml
+# config.local.yml
+Database:
+  host: localhost
+App:
+  debug: true
+  developer_mode: true
+```
+Тогда `get_config()` вернет объединенную конфигурацию, где локальные настройки переопределяют основные:
+```python
+{
+  "Database": {
+    "host": "localhost", # Переопределено локальным файлом
+    "port": 5432         # Взято из основного файла
+  },
+  "App": {
+    "debug": True,           # Переопределено локальным файлом
+    "developer_mode": True   # Добавлено из локального файла
+  }
+}
+```
+**Важно:** Убедитесь, что вы добавили `config.local.yml` (или `config.local.ini`) в ваш `.gitignore`, чтобы случайно
+не закоммитить локальные или чувствительные настройки.
 
 ## Модуль `logger`
 

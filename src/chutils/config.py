@@ -49,6 +49,19 @@ def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
     return None
 
 
+def _merge_configs(main_config: Dict, local_config: Dict) -> Dict:
+    """
+    Рекурсивно объединяет два словаря конфигурации.
+    Значения из `local_config` переопределяют значения из `main_config`.
+    """
+    for key, value in local_config.items():
+        if key in main_config and isinstance(main_config[key], dict) and isinstance(value, dict):
+            main_config[key] = _merge_configs(main_config[key], value)
+        else:
+            main_config[key] = value
+    return main_config
+
+
 def _initialize_paths():
     """Автоматически находит и кэширует пути к корню проекта и файлу конфигурации."""
     global _BASE_DIR, _CONFIG_FILE_PATH, _paths_initialized
@@ -56,7 +69,7 @@ def _initialize_paths():
         return
 
     # Приоритет поиска: сначала YAML, потом INI, потом общий маркер проекта.
-    markers = ['config.yml', 'config.yaml', 'config.ini', 'pyproject.toml']
+    markers = ['config.yml', 'config.yaml', 'config.ini', 'config.local.yml', 'config.local.yaml', 'config.local.ini', 'pyproject.toml']
     project_root = find_project_root(Path.cwd(), markers)
 
     if project_root:
@@ -73,67 +86,87 @@ def _initialize_paths():
     _paths_initialized = True
 
 
-def _get_config_path(cfg_file: Optional[str] = None) -> Optional[str]:
+def _get_config_paths(cfg_file: Optional[str] = None) -> tuple[Optional[str], Optional[str]]:
     """
-    Внутренняя функция-шлюз для получения пути к файлу конфигурации.
+    Внутренняя функция-шлюз для получения путей к файлам конфигурации (основному и локальному).
 
-    Если путь не был установлен, запускает автоматический поиск.
+    Если пути не были установлены, запускает автоматический поиск.
 
     Args:
-        cfg_file: Опциональный путь к файлу конфигурации. Если указан,
+        cfg_file: Опциональный путь к основному файлу. Если указан,
             используется он.
 
     Returns:
-        Строка с путем к файлу конфигурации или None, если файл не найден.
-
+        Кортеж из двух строк: (путь к основному файлу, путь к локальному файлу).
+        None: Если файлы не найдены.
     """
-    # Если путь к файлу передан явно, используем его.
+    main_config_path: Optional[str] = None
+    local_config_path: Optional[str] = None
+
     if cfg_file:
-        return cfg_file
-
-    # Если пути еще не инициализированы, запускаем поиск.
-    if not _paths_initialized:
+        main_config_path = cfg_file
+    elif not _paths_initialized:
         _initialize_paths()
+        main_config_path = _CONFIG_FILE_PATH
+    else:
+        main_config_path = _CONFIG_FILE_PATH
 
-    # Если после инициализации путь все еще не определен, возвращаем None.
-    if _CONFIG_FILE_PATH is None:
-        logger.debug("Файл конфигурации не найден, автоматический поиск не дал результатов.")
-        return None
-    return _CONFIG_FILE_PATH
+    if main_config_path:
+        main_path_obj = Path(main_config_path)
+        file_ext = main_path_obj.suffix.lower()
+        local_file_name = f"{main_path_obj.stem}.local{file_ext}"
+        potential_local_path = main_path_obj.parent / local_file_name
+        if potential_local_path.exists():
+            local_config_path = str(potential_local_path)
+            logger.debug("Найден локальный файл конфигурации: %s", local_config_path)
+
+    return main_config_path, local_config_path
 
 
 def get_config() -> Dict:
     """
-    Загружает конфигурацию из файла (YAML или INI) и возвращает ее как словарь.
-    Результат кэшируется для последующих вызовов.
+    Загружает конфигурацию из файлов (основного и локального) и возвращает ее как словарь.
+    Результат кэшируется для последующих вызовов. Локальные настройки переопределяют основные.
 
     Returns:
         _config_object: Словарь с загруженной конфигурацией.
-        {}: Если файл не найден или произошла ошибка, возвращается пустой словарь.
+        {}: Если файлы не найдены или произошла ошибка, возвращается пустой словарь.
     """
     global _config_object, _config_loaded
     if _config_loaded and _config_object is not None:
         return _config_object
 
-    path = _get_config_path()
-    if path is None or not Path(path).exists():
-        logger.debug("Файл конфигурации не найден или не указан. Возвращен пустой конфиг.")
-        _config_object = {}
-        _config_loaded = True
-        return _config_object
+    main_path, local_path = _get_config_paths()
+    main_config: Dict = {}
+    local_config: Dict = {}
 
-    file_ext = Path(path).suffix.lower()
-
-    if file_ext in ['.yml', '.yaml']:
-        _config_object = _load_yaml(path)
-        logger.debug("Конфигурация успешно загружена из YAML: %s", path)
-    elif file_ext == '.ini':
-        _config_object = _load_ini(path)
-        logger.debug("Конфигурация успешно загружена из INI: %s", path)
+    if main_path and Path(main_path).exists():
+        file_ext = Path(main_path).suffix.lower()
+        if file_ext in ['.yml', '.yaml']:
+            main_config = _load_yaml(main_path)
+            logger.debug("Основная конфигурация успешно загружена из YAML: %s", main_path)
+        elif file_ext == '.ini':
+            main_config = _load_ini(main_path)
+            logger.debug("Основная конфигурация успешно загружена из INI: %s", main_path)
+        else:
+            logger.warning("Неподдерживаемый формат основного файла конфигурации: %s", main_path)
     else:
-        _config_object = {}
-        logger.warning("Неподдерживаемый формат файла конфигурации: %s", path)
+        logger.debug("Основной файл конфигурации не найден или не указан.")
 
+    if local_path and Path(local_path).exists():
+        file_ext = Path(local_path).suffix.lower()
+        if file_ext in ['.yml', '.yaml']:
+            local_config = _load_yaml(local_path)
+            logger.debug("Локальная конфигурация успешно загружена из YAML: %s", local_path)
+        elif file_ext == '.ini':
+            local_config = _load_ini(local_path)
+            logger.debug("Локальная конфигурация успешно загружена из INI: %s", local_path)
+        else:
+            logger.warning("Неподдерживаемый формат локального файла конфигурации: %s", local_path)
+    else:
+        logger.debug("Локальный файл конфигурации не найден или не указан.")
+
+    _config_object = _merge_configs(main_config, local_config)
     _config_loaded = True
     return _config_object
 
@@ -186,7 +219,17 @@ def save_config_value(
     """
     global _config_object, _config_loaded
 
-    path = _get_config_path(cfg_file)
+    # Если cfg_file передан, используем его, иначе берем основной путь
+    if cfg_file:
+        path = cfg_file
+    else:
+        main_path, _ = _get_config_paths()
+        path = main_path
+
+    if path is None:
+        logger.error("Невозможно сохранить значение: путь к файлу конфигурации не определен.")
+        return False
+
     file_ext = Path(path).suffix.lower()
 
     if file_ext in ['.yml', '.yaml']:
@@ -201,8 +244,9 @@ def save_config_value(
             with open(path, 'w', encoding='utf-8') as f:
                 yaml.dump(data, f, allow_unicode=True, sort_keys=False)
 
-            if _config_loaded:
-                _config_object = data
+            # Сбрасываем кэш, чтобы при следующем get_config() конфигурация была перезагружена
+            _config_object = None
+            _config_loaded = False
 
             logger.debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
             return True
@@ -297,6 +341,9 @@ def save_config_value(
                 with open(path, 'w', encoding='utf-8') as f:
                     f.writelines(new_lines)
                 logger.debug("Файл конфигурации %s успешно обновлен.", path)
+                # Сбрасываем кэш, чтобы при следующем get_config() конфигурация была перезагружена
+                _config_object = None
+                _config_loaded = False
                 return True
             except IOError as e:
                 logger.error("Ошибка записи в файл %s при сохранении: %s", path, e)

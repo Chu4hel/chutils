@@ -271,7 +271,178 @@ def test_get_config_returns_empty_dict_when_no_file_found(config_fs, caplog):
     # ASSERT
     assert result == {}
     # Проверяем, что было записано отладочное сообщение, а не ошибка
-    assert "Файл конфигурации не найден или не указан" in caplog.text
+    assert "Основной файл конфигурации не найден или не указан" in caplog.text
+    assert "Локальный файл конфигурации не найден или не указан" in caplog.text
     # Убедимся, что нет сообщений об ошибках уровня ERROR или CRITICAL
     for record in caplog.records:
         assert record.levelno < logging.ERROR
+
+
+def test_local_config_overrides_main_yaml(config_fs):
+    """
+    Проверяет, что config.local.yml переопределяет значения из config.yml.
+    """
+    fs, project_root = config_fs
+    main_yaml_content = """
+App:
+  name: MainApp
+  version: 1.0
+  settings:
+    debug: false
+    log_level: INFO
+Database:
+  host: localhost
+  port: 5432
+"""
+    local_yaml_content = """
+App:
+  version: 1.1
+  settings:
+    debug: true
+Database:
+  port: 6000
+  user: local_user
+"""
+    fs.create_file(project_root / "config.yml", contents=main_yaml_content)
+    fs.create_file(project_root / "config.local.yml", contents=local_yaml_content)
+    fs.create_file(project_root / "pyproject.toml", contents="") # Маркер проекта
+
+    # Сбрасываем кэш конфигурации
+    config._config_loaded = False
+    config._config_object = None
+    config._paths_initialized = False
+
+    # ACT
+    cfg = config.get_config()
+
+    # ASSERT
+    assert cfg["App"]["name"] == "MainApp"  # Не переопределено
+    assert cfg["App"]["version"] == 1.1     # Переопределено
+    assert cfg["App"]["settings"]["debug"] is True # Вложенное переопределение
+    assert cfg["App"]["settings"]["log_level"] == "INFO" # Не переопределено
+    assert cfg["Database"]["host"] == "localhost" # Не переопределено
+    assert cfg["Database"]["port"] == 6000     # Переопределено
+    assert cfg["Database"]["user"] == "local_user" # Добавлено новое значение
+
+
+def test_only_local_config_exists(config_fs):
+    """
+    Проверяет, что если существует только config.local.yml, он загружается корректно.
+    """
+    fs, project_root = config_fs
+    local_yaml_content = """
+App:
+  name: LocalApp
+  version: 2.0
+"""
+    fs.create_file(project_root / "config.local.yml", contents=local_yaml_content)
+    fs.create_file(project_root / "pyproject.toml", contents="") # Маркер проекта
+
+    # Сбрасываем кэш конфигурации
+    config._config_loaded = False
+    config._config_object = None
+    config._paths_initialized = False
+
+    # ACT
+    cfg = config.get_config()
+
+    # ASSERT
+    assert cfg["App"]["name"] == "LocalApp"
+    assert cfg["App"]["version"] == 2.0
+    assert "Database" not in cfg # Убедимся, что нет секций из несуществующего основного файла
+
+
+def test_save_config_value_does_not_affect_local_config(config_fs):
+    """
+    Проверяет, что save_config_value изменяет только основной config.yml,
+    не затрагивая config.local.yml.
+    """
+    fs, project_root = config_fs
+    main_yaml_content = """
+App:
+  name: MainApp
+  version: 1.0
+"""
+    local_yaml_content = """
+App:
+  version: 1.1
+  settings:
+    debug: true
+"""
+    main_config_path = project_root / "config.yml"
+    local_config_path = project_root / "config.local.yml"
+
+    fs.create_file(main_config_path, contents=main_yaml_content)
+    fs.create_file(local_config_path, contents=local_yaml_content)
+    fs.create_file(project_root / "pyproject.toml", contents="") # Маркер проекта
+
+    # Сбрасываем кэш конфигурации
+    config._config_loaded = False
+    config._config_object = None
+    config._paths_initialized = False
+
+    # ACT: Сохраняем значение в основной конфиг
+    success = config.save_config_value("App", "version", 1.2)
+    assert success is True
+
+    # ASSERT: Проверяем, что основной конфиг изменился
+    import yaml
+    with open(main_config_path) as f:
+        main_data_after_save = yaml.safe_load(f)
+    assert main_data_after_save["App"]["version"] == 1.2
+
+    # ASSERT: Проверяем, что локальный конфиг остался без изменений
+    with open(local_config_path) as f:
+        local_data_after_save = yaml.safe_load(f)
+    assert local_data_after_save["App"]["version"] == 1.1
+    assert local_data_after_save["App"]["settings"]["debug"] is True
+
+    # ASSERT: Проверяем, что get_config() возвращает объединенные данные с учетом изменений
+    config._config_loaded = False # Сбрасываем кэш для get_config
+    merged_cfg = config.get_config()
+    assert merged_cfg["App"]["name"] == "MainApp"
+    assert merged_cfg["App"]["version"] == 1.1 # Локальный конфиг переопределяет основной
+    assert merged_cfg["App"]["settings"]["debug"] is True
+
+
+def test_local_config_overrides_main_ini(config_fs):
+    """
+    Проверяет, что config.local.ini переопределяет значения из config.ini.
+    """
+    fs, project_root = config_fs
+    main_ini_content = """
+[App]
+name = MainApp
+version = 1.0
+
+[Database]
+host = localhost
+port = 5432
+"""
+    local_ini_content = """
+[App]
+version = 1.1
+
+[Database]
+port = 6000
+user = local_user
+"""
+    fs.create_file(project_root / "config.ini", contents=main_ini_content)
+    fs.create_file(project_root / "config.local.ini", contents=local_ini_content)
+    fs.create_file(project_root / "pyproject.toml", contents="") # Маркер проекта
+
+    # Сбрасываем кэш конфигурации
+    config._config_loaded = False
+    config._config_object = None
+    config._paths_initialized = False
+
+    # ACT
+    cfg = config.get_config()
+
+    # ASSERT
+    assert cfg["App"]["name"] == "MainApp"
+    assert cfg["App"]["version"] == "1.1"
+    assert cfg["Database"]["host"] == "localhost"
+    assert cfg["Database"]["port"] == "6000" # INI парсит все как строки
+    assert cfg["Database"]["user"] == "local_user"
+
