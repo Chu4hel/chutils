@@ -26,6 +26,7 @@ exclude = [
 python = ">=3.9"
 keyring = "^25.6.0"
 pyyaml = "^6.0.3"
+python-dotenv = "^1.2.1"
 
 
 [tool.poetry.group.dev.dependencies]

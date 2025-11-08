@@ -107,3 +107,53 @@ def test_init_with_custom_prefix():
     # Тест с пустым префиксом
     sm_no_prefix = SecretManager(SERVICE_NAME, prefix="")
     assert sm_no_prefix.service_name == SERVICE_NAME
+
+
+def test_get_secret_from_dotenv(config_fs, mocker):
+    """
+    Проверяет, что секрет может быть получен из .env файла, если его нет в keyring.
+    """
+    # --- Подготовка ---
+    fs, project_root = config_fs
+    # Создаем фейковый .env файл
+    fs.create_file(project_root / ".env", contents="MY_DOTENV_SECRET=dotenv_value")
+    # Создаем маркер проекта, чтобы chutils нашел корень
+    fs.create_file(project_root / "pyproject.toml")
+    # Убеждаемся, что keyring ничего не вернет
+    mocker.patch("chutils.secret_manager.keyring.get_password", return_value=None)
+
+    # Сбрасываем состояние модуля, чтобы он пере-загрузил .env
+    from chutils import secret_manager
+    secret_manager._dotenv_loaded = False
+    secret_manager._dotenv_values = None
+
+    # --- Действие ---
+    sm = SecretManager("my_app_for_dotenv")
+    result = sm.get_secret("MY_DOTENV_SECRET")
+
+    # --- Проверка ---
+    assert result == "dotenv_value"
+
+
+def test_get_secret_prioritizes_keyring(config_fs, mocker):
+    """
+    Проверяет, что keyring имеет приоритет над .env файлом.
+    """
+    # --- Подготовка ---
+    fs, project_root = config_fs
+    fs.create_file(project_root / ".env", contents="SHARED_SECRET=dotenv_value")
+    fs.create_file(project_root / "pyproject.toml")
+    # Keyring возвращает свое значение
+    mocker.patch("chutils.secret_manager.keyring.get_password", return_value="keyring_value")
+
+    # Сбрасываем состояние модуля
+    from chutils import secret_manager
+    secret_manager._dotenv_loaded = False
+    secret_manager._dotenv_values = None
+
+    # --- Действие ---
+    sm = SecretManager("my_app_for_dotenv")
+    result = sm.get_secret("SHARED_SECRET")
+
+    # --- Проверка ---
+    assert result == "keyring_value"
