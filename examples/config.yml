@@ -31,6 +31,21 @@ Logging:
   log_backup_count: 5
 
 # Еще одна пользовательская секция
+
 API:
+
   base_url: https://api.example.com/v1
+
   timeout: 30
+
+
+
+# Секция 'Secrets' используется модулем chutils.secret_manager
+
+Secrets:
+
+  # Уникальное имя сервиса для приложения, используется в Keyring.
+
+  # Важно задать уникальное имя, чтобы избежать конфликтов с другими приложениями.
+
+  service_name: chutils_example_app

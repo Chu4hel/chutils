@@ -1,6 +1,6 @@
 import logging
-from typing import Optional, Dict
 import os
+from typing import Optional, Dict
 
 import keyring
 from dotenv import load_dotenv
@@ -60,20 +60,49 @@ class SecretManager:
 
     prefix: str = "Chutils_"
 
-    def __init__(self, service_name: str, prefix: str = "Chutils_") -> None:
-        """Инициализирует менеджер и лениво загружает переменные из .env файла.
+    def __init__(self, service_name: Optional[str] = None, prefix: Optional[str] = None) -> None:
+        """
+        Инициализирует менеджер и лениво загружает переменные из .env файла.
+
+        Порядок определения `service_name`:
+        1. Значение, переданное в конструктор (если оно не пустое).
+        2. Значение из конфигурационного файла (секция `Secrets`, ключ `service_name`).
+        3. Абсолютный путь к корню проекта (для гарантированной уникальности).
 
         Args:
-            service_name: Уникальное имя для вашего приложения.
-            prefix: Опциональный префикс для `service_name`.
+            service_name: Опциональное уникальное имя для вашего приложения.
+            prefix: Опциональный префикс для `service_name`. Если не указан,
+                    будет взят из конфига (ключ `prefix`) или использован "Chutils_".
         """
-        if not service_name or not isinstance(service_name, str):
-            raise ValueError("service_name должен быть непустой строкой.")
-        self.service_name: str = prefix + service_name
-        _get_logger().devdebug("Менеджер секретов инициализирован для сервиса: '%s'", self.service_name)
-
         # При первом создании экземпляра SecretManager загружаем .env
         _load_dotenv_if_needed()
+
+        final_service_name = service_name
+        if not final_service_name:  # Если не передано или пустая строка
+            final_service_name = config.get_config_value('Secrets', 'service_name')
+
+        if not final_service_name:  # Если в конфиге тоже пусто
+            # Гарантируем, что пути инициализированы
+            config._initialize_paths()
+            final_service_name = config._BASE_DIR
+            _get_logger().debug(
+                "service_name для SecretManager не указан. "
+                "Для обеспечения уникальности используется путь к проекту: '%s'",
+                final_service_name
+            )
+
+        final_prefix = prefix
+        if final_prefix is None:
+            final_prefix = config.get_config_value('Secrets', 'prefix', fallback=self.prefix)
+
+        if not final_service_name:
+            raise ValueError(
+                "Не удалось определить service_name. Укажите его в конструкторе, "
+                "в файле config.yml или убедитесь, что проект имеет четкую структуру (например, .git или pyproject.toml)."
+            )
+
+        self.service_name: str = final_prefix + final_service_name
+        _get_logger().devdebug("Менеджер секретов инициализирован для сервиса: '%s'", self.service_name)
 
     def save_secret(self, key: str, value: str) -> bool:
         """
@@ -120,7 +149,8 @@ class SecretManager:
                 _get_logger().devdebug("Секрет для ключа '%s' получен из keyring.", key)
                 return value
         except NoKeyringError:
-            _get_logger().warning("Keyring не доступен. Поиск секрета будет выполнен только в .env и переменных окружения.")
+            _get_logger().warning(
+                "Keyring не доступен. Поиск секрета будет выполнен только в .env и переменных окружения.")
         except Exception as e:
             _get_logger().error("Произошла непредвиденная ошибка при получении секрета из keyring: %s", e)
 

@@ -17,12 +17,30 @@ def test_init_success(secret_manager):
     assert secret_manager.service_name == SecretManager.prefix + SERVICE_NAME
 
 
-def test_init_failure():
-    """Проверяет, что инициализация с некорректным service_name вызывает ошибку."""
-    with pytest.raises(ValueError):
-        SecretManager("")
-    with pytest.raises(ValueError):
-        SecretManager(None)  # type: ignore
+def test_init_fallback_to_project_path(config_fs, monkeypatch):
+    """
+    Проверяет, что если service_name не указан, используется путь к проекту.
+    """
+    fs, project_root = config_fs
+    fs.create_file(project_root / "pyproject.toml")
+
+    # Полностью сбрасываем состояние модулей, чтобы они переинициализировались
+    from chutils import secret_manager, config as chutils_config
+    monkeypatch.setattr(secret_manager, '_dotenv_loaded', False)
+    monkeypatch.setattr(secret_manager, '_dotenv_values', None)
+    monkeypatch.setattr(chutils_config, '_BASE_DIR', None)
+    monkeypatch.setattr(chutils_config, '_paths_initialized', False)
+
+    # Переходим в корень фейкового проекта
+    import os
+    os.chdir(project_root)
+
+    sm = SecretManager("")  # или SecretManager(None)
+
+    # Ожидаем, что service_name будет равен "префикс + путь_к_проекту"
+    found_project_path = chutils_config._BASE_DIR
+    expected_service_name = sm.prefix + found_project_path
+    assert sm.service_name == expected_service_name
 
 
 def test_save_secret_success(secret_manager, mocker):

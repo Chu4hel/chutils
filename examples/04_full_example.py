@@ -5,7 +5,8 @@ from chutils import get_config_value, setup_logger, SecretManager, ChutilsLogger
 logger: ChutilsLogger = setup_logger()
 
 # 2. Инициализируем менеджер секретов.
-secrets = SecretManager("my_awesome_app")
+# service_name будет автоматически взят из config.yml
+secrets = SecretManager()
 
 
 def setup_credentials():

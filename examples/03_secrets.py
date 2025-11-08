@@ -8,9 +8,10 @@ from chutils import SecretManager
 if "API_KEY_FROM_ENV" in os.environ:
     del os.environ["API_KEY_FROM_ENV"]
 
-# 1. Инициализируем менеджер секретов для нашего примера.
-# Важно использовать уникальное имя для каждого вашего приложения.
-secrets = SecretManager("chutils_example_app")
+# 1. Инициализируем менеджер секретов.
+# Имя сервиса "chutils_example_app" будет автоматически взято
+# из файла config.yml (секция Secrets -> service_name).
+secrets = SecretManager()
 
 # --- Демонстрация приоритета ---
 
