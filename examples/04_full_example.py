@@ -29,7 +29,7 @@ def connect_to_db():
         logger.error("Не удалось получить пароль для БД!")
         return
 
-    logger.info(f"Подключаемся к {db_host} от имени {db_user}...")
+    logger.info("Подключаемся к %s от имени %s...", db_host, db_user)
     # ... логика подключения ...
     logger.info("Успешно подключились!")
 

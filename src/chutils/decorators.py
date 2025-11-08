@@ -43,13 +43,13 @@ def log_function_details(func):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        _get_logger().devdebug(f"Вызов функции: {func.__name__}() с аргументами {args} и {kwargs}")
+        _get_logger().devdebug("Вызов функции: %s() с аргументами %s и %s", func.__name__, args, kwargs)
         start_time = time.perf_counter()
         result = func(*args, **kwargs)
         end_time = time.perf_counter()
         run_time = end_time - start_time
-        _get_logger().devdebug(f"Функция {func.__name__}() завершилась за {run_time:.4f} с. "
-                               f"Возвращаемое значение: {result}")
+        _get_logger().devdebug("Функция %s() завершилась за %.4f с. Возвращаемое значение: %s",
+                             func.__name__, run_time, result)
         return result
 
     return wrapper

@@ -8,6 +8,7 @@
 
 import logging
 import logging.handlers
+from enum import Enum
 from pathlib import Path
 from typing import Optional, Any
 
@@ -24,6 +25,17 @@ MEDIUMDEBUG_LEVEL_NAME = "MEDIUMDEBUG"
 
 logging.addLevelName(MEDIUMDEBUG_LEVEL_NUM, MEDIUMDEBUG_LEVEL_NAME)
 logging.addLevelName(DEVDEBUG_LEVEL_NUM, DEVDEBUG_LEVEL_NAME)
+
+
+class LogLevel(str, Enum):
+    """Перечисление для уровней логирования."""
+    DEVDEBUG = "DEVDEBUG"
+    DEBUG = "DEBUG"
+    MEDIUMDEBUG = "MEDIUMDEBUG"
+    INFO = "INFO"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+    CRITICAL = "CRITICAL"
 
 
 class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
@@ -157,7 +169,7 @@ def _get_log_dir() -> Optional[str]:
     return _LOG_DIR
 
 
-def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> ChutilsLogger:
+def setup_logger(name: str = 'app_logger', log_level: Optional[LogLevel] = None) -> ChutilsLogger:
     """
     Настраивает и возвращает логгер с нужным именем.
 
@@ -169,9 +181,9 @@ def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> ChutilsLo
     Args:
         name: Имя логгера. `app_logger` используется для основного логгера
             приложения и его экземпляр кэшируется.
-        log_level_str: Явное указание уровня логирования (например, 'DEBUG').
-            Если не задан, значение берется из конфигурационного файла,
-            а если и там нет - используется 'INFO'.
+        log_level: Явное указание уровня логирования. Если не задан,
+            значение берется из конфигурационного файла, а если и там нет -
+            используется 'INFO'.
 
     Returns:
        logging.Logger: Настроенный экземпляр ChutilsLogger.
@@ -195,9 +207,14 @@ def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> ChutilsLo
     cfg = config.get_config()
 
     # Определяем уровень логирования
-    if not log_level_str:
-        log_level_str = config.get_config_value('Logging', 'log_level', 'INFO', cfg)
-    log_level = getattr(logging, log_level_str.upper(), logging.INFO)
+    if log_level is None:
+        level_from_config = config.get_config_value('Logging', 'log_level', 'INFO', cfg)
+        try:
+            log_level = LogLevel(level_from_config.upper())
+        except ValueError:
+            log_level = LogLevel.INFO
+    
+    level_int = getattr(logging, log_level.value, logging.INFO)
 
     # Получаем остальные настройки из конфига
     log_file_name = config.get_config_value('Logging', 'log_file_name', 'app.log', cfg)
@@ -205,7 +222,7 @@ def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> ChutilsLo
 
     # Создаем и настраиваем новый экземпляр логгера
     logger = logging.getLogger(name)
-    logger.setLevel(log_level)
+    logger.setLevel(level_int)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     # 1. Обработчик для вывода в консоль (StreamHandler)
@@ -232,12 +249,12 @@ def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> ChutilsLo
             # Выводим информационное сообщение только один раз для всего приложения
             if not _initialization_message_shown:
                 logger.debug(
-                    f"Логирование настроено. Уровень: {log_level_str}. "
-                    f"Файл: {log_file_path}, ротация: {backup_count} дней."
+                    "Логирование настроено. Уровень: %s. Файл: %s, ротация: %s дней.",
+                    log_level.value, log_file_path, backup_count
                 )
                 _initialization_message_shown = True
         except Exception as e:
-            logger.error(f"Не удалось настроить файловый обработчик логов для {log_file_path}: {e}")
+            logger.error("Не удалось настроить файловый обработчик логов для %s: %s", log_file_path, e)
     else:
         if not _initialization_message_shown:
             logger.warning("Директория для логов не настроена. Файловое логирование отключено.")

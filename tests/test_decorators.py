@@ -30,12 +30,17 @@ def test_log_function_details(mocker):
     call_args_list = mock_logger.devdebug.call_args_list
 
     # Проверка первого вызова (информация о начале вызова)
-    call_before_args = call_args_list[0].args[0]
-    assert "Вызов функции: sample_function()" in call_before_args
-    assert "с аргументами (5, 10)" in call_before_args
+    # call_args_list[0] -> call('формат %s', 'аргумент1', 'аргумент2')
+    # .args -> ('формат %s', 'аргумент1', 'аргумент2')
+    call_before = call_args_list[0]
+    assert call_before.args[0] == "Вызов функции: %s() с аргументами %s и %s"
+    assert call_before.args[1] == "sample_function"
+    assert call_before.args[2] == (5, 10)
+    assert call_before.args[3] == {}
 
     # Проверка второго вызова (информация о результате)
-    call_after_args = call_args_list[1].args[0]
-    assert "Функция sample_function() завершилась" in call_after_args
-    assert "за 2.5000 с." in call_after_args
-    assert "Возвращаемое значение: 15" in call_after_args
+    call_after = call_args_list[1]
+    assert call_after.args[0] == "Функция %s() завершилась за %.4f с. Возвращаемое значение: %s"
+    assert call_after.args[1] == "sample_function"
+    assert call_after.args[2] == 2.5
+    assert call_after.args[3] == 15

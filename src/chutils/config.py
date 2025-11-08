@@ -42,7 +42,7 @@ def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
     while current_path != current_path.parent:
         for marker in markers:
             if (current_path / marker).exists():
-                logger.debug(f"Найден маркер '{marker}' в директории: {current_path}")
+                logger.debug("Найден маркер '%s' в директории: %s", marker, current_path)
                 return current_path
         current_path = current_path.parent
     logger.debug("Корень проекта не найден.")
@@ -66,7 +66,7 @@ def _initialize_paths():
             if (project_root / marker).is_file() and marker.startswith('config'):
                 _CONFIG_FILE_PATH = str(project_root / marker)
                 break
-        logger.debug(f"Корень проекта автоматически определен: {_BASE_DIR}")
+        logger.debug("Корень проекта автоматически определен: %s", _BASE_DIR)
     else:
         logger.warning("Не удалось автоматически найти корень проекта.")
 
@@ -126,13 +126,13 @@ def get_config() -> Dict:
 
     if file_ext in ['.yml', '.yaml']:
         _config_object = _load_yaml(path)
-        logger.debug(f"Конфигурация успешно загружена из YAML: {path}")
+        logger.debug("Конфигурация успешно загружена из YAML: %s", path)
     elif file_ext == '.ini':
         _config_object = _load_ini(path)
-        logger.debug(f"Конфигурация успешно загружена из INI: {path}")
+        logger.debug("Конфигурация успешно загружена из INI: %s", path)
     else:
         _config_object = {}
-        logger.warning(f"Неподдерживаемый формат файла конфигурации: {path}")
+        logger.warning("Неподдерживаемый формат файла конфигурации: %s", path)
 
     _config_loaded = True
     return _config_object
@@ -144,7 +144,7 @@ def _load_yaml(path: str) -> Dict:
         with open(path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f) or {}
     except (yaml.YAMLError, FileNotFoundError) as e:
-        logger.critical(f"Ошибка чтения YAML файла конфигурации {path}: {e}")
+        logger.critical("Ошибка чтения YAML файла конфигурации %s: %s", path, e)
         return {}
 
 
@@ -156,7 +156,7 @@ def _load_ini(path: str) -> Dict:
             parser.read_string(f.read())
             return {s: dict(parser.items(s)) for s in parser.sections()}
     except (configparser.Error, FileNotFoundError) as e:
-        logger.critical(f"Ошибка чтения INI файла конфигурации {path}: {e}")
+        logger.critical("Ошибка чтения INI файла конфигурации %s: %s", path, e)
         return {}
 
 
@@ -204,22 +204,22 @@ def save_config_value(
             if _config_loaded:
                 _config_object = data
 
-            logger.debug(f"Ключ '{key}' в секции '[{section}]' обновлен в файле {path}")
+            logger.debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
             return True
         except Exception as e:
-            logger.error(f"Ошибка при сохранении в YAML файл {path}: {e}")
+            logger.error("Ошибка при сохранении в YAML файл %s: %s", path, e)
             return False
 
     elif file_ext == '.ini':
         if not Path(path).exists():
-            logger.error(f"Невозможно сохранить значение: файл конфигурации {path} не найден.")
+            logger.error("Невозможно сохранить значение: файл конфигурации %s не найден.", path)
             return False
 
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
         except IOError as e:
-            logger.error(f"Ошибка чтения файла {path} для сохранения: {e}")
+            logger.error("Ошибка чтения файла %s для сохранения: %s", path, e)
             return False
 
         updated = False
@@ -250,7 +250,7 @@ def save_config_value(
                     new_lines.append(new_line_content)
                     key_found_in_section = True
                     updated = True
-                    logger.debug(f"Ключ '{key}' в секции '[{section}]' будет обновлен на '{value}' в файле {path}")
+                    logger.debug("Ключ '%s' в секции '[%s]' будет обновлен на '%s' в файле %s", key, section, value, path)
                     continue
 
             new_lines.append(line)
@@ -262,7 +262,7 @@ def save_config_value(
             new_lines.append(f'[{section}]\n')
             new_lines.append(f'{key} = {value}\n')
             updated = True
-            logger.debug(f"Новая секция '[{section}]' с ключом '{key}' будет добавлена в файл {path}")
+            logger.debug("Новая секция '[%s]' с ключом '%s' будет добавлена в файл %s", section, key, path)
 
         elif not key_found_in_section:  # `section_found` is implicitly True here
             # Существующая логика для добавления ключа в существующую секцию
@@ -296,16 +296,16 @@ def save_config_value(
             try:
                 with open(path, 'w', encoding='utf-8') as f:
                     f.writelines(new_lines)
-                logger.debug(f"Файл конфигурации {path} успешно обновлен.")
+                logger.debug("Файл конфигурации %s успешно обновлен.", path)
                 return True
             except IOError as e:
-                logger.error(f"Ошибка записи в файл {path} при сохранении: {e}")
+                logger.error("Ошибка записи в файл %s при сохранении: %s", path, e)
                 return False
         else:
-            logger.debug(f"Обновление для ключа '{key}' в секции '[{section}]' не потребовалось.")
+            logger.debug("Обновление для ключа '%s' в секции '[%s]' не потребовалось.", key, section)
             return False
     else:
-        logger.warning(f"Сохранение для формата {file_ext} не поддерживается.")
+        logger.warning("Сохранение для формата %s не поддерживается.", file_ext)
         return False
 
 
@@ -355,8 +355,9 @@ def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[D
         return int(value)
     except (ValueError, TypeError):
         logger.warning(
-            f"Не удалось преобразовать значение '{value}' для ключа '{key}' в секции '[{section}]' к типу int. "
-            f"Возвращено значение по умолчанию: {fallback}."
+            "Не удалось преобразовать значение '%s' для ключа '%s' в секции '[%s]' к типу int. "
+            "Возвращено значение по умолчанию: %s.",
+            value, key, section, fallback
         )
         return fallback
 
@@ -380,8 +381,9 @@ def get_config_float(section: str, key: str, fallback: float = 0.0, config: Opti
         return float(value)
     except (ValueError, TypeError):
         logger.warning(
-            f"Не удалось преобразовать значение '{value}' для ключа '{key}' в секции '[{section}]' к типу float. "
-            f"Возвращено значение по умолчанию: {fallback}."
+            "Не удалось преобразовать значение '%s' для ключа '%s' в секции '[%s]' к типу float. "
+            "Возвращено значение по умолчанию: %s.",
+            value, key, section, fallback
         )
         return fallback
 
