@@ -8,7 +8,7 @@
 
 import logging
 import logging.handlers
-import os
+from pathlib import Path
 from typing import Optional, Any
 
 # Импортируем наш модуль config для доступа к путям и настройкам
@@ -34,6 +34,7 @@ class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
     гарантируя, что файл будет закрыт перед переименованием.
     Он явно закрывает файловый поток перед вызовом стандартной логики ротации.
     """
+
     def doRollover(self):
         if self.stream:
             self.stream.close()
@@ -141,10 +142,10 @@ def _get_log_dir() -> Optional[str]:
         return None
 
     # Создаем путь к директории логов и саму директорию, если нужно.
-    log_path = os.path.join(base_dir, 'logs')
-    if not os.path.exists(log_path):
+    log_path = Path(base_dir) / 'logs'
+    if not log_path.exists():
         try:
-            os.makedirs(log_path)
+            log_path.mkdir(parents=True, exist_ok=True)
             print(f"INFO: Создана директория для логов: {log_path}")
         except OSError as e:
             # Если не удалось создать директорию, логирование в файл будет невозможно.
@@ -152,7 +153,7 @@ def _get_log_dir() -> Optional[str]:
             return None
 
     # Кэшируем успешный результат и возвращаем его.
-    _LOG_DIR = log_path
+    _LOG_DIR = str(log_path)
     return _LOG_DIR
 
 
@@ -215,7 +216,7 @@ def setup_logger(name: str = 'app_logger', log_level_str: str = '') -> ChutilsLo
     # 2. Обработчик для записи в файл (TimedRotatingFileHandler)
     #    Добавляем его, только если директория логов была успешно определена.
     if log_dir and log_file_name:
-        log_file_path = os.path.join(log_dir, log_file_name)
+        log_file_path = Path(log_dir) / log_file_name
         try:
             # Ротация каждый день ('D'), храним backup_count старых файлов
             file_handler = SafeTimedRotatingFileHandler(

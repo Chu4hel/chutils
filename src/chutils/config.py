@@ -7,7 +7,6 @@
 
 import configparser
 import logging
-import os
 import re
 from pathlib import Path
 from typing import Any, Optional, List, Dict
@@ -117,7 +116,7 @@ def get_config() -> Dict:
         return _config_object
 
     path = _get_config_path()
-    if path is None or not os.path.exists(path):
+    if path is None or not Path(path).exists():
         logger.debug("Файл конфигурации не найден или не указан. Возвращен пустой конфиг.")
         _config_object = {}
         _config_loaded = True
@@ -125,30 +124,40 @@ def get_config() -> Dict:
 
     file_ext = Path(path).suffix.lower()
 
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            if file_ext in ['.yml', '.yaml']:
-                _config_object = yaml.safe_load(f)
-                logger.debug(f"Конфигурация успешно загружена из YAML: {path}")
-            elif file_ext == '.ini':
-                parser = configparser.ConfigParser()
-                parser.read_string(f.read())
-                # Преобразуем объект ConfigParser в словарь
-                _config_object = {s: dict(parser.items(s)) for s in parser.sections()}
-                logger.debug(f"Конфигурация успешно загружена из INI: {path}")
-            else:
-                _config_object = {}
-                logger.warning(f"Неподдерживаемый формат файла конфигурации: {path}")
-
-    except (yaml.YAMLError, configparser.Error) as e:
-        logger.critical(f"Ошибка чтения файла конфигурации {path}: {e}")
+    if file_ext in ['.yml', '.yaml']:
+        _config_object = _load_yaml(path)
+        logger.debug(f"Конфигурация успешно загружена из YAML: {path}")
+    elif file_ext == '.ini':
+        _config_object = _load_ini(path)
+        logger.debug(f"Конфигурация успешно загружена из INI: {path}")
+    else:
         _config_object = {}
-
-    if _config_object is None:
-        _config_object = {}
+        logger.warning(f"Неподдерживаемый формат файла конфигурации: {path}")
 
     _config_loaded = True
     return _config_object
+
+
+def _load_yaml(path: str) -> Dict:
+    """Загружает и парсит YAML-файл."""
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return yaml.safe_load(f) or {}
+    except (yaml.YAMLError, FileNotFoundError) as e:
+        logger.critical(f"Ошибка чтения YAML файла конфигурации {path}: {e}")
+        return {}
+
+
+def _load_ini(path: str) -> Dict:
+    """Загружает и парсит INI-файл."""
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            parser = configparser.ConfigParser()
+            parser.read_string(f.read())
+            return {s: dict(parser.items(s)) for s in parser.sections()}
+    except (configparser.Error, FileNotFoundError) as e:
+        logger.critical(f"Ошибка чтения INI файла конфигурации {path}: {e}")
+        return {}
 
 
 def save_config_value(
@@ -202,7 +211,7 @@ def save_config_value(
             return False
 
     elif file_ext == '.ini':
-        if not os.path.exists(path):
+        if not Path(path).exists():
             logger.error(f"Невозможно сохранить значение: файл конфигурации {path} не найден.")
             return False
 
@@ -302,14 +311,14 @@ def save_config_value(
 
 # --- Функции-обертки для удобного получения значений ---
 
-def get_config_value(section: str, key: str, fallback: Any = "", config: Optional[Dict] = None) -> Any:
+def get_config_value(section: str, key: str, fallback: Any = None, config: Optional[Dict] = None) -> Any:
     """
     Получает значение из конфигурации.
 
     Args:
         section: Имя секции.
         key: Имя ключа.
-        fallback: Значение по умолчанию, если ключ не найден.
+        fallback: Значение по умолчанию, если ключ не найден или его значение пустое.
         config: Опциональный, предварительно загруженный словарь конфигурации.
 
     Returns:
@@ -317,7 +326,14 @@ def get_config_value(section: str, key: str, fallback: Any = "", config: Optiona
     """
     if config is None:
         config = get_config()
-    return config.get(section, {}).get(key, fallback)
+
+    value = config.get(section, {}).get(key)
+
+    # Если значение не найдено или является пустой строкой, возвращаем fallback
+    if value is None or value == '':
+        return fallback
+
+    return value
 
 
 def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[Dict] = None) -> int:
