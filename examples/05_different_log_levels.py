@@ -4,17 +4,17 @@ from chutils.logger import setup_logger, ChutilsLogger
 # Представим, что у нас есть приложение с двумя модулями: "core" и "utils".
 # Мы хотим видеть подробные отладочные сообщения от нашего "core" модуля,
 # но для "utils" нас интересуют только предупреждения и ошибки.
+# Также мы хотим, чтобы каждый модуль писал в свой отдельный файл логов.
 
-# 1. Настраиваем логгер для модуля "core" с уровнем DEVDEBUG.
-#    Мы явно передаем уровень логирования при настройке.
-core_logger: ChutilsLogger = setup_logger("core_module", log_level_str='DEVDEBUG')
+# 1. Настраиваем логгер для модуля "core" с уровнем DEVDEBUG и своим файлом.
+core_logger: ChutilsLogger = setup_logger("core_module", log_level_str='DEVDEBUG', log_file_name="core_module.log")
 
-# 2. Настраиваем логгер для модуля "utils" с уровнем WARNING.
-utils_logger: ChutilsLogger = setup_logger("utils_module", log_level_str='WARNING')
+# 2. Настраиваем логгер для модуля "utils" с уровнем WARNING и своим файлом.
+utils_logger: ChutilsLogger = setup_logger("utils_module", log_level_str='WARNING', log_file_name="utils_module.log")
 
 # 3. Настроим основной логгер приложения.
-#    Если уровень не указать явно, он будет взят из config.yml.
-#    В файле examples/config.yml установлен уровень DEBUG.
+#    Если уровень и имя файла не указать явно, они будут взяты из config.yml.
+#    В файле examples/config.yml установлен уровень DEBUG и log_file_name: "app.log".
 app_logger: ChutilsLogger = setup_logger("main_app")
 
 print("--- Начало демонстрации логирования ---")
@@ -35,3 +35,6 @@ app_logger.info("Приложение завершает работу.")
 print("\n--- Конец демонстрации ---")
 print("Проверьте вывод в консоли. Вы должны увидеть все сообщения от 'main_app' и 'core_module' (включая debug),")
 print("а также предупреждение от 'utils_module', но не информационные сообщения от него.")
+print(
+    "\nТакже проверьте папку 'logs' в корне проекта. Там должны появиться файлы 'app.log', 'core_module.log' и 'utils_module.log'.")
+print("Содержимое этих файлов будет соответствовать сообщениям, отправленным в соответствующие логгеры.")

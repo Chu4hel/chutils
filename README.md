@@ -113,6 +113,17 @@ pip install -e .
    ```
    Папка `logs` будет создана автоматически.
 
+   Вы также можете указать имя файла лога напрямую при вызове `setup_logger`, переопределив значение из конфигурации:
+   ```python
+   # main.py
+   from chutils import setup_logger, ChutilsLogger
+
+   # Логгер будет писать в custom.log, игнорируя log_file_name из config.yml
+   logger: ChutilsLogger = setup_logger(log_file_name="custom.log")
+
+   logger.info("Сообщение в кастомном файле.")
+   ```
+
    #### Создание нескольких логгеров
 
    Вы можете создавать разные логгеры для разных частей вашего приложения, передавая уникальное имя в `setup_logger`. Это
@@ -122,15 +133,15 @@ pip install -e .
    # main.py
    from chutils import setup_logger
 
-   # Основной логгер приложения
-   main_logger = setup_logger("main_app")
-   # Логгер для модуля, отвечающего за работу с базой данных
-   db_logger = setup_logger("database")
+   # Основной логгер приложения будет писать в main_app.log
+   main_logger = setup_logger("main_app", log_file_name="main_app.log")
+   # Логгер для модуля, отвечающего за работу с базой данных, будет писать в database.log
+   db_logger = setup_logger("database", log_file_name="database.log")
 
    main_logger.info("Приложение запущено.")
    db_logger.debug("Инициализация подключения к БД...")
    ```
-   В лог-файле вы увидите сообщения от обоих логгеров с указанием их имени.
+   В лог-файлах вы увидите сообщения от соответствующих логгеров.
    Более подробный пример можно найти в [`/examples/05_different_log_levels.py`](./examples/05_different_log_levels.py).
 
 ### 3. Управление секретами

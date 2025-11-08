@@ -137,6 +137,7 @@ def _get_log_dir() -> Optional[str]:
         None (None): Если корень проекта не найден.
     """
     global _LOG_DIR
+    logging.debug("Вызов _get_log_dir(). Текущее _LOG_DIR: %s", _LOG_DIR)
     # Если путь уже кэширован, сразу возвращаем его.
     if _LOG_DIR is not None:
         return _LOG_DIR
@@ -147,29 +148,36 @@ def _get_log_dir() -> Optional[str]:
 
     # Берем найденный config'ом базовый каталог проекта.
     base_dir = config._BASE_DIR
+    logging.debug("В _get_log_dir() определен base_dir: %s", base_dir)
 
     # Если корень проекта не был найден, файловое логирование невозможно.
     if not base_dir:
-        print("ПРЕДУПРЕЖДЕНИЕ: Не удалось определить корень проекта, файловое логирование будет отключено.")
+        logging.warning("ПРЕДУПРЕЖДЕНИЕ: Не удалось определить корень проекта, файловое логирование будет отключено.")
         return None
 
     # Создаем путь к директории логов и саму директорию, если нужно.
     log_path = Path(base_dir) / 'logs'
+    logging.debug("В _get_log_dir() определен log_path: %s", log_path)
     if not log_path.exists():
         try:
             log_path.mkdir(parents=True, exist_ok=True)
-            print(f"INFO: Создана директория для логов: {log_path}")
+            logging.info("Создана директория для логов: %s", log_path)
         except OSError as e:
             # Если не удалось создать директорию, логирование в файл будет невозможно.
-            print(f"ОШИБКА: Не удалось создать директорию для логов {log_path}: {e}")
+            logging.error("Не удалось создать директорию для логов %s: %s", log_path, e)
             return None
 
     # Кэшируем успешный результат и возвращаем его.
     _LOG_DIR = str(log_path)
+    logging.debug("В _get_log_dir() кэширован _LOG_DIR: %s", _LOG_DIR)
     return _LOG_DIR
 
 
-def setup_logger(name: str = 'app_logger', log_level: Optional[LogLevel] = None) -> ChutilsLogger:
+def setup_logger(
+        name: str = 'app_logger',
+        log_level: Optional[LogLevel] = None,
+        log_file_name: Optional[str] = None
+) -> ChutilsLogger:
     """
     Настраивает и возвращает логгер с нужным именем.
 
@@ -184,24 +192,31 @@ def setup_logger(name: str = 'app_logger', log_level: Optional[LogLevel] = None)
         log_level: Явное указание уровня логирования. Если не задан,
             значение берется из конфигурационного файла, а если и там нет -
             используется 'INFO'.
+        log_file_name: Опциональное имя файла для логирования. Если указано,
+            логгер будет писать в этот файл. Если не указано, имя файла
+            берется из конфигурационного файла ('Logging', 'log_file_name').
 
     Returns:
        logging.Logger: Настроенный экземпляр ChutilsLogger.
     """
     global _logger_instance, _initialization_message_shown
+    logging.debug("Вызов setup_logger() для логгера '%s'. log_file_name: %s", name, log_file_name)
 
     # Если логгер с таким именем уже имеет обработчики, значит он настроен.
     # Просто возвращаем его, чтобы не дублировать вывод.
     existing_logger = logging.getLogger(name)
     if existing_logger.hasHandlers():
+        logging.debug("Логгер '%s' уже настроен, возвращаем существующий экземпляр.", name)
         return existing_logger  # type: ignore
 
     # Если запрашивается основной логгер приложения и он уже есть в кэше.
     if name == 'app_logger' and _logger_instance:
+        logging.debug("Возвращаем кэшированный основной логгер.")
         return _logger_instance
 
     # Получаем директорию для логов. Это первая точка, где запускается вся магия поиска путей.
     log_dir = _get_log_dir()
+    logging.debug("setup_logger() получил log_dir: %s", log_dir)
 
     # Загружаем конфигурацию для получения настроек логирования.
     cfg = config.get_config()
@@ -213,11 +228,15 @@ def setup_logger(name: str = 'app_logger', log_level: Optional[LogLevel] = None)
             log_level = LogLevel(level_from_config.upper())
         except ValueError:
             log_level = LogLevel.INFO
-    
-    level_int = getattr(logging, log_level.value, logging.INFO)
 
-    # Получаем остальные настройки из конфига
-    log_file_name = config.get_config_value('Logging', 'log_file_name', 'app.log', cfg)
+    level_int = getattr(logging, log_level.value, logging.INFO)
+    logging.debug("Уровень логирования для '%s' установлен на: %s (%s)", name, log_level.value, level_int)
+
+    # Определяем имя файла лога
+    if log_file_name is None:
+        log_file_name = config.get_config_value('Logging', 'log_file_name', 'app.log', cfg)
+    logging.debug("Имя файла лога для '%s' определено как: %s", name, log_file_name)
+
     backup_count = config.get_config_int('Logging', 'log_backup_count', 3, cfg)
 
     # Создаем и настраиваем новый экземпляр логгера
@@ -234,6 +253,7 @@ def setup_logger(name: str = 'app_logger', log_level: Optional[LogLevel] = None)
     #    Добавляем его, только если директория логов была успешно определена.
     if log_dir and log_file_name:
         log_file_path = Path(log_dir) / log_file_name
+        logging.debug("Попытка настроить файловый обработчик для %s в %s", name, log_file_path)
         try:
             # Ротация каждый день ('D'), храним backup_count старых файлов
             file_handler = SafeTimedRotatingFileHandler(
