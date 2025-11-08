@@ -176,7 +176,8 @@ def _get_log_dir() -> Optional[str]:
 def setup_logger(
         name: str = 'app_logger',
         log_level: Optional[LogLevel] = None,
-        log_file_name: Optional[str] = None
+        log_file_name: Optional[str] = None,
+        force_reconfigure: bool = False
 ) -> ChutilsLogger:
     """
     Настраивает и возвращает логгер с нужным именем.
@@ -195,19 +196,33 @@ def setup_logger(
         log_file_name: Опциональное имя файла для логирования. Если указано,
             логгер будет писать в этот файл. Если не указано, имя файла
             берется из конфигурационного файла ('Logging', 'log_file_name').
+        force_reconfigure: Если True, принудительно удаляет все существующие
+                           обработчики и настраивает логгер заново.
 
     Returns:
        logging.Logger: Настроенный экземпляр ChutilsLogger.
     """
     global _logger_instance, _initialization_message_shown
-    logging.debug("Вызов setup_logger() для логгера '%s'. log_file_name: %s", name, log_file_name)
+    logging.debug(
+        "Вызов setup_logger() для логгера '%s'. log_file_name: %s, force_reconfigure: %s",
+        name,
+        log_file_name,
+        force_reconfigure
+    )
 
     # Если логгер с таким именем уже имеет обработчики, значит он настроен.
     # Просто возвращаем его, чтобы не дублировать вывод.
     existing_logger = logging.getLogger(name)
-    if existing_logger.hasHandlers():
+    if existing_logger.hasHandlers() and not force_reconfigure:
         logging.debug("Логгер '%s' уже настроен, возвращаем существующий экземпляр.", name)
         return existing_logger  # type: ignore
+
+    # Если требуется принудительная перенастройка, очищаем старые обработчики
+    if force_reconfigure:
+        logging.debug("Принудительная перенастройка для '%s'. Удаление старых обработчиков...", name)
+        for handler in existing_logger.handlers[:]:
+            handler.close()  # Закрываем файлы, если они были открыты
+            existing_logger.removeHandler(handler)
 
     # Если запрашивается основной логгер приложения и он уже есть в кэше.
     if name == 'app_logger' and _logger_instance:
@@ -230,6 +245,7 @@ def setup_logger(
             log_level = LogLevel.INFO
 
     level_int = getattr(logging, log_level.value, logging.INFO)
+    existing_logger.setLevel(level_int)
     logging.debug("Уровень логирования для '%s' установлен на: %s (%s)", name, log_level.value, level_int)
 
     # Определяем имя файла лога
@@ -240,7 +256,7 @@ def setup_logger(
     backup_count = config.get_config_int('Logging', 'log_backup_count', 3, cfg)
 
     # Создаем и настраиваем новый экземпляр логгера
-    logger = logging.getLogger(name)
+    logger = existing_logger
     logger.setLevel(level_int)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -252,7 +268,12 @@ def setup_logger(
     # 2. Обработчик для записи в файл (TimedRotatingFileHandler)
     #    Добавляем его, только если директория логов была успешно определена.
     if log_dir and log_file_name:
-        log_file_path = Path(log_dir) / log_file_name
+        # ЕСЛИ ПУТЬ ПЕРЕДАН ЯВНО И ОН АБСОЛЮТНЫЙ, ИСПОЛЬЗУЕМ ЕГО
+        # Это нужно для нашего отладочного теста, который работает во временной папке
+        if Path(log_file_name).is_absolute():
+            log_file_path = Path(log_file_name)
+        else:
+            log_file_path = Path(log_dir) / log_file_name
         logging.debug("Попытка настроить файловый обработчик для %s в %s", name, log_file_path)
         try:
             # Ротация каждый день ('D'), храним backup_count старых файлов
