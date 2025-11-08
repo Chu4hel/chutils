@@ -315,7 +315,8 @@ def get_config_value(section: str, key: str, fallback: Any = "", config: Optiona
     Returns:
         Значение из конфигурации или `fallback`.
     """
-    if config is None: config = get_config()
+    if config is None:
+        config = get_config()
     return config.get(section, {}).get(key, fallback)
 
 
@@ -439,5 +440,6 @@ def get_config_section(
         Словарь с содержимым секции или `fallback`. Если `fallback` не указан,
         возвращается пустой словарь.
     """
-    if config is None: config = get_config()
+    if config is None:
+        config = get_config()
     return config.get(section_name, fallback if fallback is not None else {})
