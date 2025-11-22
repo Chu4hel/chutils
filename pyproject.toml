@@ -20,6 +20,9 @@ exclude = [
     ".ruff_cache/",
     "coverage.xml",
     ".coverage",
+    "PUBLISHING.md",
+    "project.txt",
+    "changelog.txt",
 ]
 
 [tool.poetry.dependencies]

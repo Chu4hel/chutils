@@ -176,3 +176,5 @@ cython_debug/
 
 # Project-specific documentation
 PUBLISHING.md
+project.txt
+changelog.txt
