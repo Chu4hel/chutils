@@ -102,7 +102,6 @@ Logging:
     mocker.patch("logging.getLogger", side_effect=mock_get_logger)
 
     monkeypatch.setattr(chutils_logger, '_LOG_DIR', None)
-    monkeypatch.setattr(chutils_logger, '_logger_instance', None)
     monkeypatch.setattr(chutils_logger, '_initialization_message_shown', False)
     monkeypatch.setattr(chutils_config, '_BASE_DIR', None)
     monkeypatch.setattr(chutils_config, '_CONFIG_FILE_PATH', None)
@@ -168,7 +167,6 @@ def test_multiple_loggers_different_files(config_fs, mocker, monkeypatch, caplog
     from chutils import logger as chutils_logger
     from chutils import config as chutils_config
     monkeypatch.setattr(chutils_logger, '_LOG_DIR', None)
-    monkeypatch.setattr(chutils_logger, '_logger_instance', None)
     monkeypatch.setattr(chutils_logger, '_initialization_message_shown', False)
     monkeypatch.setattr(chutils_config, '_BASE_DIR', None)
     monkeypatch.setattr(chutils_config, '_CONFIG_FILE_PATH', None)
@@ -486,7 +484,6 @@ def test_compression_on_rotation(tmp_path, monkeypatch):
     monkeypatch.setattr(chutils_config, '_CONFIG_FILE_PATH', None)
     monkeypatch.setattr(chutils_config, '_paths_initialized', False)
     monkeypatch.setattr(chutils_logger, '_LOG_DIR', None)
-    monkeypatch.setattr(chutils_logger, '_logger_instance', None)
     monkeypatch.setattr(chutils_logger, '_initialization_message_shown', False)
 
     # Переходим в временную директорию, чтобы chutils нашел корень проекта
