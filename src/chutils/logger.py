@@ -214,8 +214,6 @@ logging.setLoggerClass(ChutilsLogger)
 
 # Кэш для пути к директории логов. Изначально пуст.
 _LOG_DIR: Optional[str] = None
-# Глобальный экземпляр основного логгера приложения
-_logger_instance: Optional[ChutilsLogger] = None
 # Флаг, чтобы сообщение об инициализации выводилось только один раз
 _initialization_message_shown = False
 
@@ -282,71 +280,37 @@ def setup_logger(
         backup_count: int = 3
 ) -> ChutilsLogger:
     """
-    Настраивает и возвращает логгер с нужным именем.
+    Настраивает и возвращает логгер, всегда обновляя его уровень.
 
-    Функция идемпотентна: она предотвращает повторную настройку уже
-    существующего логгера. Настройки (уровень, имя файла и т.д.) читаются
-    из конфигурационного файла. По умолчанию добавляются обработчики для
-    вывода в консоль и в файл с ежедневной ротацией.
+    При первом вызове для логгера с указанным именем она настраивает его
+    обработчики (для консоли и файла). При последующих вызовах она только
+    обновляет уровень логирования, не трогая обработчики, если не указан
+    `force_reconfigure=True`.
 
     Args:
-        name: Имя логгера. `app_logger` используется для основного логгера
-            приложения и его экземпляр кэшируется.
-        log_level: Явное указание уровня логирования. Если не задан,
-            значение берется из конфигурационного файла, а если и там нет -
-            используется 'INFO'.
-        log_file_name: Опциональное имя файла для логирования. Если указано,
-            логгер будет писать в этот файл. Если не указано, имя файла
-            берется из конфигурационного файла ('Logging', 'log_file_name').
+        name: Имя логгера. `app_logger` используется как стандартное имя.
+        log_level: Явное указание уровня логирования (строкой или LogLevel).
+                   Если не задан, значение берется из конфигурационного файла.
+        log_file_name: Имя файла для логирования. Если не указано, имя берется
+                       из конфигурации ('Logging', 'log_file_name').
         force_reconfigure: Если True, принудительно удаляет все существующие
                            обработчики и настраивает логгер заново.
-        rotation_type: Тип ротации логов. Может быть 'time' (по умолчанию, ежедневная)
-                       или 'size' (по размеру файла).
-        max_bytes: Максимальный размер файла лога в байтах перед ротацией,
-                   если `rotation_type` установлен в 'size'. По умолчанию 0 (без лимита).
-        compress: Если True, ротированные файлы логов будут сжиматься в формат .gz.
-                  По умолчанию False.
-        backup_count: Количество хранимых ротированных файлов логов.
-                      Старые файлы будут удаляться. По умолчанию 3.
+        rotation_type: Тип ротации: 'time' (ежедневная) или 'size'.
+        max_bytes: Максимальный размер файла для ротации по 'size'.
+        compress: Сжимать ли ротированные логи в .gz.
+        backup_count: Количество хранимых ротированных файлов.
 
     Returns:
-       logging.Logger: Настроенный экземпляр ChutilsLogger.
+       Настроенный экземпляр ChutilsLogger.
     """
-    global _logger_instance, _initialization_message_shown
-    logging.debug(
-        "Вызов setup_logger() для логгера '%s'. log_file_name: %s, force_reconfigure: %s",
-        name,
-        log_file_name,
-        force_reconfigure
-    )
+    global _initialization_message_shown
+    logger = logging.getLogger(name)
 
-    # Если логгер с таким именем уже имеет обработчики, значит он настроен.
-    # Просто возвращаем его, чтобы не дублировать вывод.
-    existing_logger = logging.getLogger(name)
-    if existing_logger.hasHandlers() and not force_reconfigure:
-        logging.debug("Логгер '%s' уже настроен, возвращаем существующий экземпляр.", name)
-        return existing_logger  # type: ignore
+    # --- 1. Определение и установка уровня логирования ---
+    # Этот блок выполняется всегда, чтобы уровень можно было изменить в любой момент.
+    cfg = config.get_config()  # Загружаем конфигурацию
 
-    # Если требуется принудительная перенастройка, очищаем старые обработчики
-    if force_reconfigure:
-        logging.debug("Принудительная перенастройка для '%s'. Удаление старых обработчиков...", name)
-        for handler in existing_logger.handlers[:]:
-            handler.close()  # Закрываем файлы, если они были открыты
-            existing_logger.removeHandler(handler)
-
-    # Если запрашивается основной логгер приложения и он уже есть в кэше.
-    if name == 'app_logger' and _logger_instance:
-        logging.debug("Возвращаем кэшированный основной логгер.")
-        return _logger_instance
-
-    # Получаем директорию для логов. Это первая точка, где запускается вся магия поиска путей.
-    log_dir = _get_log_dir()
-    logging.debug("setup_logger() получил log_dir: %s", log_dir)
-
-    # Загружаем конфигурацию для получения настроек логирования.
-    cfg = config.get_config()
-
-    # Определяем уровень логирования
+    log_level_enum: LogLevel
     if isinstance(log_level, str):
         try:
             log_level_enum = LogLevel(log_level.upper())
@@ -362,8 +326,24 @@ def setup_logger(
         log_level_enum = log_level
 
     level_int = getattr(logging, log_level_enum.value, logging.INFO)
-    existing_logger.setLevel(level_int)
+    logger.setLevel(level_int)
     logging.debug("Уровень логирования для '%s' установлен на: %s (%s)", name, log_level_enum.value, level_int)
+
+    # --- 2. Настройка обработчиков (только при необходимости) ---
+    if logger.hasHandlers() and not force_reconfigure:
+        logging.debug("Обработчики для логгера '%s' уже настроены. Пропускаем настройку.", name)
+        return logger  # type: ignore
+
+    # Если требуется принудительная перенастройка, очищаем старые обработчики
+    if force_reconfigure:
+        logging.debug("Принудительная перенастройка для '%s'. Удаление старых обработчиков...", name)
+        for handler in logger.handlers[:]:
+            handler.close()
+            logger.removeHandler(handler)
+
+    # Получаем директорию для логов.
+    log_dir = _get_log_dir()
+    logging.debug("setup_logger() получил log_dir: %s", log_dir)
 
     # Определяем имя файла лога
     if log_file_name is None:
@@ -376,45 +356,25 @@ def setup_logger(
     compress = config.get_config_boolean('Logging', 'compress', compress, cfg)
     backup_count = config.get_config_int('Logging', 'log_backup_count', 3, cfg)
 
-    # Создаем и настраиваем новый экземпляр логгера
-    logger = existing_logger
-    logger.setLevel(level_int)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    # Обработчик для вывода в консоль (StreamHandler)
+    # Обработчик для вывода в консоль
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    # Обработчик для записи в файл (TimedRotatingFileHandler)
-    # Добавляем его, только если директория логов была успешно определена.
+    # Обработчик для записи в файл
     if log_dir and log_file_name:
-        # ЕСЛИ ПУТЬ ПЕРЕДАН ЯВНО И ОН АБСОЛЮТНЫЙ, ИСПОЛЬЗУЕМ ЕГО
-        # Это нужно для нашего отладочного теста, который работает во временной папке
-        if Path(log_file_name).is_absolute():
-            log_file_path = Path(log_file_name)
-        else:
-            log_file_path = Path(log_dir) / log_file_name
+        log_file_path = Path(log_file_name) if Path(log_file_name).is_absolute() else Path(log_dir) / log_file_name
         logging.debug("Попытка настроить файловый обработчик для %s в %s", name, log_file_path)
         try:
             file_handler: Optional[logging.FileHandler] = None
             if rotation_type == 'size':
                 handler_class = CompressingRotatingFileHandler if compress else logging.handlers.RotatingFileHandler
-                file_handler = handler_class(
-                    log_file_path,
-                    maxBytes=max_bytes,
-                    backupCount=backup_count,
-                    encoding='utf-8'
-                )
+                file_handler = handler_class(log_file_path, maxBytes=max_bytes, backupCount=backup_count, encoding='utf-8')
             else:  # 'time'
                 handler_class = CompressingTimedRotatingFileHandler if compress else SafeTimedRotatingFileHandler
-                file_handler = handler_class(
-                    log_file_path,
-                    when="D",
-                    interval=1,
-                    backupCount=backup_count,
-                    encoding='utf-8'
-                )
+                file_handler = handler_class(log_file_path, when="D", interval=1, backupCount=backup_count, encoding='utf-8')
 
             if file_handler:
                 file_handler.setFormatter(formatter)
@@ -423,18 +383,13 @@ def setup_logger(
                 if not _initialization_message_shown:
                     logger.debug(
                         "Логирование настроено. Уровень: %s. Файл: %s, ротация: %s, сжатие: %s.",
-                        log_level.value, log_file_path, rotation_type, compress
+                        log_level_enum.value, log_file_path, rotation_type, compress
                     )
                     _initialization_message_shown = True
         except Exception as e:
             logger.error("Не удалось настроить файловый обработчик логов для %s: %s", log_file_path, e)
-    else:
-        if not _initialization_message_shown:
-            logger.warning("Директория для логов не настроена. Файловое логирование отключено.")
-            _initialization_message_shown = True
-
-    # Кэшируем основной логгер приложения
-    if name == 'app_logger':
-        _logger_instance = logger
+    elif not _initialization_message_shown:
+        logger.warning("Директория для логов не настроена. Файловое логирование отключено.")
+        _initialization_message_shown = True
 
     return logger  # type: ignore
