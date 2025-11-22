@@ -347,16 +347,23 @@ def setup_logger(
     cfg = config.get_config()
 
     # Определяем уровень логирования
-    if log_level is None:
+    if isinstance(log_level, str):
+        try:
+            log_level_enum = LogLevel(log_level.upper())
+        except ValueError:
+            log_level_enum = LogLevel.INFO
+    elif log_level is None:
         level_from_config = config.get_config_value('Logging', 'log_level', 'INFO', cfg)
         try:
-            log_level = LogLevel(level_from_config.upper())
+            log_level_enum = LogLevel(level_from_config.upper())
         except ValueError:
-            log_level = LogLevel.INFO
+            log_level_enum = LogLevel.INFO
+    else:
+        log_level_enum = log_level
 
-    level_int = getattr(logging, log_level.value, logging.INFO)
+    level_int = getattr(logging, log_level_enum.value, logging.INFO)
     existing_logger.setLevel(level_int)
-    logging.debug("Уровень логирования для '%s' установлен на: %s (%s)", name, log_level.value, level_int)
+    logging.debug("Уровень логирования для '%s' установлен на: %s (%s)", name, log_level_enum.value, level_int)
 
     # Определяем имя файла лога
     if log_file_name is None:
