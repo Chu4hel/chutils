@@ -25,6 +25,9 @@ def test_custom_log_levels(config_fs, caplog):
     """
     logger = setup_logger("test_custom_levels")
 
+    # caplog слушает RootLogger, поэтому для теста нам нужно включить передачу наверх.
+    logger.propagate = True
+
     # Сценарий 1: Уровень DEBUG (10)
     # devdebug (9) не должен проходить, остальные - должны
     logger.setLevel(logging.DEBUG)
@@ -64,6 +67,28 @@ def test_custom_log_levels(config_fs, caplog):
 
     assert "dev_msg" in caplog.text
     assert "debug_msg" in caplog.text
+
+
+def test_logger_does_not_propagate_to_root(caplog):
+    """
+    Проверяет, что логгер НЕ передает сообщения корневому логгеру.
+    Это гарантирует отсутствие двойного логирования в консоли приложения.
+    """
+    # 1. Создаем логгер
+    logger = setup_logger("test_propagation_logger", force_reconfigure=True)
+
+    # 2. Проверяем атрибут (явная проверка настройки)
+    assert logger.propagate is False, "Атрибут propagate должен быть False"
+
+    # 3. Проверяем поведение (функциональная проверка)
+    # caplog автоматически перехватывает сообщения, идущие в Root Logger.
+    # Так как propagate=False, сообщение НЕ должно попасть в caplog.
+    unique_msg = "This message should NOT appear in caplog"
+
+    logger.info(unique_msg)
+
+    # Важно: мы ожидаем, что сообщения НЕТ в перехваченных логах
+    assert unique_msg not in caplog.text
 
 
 def test_setup_logger_with_custom_file_name(config_fs, mocker, monkeypatch, caplog):

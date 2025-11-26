@@ -327,6 +327,7 @@ def setup_logger(
 
     level_int = getattr(logging, log_level_enum.value, logging.INFO)
     logger.setLevel(level_int)
+    logger.propagate = False
     logging.debug("Уровень логирования для '%s' установлен на: %s (%s)", name, log_level_enum.value, level_int)
 
     # --- 2. Настройка обработчиков (только при необходимости) ---
