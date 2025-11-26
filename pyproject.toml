@@ -8,6 +8,7 @@ readme = "README.md"
 packages = [{ include = "chutils", from = "src" }]
 exclude = [
     "tests/",
+    "site/",
     "examples/",
     "docs/",
     ".github/",
