@@ -30,3 +30,14 @@ def config_fs(fs):  # fs - это фикстура из pyfakefs
 
     # Очистка
     os.chdir("/")
+
+
+@pytest.fixture
+def project_with_marker(config_fs):
+    """
+    Фикстура, которая подготавливает фейковую ФС с маркером проекта.
+    Это необходимо для тестов, которые зависят от автообнаружения корня проекта.
+    """
+    fs, project_root = config_fs
+    fs.create_file(project_root / "pyproject.toml")
+    return fs, project_root
