@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chutils"
-version = "2.2.0"
+version = "2.2.1"
 description = "Набор простых и удобных утилит для Python, который избавляет от рутины при работе с конфигурацией и логированием в новых проектах."
 authors = ["Chu4hel <sergeiivanov636@gmail.com>"]
 license = "MIT"
