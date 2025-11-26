@@ -4,13 +4,14 @@ import os
 from chutils import setup_logger
 
 
-def test_setup_logger_with_custom_file_name(config_fs, mocker, caplog, reset_chutils_state, force_chutils_logger):
+def test_setup_logger_with_custom_file_name(project_with_marker, mocker, caplog, reset_chutils_state,
+                                            force_chutils_logger):
     """
     Проверяет, что setup_logger создает лог-файл с указанным именем,
     игнорируя настройки из конфигурации, путем мокирования хендлера.
     """
     logging.basicConfig(level=logging.DEBUG)  # Добавляем эту строку
-    fs, project_root = config_fs
+    fs, project_root = project_with_marker
     logs_dir = project_root / "logs"
     fs.create_dir(logs_dir)
 
@@ -21,7 +22,6 @@ Logging:
   log_file_name: "config_default.log"
 """
     fs.create_file(project_root / "config.yml", contents=config_content)
-    fs.create_file(project_root / "pyproject.toml", contents="")  # Маркер проекта
 
     # Используем фикстуру для мока getLogger
     force_chutils_logger("custom_file_test")
@@ -61,16 +61,16 @@ Logging:
     assert "Корень проекта автоматически определен" in caplog.text
 
 
-def test_multiple_loggers_different_files(config_fs, mocker, caplog, reset_chutils_state, force_chutils_logger):
+def test_multiple_loggers_different_files(project_with_marker, mocker, caplog, reset_chutils_state,
+                                          force_chutils_logger):
     """
     Проверяет, что два логгера, созданные с разными `log_file_name`,
     пишут в разные файлы, путем мокирования хендлера.
     """
     logging.basicConfig(level=logging.DEBUG)
-    fs, project_root = config_fs
+    fs, project_root = project_with_marker
     logs_dir = project_root / "logs"
     fs.create_dir(logs_dir)
-    fs.create_file(project_root / "pyproject.toml", contents="")  # Маркер проекта
 
     # Используем фикстуру для мока getLogger (для двух имен сразу)
     force_chutils_logger(["logger1", "logger2"])

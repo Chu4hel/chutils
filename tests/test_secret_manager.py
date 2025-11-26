@@ -17,12 +17,11 @@ def test_init_success(secret_manager):
     assert secret_manager.service_name == SecretManager.prefix + SERVICE_NAME
 
 
-def test_init_fallback_to_project_path(config_fs, monkeypatch):
+def test_init_fallback_to_project_path(project_with_marker, monkeypatch):
     """
     Проверяет, что если service_name не указан, используется путь к проекту.
     """
-    fs, project_root = config_fs
-    fs.create_file(project_root / "pyproject.toml")
+    fs, project_root = project_with_marker
 
     # Полностью сбрасываем состояние модулей, чтобы они переинициализировались
     from chutils import secret_manager, config as chutils_config
@@ -127,16 +126,14 @@ def test_init_with_custom_prefix():
     assert sm_no_prefix.service_name == SERVICE_NAME
 
 
-def test_get_secret_from_dotenv(config_fs, mocker):
+def test_get_secret_from_dotenv(project_with_marker, mocker):
     """
     Проверяет, что секрет может быть получен из .env файла, если его нет в keyring.
     """
     # --- Подготовка ---
-    fs, project_root = config_fs
+    fs, project_root = project_with_marker
     # Создаем фейковый .env файл
     fs.create_file(project_root / ".env", contents="MY_DOTENV_SECRET=dotenv_value")
-    # Создаем маркер проекта, чтобы chutils нашел корень
-    fs.create_file(project_root / "pyproject.toml")
     # Убеждаемся, что keyring ничего не вернет
     mocker.patch("chutils.secret_manager.keyring.get_password", return_value=None)
 
@@ -153,14 +150,13 @@ def test_get_secret_from_dotenv(config_fs, mocker):
     assert result == "dotenv_value"
 
 
-def test_get_secret_prioritizes_keyring(config_fs, mocker):
+def test_get_secret_prioritizes_keyring(project_with_marker, mocker):
     """
     Проверяет, что keyring имеет приоритет над .env файлом.
     """
     # --- Подготовка ---
-    fs, project_root = config_fs
+    fs, project_root = project_with_marker
     fs.create_file(project_root / ".env", contents="SHARED_SECRET=dotenv_value")
-    fs.create_file(project_root / "pyproject.toml")
     # Keyring возвращает свое значение
     mocker.patch("chutils.secret_manager.keyring.get_password", return_value="keyring_value")
 

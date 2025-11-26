@@ -6,12 +6,11 @@ from pathlib import Path
 from chutils.logger import setup_logger
 
 
-def test_multiple_loggers_rotation(config_fs, time_machine, fast_rotation):
+def test_multiple_loggers_rotation(project_with_marker, time_machine, fast_rotation):
     """Проверяет независимую ротацию нескольких логгеров."""
-    fs, project_root = config_fs
+    fs, project_root = project_with_marker
     logs_dir = project_root / "logs"
     fs.create_dir(logs_dir)
-    fs.create_file(project_root / "pyproject.toml", contents="")
 
     logging.shutdown()
     os.chdir(project_root)
@@ -35,14 +34,13 @@ def test_multiple_loggers_rotation(config_fs, time_machine, fast_rotation):
     assert any(f.startswith("rotation2.log.") for f in log_files)
 
 
-def test_log_rotation_no_permission_error(config_fs, time_machine, fast_rotation, monkeypatch):
+def test_log_rotation_no_permission_error(project_with_marker, time_machine, fast_rotation, monkeypatch):
     """Тестирует базовую ротацию с pyfakefs."""
-    fs, project_root = config_fs
+    fs, project_root = project_with_marker
     logs_dir = project_root / "logs"
     fs.create_dir(logs_dir)
     fs.create_file(project_root / "config.yml",
                    contents='Logging:\n  log_level: "DEBUG"\n  log_file_name: "test_rotation.log"\n  log_backup_count: 5\n')
-    fs.create_file(project_root / "pyproject.toml", contents="")
 
     from chutils import config as chutils_config
     logging.shutdown()
@@ -84,12 +82,11 @@ def test_rotation_on_real_filesystem_is_working(time_machine, fast_rotation):
         assert any(f.startswith("rotation_debug.log.") for f in actual_files)
 
 
-def test_size_based_rotation(config_fs, monkeypatch):
+def test_size_based_rotation(project_with_marker, monkeypatch):
     """Проверяет ротацию по размеру."""
-    fs, project_root = config_fs
+    fs, project_root = project_with_marker
     logs_dir = project_root / "logs"
     fs.create_dir(logs_dir)
-    fs.create_file(project_root / "pyproject.toml", contents="")
 
     logging.shutdown()
     from chutils import config as chutils_config
