@@ -275,24 +275,24 @@ def setup_logger(
         log_level: Optional[LogLevel] = None,
         log_file_name: Optional[str] = None,
         force_reconfigure: bool = False,
-        rotation_type: str = 'time',
-        max_bytes: int = 0,
-        compress: bool = False,
-        backup_count: int = 3,
-        encoding: str = 'utf-8',
-        when: str = 'D',
-        interval: int = 1,
-        utc: bool = False,
+        rotation_type: Optional[str] = None,
+        max_bytes: Optional[int] = None,
+        compress: Optional[bool] = None,
+        backup_count: Optional[int] = None,
+        encoding: Optional[str] = None,
+        when: Optional[str] = None,
+        interval: Optional[int] = None,
+        utc: Optional[bool] = None,
         at_time: Optional[datetime.time] = None,
         **kwargs: Any
 ) -> ChutilsLogger:
     """
-    Настраивает и возвращает логгер, всегда обновляя его уровень.
+    Настраивает и возвращает логгер с гибким приоритетом конфигурации.
 
-    При первом вызове для логгера с указанным именем она настраивает его
-    обработчики (для консоли и файла). При последующих вызовах она только
-    обновляет уровень логирования, не трогая обработчики, если не указан
-    `force_reconfigure=True`.
+    Приоритет настроек:
+    1. Явные аргументы, переданные в эту функцию.
+    2. Значения из конфигурационного файла (`config.yml` или локального).
+    3. Значения по умолчанию, зашитые в коде.
 
     Args:
         name: Имя логгера. `app_logger` используется как стандартное имя.
@@ -302,13 +302,11 @@ def setup_logger(
                        из конфигурации ('Logging', 'log_file_name').
         force_reconfigure: Если True, принудительно удаляет все существующие
                            обработчики и настраивает логгер заново.
-        rotation_type: Тип ротации: 'time' (ежедневная) или 'size'.
+        rotation_type: Тип ротации: 'time' или 'size'.
         max_bytes: Максимальный размер файла для ротации по 'size'.
         compress: Сжимать ли ротированные логи в .gz.
         backup_count: Количество хранимых ротированных файлов.
-
-        # Параметры стандартных хендлеров:
-        encoding: Кодировка файла (стандартно 'utf-8').
+        encoding: Кодировка файла (по умолчанию 'utf-8').
         when: Для 'time'. Тип интервала ('S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').
         interval: Для 'time'. Длина интервала.
         utc: Для 'time'. Использовать UTC время.
@@ -321,99 +319,105 @@ def setup_logger(
     """
     global _initialization_message_shown
     logger = logging.getLogger(name)
+    cfg = config.get_config()
 
-    # --- 1. Определение и установка уровня логирования ---
-    # Этот блок выполняется всегда, чтобы уровень можно было изменить в любой момент.
-    cfg = config.get_config()  # Загружаем конфигурацию
-
-    log_level_enum: LogLevel
-    if isinstance(log_level, str):
-        try:
-            log_level_enum = LogLevel(log_level.upper())
-        except ValueError:
-            log_level_enum = LogLevel.INFO
-    elif log_level is None:
-        level_from_config = config.get_config_value('Logging', 'log_level', 'INFO', cfg)
-        try:
-            log_level_enum = LogLevel(level_from_config.upper())
-        except ValueError:
-            log_level_enum = LogLevel.INFO
+    # --- Определение и установка уровня логирования ---
+    # Приоритет: аргумент -> конфиг -> INFO
+    final_log_level_str: str
+    if log_level is not None:
+        final_log_level_str = log_level.value if isinstance(log_level, LogLevel) else str(log_level).upper()
     else:
-        log_level_enum = log_level
+        final_log_level_str = config.get_config_value('Logging', 'log_level', 'INFO', cfg).upper()
 
-    level_int = getattr(logging, log_level_enum.value, logging.INFO)
+    try:
+        log_level_enum = LogLevel(final_log_level_str)
+        level_int = getattr(logging, log_level_enum.value, logging.INFO)
+    except ValueError:
+        log_level_enum = LogLevel.INFO
+        level_int = logging.INFO
+
     logger.setLevel(level_int)
     logger.propagate = False
     logging.debug("Уровень логирования для '%s' установлен на: %s (%s)", name, log_level_enum.value, level_int)
 
-    # --- 2. Настройка обработчиков (только при необходимости) ---
+    # --- Настройка обработчиков (только при необходимости) ---
     if logger.hasHandlers() and not force_reconfigure:
         logging.debug("Обработчики для логгера '%s' уже настроены. Пропускаем настройку.", name)
         return logger  # type: ignore
 
-    # Если требуется принудительная перенастройка, очищаем старые обработчики
     if force_reconfigure:
         logging.debug("Принудительная перенастройка для '%s'. Удаление старых обработчиков...", name)
         for handler in logger.handlers[:]:
             handler.close()
             logger.removeHandler(handler)
 
-    # Получаем директорию для логов.
+    # --- Определение параметров на основе приоритетов ---
+    # Аргумент -> Конфиг -> Значение по умолчанию
+    final_log_file_name = log_file_name if log_file_name is not None else config.get_config_value(
+        'Logging', 'log_file_name', 'app.log', cfg)
+    final_rotation_type = rotation_type if rotation_type is not None else config.get_config_value(
+        'Logging', 'rotation_type', 'time', cfg)
+    final_max_bytes = max_bytes if max_bytes is not None else config.get_config_int(
+        'Logging', 'max_bytes', 5 * 1024 * 1024, cfg)
+    final_compress = compress if compress is not None else config.get_config_boolean(
+        'Logging', 'compress', False, cfg)
+    final_backup_count = backup_count if backup_count is not None else config.get_config_int(
+        'Logging', 'log_backup_count', 3, cfg)
+    final_encoding = encoding if encoding is not None else config.get_config_value(
+        'Logging', 'encoding', 'utf-8', cfg)
+    final_when = when if when is not None else config.get_config_value(
+        'Logging', 'when', 'D', cfg)
+    final_interval = interval if interval is not None else config.get_config_int(
+        'Logging', 'interval', 1, cfg)
+    final_utc = utc if utc is not None else config.get_config_boolean(
+        'Logging', 'utc', False, cfg)
+    final_at_time = at_time if at_time is not None else config.get_config_value(
+        'Logging', 'at_time', None, cfg)  # at_time может быть None, это ок
+
+    # --- Настройка обработчиков ---
     log_dir = _get_log_dir()
-    logging.debug("setup_logger() получил log_dir: %s", log_dir)
-
-    # Определяем имя файла лога
-    if log_file_name is None:
-        log_file_name = config.get_config_value('Logging', 'log_file_name', 'app.log', cfg)
-    logging.debug("Имя файла лога для '%s' определено как: %s", name, log_file_name)
-
-    # Определяем параметры ротации
-    rotation_type = config.get_config_value('Logging', 'rotation_type', rotation_type, cfg)
-    max_bytes = config.get_config_int('Logging', 'max_bytes', max_bytes, cfg)
-    compress = config.get_config_boolean('Logging', 'compress', compress, cfg)
-    backup_count = config.get_config_int('Logging', 'log_backup_count', 3, cfg)
-
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-    # Обработчик для вывода в консоль
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    # Обработчик для записи в файл
-    if log_dir and log_file_name:
-        log_file_path = Path(log_file_name) if Path(log_file_name).is_absolute() else Path(log_dir) / log_file_name
+    if log_dir and final_log_file_name:
+        log_file_path = Path(final_log_file_name) if Path(
+            final_log_file_name).is_absolute() else Path(log_dir) / final_log_file_name
         logging.debug("Попытка настроить файловый обработчик для %s в %s", name, log_file_path)
         try:
             file_handler: Optional[logging.FileHandler] = None
-
-            # Собираем общие аргументы для хендлеров
             common_kwargs = {
-                'encoding': encoding,
-                'backupCount': backup_count,
+                'encoding': final_encoding,
+                'backupCount': final_backup_count,
             }
-            # Добавляем все прочие kwargs (delay, errors, mode и т.д.)
             common_kwargs.update(kwargs)
 
-            if rotation_type == 'size':
-                handler_class = CompressingRotatingFileHandler if compress else logging.handlers.RotatingFileHandler
-                # maxBytes специфичен для size rotation
-                rotation_kwargs = {
-                    'maxBytes': max_bytes
-                }
-                # Объединяем, параметры ротации имеют приоритет
+            if final_rotation_type == 'size':
+                handler_class = CompressingRotatingFileHandler if final_compress else logging.handlers.RotatingFileHandler
+                rotation_kwargs = {'maxBytes': final_max_bytes}
                 final_kwargs = {**common_kwargs, **rotation_kwargs}
                 file_handler = handler_class(str(log_file_path), **final_kwargs)
             else:  # 'time'
-                handler_class = CompressingTimedRotatingFileHandler if compress else SafeTimedRotatingFileHandler
+                handler_class = CompressingTimedRotatingFileHandler if final_compress else SafeTimedRotatingFileHandler
 
                 rotation_kwargs = {
-                    'when': when,
-                    'interval': interval,
-                    'utc': utc,
+                    'when': final_when,
+                    'interval': final_interval,
+                    'utc': final_utc,
                 }
-                if at_time is not None:
-                    rotation_kwargs['atTime'] = at_time
+                # `at_time` может быть строкой из конфига, нужно преобразовать
+                if isinstance(final_at_time, str):
+                    try:
+                        final_at_time = datetime.time.fromisoformat(final_at_time)
+                    except (TypeError, ValueError):
+                        logger.error(
+                            "Неверный формат времени '%s' для 'at_time' в конфиге. Используется None.", final_at_time)
+                        final_at_time = None
+
+                if final_at_time is not None:
+                    rotation_kwargs['atTime'] = final_at_time
 
                 final_kwargs = {**common_kwargs, **rotation_kwargs}
 
@@ -425,13 +429,13 @@ def setup_logger(
 
                 if not _initialization_message_shown:
                     info_msg = "."
-                    if rotation_type == 'time':
-                        info_msg = f", интервал: {interval}{when}"
+                    if final_rotation_type == 'time':
+                        info_msg = f", интервал: {final_interval}{final_when}"
                     else:
-                        info_msg = f", макс. размер: {max_bytes}"
+                        info_msg = f", макс. размер: {final_max_bytes}"
                     logger.debug(
                         "Логирование настроено. Уровень: %s. Файл: %s, ротация: %s, сжатие: %s%s",
-                        log_level_enum.value, log_file_path, rotation_type, compress, info_msg
+                        log_level_enum.value, log_file_path, final_rotation_type, final_compress, info_msg
                     )
                     _initialization_message_shown = True
         except Exception as e:
