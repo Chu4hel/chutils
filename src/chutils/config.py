@@ -181,16 +181,54 @@ def _load_yaml(path: str) -> Dict:
         return {}
 
 
+def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
+    """
+    Преобразует плоский словарь INI-секций (с точками в именах секций)
+    во вложенную структуру словарей.
+    Например: {'Logging.default': {'key': 'value'}} -> {'Logging': {'default': {'key': 'value'}}}
+    """
+    nested_dict = {}
+    for section_key, section_values in flat_dict.items():
+        current_level = nested_dict
+        parts = section_key.split('.')
+        for i, part in enumerate(parts):
+            if i == len(parts) - 1: # Последняя часть - это название секции
+                current_level[part] = section_values
+            else:
+                current_level = current_level.setdefault(part, {})
+    return nested_dict
+
+
 def _load_ini(path: str) -> Dict:
     """Загружает и парсит INI-файл."""
     try:
         with open(path, 'r', encoding='utf-8') as f:
             parser = configparser.ConfigParser()
             parser.read_string(f.read())
-            return {s: dict(parser.items(s)) for s in parser.sections()}
+            flat_ini_config = {s: dict(parser.items(s)) for s in parser.sections()}
+            # Преобразуем плоскую структуру вложенных секций в иерархическую
+            return _nest_ini_dict(flat_ini_config)
     except (configparser.Error, FileNotFoundError) as e:
         logger.critical("Ошибка чтения INI файла конфигурации %s: %s", path, e)
         return {}
+
+
+def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
+    """
+    Преобразует плоский словарь INI-секций (с точками в именах секций)
+    во вложенную структуру словарей.
+    Например: {'Logging.default': {'key': 'value'}} -> {'Logging': {'default': {'key': 'value'}}}
+    """
+    nested_dict = {}
+    for section_key, section_values in flat_dict.items():
+        current_level = nested_dict
+        parts = section_key.split('.')
+        for i, part in enumerate(parts):
+            if i == len(parts) - 1: # Последняя часть - это название секции
+                current_level[part] = section_values
+            else:
+                current_level = current_level.setdefault(part, {})
+    return nested_dict
 
 
 def save_config_value(

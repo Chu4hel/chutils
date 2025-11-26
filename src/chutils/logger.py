@@ -272,6 +272,7 @@ def _get_log_dir() -> Optional[str]:
 
 def setup_logger(
         name: str = 'app_logger',
+        config_section_name: Optional[str] = None,
         log_level: Optional[LogLevel] = None,
         log_file_name: Optional[str] = None,
         force_reconfigure: bool = False,
@@ -291,8 +292,10 @@ def setup_logger(
 
     Приоритет настроек:
     1. Явные аргументы, переданные в эту функцию.
-    2. Значения из конфигурационного файла (`config.yml` или локального).
-    3. Значения по умолчанию, зашитые в коде.
+    2. Объединенные настройки из `Logging.loggers.{name}` (если есть) поверх `Logging.default` (если есть).
+    3. Для обратной совместимости: если `Logging.default` и `Logging.loggers` отсутствуют,
+       используются прямые настройки из `Logging` (как в старом формате).
+    4. Значения по умолчанию, зашитые в коде.
 
     Args:
         name: Имя логгера. `app_logger` используется как стандартное имя.
@@ -321,13 +324,25 @@ def setup_logger(
     logger = logging.getLogger(name)
     cfg = config.get_config()
 
-    # --- Определение и установка уровня логирования ---
-    # Приоритет: аргумент -> конфиг -> INFO
+    # --- Определение словаря настроек для данного логгера ---
+    # По умолчанию используем секцию [Logging]
+    default_settings = cfg.get('Logging', {})
+    
+    # Если указана специфичная секция, ее настройки переопределяют дефолтные
+    specific_settings = {}
+    if config_section_name:
+        specific_settings = cfg.get(config_section_name, {})
+
+    final_logger_settings = {**default_settings, **specific_settings}
+
+    # --- 1. Определение и установка уровня логирования ---
+    # Приоритет: аргумент функции > настройки из конфига > 'INFO'
     final_log_level_str: str
     if log_level is not None:
         final_log_level_str = log_level.value if isinstance(log_level, LogLevel) else str(log_level).upper()
     else:
-        final_log_level_str = config.get_config_value('Logging', 'log_level', 'INFO', cfg).upper()
+        level_val = final_logger_settings.get('log_level', 'INFO')
+        final_log_level_str = str(level_val).upper()
 
     try:
         log_level_enum = LogLevel(final_log_level_str)
@@ -352,29 +367,49 @@ def setup_logger(
             logger.removeHandler(handler)
 
     # --- Определение параметров на основе приоритетов ---
-    # Аргумент -> Конфиг -> Значение по умолчанию
-    final_log_file_name = log_file_name if log_file_name is not None else config.get_config_value(
-        'Logging', 'log_file_name', 'app.log', cfg)
-    final_rotation_type = rotation_type if rotation_type is not None else config.get_config_value(
-        'Logging', 'rotation_type', 'time', cfg)
-    final_max_bytes = max_bytes if max_bytes is not None else config.get_config_int(
-        'Logging', 'max_bytes', 5 * 1024 * 1024, cfg)
-    final_compress = compress if compress is not None else config.get_config_boolean(
-        'Logging', 'compress', False, cfg)
-    final_backup_count = backup_count if backup_count is not None else config.get_config_int(
-        'Logging', 'log_backup_count', 3, cfg)
-    final_encoding = encoding if encoding is not None else config.get_config_value(
-        'Logging', 'encoding', 'utf-8', cfg)
-    final_when = when if when is not None else config.get_config_value(
-        'Logging', 'when', 'D', cfg)
-    final_interval = interval if interval is not None else config.get_config_int(
-        'Logging', 'interval', 1, cfg)
-    final_utc = utc if utc is not None else config.get_config_boolean(
-        'Logging', 'utc', False, cfg)
-    final_at_time = at_time if at_time is not None else config.get_config_value(
-        'Logging', 'at_time', None, cfg)  # at_time может быть None, это ок
+    # Приоритет: аргумент функции > настройки из конфига > жестко заданное значение
+    final_log_file_name = log_file_name if log_file_name is not None else final_logger_settings.get('log_file_name', 'app.log')
+    final_rotation_type = rotation_type if rotation_type is not None else final_logger_settings.get('rotation_type', 'time')
+    
+    # Для типизированных значений нужна безопасная обработка
+    try:
+        max_bytes_from_config = int(final_logger_settings.get('max_bytes', 5 * 1024 * 1024))
+    except (ValueError, TypeError):
+        max_bytes_from_config = 5 * 1024 * 1024
+    final_max_bytes = max_bytes if max_bytes is not None else max_bytes_from_config
 
-    # --- Настройка обработчиков ---
+    compress_val = final_logger_settings.get('compress', False)
+    if isinstance(compress_val, str):
+        compress_from_config = compress_val.lower() in ['true', '1', 't', 'y', 'yes']
+    else:
+        compress_from_config = bool(compress_val)
+    final_compress = compress if compress is not None else compress_from_config
+
+    try:
+        backup_count_from_config = int(final_logger_settings.get('log_backup_count', 3))
+    except (ValueError, TypeError):
+        backup_count_from_config = 3
+    final_backup_count = backup_count if backup_count is not None else backup_count_from_config
+    
+    final_encoding = encoding if encoding is not None else final_logger_settings.get('encoding', 'utf-8')
+    final_when = when if when is not None else final_logger_settings.get('when', 'D')
+    
+    try:
+        interval_from_config = int(final_logger_settings.get('interval', 1))
+    except (ValueError, TypeError):
+        interval_from_config = 1
+    final_interval = interval if interval is not None else interval_from_config
+    
+    utc_val = final_logger_settings.get('utc', False)
+    if isinstance(utc_val, str):
+        utc_from_config = utc_val.lower() in ['true', '1', 't', 'y', 'yes']
+    else:
+        utc_from_config = bool(utc_val)
+    final_utc = utc if utc is not None else utc_from_config
+
+    final_at_time = at_time if at_time is not None else final_logger_settings.get('at_time', None)
+
+    # --- 4. Настройка обработчиков ---
     log_dir = _get_log_dir()
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
