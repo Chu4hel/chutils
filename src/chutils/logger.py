@@ -6,6 +6,7 @@
 Директория для логов ('logs') создается автоматически в корне проекта.
 """
 
+import datetime
 import logging
 import logging.handlers
 import os
@@ -277,7 +278,13 @@ def setup_logger(
         rotation_type: str = 'time',
         max_bytes: int = 0,
         compress: bool = False,
-        backup_count: int = 3
+        backup_count: int = 3,
+        encoding: str = 'utf-8',
+        when: str = 'D',
+        interval: int = 1,
+        utc: bool = False,
+        at_time: Optional[datetime.time] = None,
+        **kwargs: Any
 ) -> ChutilsLogger:
     """
     Настраивает и возвращает логгер, всегда обновляя его уровень.
@@ -299,6 +306,15 @@ def setup_logger(
         max_bytes: Максимальный размер файла для ротации по 'size'.
         compress: Сжимать ли ротированные логи в .gz.
         backup_count: Количество хранимых ротированных файлов.
+
+        # Параметры стандартных хендлеров:
+        encoding: Кодировка файла (стандартно 'utf-8').
+        when: Для 'time'. Тип интервала ('S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').
+        interval: Для 'time'. Длина интервала.
+        utc: Для 'time'. Использовать UTC время.
+        at_time: Для 'time'. Время ротации (при when='midnight').
+
+        **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`).
 
     Returns:
        Настроенный экземпляр ChutilsLogger.
@@ -370,21 +386,52 @@ def setup_logger(
         logging.debug("Попытка настроить файловый обработчик для %s в %s", name, log_file_path)
         try:
             file_handler: Optional[logging.FileHandler] = None
+
+            # Собираем общие аргументы для хендлеров
+            common_kwargs = {
+                'encoding': encoding,
+                'backupCount': backup_count,
+            }
+            # Добавляем все прочие kwargs (delay, errors, mode и т.д.)
+            common_kwargs.update(kwargs)
+
             if rotation_type == 'size':
                 handler_class = CompressingRotatingFileHandler if compress else logging.handlers.RotatingFileHandler
-                file_handler = handler_class(log_file_path, maxBytes=max_bytes, backupCount=backup_count, encoding='utf-8')
+                # maxBytes специфичен для size rotation
+                rotation_kwargs = {
+                    'maxBytes': max_bytes
+                }
+                # Объединяем, параметры ротации имеют приоритет
+                final_kwargs = {**common_kwargs, **rotation_kwargs}
+                file_handler = handler_class(str(log_file_path), **final_kwargs)
             else:  # 'time'
                 handler_class = CompressingTimedRotatingFileHandler if compress else SafeTimedRotatingFileHandler
-                file_handler = handler_class(log_file_path, when="D", interval=1, backupCount=backup_count, encoding='utf-8')
+
+                rotation_kwargs = {
+                    'when': when,
+                    'interval': interval,
+                    'utc': utc,
+                }
+                if at_time is not None:
+                    rotation_kwargs['atTime'] = at_time
+
+                final_kwargs = {**common_kwargs, **rotation_kwargs}
+
+                file_handler = handler_class(str(log_file_path), **final_kwargs)
 
             if file_handler:
                 file_handler.setFormatter(formatter)
                 logger.addHandler(file_handler)
 
                 if not _initialization_message_shown:
+                    info_msg = "."
+                    if rotation_type == 'time':
+                        info_msg = f", интервал: {interval}{when}"
+                    else:
+                        info_msg = f", макс. размер: {max_bytes}"
                     logger.debug(
-                        "Логирование настроено. Уровень: %s. Файл: %s, ротация: %s, сжатие: %s.",
-                        log_level_enum.value, log_file_path, rotation_type, compress
+                        "Логирование настроено. Уровень: %s. Файл: %s, ротация: %s, сжатие: %s%s",
+                        log_level_enum.value, log_file_path, rotation_type, compress, info_msg
                     )
                     _initialization_message_shown = True
         except Exception as e:
