@@ -12,40 +12,44 @@ Logging:
   # Уровень логирования.
   # Возможные значения: DEVDEBUG, DEBUG, MEDIUMDEBUG, INFO, WARNING, ERROR, CRITICAL
   log_level: DEBUG
-
   # Имя файла, в который будут сохраняться логи.
   # Файл будет создан в папке /logs в корне проекта.
   log_file_name: example_app.log
-
   # Тип ротации логов: 'time' (по умолчанию, ежедневная) или 'size' (по размеру файла).
   rotation_type: size
-
   # Максимальный размер файла лога в байтах перед ротацией, если rotation_type: size.
   # 1MB = 1048576 байт.
   max_bytes: 1048576
-
   # Если true, ротированные файлы логов будут сжиматься в формат .gz.
   compress: true
-
   # Количество хранимых ротированных файлов логов. Старые файлы будут удаляться.
   log_backup_count: 5
 
 # Еще одна пользовательская секция
-
 API:
-
   base_url: https://api.example.com/v1
-
   timeout: 30
 
 
 
 # Секция 'Secrets' используется модулем chutils.secret_manager
-
 Secrets:
-
   # Уникальное имя сервиса для приложения, используется в Keyring.
-
   # Важно задать уникальное имя, чтобы избежать конфликтов с другими приложениями.
-
   service_name: chutils_example_app
+
+# --- Пример настройки отдельных логгеров ---
+# Новая секция для логгера аудита. Вызывается через setup_logger(..., config_section_name="AuditLogger")
+# Настройки из этой секции переопределяют аналогичные из секции [Logging].
+AuditLogger:
+  log_level: INFO
+  log_file_name: "audit.log"
+  log_backup_count: 10 # Переопределяет значение 5 из [Logging]
+
+# Еще одна секция для другого логгера
+EventLogger:
+  log_level: WARNING
+  log_file_name: "events.log"
+  rotation_type: time
+  when: D # Ежедневная ротация
+  interval: 1

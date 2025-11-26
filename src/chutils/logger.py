@@ -299,6 +299,9 @@ def setup_logger(
 
     Args:
         name: Имя логгера. `app_logger` используется как стандартное имя.
+        config_section_name: Имя специфичной секции в конфиге (например, 'MyAuditLogger').
+            Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.
+            Если не указана, используется только общая секция `[Logging]`.
         log_level: Явное указание уровня логирования (строкой или LogLevel).
                    Если не задан, значение берется из конфигурационного файла.
         log_file_name: Имя файла для логирования. Если не указано, имя берется
@@ -327,7 +330,7 @@ def setup_logger(
     # --- Определение словаря настроек для данного логгера ---
     # По умолчанию используем секцию [Logging]
     default_settings = cfg.get('Logging', {})
-    
+
     # Если указана специфичная секция, ее настройки переопределяют дефолтные
     specific_settings = {}
     if config_section_name:
@@ -368,9 +371,11 @@ def setup_logger(
 
     # --- Определение параметров на основе приоритетов ---
     # Приоритет: аргумент функции > настройки из конфига > жестко заданное значение
-    final_log_file_name = log_file_name if log_file_name is not None else final_logger_settings.get('log_file_name', 'app.log')
-    final_rotation_type = rotation_type if rotation_type is not None else final_logger_settings.get('rotation_type', 'time')
-    
+    final_log_file_name = log_file_name if log_file_name is not None else final_logger_settings.get('log_file_name',
+                                                                                                    'app.log')
+    final_rotation_type = rotation_type if rotation_type is not None else final_logger_settings.get('rotation_type',
+                                                                                                    'time')
+
     # Для типизированных значений нужна безопасная обработка
     try:
         max_bytes_from_config = int(final_logger_settings.get('max_bytes', 5 * 1024 * 1024))
@@ -390,16 +395,16 @@ def setup_logger(
     except (ValueError, TypeError):
         backup_count_from_config = 3
     final_backup_count = backup_count if backup_count is not None else backup_count_from_config
-    
+
     final_encoding = encoding if encoding is not None else final_logger_settings.get('encoding', 'utf-8')
     final_when = when if when is not None else final_logger_settings.get('when', 'D')
-    
+
     try:
         interval_from_config = int(final_logger_settings.get('interval', 1))
     except (ValueError, TypeError):
         interval_from_config = 1
     final_interval = interval if interval is not None else interval_from_config
-    
+
     utc_val = final_logger_settings.get('utc', False)
     if isinstance(utc_val, str):
         utc_from_config = utc_val.lower() in ['true', '1', 't', 'y', 'yes']
