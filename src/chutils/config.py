@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Optional, List, Dict
 
 import yaml
+import asyncio
 
 # Настраиваем логгер для этого модуля
 logger = logging.getLogger(__name__)
@@ -170,6 +171,15 @@ def get_config() -> Dict:
     _config_object = _merge_configs(main_config, local_config)
     _config_loaded = True
     return _config_object
+
+
+async def aget_config() -> Dict:
+    """
+    Асинхронно загружает конфигурацию из файлов (основного и локального)
+    и возвращает ее как словарь.
+    Работает как асинхронная обертка вокруг синхронной `get_config()`.
+    """
+    return await asyncio.to_thread(get_config)
 
 
 def _load_yaml(path: str) -> Dict:
@@ -404,6 +414,34 @@ def save_config_value(
     else:
         logger.warning("Сохранение для формата %s не поддерживается.", file_ext)
         return False
+
+
+async def asave_config_value(
+        section: str,
+        key: str,
+        value: Any,
+        cfg_file: Optional[str] = None,
+        save_to_local: bool = False
+) -> bool:
+    """
+    Асинхронно сохраняет одно значение в конфигурационном файле.
+    Работает как асинхронная обертка вокруг синхронной `save_config_value()`.
+
+    Args:
+        section: Имя секции.
+        key: Имя ключа в секции.
+        value: Новое значение для ключа.
+        cfg_file: Опциональный путь к файлу для сохранения. Если указан,
+            имеет приоритет над `save_to_local`.
+        save_to_local: Если True, и существует локальный файл конфигурации
+            (например, `config.local.yml`), значение будет сохранено в него.
+            По умолчанию False.
+
+    Returns:
+        True: Если значение было успешно обновлено и сохранено.
+        False: Если файл не найден, или произошла ошибка.
+    """
+    return await asyncio.to_thread(save_config_value, section, key, value, cfg_file, save_to_local)
 
 
 # --- Функции-обертки для удобного получения значений ---

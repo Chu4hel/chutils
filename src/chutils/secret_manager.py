@@ -1,6 +1,7 @@
 import logging
 import os
 from typing import Optional, Dict
+import asyncio
 
 import keyring
 from dotenv import load_dotenv
@@ -128,6 +129,21 @@ class SecretManager:
             _get_logger().error("Произошла непредвиденная ошибка при сохранении секрета: %s", e)
             return False
 
+    async def asave_secret(self, key: str, value: str) -> bool:
+        """
+        Асинхронно сохраняет пару ключ-значение в системном хранилище (keyring).
+        Работает как асинхронная обертка вокруг синхронной `save_secret()`.
+
+        Args:
+            key: Ключ для секрета.
+            value: Секретное значение.
+
+        Returns:
+            True, если секрет успешно сохранен в keyring.
+            False, если произошла ошибка.
+        """
+        return await asyncio.to_thread(self.save_secret, key, value)
+
     def get_secret(self, key: str) -> Optional[str]:
         """
         Получает секретное значение по ключу.
@@ -166,6 +182,19 @@ class SecretManager:
 
         return value
 
+    async def aget_secret(self, key: str) -> Optional[str]:
+        """
+        Асинхронно получает секретное значение по ключу.
+        Работает как асинхронная обертка вокруг синхронной `get_secret()`.
+
+        Args:
+            key: Ключ, по которому нужно найти секрет.
+
+        Returns:
+            Найденное значение или None.
+        """
+        return await asyncio.to_thread(self.get_secret, key)
+
     def delete_secret(self, key: str) -> bool:
         """
         Удаляет пару ключ-значение из системного хранилища (keyring).
@@ -196,6 +225,20 @@ class SecretManager:
         except Exception as e:
             _get_logger().error("Произошла непредвиденная ошибка при удалении секрета из keyring: %s", e)
             return False
+
+    async def adelete_secret(self, key: str) -> bool:
+        """
+        Асинхронно удаляет пару ключ-значение из системного хранилища (keyring).
+        Работает как асинхронная обертка вокруг синхронной `delete_secret()`.
+
+        Args:
+            key: Ключ секрета, который нужно удалить.
+
+        Returns:
+            True, если секрет был удален или уже не существовал.
+            False, если произошла ошибка при удалении.
+        """
+        return await asyncio.to_thread(self.delete_secret, key)
 
     def update_secret(self, key: str, value: str) -> bool:
         """
