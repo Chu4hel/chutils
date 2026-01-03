@@ -52,7 +52,9 @@ def test_save_secret_success(secret_manager, mocker):
 
 def test_save_secret_no_keyring_error(secret_manager, mocker):
     """Проверяет обработку ошибки NoKeyringError при сохранении."""
-    mocker.patch("chutils.secret_manager.keyring.set_password", side_effect=NoKeyringError)
+    # Мокаем весь модуль, чтобы избежать побочных эффектов от его внутренней логики
+    mock_keyring = mocker.patch("chutils.secret_manager.keyring")
+    mock_keyring.set_password.side_effect = NoKeyringError
     result = secret_manager.save_secret("my_key", "my_value")
     assert result is False
 
@@ -100,8 +102,10 @@ def test_delete_secret_not_found(secret_manager, mocker):
 
 def test_delete_secret_error(secret_manager, mocker):
     """Проверяет обработку ошибки при удалении."""
-    mocker.patch("chutils.secret_manager.keyring.get_password", return_value="some_value")
-    mocker.patch("chutils.secret_manager.keyring.delete_password", side_effect=PasswordDeleteError)
+    # Мокаем весь модуль, чтобы избежать побочных эффектов
+    mock_keyring = mocker.patch("chutils.secret_manager.keyring")
+    mock_keyring.get_password.return_value = "some_value"
+    mock_keyring.delete_password.side_effect = PasswordDeleteError
 
     result = secret_manager.delete_secret("my_key")
 

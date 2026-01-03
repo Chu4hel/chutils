@@ -92,6 +92,7 @@ def reset_chutils_state(monkeypatch):
     monkeypatch.setattr(chutils_config, '_paths_initialized', False)
     monkeypatch.setattr(chutils_config, '_config_object', None)
     monkeypatch.setattr(chutils_config, '_config_loaded', False)
+    monkeypatch.setattr(chutils_logger, '_file_handler_cache', {})
 
 
 @pytest.fixture

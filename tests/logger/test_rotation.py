@@ -110,3 +110,60 @@ def test_size_based_rotation(project_with_marker, monkeypatch):
     log_files = fs.listdir(logs_dir)
     assert "size_rotation.log" in log_files
     assert "size_rotation.log.1" in log_files
+
+
+def test_rotation_with_shared_handler_no_error(project_with_marker, monkeypatch):
+    """
+    Проверяет, что при использовании одного файла для нескольких логгеров
+    не возникает ошибки PermissionError благодаря кэшированию обработчиков.
+    """
+    fs, project_root = project_with_marker
+    logs_dir = project_root / "logs"
+    fs.create_dir(logs_dir)
+
+    logging.shutdown()
+    from chutils import config as chutils_config
+    monkeypatch.setattr(chutils_config, '_paths_initialized', False)
+    # Сбрасываем кэш обработчиков перед тестом
+    from chutils import logger as chutils_logger
+    monkeypatch.setattr(chutils_logger, '_file_handler_cache', {})
+    os.chdir(project_root)
+
+    log_file = "shared_rotation.log"
+
+    # Настраиваем два логгера на один и тот же файл
+    logger_a = setup_logger(
+        "logger_A",
+        log_file_name=log_file,
+        rotation_type='size',
+        max_bytes=150,  # Небольшой размер для быстрого срабатывания
+        backup_count=2,
+        force_reconfigure=True
+    )
+    logger_b = setup_logger(
+        "logger_B",
+        log_file_name=log_file,
+        rotation_type='size',
+        max_bytes=150,
+        backup_count=2,
+        force_reconfigure=True # Используем True, чтобы убедиться, что логика кэша отрабатывает
+    )
+
+    # Убедимся, что оба логгера используют один и тот же объект обработчика
+    handler_a = next((h for h in logger_a.handlers if isinstance(h, logging.FileHandler)), None)
+    handler_b = next((h for h in logger_b.handlers if isinstance(h, logging.FileHandler)), None)
+    assert handler_a is not None
+    assert handler_a is handler_b, "Обработчики должны быть одним и тем же объектом из кэша"
+
+    # Генерируем логи, чтобы вызвать ротацию
+    for i in range(15):
+        logger_a.info(f"Message {i} from logger A")
+        logger_b.warning(f"Message {i} from logger B")
+
+    logging.shutdown()
+
+    # Проверяем, что ротация произошла успешно
+    log_files = fs.listdir(logs_dir)
+    assert "shared_rotation.log" in log_files
+    assert "shared_rotation.log.1" in log_files, "Ротация должна была создать как минимум один бэкап"
+
