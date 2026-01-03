@@ -1,0 +1,1002 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Простые утилиты для конфигурации, логирования и секретов в Python.">
+      
+      
+        <meta name="author" content="Chu4hel">
+      
+      
+        <link rel="canonical" href="https://Chu4hel.github.io/chutils/README_RU/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>chutils: Рутина — в прошлом! - chutils</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chutils" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href=".." title="chutils" class="md-header__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            chutils
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              chutils: Рутина — в прошлом!
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Справочник API
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="chutils" class="md-nav__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    chutils
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Проблема
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ключевые возможности
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Установка
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Быстрый старт">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Работа с конфигурацией
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Настройка логирования
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Управление секретами
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Управление секретами">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-keyring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Способ 1: Keyring (рекомендуемый)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-env-docker-cicd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Способ 2: Файл .env (удобно для Docker и CI/CD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Комплексный пример
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chutilsconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Работа с конфигурацией (chutils.config)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chutilslogger" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка логирования (chutils.logger)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chutilssecret_manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Управление секретами (chutils.secret_manager)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chutilsdecorators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Декораторы (chutils.decorators)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chutilsinit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ручная инициализация (chutils.init)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secret_manager-keyring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Особенности secret_manager (Keyring)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Лицензия
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="chutils">chutils: Рутина — в прошлом!</h1>
+<p><a href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a>
+<a href="https://www.python.org/downloads/"><img alt="Python" src="https://img.shields.io/badge/python-3.9%2B-blue.svg" /></a>
+<a href="https://badge.fury.io/py/chutils"><img alt="PyPI version" src="https://badge.fury.io/py/chutils.svg" /></a>
+<a href="https://Chu4hel.github.io/chutils/"><img alt="Documentation" src="https://img.shields.io/badge/документация-читать-brightgreen" /></a></p>
+<p><strong>chutils</strong> — это набор простых утилит для Python, который избавляет от повторяющейся настройки конфигурации,
+логирования и секретов в ваших проектах.</p>
+<p>Начните новый проект и сразу сфокусируйтесь на главном, а не на рутине.</p>
+<p>Полная документация доступна на <a href="https://Chu4hel.github.io/chutils/">нашем сайте</a>.</p>
+<h2 id="_1">Проблема</h2>
+<p>Каждый раз, начиная новый проект, приходится решать одни и те же задачи:</p>
+<ul>
+<li>Как удобно читать настройки из файла конфигурации?</li>
+<li>Как настроить логирование, чтобы сообщения писались и в консоль, и в файл с ежедневной ротацией?</li>
+<li>Как безопасно хранить API-ключи, не прописывая их в коде?</li>
+<li>Как сделать, чтобы всё это работало "из коробки", без прописывания путей?</li>
+</ul>
+<p><strong>chutils</strong> предлагает готовые решения для всех этих проблем.</p>
+<h2 id="_2">Ключевые возможности</h2>
+<ul>
+<li><strong>✨ Ноль конфигурации:</strong> Библиотека <strong>автоматически</strong> находит корень вашего проекта и файл <code>config.yml</code> или
+  <code>config.ini</code>. Если файл не найден, используются безопасные настройки по умолчанию (например, логирование только в
+  консоль).</li>
+<li><strong>⚙️ Гибкая конфигурация:</strong> Поддержка <code>YAML</code> и <code>INI</code> форматов. Простые функции для получения типизированных данных.</li>
+<li><strong>✍️ Продвинутый логгер:</strong> Функция <code>setup_logger()</code> "из коробки" настраивает логирование в консоль и в ротируемые
+  файлы. Возвращает кастомный логгер с дополнительными уровнями отладки (<code>devdebug</code>, <code>mediumdebug</code>).</li>
+<li><strong>🔒 Безопасное хранилище секретов:</strong> Модуль <code>secret_manager</code> предоставляет простой интерфейс для сохранения и
+  получения секретов. Поддерживает системное хранилище <code>keyring</code> и может использовать <code>.env</code> файлы как запасной вариант.</li>
+<li><strong>🚀 Готовность к работе:</strong> Просто установите и используйте.</li>
+</ul>
+<h2 id="_3">Установка</h2>
+<pre><code class="language-bash">poetry add chutils
+</code></pre>
+<p>Или с помощью pip:</p>
+<pre><code class="language-bash">pip install chutils
+</code></pre>
+<p>Для разработки клонируйте репозиторий и установите его в режиме редактирования:</p>
+<pre><code class="language-bash">git clone https://github.com/Chu4hel/chutils.git
+cd chutils
+pip install -e .
+</code></pre>
+<h2 id="_4">Примеры использования</h2>
+<p>В папке <a href="./examples/"><code>/examples</code></a> вы найдете готовые к запуску скрипты, демонстрирующие ключевые возможности
+библиотеки. Каждый пример сфокусирован на одной конкретной задаче.</p>
+<h2 id="_5">Быстрый старт</h2>
+<h3 id="1">1. Работа с конфигурацией</h3>
+<ol>
+<li>(Опционально) Создайте файл <code>config.yml</code> в корне вашего проекта. Если этого не сделать, библиотека будет использовать
+   настройки по умолчанию:</li>
+</ol>
+<p><code>yaml
+   # config.yml
+   Database:
+     host: localhost
+     port: 5432
+     user: my_user</code></p>
+<ol>
+<li>Получайте значения в вашем коде:</li>
+</ol>
+<p>```python
+   # main.py
+   from chutils import get_config_value, get_config_int</p>
+<p>db_host = get_config_value("Database", "host", fallback="127.0.0.1")
+   db_port = get_config_int("Database", "port", fallback=5433)</p>
+<p>print(f"Подключаемся к БД по адресу: {db_host}:{db_port}")
+   # Вывод: Подключаемся к БД по адресу: localhost:5432
+   <code>``</code>chutils<code>автоматически найдет</code>config.yml` и прочитает из него данные.</p>
+<p>#### Переопределение конфигурации локальным файлом (<code>config.local.yml</code>)</p>
+<p>Вы можете создать локальный файл конфигурации (например, <code>config.local.yml</code> или <code>config.local.ini</code>) рядом с основным
+   файлом (<code>config.yml</code> или <code>config.ini</code>). Значения из локального файла будут <strong>переопределять</strong> соответствующие
+   значения из основного файла. Это удобно для:
+    - Хранения чувствительных данных, которые не должны попадать в систему контроля версий (добавьте <code>config.local.yml</code>
+      в <code>.gitignore</code>).
+    - Переопределения настроек для локальной разработки без изменения основного файла.</p>
+<p>Пример:
+   Если <code>config.yml</code> содержит:
+   <code>yaml
+   # config.yml
+   Database:
+     host: production_db.com
+     port: 5432
+   App:
+     debug: false</code>
+   А <code>config.local.yml</code> содержит:
+   <code>yaml
+   # config.local.yml
+   Database:
+     host: localhost
+   App:
+     debug: true
+     developer_mode: true</code>
+   Тогда <code>get_config()</code> вернет:
+   <code>yaml
+   Database:
+     host: localhost # Переопределено локальным файлом
+     port: 5432      # Взято из основного файла
+   App:
+     debug: true         # Переопределено локальным файлом
+     developer_mode: true # Добавлено из локального файла</code>
+   <strong>Важно:</strong> Убедитесь, что вы добавили <code>config.local.yml</code> (или <code>config.local.ini</code>) в ваш <code>.gitignore</code>, чтобы случайно
+   не закоммитить локальные или чувствительные настройки.</p>
+<h3 id="2">2. Настройка логирования</h3>
+<ol>
+<li>Добавьте секцию <code>Logging</code> в ваш <code>config.yml</code> (опционально):</li>
+</ol>
+<p><code>yaml
+   # config.yml
+   Logging:
+     log_level: DEBUG
+     log_file_name: my_app.log</code></p>
+<ol>
+<li>Используйте логгер:</li>
+</ol>
+<p>```python
+   # main.py
+   from chutils import setup_logger, ChutilsLogger</p>
+<p># Настраиваем логгер. Он сам прочитает настройки из конфига.
+   logger: ChutilsLogger = setup_logger()</p>
+<p>logger.info("Приложение запущено.")
+   logger.debug("Это отладочное сообщение.")
+   # Вывод в консоли и запись в файл logs/my_app.log
+   <code>``
+   Папка</code>logs` будет создана автоматически.</p>
+<p>Вы также можете указать имя файла лога напрямую при вызове <code>setup_logger</code>, переопределив значение из конфигурации:
+   ```python
+   # main.py
+   from chutils import setup_logger, ChutilsLogger</p>
+<p># Логгер будет писать в custom.log, игнорируя log_file_name из config.yml
+   logger: ChutilsLogger = setup_logger(log_file_name="custom.log")</p>
+<p>logger.info("Сообщение в кастомном файле.")
+   ```</p>
+<p>#### Создание нескольких логгеров</p>
+<p>Вы можете создавать разные логгеры для разных частей вашего приложения, передавая уникальное имя в <code>setup_logger</code>.
+   Это
+   помогает фильтровать и разделять логи.</p>
+<p>```python
+   # main.py
+   from chutils import setup_logger</p>
+<p># Основной логгер приложения будет писать в main_app.log
+   main_logger = setup_logger("main_app", log_file_name="main_app.log")
+   # Логгер для модуля, отвечающего за работу с базой данных, будет писать в database.log
+   db_logger = setup_logger("database", log_file_name="database.log")</p>
+<p>main_logger.info("Приложение запущено.")
+   db_logger.debug("Инициализация подключения к БД...")
+   <code>``
+   В лог-файлах вы увидите сообщения от соответствующих логгеров.
+   Более подробный пример можно найти в [</code>/examples/05_different_log_levels.py`](./examples/05_different_log_levels.py).</p>
+<p>#### Конфигурация нескольких логгеров через файл</p>
+<p>Вы можете централизованно управлять настройками разных логгеров, используя параметр <code>config_section_name</code>.</p>
+<pre><code>1. **Добавьте секции в `config.yml`**:
+   Секция `[Logging]` используется для настроек по умолчанию. Остальные секции можно использовать для специфичных
+   логгеров.
+   ```yaml
+   # config.yml
+   Logging:
+     log_level: INFO
+     rotation_type: time
+     compress: true
+
+   AuditLogger:
+     log_level: DEBUG
+     log_file_name: "audit.log"
+   ```
+
+2. **Используйте `config_section_name` в коде**:
+   ```python
+   # main.py
+   from chutils import setup_logger
+
+   # Этот логгер возьмет настройки из секции [Logging]
+   main_logger = setup_logger("main")
+   main_logger.info("Сообщение от основного логгера.")
+
+   # А этот логгер - из секции [AuditLogger], которая переопределит настройки из [Logging]
+   audit_logger = setup_logger("audit", config_section_name="AuditLogger")
+   audit_logger.debug("Детальное сообщение для аудита.")
+   ```
+</code></pre>
+<h3 id="3">3. Управление секретами</h3>
+<p><code>SecretManager</code> ищет секреты в следующем порядке:</p>
+<ol>
+<li><strong>Системное хранилище (<code>keyring</code>)</strong>: Наиболее безопасный способ.</li>
+<li><strong>Файл <code>.env</code></strong>: Если секрет не найден в <code>keyring</code>, менеджер будет искать его в файле <code>.env</code> в корне вашего проекта.</li>
+<li><strong>Переменные окружения</strong>: Если секрета нет и там, будет произведен поиск в переменных окружения ОС.</li>
+</ol>
+<h4 id="1-keyring">Способ 1: Keyring (рекомендуемый)</h4>
+<ol>
+<li>Инициализируйте <code>SecretManager</code> и сохраните ваш секрет. <strong>Это нужно сделать один раз.</strong></li>
+</ol>
+<p>```python
+   # setup_secrets.py
+   from chutils import SecretManager</p>
+<p>secrets = SecretManager("my_awesome_app")
+   secrets.save_secret("DB_PASSWORD", "MySuperSecretDbPassword123!")
+   print("Пароль от БД сохранен в системном хранилище!")
+   ```</p>
+<ol>
+<li>Получайте секрет в основном коде, не "светя" им:</li>
+</ol>
+<p>```python
+   # main.py
+   from chutils import SecretManager, get_config_value</p>
+<p>secrets = SecretManager("my_awesome_app")
+   db_user = get_config_value("Database", "user")</p>
+<p># Получаем пароль из безопасного хранилища
+   db_password = secrets.get_secret("DB_PASSWORD")</p>
+<p>if db_password:
+       print(f"Получен пароль для пользователя {db_user}.")
+   else:
+       print("Пароль не найден!")
+   ```</p>
+<h4 id="2-env-docker-cicd">Способ 2: Файл .env (удобно для Docker и CI/CD)</h4>
+<ol>
+<li>
+<p>Создайте файл <code>.env</code> в корне вашего проекта:
+   <code>dotenv
+   # .env
+   DB_PASSWORD="AnotherSecretPassword"
+   API_KEY="abcdef123456"</code></p>
+</li>
+<li>
+<p><code>SecretManager</code> автоматически найдет этот файл и прочитает из него переменные, если не найдет их в <code>keyring</code>.</p>
+</li>
+</ol>
+<p>```python
+   # main.py
+   from chutils import SecretManager</p>
+<p>secrets = SecretManager("my_awesome_app")</p>
+<p># Этот секрет будет взят из .env, если его нет в keyring
+   api_key = secrets.get_secret("API_KEY")
+   print(f"Найден API ключ: {api_key}")
+   ```</p>
+<h2 id="_6">Комплексный пример</h2>
+<p>Этот пример показывает, как все компоненты <code>chutils</code> работают вместе.</p>
+<ol>
+<li><strong>Файл <code>config.yml</code>:</strong>
+   ```yaml
+   API:
+     base_url: https://api.example.com</li>
+</ol>
+<p>Database:
+     host: localhost
+     port: 5432
+     user: my_user</p>
+<p>Logging:
+     log_level: INFO
+   ```</p>
+<ol>
+<li><strong>Код <code>main.py</code>:</strong>
+   ```python
+   # main.py
+   from chutils import get_config_value, setup_logger, SecretManager, ChutilsLogger</li>
+</ol>
+<p># 1. Настраиваем логгер. Он автоматически прочитает настройки из конфига.
+   logger: ChutilsLogger = setup_logger()</p>
+<p># 2. Инициализируем менеджер секретов для нашего приложения.
+   secrets = SecretManager("my_awesome_app")</p>
+<p>def setup_credentials():
+       """Функция для первоначального сохранения пароля, если его нет."""
+       db_user = get_config_value("Database", "user")
+       password_key = f"{db_user}_password"</p>
+<pre><code>   if not secrets.get_secret(password_key):
+       logger.info("Пароль для БД не найден. Сохраняем новый...")
+       secrets.save_secret(password_key, "MySuperSecretDbPassword123!")
+       logger.info("Пароль для БД сохранен в системном хранилище.")
+</code></pre>
+<p>def connect_to_db():
+       """Пример подключения к БД с использованием конфига и секретов."""
+       db_host = get_config_value("Database", "host")
+       db_user = get_config_value("Database", "user")
+       db_password = secrets.get_secret(f"{db_user}_password")</p>
+<pre><code>   if not db_password:
+       logger.error("Не удалось получить пароль для БД!")
+       return
+
+   logger.info(f"Подключаемся к {db_host} от имени {db_user}...")
+   # ... логика подключения ...
+   logger.info("Успешно подключились!")
+</code></pre>
+<p>def main():
+       logger.info("Приложение запущено.")
+       setup_credentials()
+       connect_to_db()
+       logger.info("Приложение завершило работу.")</p>
+<p>if <strong>name</strong> == "<strong>main</strong>":
+       main()
+   ```</p>
+<h2 id="api">API</h2>
+<h3 id="chutilsconfig">Работа с конфигурацией (<code>chutils.config</code>)</h3>
+<ul>
+<li><code>get_config_value(section, key, fallback="")</code>: Получить значение.</li>
+<li><code>get_config_int(section, key, fallback=0)</code>: Получить целое число.</li>
+<li><code>get_config_boolean(section, key, fallback=False)</code>: Получить булево значение.</li>
+<li><code>get_config_list(section, key, fallback=[])</code>: Получить список.</li>
+<li><code>get_config_section(section)</code>: Получить всю секцию как словарь.</li>
+<li><code>save_config_value(section, key, value)</code>: Сохранить значение. Работает для <code>.yml</code> и <code>.ini</code>.
+  <strong>Важно</strong>: при сохранении в <code>.yml</code> комментарии и форматирование будут утеряны. При сохранении в <code>.ini</code> - сохраняются.</li>
+</ul>
+<h3 id="chutilslogger">Настройка логирования (<code>chutils.logger</code>)</h3>
+<ul>
+<li><code>setup_logger(name='app_logger', log_level_str='')</code>: Настраивает и возвращает экземпляр <code>ChutilsLogger</code>.</li>
+<li><code>logger.mediumdebug("message")</code>: Логирование с уровнем 15. Промежуточный уровень между <code>DEBUG</code> и <code>INFO</code>.</li>
+<li><code>logger.devdebug("message")</code>: Логирование с уровнем 9. Самый подробный уровень для глубокой отладки (например, для
+  вывода дампов переменных).</li>
+</ul>
+<h3 id="chutilssecret_manager">Управление секретами (<code>chutils.secret_manager</code>)</h3>
+<ul>
+<li><code>SecretManager(service_name, prefix="Chutils_")</code>: Создает менеджер, изолированный по имени сервиса.</li>
+<li><code>secrets.save_secret(key, value)</code>: Сохраняет секрет.</li>
+<li><code>secrets.get_secret(key)</code>: Получает секрет.</li>
+<li><code>secrets.delete_secret(key)</code>: Удаляет секрет.</li>
+</ul>
+<h3 id="chutilsdecorators">Декораторы (<code>chutils.decorators</code>)</h3>
+<ul>
+<li><code>log_function_details</code>: Декоратор для логирования деталей вызова функции (аргументы, время выполнения, результат).</li>
+</ul>
+<h3 id="chutilsinit">Ручная инициализация (<code>chutils.init</code>)</h3>
+<p>В 99% случаев вам это <strong>не понадобится</strong>. Но если автоматика не справилась, вы можете один раз указать путь к проекту
+вручную в самом начале работы приложения:</p>
+<pre><code class="language-python">import chutils
+
+chutils.init(base_dir=&quot;/path/to/my/project/root&quot;)
+</code></pre>
+<h3 id="secret_manager-keyring">Особенности <code>secret_manager</code> (Keyring)</h3>
+<p>Модуль <code>SecretManager</code> использует библиотеку <code>keyring</code> для безопасного хранения секретов в системном хранилище.</p>
+<ul>
+<li>На <strong>Windows</strong> и <strong>macOS</strong> это работает "из коробки".</li>
+<li><strong>Требования для Linux</strong>: На Linux для безопасной работы <code>keyring</code> требуется установленный и настроенный "бэкенд"
+  (хранилище секретов), например, <code>GNOME Keyring</code> (Seahorse) или <code>KWallet</code>. На серверах или минималистичных сборках его
+  может понадобиться установить вручную.
+  Подробнее — в <a href="https://keyring.readthedocs.io/en/latest/">официальной документации <code>keyring</code></a>.</li>
+<li><strong>Использование на мобильных ОС</strong>: Этот модуль <strong>не предназначен</strong> для использования на мобильных операционных
+  системах (Android, iOS). <code>keyring</code> с высокой вероятностью не найдет системного хранилища и будет использовать
+  <strong>незащищенный</strong> способ хранения ваших секретов.</li>
+</ul>
+<h2 id="_7">Лицензия</h2>
+<p>Проект распространяется под лицензией MIT.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.top"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>
