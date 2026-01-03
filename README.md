@@ -1,53 +1,54 @@
-# chutils: Рутина — в прошлом!
+[Русская версия](docs/README_RU.md)
+
+# chutils: Stop the Routine!
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![PyPI version](https://badge.fury.io/py/chutils.svg)](https://badge.fury.io/py/chutils)
-[![Documentation](https://img.shields.io/badge/документация-читать-brightgreen)](https://Chu4hel.github.io/chutils/)
+[![Documentation](https://img.shields.io/badge/documentation-read-brightgreen)](https://Chu4hel.github.io/chutils/)
 
-**chutils** — это набор простых утилит для Python, который избавляет от повторяющейся настройки конфигурации,
-логирования и секретов в ваших проектах.
+**chutils** is a set of simple utilities for Python designed to eliminate the repetitive setup of configuration,
+logging, and secrets in your projects.
 
-Начните новый проект и сразу сфокусируйтесь на главном, а не на рутине.
+Start a new project and focus on what matters, not the routine.
 
-Полная документация доступна на [нашем сайте](https://Chu4hel.github.io/chutils/).
+Full documentation is available on [our website](https://Chu4hel.github.io/chutils/) (currently in Russian).
 
-## Проблема
+## The Problem
 
-Каждый раз, начиная новый проект, приходится решать одни и те же задачи:
+Every time you start a new project, you have to solve the same tasks:
 
-- Как удобно читать настройки из файла конфигурации?
-- Как настроить логирование, чтобы сообщения писались и в консоль, и в файл с ежедневной ротацией?
-- Как безопасно хранить API-ключи, не прописывая их в коде?
-- Как сделать, чтобы всё это работало "из коробки", без прописывания путей?
+- How to conveniently read settings from a configuration file?
+- How to configure logging to write messages to both the console and a file with daily rotation?
+- How to securely store API keys without hardcoding them in the code?
+- How to make it all work "out of the box" without manually defining paths?
 
-**chutils** предлагает готовые решения для всех этих проблем.
+**chutils** offers ready-made solutions for all these problems.
 
-## Ключевые возможности
+## Key Features
 
-- **✨ Ноль конфигурации:** Библиотека **автоматически** находит корень вашего проекта и файл `config.yml` или
-  `config.ini`. Если файл не найден, используются безопасные настройки по умолчанию (например, логирование только в
-  консоль).
-- **⚙️ Гибкая конфигурация:** Поддержка `YAML` и `INI` форматов. Простые функции для получения типизированных данных.
-- **✍️ Продвинутый логгер:** Функция `setup_logger()` "из коробки" настраивает логирование в консоль и в ротируемые
-  файлы. Возвращает кастомный логгер с дополнительными уровнями отладки (`devdebug`, `mediumdebug`).
-- **🔒 Безопасное хранилище секретов:** Модуль `secret_manager` предоставляет простой интерфейс для сохранения и
-  получения секретов. Поддерживает системное хранилище `keyring` и может использовать `.env` файлы как запасной вариант.
-- **🚀 Готовность к работе:** Просто установите и используйте.
+- **✨ Zero Configuration:** The library **automatically** finds your project root and the `config.yml` or `config.ini`
+  file. If the file is not found, safe defaults are used.
+- **⚙️ Flexible Configuration:** Support for `YAML` and `INI` formats. Simple functions for retrieving typed data.
+- **✍️ Advanced Logger:** The `setup_logger()` function configures logging to the console and rotating files out of the
+  box. It returns a custom logger with additional debug levels (`devdebug`, `mediumdebug`).
+- **🔒 Secure Secret Storage:** The `secret_manager` module provides a simple interface for saving and retrieving secrets
+  via the system `keyring`, with a fallback to `.env` files.
+- **🚀 Ready to Use:** Just install and use.
 
-## Установка
+## Installation
 
 ```bash
 poetry add chutils
 ```
 
-Или с помощью pip:
+Or using pip:
 
 ```bash
 pip install chutils
 ```
 
-Для разработки клонируйте репозиторий и установите его в режиме редактирования:
+For development, clone the repository and install in editable mode:
 
 ```bash
 git clone https://github.com/Chu4hel/chutils.git
@@ -55,17 +56,16 @@ cd chutils
 pip install -e .
 ```
 
-## Примеры использования
+## Examples
 
-В папке [`/examples`](./examples/) вы найдете готовые к запуску скрипты, демонстрирующие ключевые возможности
-библиотеки. Каждый пример сфокусирован на одной конкретной задаче.
+In the [`/examples`](./examples/) folder, you will find ready-to-run scripts demonstrating the library's key features.
+Each example focuses on a specific task.
 
-## Быстрый старт
+## Quick Start
 
-### 1. Работа с конфигурацией
+### 1. Working with Configuration
 
-1. (Опционально) Создайте файл `config.yml` в корне вашего проекта. Если этого не сделать, библиотека будет использовать
-   настройки по умолчанию:
+1. (Optional) Create a `config.yml` file in your project root. If you skip this, the library will use defaults:
 
    ```yaml
    # config.yml
@@ -75,7 +75,7 @@ pip install -e .
      user: my_user
    ```
 
-2. Получайте значения в вашем коде:
+2. Get values in your code:
 
    ```python
    # main.py
@@ -84,22 +84,21 @@ pip install -e .
    db_host = get_config_value("Database", "host", fallback="127.0.0.1")
    db_port = get_config_int("Database", "port", fallback=5433)
 
-   print(f"Подключаемся к БД по адресу: {db_host}:{db_port}")
-   # Вывод: Подключаемся к БД по адресу: localhost:5432
+   print(f"Connecting to DB at: {db_host}:{db_port}")
+   # Output: Connecting to DB at: localhost:5432
    ```
-   `chutils` автоматически найдет `config.yml` и прочитает из него данные.
+   `chutils` will automatically find `config.yml` and read the data.
 
-   #### Переопределение конфигурации локальным файлом (`config.local.yml`)
+   #### Overriding Configuration with Local Files (`config.local.yml`)
 
-   Вы можете создать локальный файл конфигурации (например, `config.local.yml` или `config.local.ini`) рядом с основным
-   файлом (`config.yml` или `config.ini`). Значения из локального файла будут **переопределять** соответствующие
-   значения из основного файла. Это удобно для:
-    - Хранения чувствительных данных, которые не должны попадать в систему контроля версий (добавьте `config.local.yml`
-      в `.gitignore`).
-    - Переопределения настроек для локальной разработки без изменения основного файла.
+   You can create a local configuration file (e.g., `config.local.yml` or `config.local.ini`) next to your main file (
+   `config.yml` or `config.ini`). Values from the local file will **override** corresponding values from the main file.
+   This is useful for:
+    - Storing sensitive data that should not be committed to version control (add `config.local.yml` to `.gitignore`).
+    - Overriding settings for local development without changing the main file.
 
-   Пример:
-   Если `config.yml` содержит:
+   **Example:**
+   If `config.yml` contains:
    ```yaml
    # config.yml
    Database:
@@ -108,7 +107,7 @@ pip install -e .
    App:
      debug: false
    ```
-   А `config.local.yml` содержит:
+   And `config.local.yml` contains:
    ```yaml
    # config.local.yml
    Database:
@@ -117,21 +116,20 @@ pip install -e .
      debug: true
      developer_mode: true
    ```
-   Тогда `get_config()` вернет:
+   Then `get_config()` will return:
    ```yaml
    Database:
-     host: localhost # Переопределено локальным файлом
-     port: 5432      # Взято из основного файла
+     host: localhost # Overridden by local file
+     port: 5432      # From main file
    App:
-     debug: true         # Переопределено локальным файлом
-     developer_mode: true # Добавлено из локального файла
+     debug: true         # Overridden by local file
+     developer_mode: true # Added from local file
    ```
-   **Важно:** Убедитесь, что вы добавили `config.local.yml` (или `config.local.ini`) в ваш `.gitignore`, чтобы случайно
-   не закоммитить локальные или чувствительные настройки.
+   **Important:** Ensure you add `config.local.yml` (or `config.local.ini`) to your `.gitignore`.
 
-### 2. Настройка логирования
+### 2. Logging Setup
 
-1. Добавьте секцию `Logging` в ваш `config.yml` (опционально):
+1. Add a `Logging` section to your `config.yml` (optional):
 
    ```yaml
    # config.yml
@@ -140,60 +138,57 @@ pip install -e .
      log_file_name: my_app.log
    ```
 
-2. Используйте логгер:
+2. Use the logger:
 
    ```python
    # main.py
    from chutils import setup_logger, ChutilsLogger
 
-   # Настраиваем логгер. Он сам прочитает настройки из конфига.
+   # Configure logger. It automatically reads settings from config.
    logger: ChutilsLogger = setup_logger()
 
-   logger.info("Приложение запущено.")
-   logger.debug("Это отладочное сообщение.")
-   # Вывод в консоли и запись в файл logs/my_app.log
+   logger.info("Application started.")
+   logger.debug("This is a debug message.")
+   # Output to console and writes to file logs/my_app.log
    ```
-   Папка `logs` будет создана автоматически.
+   The `logs` folder will be created automatically.
 
-   Вы также можете указать имя файла лога напрямую при вызове `setup_logger`, переопределив значение из конфигурации:
+   You can also specify the log filename directly when calling `setup_logger`, overriding the config:
    ```python
    # main.py
    from chutils import setup_logger, ChutilsLogger
 
-   # Логгер будет писать в custom.log, игнорируя log_file_name из config.yml
+   # Logger will write to custom.log, ignoring log_file_name from config.yml
    logger: ChutilsLogger = setup_logger(log_file_name="custom.log")
 
-   logger.info("Сообщение в кастомном файле.")
+   logger.info("Message in a custom file.")
    ```
 
-   #### Создание нескольких логгеров
+   #### Creating Multiple Loggers
 
-   Вы можете создавать разные логгеры для разных частей вашего приложения, передавая уникальное имя в `setup_logger`.
-   Это
-   помогает фильтровать и разделять логи.
+   You can create different loggers for different parts of your application by passing a unique name to `setup_logger`.
+   This helps filter and separate logs.
 
    ```python
    # main.py
    from chutils import setup_logger
 
-   # Основной логгер приложения будет писать в main_app.log
+   # Main app logger will write to main_app.log
    main_logger = setup_logger("main_app", log_file_name="main_app.log")
-   # Логгер для модуля, отвечающего за работу с базой данных, будет писать в database.log
+   # Logger for the database module will write to database.log
    db_logger = setup_logger("database", log_file_name="database.log")
 
-   main_logger.info("Приложение запущено.")
-   db_logger.debug("Инициализация подключения к БД...")
+   main_logger.info("Application started.")
+   db_logger.debug("Initializing DB connection...")
    ```
-   В лог-файлах вы увидите сообщения от соответствующих логгеров.
-   Более подробный пример можно найти в [`/examples/05_different_log_levels.py`](./examples/05_different_log_levels.py).
+   See [`/examples/05_different_log_levels.py`](./examples/05_different_log_levels.py) for a detailed example.
 
-   #### Конфигурация нескольких логгеров через файл
+   #### Configuring Multiple Loggers via File
 
-   Вы можете централизованно управлять настройками разных логгеров, используя параметр `config_section_name`.
+   You can centrally manage settings for different loggers using the `config_section_name` parameter.
 
-    1. **Добавьте секции в `config.yml`**:
-       Секция `[Logging]` используется для настроек по умолчанию. Остальные секции можно использовать для специфичных
-       логгеров.
+    1. **Add sections to `config.yml`**:
+       The `[Logging]` section is used for defaults. Other sections can be used for specific loggers.
        ```yaml
        # config.yml
        Logging:
@@ -206,31 +201,31 @@ pip install -e .
          log_file_name: "audit.log"
        ```
 
-    2. **Используйте `config_section_name` в коде**:
+    2. **Use `config_section_name` in code**:
        ```python
        # main.py
        from chutils import setup_logger
  
-       # Этот логгер возьмет настройки из секции [Logging]
+       # This logger takes settings from [Logging]
        main_logger = setup_logger("main")
-       main_logger.info("Сообщение от основного логгера.")
+       main_logger.info("Message from main logger.")
  
-       # А этот логгер - из секции [AuditLogger], которая переопределит настройки из [Logging]
+       # This logger takes settings from [AuditLogger], overriding defaults
        audit_logger = setup_logger("audit", config_section_name="AuditLogger")
-       audit_logger.debug("Детальное сообщение для аудита.")
+       audit_logger.debug("Detailed audit message.")
        ```
 
-### 3. Управление секретами
+### 3. Secret Management
 
-`SecretManager` ищет секреты в следующем порядке:
+`SecretManager` looks for secrets in the following order:
 
-1. **Системное хранилище (`keyring`)**: Наиболее безопасный способ.
-2. **Файл `.env`**: Если секрет не найден в `keyring`, менеджер будет искать его в файле `.env` в корне вашего проекта.
-3. **Переменные окружения**: Если секрета нет и там, будет произведен поиск в переменных окружения ОС.
+1. **System Storage (`keyring`)**: The most secure method.
+2. **`.env` File**: If the secret is not found in `keyring`, the manager looks in the `.env` file in the project root.
+3. **Environment Variables**: If not found there either, it checks OS environment variables.
 
-#### Способ 1: Keyring (рекомендуемый)
+#### Method 1: Keyring (Recommended)
 
-1. Инициализируйте `SecretManager` и сохраните ваш секрет. **Это нужно сделать один раз.**
+1. Initialize `SecretManager` and save your secret. **Do this once.**
 
    ```python
    # setup_secrets.py
@@ -238,10 +233,10 @@ pip install -e .
 
    secrets = SecretManager("my_awesome_app")
    secrets.save_secret("DB_PASSWORD", "MySuperSecretDbPassword123!")
-   print("Пароль от БД сохранен в системном хранилище!")
+   print("DB password saved to system storage!")
    ```
 
-2. Получайте секрет в основном коде, не "светя" им:
+2. Retrieve the secret in your main code without exposing it:
 
    ```python
    # main.py
@@ -250,25 +245,25 @@ pip install -e .
    secrets = SecretManager("my_awesome_app")
    db_user = get_config_value("Database", "user")
 
-   # Получаем пароль из безопасного хранилища
+   # Get password from secure storage
    db_password = secrets.get_secret("DB_PASSWORD")
 
    if db_password:
-       print(f"Получен пароль для пользователя {db_user}.")
+       print(f"Password retrieved for user {db_user}.")
    else:
-       print("Пароль не найден!")
+       print("Password not found!")
    ```
 
-#### Способ 2: Файл .env (удобно для Docker и CI/CD)
+#### Method 2: .env File (Useful for Docker and CI/CD)
 
-1. Создайте файл `.env` в корне вашего проекта:
+1. Create a `.env` file in your project root:
    ```dotenv
    # .env
    DB_PASSWORD="AnotherSecretPassword"
    API_KEY="abcdef123456"
    ```
 
-2. `SecretManager` автоматически найдет этот файл и прочитает из него переменные, если не найдет их в `keyring`.
+2. `SecretManager` automatically finds this file and reads variables if not found in `keyring`.
 
    ```python
    # main.py
@@ -276,16 +271,16 @@ pip install -e .
 
    secrets = SecretManager("my_awesome_app")
 
-   # Этот секрет будет взят из .env, если его нет в keyring
+   # This secret will be taken from .env if not in keyring
    api_key = secrets.get_secret("API_KEY")
-   print(f"Найден API ключ: {api_key}")
+   print(f"Found API key: {api_key}")
    ```
 
-## Комплексный пример
+## Comprehensive Example
 
-Этот пример показывает, как все компоненты `chutils` работают вместе.
+This example shows how all `chutils` components work together.
 
-1. **Файл `config.yml`:**
+1. **`config.yml`:**
    ```yaml
    API:
      base_url: https://api.example.com
@@ -299,46 +294,46 @@ pip install -e .
      log_level: INFO
    ```
 
-2. **Код `main.py`:**
+2. **`main.py`:**
    ```python
    # main.py
    from chutils import get_config_value, setup_logger, SecretManager, ChutilsLogger
 
-   # 1. Настраиваем логгер. Он автоматически прочитает настройки из конфига.
+   # 1. Setup logger. It automatically reads settings from config.
    logger: ChutilsLogger = setup_logger()
 
-   # 2. Инициализируем менеджер секретов для нашего приложения.
+   # 2. Initialize secret manager for our app.
    secrets = SecretManager("my_awesome_app")
 
    def setup_credentials():
-       """Функция для первоначального сохранения пароля, если его нет."""
+       """Function to save password initially if missing."""
        db_user = get_config_value("Database", "user")
        password_key = f"{db_user}_password"
 
        if not secrets.get_secret(password_key):
-           logger.info("Пароль для БД не найден. Сохраняем новый...")
+           logger.info("DB password not found. Saving new one...")
            secrets.save_secret(password_key, "MySuperSecretDbPassword123!")
-           logger.info("Пароль для БД сохранен в системном хранилище.")
+           logger.info("DB password saved to system storage.")
 
    def connect_to_db():
-       """Пример подключения к БД с использованием конфига и секретов."""
+       """Example DB connection using config and secrets."""
        db_host = get_config_value("Database", "host")
        db_user = get_config_value("Database", "user")
        db_password = secrets.get_secret(f"{db_user}_password")
 
        if not db_password:
-           logger.error("Не удалось получить пароль для БД!")
+           logger.error("Failed to retrieve DB password!")
            return
 
-       logger.info(f"Подключаемся к {db_host} от имени {db_user}...")
-       # ... логика подключения ...
-       logger.info("Успешно подключились!")
+       logger.info(f"Connecting to {db_host} as {db_user}...")
+       # ... connection logic ...
+       logger.info("Connected successfully!")
 
    def main():
-       logger.info("Приложение запущено.")
+       logger.info("App started.")
        setup_credentials()
        connect_to_db()
-       logger.info("Приложение завершило работу.")
+       logger.info("App finished.")
 
    if __name__ == "__main__":
        main()
@@ -346,38 +341,37 @@ pip install -e .
 
 ## API
 
-### Работа с конфигурацией (`chutils.config`)
+### Configuration (`chutils.config`)
 
-- `get_config_value(section, key, fallback="")`: Получить значение.
-- `get_config_int(section, key, fallback=0)`: Получить целое число.
-- `get_config_boolean(section, key, fallback=False)`: Получить булево значение.
-- `get_config_list(section, key, fallback=[])`: Получить список.
-- `get_config_section(section)`: Получить всю секцию как словарь.
-- `save_config_value(section, key, value)`: Сохранить значение. Работает для `.yml` и `.ini`.
-  **Важно**: при сохранении в `.yml` комментарии и форматирование будут утеряны. При сохранении в `.ini` - сохраняются.
+- `get_config_value(section, key, fallback="")`: Get a value.
+- `get_config_int(section, key, fallback=0)`: Get an integer.
+- `get_config_boolean(section, key, fallback=False)`: Get a boolean.
+- `get_config_list(section, key, fallback=[])`: Get a list.
+- `get_config_section(section)`: Get the entire section as a dictionary.
+- `save_config_value(section, key, value)`: Save a value. Works for `.yml` and `.ini`.
+  **Note**: comments and formatting are lost when saving to `.yml`. They are preserved for `.ini`.
 
-### Настройка логирования (`chutils.logger`)
+### Logging (`chutils.logger`)
 
-- `setup_logger(name='app_logger', log_level_str='')`: Настраивает и возвращает экземпляр `ChutilsLogger`.
-- `logger.mediumdebug("message")`: Логирование с уровнем 15. Промежуточный уровень между `DEBUG` и `INFO`.
-- `logger.devdebug("message")`: Логирование с уровнем 9. Самый подробный уровень для глубокой отладки (например, для
-  вывода дампов переменных).
+- `setup_logger(name='app_logger', log_level_str='')`: Configures and returns a `ChutilsLogger` instance.
+- `logger.mediumdebug("message")`: Log with level 15.
+- `logger.devdebug("message")`: Log with level 9.
 
-### Управление секретами (`chutils.secret_manager`)
+### Secret Management (`chutils.secret_manager`)
 
-- `SecretManager(service_name, prefix="Chutils_")`: Создает менеджер, изолированный по имени сервиса.
-- `secrets.save_secret(key, value)`: Сохраняет секрет.
-- `secrets.get_secret(key)`: Получает секрет.
-- `secrets.delete_secret(key)`: Удаляет секрет.
+- `SecretManager(service_name, prefix="Chutils_")`: Creates a manager isolated by service name.
+- `secrets.save_secret(key, value)`: Saves a secret.
+- `secrets.get_secret(key)`: Retrieves a secret.
+- `secrets.delete_secret(key)`: Deletes a secret.
 
-### Декораторы (`chutils.decorators`)
+### Decorators (`chutils.decorators`)
 
-- `log_function_details`: Декоратор для логирования деталей вызова функции (аргументы, время выполнения, результат).
+- `log_function_details`: Decorator for logging function call details (arguments, execution time, result).
 
-### Ручная инициализация (`chutils.init`)
+### Manual Initialization (`chutils.init`)
 
-В 99% случаев вам это **не понадобится**. Но если автоматика не справилась, вы можете один раз указать путь к проекту
-вручную в самом начале работы приложения:
+In 99% of cases, you **will not need this**. But if automation fails, you can manually specify the project path once at
+the very beginning:
 
 ```python
 import chutils
@@ -385,19 +379,18 @@ import chutils
 chutils.init(base_dir="/path/to/my/project/root")
 ```
 
-### Особенности `secret_manager` (Keyring)
+### Note on `secret_manager` (Keyring)
 
-Модуль `SecretManager` использует библиотеку `keyring` для безопасного хранения секретов в системном хранилище.
+The `SecretManager` module uses the `keyring` library to securely store secrets in system storage.
 
-- На **Windows** и **macOS** это работает "из коробки".
-- **Требования для Linux**: На Linux для безопасной работы `keyring` требуется установленный и настроенный "бэкенд"
-  (хранилище секретов), например, `GNOME Keyring` (Seahorse) или `KWallet`. На серверах или минималистичных сборках его
-  может понадобиться установить вручную.
-  Подробнее — в [официальной документации `keyring`](https://keyring.readthedocs.io/en/latest/).
-- **Использование на мобильных ОС**: Этот модуль **не предназначен** для использования на мобильных операционных
-  системах (Android, iOS). `keyring` с высокой вероятностью не найдет системного хранилища и будет использовать
-  **незащищенный** способ хранения ваших секретов.
+- On **Windows** and **macOS**, this works "out of the box".
+- **Linux Requirements**: Secure `keyring` operation on Linux requires an installed and configured backend (secret
+  storage), such as `GNOME Keyring` (Seahorse) or `KWallet`. On servers or minimal builds, you may need to install this
+  manually.
+  See the [official `keyring` documentation](https://keyring.readthedocs.io/en/latest/) for details.
+- **Mobile OS**: This module is **not intended** for use on mobile operating systems (Android, iOS). `keyring` will
+  likely not find system storage and may use an **insecure** method to store your secrets.
 
-## Лицензия
+## License
 
-Проект распространяется под лицензией MIT.
+The project is distributed under the MIT License.

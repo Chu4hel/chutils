@@ -1,73 +1,70 @@
-# Как внести свой вклад в chutils
+[Русская версия](docs/CONTRIBUTING_RU.md)
 
-Мы рады, что вы хотите помочь проекту! Любой вклад очень ценен.
+# How to Contribute to chutils
 
-Этот документ содержит набор рекомендаций по участию в проекте `chutils`.
+We're excited that you want to help improve the project! Every contribution is highly valued.
 
-## Кодекс поведения
+This document provides a set of guidelines for contributing to `chutils`.
 
-Прежде всего, пожалуйста, ознакомьтесь с нашим [Кодексом поведения](./CODE_OF_CONDUCT.md). Мы ожидаем, что все участники
-будут ему следовать.
+## Code of Conduct
 
-## Как можно помочь?
+First and foremost, please review our [Code of Conduct](./CODE_OF_CONDUCT.md). We expect all participants to adhere to it.
 
-### Сообщения об ошибках
+## How Can You Help?
 
-- Убедитесь, что ошибка еще не была зарегистрирована, проверив
-  раздел [Issues](https://github.com/Chu4hel/chutils/issues).
-- Если вы не нашли похожей проблемы, создайте новый issue. Обязательно включите в него четкое название, описание, и,
-  если возможно, небольшой пример кода для воспроизведения ошибки.
+### Reporting Bugs
 
-### Предложения по улучшению
+- Ensure the bug hasn't already been reported by checking the [Issues](https://github.com/Chu4hel/chutils/issues) section.
+- If you don't find a similar issue, create a new one. Be sure to include a clear title, a detailed description, and, if possible, a small code sample to reproduce the error.
 
-- Создайте новый issue с вашим предложением. Подробно опишите, какую проблему решает ваше улучшение и как оно должно
-  работать.
+### Suggesting Enhancements
+
+- Create a new issue with your suggestion. Describe in detail the problem your enhancement solves and how it should work.
 
 ### Pull Requests
 
-Мы рады вашим pull request'ам! Вот как это сделать правильно:
+We welcome your pull requests! Here’s how to do it right:
 
-1. Сделайте форк репозитория.
-2. Создайте новую ветку для ваших изменений (`git checkout -b feature/amazing-feature`).
-3. Внесите изменения и напишите тесты для них, если это необходимо.
-4. Убедитесь, что все тесты проходят.
-5. Отправьте pull request в ветку `main` нашего репозитория.
+1.  Fork the repository.
+2.  Create a new branch for your changes (`git checkout -b feature/amazing-feature`).
+3.  Make your changes and write tests for them if necessary.
+4.  Ensure all tests pass.
+5.  Submit a pull request to the `main` branch of our repository.
 
-## Настройка окружения для разработки
+## Development Environment Setup
 
-1. Клонируйте ваш форк репозитория:
-   ```bash
-   git clone https://github.com/ВАШ_НИК/chutils.git
-   ```
+1.  Clone your forked repository:
+    ```bash
+    git clone https://github.com/YOUR_USERNAME/chutils.git
+    ```
 
-2. Перейдите в папку проекта:
-   ```bash
-   cd chutils
-   ```
+2.  Navigate to the project directory:
+    ```bash
+    cd chutils
+    ```
 
-3. Установите зависимости с помощью Poetry:
-   ```bash
-   poetry install
-   ```
+3.  Install dependencies using Poetry:
+    ```bash
+    poetry install
+    ```
 
-## Тестирование и документация
+## Testing and Documentation
 
-- **Запуск тестов**:
+- **Run tests**:
   ```bash
   poetry run pytest
   ```
 
-- **Просмотр документации локально**:
+- **View documentation locally**:
   ```bash
   poetry run mkdocs serve
   ```
 
-## Стиль кода и коммитов
+## Code and Commit Style
 
-- **Стиль кода**: Мы стараемся придерживаться стандартов PEP 8. Пожалуйста, убедитесь, что ваш код им соответствует.
-- **Docstrings**: Вся документация в коде пишется в **Google-стиле**. Пожалуйста, следуйте ему.
-- **Коммиты**: Мы используем [Conventional Commits](https://www.conventionalcommits.org/). Это помогает нам поддерживать
-  историю изменений чистой и понятной.
-  *Пример: `feat(config): добавить поддержку формата .toml` или `fix(logger): исправить ошибку ротации логов`*
+- **Code Style**: We adhere to the PEP 8 standard. Please ensure your code complies with it.
+- **Docstrings**: All docstrings are written in **Google style**. Please follow this convention.
+- **Commits**: We use [Conventional Commits](https://www.conventionalcommits.org/). This helps us maintain a clean and understandable change history.
+  *Example: `feat(config): add support for .toml format` or `fix(logger): correct log rotation error`*
 
-Спасибо за ваш вклад!
+Thank you for your contribution!
