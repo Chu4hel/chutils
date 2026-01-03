@@ -215,6 +215,8 @@ logging.setLoggerClass(ChutilsLogger)
 
 # Кэш для пути к директории логов. Изначально пуст.
 _LOG_DIR: Optional[str] = None
+# Кэш для файловых обработчиков, чтобы избежать конфликтов при ротации.
+_file_handler_cache: dict[str, logging.FileHandler] = {}
 # Флаг, чтобы сообщение об инициализации выводилось только один раз
 _initialization_message_shown = False
 
@@ -366,6 +368,12 @@ def setup_logger(
     if force_reconfigure:
         logging.debug("Принудительная перенастройка для '%s'. Удаление старых обработчиков...", name)
         for handler in logger.handlers[:]:
+            # Если это файловый обработчик, пытаемся удалить его из нашего кэша
+            if isinstance(handler, logging.FileHandler):
+                # Ключ в нашем кэше - это handler.baseFilename
+                if handler.baseFilename in _file_handler_cache:
+                    del _file_handler_cache[handler.baseFilename]
+                    logging.debug("Удален обработчик для %s из кэша.", handler.baseFilename)
             handler.close()
             logger.removeHandler(handler)
 
@@ -425,61 +433,77 @@ def setup_logger(
     if log_dir and final_log_file_name:
         log_file_path = Path(final_log_file_name) if Path(
             final_log_file_name).is_absolute() else Path(log_dir) / final_log_file_name
-        logging.debug("Попытка настроить файловый обработчик для %s в %s", name, log_file_path)
-        try:
-            file_handler: Optional[logging.FileHandler] = None
-            common_kwargs = {
-                'encoding': final_encoding,
-                'backupCount': final_backup_count,
-            }
-            common_kwargs.update(kwargs)
 
-            if final_rotation_type == 'size':
-                handler_class = CompressingRotatingFileHandler if final_compress else logging.handlers.RotatingFileHandler
-                rotation_kwargs = {'maxBytes': final_max_bytes}
-                final_kwargs = {**common_kwargs, **rotation_kwargs}
-                file_handler = handler_class(str(log_file_path), **final_kwargs)
-            else:  # 'time'
-                handler_class = CompressingTimedRotatingFileHandler if final_compress else SafeTimedRotatingFileHandler
+        log_file_path_str = str(log_file_path)
 
-                rotation_kwargs = {
-                    'when': final_when,
-                    'interval': final_interval,
-                    'utc': final_utc,
+        # Проверяем, есть ли уже обработчик для этого файла в кэше
+        if log_file_path_str in _file_handler_cache:
+            file_handler = _file_handler_cache[log_file_path_str]
+            logger.debug("Используется кэшированный файловый обработчик для %s", log_file_path_str)
+        else:
+            # Если обработчика нет, создаем новый и добавляем в кэш
+            logging.debug("Попытка настроить файловый обработчик для %s в %s", name, log_file_path)
+            try:
+                file_handler: Optional[logging.FileHandler] = None
+                common_kwargs = {
+                    'encoding': final_encoding,
+                    'backupCount': final_backup_count,
                 }
-                # `at_time` может быть строкой из конфига, нужно преобразовать
-                if isinstance(final_at_time, str):
-                    try:
-                        final_at_time = datetime.time.fromisoformat(final_at_time)
-                    except (TypeError, ValueError):
-                        logger.error(
-                            "Неверный формат времени '%s' для 'at_time' в конфиге. Используется None.", final_at_time)
-                        final_at_time = None
+                common_kwargs.update(kwargs)
 
-                if final_at_time is not None:
-                    rotation_kwargs['atTime'] = final_at_time
+                if final_rotation_type == 'size':
+                    handler_class = CompressingRotatingFileHandler if final_compress else logging.handlers.RotatingFileHandler
+                    rotation_kwargs = {'maxBytes': final_max_bytes}
+                    final_kwargs = {**common_kwargs, **rotation_kwargs}
+                    file_handler = handler_class(log_file_path_str, **final_kwargs)
+                else:  # 'time'
+                    handler_class = CompressingTimedRotatingFileHandler if final_compress else SafeTimedRotatingFileHandler
 
-                final_kwargs = {**common_kwargs, **rotation_kwargs}
+                    rotation_kwargs = {
+                        'when': final_when,
+                        'interval': final_interval,
+                        'utc': final_utc,
+                    }
+                    # `at_time` может быть строкой из конфига, нужно преобразовать
+                    if isinstance(final_at_time, str):
+                        try:
+                            final_at_time = datetime.time.fromisoformat(final_at_time)
+                        except (TypeError, ValueError):
+                            logger.error(
+                                "Неверный формат времени '%s' для 'at_time' в конфиге. Используется None.",
+                                final_at_time)
+                            final_at_time = None
 
-                file_handler = handler_class(str(log_file_path), **final_kwargs)
+                    if final_at_time is not None:
+                        rotation_kwargs['atTime'] = final_at_time
 
-            if file_handler:
-                file_handler.setFormatter(formatter)
-                logger.addHandler(file_handler)
+                    final_kwargs = {**common_kwargs, **rotation_kwargs}
 
-                if not _initialization_message_shown:
-                    info_msg = "."
-                    if final_rotation_type == 'time':
-                        info_msg = f", интервал: {final_interval}{final_when}"
-                    else:
-                        info_msg = f", макс. размер: {final_max_bytes}"
-                    logger.debug(
-                        "Логирование настроено. Уровень: %s. Файл: %s, ротация: %s, сжатие: %s%s",
-                        log_level_enum.value, log_file_path, final_rotation_type, final_compress, info_msg
-                    )
-                    _initialization_message_shown = True
-        except Exception as e:
-            logger.error("Не удалось настроить файловый обработчик логов для %s: %s", log_file_path, e)
+                    file_handler = handler_class(log_file_path_str, **final_kwargs)
+
+                if file_handler:
+                    file_handler.setFormatter(formatter)
+                    # Добавляем новый обработчик в кэш
+                    _file_handler_cache[log_file_path_str] = file_handler
+                    logger.debug("Новый файловый обработчик для %s добавлен в кэш.", log_file_path_str)
+
+                    if not _initialization_message_shown:
+                        info_msg = "."
+                        if final_rotation_type == 'time':
+                            info_msg = f", интервал: {final_interval}{final_when}"
+                        else:
+                            info_msg = f", макс. размер: {final_max_bytes}"
+                        logger.debug(
+                            "Логирование настроено. Уровень: %s. Файл: %s, ротация: %s, сжатие: %s%s",
+                            log_level_enum.value, log_file_path, final_rotation_type, final_compress, info_msg
+                        )
+                        _initialization_message_shown = True
+            except Exception as e:
+                logger.error("Не удалось настроить файловый обработчик логов для %s: %s", log_file_path, e)
+                file_handler = None
+
+        if file_handler:
+            logger.addHandler(file_handler)
     elif not _initialization_message_shown:
         logger.warning("Директория для логов не настроена. Файловое логирование отключено.")
         _initialization_message_shown = True
