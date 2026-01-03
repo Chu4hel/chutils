@@ -69,7 +69,8 @@ def _initialize_paths():
         return
 
     # Приоритет поиска: сначала YAML, потом INI, потом общий маркер проекта.
-    markers = ['config.yml', 'config.yaml', 'config.ini', 'config.local.yml', 'config.local.yaml', 'config.local.ini', 'pyproject.toml']
+    markers = ['config.yml', 'config.yaml', 'config.ini', 'config.local.yml', 'config.local.yaml', 'config.local.ini',
+               'pyproject.toml']
     project_root = find_project_root(Path.cwd(), markers)
 
     if project_root:
@@ -192,7 +193,7 @@ def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
         current_level = nested_dict
         parts = section_key.split('.')
         for i, part in enumerate(parts):
-            if i == len(parts) - 1: # Последняя часть - это название секции
+            if i == len(parts) - 1:  # Последняя часть - это название секции
                 current_level[part] = section_values
             else:
                 current_level = current_level.setdefault(part, {})
@@ -224,7 +225,7 @@ def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
         current_level = nested_dict
         parts = section_key.split('.')
         for i, part in enumerate(parts):
-            if i == len(parts) - 1: # Последняя часть - это название секции
+            if i == len(parts) - 1:  # Последняя часть - это название секции
                 current_level[part] = section_values
             else:
                 current_level = current_level.setdefault(part, {})
@@ -342,7 +343,8 @@ def save_config_value(
                     new_lines.append(new_line_content)
                     key_found_in_section = True
                     updated = True
-                    logger.debug("Ключ '%s' в секции '[%s]' будет обновлен на '%s' в файле %s", key, section, value, path)
+                    logger.debug("Ключ '%s' в секции '[%s]' будет обновлен на '%s' в файле %s", key, section, value,
+                                 path)
                     continue
 
             new_lines.append(line)
