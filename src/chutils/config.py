@@ -546,3 +546,39 @@ def get_config_section(
     if config is None:
         config = get_config()
     return config.get(section_name, fallback if fallback is not None else {})
+
+
+def get_config_path(
+        section: str,
+        key: str,
+        fallback: Optional[str] = None,
+        config: Optional[Dict] = None,
+        resolve_from_root: bool = True
+) -> Optional[str]:
+    """
+    Получает путь из конфигурации.
+    Функция автоматически добавляет _BASE_DIR к относительным путям,
+    если resolve_from_root установлено в True.
+    Args:
+        section: Имя секции.
+        key: Имя ключа.
+        fallback: Значение по умолчанию, если ключ не найден.
+        config: Опциональный, предварительно загруженный словарь конфигурации.
+        resolve_from_root: Если True, относительные пути будут разрешаться
+            относительно _BASE_DIR. Если False, пути возвращаются как есть,
+            без добавления _BASE_DIR.
+    Returns:
+        Путь из конфигурации или `fallback`.
+    """
+    path_str = get_config_value(section, key, fallback, config)
+
+    if not path_str:
+        return fallback
+
+    path_obj = Path(path_str)
+
+    # Если путь относительный, _BASE_DIR определен и resolve_from_root включен, объединяем их
+    if resolve_from_root and not path_obj.is_absolute() and _BASE_DIR:
+        return str(Path(_BASE_DIR) / path_obj)
+
+    return path_str
