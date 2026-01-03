@@ -235,7 +235,8 @@ def save_config_value(
         section: str,
         key: str,
         value: Any,
-        cfg_file: Optional[str] = None
+        cfg_file: Optional[str] = None,
+        save_to_local: bool = False
 ) -> bool:
     """
     Сохраняет одно значение в конфигурационном файле.
@@ -248,8 +249,11 @@ def save_config_value(
         section: Имя секции.
         key: Имя ключа в секции.
         value: Новое значение для ключа.
-        cfg_file: Опциональный путь к файлу. Если не указан, будет
-            использован автоматически найденный файл.
+        cfg_file: Опциональный путь к файлу для сохранения. Если указан,
+            имеет приоритет над `save_to_local`.
+        save_to_local: Если True, и существует локальный файл конфигурации
+            (например, `config.local.yml`), значение будет сохранено в него.
+            По умолчанию False.
 
     Returns:
         True: Если значение было успешно обновлено и сохранено.
@@ -257,12 +261,18 @@ def save_config_value(
     """
     global _config_object, _config_loaded
 
-    # Если cfg_file передан, используем его, иначе берем основной путь
+    path: Optional[str] = None
+
+    # Явный путь в cfg_file имеет высший приоритет
     if cfg_file:
         path = cfg_file
     else:
-        main_path, _ = _get_config_paths()
-        path = main_path
+        main_path, local_path = _get_config_paths()
+        if save_to_local and local_path:
+            path = local_path
+            logger.debug("Для сохранения выбран локальный файл конфигурации: %s", path)
+        else:
+            path = main_path
 
     if path is None:
         logger.error("Невозможно сохранить значение: путь к файлу конфигурации не определен.")
