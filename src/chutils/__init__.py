@@ -7,7 +7,8 @@
 Ключевые особенности:
 - Автоматическое обнаружение корня проекта и файла конфигурации.
 - Поддержка форматов `config.yml`, `config.yaml` и `config.ini` (YAML в приоритете).
-- Удобные функции для доступа к настройкам.
+- Удобные функции для доступа к настройкам, включая разрешение путей.
+- Асинхронные версии основных функций для неблокирующей работы.
 - Готовый к работе логгер с выводом в консоль и ротируемые файлы.
 - Безопасное хранение секретов через системное хранилище (keyring).
 
@@ -46,7 +47,10 @@ from .config import (
     get_config_float,
     get_config_boolean,
     get_config_list,
-    get_config_section
+    get_config_section,
+    get_config_path,
+    aget_config,
+    asave_config_value
 )
 from .logger import setup_logger, ChutilsLogger, SafeTimedRotatingFileHandler
 from .secret_manager import SecretManager
@@ -93,6 +97,9 @@ __all__ = [
     'get_config_boolean',
     'get_config_list',
     'get_config_section',
+    'get_config_path',
+    'aget_config',
+    'asave_config_value',
 
     # Функции и классы из модуля logger
     'setup_logger',
