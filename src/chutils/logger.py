@@ -349,16 +349,14 @@ def setup_logger(
         level_val = final_logger_settings.get('log_level', 'INFO')
         final_log_level_str = str(level_val).upper()
 
-    try:
-        log_level_enum = LogLevel(final_log_level_str)
-        level_int = getattr(logging, log_level_enum.value, logging.INFO)
-    except ValueError:
-        log_level_enum = LogLevel.INFO
+    level_int = logging.getLevelName(final_log_level_str)
+    if not isinstance(level_int, int):
+        logger.warning("Неизвестный уровень логирования: '%s'. Используется INFO.", final_log_level_str)
         level_int = logging.INFO
 
     logger.setLevel(level_int)
     logger.propagate = False
-    logging.debug("Уровень логирования для '%s' установлен на: %s (%s)", name, log_level_enum.value, level_int)
+    logging.debug("Уровень логирования для '%s' установлен на: %s (%s)", name, final_log_level_str, level_int)
 
     # --- Настройка обработчиков (только при необходимости) ---
     if logger.hasHandlers() and not force_reconfigure:
@@ -428,6 +426,7 @@ def setup_logger(
 
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
+    console_handler.setLevel(level_int)
     logger.addHandler(console_handler)
 
     if log_dir and final_log_file_name:
@@ -495,7 +494,7 @@ def setup_logger(
                             info_msg = f", макс. размер: {final_max_bytes}"
                         logger.debug(
                             "Логирование настроено. Уровень: %s. Файл: %s, ротация: %s, сжатие: %s%s",
-                            log_level_enum.value, log_file_path, final_rotation_type, final_compress, info_msg
+                            final_log_level_str, log_file_path, final_rotation_type, final_compress, info_msg
                         )
                         _initialization_message_shown = True
             except Exception as e:
