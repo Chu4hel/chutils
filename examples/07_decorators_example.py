@@ -13,9 +13,10 @@ def main():
     """
     Основная функция, демонстрирующая работу декоратора.
     """
-    # 1. Настраиваем логгер для всего пакета chutils.
-    # Это позволит дочернему логгеру 'chutils.decorators' унаследовать уровень.
-    logger: ChutilsLogger = setup_logger(name="chutils", log_level="DEVDEBUG")
+    # 1. Настраиваем логгер.
+    # Чтобы видеть вывод от декоратора, уровень лога должен быть DEVDEBUG.
+    # В этом примере мы не используем config.yml, а задаем уровень явно.
+    logger: ChutilsLogger = setup_logger(log_level="DEVDEBUG")
 
     logger.info("Логгер настроен. Сейчас будет вызвана декорированная функция.")
 

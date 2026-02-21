@@ -42,13 +42,13 @@ Secrets:
 # Новая секция для логгера аудита. Вызывается через setup_logger(..., config_section_name="AuditLogger")
 # Настройки из этой секции переопределяют аналогичные из секции [Logging].
 AuditLogger:
-  log_level: INFO
+  log_level: DEBUG
   log_file_name: "audit.log"
   log_backup_count: 10 # Переопределяет значение 5 из [Logging]
 
 # Еще одна секция для другого логгера
 EventLogger:
-  log_level: WARNING
+  log_level: INFO
   log_file_name: "events.log"
   rotation_type: time
   when: D # Ежедневная ротация
