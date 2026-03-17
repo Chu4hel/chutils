@@ -1,7 +1,7 @@
+import asyncio
 import logging
 import os
 from typing import Optional, Dict
-import asyncio
 
 import keyring
 from dotenv import load_dotenv
@@ -103,7 +103,10 @@ class SecretManager:
             )
 
         self.service_name: str = final_prefix + final_service_name
-        _get_logger().devdebug("Менеджер секретов инициализирован для сервиса: '%s'", self.service_name)
+        self.disable_keyring: bool = config.get_config_boolean('secrets', 'disable_keyring', fallback=False)
+
+        _get_logger().devdebug("Менеджер секретов инициализирован для сервиса: '%s' (disable_keyring=%s)",
+                               self.service_name, self.disable_keyring)
 
     def save_secret(self, key: str, value: str) -> bool:
         """
@@ -118,6 +121,12 @@ class SecretManager:
             True, если секрет успешно сохранен в keyring.
             False, если произошла ошибка.
         """
+        if self.disable_keyring:
+            _get_logger().devdebug(
+                "Keyring отключен в настройках. Секрет '%s' не будет сохранен в системное хранилище.",
+                key)
+            return False
+
         try:
             keyring.set_password(self.service_name, key, value)
             _get_logger().devdebug("Секрет для ключа '%s' успешно сохранен в keyring.", key)
@@ -159,16 +168,20 @@ class SecretManager:
             Найденное значение или None.
         """
         # 1. Попытка получить из keyring
-        try:
-            value = keyring.get_password(self.service_name, key)
-            if value is not None:
-                _get_logger().devdebug("Секрет для ключа '%s' получен из keyring.", key)
-                return value
-        except NoKeyringError:
-            _get_logger().warning(
-                "Keyring не доступен. Поиск секрета будет выполнен только в .env и переменных окружения.")
-        except Exception as e:
-            _get_logger().error("Произошла непредвиденная ошибка при получении секрета из keyring: %s", e)
+        if not self.disable_keyring:
+            try:
+                value = keyring.get_password(self.service_name, key)
+                if value is not None:
+                    _get_logger().devdebug("Секрет для ключа '%s' получен из keyring.", key)
+                    return value
+            except NoKeyringError:
+                _get_logger().warning(
+                    "Keyring не доступен. Поиск секрета будет выполнен только в .env и переменных окружения.")
+            except Exception as e:
+                _get_logger().error("Произошла непредвиденная ошибка при получении секрета из keyring: %s", e)
+        else:
+            _get_logger().devdebug("Keyring отключен в настройках. Поиск секрета '%s' в системном хранилище пропущен.",
+                                   key)
 
         # 2. Если в keyring нет, ищем в .env / переменных окружения
         _get_logger().devdebug("Секрет для ключа '%s' не найден в keyring, поиск в .env/переменных окружения...", key)
@@ -207,6 +220,12 @@ class SecretManager:
             True, если секрет был удален или уже не существовал.
             False, если произошла ошибка при удалении.
         """
+        if self.disable_keyring:
+            _get_logger().devdebug(
+                "Keyring отключен в настройках. Удаление секрета '%s' из системного хранилища пропущено.",
+                key)
+            return True
+
         try:
             # Проверяем только keyring, так как удаляем только оттуда
             if keyring.get_password(self.service_name, key) is None:
