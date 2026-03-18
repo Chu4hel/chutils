@@ -1,39 +1,40 @@
 """
-Пример 7: Использование декоратора log_function_details
+Пример 7: Использование декоратора логирования функций.
 
-Этот пример показывает, как использовать декоратор `@log_function_details`
-для автоматического логирования вызовов функций.
+Демонстрирует, как автоматически логировать аргументы, время выполнения
+и результат функции с помощью @log_function_details.
+Это избавляет от необходимости писать print() или logger.info() вручную в каждой функции.
 """
 
 from chutils.decorators import log_function_details
-from chutils.logger import setup_logger, ChutilsLogger
-
-
-def main():
-    """
-    Основная функция, демонстрирующая работу декоратора.
-    """
-    # 1. Настраиваем логгер.
-    # Чтобы видеть вывод от декоратора, уровень лога должен быть DEVDEBUG.
-    # В этом примере мы не используем config.yml, а задаем уровень явно.
-    logger: ChutilsLogger = setup_logger(log_level="DEVDEBUG")
-
-    logger.info("Логгер настроен. Сейчас будет вызвана декорированная функция.")
-
-    # 2. Вызываем функцию, обернутую декоратором.
-    result = decorated_sum(5, 10, option="fast")
-
-    logger.info(f"Декорированная функция вернула результат: {result}")
-    logger.info("Проверьте логи выше, чтобы увидеть детальную информацию от декоратора.")
+from chutils.logger import setup_logger, ChutilsLogger, LogLevel
 
 
 @log_function_details
-def decorated_sum(a: int, b: int, option: str = "default"):
+def calculate_complex_logic(a: int, b: int, factor: float = 1.0) -> float:
+    """Функция, детали вызова которой мы хотим видеть в логах."""
+    import time
+    time.sleep(0.1)  # Имитация работы
+    return (a + b) * factor
+
+
+def main() -> None:
     """
-    Простая функция, которая суммирует два числа.
-    Она обернута декоратором для логирования.
+    Настраивает логгер и вызывает декорированную функцию.
     """
-    return a + b
+    # ВНИМАНИЕ: Декоратор логирует на уровне DEVDEBUG.
+    # Чтобы увидеть вывод, установите соответствующий уровень логгера.
+    logger: ChutilsLogger = setup_logger("decorator_demo", log_level=LogLevel.DEVDEBUG)
+
+    logger.info("--- Вызов декорированной функции ---")
+
+    # При вызове в консоли (и файле) появится:
+    # 1. Какие аргументы были переданы.
+    # 2. Сколько времени заняло выполнение.
+    # 3. Что функция вернула в итоге.
+    result: float = calculate_complex_logic(10, 20, factor=1.5)
+
+    logger.info("Результат в основном коде: %.2f", result)
 
 
 if __name__ == "__main__":

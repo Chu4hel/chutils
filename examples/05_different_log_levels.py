@@ -1,40 +1,50 @@
-# examples/05_different_log_levels.py
-from chutils.logger import setup_logger, ChutilsLogger
+"""
+Пример 5: Различные уровни логирования для разных модулей.
 
-# Представим, что у нас есть приложение с двумя модулями: "core" и "utils".
-# Мы хотим видеть подробные отладочные сообщения от нашего "core" модуля,
-# но для "utils" нас интересуют только предупреждения и ошибки.
-# Также мы хотим, чтобы каждый модуль писал в свой отдельный файл логов.
+Демонстрирует сценарий, когда в одном приложении нужно видеть подробную отладку
+от одного модуля ('core') и только критические ошибки от другого ('utils').
+Каждый модуль при этом может писать в свой собственный файл.
+"""
 
-# 1. Настраиваем логгер для модуля "core" с уровнем DEVDEBUG и своим файлом.
-core_logger: ChutilsLogger = setup_logger("core_module", log_level_str='DEVDEBUG', log_file_name="core_module.log")
+from chutils.logger import setup_logger, ChutilsLogger, LogLevel
 
-# 2. Настраиваем логгер для модуля "utils" с уровнем WARNING и своим файлом.
-utils_logger: ChutilsLogger = setup_logger("utils_module", log_level_str='WARNING', log_file_name="utils_module.log")
 
-# 3. Настроим основной логгер приложения.
-#    Если уровень и имя файла не указать явно, они будут взяты из config.yml.
-#    В файле examples/config.yml установлен уровень DEBUG и log_file_name: "app.log".
-app_logger: ChutilsLogger = setup_logger("main_app")
+def main() -> None:
+    """
+    Создает логгеры с индивидуальными настройками уровней и файлов.
+    """
+    # 1. Модуль 'Core' - здесь нам важна каждая деталь (уровень DEVDEBUG)
+    core_logger: ChutilsLogger = setup_logger(
+        "core",
+        log_level=LogLevel.DEVDEBUG,
+        log_file_name="core_debug.log"
+    )
 
-print("--- Начало демонстрации логирования ---")
+    # 2. Модуль 'Utils' - вспомогательный код, смотрим только ошибки (уровень WARNING)
+    utils_logger: ChutilsLogger = setup_logger(
+        "utils",
+        log_level=LogLevel.WARNING,
+        log_file_name="utils_errors.log"
+    )
 
-# Логируем сообщения из разных "модулей"
-app_logger.info("Приложение запущено.")
-app_logger.debug("Это debug-сообщение от app_logger. Оно будет показано, т.к. в config.yml стоит уровень DEBUG.")
+    # 3. Основной логгер (настройки по умолчанию из config.yml)
+    app_logger: ChutilsLogger = setup_logger("app")
 
-core_logger.info("Core-модуль начинает работу...")
-core_logger.devdebug("Это детальное сообщение от core_logger, оно должно появиться.")
-core_logger.mediumdebug("Сообщение средней детализации от core_logger.")
+    print("--- Демонстрация разделения уровней ---")
 
-utils_logger.info("Это информационное сообщение от utils_logger, оно будет скрыто.")
-utils_logger.warning("А вот это предупреждение от utils_logger мы увидим.")
+    app_logger.info("Приложение запущено.")
 
-app_logger.info("Приложение завершает работу.")
+    # Это сообщение МЫ УВИДИМ, т.к. уровень DEVDEBUG позволяет всё
+    core_logger.devdebug("Ядро системы: проверка внутренних ресурсов...")
 
-print("\n--- Конец демонстрации ---")
-print("Проверьте вывод в консоли. Вы должны увидеть все сообщения от 'main_app' и 'core_module' (включая debug),")
-print("а также предупреждение от 'utils_module', но не информационные сообщения от него.")
-print(
-    "\nТакже проверьте папку 'logs' в корне проекта. Там должны появиться файлы 'app.log', 'core_module.log' и 'utils_module.log'.")
-print("Содержимое этих файлов будет соответствовать сообщениям, отправленным в соответствующие логгеры.")
+    # Это сообщение МЫ НЕ УВИДИМ в консоли/файле, т.к. уровень логгера WARNING
+    utils_logger.info("Утилита: выполнение фоновой задачи (сообщение INFO)")
+
+    # Это сообщение МЫ УВИДИМ
+    utils_logger.error("Утилита: обнаружен сбой при доступе к ресурсу!")
+
+    app_logger.info("Приложение завершило работу. Проверьте файлы в папке logs/.")
+
+
+if __name__ == "__main__":
+    main()

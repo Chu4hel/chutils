@@ -1,4 +1,9 @@
-# examples/03_secrets.py
+"""
+Пример 3: Безопасное управление секретами.
+
+Демонстрирует работу SecretManager: сохранение и получение секретов из
+системного хранилища (keyring) и файлов .env с учетом приоритетов.
+"""
 import os
 
 from chutils import SecretManager
@@ -8,46 +13,47 @@ from chutils import SecretManager
 if "API_KEY_FROM_ENV" in os.environ:
     del os.environ["API_KEY_FROM_ENV"]
 
-# 1. Инициализируем менеджер секретов.
-# Имя сервиса "chutils_example_app" будет автоматически взято
-# из файла config.yml (секция Secrets -> service_name).
-secrets = SecretManager()
 
-# --- Демонстрация приоритета ---
+def main() -> None:
+    """
+    Демонстрирует способы хранения секретов и их приоритеты.
+    """
+    # Инициализация. Имя сервиса берется из config.yml (Secrets -> service_name).
+    secrets = SecretManager()
 
-print("--- 1. Поиск секрета, который есть только в keyring ---")
-keyring_key = "my_keyring_secret"
-secrets.save_secret(keyring_key, "value_from_keyring")
-print(f"  -> Результат для '{keyring_key}': {secrets.get_secret(keyring_key)}")
-secrets.delete_secret(keyring_key)  # Очистка
-print("-" * 20)
+    print("--- 1. Системное хранилище (Keyring) ---")
+    # Этот метод сохраняет данные в безопасное хранилище ОС (Windows Credential Manager, и т.д.)
+    db_key = "example_db_password"
+    secrets.save_secret(db_key, "ValueFromKeyring_123")
 
-print("\n--- 2. Поиск секрета, который есть только в .env файле ---")
+    val: str = secrets.get_secret(db_key)
+    print(f"Получен секрет из Keyring: {val}")
 
-# Для этого теста убедитесь, что в папке `examples` есть файл `.env`
-# с содержимым: DOTENV_SECRET="value_from_dotenv_file"
+    print("\n--- 2. Использование .env файла ---")
+    # SecretManager автоматически загружает .env из корня проекта.
+    # Добавьте в ваш .env файл: DOTENV_SECRET="ValueFromDotEnv_456"
+    # Это удобно для Docker-контейнеров или CI/CD.
+    dotenv_val: str = secrets.get_secret("DOTENV_SECRET")
+    if dotenv_val:
+        print(f"Получен секрет из .env: {dotenv_val}")
+    else:
+        print("Секрет DOTENV_SECRET не найден в .env. (Проверьте наличие файла .env)")
 
-dotenv_key = "DOTENV_SECRET"
+    print("\n--- 3. Демонстрация приоритетов ---")
+    # Если секрет существует в обоих местах, Keyring всегда побеждает.
+    # Добавим в Keyring ключ, который (предположим) уже есть в .env
+    shared_key = "SHARED_KEY"
+    secrets.save_secret(shared_key, "I_AM_FROM_KEYRING")
 
-print(f"  -> Результат для '{dotenv_key}': {secrets.get_secret(dotenv_key)}")
-print("-" * 20)
-print("\n--- 3. Поиск секрета, который есть и в keyring, и в .env ---")
+    # Предположим, в .env написано: SHARED_KEY="I_AM_FROM_DOTENV"
+    result: str = secrets.get_secret(shared_key)
+    print(f"Поиск ключа '{shared_key}': {result}")
+    print("Результат: Keyring имеет высший приоритет над .env и переменными окружения.")
 
-shared_key = "SHARED_KEY"
+    # Очистка для чистоты следующих запусков
+    secrets.delete_secret(db_key)
+    secrets.delete_secret(shared_key)
 
-# Сохраняем значение в keyring
-secrets.save_secret(shared_key, "value_from_keyring_wins")
 
-# Для этого теста убедитесь, что в папке `examples` есть файл `.env`
-# с содержимым: SHARED_KEY="value_from_dotenv_loses"
-
-print(f"  -> Результат для '{shared_key}': {secrets.get_secret(shared_key)} (keyring имеет приоритет)")
-
-secrets.delete_secret(shared_key)  # Очистка
-
-print("-" * 20)
-
-print("\n--- 4. Поиск несуществующего секрета ---")
-non_existent_key = "I_DO_NOT_EXIST"
-print(f"  -> Результат для '{non_existent_key}': {secrets.get_secret(non_existent_key)}")
-print("-" * 20)
+if __name__ == "__main__":
+    main()

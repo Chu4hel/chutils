@@ -1,36 +1,33 @@
 """
-Пример 8: Использование и настройка нескольких логгеров
+Пример 8: Настройка нескольких независимых логгеров.
 
-Этот пример показывает, как централизованно настраивать разные логгеры
-через один конфигурационный файл (`config.yml`).
+Этот пример показывает, как настроить несколько логгеров с разными 
+параметрами (уровни, файлы, типы ротации), используя разные секции в config.yml.
 """
 
-from chutils.logger import setup_logger
+from chutils.logger import setup_logger, ChutilsLogger
 
 
-# Важно: chutils автоматически найдет файл config.yml в этой же директории
-# или в корне проекта. В данном случае будет использован config.yml из папки examples.
-
-def main():
+def main() -> None:
     """
-    Создает и использует три разных логгера с разными настройками.
+    Создает логгеры, обращаясь к разным секциям конфигурационного файла.
     """
-    # 1. Логгер с настройками по умолчанию из секции [Logging]
-    # Так как config_section_name не указан, используется только [Logging].
-    # Его уровень будет DEBUG (из файла), поэтому INFO сообщение пройдет.
-    main_logger = setup_logger("main")
-    main_logger.info("Сообщение от основного логгера.")
+    # 1. Логгер 'main' - использует стандартную секцию [Logging] из config.yml.
+    main_logger: ChutilsLogger = setup_logger("main")
+    main_logger.info("Это сообщение от ОСНОВНОГО логгера.")
 
-    # 2. Логгер аудита со специфичными настройками
-    # Явно указываем, что нужно прочитать секцию [AuditLogger].
-    # Уровень DEBUG будет взят из этой секции.
-    audit_logger = setup_logger("audit", config_section_name="AuditLogger")
-    audit_logger.debug("Детальное сообщение для аудита.")
+    # 2. Логгер 'audit' - использует настройки из секции [AuditLogger].
+    # Там может быть указан другой файл (например, 'audit.log') и другой уровень.
+    audit_logger: ChutilsLogger = setup_logger("audit", config_section_name="AuditLogger")
+    audit_logger.debug("Это DEBUG-сообщение от логгера АУДИТА.")
 
-    # 3. Логгер событий со своими настройками
-    # Уровень INFO будет взят из этой секции, а тип ротации - 'time' - унаследован из [Logging].
-    event_logger = setup_logger("events", config_section_name="EventLogger")
-    event_logger.info("Логгер событий использует ротацию по времени.")
+    # 3. Логгер 'events' - использует секцию [EventLogger].
+    # В примере config.yml для него настроена ротация по времени, а не по размеру.
+    event_logger: ChutilsLogger = setup_logger("events", config_section_name="EventLogger")
+    event_logger.info("Логгер СОБЫТИЙ работает (настроен через EventLogger).")
+
+    print("\n[OK] Логирование выполнено в разные потоки.")
+    print("Загляните в папку 'logs/', чтобы увидеть раздельные файлы для каждого логгера.")
 
 
 if __name__ == "__main__":
