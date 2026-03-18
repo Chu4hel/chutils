@@ -22,6 +22,7 @@ theme:
 
 nav:
   - Главная: index.md
+  - Рецепты: recipes.md
   - Справочник API: api.md
 
 plugins:
