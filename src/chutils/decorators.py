@@ -1,19 +1,21 @@
 import functools
-import logging
 import time
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .logger import ChutilsLogger
 
 # Ленивая инициализация логгера
-_module_logger: Optional[logging.Logger] = None
+_module_logger: Optional['ChutilsLogger'] = None
 
 
-def _get_logger() -> logging.Logger:
+def _get_logger() -> 'ChutilsLogger':
     """Получает лениво инициализированный логгер модуля."""
     global _module_logger
     if _module_logger is None:
         from . import logger as chutils_logger
         _module_logger = chutils_logger.setup_logger(__name__)
-    return _module_logger
+    return _module_logger  # type: ignore
 
 
 def log_function_details(func):
@@ -49,7 +51,7 @@ def log_function_details(func):
         end_time = time.perf_counter()
         run_time = end_time - start_time
         _get_logger().devdebug("Функция %s() завершилась за %.4f с. Возвращаемое значение: %s",
-                             func.__name__, run_time, result)
+                               func.__name__, run_time, result)
         return result
 
     return wrapper

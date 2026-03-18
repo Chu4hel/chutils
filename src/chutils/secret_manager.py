@@ -1,7 +1,6 @@
 import asyncio
-import logging
 import os
-from typing import Optional, Dict
+from typing import Optional, Dict, TYPE_CHECKING
 
 import keyring
 from dotenv import load_dotenv
@@ -9,21 +8,24 @@ from keyring.errors import NoKeyringError, PasswordDeleteError
 
 from . import config
 
+if TYPE_CHECKING:
+    from .logger import ChutilsLogger
+
 # Ленивая инициализация логгера
-_module_logger: Optional[logging.Logger] = None
+_module_logger: Optional['ChutilsLogger'] = None
 
 # Глобальный кэш для переменных из .env и флаг, что они загружены
 _dotenv_values: Optional[Dict[str, str]] = None
 _dotenv_loaded = False
 
 
-def _get_logger() -> logging.Logger:
+def _get_logger() -> 'ChutilsLogger':
     """Получает лениво инициализированный логгер модуля."""
     global _module_logger
     if _module_logger is None:
         from . import logger as chutils_logger
         _module_logger = chutils_logger.setup_logger(__name__)
-    return _module_logger
+    return _module_logger  # type: ignore
 
 
 def _load_dotenv_if_needed():

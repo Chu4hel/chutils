@@ -11,12 +11,23 @@ import logging
 import os
 import re
 from pathlib import Path
-from typing import Any, Optional, List, Dict
+from typing import Any, Optional, List, Dict, TYPE_CHECKING
 
 import yaml
 
-# Настраиваем логгер для этого модуля
+if TYPE_CHECKING:
+    from .logger import ChutilsLogger
+
+# Настраиваем логгер для этого модуля. 
+# Используем стандартный getLogger, чтобы избежать циклической рекурсии с logger.setup_logger.
+# Если модуль logger уже загружен, logging вернет экземпляр ChutilsLogger.
 logger = logging.getLogger(__name__)
+
+
+def _get_logger() -> 'ChutilsLogger':
+    """Вспомогательная функция для типизации логгера."""
+    return logger  # type: ignore
+
 
 # --- Глобальное состояние для "ленивой" инициализации ---
 _BASE_DIR: Optional[str] = None
@@ -44,10 +55,10 @@ def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
     while current_path != current_path.parent:
         for marker in markers:
             if (current_path / marker).exists():
-                logger.debug("Найден маркер '%s' в директории: %s", marker, current_path)
+                _get_logger().debug("Найден маркер '%s' в директории: %s", marker, current_path)
                 return current_path
         current_path = current_path.parent
-    logger.debug("Корень проекта не найден.")
+    _get_logger().debug("Корень проекта не найден.")
     return None
 
 
@@ -82,9 +93,9 @@ def _initialize_paths():
             if (project_root / marker).is_file() and marker.startswith('config'):
                 _CONFIG_FILE_PATH = str(project_root / marker)
                 break
-        logger.debug("Корень проекта автоматически определен: %s", _BASE_DIR)
+        _get_logger().debug("Корень проекта автоматически определен: %s", _BASE_DIR)
     else:
-        logger.warning("Не удалось автоматически найти корень проекта.")
+        _get_logger().warning("Не удалось автоматически найти корень проекта.")
 
     _paths_initialized = True
 
@@ -121,7 +132,7 @@ def _get_config_paths(cfg_file: Optional[str] = None) -> tuple[Optional[str], Op
         potential_local_path = main_path_obj.parent / local_file_name
         if potential_local_path.exists():
             local_config_path = str(potential_local_path)
-            logger.debug("Найден локальный файл конфигурации: %s", local_config_path)
+            _get_logger().debug("Найден локальный файл конфигурации: %s", local_config_path)
 
     return main_config_path, local_config_path
 
@@ -147,27 +158,27 @@ def get_config() -> Dict:
         file_ext = Path(main_path).suffix.lower()
         if file_ext in ['.yml', '.yaml']:
             main_config = _load_yaml(main_path)
-            logger.debug("Основная конфигурация успешно загружена из YAML: %s", main_path)
+            _get_logger().debug("Основная конфигурация успешно загружена из YAML: %s", main_path)
         elif file_ext == '.ini':
             main_config = _load_ini(main_path)
-            logger.debug("Основная конфигурация успешно загружена из INI: %s", main_path)
+            _get_logger().debug("Основная конфигурация успешно загружена из INI: %s", main_path)
         else:
-            logger.warning("Неподдерживаемый формат основного файла конфигурации: %s", main_path)
+            _get_logger().warning("Неподдерживаемый формат основного файла конфигурации: %s", main_path)
     else:
-        logger.debug("Основной файл конфигурации не найден или не указан.")
+        _get_logger().debug("Основной файл конфигурации не найден или не указан.")
 
     if local_path and Path(local_path).exists():
         file_ext = Path(local_path).suffix.lower()
         if file_ext in ['.yml', '.yaml']:
             local_config = _load_yaml(local_path)
-            logger.debug("Локальная конфигурация успешно загружена из YAML: %s", local_path)
+            _get_logger().debug("Локальная конфигурация успешно загружена из YAML: %s", local_path)
         elif file_ext == '.ini':
             local_config = _load_ini(local_path)
-            logger.debug("Локальная конфигурация успешно загружена из INI: %s", local_path)
+            _get_logger().debug("Локальная конфигурация успешно загружена из INI: %s", local_path)
         else:
-            logger.warning("Неподдерживаемый формат локального файла конфигурации: %s", local_path)
+            _get_logger().warning("Неподдерживаемый формат локального файла конфигурации: %s", local_path)
     else:
-        logger.debug("Локальный файл конфигурации не найден или не указан.")
+        _get_logger().debug("Локальный файл конфигурации не найден или не указан.")
 
     _config_object = _merge_configs(main_config, local_config)
     _config_loaded = True
@@ -189,7 +200,7 @@ def _load_yaml(path: str) -> Dict:
         with open(path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f) or {}
     except (yaml.YAMLError, FileNotFoundError) as e:
-        logger.critical("Ошибка чтения YAML файла конфигурации %s: %s", path, e)
+        _get_logger().critical("Ошибка чтения YAML файла конфигурации %s: %s", path, e)
         return {}
 
 
@@ -221,26 +232,8 @@ def _load_ini(path: str) -> Dict:
             # Преобразуем плоскую структуру вложенных секций в иерархическую
             return _nest_ini_dict(flat_ini_config)
     except (configparser.Error, FileNotFoundError) as e:
-        logger.critical("Ошибка чтения INI файла конфигурации %s: %s", path, e)
+        _get_logger().critical("Ошибка чтения INI файла конфигурации %s: %s", path, e)
         return {}
-
-
-def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
-    """
-    Преобразует плоский словарь INI-секций (с точками в именах секций)
-    во вложенную структуру словарей.
-    Например: {'Logging.default': {'key': 'value'}} -> {'Logging': {'default': {'key': 'value'}}}
-    """
-    nested_dict = {}
-    for section_key, section_values in flat_dict.items():
-        current_level = nested_dict
-        parts = section_key.split('.')
-        for i, part in enumerate(parts):
-            if i == len(parts) - 1:  # Последняя часть - это название секции
-                current_level[part] = section_values
-            else:
-                current_level = current_level.setdefault(part, {})
-    return nested_dict
 
 
 def save_config_value(
@@ -282,12 +275,12 @@ def save_config_value(
         main_path, local_path = _get_config_paths()
         if save_to_local and local_path:
             path = local_path
-            logger.debug("Для сохранения выбран локальный файл конфигурации: %s", path)
+            _get_logger().debug("Для сохранения выбран локальный файл конфигурации: %s", path)
         else:
             path = main_path
 
     if path is None:
-        logger.error("Невозможно сохранить значение: путь к файлу конфигурации не определен.")
+        _get_logger().error("Невозможно сохранить значение: путь к файлу конфигурации не определен.")
         return False
 
     file_ext = Path(path).suffix.lower()
@@ -308,22 +301,22 @@ def save_config_value(
             _config_object = None
             _config_loaded = False
 
-            logger.debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
+            _get_logger().debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
             return True
         except Exception as e:
-            logger.error("Ошибка при сохранении в YAML файл %s: %s", path, e)
+            _get_logger().error("Ошибка при сохранении в YAML файл %s: %s", path, e)
             return False
 
     elif file_ext == '.ini':
         if not Path(path).exists():
-            logger.error("Невозможно сохранить значение: файл конфигурации %s не найден.", path)
+            _get_logger().error("Невозможно сохранить значение: файл конфигурации %s не найден.", path)
             return False
 
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
         except IOError as e:
-            logger.error("Ошибка чтения файла %s для сохранения: %s", path, e)
+            _get_logger().error("Ошибка чтения файла %s для сохранения: %s", path, e)
             return False
 
         updated = False
@@ -354,8 +347,9 @@ def save_config_value(
                     new_lines.append(new_line_content)
                     key_found_in_section = True
                     updated = True
-                    logger.debug("Ключ '%s' в секции '[%s]' будет обновлен на '%s' в файле %s", key, section, value,
-                                 path)
+                    _get_logger().debug("Ключ '%s' в секции '[%s]' будет обновлен на '%s' в файле %s", key, section,
+                                        value,
+                                        path)
                     continue
 
             new_lines.append(line)
@@ -367,7 +361,7 @@ def save_config_value(
             new_lines.append(f'[{section}]\n')
             new_lines.append(f'{key} = {value}\n')
             updated = True
-            logger.debug("Новая секция '[%s]' с ключом '%s' будет добавлена в файл %s", section, key, path)
+            _get_logger().debug("Новая секция '[%s]' с ключом '%s' будет добавлена в файл %s", section, key, path)
 
         elif not key_found_in_section:  # `section_found` is implicitly True here
             # Существующая логика для добавления ключа в существующую секцию
@@ -401,19 +395,19 @@ def save_config_value(
             try:
                 with open(path, 'w', encoding='utf-8') as f:
                     f.writelines(new_lines)
-                logger.debug("Файл конфигурации %s успешно обновлен.", path)
+                _get_logger().debug("Файл конфигурации %s успешно обновлен.", path)
                 # Сбрасываем кэш, чтобы при следующем get_config() конфигурация была перезагружена
                 _config_object = None
                 _config_loaded = False
                 return True
             except IOError as e:
-                logger.error("Ошибка записи в файл %s при сохранении: %s", path, e)
+                _get_logger().error("Ошибка записи в файл %s при сохранении: %s", path, e)
                 return False
         else:
-            logger.debug("Обновление для ключа '%s' в секции '[%s]' не потребовалось.", key, section)
+            _get_logger().debug("Обновление для ключа '%s' в секции '[%s]' не потребовалось.", key, section)
             return False
     else:
-        logger.warning("Сохранение для формата %s не поддерживается.", file_ext)
+        _get_logger().warning("Сохранение для формата %s не поддерживается.", file_ext)
         return False
 
 
@@ -496,7 +490,7 @@ def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[D
     try:
         return int(value)
     except (ValueError, TypeError):
-        logger.warning(
+        _get_logger().warning(
             "Не удалось преобразовать значение '%s' для ключа '%s' в секции '[%s]' к типу int. "
             "Возвращено значение по умолчанию: %s.",
             value, key, section, fallback
@@ -522,7 +516,7 @@ def get_config_float(section: str, key: str, fallback: float = 0.0, config: Opti
     try:
         return float(value)
     except (ValueError, TypeError):
-        logger.warning(
+        _get_logger().warning(
             "Не удалось преобразовать значение '%s' для ключа '%s' в секции '[%s]' к типу float. "
             "Возвращено значение по умолчанию: %s.",
             value, key, section, fallback
