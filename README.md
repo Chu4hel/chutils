@@ -276,6 +276,25 @@ Each example focuses on a specific task.
    print(f"Found API key: {api_key}")
    ```
 
+#### Disabling Keyring and Suppressing Warnings (Optional)
+
+In environments where `keyring` is unavailable (e.g., Docker, CI/CD), you can explicitly disable it and suppress
+warnings if you prefer a cleaner output and intend to use only `.env` files or environment variables. This is entirely
+optional.
+
+**Option 1: Environment Variable**
+Set `CH_DISABLE_KEYRING_WARNING=true` (or `1`) in your OS environment.
+
+**Option 2: Configuration File**
+Add the following to your `config.yml`:
+
+```yaml
+secrets:
+  disable_keyring: true
+```
+
+If disabled, `SecretManager` will skip the `keyring` check and look directly in `.env` and environment variables.
+
 ## Comprehensive Example
 
 This example shows how all `chutils` components work together.

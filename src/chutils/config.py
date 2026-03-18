@@ -5,14 +5,15 @@
 в корне проекта и предоставляет удобные функции для чтения настроек.
 """
 
+import asyncio
 import configparser
 import logging
+import os
 import re
 from pathlib import Path
 from typing import Any, Optional, List, Dict
 
 import yaml
-import asyncio
 
 # Настраиваем логгер для этого модуля
 logger = logging.getLogger(__name__)
@@ -459,6 +460,12 @@ def get_config_value(section: str, key: str, fallback: Any = None, config: Optio
     Returns:
         Значение из конфигурации или `fallback`.
     """
+    # Проверка переменных окружения для специфических ключей (FR3: приоритет над конфигом)
+    if section == "secrets" and key == "disable_keyring":
+        env_val = os.getenv("CH_DISABLE_KEYRING_WARNING")
+        if env_val is not None:
+            return env_val
+
     if config is None:
         config = get_config()
 
