@@ -422,14 +422,24 @@ def setup_logger(
 
     # --- 4. Настройка обработчиков ---
     log_dir = _get_log_dir()
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # Проверка переменных окружения для управления форматом и файлами (Performance: Setup Time Check)
+    env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]
+    env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in ["true", "1", "yes", "y"]
+
+    if env_no_time:
+        log_format = '%(name)s - %(levelname)s - %(message)s'
+    else:
+        log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+    formatter = logging.Formatter(log_format)
 
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     console_handler.setLevel(level_int)
     logger.addHandler(console_handler)
 
-    if log_dir and final_log_file_name:
+    if not env_no_file and log_dir and final_log_file_name:
         log_file_path = Path(final_log_file_name) if Path(
             final_log_file_name).is_absolute() else Path(log_dir) / final_log_file_name
 

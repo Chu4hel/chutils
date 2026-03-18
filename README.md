@@ -164,6 +164,16 @@ Each example focuses on a specific task.
    logger.info("Message in a custom file.")
    ```
 
+   #### Controlling Logging via Environment Variables
+
+   You can control logging behavior globally using environment variables. This is especially useful for cloud
+   environments (Docker, Serverless).
+
+    - `CH_LOG_NO_TIME=true`: Removes the date and time from the log format.
+    - `CH_LOG_NO_FILE=true`: Disables creating log files, even if configured in code or `config.yml`.
+
+   These variables have **highest priority** and override any settings passed to `setup_logger()`.
+
    #### Creating Multiple Loggers
 
    You can create different loggers for different parts of your application by passing a unique name to `setup_logger`.
