@@ -30,7 +30,9 @@ logging.addLevelName(DEVDEBUG_LEVEL_NUM, DEVDEBUG_LEVEL_NAME)
 
 
 class LogLevel(str, Enum):
-    """Перечисление для уровней логирования."""
+    """
+    Перечисление для поддерживаемых уровней логирования.
+    """
     DEVDEBUG = "DEVDEBUG"
     DEBUG = "DEBUG"
     MEDIUMDEBUG = "MEDIUMDEBUG"
@@ -42,7 +44,7 @@ class LogLevel(str, Enum):
 
 class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
     """
-    Надежный обработчик ротации логов, особенно для Windows.
+    Надежный обработчик ротации логов, адаптированный для Windows.
 
     Этот класс решает проблему `PermissionError` при ротации логов в Windows,
     гарантируя, что файл будет закрыт перед переименованием.
@@ -50,6 +52,9 @@ class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
     """
 
     def doRollover(self):
+        """
+        Выполняет ротацию, закрывая текущий поток перед операцией.
+        """
         if self.stream:
             self.stream.close()
             self.stream = None
@@ -58,17 +63,21 @@ class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
 
 class CompressingRotatingFileHandler(logging.handlers.RotatingFileHandler):
     """
-    Обработчик ротации по размеру с поддержкой сжатия, который корректно
-    обрабатывает существующие сжатые бэкапы.
+    Обработчик ротации по размеру с поддержкой сжатия (gzip).
+
+    Обеспечивает корректную работу с цепочкой сжатых бэкапов.
     """
 
     def doRollover(self):
         """
-        Выполняет ротацию логов:
-        1. Сдвигает существующие архивы (`log.1.gz` -> `log.2.gz`).
-        2. Переименовывает текущий лог в `log.1`.
-        3. Открывает новый пустой лог-файл для дальнейшей записи.
-        4. Сжимает `log.1` в `log.1.gz` и удаляет `log.1`.
+        Выполняет ротацию логов с последующим сжатием старого файла.
+
+        Процесс:
+        1. Закрытие текущего потока.
+        2. Сдвиг существующих архивов (`log.1.gz` -> `log.2.gz`).
+        3. Переименование текущего лога в `log.1`.
+        4. Открытие нового файла для дальнейшей записи.
+        5. Сжатие переименованного файла в фоне.
         """
         # Закрываем текущий поток
         if self.stream:
@@ -123,19 +132,17 @@ class CompressingRotatingFileHandler(logging.handlers.RotatingFileHandler):
 
 class CompressingTimedRotatingFileHandler(SafeTimedRotatingFileHandler):
     """
-    Обработчик ротации по времени с поддержкой сжатия.
+    Обработчик ротации по времени с поддержкой сжатия (gzip).
     """
 
     def doRollover(self):
         """
-        Выполняет ротацию и сжимает все старые лог-файлы.
+        Выполняет временную ротацию и сжимает полученные бэкапы.
         """
         # Вызываем стандартный doRollover, который переименует файлы
         super().doRollover()
 
         # Получаем список всех ротированных файлов, которые знает обработчик
-        # Этот метод идеально подходит, так как он возвращает именно те файлы,
-        # которые являются бэкапами.
         files_to_compress = self.getFilesToDelete()
 
         for source_file in files_to_compress:
@@ -155,7 +162,7 @@ class CompressingTimedRotatingFileHandler(SafeTimedRotatingFileHandler):
 
 class ChutilsLogger(logging.Logger):
     """
-    Кастомный класс логгера, который расширяет стандартный `logging.Logger`.
+    Кастомный класс логгера, расширяющий стандартный `logging.Logger`.
 
     Добавляет поддержку пользовательских уровней логирования (`devdebug` и `mediumdebug`),
     обеспечивая при этом корректную работу статических анализаторов и автодополнения в IDE.
@@ -169,18 +176,12 @@ class ChutilsLogger(logging.Logger):
         - `INFO` (20): Стандартный информационный уровень.
 
     Note:
-        Вам не нужно создавать экземпляр этого класса напрямую. Используйте
-        функцию `setup_logger()`, которая автоматически вернет объект этого типа.
+        Не создавайте экземпляр напрямую. Используйте `setup_logger()`.
 
     Example:
         ```python
-        from chutils.logger import setup_logger, ChutilsLogger
-
-        # Используем наш класс для аннотации типа, чтобы IDE давала подсказки
         logger: ChutilsLogger = setup_logger()
-
-        # Теперь IDE знает об этом методе и не будет показывать предупреждений
-        logger.mediumdebug("Это сообщение с автодополнением.")
+        logger.devdebug("Максимально подробное сообщение")
         ```
     """
 
@@ -190,8 +191,8 @@ class ChutilsLogger(logging.Logger):
 
         Args:
             message: Сообщение для логирования.
-            *args: Аргументы для форматирования сообщения.
-            **kws: Ключевые слова для `_log`.
+            *args: Аргументы форматирования.
+            **kws: Ключевые слова для логгера.
         """
         if self.isEnabledFor(MEDIUMDEBUG_LEVEL_NUM):
             self._log(MEDIUMDEBUG_LEVEL_NUM, message, args, **kws)
@@ -202,8 +203,8 @@ class ChutilsLogger(logging.Logger):
 
         Args:
             message: Сообщение для логирования.
-            *args: Аргументы для форматирования сообщения.
-            **kws: Ключевые слова для `_log`.
+            *args: Аргументы форматирования.
+            **kws: Ключевые слова для логгера.
         """
         if self.isEnabledFor(DEVDEBUG_LEVEL_NUM):
             self._log(DEVDEBUG_LEVEL_NUM, message, args, **kws)
@@ -213,23 +214,19 @@ logging.setLoggerClass(ChutilsLogger)
 
 # --- Глобальное состояние для "ленивой" инициализации ---
 
-# Кэш для пути к директории логов. Изначально пуст.
 _LOG_DIR: Optional[str] = None
-# Кэш для файловых обработчиков, чтобы избежать конфликтов при ротации.
+"Кэш для пути к директории логов. Изначально пуст."
 _file_handler_cache: dict[str, logging.FileHandler] = {}
-# Флаг, чтобы сообщение об инициализации выводилось только один раз
+"Кэш для файловых обработчиков, чтобы избежать конфликтов при ротации."
 _initialization_message_shown = False
+"Флаг, чтобы сообщение об инициализации выводилось только один раз"
 
 
 def _get_log_dir() -> Optional[str]:
     """
     "Лениво" получает и кэширует путь к директории логов.
 
-    При первом вызове:
-    1. Запускает поиск корня проекта через модуль config.
-    2. Создает директорию 'logs' в корне проекта, если ее нет.
-    3. Кэширует результат.
-    При последующих вызовах немедленно возвращает кэшированный путь.
+    Создает директорию 'logs' в корне проекта при первом обращении.
 
     Returns:
         str: Путь к директории логов.
@@ -242,19 +239,16 @@ def _get_log_dir() -> Optional[str]:
         return _LOG_DIR
 
     # Запускаем инициализацию в config, если она еще не была выполнена.
-    # Это "сердце" автоматического обнаружения.
     config._initialize_paths()
 
-    # Берем найденный config'ом базовый каталог проекта.
     base_dir = config._BASE_DIR
+    "Найденный config'ом базовый каталог проекта."
     logging.debug("В _get_log_dir() определен base_dir: %s", base_dir)
 
-    # Если корень проекта не был найден, файловое логирование невозможно.
     if not base_dir:
-        logging.warning("ПРЕДУПРЕЖДЕНИЕ: Не удалось определить корень проекта, файловое логирование будет отключено.")
+        logging.warning("Не удалось определить корень проекта, файловое логирование отключено.")
         return None
 
-    # Создаем путь к директории логов и саму директорию, если нужно.
     log_path = Path(base_dir) / 'logs'
     logging.debug("В _get_log_dir() определен log_path: %s", log_path)
     if not log_path.exists():
@@ -262,11 +256,9 @@ def _get_log_dir() -> Optional[str]:
             log_path.mkdir(parents=True, exist_ok=True)
             logging.info("Создана директория для логов: %s", log_path)
         except OSError as e:
-            # Если не удалось создать директорию, логирование в файл будет невозможно.
             logging.error("Не удалось создать директорию для логов %s: %s", log_path, e)
             return None
 
-    # Кэшируем успешный результат и возвращаем его.
     _LOG_DIR = str(log_path)
     logging.debug("В _get_log_dir() кэширован _LOG_DIR: %s", _LOG_DIR)
     return _LOG_DIR
@@ -290,9 +282,10 @@ def setup_logger(
         **kwargs: Any
 ) -> ChutilsLogger:
     """
-    Настраивает и возвращает логгер с гибким приоритетом конфигурации.
+    Настраивает и возвращает экземпляр логгера.
 
     Приоритет настроек:
+    0. Переменные окружения CH_LOG_NO_TIME и CH_LOG_NO_FILE имеют наивысший приоритет.
     1. Явные аргументы, переданные в эту функцию.
     2. Объединенные настройки из `Logging.loggers.{name}` (если есть) поверх `Logging.default` (если есть).
     3. Для обратной совместимости: если `Logging.default` и `Logging.loggers` отсутствуют,
@@ -301,18 +294,16 @@ def setup_logger(
 
     Args:
         name: Имя логгера. `app_logger` используется как стандартное имя.
-        config_section_name: Имя специфичной секции в конфиге (например, 'MyAuditLogger').
+        config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').
             Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.
             Если не указана, используется только общая секция `[Logging]`.
-        log_level: Явное указание уровня логирования (строкой или LogLevel).
-                   Если не задан, значение берется из конфигурационного файла.
+        log_level: Уровень логирования (строка или LogLevel).
         log_file_name: Имя файла для логирования. Если не указано, имя берется
                        из конфигурации ('Logging', 'log_file_name').
-        force_reconfigure: Если True, принудительно удаляет все существующие
-                           обработчики и настраивает логгер заново.
-        rotation_type: Тип ротации: 'time' или 'size'.
-        max_bytes: Максимальный размер файла для ротации по 'size'.
-        compress: Сжимать ли ротированные логи в .gz.
+        force_reconfigure: Удалить существующие обработчики и настроить заново.
+        rotation_type: Тип ротации ('time' или 'size').
+        max_bytes: Макс. размер файла для ротации по 'size'.
+        compress: Сжимать ли ротированные логи в `.gz`.
         backup_count: Количество хранимых ротированных файлов.
         encoding: Кодировка файла (по умолчанию 'utf-8').
         when: Для 'time'. Тип интервала ('S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').
@@ -323,7 +314,7 @@ def setup_logger(
         **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`).
 
     Returns:
-       Настроенный экземпляр ChutilsLogger.
+        Настроенный экземпляр ChutilsLogger.
     """
     global _initialization_message_shown
     logger = logging.getLogger(name)
@@ -423,7 +414,7 @@ def setup_logger(
     # --- 4. Настройка обработчиков ---
     log_dir = _get_log_dir()
 
-    # Проверка переменных окружения для управления форматом и файлами (Performance: Setup Time Check)
+    # Управление форматом и файлами через переменные окружения
     env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]
     env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in ["true", "1", "yes", "y"]
 
@@ -450,7 +441,6 @@ def setup_logger(
             file_handler = _file_handler_cache[log_file_path_str]
             logger.debug("Используется кэшированный файловый обработчик для %s", log_file_path_str)
         else:
-            # Если обработчика нет, создаем новый и добавляем в кэш
             logging.debug("Попытка настроить файловый обработчик для %s в %s", name, log_file_path)
             try:
                 file_handler: Optional[logging.FileHandler] = None
@@ -492,7 +482,6 @@ def setup_logger(
 
                 if file_handler:
                     file_handler.setFormatter(formatter)
-                    # Добавляем новый обработчик в кэш
                     _file_handler_cache[log_file_path_str] = file_handler
                     logger.debug("Новый файловый обработчик для %s добавлен в кэш.", log_file_path_str)
 

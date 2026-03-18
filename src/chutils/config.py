@@ -2,7 +2,8 @@
 Модуль для работы с конфигурацией.
 
 Обеспечивает автоматический поиск файла `config.yml`, `config.yaml` или `config.ini`
-в корне проекта и предоставляет удобные функции для чтения настроек.
+в корне проекта и предоставляет удобные функции для чтения и сохранения настроек.
+Поддерживает кастомные уровни логирования при условии, что модуль logger загружен.
 """
 
 import asyncio
@@ -18,14 +19,19 @@ import yaml
 if TYPE_CHECKING:
     from .logger import ChutilsLogger
 
-# Настраиваем логгер для этого модуля. 
+# Настраиваем логгер для этого модуля.
 # Используем стандартный getLogger, чтобы избежать циклической рекурсии с logger.setup_logger.
 # Если модуль logger уже загружен, logging вернет экземпляр ChutilsLogger.
 logger = logging.getLogger(__name__)
 
 
 def _get_logger() -> 'ChutilsLogger':
-    """Вспомогательная функция для типизации логгера."""
+    """
+    Вспомогательная функция для получения типизированного логгера.
+
+    Returns:
+        Экземпляр логгера (может быть ChutilsLogger, если инициализирован).
+    """
     return logger  # type: ignore
 
 
@@ -39,7 +45,10 @@ _config_loaded = False
 
 
 def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
-    """Ищет корень проекта, двигаясь вверх по дереву каталогов.
+    """
+    Ищет корень проекта, двигаясь вверх по дереву каталогов.
+
+    Корень определяется по наличию одного из файлов-маркеров (например, .git или pyproject.toml).
 
     Args:
         start_path: Директория, с которой начинается поиск.
@@ -47,8 +56,7 @@ def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
             в директории указывает на то, что это корень проекта.
 
     Returns:
-        Объект Path, представляющий корневую директорию проекта
-        None: Если корень не был найден.
+        Объект Path, представляющий корневую директорию проекта, или None, если корень не найден.
     """
     current_path = start_path.resolve()
     # Идем вверх до тех пор, пока не достигнем корня файловой системы
@@ -65,7 +73,15 @@ def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
 def _merge_configs(main_config: Dict, local_config: Dict) -> Dict:
     """
     Рекурсивно объединяет два словаря конфигурации.
-    Значения из `local_config` переопределяют значения из `main_config`.
+
+    Значения из `local_config` имеют приоритет и переопределяют значения из `main_config`.
+
+    Args:
+        main_config: Основной словарь конфигурации.
+        local_config: Словарь с локальными переопределениями.
+
+    Returns:
+        Объединенный словарь конфигурации.
     """
     for key, value in local_config.items():
         if key in main_config and isinstance(main_config[key], dict) and isinstance(value, dict):
@@ -76,7 +92,12 @@ def _merge_configs(main_config: Dict, local_config: Dict) -> Dict:
 
 
 def _initialize_paths():
-    """Автоматически находит и кэширует пути к корню проекта и файлу конфигурации."""
+    """
+    Автоматически находит и кэширует пути к корню проекта и файлу конфигурации.
+
+    Инициализация происходит только один раз. Приоритет поиска файлов:
+    YAML (.yml, .yaml) -> INI (.ini) -> Маркеры проекта (pyproject.toml).
+    """
     global _BASE_DIR, _CONFIG_FILE_PATH, _paths_initialized
     if _paths_initialized:
         return
@@ -102,17 +123,16 @@ def _initialize_paths():
 
 def _get_config_paths(cfg_file: Optional[str] = None) -> tuple[Optional[str], Optional[str]]:
     """
-    Внутренняя функция-шлюз для получения путей к файлам конфигурации (основному и локальному).
+    Внутренняя функция для получения путей к основному и локальному файлам конфигурации.
 
-    Если пути не были установлены, запускает автоматический поиск.
+    Если пути не инициализированы, запускает поиск. Также определяет путь к .local файлу
+    на основе имени основного файла.
 
     Args:
-        cfg_file: Опциональный путь к основному файлу. Если указан,
-            используется он.
+        cfg_file: Явный путь к основному файлу (переопределяет автопоиск).
 
     Returns:
-        Кортеж из двух строк: (путь к основному файлу, путь к локальному файлу).
-        None: Если файлы не найдены.
+        Кортеж: (путь_к_основному, путь_к_локальному). Элементы могут быть None, если файлы не найдены.
     """
     main_config_path: Optional[str] = None
     local_config_path: Optional[str] = None
@@ -139,12 +159,13 @@ def _get_config_paths(cfg_file: Optional[str] = None) -> tuple[Optional[str], Op
 
 def get_config() -> Dict:
     """
-    Загружает конфигурацию из файлов (основного и локального) и возвращает ее как словарь.
-    Результат кэшируется для последующих вызовов. Локальные настройки переопределяют основные.
+    Загружает и объединяет конфигурацию из всех доступных источников.
+
+    Результат кэшируется. Повторные вызовы возвращают кэшированный объект,
+    если он не был сброшен (например, при сохранении нового значения).
 
     Returns:
-        _config_object: Словарь с загруженной конфигурацией.
-        {}: Если файлы не найдены или произошла ошибка, возвращается пустой словарь.
+       _config_object: Словарь со всей конфигурацией проекта. Если файлы не найдены, возвращается пустой словарь.
     """
     global _config_object, _config_loaded
     if _config_loaded and _config_object is not None:
@@ -187,15 +208,24 @@ def get_config() -> Dict:
 
 async def aget_config() -> Dict:
     """
-    Асинхронно загружает конфигурацию из файлов (основного и локального)
-    и возвращает ее как словарь.
-    Работает как асинхронная обертка вокруг синхронной `get_config()`.
+    Асинхронная версия get_config.
+
+    Returns:
+        Словарь конфигурации.
     """
     return await asyncio.to_thread(get_config)
 
 
 def _load_yaml(path: str) -> Dict:
-    """Загружает и парсит YAML-файл."""
+    """
+    Загружает YAML файл и обрабатывает ошибки парсинга.
+
+    Args:
+        path: Путь к файлу.
+
+    Returns:
+        Словарь данных или пустой словарь при ошибке.
+    """
     try:
         with open(path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f) or {}
@@ -206,9 +236,15 @@ def _load_yaml(path: str) -> Dict:
 
 def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
     """
-    Преобразует плоский словарь INI-секций (с точками в именах секций)
-    во вложенную структуру словарей.
-    Например: {'Logging.default': {'key': 'value'}} -> {'Logging': {'default': {'key': 'value'}}}
+    Преобразует плоский словарь INI-секций во вложенную структуру.
+
+    Разделяет имена секций по точкам (например, 'Logging.default' -> {'Logging': {'default': ...}}).
+
+    Args:
+        flat_dict: Словарь, где ключи - названия секций INI.
+
+    Returns:
+        Вложенный словарь.
     """
     nested_dict = {}
     for section_key, section_values in flat_dict.items():
@@ -223,7 +259,15 @@ def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
 
 
 def _load_ini(path: str) -> Dict:
-    """Загружает и парсит INI-файл."""
+    """
+    Загружает INI файл и преобразует его во вложенный словарь.
+
+    Args:
+        path: Путь к файлу.
+
+    Returns:
+        Словарь данных или пустой словарь при ошибке.
+    """
     try:
         with open(path, 'r', encoding='utf-8') as f:
             parser = configparser.ConfigParser()
@@ -244,7 +288,7 @@ def save_config_value(
         save_to_local: bool = False
 ) -> bool:
     """
-    Сохраняет одно значение в конфигурационном файле.
+    Сохраняет или обновляет одно значение в файле конфигурации.
 
     Warning:
         Важно: При сохранении в `.yml` комментарии и форматирование будут утеряны.
@@ -439,11 +483,14 @@ async def asave_config_value(
     return await asyncio.to_thread(save_config_value, section, key, value, cfg_file, save_to_local)
 
 
-# --- Функции-обертки для удобного получения значений ---
+# --- Функции-обертки для удобного получения типизированных значений ---
 
 def get_config_value(section: str, key: str, fallback: Any = None, config: Optional[Dict] = None) -> Any:
     """
-    Получает значение из конфигурации.
+    Получает произвольное значение из конфигурации.
+
+    Если значение не найдено или оно пустое, возвращает `fallback`.
+    Для ключа `disable_keyring` в секции `secrets` проверяет переменную окружения.
 
     Args:
         section: Имя секции.
@@ -510,7 +557,7 @@ def get_config_float(section: str, key: str, fallback: float = 0.0, config: Opti
         config: Опциональный, предварительно загруженный словарь конфигурации.
 
     Returns:
-        Дробное число из конфигурации или `fallback`.
+        Float или fallback.
     """
     value = get_config_value(section, key, fallback, config)
     try:
@@ -539,7 +586,7 @@ def get_config_boolean(section: str, key: str, fallback: bool = False, config: O
         config: Опциональный, предварительно загруженный словарь конфигурации.
 
     Returns:
-        Булево значение из конфигурации или `fallback`.
+        True или False.
     """
     value = get_config_value(section, key, fallback, config)
     if isinstance(value, bool):

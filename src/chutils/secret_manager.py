@@ -1,3 +1,10 @@
+"""
+Модуль для безопасного управления секретами.
+
+Обеспечивает доступ к секретам через системное хранилище (keyring), файлы .env
+и переменные окружения ОС с настраиваемыми приоритетами.
+"""
+
 import asyncio
 import os
 from typing import Optional, Dict, TYPE_CHECKING
@@ -20,7 +27,12 @@ _dotenv_loaded = False
 
 
 def _get_logger() -> 'ChutilsLogger':
-    """Получает лениво инициализированный логгер модуля."""
+    """
+    Получает лениво инициализированный логгер модуля.
+
+    Returns:
+        Экземпляр ChutilsLogger.
+    """
     global _module_logger
     if _module_logger is None:
         from . import logger as chutils_logger
@@ -29,7 +41,11 @@ def _get_logger() -> 'ChutilsLogger':
 
 
 def _load_dotenv_if_needed():
-    """Загружает переменные из .env файла, если это еще не было сделано."""
+    """
+    Загружает переменные из .env файла, если это еще не было сделано.
+
+    Ищет файл .env в корне проекта, используя модуль config для определения путей.
+    """
     global _dotenv_values, _dotenv_loaded
     if _dotenv_loaded:
         return
@@ -54,11 +70,12 @@ class SecretManager:
 
     Приоритет получения секрета:
     1. Системное хранилище (keyring).
-    2. Переменные, загруженные из `.env` файла в корне проекта.
-    3. Переменные окружения операционной системы.
+    2. Переменные из `.env` файла в корне проекта.
+    3. Переменные окружения ОС.
 
     Attributes:
-        service_name (str): Полное имя сервиса, используемое в keyring.
+        service_name (str): Полное имя сервиса для keyring.
+        disable_keyring (bool): Флаг отключения работы с keyring.
     """
 
     prefix: str = "Chutils_"
@@ -76,6 +93,9 @@ class SecretManager:
             service_name: Опциональное уникальное имя для вашего приложения.
             prefix: Опциональный префикс для `service_name`. Если не указан,
                     будет взят из конфига (ключ `prefix`) или использован "Chutils_".
+
+        Raises:
+            ValueError: Если не удалось определить service_name.
         """
         # При первом создании экземпляра SecretManager загружаем .env
         _load_dotenv_if_needed()
@@ -116,7 +136,7 @@ class SecretManager:
         Эта функция не влияет на переменные окружения или .env файлы.
 
         Args:
-            key: Ключ для секрета.
+            key: Ключ секрета.
             value: Секретное значение.
 
         Returns:
@@ -125,28 +145,26 @@ class SecretManager:
         """
         if self.disable_keyring:
             _get_logger().devdebug(
-                "Keyring отключен в настройках. Секрет '%s' не будет сохранен в системное хранилище.",
-                key)
+                "Keyring отключен. Секрет '%s' не будет сохранен в системное хранилище.", key)
             return False
 
         try:
             keyring.set_password(self.service_name, key, value)
-            _get_logger().devdebug("Секрет для ключа '%s' успешно сохранен в keyring.", key)
+            _get_logger().devdebug("Секрет для ключа '%s' сохранен в keyring.", key)
             return True
         except NoKeyringError:
-            _get_logger().error("Ошибка: системное хранилище (keyring) не найдено. Секрет не сохранен.")
+            _get_logger().error("Системное хранилище (keyring) не найдено.")
             return False
         except Exception as e:
-            _get_logger().error("Произошла непредвиденная ошибка при сохранении секрета: %s", e)
+            _get_logger().error("Ошибка при сохранении секрета: %s", e)
             return False
 
     async def asave_secret(self, key: str, value: str) -> bool:
         """
-        Асинхронно сохраняет пару ключ-значение в системном хранилище (keyring).
-        Работает как асинхронная обертка вокруг синхронной `save_secret()`.
+        Асинхронная версия save_secret.
 
         Args:
-            key: Ключ для секрета.
+            key: Ключ секрета.
             value: Секретное значение.
 
         Returns:
@@ -164,49 +182,44 @@ class SecretManager:
         2. Переменные из `.env` файла / переменные окружения.
 
         Args:
-            key: Ключ, по которому нужно найти секрет.
+            key: Ключ секрета.
 
         Returns:
-            Найденное значение или None.
+            Значение секрета или None, если ключ не найден.
         """
-        # 1. Попытка получить из keyring
         if not self.disable_keyring:
             try:
                 value = keyring.get_password(self.service_name, key)
                 if value is not None:
-                    _get_logger().devdebug("Секрет для ключа '%s' получен из keyring.", key)
+                    _get_logger().devdebug("Секрет '%s' получен из keyring.", key)
                     return value
             except NoKeyringError:
-                _get_logger().warning(
-                    "Keyring не доступен. Поиск секрета будет выполнен только в .env и переменных окружения.")
+                _get_logger().warning("Keyring не доступен. Поиск только в окружении.")
             except Exception as e:
-                _get_logger().error("Произошла непредвиденная ошибка при получении секрета из keyring: %s", e)
+                _get_logger().error("Ошибка при получении секрета из keyring: %s", e)
         else:
-            _get_logger().devdebug("Keyring отключен в настройках. Поиск секрета '%s' в системном хранилище пропущен.",
-                                   key)
+            _get_logger().devdebug("Keyring отключен. Поиск секрета '%s' в хранилище пропущен.", key)
 
-        # 2. Если в keyring нет, ищем в .env / переменных окружения
-        _get_logger().devdebug("Секрет для ключа '%s' не найден в keyring, поиск в .env/переменных окружения...", key)
-        # _dotenv_values уже содержит все переменные окружения, включая загруженные из .env
+        # Если в keyring нет, ищем в .env / переменных окружения
+        _get_logger().devdebug("Поиск секрета '%s' в .env и переменных окружения...", key)
         value = _dotenv_values.get(key)
 
         if value is not None:
-            _get_logger().devdebug("Секрет для ключа '%s' найден в .env или переменных окружения.", key)
+            _get_logger().devdebug("Секрет '%s' найден в окружении.", key)
         else:
-            _get_logger().devdebug("Секрет для ключа '%s' не найден ни в одном из источников.", key)
+            _get_logger().devdebug("Секрет '%s' не найден.", key)
 
         return value
 
     async def aget_secret(self, key: str) -> Optional[str]:
         """
-        Асинхронно получает секретное значение по ключу.
-        Работает как асинхронная обертка вокруг синхронной `get_secret()`.
+        Асинхронная версия get_secret.
 
         Args:
-            key: Ключ, по которому нужно найти секрет.
+            key: Ключ секрета.
 
         Returns:
-            Найденное значение или None.
+            Значение секрета или None.
         """
         return await asyncio.to_thread(self.get_secret, key)
 
@@ -216,32 +229,29 @@ class SecretManager:
         Эта функция не влияет на переменные окружения или .env файлы.
 
         Args:
-            key: Ключ секрета, который нужно удалить.
+            key: Ключ секрета.
 
         Returns:
-            True, если секрет был удален или уже не существовал.
-            False, если произошла ошибка при удалении.
+            True если секрет удален или отсутствовал,
+            False при ошибке.
         """
         if self.disable_keyring:
-            _get_logger().devdebug(
-                "Keyring отключен в настройках. Удаление секрета '%s' из системного хранилища пропущено.",
-                key)
+            _get_logger().devdebug("Keyring отключен. Удаление секрета '%s' пропущено.", key)
             return True
 
         try:
-            # Проверяем только keyring, так как удаляем только оттуда
             if keyring.get_password(self.service_name, key) is None:
-                _get_logger().devdebug("Секрет для ключа '%s' не найден в keyring, удаление не требуется.", key)
+                _get_logger().devdebug("Секрет '%s' не найден в keyring.", key)
                 return True
 
             keyring.delete_password(self.service_name, key)
-            _get_logger().devdebug("Секрет для ключа '%s' успешно удален из keyring.", key)
+            _get_logger().devdebug("Секрет '%s' удален из keyring.", key)
             return True
         except PasswordDeleteError:
-            _get_logger().error("Ошибка: не удалось удалить секрет для ключа '%s' из keyring.", key)
+            _get_logger().error("Не удалось удалить секрет '%s' из keyring.", key)
             return False
         except NoKeyringError:
-            _get_logger().warning("Keyring не доступен. Невозможно удалить секрет.")
+            _get_logger().warning("Keyring не доступен.")
             return False
         except Exception as e:
             _get_logger().error("Произошла непредвиденная ошибка при удалении секрета из keyring: %s", e)
@@ -249,11 +259,10 @@ class SecretManager:
 
     async def adelete_secret(self, key: str) -> bool:
         """
-        Асинхронно удаляет пару ключ-значение из системного хранилища (keyring).
-        Работает как асинхронная обертка вокруг синхронной `delete_secret()`.
+        Асинхронная версия delete_secret.
 
         Args:
-            key: Ключ секрета, который нужно удалить.
+            key: Ключ секрета.
 
         Returns:
             True, если секрет был удален или уже не существовал.
@@ -267,14 +276,14 @@ class SecretManager:
         Это псевдоним для `save_secret`.
 
         Args:
-            key: Ключ для секрета.
-            value: Новое секретное значение.
+            key: Ключ секрета.
+            value: Новое значение.
 
         Returns:
             True, если секрет успешно обновлен в keyring.
             False в случае ошибки.
         """
-        _get_logger().devdebug("Обновление секрета для ключа '%s' в keyring...", key)
+        _get_logger().devdebug("Обновление секрета '%s' в keyring...", key)
         return self.save_secret(key, value)
 
 
