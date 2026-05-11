@@ -10,9 +10,11 @@ import datetime
 import logging
 import logging.handlers
 import os
+import re
+import threading
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Any
+from typing import Optional, Any, Set
 
 # Импортируем наш модуль config для доступа к путям и настройкам
 from . import config
@@ -160,6 +162,79 @@ class CompressingTimedRotatingFileHandler(SafeTimedRotatingFileHandler):
                     self.handleError(f"Ошибка при сжатии файла {source_file}: {e}")
 
 
+# --- Глобальное состояние для маскирования секретов ---
+
+_GLOBAL_MASKS: Set[str] = set()
+"Глобальный список строк (секретов), которые должны быть заменены на *** в логах."
+_MASK_RE: Optional[re.Pattern] = None
+"Скомпилированное регулярное выражение для поиска всех секретов."
+_masks_lock = threading.Lock()
+"Блокировка для обеспечения потокобезопасности при обновлении масок."
+
+
+def _update_mask_re():
+    """
+    Обновляет и компилирует регулярное выражение на основе текущих масок.
+    """
+    global _MASK_RE
+    with _masks_lock:
+        if not _GLOBAL_MASKS:
+            _MASK_RE = None
+            return
+
+        # Сортируем маски по длине (от длинных к коротким), чтобы сначала находить подстроки большей длины.
+        # Экранируем спецсимволы регулярных выражений.
+        sorted_masks = sorted([m for m in _GLOBAL_MASKS if m], key=len, reverse=True)
+        if not sorted_masks:
+            _MASK_RE = None
+            return
+
+        pattern = "|".join(re.escape(m) for m in sorted_masks)
+        _MASK_RE = re.compile(pattern)
+
+
+class SecretMaskingFilter(logging.Filter):
+    """
+    Фильтр для автоматического маскирования секретов в сообщениях логов.
+
+    Ищет в тексте сообщения и в аргументах все зарегистрированные секреты
+    и заменяет их на '***'.
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """
+        Применяет маскирование к записи лога.
+
+        Args:
+            record: Запись лога.
+
+        Returns:
+            Всегда True (фильтр не отсеивает записи, а модифицирует их).
+        """
+        # Если маскирование отключено через окружение, ничего не делаем.
+        if os.getenv("CH_DISABLE_LOG_MASKING", "").lower() in ("true", "1", "yes", "y"):
+            return True
+
+        if _MASK_RE is None:
+            return True
+
+        # Маскируем основное сообщение, если оно является строкой.
+        if isinstance(record.msg, str):
+            record.msg = _MASK_RE.sub("***", record.msg)
+
+        # Маскируем аргументы, если они являются строками.
+        if record.args:
+            new_args = []
+            for arg in record.args:
+                if isinstance(arg, str):
+                    new_args.append(_MASK_RE.sub("***", arg))
+                else:
+                    new_args.append(arg)
+            record.args = tuple(new_args)
+
+        return True
+
+
 class ChutilsLogger(logging.Logger):
     """
     Кастомный класс логгера, расширяющий стандартный `logging.Logger`.
@@ -208,6 +283,20 @@ class ChutilsLogger(logging.Logger):
         """
         if self.isEnabledFor(DEVDEBUG_LEVEL_NUM):
             self._log(DEVDEBUG_LEVEL_NUM, message, args, **kws)
+
+    def add_mask(self, value: str):
+        """
+        Добавляет строку в глобальный список маскируемых секретов.
+
+        Каждая зарегистрированная строка будет заменяться на '***' во всех сообщениях
+        всех логгеров chutils.
+
+        Args:
+            value: Секретная строка для маскирования.
+        """
+        if value and isinstance(value, str):
+            _GLOBAL_MASKS.add(value)
+            _update_mask_re()
 
 
 logging.setLoggerClass(ChutilsLogger)
@@ -505,5 +594,27 @@ def setup_logger(
     elif not _initialization_message_shown:
         logger.warning("Директория для логов не настроена. Файловое логирование отключено.")
         _initialization_message_shown = True
+
+    # --- 5. Настройка маскирования секретов ---
+    mask_patterns = final_logger_settings.get('mask_patterns', [])
+    if isinstance(mask_patterns, list):
+        for pattern in mask_patterns:
+            if not pattern:
+                continue
+            # Пытаемся получить значение секрета из конфига по имени ключа
+            secret_value = final_logger_settings.get(pattern)
+            if secret_value and isinstance(secret_value, str):
+                _GLOBAL_MASKS.add(secret_value)
+            # Также рассматриваем паттерн как регулярное выражение или литерал для маскирования
+            # (согласно FR3 спецификации)
+            elif isinstance(pattern, str):
+                # Если это не ключ в конфиге, просто добавляем сам паттерн
+                _GLOBAL_MASKS.add(pattern)
+
+    _update_mask_re()
+
+    # Добавляем фильтр маскирования, если он еще не добавлен
+    if not any(isinstance(f, SecretMaskingFilter) for f in logger.filters):
+        logger.addFilter(SecretMaskingFilter())
 
     return logger  # type: ignore

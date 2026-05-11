@@ -80,7 +80,8 @@ class SecretManager:
 
     prefix: str = "Chutils_"
 
-    def __init__(self, service_name: Optional[str] = None, prefix: Optional[str] = None) -> None:
+    def __init__(self, service_name: Optional[str] = None, prefix: Optional[str] = None,
+                 auto_mask_logs: bool = True) -> None:
         """
         Инициализирует менеджер и лениво загружает переменные из .env файла.
 
@@ -93,12 +94,16 @@ class SecretManager:
             service_name: Опциональное уникальное имя для вашего приложения.
             prefix: Опциональный префикс для `service_name`. Если не указан,
                     будет взят из конфига (ключ `prefix`) или использован "Chutils_".
+            auto_mask_logs: Если True, все полученные секреты будут автоматически
+                            маскироваться в логах chutils. По умолчанию True.
 
         Raises:
             ValueError: Если не удалось определить service_name.
         """
         # При первом создании экземпляра SecretManager загружаем .env
         _load_dotenv_if_needed()
+
+        self.auto_mask_logs = auto_mask_logs
 
         final_service_name = service_name
         if not final_service_name:  # Если не передано или пустая строка
@@ -208,6 +213,9 @@ class SecretManager:
             _get_logger().devdebug("Секрет '%s' найден в окружении.", key)
         else:
             _get_logger().devdebug("Секрет '%s' не найден.", key)
+
+        if value and self.auto_mask_logs:
+            _get_logger().add_mask(value)
 
         return value
 
