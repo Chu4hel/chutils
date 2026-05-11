@@ -8,6 +8,7 @@
 
 import asyncio
 import configparser
+import json
 import logging
 import os
 import re
@@ -96,15 +97,18 @@ def _initialize_paths():
     Автоматически находит и кэширует пути к корню проекта и файлу конфигурации.
 
     Инициализация происходит только один раз. Приоритет поиска файлов:
-    YAML (.yml, .yaml) -> INI (.ini) -> Маркеры проекта (pyproject.toml).
+    YAML (.yml, .yaml) -> INI (.ini) -> JSON (.json) -> Маркеры проекта (pyproject.toml).
     """
     global _BASE_DIR, _CONFIG_FILE_PATH, _paths_initialized
     if _paths_initialized:
         return
 
-    # Приоритет поиска: сначала YAML, потом INI, потом общий маркер проекта.
-    markers = ['config.yml', 'config.yaml', 'config.ini', 'config.local.yml', 'config.local.yaml', 'config.local.ini',
-               'pyproject.toml']
+    # Приоритет поиска: сначала YAML, потом INI, потом JSON, потом общий маркер проекта.
+    markers = [
+        'config.yml', 'config.yaml', 'config.ini', 'config.json',
+        'config.local.yml', 'config.local.yaml', 'config.local.ini', 'config.local.json',
+        'pyproject.toml'
+    ]
     project_root = find_project_root(Path.cwd(), markers)
 
     if project_root:
@@ -183,6 +187,9 @@ def get_config() -> Dict:
         elif file_ext == '.ini':
             main_config = _load_ini(main_path)
             _get_logger().debug("Основная конфигурация успешно загружена из INI: %s", main_path)
+        elif file_ext == '.json':
+            main_config = _load_json(main_path)
+            _get_logger().debug("Основная конфигурация успешно загружена из JSON: %s", main_path)
         else:
             _get_logger().warning("Неподдерживаемый формат основного файла конфигурации: %s", main_path)
     else:
@@ -196,6 +203,9 @@ def get_config() -> Dict:
         elif file_ext == '.ini':
             local_config = _load_ini(local_path)
             _get_logger().debug("Локальная конфигурация успешно загружена из INI: %s", local_path)
+        elif file_ext == '.json':
+            local_config = _load_json(local_path)
+            _get_logger().debug("Локальная конфигурация успешно загружена из JSON: %s", local_path)
         else:
             _get_logger().warning("Неподдерживаемый формат локального файла конфигурации: %s", local_path)
     else:
@@ -231,6 +241,24 @@ def _load_yaml(path: str) -> Dict:
             return yaml.safe_load(f) or {}
     except (yaml.YAMLError, FileNotFoundError) as e:
         _get_logger().critical("Ошибка чтения YAML файла конфигурации %s: %s", path, e)
+        return {}
+
+
+def _load_json(path: str) -> Dict:
+    """
+    Загружает JSON файл и обрабатывает ошибки парсинга.
+
+    Args:
+        path: Путь к файлу.
+
+    Returns:
+        Словарь данных или пустой словарь при ошибке.
+    """
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f) or {}
+    except (json.JSONDecodeError, FileNotFoundError) as e:
+        _get_logger().critical("Ошибка чтения JSON файла конфигурации %s: %s", path, e)
         return {}
 
 
@@ -349,6 +377,33 @@ def save_config_value(
             return True
         except Exception as e:
             _get_logger().error("Ошибка при сохранении в YAML файл %s: %s", path, e)
+            return False
+
+    elif file_ext == '.json':
+        try:
+            data = {}
+            if Path(path).exists():
+                with open(path, 'r', encoding='utf-8') as f:
+                    try:
+                        data = json.load(f) or {}
+                    except json.JSONDecodeError:
+                        _get_logger().warning("Файл %s содержит некорректный JSON, он будет перезаписан.", path)
+
+            if section not in data:
+                data[section] = {}
+            data[section][key] = value
+
+            with open(path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+
+            # Сбрасываем кэш
+            _config_object = None
+            _config_loaded = False
+
+            _get_logger().debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
+            return True
+        except Exception as e:
+            _get_logger().error("Ошибка при сохранении в JSON файл %s: %s", path, e)
             return False
 
     elif file_ext == '.ini':

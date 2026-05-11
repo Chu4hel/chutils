@@ -1,8 +1,7 @@
 import logging
 
-import pytest
-
 import chutils
+import pytest
 from chutils.decorators import log_function_details
 # Импортируем нужные функции и классы из библиотеки
 from chutils.logger import setup_logger, DEVDEBUG_LEVEL_NUM
@@ -105,7 +104,7 @@ def test_decorator_example_logs_correctly(caplog, tmp_path):
     # Проверяем уровень и содержание второго сообщения (о результате)
     assert second_log.levelno == DEVDEBUG_LEVEL_NUM
     assert "Функция decorated_sum() завершилась за" in second_log.message
-    assert "Возвращаемое значение: 15" in second_log.message
+    assert "Результат: 15" in second_log.message
 
 
 def test_multiple_loggers_example_logs_correctly(caplog, tmp_path):
