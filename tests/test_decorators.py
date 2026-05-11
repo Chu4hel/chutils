@@ -1,10 +1,12 @@
 from chutils.decorators import log_function_details
 
+
 # Просто функция для тестов
 @log_function_details
 def sample_function(a, b):
     """Складывает два числа."""
     return a + b
+
 
 def test_log_function_details(mocker):
     """
@@ -40,7 +42,7 @@ def test_log_function_details(mocker):
 
     # Проверка второго вызова (информация о результате)
     call_after = call_args_list[1]
-    assert call_after.args[0] == "Функция %s() завершилась за %.4f с. Возвращаемое значение: %s"
+    assert call_after.args[0] == "Функция %s() завершилась за %.4f с. Результат: %s"
     assert call_after.args[1] == "sample_function"
     assert call_after.args[2] == 2.5
     assert call_after.args[3] == 15
