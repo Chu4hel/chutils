@@ -145,6 +145,20 @@ key = secrets.get_secret("API_KEY")
 ### Декораторы (`chutils.decorators`)
 
 - `@log_function_details`: Логирует аргументы, время и результат функции (уровень `DEVDEBUG`).
+- `@retry`: Автоматически повторяет выполнение функции при ошибках. Поддерживает синхронные и асинхронные функции,
+  экспоненциальную задержку (backoff), случайный шум (jitter) и фильтрацию исключений.
+
+#### Пример использования @retry:
+
+```python
+from chutils.decorators import retry
+
+
+@retry(retries=3, delay=1.0, backoff=2.0)
+def fetch_data():
+    # Будет повторено до 3 раз при возникновении любого Exception
+    ...
+```
 
 ## Лицензия
 

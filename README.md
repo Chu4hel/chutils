@@ -149,6 +149,19 @@ In environments like Docker or CI/CD where `keyring` is unavailable, you can sup
 ### Decorators (`chutils.decorators`)
 
 - `@log_function_details`: Logs arguments, execution time, and result (uses `DEVDEBUG` level).
+- `@retry`: Automatically retries a function if it fails. Supports sync/async, backoff, jitter, and exception filtering.
+
+#### Example of @retry usage:
+
+```python
+from chutils.decorators import retry
+
+
+@retry(retries=3, delay=1.0, backoff=2.0)
+def fetch_data():
+    # Will be retried up to 3 times on any Exception
+    ...
+```
 
 ## License
 
