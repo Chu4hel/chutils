@@ -54,7 +54,7 @@ def test_finds_yaml_first(config_fs):
     config._initialize_paths()
 
     # ASSERT
-    assert Path(config._CONFIG_FILE_PATH).as_posix().endswith('/home/user/project/config.yml')
+    assert Path(config.get_config_file_path()).as_posix().endswith('/home/user/project/config.yml')
 
     # ACT & ASSERT: Проверяем, что загрузились данные из YAML
     db_host = config.get_config_value("Database", "host")
@@ -71,7 +71,7 @@ def test_falls_back_to_ini(config_fs):
     config._initialize_paths()
 
     # ASSERT
-    assert Path(config._CONFIG_FILE_PATH).as_posix().endswith('/home/user/project/config.ini')
+    assert Path(config.get_config_file_path()).as_posix().endswith('/home/user/project/config.ini')
 
     # ACT & ASSERT: Проверяем, что загрузились данные из INI
     db_host = config.get_config_value("Database", "host")
@@ -323,10 +323,8 @@ Database:
     fs.create_file(project_root / "config.local.yml", contents=local_yaml_content)
     fs.create_file(project_root / "pyproject.toml", contents="")  # Маркер проекта
 
-    # Сбрасываем кэш конфигурации
-    config._config_loaded = False
-    config._config_object = None
-    config._paths_initialized = False
+    # Сбрасываем кэш конфигурации через менеджер
+    config._cm._reset()
 
     # ACT
     cfg = config.get_config()
@@ -354,10 +352,8 @@ App:
     fs.create_file(project_root / "config.local.yml", contents=local_yaml_content)
     fs.create_file(project_root / "pyproject.toml", contents="")  # Маркер проекта
 
-    # Сбрасываем кэш конфигурации
-    config._config_loaded = False
-    config._config_object = None
-    config._paths_initialized = False
+    # Сбрасываем кэш конфигурации через менеджер
+    config._cm._reset()
 
     # ACT
     cfg = config.get_config()
@@ -392,10 +388,8 @@ App:
     fs.create_file(local_config_path, contents=local_yaml_content)
     fs.create_file(project_root / "pyproject.toml", contents="")  # Маркер проекта
 
-    # Сбрасываем кэш конфигурации
-    config._config_loaded = False
-    config._config_object = None
-    config._paths_initialized = False
+    # Сбрасываем кэш конфигурации через менеджер
+    config._cm._reset()
 
     # ACT: Сохраняем значение в основной конфиг
     success = config.save_config_value("App", "version", 1.2)
@@ -414,7 +408,7 @@ App:
     assert local_data_after_save["App"]["settings"]["debug"] is True
 
     # ASSERT: Проверяем, что get_config() возвращает объединенные данные с учетом изменений
-    config._config_loaded = False  # Сбрасываем кэш для get_config
+    config._cm.config_loaded = False  # Сбрасываем кэш для get_config
     merged_cfg = config.get_config()
     assert merged_cfg["App"]["name"] == "MainApp"
     assert merged_cfg["App"]["version"] == 1.1  # Локальный конфиг переопределяет основной
@@ -447,10 +441,8 @@ user = local_user
     fs.create_file(project_root / "config.local.ini", contents=local_ini_content)
     fs.create_file(project_root / "pyproject.toml", contents="")  # Маркер проекта
 
-    # Сбрасываем кэш конфигурации
-    config._config_loaded = False
-    config._config_object = None
-    config._paths_initialized = False
+    # Сбрасываем кэш конфигурации через менеджер
+    config._cm._reset()
 
     # ACT
     cfg = config.get_config()

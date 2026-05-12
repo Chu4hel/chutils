@@ -74,10 +74,9 @@ def init(base_dir: str):
     if not os.path.isdir(base_dir):
         raise ValueError(f"Указанная директория base_dir не существует или не является директорией: {base_dir}")
 
-    # Вручную устанавливаем базовую директорию. Модуль config сам найдет
-    # нужный файл (yml или ini) при первом обращении.
-    config._BASE_DIR = base_dir
-    config._paths_initialized = True
+    # Вручную устанавливаем базовую директорию через менеджер состояний.
+    config._cm.base_dir = base_dir
+    config._cm.paths_initialized = True
 
     print(f"Пакет chutils вручную инициализирован с базовой директорией: {base_dir}")
 

@@ -14,16 +14,10 @@ def clean_logging_state(caplog, tmp_path):
     сбрасывается перед каждым тестом.
     """
     # Сохраняем оригинальные пути конфига, если они были установлены
-    try:
-        original_base_dir = chutils.config._BASE_DIR
-        original_config_path = chutils.config._CONFIG_FILE_PATH
-        original_config_object = chutils.config._config_object
-        original_config_loaded = chutils.config._config_loaded
-    except AttributeError:
-        original_base_dir = None
-        original_config_path = None
-        original_config_object = None
-        original_config_loaded = False
+    original_base_dir = chutils.config.get_base_dir()
+    original_config_path = chutils.config.get_config_file_path()
+    original_config_object = chutils.config.get_config()
+    original_config_loaded = chutils.config.is_config_loaded()
 
     # Кэшируем глобальные состояния для логгера и декоратора
     original_log_dir = chutils.logger._LOG_DIR
@@ -34,8 +28,7 @@ def clean_logging_state(caplog, tmp_path):
     log_dir_for_test = tmp_path / "logs"
     log_dir_for_test.mkdir(exist_ok=True)
 
-    chutils.config._config_object = None
-    chutils.config._config_loaded = False
+    chutils.config._cm._reset()
     chutils.logger._file_handler_cache.clear()
     chutils.logger._initialization_message_shown = False
 
@@ -53,11 +46,11 @@ def clean_logging_state(caplog, tmp_path):
 
     yield  # Выполнение теста
 
-    # Восстанавливаем оригинальное состояние после теста
-    chutils.config._BASE_DIR = original_base_dir
-    chutils.config._CONFIG_FILE_PATH = original_config_path
-    chutils.config._config_object = original_config_object
-    chutils.config._config_loaded = original_config_loaded
+    # Восстанавливаем оригинальное состояние после теста через менеджер
+    chutils.config._cm.base_dir = original_base_dir
+    chutils.config._cm.config_file_path = original_config_path
+    chutils.config._cm.config_object = original_config_object
+    chutils.config._cm.config_loaded = original_config_loaded
     chutils.logger._LOG_DIR = original_log_dir
     chutils.decorators._module_logger = original_module_logger
 
@@ -71,7 +64,8 @@ def test_decorator_example_logs_correctly(caplog, tmp_path):
     caplog.set_level(DEVDEBUG_LEVEL_NUM)
 
     # Изолируем создание лог файлов в тестовой директории
-    chutils.config._BASE_DIR = str(tmp_path)
+    chutils.config._cm.base_dir = str(tmp_path)
+    chutils.config._cm.paths_initialized = True
 
     # Настраиваем логгер для модуля декораторов напрямую
     dec_logger = setup_logger(name="chutils.decorators", log_level="DEVDEBUG")
@@ -129,10 +123,11 @@ EventLogger:
   log_file_name: "events.log"
 """
     # Указываем chutils на нашу временную директорию как на корень проекта
-    chutils.config._BASE_DIR = str(tmp_path)
+    chutils.config._cm.base_dir = str(tmp_path)
     tmp_config_file = tmp_path / "config.yml"
     tmp_config_file.write_text(example_config_content, encoding='utf-8')
-    chutils.config._CONFIG_FILE_PATH = str(tmp_config_file)
+    chutils.config._cm.config_file_path = str(tmp_config_file)
+    chutils.config._cm.paths_initialized = True
 
     (tmp_path / "logs").mkdir(exist_ok=True)
 

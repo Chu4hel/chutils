@@ -3,10 +3,12 @@ import os
 from pathlib import Path
 
 import pytest
+
 from chutils.config import (
     get_config,
     _initialize_paths,
-    save_config_value
+    save_config_value,
+    get_config_file_path
 )
 
 
@@ -14,11 +16,7 @@ from chutils.config import (
 def reset_config_state():
     """Сбрасывает глобальное состояние модуля config перед каждым тестом."""
     import chutils.config
-    chutils.config._BASE_DIR = None
-    chutils.config._CONFIG_FILE_PATH = None
-    chutils.config._paths_initialized = False
-    chutils.config._config_object = None
-    chutils.config._config_loaded = False
+    chutils.config._cm._reset()
     yield
 
 
@@ -33,9 +31,9 @@ def test_json_config_auto_discovery(fs):
     fs.cwd = root_path
 
     _initialize_paths()
-    from chutils.config import _CONFIG_FILE_PATH
-    assert _CONFIG_FILE_PATH is not None
-    assert Path(_CONFIG_FILE_PATH).name == "config.json"
+    config_file_path = get_config_file_path()
+    assert config_file_path is not None
+    assert Path(config_file_path).name == "config.json"
 
 
 def test_json_config_loading(fs):

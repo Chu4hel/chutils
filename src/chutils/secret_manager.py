@@ -51,8 +51,7 @@ def _load_dotenv_if_needed():
         return
 
     # Ищем .env файл в корне проекта
-    config._initialize_paths()
-    base_dir = config._BASE_DIR
+    base_dir = config.get_base_dir()
     if base_dir:
         dotenv_path = os.path.join(base_dir, '.env')
         if os.path.exists(dotenv_path):
@@ -110,9 +109,7 @@ class SecretManager:
             final_service_name = config.get_config_value('Secrets', 'service_name')
 
         if not final_service_name:  # Если в конфиге тоже пусто
-            # Гарантируем, что пути инициализированы
-            config._initialize_paths()
-            final_service_name = config._BASE_DIR
+            final_service_name = config.get_base_dir()
             _get_logger().debug(
                 "service_name для SecretManager не указан. "
                 "Для обеспечения уникальности используется путь к проекту: '%s'",

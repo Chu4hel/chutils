@@ -9,12 +9,8 @@ def config_fs(fs):  # fs - это фикстура из pyfakefs
     """
     Настраивает фейковую файловую систему и сбрасывает состояние модулей config и logger.
     """
-    # Сброс состояния модуля config
-    config._BASE_DIR = None
-    config._CONFIG_FILE_PATH = None
-    config._paths_initialized = False
-    config._config_object = None
-    config._config_loaded = False
+    # Сброс состояния модуля config через менеджер
+    config._cm._reset()
 
     # Сброс состояния модуля logger
     logger._LOG_DIR = None

@@ -1,4 +1,5 @@
 import pytest
+
 from chutils.secret_manager import SecretManager, NoKeyringError, PasswordDeleteError
 
 SERVICE_NAME = "my_test_app"
@@ -27,8 +28,7 @@ def test_init_fallback_to_project_path(project_with_marker, monkeypatch):
     from chutils import secret_manager, config as chutils_config
     monkeypatch.setattr(secret_manager, '_dotenv_loaded', False)
     monkeypatch.setattr(secret_manager, '_dotenv_values', None)
-    monkeypatch.setattr(chutils_config, '_BASE_DIR', None)
-    monkeypatch.setattr(chutils_config, '_paths_initialized', False)
+    chutils_config._cm._reset()
 
     # Переходим в корень фейкового проекта
     import os
@@ -37,7 +37,7 @@ def test_init_fallback_to_project_path(project_with_marker, monkeypatch):
     sm = SecretManager("")  # или SecretManager(None)
 
     # Ожидаем, что service_name будет равен "префикс + путь_к_проекту"
-    found_project_path = chutils_config._BASE_DIR
+    found_project_path = chutils_config.get_base_dir()
     expected_service_name = sm.prefix + found_project_path
     assert sm.service_name == expected_service_name
 

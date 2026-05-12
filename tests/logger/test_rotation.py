@@ -44,7 +44,7 @@ def test_log_rotation_no_permission_error(project_with_marker, time_machine, fas
 
     from chutils import config as chutils_config
     logging.shutdown()
-    monkeypatch.setattr(chutils_config, '_paths_initialized', False)
+    chutils_config._cm.paths_initialized = False
     os.chdir(project_root)
 
     logger = setup_logger("rotation_test", force_reconfigure=True)
@@ -90,7 +90,7 @@ def test_size_based_rotation(project_with_marker, monkeypatch):
 
     logging.shutdown()
     from chutils import config as chutils_config
-    monkeypatch.setattr(chutils_config, '_paths_initialized', False)
+    chutils_config._cm.paths_initialized = False
     os.chdir(project_root)
 
     logger = setup_logger(
@@ -123,7 +123,7 @@ def test_rotation_with_shared_handler_no_error(project_with_marker, monkeypatch)
 
     logging.shutdown()
     from chutils import config as chutils_config
-    monkeypatch.setattr(chutils_config, '_paths_initialized', False)
+    chutils_config._cm.paths_initialized = False
     # Сбрасываем кэш обработчиков перед тестом
     from chutils import logger as chutils_logger
     monkeypatch.setattr(chutils_logger, '_file_handler_cache', {})

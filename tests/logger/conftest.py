@@ -85,13 +85,12 @@ def reset_chutils_state(monkeypatch):
     from chutils import logger as chutils_logger
     from chutils import config as chutils_config
 
+    # Сбрасываем состояние через менеджер напрямую
+    chutils_config._cm._reset()
+
+    # Сбрасываем logger
     monkeypatch.setattr(chutils_logger, '_LOG_DIR', None)
     monkeypatch.setattr(chutils_logger, '_initialization_message_shown', False)
-    monkeypatch.setattr(chutils_config, '_BASE_DIR', None)
-    monkeypatch.setattr(chutils_config, '_CONFIG_FILE_PATH', None)
-    monkeypatch.setattr(chutils_config, '_paths_initialized', False)
-    monkeypatch.setattr(chutils_config, '_config_object', None)
-    monkeypatch.setattr(chutils_config, '_config_loaded', False)
     monkeypatch.setattr(chutils_logger, '_file_handler_cache', {})
 
 

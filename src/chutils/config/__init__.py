@@ -101,6 +101,42 @@ def _sync_legacy_state():
             del g[mod_var]
 
 
+def get_base_dir() -> Optional[str]:
+    """
+    Возвращает абсолютный путь к корневой директории проекта.
+
+    Если пути еще не инициализированы, запускает автоматический поиск.
+
+    Returns:
+        Путь к корню проекта или None, если корень не найден.
+    """
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+    return _cm.base_dir
+
+
+def get_config_file_path() -> Optional[str]:
+    """
+    Возвращает путь к основному файлу конфигурации, который используется в данный момент.
+
+    Returns:
+        Путь к файлу или None, если файл не найден.
+    """
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+    return _cm.config_file_path
+
+
+def is_config_loaded() -> bool:
+    """
+    Проверяет, была ли конфигурация уже загружена в память.
+
+    Returns:
+        True, если кэш конфигурации заполнен.
+    """
+    return _cm.config_loaded
+
+
 def get_config() -> Dict:
     """
     Загружает и объединяет конфигурацию из всех доступных источников.

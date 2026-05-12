@@ -328,9 +328,7 @@ def _get_log_dir() -> Optional[str]:
         return _LOG_DIR
 
     # Запускаем инициализацию в config, если она еще не была выполнена.
-    config._initialize_paths()
-
-    base_dir = config._BASE_DIR
+    base_dir = config.get_base_dir()
     "Найденный config'ом базовый каталог проекта."
     logging.debug("В _get_log_dir() определен base_dir: %s", base_dir)
 
