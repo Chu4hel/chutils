@@ -39,12 +39,18 @@ class _ConfigManager:
         if self.paths_initialized:
             return
 
+        # В некоторых окружениях тестов Path.cwd() может вызвать ошибку, если директория удалена
+        try:
+            current_dir = Path.cwd()
+        except OSError:
+            current_dir = Path('.')
+
         markers = [
             'config.yml', 'config.yaml', 'config.ini', 'config.json',
             'config.local.yml', 'config.local.yaml', 'config.local.ini', 'config.local.json',
             'pyproject.toml'
         ]
-        project_root = find_root_func(Path.cwd(), markers)
+        project_root = find_root_func(current_dir, markers)
 
         if project_root:
             self.base_dir = str(project_root)

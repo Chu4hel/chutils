@@ -63,7 +63,7 @@ def __getattr__(name: str) -> Any:
             stacklevel=2
         )
         # Если пути еще не инициализированы, инициализируем их при первом обращении
-        if name in ['_BASE_DIR', '_CONFIG_FILE_PATH', '_paths_initialized'] and not _cm.paths_initialized:
+        if name in ['_BASE_DIR', '_CONFIG_FILE_PATH'] and not _cm.paths_initialized:
             _cm.initialize_paths(find_project_root)
 
         return getattr(_cm, remap[name])
@@ -75,26 +75,33 @@ def _initialize_paths():
     """
     Внутренняя функция для инициализации путей (сохранена для обратной совместимости тестов).
     """
+    _sync_legacy_state()
+    # Для тестов: при явном вызове инициализации сбрасываем состояние менеджера,
+    # чтобы поиск путей начался заново в новом окружении фикстуры.
+    _cm._reset()
     _cm.initialize_paths(find_project_root)
 
 
 def _sync_legacy_state():
     """
-    Синхронизирует состояние из старых глобальных переменных.
-    Это необходимо для поддержки существующих тестов, которые сбрасывают кэш
-    путем прямого присваивания: `config._config_loaded = False`.
+    Синхронизирует состояние и ОЧИЩАЕТ модуль от физических переменных,
+    чтобы __getattr__ продолжал работать.
     """
     g = globals()
-    if '_config_loaded' in g:
-        _cm.config_loaded = g['_config_loaded']
-    if '_config_object' in g:
-        _cm.config_object = g['_config_object']
-    if '_paths_initialized' in g:
-        _cm.paths_initialized = g['_paths_initialized']
-    if '_BASE_DIR' in g:
-        _cm.base_dir = g['_BASE_DIR']
-    if '_CONFIG_FILE_PATH' in g:
-        _cm.config_file_path = g['_CONFIG_FILE_PATH']
+    mapping = {
+        '_config_loaded': 'config_loaded',
+        '_config_object': 'config_object',
+        '_paths_initialized': 'paths_initialized',
+        '_BASE_DIR': 'base_dir',
+        '_CONFIG_FILE_PATH': 'config_file_path'
+    }
+
+    for mod_var, cm_attr in mapping.items():
+        if mod_var in g:
+            # Переносим значение в менеджер
+            setattr(_cm, cm_attr, g[mod_var])
+            # УДАЛЯЕМ из globals, чтобы __getattr__ снова мог перехватывать обращения
+            del g[mod_var]
 
 
 def get_config() -> Dict:
