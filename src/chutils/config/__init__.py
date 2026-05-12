@@ -3,20 +3,18 @@
 
 Обеспечивает автоматический поиск файла `config.yml`, `config.yaml` или `config.ini`
 в корне проекта и предоставляет удобные функции для чтения и сохранения настроек.
-Поддерживает кастомные уровни логирования при условии, что модуль logger загружен.
+Поддерживает кастомные уровни логирования при условии, что модуль logger уже загружен.
 """
 
 import asyncio
-import configparser
-import json
 import logging
 import os
-import re
+import warnings
 from pathlib import Path
 from typing import Any, Optional, List, Dict, TYPE_CHECKING
 
-import yaml
-
+from .manager import _cm
+from .providers import get_providers
 from .utils import find_project_root, _merge_configs, _nest_ini_dict, _get_typed_value
 
 if TYPE_CHECKING:
@@ -26,6 +24,9 @@ if TYPE_CHECKING:
 # Используем стандартный getLogger, чтобы избежать циклической рекурсии с logger.setup_logger.
 # Если модуль logger уже загружен, logging вернет экземпляр ChutilsLogger.
 logger = logging.getLogger(__name__)
+
+# Реестр провайдеров (использует _nest_ini_dict из utils)
+_PROVIDERS = get_providers(_nest_ini_dict)
 
 
 def _get_logger() -> 'ChutilsLogger':
@@ -38,82 +39,43 @@ def _get_logger() -> 'ChutilsLogger':
     return logger  # type: ignore
 
 
-# --- Глобальное состояние для "ленивой" инициализации ---
-_BASE_DIR: Optional[str] = None
-_CONFIG_FILE_PATH: Optional[str] = None
-_paths_initialized = False
+def __getattr__(name: str) -> Any:
+    """
+    Обеспечивает обратную совместимость для старых глобальных переменных.
 
-_config_object: Optional[Dict] = None
-_config_loaded = False
+    Согласно PEP 562, эта функция вызывается при обращении к отсутствующим атрибутам модуля.
+    Мы используем её для перенаправления обращений к старым приватным переменным
+    в новый менеджер состояния с выводом предупреждения об устаревании.
+    """
+    remap = {
+        '_BASE_DIR': 'base_dir',
+        '_CONFIG_FILE_PATH': 'config_file_path',
+        '_paths_initialized': 'paths_initialized',
+        '_config_object': 'config_object',
+        '_config_loaded': 'config_loaded'
+    }
+
+    if name in remap:
+        warnings.warn(
+            f"Прямое обращение к 'chutils.config.{name}' устарело и будет удалено в будущих версиях. "
+            f"Используйте публичный API модуля.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        # Если пути еще не инициализированы, инициализируем их при первом обращении
+        if name in ['_BASE_DIR', '_CONFIG_FILE_PATH', '_paths_initialized'] and not _cm.paths_initialized:
+            _cm.initialize_paths(find_project_root)
+
+        return getattr(_cm, remap[name])
+
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
 def _initialize_paths():
     """
-    Автоматически находит и кэширует пути к корню проекта и файлу конфигурации.
-
-    Инициализация происходит только один раз. Приоритет поиска файлов:
-    YAML (.yml, .yaml) -> INI (.ini) -> JSON (.json) -> Маркеры проекта (pyproject.toml).
+    Внутренняя функция для инициализации путей (сохранена для обратной совместимости тестов).
     """
-    global _BASE_DIR, _CONFIG_FILE_PATH, _paths_initialized
-    if _paths_initialized:
-        return
-
-    # Приоритет поиска: сначала YAML, потом INI, потом JSON, потом общий маркер проекта.
-    markers = [
-        'config.yml', 'config.yaml', 'config.ini', 'config.json',
-        'config.local.yml', 'config.local.yaml', 'config.local.ini', 'config.local.json',
-        'pyproject.toml'
-    ]
-    project_root = find_project_root(Path.cwd(), markers)
-
-    if project_root:
-        _BASE_DIR = str(project_root)
-        # Находим, какой именно конфигурационный файл был найден
-        for marker in markers:
-            if (project_root / marker).is_file() and marker.startswith('config'):
-                _CONFIG_FILE_PATH = str(project_root / marker)
-                break
-        _get_logger().debug("Корень проекта автоматически определен: %s", _BASE_DIR)
-    else:
-        _get_logger().warning("Не удалось автоматически найти корень проекта.")
-
-    _paths_initialized = True
-
-
-def _get_config_paths(cfg_file: Optional[str] = None) -> tuple[Optional[str], Optional[str]]:
-    """
-    Внутренняя функция для получения путей к основному и локальному файлам конфигурации.
-
-    Если пути не инициализированы, запускает поиск. Также определяет путь к .local файлу
-    на основе имени основного файла.
-
-    Args:
-        cfg_file: Явный путь к основному файлу (переопределяет автопоиск).
-
-    Returns:
-        Кортеж: (путь_к_основному, путь_к_локальному). Элементы могут быть None, если файлы не найдены.
-    """
-    main_config_path: Optional[str] = None
-    local_config_path: Optional[str] = None
-
-    if cfg_file:
-        main_config_path = cfg_file
-    elif not _paths_initialized:
-        _initialize_paths()
-        main_config_path = _CONFIG_FILE_PATH
-    else:
-        main_config_path = _CONFIG_FILE_PATH
-
-    if main_config_path:
-        main_path_obj = Path(main_config_path)
-        file_ext = main_path_obj.suffix.lower()
-        local_file_name = f"{main_path_obj.stem}.local{file_ext}"
-        potential_local_path = main_path_obj.parent / local_file_name
-        if potential_local_path.exists():
-            local_config_path = str(potential_local_path)
-            _get_logger().debug("Найден локальный файл конфигурации: %s", local_config_path)
-
-    return main_config_path, local_config_path
+    _cm.initialize_paths(find_project_root)
 
 
 def get_config() -> Dict:
@@ -124,51 +86,42 @@ def get_config() -> Dict:
     если он не был сброшен (например, при сохранении нового значения).
 
     Returns:
-       _config_object: Словарь со всей конфигурацией проекта. Если файлы не найдены, возвращается пустой словарь.
+       Словарь со всей конфигурацией проекта. Если файлы не найдены, возвращается пустой словарь.
     """
-    global _config_object, _config_loaded
-    if _config_loaded and _config_object is not None:
-        return _config_object
+    if _cm.config_loaded and _cm.config_object is not None:
+        return _cm.config_object
 
-    main_path, local_path = _get_config_paths()
+    # Гарантируем инициализацию путей
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+
+    main_path, local_path = _cm.get_config_paths()
     main_config: Dict = {}
     local_config: Dict = {}
 
+    def load_from_path(path: str) -> Dict:
+        ext = Path(path).suffix.lower()
+        provider = _PROVIDERS.get(ext)
+        if provider:
+            data = provider.load(path)
+            _get_logger().debug("Конфигурация загружена из %s (%s)", path, ext)
+            return data
+        _get_logger().warning("Неподдерживаемый формат файла конфигурации: %s", path)
+        return {}
+
     if main_path and Path(main_path).exists():
-        file_ext = Path(main_path).suffix.lower()
-        if file_ext in ['.yml', '.yaml']:
-            main_config = _load_yaml(main_path)
-            _get_logger().debug("Основная конфигурация успешно загружена из YAML: %s", main_path)
-        elif file_ext == '.ini':
-            main_config = _load_ini(main_path)
-            _get_logger().debug("Основная конфигурация успешно загружена из INI: %s", main_path)
-        elif file_ext == '.json':
-            main_config = _load_json(main_path)
-            _get_logger().debug("Основная конфигурация успешно загружена из JSON: %s", main_path)
-        else:
-            _get_logger().warning("Неподдерживаемый формат основного файла конфигурации: %s", main_path)
+        main_config = load_from_path(main_path)
     else:
         _get_logger().debug("Основной файл конфигурации не найден или не указан.")
 
     if local_path and Path(local_path).exists():
-        file_ext = Path(local_path).suffix.lower()
-        if file_ext in ['.yml', '.yaml']:
-            local_config = _load_yaml(local_path)
-            _get_logger().debug("Локальная конфигурация успешно загружена из YAML: %s", local_path)
-        elif file_ext == '.ini':
-            local_config = _load_ini(local_path)
-            _get_logger().debug("Локальная конфигурация успешно загружена из INI: %s", local_path)
-        elif file_ext == '.json':
-            local_config = _load_json(local_path)
-            _get_logger().debug("Локальная конфигурация успешно загружена из JSON: %s", local_path)
-        else:
-            _get_logger().warning("Неподдерживаемый формат локального файла конфигурации: %s", local_path)
+        local_config = load_from_path(local_path)
     else:
         _get_logger().debug("Локальный файл конфигурации не найден или не указан.")
 
-    _config_object = _merge_configs(main_config, local_config)
-    _config_loaded = True
-    return _config_object
+    _cm.config_object = _merge_configs(main_config, local_config)
+    _cm.config_loaded = True
+    return _cm.config_object
 
 
 async def aget_config() -> Dict:
@@ -179,64 +132,6 @@ async def aget_config() -> Dict:
         Словарь конфигурации.
     """
     return await asyncio.to_thread(get_config)
-
-
-def _load_yaml(path: str) -> Dict:
-    """
-    Загружает YAML файл и обрабатывает ошибки парсинга.
-
-    Args:
-        path: Путь к файлу.
-
-    Returns:
-        Словарь данных или пустой словарь при ошибке.
-    """
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            return yaml.safe_load(f) or {}
-    except (yaml.YAMLError, FileNotFoundError) as e:
-        _get_logger().critical("Ошибка чтения YAML файла конфигурации %s: %s", path, e)
-        return {}
-
-
-def _load_json(path: str) -> Dict:
-    """
-    Загружает JSON файл и обрабатывает ошибки парсинга.
-
-    Args:
-        path: Путь к файлу.
-
-    Returns:
-        Словарь данных или пустой словарь при ошибке.
-    """
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            return json.load(f) or {}
-    except (json.JSONDecodeError, FileNotFoundError) as e:
-        _get_logger().critical("Ошибка чтения JSON файла конфигурации %s: %s", path, e)
-        return {}
-
-
-def _load_ini(path: str) -> Dict:
-    """
-    Загружает INI файл и преобразует его во вложенный словарь.
-
-    Args:
-        path: Путь к файлу.
-
-    Returns:
-        Словарь данных или пустой словарь при ошибке.
-    """
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            parser = configparser.ConfigParser()
-            parser.read_string(f.read())
-            flat_ini_config = {s: dict(parser.items(s)) for s in parser.sections()}
-            # Преобразуем плоскую структуру вложенных секций в иерархическую
-            return _nest_ini_dict(flat_ini_config)
-    except (configparser.Error, FileNotFoundError) as e:
-        _get_logger().critical("Ошибка чтения INI файла конфигурации %s: %s", path, e)
-        return {}
 
 
 def save_config_value(
@@ -267,7 +162,9 @@ def save_config_value(
         True: Если значение было успешно обновлено и сохранено.
         False: Если файл не найден, или произошла ошибка.
     """
-    global _config_object, _config_loaded
+    # Гарантируем инициализацию путей
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
 
     path: Optional[str] = None
 
@@ -275,7 +172,7 @@ def save_config_value(
     if cfg_file:
         path = cfg_file
     else:
-        main_path, local_path = _get_config_paths()
+        main_path, local_path = _cm.get_config_paths()
         if save_to_local and local_path:
             path = local_path
             _get_logger().debug("Для сохранения выбран локальный файл конфигурации: %s", path)
@@ -286,159 +183,22 @@ def save_config_value(
         _get_logger().error("Невозможно сохранить значение: путь к файлу конфигурации не определен.")
         return False
 
-    file_ext = Path(path).suffix.lower()
+    ext = Path(path).suffix.lower()
+    provider = _PROVIDERS.get(ext)
 
-    if file_ext in ['.yml', '.yaml']:
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                data = yaml.safe_load(f) or {}
-
-            if section not in data:
-                data[section] = {}
-            data[section][key] = value
-
-            with open(path, 'w', encoding='utf-8') as f:
-                yaml.dump(data, f, allow_unicode=True, sort_keys=False)
-
-            # Сбрасываем кэш, чтобы при следующем get_config() конфигурация была перезагружена
-            _config_object = None
-            _config_loaded = False
-
-            _get_logger().debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
-            return True
-        except Exception as e:
-            _get_logger().error("Ошибка при сохранении в YAML файл %s: %s", path, e)
-            return False
-
-    elif file_ext == '.json':
-        try:
-            data = {}
-            if Path(path).exists():
-                with open(path, 'r', encoding='utf-8') as f:
-                    try:
-                        data = json.load(f) or {}
-                    except json.JSONDecodeError:
-                        _get_logger().warning("Файл %s содержит некорректный JSON, он будет перезаписан.", path)
-
-            if section not in data:
-                data[section] = {}
-            data[section][key] = value
-
-            with open(path, 'w', encoding='utf-8') as f:
-                json.dump(data, f, indent=4, ensure_ascii=False)
-
-            # Сбрасываем кэш
-            _config_object = None
-            _config_loaded = False
-
-            _get_logger().debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
-            return True
-        except Exception as e:
-            _get_logger().error("Ошибка при сохранении в JSON файл %s: %s", path, e)
-            return False
-
-    elif file_ext == '.ini':
-        if not Path(path).exists():
-            _get_logger().error("Невозможно сохранить значение: файл конфигурации %s не найден.", path)
-            return False
-
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                lines = f.readlines()
-        except IOError as e:
-            _get_logger().error("Ошибка чтения файла %s для сохранения: %s", path, e)
-            return False
-
-        updated = False
-        in_target_section = False
-        section_found = False
-        key_found_in_section = False
-        section_pattern = re.compile(r'^\s*\[\s*(?P<section_name>[^]]+)\s*\]\s*')
-        key_pattern = re.compile(rf'^\s*({re.escape(key)})\s*=\s*(.*)', re.IGNORECASE)
-
-        new_lines = []
-        for line in lines:
-            section_match = section_pattern.match(line)
-            if section_match:
-                current_section_name = section_match.group('section_name').strip()
-                if current_section_name.lower() == section.lower():
-                    in_target_section = True
-                    section_found = True
-                else:
-                    in_target_section = False
-                new_lines.append(line)
-                continue
-
-            if in_target_section and not key_found_in_section:
-                key_match = key_pattern.match(line)
-                if key_match:
-                    original_key = key_match.group(1)
-                    new_line_content = f"{original_key} = {value}\n"
-                    new_lines.append(new_line_content)
-                    key_found_in_section = True
-                    updated = True
-                    _get_logger().debug("Ключ '%s' в секции '[%s]' будет обновлен на '%s' в файле %s", key, section,
-                                        value,
-                                        path)
-                    continue
-
-            new_lines.append(line)
-
-        if not section_found:
-            # Если секция не найдена, добавляем ее в конец файла
-            if new_lines and new_lines[-1].strip() != "":
-                new_lines.append('\n')  # Добавляем пустую строку для отступа
-            new_lines.append(f'[{section}]\n')
-            new_lines.append(f'{key} = {value}\n')
-            updated = True
-            _get_logger().debug("Новая секция '[%s]' с ключом '%s' будет добавлена в файл %s", section, key, path)
-
-        elif not key_found_in_section:  # `section_found` is implicitly True here
-            # Существующая логика для добавления ключа в существующую секцию
-            key_added = False
-            final_lines = []
-            in_target_section_for_add = False
-            for i, line in enumerate(new_lines):
-                final_lines.append(line)
-                section_match = section_pattern.match(line)
-                if section_match:
-                    current_section_name = section_match.group('section_name').strip()
-                    in_target_section_for_add = current_section_name.lower() == section.lower()
-
-                # Проверяем, является ли следующая строка началом новой секции или концом файла
-                is_last_line = i == len(new_lines) - 1
-                next_line_is_new_section = False
-                if not is_last_line:
-                    next_line_match = section_pattern.match(new_lines[i + 1])
-                    if next_line_match:
-                        next_line_is_new_section = True
-
-                if in_target_section_for_add and (is_last_line or next_line_is_new_section):
-                    # Вставляем ключ перед следующей секцией или в конце файла
-                    final_lines.append(f"{key} = {value}\n")
-                    key_added = True
-                    updated = True
-                    break  # Выходим из цикла, чтобы не добавлять ключ многократно
-            new_lines = final_lines
-
-        if updated:
-            try:
-                with open(path, 'w', encoding='utf-8') as f:
-                    f.writelines(new_lines)
-                _get_logger().debug("Файл конфигурации %s успешно обновлен.", path)
-                # Сбрасываем кэш, чтобы при следующем get_config() конфигурация была перезагружена
-                _config_object = None
-                _config_loaded = False
-                return True
-            except IOError as e:
-                _get_logger().error("Ошибка записи в файл %s при сохранении: %s", path, e)
-                return False
-        else:
-            _get_logger().debug("Обновление для ключа '%s' в секции '[%s]' не потребовалось.", key, section)
-            return False
-    else:
-        _get_logger().warning("Сохранение для формата %s не поддерживается.", file_ext)
+    if not provider:
+        _get_logger().warning("Сохранение для формата %s не поддерживается.", ext)
         return False
+
+    success = provider.save(path, section, key, value)
+    if success:
+        _get_logger().debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
+        # Сбрасываем кэш
+        _cm.config_object = None
+        _cm.config_loaded = False
+        return True
+
+    return False
 
 
 async def asave_config_value(
@@ -663,8 +423,11 @@ def get_config_path(
 
     path_obj = Path(path_str)
 
+    # Используем динамический атрибут _BASE_DIR для обратной совместимости
+    base_dir = _BASE_DIR
+
     # Если путь относительный, _BASE_DIR определен и resolve_from_root включен, объединяем их
-    if resolve_from_root and not path_obj.is_absolute() and _BASE_DIR:
-        return str(Path(_BASE_DIR) / path_obj)
+    if resolve_from_root and not path_obj.is_absolute() and base_dir:
+        return str(Path(base_dir) / path_obj)
 
     return path_str
