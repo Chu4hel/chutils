@@ -18,7 +18,7 @@ from typing import Any, Optional, List, Dict, TYPE_CHECKING
 import yaml
 
 if TYPE_CHECKING:
-    from .logger import ChutilsLogger
+    from ..logger import ChutilsLogger
 
 # Настраиваем логгер для этого модуля.
 # Используем стандартный getLogger, чтобы избежать циклической рекурсии с logger.setup_logger.
