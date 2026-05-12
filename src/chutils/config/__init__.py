@@ -78,6 +78,25 @@ def _initialize_paths():
     _cm.initialize_paths(find_project_root)
 
 
+def _sync_legacy_state():
+    """
+    Синхронизирует состояние из старых глобальных переменных.
+    Это необходимо для поддержки существующих тестов, которые сбрасывают кэш
+    путем прямого присваивания: `config._config_loaded = False`.
+    """
+    g = globals()
+    if '_config_loaded' in g:
+        _cm.config_loaded = g['_config_loaded']
+    if '_config_object' in g:
+        _cm.config_object = g['_config_object']
+    if '_paths_initialized' in g:
+        _cm.paths_initialized = g['_paths_initialized']
+    if '_BASE_DIR' in g:
+        _cm.base_dir = g['_BASE_DIR']
+    if '_CONFIG_FILE_PATH' in g:
+        _cm.config_file_path = g['_CONFIG_FILE_PATH']
+
+
 def get_config() -> Dict:
     """
     Загружает и объединяет конфигурацию из всех доступных источников.
@@ -88,6 +107,9 @@ def get_config() -> Dict:
     Returns:
        Словарь со всей конфигурацией проекта. Если файлы не найдены, возвращается пустой словарь.
     """
+    # Поддержка старых тестов: синхронизируем состояние, если оно было изменено напрямую в модуле
+    _sync_legacy_state()
+
     if _cm.config_loaded and _cm.config_object is not None:
         return _cm.config_object
 
@@ -162,6 +184,9 @@ def save_config_value(
         True: Если значение было успешно обновлено и сохранено.
         False: Если файл не найден, или произошла ошибка.
     """
+    # Поддержка старых тестов: синхронизируем состояние, если оно было изменено напрямую в модуле
+    _sync_legacy_state()
+
     # Гарантируем инициализацию путей
     if not _cm.paths_initialized:
         _cm.initialize_paths(find_project_root)
