@@ -253,6 +253,7 @@ Database:
     assert "'not-a-float'" in caplog.text
     assert "к типу float" in caplog.text
 
+
 def test_get_config_returns_empty_dict_when_no_file_found(config_fs, caplog):
     """
     Проверяет, что get_config() возвращает пустой словарь и не падает,
@@ -305,7 +306,7 @@ Database:
 """
     fs.create_file(project_root / "config.yml", contents=main_yaml_content)
     fs.create_file(project_root / "config.local.yml", contents=local_yaml_content)
-    fs.create_file(project_root / "pyproject.toml", contents="") # Маркер проекта
+    fs.create_file(project_root / "pyproject.toml", contents="")  # Маркер проекта
 
     # Сбрасываем кэш конфигурации
     config._config_loaded = False
@@ -317,12 +318,12 @@ Database:
 
     # ASSERT
     assert cfg["App"]["name"] == "MainApp"  # Не переопределено
-    assert cfg["App"]["version"] == 1.1     # Переопределено
-    assert cfg["App"]["settings"]["debug"] is True # Вложенное переопределение
-    assert cfg["App"]["settings"]["log_level"] == "INFO" # Не переопределено
-    assert cfg["Database"]["host"] == "localhost" # Не переопределено
-    assert cfg["Database"]["port"] == 6000     # Переопределено
-    assert cfg["Database"]["user"] == "local_user" # Добавлено новое значение
+    assert cfg["App"]["version"] == 1.1  # Переопределено
+    assert cfg["App"]["settings"]["debug"] is True  # Вложенное переопределение
+    assert cfg["App"]["settings"]["log_level"] == "INFO"  # Не переопределено
+    assert cfg["Database"]["host"] == "localhost"  # Не переопределено
+    assert cfg["Database"]["port"] == 6000  # Переопределено
+    assert cfg["Database"]["user"] == "local_user"  # Добавлено новое значение
 
 
 def test_only_local_config_exists(config_fs):
@@ -336,7 +337,7 @@ App:
   version: 2.0
 """
     fs.create_file(project_root / "config.local.yml", contents=local_yaml_content)
-    fs.create_file(project_root / "pyproject.toml", contents="") # Маркер проекта
+    fs.create_file(project_root / "pyproject.toml", contents="")  # Маркер проекта
 
     # Сбрасываем кэш конфигурации
     config._config_loaded = False
@@ -349,7 +350,7 @@ App:
     # ASSERT
     assert cfg["App"]["name"] == "LocalApp"
     assert cfg["App"]["version"] == 2.0
-    assert "Database" not in cfg # Убедимся, что нет секций из несуществующего основного файла
+    assert "Database" not in cfg  # Убедимся, что нет секций из несуществующего основного файла
 
 
 def test_save_config_value_does_not_affect_local_config(config_fs):
@@ -374,7 +375,7 @@ App:
 
     fs.create_file(main_config_path, contents=main_yaml_content)
     fs.create_file(local_config_path, contents=local_yaml_content)
-    fs.create_file(project_root / "pyproject.toml", contents="") # Маркер проекта
+    fs.create_file(project_root / "pyproject.toml", contents="")  # Маркер проекта
 
     # Сбрасываем кэш конфигурации
     config._config_loaded = False
@@ -398,10 +399,10 @@ App:
     assert local_data_after_save["App"]["settings"]["debug"] is True
 
     # ASSERT: Проверяем, что get_config() возвращает объединенные данные с учетом изменений
-    config._config_loaded = False # Сбрасываем кэш для get_config
+    config._config_loaded = False  # Сбрасываем кэш для get_config
     merged_cfg = config.get_config()
     assert merged_cfg["App"]["name"] == "MainApp"
-    assert merged_cfg["App"]["version"] == 1.1 # Локальный конфиг переопределяет основной
+    assert merged_cfg["App"]["version"] == 1.1  # Локальный конфиг переопределяет основной
     assert merged_cfg["App"]["settings"]["debug"] is True
 
 
@@ -429,7 +430,7 @@ user = local_user
 """
     fs.create_file(project_root / "config.ini", contents=main_ini_content)
     fs.create_file(project_root / "config.local.ini", contents=local_ini_content)
-    fs.create_file(project_root / "pyproject.toml", contents="") # Маркер проекта
+    fs.create_file(project_root / "pyproject.toml", contents="")  # Маркер проекта
 
     # Сбрасываем кэш конфигурации
     config._config_loaded = False
@@ -443,6 +444,5 @@ user = local_user
     assert cfg["App"]["name"] == "MainApp"
     assert cfg["App"]["version"] == "1.1"
     assert cfg["Database"]["host"] == "localhost"
-    assert cfg["Database"]["port"] == "6000" # INI парсит все как строки
+    assert cfg["Database"]["port"] == "6000"  # INI парсит все как строки
     assert cfg["Database"]["user"] == "local_user"
-
