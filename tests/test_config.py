@@ -2,7 +2,22 @@
 import logging
 from pathlib import Path
 
+import pytest
+
 from chutils import config
+
+
+def test_deprecation_warning_for_old_globals():
+    """Проверяет, что доступ к старым глобальным переменным вызывает DeprecationWarning."""
+    # Мы пока не реализовали __getattr__, поэтому этот тест провалится или будет работать
+    # напрямую с переменными. Но задача - создать тест.
+    with pytest.warns(DeprecationWarning, match="устарело"):
+        _ = config._BASE_DIR
+    with pytest.warns(DeprecationWarning, match="устарело"):
+        _ = config._CONFIG_FILE_PATH
+    with pytest.warns(DeprecationWarning, match="устарело"):
+        _ = config._config_object
+
 
 # Контент для фейкового config.yml
 FAKE_YAML_CONTENT = """
