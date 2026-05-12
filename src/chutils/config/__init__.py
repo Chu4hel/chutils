@@ -17,6 +17,8 @@ from typing import Any, Optional, List, Dict, TYPE_CHECKING
 
 import yaml
 
+from .utils import find_project_root, _merge_configs, _nest_ini_dict, _get_typed_value
+
 if TYPE_CHECKING:
     from ..logger import ChutilsLogger
 
@@ -43,53 +45,6 @@ _paths_initialized = False
 
 _config_object: Optional[Dict] = None
 _config_loaded = False
-
-
-def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
-    """
-    Ищет корень проекта, двигаясь вверх по дереву каталогов.
-
-    Корень определяется по наличию одного из файлов-маркеров (например, .git или pyproject.toml).
-
-    Args:
-        start_path: Директория, с которой начинается поиск.
-        markers: Список имен файлов или папок (маркеров), наличие которых
-            в директории указывает на то, что это корень проекта.
-
-    Returns:
-        Объект Path, представляющий корневую директорию проекта, или None, если корень не найден.
-    """
-    current_path = start_path.resolve()
-    # Идем вверх до тех пор, пока не достигнем корня файловой системы
-    while current_path != current_path.parent:
-        for marker in markers:
-            if (current_path / marker).exists():
-                _get_logger().debug("Найден маркер '%s' в директории: %s", marker, current_path)
-                return current_path
-        current_path = current_path.parent
-    _get_logger().debug("Корень проекта не найден.")
-    return None
-
-
-def _merge_configs(main_config: Dict, local_config: Dict) -> Dict:
-    """
-    Рекурсивно объединяет два словаря конфигурации.
-
-    Значения из `local_config` имеют приоритет и переопределяют значения из `main_config`.
-
-    Args:
-        main_config: Основной словарь конфигурации.
-        local_config: Словарь с локальными переопределениями.
-
-    Returns:
-        Объединенный словарь конфигурации.
-    """
-    for key, value in local_config.items():
-        if key in main_config and isinstance(main_config[key], dict) and isinstance(value, dict):
-            main_config[key] = _merge_configs(main_config[key], value)
-        else:
-            main_config[key] = value
-    return main_config
 
 
 def _initialize_paths():
@@ -260,30 +215,6 @@ def _load_json(path: str) -> Dict:
     except (json.JSONDecodeError, FileNotFoundError) as e:
         _get_logger().critical("Ошибка чтения JSON файла конфигурации %s: %s", path, e)
         return {}
-
-
-def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
-    """
-    Преобразует плоский словарь INI-секций во вложенную структуру.
-
-    Разделяет имена секций по точкам (например, 'Logging.default' -> {'Logging': {'default': ...}}).
-
-    Args:
-        flat_dict: Словарь, где ключи - названия секций INI.
-
-    Returns:
-        Вложенный словарь.
-    """
-    nested_dict = {}
-    for section_key, section_values in flat_dict.items():
-        current_level = nested_dict
-        parts = section_key.split('.')
-        for i, part in enumerate(parts):
-            if i == len(parts) - 1:  # Последняя часть - это название секции
-                current_level[part] = section_values
-            else:
-                current_level = current_level.setdefault(part, {})
-    return nested_dict
 
 
 def _load_ini(path: str) -> Dict:
@@ -602,16 +533,7 @@ def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[D
     Returns:
         Целое число из конфигурации или `fallback`.
     """
-    value = get_config_value(section, key, fallback, config)
-    try:
-        return int(value)
-    except (ValueError, TypeError):
-        _get_logger().warning(
-            "Не удалось преобразовать значение '%s' для ключа '%s' в секции '[%s]' к типу int. "
-            "Возвращено значение по умолчанию: %s.",
-            value, key, section, fallback
-        )
-        return fallback
+    return _get_typed_value(section, key, int, fallback, get_config_value, config)
 
 
 def get_config_float(section: str, key: str, fallback: float = 0.0, config: Optional[Dict] = None) -> float:
@@ -628,16 +550,7 @@ def get_config_float(section: str, key: str, fallback: float = 0.0, config: Opti
     Returns:
         Float или fallback.
     """
-    value = get_config_value(section, key, fallback, config)
-    try:
-        return float(value)
-    except (ValueError, TypeError):
-        _get_logger().warning(
-            "Не удалось преобразовать значение '%s' для ключа '%s' в секции '[%s]' к типу float. "
-            "Возвращено значение по умолчанию: %s.",
-            value, key, section, fallback
-        )
-        return fallback
+    return _get_typed_value(section, key, float, fallback, get_config_value, config)
 
 
 def get_config_boolean(section: str, key: str, fallback: bool = False, config: Optional[Dict] = None) -> bool:
@@ -657,14 +570,18 @@ def get_config_boolean(section: str, key: str, fallback: bool = False, config: O
     Returns:
         True или False.
     """
-    value = get_config_value(section, key, fallback, config)
-    if isinstance(value, bool):
-        return value
-    if str(value).lower() in ['true', '1', 't', 'y', 'yes']:
-        return True
-    if str(value).lower() in ['false', '0', 'f', 'n', 'no']:
-        return False
-    return fallback
+
+    def bool_converter(v: Any) -> bool:
+        if isinstance(v, bool):
+            return v
+        s = str(v).lower()
+        if s in ['true', '1', 't', 'y', 'yes']:
+            return True
+        if s in ['false', '0', 'f', 'n', 'no']:
+            return False
+        raise ValueError(f"Invalid boolean value: {v}")
+
+    return _get_typed_value(section, key, bool_converter, fallback, get_config_value, config, type_name="bool")
 
 
 def get_config_list(
@@ -685,12 +602,14 @@ def get_config_list(
         Список из конфигурации или `fallback`. Если `fallback` не указан,
         возвращается пустой список.
     """
-    value = get_config_value(section, key, fallback, config)
-    if isinstance(value, list):
-        return value
-    if fallback is None:
-        return []
-    return fallback
+    actual_fallback = fallback if fallback is not None else []
+
+    def list_converter(v: Any) -> List:
+        if isinstance(v, list):
+            return v
+        raise ValueError(f"Value is not a list: {v}")
+
+    return _get_typed_value(section, key, list_converter, actual_fallback, get_config_value, config, type_name="list")
 
 
 def get_config_section(
