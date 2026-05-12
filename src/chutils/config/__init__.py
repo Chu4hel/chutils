@@ -423,8 +423,8 @@ def get_config_path(
 
     path_obj = Path(path_str)
 
-    # Используем динамический атрибут _BASE_DIR для обратной совместимости
-    base_dir = _BASE_DIR
+    # Внутри модуля используем менеджер напрямую, чтобы не вызывать DeprecationWarning и избежать NameError
+    base_dir = _cm.base_dir
 
     # Если путь относительный, _BASE_DIR определен и resolve_from_root включен, объединяем их
     if resolve_from_root and not path_obj.is_absolute() and base_dir:
