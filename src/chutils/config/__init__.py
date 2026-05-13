@@ -11,7 +11,7 @@ import logging
 import os
 import warnings
 from pathlib import Path
-from typing import Any, Optional, List, Dict, TYPE_CHECKING
+from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union
 
 from .manager import _cm
 from .providers import get_providers
@@ -19,6 +19,10 @@ from .utils import find_project_root, _merge_configs, _nest_ini_dict, _get_typed
 
 if TYPE_CHECKING:
     from ..logger import ChutilsLogger
+    from pydantic import BaseModel
+
+# Тип для Pydantic моделей
+T = TypeVar("T", bound="BaseModel")
 
 # Настраиваем логгер для этого модуля.
 # Используем стандартный getLogger, чтобы избежать циклической рекурсии с logger.setup_logger.
@@ -137,63 +141,105 @@ def is_config_loaded() -> bool:
     return _cm.config_loaded
 
 
-def get_config() -> Dict:
+def _check_pydantic():
+    """Проверяет наличие установленного пакета pydantic."""
+    try:
+        import pydantic
+        return True
+    except ImportError:
+        return False
+
+
+@overload
+def get_config(model: Type[T]) -> T: ...
+
+
+@overload
+def get_config(model: None = None) -> Dict[str, Any]: ...
+
+
+def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
     """
     Загружает и объединяет конфигурацию из всех доступных источников.
 
     Результат кэшируется. Повторные вызовы возвращают кэшированный объект,
     если он не был сброшен (например, при сохранении нового значения).
 
+    Args:
+        model: Опциональный класс Pydantic модели для валидации.
+
     Returns:
-       Словарь со всей конфигурацией проекта. Если файлы не найдены, возвращается пустой словарь.
+       Словарь со всей конфигурацией проекта или экземпляр Pydantic модели.
+       Если файлы не найдены, возвращается пустой словарь (или ошибка валидации модели).
     """
     # Поддержка старых тестов: синхронизируем состояние, если оно было изменено напрямую в модуле
     _sync_legacy_state()
 
-    if _cm.config_loaded and _cm.config_object is not None:
-        return _cm.config_object
+    config_data = _cm.config_object
 
-    # Гарантируем инициализацию путей
-    if not _cm.paths_initialized:
-        _cm.initialize_paths(find_project_root)
+    if not (_cm.config_loaded and config_data is not None):
+        # Гарантируем инициализацию путей
+        if not _cm.paths_initialized:
+            _cm.initialize_paths(find_project_root)
 
-    main_path, local_path = _cm.get_config_paths()
-    main_config: Dict = {}
-    local_config: Dict = {}
+        main_path, local_path = _cm.get_config_paths()
+        main_config: Dict = {}
+        local_config: Dict = {}
 
-    def load_from_path(path: str) -> Dict:
-        ext = Path(path).suffix.lower()
-        provider = _PROVIDERS.get(ext)
-        if provider:
-            data = provider.load(path)
-            _get_logger().debug("Конфигурация загружена из %s (%s)", path, ext)
-            return data
-        _get_logger().warning("Неподдерживаемый формат файла конфигурации: %s", path)
-        return {}
+        def load_from_path(path: str) -> Dict:
+            ext = Path(path).suffix.lower()
+            provider = _PROVIDERS.get(ext)
+            if provider:
+                data = provider.load(path)
+                _get_logger().debug("Конфигурация загружена из %s (%s)", path, ext)
+                return data
+            _get_logger().warning("Неподдерживаемый формат файла конфигурации: %s", path)
+            return {}
 
-    if main_path and Path(main_path).exists():
-        main_config = load_from_path(main_path)
-    else:
-        _get_logger().debug("Основной файл конфигурации не найден или не указан.")
+        if main_path and Path(main_path).exists():
+            main_config = load_from_path(main_path)
+        else:
+            _get_logger().debug("Основной файл конфигурации не найден или не указан.")
 
-    if local_path and Path(local_path).exists():
-        local_config = load_from_path(local_path)
-    else:
-        _get_logger().debug("Локальный файл конфигурации не найден или не указан.")
+        if local_path and Path(local_path).exists():
+            local_config = load_from_path(local_path)
+        else:
+            _get_logger().debug("Локальный файл конфигурации не найден или не указан.")
 
-    _cm.config_object = _merge_configs(main_config, local_config)
-    _cm.config_loaded = True
-    return _cm.config_object
+        config_data = _merge_configs(main_config, local_config)
+        _cm.config_object = config_data
+        _cm.config_loaded = True
+
+    if model is not None:
+        if not _check_pydantic():
+            raise ImportError(
+                "Pydantic is required for configuration validation. "
+                "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
+            )
+        return model(**config_data)
+
+    return config_data
 
 
-async def aget_config() -> Dict:
+@overload
+async def aget_config(model: Type[T]) -> T: ...
+
+
+@overload
+async def aget_config(model: None = None) -> Dict[str, Any]: ...
+
+
+async def aget_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
     """
     Асинхронная версия get_config.
 
+    Args:
+        model: Опциональный класс Pydantic модели для валидации.
+
     Returns:
-        Словарь конфигурации.
+        Словарь конфигурации или экземпляр Pydantic модели.
     """
-    return await asyncio.to_thread(get_config)
+    return await asyncio.to_thread(get_config, model=model)
 
 
 def save_config_value(
@@ -437,26 +483,57 @@ def get_config_list(
     return _get_typed_value(section, key, list_converter, actual_fallback, get_config_value, config, type_name="list")
 
 
+@overload
+def get_config_section(
+    section_name: str,
+    fallback: Optional[Dict] = None,
+    config: Optional[Dict] = None,
+    model: None = None
+) -> Dict[str, Any]: ...
+
+
+@overload
+def get_config_section(
+    section_name: str,
+    fallback: Optional[Dict] = None,
+    config: Optional[Dict] = None,
+    model: Type[T] = None
+) -> T: ...
+
+
 def get_config_section(
         section_name: str,
         fallback: Optional[Dict] = None,
-        config: Optional[Dict] = None
-) -> Dict[str, Any]:
+        config: Optional[Dict] = None,
+        model: Optional[Type[T]] = None
+) -> Union[Dict[str, Any], T]:
     """
-    Получает всю секцию конфигурации как словарь.
+    Получает всю секцию конфигурации как словарь или Pydantic модель.
 
     Args:
         section_name: Имя секции.
         fallback: Значение по умолчанию, если секция не найдена.
         config: Опциональный, предварительно загруженный словарь конфигурации.
+        model: Опциональный класс Pydantic модели для валидации секции.
 
     Returns:
-        Словарь с содержимым секции или `fallback`. Если `fallback` не указан,
-        возвращается пустой словарь.
+        Словарь с содержимым секции или экземпляр Pydantic модели.
+        Если `fallback` не указан и секция не найдена, возвращается пустой словарь.
     """
     if config is None:
         config = get_config()
-    return config.get(section_name, fallback if fallback is not None else {})
+
+    section_data = config.get(section_name, fallback if fallback is not None else {})
+
+    if model is not None:
+        if not _check_pydantic():
+            raise ImportError(
+                "Pydantic is required for configuration validation. "
+                "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
+            )
+        return model(**section_data)
+
+    return section_data
 
 
 def get_config_path(
