@@ -76,6 +76,29 @@ Each example focuses on a specific task.
    db_port = get_config_int("Database", "port", fallback=5432)
    ```
 
+   #### Validation via Pydantic (Optional)
+
+   For strict typing and validation, you can use Pydantic models (requires `pip install chutils[pydantic]`):
+
+   ```python
+   from pydantic import BaseModel
+   from chutils import get_config
+
+   class AppConfig(BaseModel):
+       app_name: str
+       version: str
+
+   # Returns an instance of AppConfig
+   cfg = get_config(model=AppConfig)
+   print(cfg.app_name)
+   ```
+
+   You can also validate specific sections:
+   ```python
+   from chutils import get_config_section
+   db_cfg = get_config_section("Database", model=MyDbModel)
+   ```
+
    #### Overriding Configuration with Local Files (`config.local.yml`)
 
    You can create a `config.local.yml` next to your main file. Values from the local file will **override**
