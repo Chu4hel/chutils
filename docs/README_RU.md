@@ -76,6 +76,34 @@ pip install chutils
    db_port = get_config_int("Database", "port", fallback=5432)
    ```
 
+#### Валидация через Pydantic (Опционально)
+
+Если вам нужна строгая типизация и валидация, вы можете использовать Pydantic модели (требуется
+`pip install chutils[pydantic]`):
+
+```python
+from pydantic import BaseModel
+from chutils import get_config
+
+
+class AppConfig(BaseModel):
+    app_name: str
+    version: str
+
+
+# Функция вернет экземпляр модели AppConfig
+cfg = get_config(model=AppConfig)
+print(cfg.app_name)
+```
+
+Вы также можете валидировать отдельные секции:
+
+```python
+from chutils import get_config_section
+
+db_cfg = get_config_section("Database", model=MyDbModel)
+```
+
 #### Переопределение через переменные окружения
 
 Вы можете переопределить любое значение из конфигурационного файла с помощью переменных окружения. Это особенно полезно

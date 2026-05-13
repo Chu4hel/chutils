@@ -97,6 +97,35 @@ Database:
         get_config_section("Database", model=DbConfig)
 
 
+@pytest.mark.asyncio
+async def test_aget_config_with_model(config_fs):
+    """Тест успешной асинхронной валидации через Pydantic модель."""
+    fs, project_root = config_fs
+    yaml_content = "name: AsyncApp\nversion: 2.0.0\nDatabase:\n  host: async-db\n  port: 5432"
+    fs.create_file(project_root / "config.yml", contents=yaml_content)
+    fs.create_file(project_root / "pyproject.toml", contents="")
+    config._cm._reset()
+
+    # ACT
+    cfg = await config.aget_config(model=AppConfig)
+
+    # ASSERT
+    assert isinstance(cfg, AppConfig)
+    assert cfg.name == "AsyncApp"
+
+
+def test_get_config_section_import_error(config_fs, monkeypatch):
+    """Тест выброса ImportError в get_config_section, если pydantic не установлен."""
+    monkeypatch.setattr(config, '_check_pydantic', lambda: False)
+
+    fs, project_root = config_fs
+    fs.create_file(project_root / "config.yml", contents="Database:\n  host: localhost")
+    config._cm._reset()
+
+    with pytest.raises(ImportError, match="Pydantic is required"):
+        get_config_section("Database", model=DbConfig)
+
+
 def test_import_error_when_pydantic_missing(config_fs, monkeypatch):
     """Тест выброса понятной ошибки, если pydantic не установлен."""
     # Эмулируем отсутствие pydantic
