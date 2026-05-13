@@ -19,6 +19,9 @@ full = [
     "pydantic (>=2.13.4)"
 ]
 
+[project.scripts]
+chutils = "chutils.cli:main"
+
 [tool.poetry]
 packages = [{ include = "chutils", from = "src" }]
 exclude = [
