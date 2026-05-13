@@ -1,10 +1,25 @@
-[tool.poetry]
+[project]
 name = "chutils"
 version = "2.6.0a0"
 description = "Набор простых и удобных утилит для Python, который избавляет от рутины при работе с конфигурацией и логированием в новых проектах."
-authors = ["Chu4hel <sergeiivanov636@gmail.com>"]
+authors = [{name = "Chu4hel", email = "sergeiivanov636@gmail.com"}]
 license = "MIT"
 readme = "README.md"
+requires-python = ">=3.9, !=3.9.0, !=3.9.1"
+dependencies = [
+    "keyring (>=25.7.0)",
+    "pyyaml (>=6.0.3)",
+    "python-dotenv (>=1.2.1) ; python_full_version < '3.10'",
+    "python-dotenv (>=1.2.2) ; python_full_version >= '3.10'"
+]
+
+[project.optional-dependencies]
+pydantic = ["pydantic (>=2.13.4,<3.0.0)"]
+full = [
+    "pydantic (>=2.13.4)"
+]
+
+[tool.poetry]
 packages = [{ include = "chutils", from = "src" }]
 exclude = [
     "tests/",
@@ -26,16 +41,6 @@ exclude = [
     "changelog.txt",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.9, !=3.9.0, !=3.9.1"
-keyring = "^25.7.0"
-pyyaml = "^6.0.3"
-python-dotenv = [
-    { version = "1.2.1", python = "<3.10" },
-    { version = "^1.2.2", python = ">=3.10" }
-]
-
-
 [tool.poetry.group.dev.dependencies]
 pytest = [
     { version = "^8.4.2", python = "<3.10" },
@@ -47,7 +52,6 @@ pyfakefs = [
     { version = "^6.1.5", python = ">=3.10" }
 ]
 mkdocs = "^1.6.1"
-
 mkdocs-material = "^9.7.5"
 mkdocstrings = { extras = ["python"], version = "^0.30.1" }
 pytest-cov = "^7.0.0"
