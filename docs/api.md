@@ -29,16 +29,7 @@ members:
 - get_config_file_path
 - is_config_loaded
 
-## Модуль `context`
-
-::: chutils.context
-options:
-  members:
-    - bind_context
-    - unbind_context
-    - clear_context
-    - ContextFilter
-
+## Модуль `logger`
 
 ::: chutils.logger
 options:
@@ -48,6 +39,16 @@ members:
 - ChutilsLogger
 - DEVDEBUG_LEVEL_NUM
 - MEDIUMDEBUG_LEVEL_NUM
+
+## Модуль `context`
+
+::: chutils.context
+options:
+  members:
+    - bind_context
+    - unbind_context
+    - clear_context
+    - ContextFilter
 
 ## Модуль `secret_manager`
 
@@ -62,4 +63,3 @@ members:
 - retry
 - log_function_details
 - timeout
-
