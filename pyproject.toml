@@ -16,9 +16,11 @@ dependencies = [
 [project.optional-dependencies]
 pydantic = ["pydantic (>=2.13.4,<3.0.0)"]
 json = ["python-json-logger (>=3.2.1)"]
+watch = ["watchdog (>=6.0.0)"]
 full = [
     "pydantic (>=2.13.4)",
-    "python-json-logger (>=3.2.1)"
+    "python-json-logger (>=3.2.1)",
+    "watchdog (>=6.0.0)"
 ]
 
 [project.scripts]
