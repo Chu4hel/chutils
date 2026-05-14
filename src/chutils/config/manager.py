@@ -5,7 +5,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Any
 
 # Настраиваем локальный логгер
 logger = logging.getLogger(__name__)
@@ -31,6 +31,9 @@ class _ConfigManager:
         self.paths_initialized = False
         self.config_object: Optional[Dict] = None
         self.config_loaded = False
+        self.observer: Optional[Any] = None
+        self.callbacks: list = []
+        self.last_reload_time: float = 0.0
 
     def initialize_paths(self, find_root_func):
         """

@@ -27,6 +27,11 @@ from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, over
 from .manager import _cm
 from .providers import get_providers
 from .utils import find_project_root, _merge_configs, _nest_ini_dict, _get_typed_value
+from .watcher import (
+    on_config_change,
+    start_config_watcher,
+    stop_config_watcher,
+)
 
 if TYPE_CHECKING:
     from ..logger import ChutilsLogger

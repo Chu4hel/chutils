@@ -46,16 +46,19 @@ from .config import (
     get_config_section,
     get_config_path,
     aget_config,
-    asave_config_value
+    asave_config_value,
+    start_config_watcher,
+    stop_config_watcher,
+    on_config_change,
 )
 from .context import bind_context, unbind_context, clear_context
+from .decorators import log_function_details, retry, timeout
 from .logger import (
     setup_logger,
     ChutilsLogger,
     SafeTimedRotatingFileHandler
 )
 from .secret_manager import SecretManager
-from .decorators import log_function_details, retry, timeout
 
 
 def init(base_dir: str):
@@ -100,6 +103,9 @@ __all__ = [
     'get_config_path',
     'aget_config',
     'asave_config_value',
+    'start_config_watcher',
+    'stop_config_watcher',
+    'on_config_change',
 
     # Функции и классы из модуля logger
     'setup_logger',

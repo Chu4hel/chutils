@@ -1,0 +1,113 @@
+import pytest
+import time
+import sys
+from unittest.mock import MagicMock, patch
+from chutils.config import (
+    get_config, 
+    _cm,
+    on_config_change,
+    start_config_watcher,
+    stop_config_watcher
+)
+
+def test_graceful_degradation_no_watchdog(mocker):
+    """Тест: start_config_watcher бросает ImportError, если watchdog не установлен."""
+    # Эмулируем отсутствие watchdog
+    mocker.patch.dict(sys.modules, {'watchdog': None, 'watchdog.observers': None, 'watchdog.events': None})
+    
+    with pytest.raises(ImportError) as excinfo:
+        start_config_watcher()
+    assert "watchdog" in str(excinfo.value).lower()
+
+def test_callback_registration():
+    """Тест регистрации и вызова коллбеков."""
+    _cm._reset()
+    mock_callback = MagicMock()
+    on_config_change(mock_callback)
+    
+    assert mock_callback in _cm.callbacks
+    
+    # Вызываем коллбеки напрямую через менеджер
+    for cb in _cm.callbacks:
+        cb()
+    mock_callback.assert_called_once()
+
+def test_debounce_logic(mocker):
+    """Тест механизма debounce: несколько быстрых событий -> один вызов."""
+    _cm._reset()
+    mock_callback = MagicMock()
+    on_config_change(mock_callback)
+    
+    from chutils.config import ConfigChangeHandler
+    handler = ConfigChangeHandler(["/tmp/config.yml"])
+    
+    # Первое срабатывание
+    handler._on_modified()
+    mock_callback.assert_called_once()
+    
+    # Быстрое второе срабатывание (должно игнорироваться)
+    handler._on_modified()
+    mock_callback.assert_called_once() # Все еще один раз
+    
+    # Имитируем прошествие времени
+    _cm.last_reload_time -= 2.0
+    handler._on_modified()
+    assert mock_callback.call_count == 2
+
+@pytest.mark.usefixtures("fs")
+def test_integration_reload(fs, mocker):
+    """Интеграционный тест: изменение файла -> сброс кэша и вызов коллбека."""
+    _cm._reset()
+    
+    # Создаем фиктивный конфиг
+    config_path = "/app/config.yml"
+    fs.create_file(config_path, content="test: value1")
+    
+    _cm.config_file_path = config_path
+    _cm.paths_initialized = True
+    
+    mock_callback = MagicMock()
+    on_config_change(mock_callback)
+    
+    # Загружаем конфиг
+    assert get_config()["test"] == "value1"
+    assert _cm.config_loaded is True
+    
+    # Имитируем работу watchdog через хендлер
+    from chutils.config import ConfigChangeHandler
+    handler = ConfigChangeHandler([config_path])
+    
+    # Меняем файл на диске
+    fs.create_file(config_path, content="test: value2", overwrite=True)
+    
+    # Вызываем хендлер
+    handler._on_modified()
+    
+    mock_callback.assert_called_once()
+    assert _cm.config_loaded is False
+    assert _cm.config_object is None
+    
+    # Проверяем, что подхватилось новое значение
+    assert get_config()["test"] == "value2"
+
+def test_start_stop_watcher(mocker):
+    """Тест запуска и остановки watcher'а."""
+    _cm._reset()
+    _cm.config_file_path = "/tmp/config.yml"
+    _cm.paths_initialized = True
+    
+    # Мокаем Observer
+    mock_observer_cls = mocker.patch("watchdog.observers.Observer")
+    mock_observer = mock_observer_cls.return_value
+    
+    # Мокаем существование файла
+    mocker.patch("pathlib.Path.exists", return_value=True)
+    
+    start_config_watcher()
+    assert _cm.observer is not None
+    mock_observer.start.assert_called_once()
+    
+    stop_config_watcher()
+    assert _cm.observer is None
+    mock_observer.stop.assert_called_once()
+    mock_observer.join.assert_called_once()
