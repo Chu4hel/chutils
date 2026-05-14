@@ -16,8 +16,18 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional, Any, Set
 
-# Импортируем наш модуль config для доступа к путям и настройкам
 from . import config
+
+try:
+    try:
+        from pythonjsonlogger import json as json_mod
+
+        jsonlogger = json_mod
+    except ImportError:
+        from pythonjsonlogger import jsonlogger
+    JSON_LOGGER_AVAILABLE = True
+except ImportError:
+    JSON_LOGGER_AVAILABLE = False
 
 # --- Пользовательские уровни логирования ---
 # Для более гранулярного контроля над отладочными сообщениями.
@@ -366,6 +376,7 @@ def setup_logger(
         interval: Optional[int] = None,
         utc: Optional[bool] = None,
         at_time: Optional[datetime.time] = None,
+        json_format: Optional[bool] = None,
         **kwargs: Any
 ) -> ChutilsLogger:
     """
@@ -423,6 +434,21 @@ def setup_logger(
         specific_settings = cfg.get(config_section_name, {})
 
     final_logger_settings = {**default_settings, **specific_settings}
+
+    # --- 0. Определение флага JSON формата ---
+    # Приоритет: ENV > Аргумент функции > Конфиг > False
+    env_json_val = os.getenv("CH_LOG_JSON", "").lower()
+
+    if env_json_val:
+        final_json_format = env_json_val in ["true", "1", "yes", "y"]
+    elif json_format is not None:
+        final_json_format = json_format
+    else:
+        config_json = final_logger_settings.get('json_format', False)
+        if isinstance(config_json, str):
+            final_json_format = config_json.lower() in ["true", "1", "yes", "y"]
+        else:
+            final_json_format = bool(config_json)
 
     # --- 1. Определение и установка уровня логирования ---
     # Приоритет: аргумент функции > настройки из конфига > 'INFO'
@@ -516,7 +542,18 @@ def setup_logger(
     else:
         log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
-    formatter = logging.Formatter(log_format)
+    # Определение форматтера (JSON или стандартный текст)
+    if final_json_format:
+        if JSON_LOGGER_AVAILABLE:
+            formatter = jsonlogger.JsonFormatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+        else:
+            logger.warning(
+                "Запрошен формат JSON, но пакет 'python-json-logger' не установлен. "
+                "Используется стандартный текстовый формат."
+            )
+            formatter = logging.Formatter(log_format)
+    else:
+        formatter = logging.Formatter(log_format)
 
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
