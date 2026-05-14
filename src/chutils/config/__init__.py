@@ -3,7 +3,18 @@
 
 Обеспечивает автоматический поиск файла `config.yml`, `config.yaml` или `config.ini`
 в корне проекта и предоставляет удобные функции для чтения и сохранения настроек.
-Поддерживает кастомные уровни логирования при условии, что модуль logger уже загружен.
+Поддерживает кастомные уровни логирования при условии, что модуль logger загружен.
+
+### Переопределение конфигурации
+
+Библиотека поддерживает многоуровневое переопределение настроек:
+1. **Переменные окружения (`CH_[SECTION]_[KEY]`)**: Имеют наивысший приоритет.
+2. **Локальный файл (`config.local.yml`)**: Переопределяет значения основного файла.
+3. **Основной файл (`config.yml`)**: Базовые настройки проекта.
+
+Локальные файлы конфигурации (например, `config.local.yml` или `config.local.ini`) должны
+находиться в той же директории, что и основной файл. Это позволяет удобно управлять
+чувствительными или специфичными для разработчика настройками, не коммитя их в репозиторий.
 """
 
 import asyncio
@@ -485,19 +496,19 @@ def get_config_list(
 
 @overload
 def get_config_section(
-    section_name: str,
-    fallback: Optional[Dict] = None,
-    config: Optional[Dict] = None,
-    model: None = None
+        section_name: str,
+        fallback: Optional[Dict] = None,
+        config: Optional[Dict] = None,
+        model: None = None
 ) -> Dict[str, Any]: ...
 
 
 @overload
 def get_config_section(
-    section_name: str,
-    fallback: Optional[Dict] = None,
-    config: Optional[Dict] = None,
-    model: Type[T] = None
+        section_name: str,
+        fallback: Optional[Dict] = None,
+        config: Optional[Dict] = None,
+        model: Type[T] = None
 ) -> T: ...
 
 
