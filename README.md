@@ -34,6 +34,8 @@ Every time you start a new project, you have to solve the same tasks:
   box. It returns a custom logger with additional debug levels (`devdebug`, `mediumdebug`).
 - **🔒 Secure Secret Storage:** The `secret_manager` module provides a simple interface for saving and retrieving secrets
   via the system `keyring`, with a fallback to `.env` files.
+- **🔄 Hot-Reload:** Support for automatic configuration reloading on file changes without restart (requires
+  `pip install chutils[watch]`).
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.
 - **🚀 Ready to Use:** Just install and use.
 
@@ -122,7 +124,29 @@ Each example focuses on a specific task.
    corresponding values from the main file. This is perfect for local development or storing sensitive data (ensure
    `*.local.*` is in your `.gitignore`).
 
-### 2. Logging Setup
+### 2. Hot-Reload
+
+You can make your application react to configuration file changes in real-time.
+
+```python
+from chutils import start_config_watcher, on_config_change, get_config_value
+
+def reload_logic():
+    print("Configuration updated!")
+    # Update app state here
+    db_url = get_config_value("Database", "url")
+
+# Register callback
+on_config_change(reload_logic)
+
+# Start watcher (requires watchdog package)
+start_config_watcher()
+```
+
+To use this feature, install `watchdog`:
+`pip install chutils[watch]`
+
+### 3. Logging Setup
 
 1. Configure and use the logger:
 
@@ -150,7 +174,7 @@ Each example focuses on a specific task.
 
    #### Contextual Logging (ContextVar)
 
-   You can bind metadata to the current execution context (thread or coroutine), and it will be automatically 
+   You can bind metadata to the current execution context (thread or coroutine), and it will be automatically
    included in all log messages.
 
    ```python

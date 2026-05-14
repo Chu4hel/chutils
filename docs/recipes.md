@@ -116,7 +116,49 @@ DB_PASSWORD="my-safe-password"
 
 `SecretManager` автоматически подхватит это значение.
 
-## 4. Декораторы
+## 4. Hot-Reload конфигурации
+
+### Автоматическое обновление состояния приложения
+
+Если ваше приложение должно менять свое поведение (например, уровень логирования или лимиты) без перезагрузки.
+
+```python
+from chutils import (
+    setup_logger, 
+    start_config_watcher, 
+    on_config_change, 
+    get_config_value
+)
+
+logger = setup_logger()
+
+def update_app_state():
+    # Читаем новые значения
+    new_limit = get_config_value("App", "rate_limit", 100)
+    logger.info(f"Лимит обновлен: {new_limit}")
+    
+    # Здесь можно обновить объект приложения или глобальное состояние
+    # app.rate_limiter.set_limit(new_limit)
+
+# 1. Подписываемся на изменения
+on_config_change(update_app_state)
+
+# 2. Запускаем мониторинг
+start_config_watcher()
+```
+
+### Использование с Pydantic моделями
+
+При каждом изменении файла кэш `get_config()` сбрасывается, поэтому вы всегда будете получать свежую провалидированную модель.
+
+```python
+def on_reload():
+    # При вызове заново будет создана новая модель с актуальными данными
+    cfg = get_config(model=AppConfig)
+    print(f"Новое имя приложения: {cfg.name}")
+```
+
+## 5. Декораторы
 
 ### Отладка производительности
 

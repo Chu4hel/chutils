@@ -25,6 +25,9 @@ members:
 - get_config_section
 - get_config_path
 - save_config_value
+- start_config_watcher
+- stop_config_watcher
+- on_config_change
 - get_base_dir
 - get_config_file_path
 - is_config_loaded
@@ -44,11 +47,11 @@ members:
 
 ::: chutils.context
 options:
-  members:
-    - bind_context
-    - unbind_context
-    - clear_context
-    - ContextFilter
+members:
+- bind_context
+- unbind_context
+- clear_context
+- ContextFilter
 
 ## Модуль `secret_manager`
 
