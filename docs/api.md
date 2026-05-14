@@ -29,7 +29,16 @@ members:
 - get_config_file_path
 - is_config_loaded
 
-## Модуль `logger`
+## Модуль `context`
+
+::: chutils.context
+options:
+  members:
+    - bind_context
+    - unbind_context
+    - clear_context
+    - ContextFilter
+
 
 ::: chutils.logger
 options:

@@ -148,6 +148,24 @@ Each example focuses on a specific task.
    # json_format: true
    ```
 
+   #### Contextual Logging (ContextVar)
+
+   You can bind metadata to the current execution context (thread or coroutine), and it will be automatically 
+   included in all log messages.
+
+   ```python
+   from chutils import setup_logger, bind_context
+
+   logger = setup_logger()
+
+   # Bind request ID and user to the current context
+   bind_context(request_id="REQ-123", user="admin")
+
+   logger.info("Action performed")
+   # Text: ... [request_id=REQ-123 user=admin] Action performed
+   # JSON: {..., "message": "Action performed", "context": {"request_id": "REQ-123", "user": "admin"}}
+   ```
+
    #### Controlling Logging via Environment Variables
 
     - `CH_LOG_JSON=true`: Forces JSON format.

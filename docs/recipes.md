@@ -43,6 +43,32 @@ AuditLogger:
 audit_logger = setup_logger("audit", config_section_name="AuditLogger")
 ```
 
+### Контекстное логирование в FastAPI / asyncio
+
+Если вы хотите автоматически добавлять ID запроса во все логи без передачи его через аргументы функций.
+
+```python
+from chutils import setup_logger, bind_context
+import asyncio
+
+logger = setup_logger()
+
+async def deep_nested_function():
+    # Нам не нужно передавать request_id сюда, он подхватится сам!
+    logger.info("Лог из глубины приложения")
+
+async def handle_request(request_id: str):
+    bind_context(request_id=request_id)
+    logger.info("Начало обработки")
+    await deep_nested_function()
+
+# В асинхронном цикле контексты изолированы
+asyncio.gather(
+    handle_request("REQ-1"),
+    handle_request("REQ-2")
+)
+```
+
 ## 2. Работа с конфигурацией
 
 ### Использование относительных путей
