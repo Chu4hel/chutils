@@ -3,7 +3,46 @@ import time
 
 import pytest
 
-from chutils.decorators import timeout
+from chutils.decorators import timeout, retry
+
+
+# --- Combined Tests ---
+
+def test_timeout_with_retry_sync():
+    """Проверяет совместную работу @timeout и @retry для синхронной функции."""
+    call_count = 0
+
+    @retry(retries=2, delay=0.1)
+    @timeout(0.1)
+    def fluky_slow_func():
+        nonlocal call_count
+        call_count += 1
+        if call_count < 3:
+            time.sleep(0.2)
+        return "finally fast"
+
+    # Первая и вторая попытки должны упасть по таймауту, третья должна успеть
+    assert fluky_slow_func() == "finally fast"
+    assert call_count == 3
+
+
+@pytest.mark.asyncio
+async def test_timeout_with_retry_async():
+    """Проверяет совместную работу @timeout и @retry для асинхронной функции."""
+    call_count = 0
+
+    @retry(retries=2, delay=0.1)
+    @timeout(0.1)
+    async def fluky_slow_async_func():
+        nonlocal call_count
+        call_count += 1
+        if call_count < 3:
+            await asyncio.sleep(0.2)
+        return "finally fast async"
+
+    result = await fluky_slow_async_func()
+    assert result == "finally fast async"
+    assert call_count == 3
 
 
 # --- Sync Tests ---
