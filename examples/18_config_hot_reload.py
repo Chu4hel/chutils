@@ -6,8 +6,8 @@
 """
 
 import time
-import os
 from pathlib import Path
+
 from chutils import (
     get_config_value,
     start_config_watcher,
