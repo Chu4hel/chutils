@@ -189,6 +189,7 @@ In environments like Docker or CI/CD where `keyring` is unavailable, you can sup
 ### Decorators (`chutils.decorators`)
 
 - `@log_function_details`: Logs arguments, execution time, and result (uses `DEVDEBUG` level).
+- `@timeout(seconds, fallback)`: Limits function execution time. Supports sync/async and optional fallback.
 - `@retry`: Automatically retries a function if it fails. Supports sync/async, backoff, jitter, and exception filtering.
 
 #### Example of @retry usage:

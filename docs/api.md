@@ -14,6 +14,7 @@ members: [init]
 ::: chutils.config
 options:
 members:
+
 - get_config
 - aget_config
 - get_config_value
@@ -33,6 +34,7 @@ members:
 ::: chutils.logger
 options:
 members:
+
 - setup_logger
 - ChutilsLogger
 - DEVDEBUG_LEVEL_NUM
@@ -47,5 +49,8 @@ members:
 ::: chutils.decorators
 options:
 members:
+
 - retry
 - log_function_details
+- timeout
+
