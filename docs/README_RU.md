@@ -37,6 +37,23 @@
   режиме.
 - **🚀 Готовность к работе:** Просто установите и используйте.
 
+## Интерфейс командной строки (CLI)
+
+Библиотека предоставляет консольную команду `chutils` для удобного управления секретами без написания кода.
+
+### Управление секретами
+
+```bash
+# Сохранить секрет в системное хранилище (keyring)
+chutils secrets set MY_API_KEY "super-secret-value"
+
+# Удалить секрет
+chutils secrets delete MY_API_KEY
+
+# Указать имя сервиса (service_name) явно
+chutils secrets set DB_PASSWORD "12345" --service my_custom_app
+```
+
 ## Установка
 
 ```bash

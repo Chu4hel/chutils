@@ -15,13 +15,18 @@ options:
 members:
 
 - get_config
+- aget_config
 - get_config_value
 - get_config_int
 - get_config_float
 - get_config_boolean
 - get_config_list
 - get_config_section
+- get_config_path
 - save_config_value
+- get_base_dir
+- get_config_file_path
+- is_config_loaded
 
 ### Переопределение конфигурации локальным файлом
 

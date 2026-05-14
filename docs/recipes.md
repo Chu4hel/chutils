@@ -113,3 +113,54 @@ process_heavy_task([1, 2, 3])
 ```
 
 В логах появится время выполнения с точностью до миллисекунд и переданные аргументы.
+
+## 5. Валидация через Pydantic
+
+### Строгая типизация всей конфигурации
+
+Вы можете описать ожидаемую структуру вашего `config.yml` в виде Pydantic моделей для автоматической валидации при загрузке.
+
+```python
+from pydantic import BaseModel, Field
+from chutils import get_config
+
+class DbConfig(BaseModel):
+    host: str
+    port: int
+
+class AppConfig(BaseModel):
+    name: str
+    version: str
+    db: DbConfig = Field(alias="Database")
+
+# Валидация и автодополнение
+cfg = get_config(model=AppConfig)
+print(f"Подключение к {cfg.db.host}:{cfg.db.port}")
+```
+
+### Валидация отдельной секции
+
+Если вам нужна только часть настроек:
+
+```python
+from chutils import get_config_section
+
+db_cfg = get_config_section("Database", model=DbConfig)
+```
+
+## 6. Утилита командной строки (CLI)
+
+### Управление секретами без кода
+
+Используйте команду `chutils`, чтобы быстро настроить секреты в окружении разработки или на сервере.
+
+```bash
+# Сохранить API ключ
+chutils secrets set STRIPE_KEY "sk_test_..."
+
+# Удалить секрет
+chutils secrets delete STRIPE_KEY
+
+# Указать конкретный сервис (по умолчанию - имя текущей папки)
+chutils secrets set AWS_SECRET "..." --service my-production-app
+```

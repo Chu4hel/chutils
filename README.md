@@ -37,6 +37,23 @@ Every time you start a new project, you have to solve the same tasks:
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.
 - **🚀 Ready to Use:** Just install and use.
 
+## Command Line Interface (CLI)
+
+The library provides a `chutils` console command for convenient secret management without writing code.
+
+### Secret Management
+
+```bash
+# Save a secret to the system storage (keyring)
+chutils secrets set MY_API_KEY "super-secret-value"
+
+# Delete a secret
+chutils secrets delete MY_API_KEY
+
+# Explicitly specify service name
+chutils secrets set DB_PASSWORD "12345" --service my_custom_app
+```
+
 ## Installation
 
 ```bash
