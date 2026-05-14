@@ -136,8 +136,21 @@ Each example focuses on a specific task.
    logger.devdebug("Deep debug message (level 9).")
    ```
 
+   #### Structured Logging (JSON)
+
+   If you need to output logs in JSON format for ELK, Splunk, or cloud logging (requires `pip install chutils[json]`):
+
+   ```python
+   # Via code
+   logger = setup_logger(json_format=True)
+
+   # Or via config in the [Logging] section
+   # json_format: true
+   ```
+
    #### Controlling Logging via Environment Variables
 
+    - `CH_LOG_JSON=true`: Forces JSON format.
     - `CH_LOG_NO_TIME=true`: Removes the date/time from the log format (for clean Docker logs).
     - `CH_LOG_NO_FILE=true`: Disables creating log files.
 

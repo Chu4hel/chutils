@@ -1,4 +1,5 @@
 import json
+import logging
 
 import pytest
 
@@ -87,3 +88,44 @@ def test_json_format_masking_integration(capsys, monkeypatch):
 
     assert "supersecret123" not in log_json["message"]
     assert "***" in log_json["message"]
+
+
+def test_json_format_from_config(config_fs, capsys):
+    """Проверяет включение JSON формата через файл конфигурации."""
+    fs, project_root = config_fs
+    yaml_content = """
+Logging:
+  json_format: true
+"""
+    fs.create_file(project_root / "config.yml", contents=yaml_content)
+    # Сбрасываем кэш, чтобы подхватить новый файл
+    from chutils import config as chutils_config
+    chutils_config._cm._reset()
+
+    logger = setup_logger(name="json_config_test", force_reconfigure=True)
+    logger.info("Config JSON message")
+
+    captured = capsys.readouterr()
+    try:
+        json.loads(captured.err.strip().split('\n')[-1])
+    except json.JSONDecodeError:
+        pytest.fail("JSON формат из конфигурации не применился")
+
+
+def test_setup_logger_invalid_at_time_config(config_fs, capsys):
+    """Проверяет обработку некорректного формата at_time в конфиге."""
+    fs, project_root = config_fs
+    yaml_content = """
+Logging:
+  at_time: "not-a-time"
+  rotation_type: "time"
+  when: "midnight"
+"""
+    fs.create_file(project_root / "config.yml", contents=yaml_content)
+    from chutils import config as chutils_config
+    chutils_config._cm._reset()
+
+    setup_logger(name="invalid_time_test", force_reconfigure=True)
+    captured = capsys.readouterr()
+    assert "Неверный формат времени" in captured.err
+
