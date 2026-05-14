@@ -54,7 +54,7 @@ from .config import (
 )
 from .logger import setup_logger, ChutilsLogger, SafeTimedRotatingFileHandler
 from .secret_manager import SecretManager
-from .decorators import log_function_details
+from .decorators import log_function_details, retry, timeout
 
 
 def init(base_dir: str):
@@ -110,4 +110,6 @@ __all__ = [
 
     # Декораторы
     'log_function_details',
+    'retry',
+    'timeout',
 ]

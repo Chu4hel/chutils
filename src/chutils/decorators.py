@@ -3,8 +3,8 @@
 
 Включает инструменты для логирования производительности и деталей вызовов функций.
 """
-
 import asyncio
+import concurrent.futures
 import functools
 import inspect
 import random
@@ -16,6 +16,9 @@ if TYPE_CHECKING:
 
 # Тип для декорируемой функции
 F = TypeVar("F", bound=Callable[..., Any])
+
+# Уникальный маркер для определения, был ли передан fallback (позволяет передавать None)
+_NO_FALLBACK = object()
 
 # Ленивая инициализация логгера
 _module_logger: Optional['ChutilsLogger'] = None
@@ -143,3 +146,53 @@ def log_function_details(func: F) -> F:
         return result
 
     return wrapper  # type: ignore
+
+
+def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable:
+    """
+    Декоратор для ограничения времени выполнения функции.
+
+    Поддерживает как синхронные, так и асинхронные функции.
+    Для асинхронных функций использует `asyncio.wait_for`.
+    Для синхронных функций запускает их в отдельном потоке и ожидает завершения.
+
+    Args:
+        seconds: Максимальное время выполнения в секундах.
+        fallback: Значение, которое будет возвращено при таймауте.
+            Если не указано, выбрасывается `TimeoutError`.
+
+    Returns:
+        Декоратор функции.
+
+    Raises:
+        TimeoutError: Если время выполнения превышено и `fallback` не указан.
+    """
+
+    def decorator(func: Callable) -> Callable:
+        if inspect.iscoroutinefunction(func):
+            @functools.wraps(func)
+            async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+                try:
+                    return await asyncio.wait_for(func(*args, **kwargs), timeout=seconds)
+                except (asyncio.TimeoutError, TimeoutError):
+                    if fallback is _NO_FALLBACK:
+                        raise TimeoutError(f"Function {func.__name__} timed out after {seconds} seconds")
+                    return fallback
+
+            return async_wrapper
+        else:
+            @functools.wraps(func)
+            def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
+                # Используем ThreadPoolExecutor для запуска в отдельном потоке
+                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                    future = executor.submit(func, *args, **kwargs)
+                    try:
+                        return future.result(timeout=seconds)
+                    except concurrent.futures.TimeoutError:
+                        if fallback is _NO_FALLBACK:
+                            raise TimeoutError(f"Function {func.__name__} timed out after {seconds} seconds")
+                        return fallback
+
+            return sync_wrapper
+
+    return decorator
