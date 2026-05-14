@@ -3,7 +3,8 @@ import json
 
 import pytest
 
-from chutils.logger import setup_logger, bind_context, unbind_context, clear_context
+from chutils import bind_context, unbind_context, clear_context
+from chutils.logger import setup_logger
 
 
 @pytest.mark.asyncio

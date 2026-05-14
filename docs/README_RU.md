@@ -163,6 +163,24 @@ logger = setup_logger(json_format=True)
 # json_format: true
 ```
 
+#### Контекстное логирование (ContextVar)
+
+Вы можете привязывать метаданные к текущему контексту выполнения (потоку или корутине), и они будут автоматически
+добавляться во все сообщения логов.
+
+```python
+from chutils import setup_logger, bind_context
+
+logger = setup_logger()
+
+# Привязываем ID запроса и имя пользователя к текущему контексту
+bind_context(request_id="REQ-123", user="admin")
+
+logger.info("Действие выполнено")
+# Текст: ... [request_id=REQ-123 user=admin] Действие выполнено
+# JSON: {..., "message": "Действие выполнено", "context": {"request_id": "REQ-123", "user": "admin"}}
+```
+
 #### Управление через переменные окружения
 
 - `CH_LOG_JSON=true`: Принудительно включает JSON-формат.
