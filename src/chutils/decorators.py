@@ -9,10 +9,13 @@ import functools
 import inspect
 import random
 import time
-from typing import Optional, TYPE_CHECKING, Tuple, Type, Any, Callable
+from typing import Optional, TYPE_CHECKING, Tuple, Type, Any, Callable, TypeVar
 
 if TYPE_CHECKING:
     from .logger import ChutilsLogger
+
+# Тип для декорируемой функции
+F = TypeVar("F", bound=Callable[..., Any])
 
 # Ленивая инициализация логгера
 _module_logger: Optional['ChutilsLogger'] = None
@@ -106,7 +109,7 @@ def retry(
     return decorator
 
 
-def log_function_details(func):
+def log_function_details(func: F) -> F:
     """
     Декоратор для логирования деталей вызова функции.
 
@@ -129,7 +132,7 @@ def log_function_details(func):
     """
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         _get_logger().devdebug("Вызов функции: %s() с аргументами %s и %s", func.__name__, args, kwargs)
         start_time = time.perf_counter()
         result = func(*args, **kwargs)
@@ -139,4 +142,4 @@ def log_function_details(func):
                                func.__name__, run_time, result)
         return result
 
-    return wrapper
+    return wrapper  # type: ignore
