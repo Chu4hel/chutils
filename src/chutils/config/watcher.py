@@ -47,6 +47,14 @@ class ConfigChangeHandler:
     @staticmethod
     def _on_modified():
         current_time = time.monotonic()
+
+        # Подавляем уведомление, если это было внутреннее сохранение с notify=False
+        # Используем небольшой запас времени (0.5 сек) для синхронизации событий ОС
+        if current_time - _cm._last_internal_save_time < 0.5:
+            _cm._last_internal_save_time = 0.0  # Сбрасываем флаг
+            logger.debug("Hot-Reload подавлен (внутреннее сохранение).")
+            return
+
         if current_time - _cm.last_reload_time < _DEBOUNCE_SECONDS:
             return
 

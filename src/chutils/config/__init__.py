@@ -20,6 +20,7 @@
 import asyncio
 import logging
 import os
+import time
 import warnings
 from pathlib import Path
 from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union
@@ -263,7 +264,8 @@ def save_config_value(
         key: str,
         value: Any,
         cfg_file: Optional[str] = None,
-        save_to_local: bool = False
+        save_to_local: bool = False,
+        notify: bool = True
 ) -> bool:
     """
     Сохраняет или обновляет одно значение в файле конфигурации.
@@ -281,6 +283,8 @@ def save_config_value(
         save_to_local: Если True, и существует локальный файл конфигурации
             (например, `config.local.yml`), значение будет сохранено в него.
             По умолчанию False.
+        notify: Если True (по умолчанию), Hot-Reload watcher уведомит о
+            смене конфигурации. Если False, уведомление будет подавлено.
 
     Returns:
         True: Если значение было успешно обновлено и сохранено.
@@ -310,6 +314,10 @@ def save_config_value(
         _get_logger().error("Невозможно сохранить значение: путь к файлу конфигурации не определен.")
         return False
 
+    if not notify:
+        # Фиксируем время внутреннего сохранения для подавления Hot-Reload
+        _cm._last_internal_save_time = time.monotonic()
+
     ext = Path(path).suffix.lower()
     provider = _PROVIDERS.get(ext)
 
@@ -333,7 +341,8 @@ async def asave_config_value(
         key: str,
         value: Any,
         cfg_file: Optional[str] = None,
-        save_to_local: bool = False
+        save_to_local: bool = False,
+        notify: bool = True
 ) -> bool:
     """
     Асинхронно сохраняет одно значение в конфигурационном файле.
@@ -348,12 +357,14 @@ async def asave_config_value(
         save_to_local: Если True, и существует локальный файл конфигурации
             (например, `config.local.yml`), значение будет сохранено в него.
             По умолчанию False.
+        notify: Если True (по умолчанию), Hot-Reload watcher уведомит о
+            смене конфигурации. Если False, уведомление будет подавлено.
 
     Returns:
         True: Если значение было успешно обновлено и сохранено.
         False: Если файл не найден, или произошла ошибка.
     """
-    return await asyncio.to_thread(save_config_value, section, key, value, cfg_file, save_to_local)
+    return await asyncio.to_thread(save_config_value, section, key, value, cfg_file, save_to_local, notify)
 
 
 # --- Функции-обертки для удобного получения типизированных значений ---

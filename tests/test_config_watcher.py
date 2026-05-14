@@ -117,3 +117,41 @@ def test_start_stop_watcher(mocker):
     assert _cm.observer is None
     mock_observer.stop.assert_called_once()
     mock_observer.join.assert_called_once()
+
+
+def test_internal_save_suppression(mocker):
+    """Тест: save_config_value(notify=False) подавляет Hot-Reload коллбэк."""
+    _cm._reset()
+    config_path = "/tmp/config.yml"
+    _cm.config_file_path = config_path
+    _cm.paths_initialized = True
+
+    mock_callback = MagicMock()
+    on_config_change(mock_callback)
+
+    # Мокаем провайдер сохранения
+    mock_provider = MagicMock()
+    mock_provider.save.return_value = True
+    mocker.patch("chutils.config._PROVIDERS", {".yml": mock_provider})
+
+    from chutils.config import save_config_value
+    from chutils.config.watcher import ConfigChangeHandler
+    handler = ConfigChangeHandler([config_path])
+
+    # 1. Сохраняем с notify=False
+    save_config_value("Section", "Key", "Value", notify=False)
+    
+    # Имитируем событие от ОС
+    handler._on_modified()
+    
+    # Коллбэк НЕ должен быть вызван
+    mock_callback.assert_not_called()
+
+    # 2. Сохраняем с notify=True (по умолчанию)
+    save_config_value("Section", "Key", "Value2", notify=True)
+    
+    # Имитируем событие от ОС
+    handler._on_modified()
+    
+    # Коллбэк ДОЛЖЕН быть вызван
+    mock_callback.assert_called_once()

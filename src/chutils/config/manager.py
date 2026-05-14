@@ -34,6 +34,7 @@ class _ConfigManager:
         self.observer: Optional[Any] = None
         self.callbacks: list = []
         self.last_reload_time: float = 0.0
+        self._last_internal_save_time: float = 0.0
 
     def initialize_paths(self, find_root_func):
         """
