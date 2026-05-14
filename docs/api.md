@@ -25,6 +25,7 @@ members:
 - get_config_section
 - get_config_path
 - save_config_value
+- asave_config_value
 - start_config_watcher
 - stop_config_watcher
 - on_config_change

@@ -10,6 +10,7 @@ from pathlib import Path
 
 from chutils import (
     get_config_value,
+    save_config_value,
     start_config_watcher,
     stop_config_watcher,
     on_config_change,
@@ -52,15 +53,27 @@ App:
 
         logger.info("Watcher запущен. Текущее приветствие: " + get_config_value("App", "greeting"))
         logger.info("Попробуйте вручную изменить 'greeting' в файле config.yml...")
-        logger.info("Или подождите 3 секунды, скрипт изменит его автоматически.")
+        logger.info("Или подождите 2 секунды, скрипт начнет автоматические тесты.")
 
-        time.sleep(3)
+        time.sleep(2)
 
-        # Имитируем ручное изменение файла другим процессом
-        logger.info("Имитация изменения файла...")
+        # 1. Имитируем программное изменение БЕЗ уведомления (notify=False)
+        logger.info("Программное обновление (quiet mode, notify=False)...")
+        save_config_value("App", "greeting", "Silent Update", notify=False)
+        # Коллбэк my_callback НЕ должен быть вызван (проверьте логи)
+        time.sleep(2)
+
+        # 2. Имитируем программное изменение С уведомлением (по умолчанию notify=True)
+        logger.info("Программное обновление (с уведомлением)...")
+        save_config_value("App", "greeting", "Hello from save_config_value!")
+        # Коллбэк my_callback ДОЛЖЕН быть вызван
+        time.sleep(2)
+
+        # 3. Имитируем ручное изменение файла другим процессом
+        logger.info("Имитация внешнего изменения файла...")
         updated_content = """
 App:
-  greeting: "Hello from Hot-Reload!"
+  greeting: "Hello from External Process!"
 """
         config_path.write_text(updated_content, encoding='utf-8')
 

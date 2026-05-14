@@ -131,10 +131,12 @@ You can make your application react to configuration file changes in real-time.
 ```python
 from chutils import start_config_watcher, on_config_change, get_config_value
 
+
 def reload_logic():
     print("Configuration updated!")
     # Update app state here
     db_url = get_config_value("Database", "url")
+
 
 # Register callback
 on_config_change(reload_logic)
@@ -227,7 +229,8 @@ In environments like Docker or CI/CD where `keyring` is unavailable, you can sup
 
 - `get_config_value(section, key, fallback)` / `aget_config()`
 - `get_config_int`, `get_config_boolean`, `get_config_list`, `get_config_path`
-- `save_config_value(section, key, value)` / `asave_config_value()`
+- `save_config_value(section, key, value, notify=True)` / `asave_config_value()`
+- Use `notify=False` to update the file without triggering Hot-Reload callbacks.
 
 ### Logging (`chutils.logger`)
 

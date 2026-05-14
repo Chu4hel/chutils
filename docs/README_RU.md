@@ -242,7 +242,8 @@ key = secrets.get_secret("API_KEY")
 
 - `get_config_value(section, key, fallback)` / `aget_config()`
 - `get_config_int`, `get_config_boolean`, `get_config_list`, `get_config_path`
-- `save_config_value(section, key, value)` / `asave_config_value()`
+- `save_config_value(section, key, value, notify=True)` / `asave_config_value()`
+- Параметр `notify=False` позволяет обновить файл без срабатывания Hot-Reload коллбэков.
 
 ### Логирование (`chutils.logger`)
 
