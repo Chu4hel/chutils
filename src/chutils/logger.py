@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Optional, Any, Set
 
 from . import config
+from .context import ContextFilter
 
 try:
     try:
@@ -26,6 +27,19 @@ try:
     except ImportError:
         from pythonjsonlogger import jsonlogger
     JSON_LOGGER_AVAILABLE = True
+
+
+    class ChutilsJsonFormatter(jsonlogger.JsonFormatter):
+        """
+        Кастомный JSON-форматтер, который группирует контекстные данные
+        во вложенный объект 'context'.
+        """
+
+        def add_fields(self, log_record, record, message_dict):
+            super().add_fields(log_record, record, message_dict)
+            if hasattr(record, 'context_dict') and record.context_dict:
+                log_record['context'] = record.context_dict
+
 except ImportError:
     JSON_LOGGER_AVAILABLE = False
 
@@ -538,14 +552,14 @@ def setup_logger(
     env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in ["true", "1", "yes", "y"]
 
     if env_no_time:
-        log_format = '%(name)s - %(levelname)s - %(message)s'
+        log_format = '%(name)s - %(levelname)s %(context)s- %(message)s'
     else:
-        log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        log_format = '%(asctime)s - %(name)s - %(levelname)s %(context)s- %(message)s'
 
     # Определение форматтера (JSON или стандартный текст)
     if final_json_format:
         if JSON_LOGGER_AVAILABLE:
-            formatter = jsonlogger.JsonFormatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+            formatter = ChutilsJsonFormatter('%(asctime)s %(name)s %(levelname)s %(message)s')
         else:
             logger.warning(
                 "Запрошен формат JSON, но пакет 'python-json-logger' не установлен. "
@@ -657,5 +671,9 @@ def setup_logger(
     # Добавляем фильтр маскирования, если он еще не добавлен
     if not any(isinstance(f, SecretMaskingFilter) for f in logger.filters):
         logger.addFilter(SecretMaskingFilter())
+
+    # Добавляем фильтр контекста
+    if not any(isinstance(f, ContextFilter) for f in logger.filters):
+        logger.addFilter(ContextFilter())
 
     return logger  # type: ignore

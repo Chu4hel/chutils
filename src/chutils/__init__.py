@@ -36,10 +36,6 @@ import os
 
 from . import config
 from . import logger
-
-# --- Импорт публичных функций и классов ---
-# Явно импортируем все, что должно быть доступно пользователю напрямую из пакета chutils.
-
 from .config import (
     get_config,
     get_config_value,
@@ -52,7 +48,12 @@ from .config import (
     aget_config,
     asave_config_value
 )
-from .logger import setup_logger, ChutilsLogger, SafeTimedRotatingFileHandler
+from .context import bind_context, unbind_context, clear_context
+from .logger import (
+    setup_logger,
+    ChutilsLogger,
+    SafeTimedRotatingFileHandler
+)
 from .secret_manager import SecretManager
 from .decorators import log_function_details, retry, timeout
 
@@ -104,6 +105,9 @@ __all__ = [
     'setup_logger',
     'ChutilsLogger',
     'SafeTimedRotatingFileHandler',
+    'bind_context',
+    'unbind_context',
+    'clear_context',
 
     # Классы из модуля secret_manager
     'SecretManager',
