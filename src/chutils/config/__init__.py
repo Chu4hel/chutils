@@ -627,6 +627,21 @@ def get_config_path(
 
     # Если путь относительный, _BASE_DIR определен и resolve_from_root включен, объединяем их
     if resolve_from_root and not path_obj.is_absolute() and base_dir:
-        return str(Path(base_dir) / path_obj)
+        # Безопасное разрешение пути с проверкой на выход за пределы корня проекта (Path Traversal)
+        try:
+            base_dir_obj = Path(base_dir).resolve()
+            resolved_path = (base_dir_obj / path_obj).resolve()
+
+            # Проверяем, что итоговый путь находится внутри базовой директории
+            if not str(resolved_path).startswith(str(base_dir_obj)):
+                _get_logger().warning(
+                    "Обнаружена попытка выхода за пределы корня проекта (Path Traversal). "
+                    "Путь '%s' отклонен. Возвращено значение по умолчанию.", path_str
+                )
+                return fallback
+            return str(resolved_path)
+        except Exception as e:
+            _get_logger().error("Ошибка при разрешении пути '%s': %s", path_str, e)
+            return fallback
 
     return path_str
