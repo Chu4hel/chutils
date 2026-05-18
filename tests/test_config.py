@@ -3,7 +3,6 @@ import logging
 from pathlib import Path
 
 import pytest
-
 from chutils import config
 
 
@@ -98,6 +97,63 @@ def test_get_config_list_from_yaml(config_fs):
 
     roles = config.get_config_list("User", "roles")
     assert roles == ["admin", "editor", "viewer"]
+
+
+def test_get_config_path_traversal_protection(config_fs, caplog):
+    """Проверяет защиту от Path Traversal в функции get_config_path."""
+    fs, project_root = config_fs
+
+    # Имитируем корень проекта
+    config._cm.base_dir = str(project_root)
+    config._cm.paths_initialized = True
+
+    # Файл ВНЕ корня проекта
+    outside_file = Path("/home/user/secret.txt")
+    fs.create_file(outside_file, contents="EXTERNALLY SECRET")
+
+    # Опасный путь (выход через ..)
+    # project_root обычно /home/user/project
+    traversal_path = "../secret.txt"
+
+    # Пытаемся разрешить путь
+    with caplog.at_level(logging.WARNING):
+        resolved = config.get_config_path(
+            "any", "key",
+            fallback="default.txt",
+            config={"any": {"key": traversal_path}},
+            resolve_from_root=True
+        )
+
+    # ASSERT
+    assert resolved == "default.txt"
+    assert "Path Traversal" in caplog.text
+    assert traversal_path in caplog.text
+
+
+def test_get_config_path_absolute_outside_protection(config_fs, caplog):
+    """Проверяет защиту от указания абсолютных путей вне корня в get_config_path."""
+    fs, project_root = config_fs
+
+    config._cm.base_dir = str(project_root)
+    config._cm.paths_initialized = True
+
+    # Абсолютный путь вне корня
+    absolute_outside = "/etc/passwd" if Path("/").exists() else "C:/Windows/System32/drivers/etc/hosts"
+
+    # Пытаемся разрешить путь
+    with caplog.at_level(logging.WARNING):
+        resolved = config.get_config_path(
+            "any", "key",
+            fallback="safe.txt",
+            config={"any": {"key": absolute_outside}},
+            resolve_from_root=True
+        )
+
+    # ASSERT
+    # Даже если resolve_from_root=True, если путь абсолютный, Path(base) / Path(abs) 
+    # в Python вернет Path(abs). Наша защита должна это отловить.
+    assert resolved == "safe.txt"
+    assert "Path Traversal" in caplog.text
 
 
 def test_get_config_section_from_yaml(config_fs):
