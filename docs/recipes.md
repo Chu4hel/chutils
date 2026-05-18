@@ -43,6 +43,32 @@ AuditLogger:
 audit_logger = setup_logger("audit", config_section_name="AuditLogger")
 ```
 
+### Контекстное логирование в FastAPI / asyncio
+
+Если вы хотите автоматически добавлять ID запроса во все логи без передачи его через аргументы функций.
+
+```python
+from chutils import setup_logger, bind_context
+import asyncio
+
+logger = setup_logger()
+
+async def deep_nested_function():
+    # Нам не нужно передавать request_id сюда, он подхватится сам!
+    logger.info("Лог из глубины приложения")
+
+async def handle_request(request_id: str):
+    bind_context(request_id=request_id)
+    logger.info("Начало обработки")
+    await deep_nested_function()
+
+# В асинхронном цикле контексты изолированы
+asyncio.gather(
+    handle_request("REQ-1"),
+    handle_request("REQ-2")
+)
+```
+
 ## 2. Работа с конфигурацией
 
 ### Использование относительных путей
@@ -90,7 +116,49 @@ DB_PASSWORD="my-safe-password"
 
 `SecretManager` автоматически подхватит это значение.
 
-## 4. Декораторы
+## 4. Hot-Reload конфигурации
+
+### Автоматическое обновление состояния приложения
+
+Если ваше приложение должно менять свое поведение (например, уровень логирования или лимиты) без перезагрузки.
+
+```python
+from chutils import (
+    setup_logger, 
+    start_config_watcher, 
+    on_config_change, 
+    get_config_value
+)
+
+logger = setup_logger()
+
+def update_app_state():
+    # Читаем новые значения
+    new_limit = get_config_value("App", "rate_limit", 100)
+    logger.info(f"Лимит обновлен: {new_limit}")
+    
+    # Здесь можно обновить объект приложения или глобальное состояние
+    # app.rate_limiter.set_limit(new_limit)
+
+# 1. Подписываемся на изменения
+on_config_change(update_app_state)
+
+# 2. Запускаем мониторинг
+start_config_watcher()
+```
+
+### Использование с Pydantic моделями
+
+При каждом изменении файла кэш `get_config()` сбрасывается, поэтому вы всегда будете получать свежую провалидированную модель.
+
+```python
+def on_reload():
+    # При вызове заново будет создана новая модель с актуальными данными
+    cfg = get_config(model=AppConfig)
+    print(f"Новое имя приложения: {cfg.name}")
+```
+
+## 5. Декораторы
 
 ### Отладка производительности
 
@@ -113,3 +181,54 @@ process_heavy_task([1, 2, 3])
 ```
 
 В логах появится время выполнения с точностью до миллисекунд и переданные аргументы.
+
+## 5. Валидация через Pydantic
+
+### Строгая типизация всей конфигурации
+
+Вы можете описать ожидаемую структуру вашего `config.yml` в виде Pydantic моделей для автоматической валидации при загрузке.
+
+```python
+from pydantic import BaseModel, Field
+from chutils import get_config
+
+class DbConfig(BaseModel):
+    host: str
+    port: int
+
+class AppConfig(BaseModel):
+    name: str
+    version: str
+    db: DbConfig = Field(alias="Database")
+
+# Валидация и автодополнение
+cfg = get_config(model=AppConfig)
+print(f"Подключение к {cfg.db.host}:{cfg.db.port}")
+```
+
+### Валидация отдельной секции
+
+Если вам нужна только часть настроек:
+
+```python
+from chutils import get_config_section
+
+db_cfg = get_config_section("Database", model=DbConfig)
+```
+
+## 6. Утилита командной строки (CLI)
+
+### Управление секретами без кода
+
+Используйте команду `chutils`, чтобы быстро настроить секреты в окружении разработки или на сервере.
+
+```bash
+# Сохранить API ключ
+chutils secrets set STRIPE_KEY "sk_test_..."
+
+# Удалить секрет
+chutils secrets delete STRIPE_KEY
+
+# Указать конкретный сервис (по умолчанию - имя текущей папки)
+chutils secrets set AWS_SECRET "..." --service my-production-app
+```

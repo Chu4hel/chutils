@@ -9,9 +9,8 @@ def test_disable_keyring_env_var_true(config_fs):
     os.environ["CH_DISABLE_KEYRING_WARNING"] = "true"
 
     try:
-        # Сбрасываем кэш конфигурации
-        config._config_loaded = False
-        config._config_object = None
+        # Сбрасываем кэш конфигурации через менеджер
+        config._cm._reset()
 
         # ACT
         result = config.get_config_boolean("secrets", "disable_keyring", fallback=False)
@@ -29,9 +28,8 @@ def test_disable_keyring_env_var_false(config_fs):
     os.environ["CH_DISABLE_KEYRING_WARNING"] = "false"
 
     try:
-        # Сбрасываем кэш конфигурации
-        config._config_loaded = False
-        config._config_object = None
+        # Сбрасываем кэш конфигурации через менеджер
+        config._cm._reset()
 
         # ACT
         result = config.get_config_boolean("secrets", "disable_keyring", fallback=True)
@@ -53,10 +51,8 @@ secrets:
     fs.create_file(project_root / "config.yml", contents=content)
     fs.create_file(project_root / "pyproject.toml", contents="")
 
-    # Сбрасываем кэш конфигурации
-    config._config_loaded = False
-    config._config_object = None
-    config._paths_initialized = False
+    # Сбрасываем кэш конфигурации через менеджер
+    config._cm._reset()
 
     # ACT
     result = config.get_config_boolean("secrets", "disable_keyring", fallback=False)
@@ -80,10 +76,9 @@ secrets:
     os.environ["CH_DISABLE_KEYRING_WARNING"] = "false"
 
     try:
-        # Сбрасываем кэш конфигурации
-        config._config_loaded = False
-        config._config_object = None
-        config._paths_initialized = False
+        # Сбрасываем кэш конфигурации через менеджер
+        config._cm._reset()
+        config._cm.paths_initialized = False
 
         # ACT
         result = config.get_config_boolean("secrets", "disable_keyring", fallback=True)

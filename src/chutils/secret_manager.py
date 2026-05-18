@@ -51,8 +51,7 @@ def _load_dotenv_if_needed():
         return
 
     # Ищем .env файл в корне проекта
-    config._initialize_paths()
-    base_dir = config._BASE_DIR
+    base_dir = config.get_base_dir()
     if base_dir:
         dotenv_path = os.path.join(base_dir, '.env')
         if os.path.exists(dotenv_path):
@@ -72,6 +71,19 @@ class SecretManager:
     1. Системное хранилище (keyring).
     2. Переменные из `.env` файла в корне проекта.
     3. Переменные окружения ОС.
+
+    ### Конфигурация и предотвращение конфликтов
+
+    Для безопасной работы с `keyring` крайне важно, чтобы каждое приложение использовало уникальное
+    имя сервиса (`service_name`). Это предотвращает конфликты, когда разные приложения
+    могут случайно перезаписать секреты друг друга.
+
+    Порядок определения `service_name`:
+    1. **Аргумент конструктора**: Явное указание имени (наивысший приоритет).
+    2. **Конфигурация**: Секция `[Secrets]`, ключ `service_name` в `config.yml`.
+    3. **Путь к проекту**: Абсолютный путь к корню проекта (автоматически гарантирует уникальность).
+
+    Итоговое имя в хранилище формируется как `{prefix}{service_name}`. Префикс по умолчанию: `Chutils_`.
 
     Attributes:
         service_name (str): Полное имя сервиса для keyring.
@@ -110,9 +122,7 @@ class SecretManager:
             final_service_name = config.get_config_value('Secrets', 'service_name')
 
         if not final_service_name:  # Если в конфиге тоже пусто
-            # Гарантируем, что пути инициализированы
-            config._initialize_paths()
-            final_service_name = config._BASE_DIR
+            final_service_name = config.get_base_dir()
             _get_logger().debug(
                 "service_name для SecretManager не указан. "
                 "Для обеспечения уникальности используется путь к проекту: '%s'",

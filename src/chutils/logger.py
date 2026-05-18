@@ -16,8 +16,32 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional, Any, Set
 
-# Импортируем наш модуль config для доступа к путям и настройкам
 from . import config
+from .context import ContextFilter
+
+try:
+    try:
+        from pythonjsonlogger import json as json_mod
+
+        jsonlogger = json_mod
+    except ImportError:
+        from pythonjsonlogger import jsonlogger
+    JSON_LOGGER_AVAILABLE = True
+
+
+    class ChutilsJsonFormatter(jsonlogger.JsonFormatter):
+        """
+        Кастомный JSON-форматтер, который группирует контекстные данные
+        во вложенный объект 'context'.
+        """
+
+        def add_fields(self, log_record, record, message_dict):
+            super().add_fields(log_record, record, message_dict)
+            if hasattr(record, 'context_dict') and record.context_dict:
+                log_record['context'] = record.context_dict
+
+except ImportError:
+    JSON_LOGGER_AVAILABLE = False
 
 # --- Пользовательские уровни логирования ---
 # Для более гранулярного контроля над отладочными сообщениями.
@@ -328,9 +352,7 @@ def _get_log_dir() -> Optional[str]:
         return _LOG_DIR
 
     # Запускаем инициализацию в config, если она еще не была выполнена.
-    config._initialize_paths()
-
-    base_dir = config._BASE_DIR
+    base_dir = config.get_base_dir()
     "Найденный config'ом базовый каталог проекта."
     logging.debug("В _get_log_dir() определен base_dir: %s", base_dir)
 
@@ -368,37 +390,44 @@ def setup_logger(
         interval: Optional[int] = None,
         utc: Optional[bool] = None,
         at_time: Optional[datetime.time] = None,
+        json_format: Optional[bool] = None,
         **kwargs: Any
 ) -> ChutilsLogger:
     """
     Настраивает и возвращает экземпляр логгера.
 
-    Приоритет настроек:
-    0. Переменные окружения CH_LOG_NO_TIME и CH_LOG_NO_FILE имеют наивысший приоритет.
-    1. Явные аргументы, переданные в эту функцию.
-    2. Объединенные настройки из `Logging.loggers.{name}` (если есть) поверх `Logging.default` (если есть).
-    3. Для обратной совместимости: если `Logging.default` и `Logging.loggers` отсутствуют,
-       используются прямые настройки из `Logging` (как в старом формате).
+    Функция предлагает гибкую настройку, включая управление уровнями, ротацией и сжатием.
+    При каждом вызове для существующего логгера его уровень **всегда обновляется**.
+
+    ### Приоритет настроек:
+    0. Переменные окружения `CH_LOG_NO_TIME` и `CH_LOG_NO_FILE` (высший приоритет).
+    1. Явные аргументы, переданные в эту функцию (например, `log_level=...`).
+    2. Секция, указанная в `config_section_name` (например, `[AuditLogger]`).
+    3. Общая секция `[Logging]` в `config.yml`.
     4. Значения по умолчанию, зашитые в коде.
 
+    ### Ротация и сжатие:
+    - **По времени (`rotation_type='time'`)**: Ротация ежедневно или по интервалу (параметры `when`, `interval`).
+    - **По размеру (`rotation_type='size'`)**: Ротация при достижении `max_bytes`.
+    - **Сжатие**: Если `compress=True`, старые логи сжимаются в `.gz`.
+
     Args:
-        name: Имя логгера. `app_logger` используется как стандартное имя.
+        name: Имя логгера. `app_logger` по умолчанию.
         config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').
             Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.
             Если не указана, используется только общая секция `[Logging]`.
         log_level: Уровень логирования (строка или LogLevel).
-        log_file_name: Имя файла для логирования. Если не указано, имя берется
-                       из конфигурации ('Logging', 'log_file_name').
-        force_reconfigure: Удалить существующие обработчики и настроить заново.
+        log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.
+        force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).
         rotation_type: Тип ротации ('time' или 'size').
-        max_bytes: Макс. размер файла для ротации по 'size'.
-        compress: Сжимать ли ротированные логи в `.gz`.
-        backup_count: Количество хранимых ротированных файлов.
-        encoding: Кодировка файла (по умолчанию 'utf-8').
-        when: Для 'time'. Тип интервала ('S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').
-        interval: Для 'time'. Длина интервала.
-        utc: Для 'time'. Использовать UTC время.
-        at_time: Для 'time'. Время ротации (при when='midnight').
+        max_bytes: Макс. размер файла (для 'size'). По умолчанию 5 МБ.
+        compress: Сжимать ли старые логи в `.gz`. По умолчанию False.
+        backup_count: Количество хранимых ротированных файлов. По умолчанию 3.
+        encoding: Кодировка файла. По умолчанию 'utf-8'.
+        when: Интервал ротации для 'time' (например, 'S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').
+        interval: Для 'time'. Кратность интервала.
+        utc: Для 'time'. Использовать ли UTC время для имен файлов.
+        at_time: Для 'time'. Время ротации (для when='midnight').
 
         **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`).
 
@@ -419,6 +448,21 @@ def setup_logger(
         specific_settings = cfg.get(config_section_name, {})
 
     final_logger_settings = {**default_settings, **specific_settings}
+
+    # --- 0. Определение флага JSON формата ---
+    # Приоритет: ENV > Аргумент функции > Конфиг > False
+    env_json_val = os.getenv("CH_LOG_JSON", "").lower()
+
+    if env_json_val:
+        final_json_format = env_json_val in ["true", "1", "yes", "y"]
+    elif json_format is not None:
+        final_json_format = json_format
+    else:
+        config_json = final_logger_settings.get('json_format', False)
+        if isinstance(config_json, str):
+            final_json_format = config_json.lower() in ["true", "1", "yes", "y"]
+        else:
+            final_json_format = bool(config_json)
 
     # --- 1. Определение и установка уровня логирования ---
     # Приоритет: аргумент функции > настройки из конфига > 'INFO'
@@ -508,11 +552,22 @@ def setup_logger(
     env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in ["true", "1", "yes", "y"]
 
     if env_no_time:
-        log_format = '%(name)s - %(levelname)s - %(message)s'
+        log_format = '%(name)s - %(levelname)s %(context)s- %(message)s'
     else:
-        log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        log_format = '%(asctime)s - %(name)s - %(levelname)s %(context)s- %(message)s'
 
-    formatter = logging.Formatter(log_format)
+    # Определение форматтера (JSON или стандартный текст)
+    if final_json_format:
+        if JSON_LOGGER_AVAILABLE:
+            formatter = ChutilsJsonFormatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+        else:
+            logger.warning(
+                "Запрошен формат JSON, но пакет 'python-json-logger' не установлен. "
+                "Используется стандартный текстовый формат."
+            )
+            formatter = logging.Formatter(log_format)
+    else:
+        formatter = logging.Formatter(log_format)
 
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
@@ -616,5 +671,9 @@ def setup_logger(
     # Добавляем фильтр маскирования, если он еще не добавлен
     if not any(isinstance(f, SecretMaskingFilter) for f in logger.filters):
         logger.addFilter(SecretMaskingFilter())
+
+    # Добавляем фильтр контекста
+    if not any(isinstance(f, ContextFilter) for f in logger.filters):
+        logger.addFilter(ContextFilter())
 
     return logger  # type: ignore

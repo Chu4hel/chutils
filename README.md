@@ -34,8 +34,27 @@ Every time you start a new project, you have to solve the same tasks:
   box. It returns a custom logger with additional debug levels (`devdebug`, `mediumdebug`).
 - **🔒 Secure Secret Storage:** The `secret_manager` module provides a simple interface for saving and retrieving secrets
   via the system `keyring`, with a fallback to `.env` files.
+- **🔄 Hot-Reload:** Support for automatic configuration reloading on file changes without restart (requires
+  `pip install chutils[watch]`).
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.
 - **🚀 Ready to Use:** Just install and use.
+
+## Command Line Interface (CLI)
+
+The library provides a `chutils` console command for convenient secret management without writing code.
+
+### Secret Management
+
+```bash
+# Save a secret to the system storage (keyring)
+chutils secrets set MY_API_KEY "super-secret-value"
+
+# Delete a secret
+chutils secrets delete MY_API_KEY
+
+# Explicitly specify service name
+chutils secrets set DB_PASSWORD "12345" --service my_custom_app
+```
 
 ## Installation
 
@@ -76,13 +95,60 @@ Each example focuses on a specific task.
    db_port = get_config_int("Database", "port", fallback=5432)
    ```
 
+   #### Validation via Pydantic (Optional)
+
+   For strict typing and validation, you can use Pydantic models (requires `pip install chutils[pydantic]`):
+
+   ```python
+   from pydantic import BaseModel
+   from chutils import get_config
+
+   class AppConfig(BaseModel):
+       app_name: str
+       version: str
+
+   # Returns an instance of AppConfig
+   cfg = get_config(model=AppConfig)
+   print(cfg.app_name)
+   ```
+
+   You can also validate specific sections:
+   ```python
+   from chutils import get_config_section
+   db_cfg = get_config_section("Database", model=MyDbModel)
+   ```
+
    #### Overriding Configuration with Local Files (`config.local.yml`)
 
    You can create a `config.local.yml` next to your main file. Values from the local file will **override**
    corresponding values from the main file. This is perfect for local development or storing sensitive data (ensure
    `*.local.*` is in your `.gitignore`).
 
-### 2. Logging Setup
+### 2. Hot-Reload
+
+You can make your application react to configuration file changes in real-time.
+
+```python
+from chutils import start_config_watcher, on_config_change, get_config_value
+
+
+def reload_logic():
+    print("Configuration updated!")
+    # Update app state here
+    db_url = get_config_value("Database", "url")
+
+
+# Register callback
+on_config_change(reload_logic)
+
+# Start watcher (requires watchdog package)
+start_config_watcher()
+```
+
+To use this feature, install `watchdog`:
+`pip install chutils[watch]`
+
+### 3. Logging Setup
 
 1. Configure and use the logger:
 
@@ -96,8 +162,39 @@ Each example focuses on a specific task.
    logger.devdebug("Deep debug message (level 9).")
    ```
 
+   #### Structured Logging (JSON)
+
+   If you need to output logs in JSON format for ELK, Splunk, or cloud logging (requires `pip install chutils[json]`):
+
+   ```python
+   # Via code
+   logger = setup_logger(json_format=True)
+
+   # Or via config in the [Logging] section
+   # json_format: true
+   ```
+
+   #### Contextual Logging (ContextVar)
+
+   You can bind metadata to the current execution context (thread or coroutine), and it will be automatically
+   included in all log messages.
+
+   ```python
+   from chutils import setup_logger, bind_context
+
+   logger = setup_logger()
+
+   # Bind request ID and user to the current context
+   bind_context(request_id="REQ-123", user="admin")
+
+   logger.info("Action performed")
+   # Text: ... [request_id=REQ-123 user=admin] Action performed
+   # JSON: {..., "message": "Action performed", "context": {"request_id": "REQ-123", "user": "admin"}}
+   ```
+
    #### Controlling Logging via Environment Variables
 
+    - `CH_LOG_JSON=true`: Forces JSON format.
     - `CH_LOG_NO_TIME=true`: Removes the date/time from the log format (for clean Docker logs).
     - `CH_LOG_NO_FILE=true`: Disables creating log files.
 
@@ -132,7 +229,8 @@ In environments like Docker or CI/CD where `keyring` is unavailable, you can sup
 
 - `get_config_value(section, key, fallback)` / `aget_config()`
 - `get_config_int`, `get_config_boolean`, `get_config_list`, `get_config_path`
-- `save_config_value(section, key, value)` / `asave_config_value()`
+- `save_config_value(section, key, value, notify=True)` / `asave_config_value()`
+- Use `notify=False` to update the file without triggering Hot-Reload callbacks.
 
 ### Logging (`chutils.logger`)
 
@@ -149,6 +247,7 @@ In environments like Docker or CI/CD where `keyring` is unavailable, you can sup
 ### Decorators (`chutils.decorators`)
 
 - `@log_function_details`: Logs arguments, execution time, and result (uses `DEVDEBUG` level).
+- `@timeout(seconds, fallback)`: Limits function execution time. Supports sync/async and optional fallback.
 - `@retry`: Automatically retries a function if it fails. Supports sync/async, backoff, jitter, and exception filtering.
 
 #### Example of @retry usage:

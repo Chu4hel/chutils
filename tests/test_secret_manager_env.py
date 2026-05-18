@@ -38,12 +38,11 @@ def test_get_secret_suppress_keyring_warning_via_env(project_with_marker, mocker
     os.environ["CH_DISABLE_KEYRING_WARNING"] = "true"
     try:
         # Сбрасываем состояние модуля
-        from chutils import secret_manager, config
+        from chutils import secret_manager, config as chutils_config
         secret_manager._dotenv_loaded = False
         secret_manager._dotenv_values = None
         secret_manager._module_logger = None
-        config._config_loaded = False
-        config._config_object = None
+        chutils_config._cm._reset()  # Используем менеджер напрямую для сброса
 
         sm = SecretManager("test_app")
         secret_manager._get_logger().propagate = True
@@ -74,14 +73,12 @@ secrets:
 """
     fs.create_file(project_root / "config.yml", contents=content)
 
-    # Сбрасываем состояние модуля
-    from chutils import secret_manager, config
+    # Сбрасываем состояние модуля через менеджер
+    from chutils import secret_manager, config as chutils_config
     secret_manager._dotenv_loaded = False
     secret_manager._dotenv_values = None
     secret_manager._module_logger = None
-    config._config_loaded = False
-    config._config_object = None
-    config._paths_initialized = False
+    chutils_config._cm._reset()
 
     # Переходим в корень фейкового проекта для автообнаружения конфига
     os.chdir(project_root)

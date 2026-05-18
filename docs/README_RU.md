@@ -33,9 +33,28 @@
   маскированием секретов**.
 - **🔒 Безопасное хранилище секретов:** Модуль `secret_manager` предоставляет простой интерфейс для сохранения и
   получения секретов через системный `keyring` с автоматическим откатом к `.env` файлам.
+- **🔄 Hot-Reload конфигурации:** Поддержка автоматического обновления настроек при изменении файлов `config.yml` или
+  `config.local.yml` без перезапуска приложения (требуется `pip install chutils[watch]`).
 - **⚡ Поддержка Async:** Большинство функций имеют асинхронные версии (с префиксом `a`) для работы в неблокирующем
   режиме.
 - **🚀 Готовность к работе:** Просто установите и используйте.
+
+## Интерфейс командной строки (CLI)
+
+Библиотека предоставляет консольную команду `chutils` для удобного управления секретами без написания кода.
+
+### Управление секретами
+
+```bash
+# Сохранить секрет в системное хранилище (keyring)
+chutils secrets set MY_API_KEY "super-secret-value"
+
+# Удалить секрет
+chutils secrets delete MY_API_KEY
+
+# Указать имя сервиса (service_name) явно
+chutils secrets set DB_PASSWORD "12345" --service my_custom_app
+```
 
 ## Установка
 
@@ -51,7 +70,8 @@ pip install chutils
 
 ## Примеры использования
 
-В папке [`/examples`](../examples/) вы найдете готовые к запуску скрипты, демонстрирующие ключевые возможности
+В папке [examples](https://github.com/Chu4hel/chutils/tree/main/examples) вы найдете готовые к запуску скрипты,
+демонстрирующие ключевые возможности
 библиотеки. Каждый пример сфокусирован на одной конкретной задаче.
 
 ## Быстрый старт
@@ -76,6 +96,34 @@ pip install chutils
    db_port = get_config_int("Database", "port", fallback=5432)
    ```
 
+#### Валидация через Pydantic (Опционально)
+
+Если вам нужна строгая типизация и валидация, вы можете использовать Pydantic модели (требуется
+`pip install chutils[pydantic]`):
+
+```python
+from pydantic import BaseModel
+from chutils import get_config
+
+
+class AppConfig(BaseModel):
+    app_name: str
+    version: str
+
+
+# Функция вернет экземпляр модели AppConfig
+cfg = get_config(model=AppConfig)
+print(cfg.app_name)
+```
+
+Вы также можете валидировать отдельные секции:
+
+```python
+from chutils import get_config_section
+
+db_cfg = get_config_section("Database", model=MyDbModel)
+```
+
 #### Переопределение через переменные окружения
 
 Вы можете переопределить любое значение из конфигурационного файла с помощью переменных окружения. Это особенно полезно
@@ -93,7 +141,29 @@ pip install chutils
 уступать переменным окружения `CH_*`). Это
 удобно для локальной разработки или хранения секретов (не забудьте добавить `*.local.*` в `.gitignore`).
 
-### 2. Настройка логирования
+### 2. Hot-Reload конфигурации
+
+Вы можете настроить приложение так, чтобы оно реагировало на изменения в файлах конфигурации в реальном времени.
+
+```python
+from chutils import start_config_watcher, on_config_change, get_config_value
+
+def reload_logic():
+    print("Конфигурация обновилась!")
+    # Здесь можно обновить состояние приложения
+    db_url = get_config_value("Database", "url")
+
+# Регистрируем коллбэк
+on_config_change(reload_logic)
+
+# Запускаем мониторинг (требуется пакет watchdog)
+start_config_watcher()
+```
+
+Для работы этой функции необходимо установить пакет `watchdog`:
+`pip install chutils[watch]`
+
+### 3. Настройка логирования
 
 ```python
 from chutils import setup_logger, ChutilsLogger
@@ -105,8 +175,39 @@ logger.info("Приложение запущено.")
 logger.devdebug("Очень подробное сообщение (уровень 9).")
 ```
 
+#### Структурированное логирование (JSON)
+
+Если вам нужно выводить логи в формате JSON для ELK или Splunk (требуется `pip install chutils[json]`):
+
+```python
+# Через код
+logger = setup_logger(json_format=True)
+
+# Или через конфиг в секции [Logging]
+# json_format: true
+```
+
+#### Контекстное логирование (ContextVar)
+
+Вы можете привязывать метаданные к текущему контексту выполнения (потоку или корутине), и они будут автоматически
+добавляться во все сообщения логов.
+
+```python
+from chutils import setup_logger, bind_context
+
+logger = setup_logger()
+
+# Привязываем ID запроса и имя пользователя к текущему контексту
+bind_context(request_id="REQ-123", user="admin")
+
+logger.info("Действие выполнено")
+# Текст: ... [request_id=REQ-123 user=admin] Действие выполнено
+# JSON: {..., "message": "Действие выполнено", "context": {"request_id": "REQ-123", "user": "admin"}}
+```
+
 #### Управление через переменные окружения
 
+- `CH_LOG_JSON=true`: Принудительно включает JSON-формат.
 - `CH_LOG_NO_TIME=true`: Удаляет дату/время из формата (удобно для чистых логов в Docker).
 - `CH_LOG_NO_FILE=true`: Полностью отключает создание файлов логов.
 
@@ -141,7 +242,8 @@ key = secrets.get_secret("API_KEY")
 
 - `get_config_value(section, key, fallback)` / `aget_config()`
 - `get_config_int`, `get_config_boolean`, `get_config_list`, `get_config_path`
-- `save_config_value(section, key, value)` / `asave_config_value()`
+- `save_config_value(section, key, value, notify=True)` / `asave_config_value()`
+- Параметр `notify=False` позволяет обновить файл без срабатывания Hot-Reload коллбэков.
 
 ### Логирование (`chutils.logger`)
 
@@ -158,6 +260,8 @@ key = secrets.get_secret("API_KEY")
 ### Декораторы (`chutils.decorators`)
 
 - `@log_function_details`: Логирует аргументы, время и результат функции (уровень `DEVDEBUG`).
+- `@timeout(seconds, fallback)`: Ограничивает время выполнения функции. Поддерживает sync/async и опциональный
+  fallback.
 - `@retry`: Автоматически повторяет выполнение функции при ошибках. Поддерживает синхронные и асинхронные функции,
   экспоненциальную задержку (backoff), случайный шум (jitter) и фильтрацию исключений.
 

@@ -24,6 +24,10 @@ nav:
   - Главная: index.md
   - Рецепты: recipes.md
   - Справочник API: api.md
+  - Проект:
+    - Обзор (RU): README_RU.md
+    - Кодекс поведения: CODE_OF_CONDUCT_RU.md
+    - Правила участия: CONTRIBUTING_RU.md
 
 plugins:
   - search

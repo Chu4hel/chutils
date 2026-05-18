@@ -46,10 +46,8 @@ def main() -> None:
     os.chdir(temp_dir)
 
     try:
-        # Сбрасываем кэш, чтобы chutils заново нашел файлы в текущей папке
-        config._config_loaded = False
-        config._config_object = None
-        config._paths_initialized = False
+        # Сбрасываем кэш через менеджер, чтобы chutils заново нашел файлы в текущей папке
+        config._cm._reset()
 
         print("--- Демонстрация слияния (Merge) конфигураций ---")
 
