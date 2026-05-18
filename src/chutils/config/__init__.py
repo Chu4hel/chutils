@@ -23,7 +23,7 @@ import os
 import time
 import warnings
 from pathlib import Path
-from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union
+from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union, Tuple
 
 from .manager import _cm
 from .providers import get_providers
@@ -69,25 +69,30 @@ def __getattr__(name: str) -> Any:
     в новый менеджер состояния с выводом предупреждения об устаревании.
     """
     remap = {
-        '_BASE_DIR': 'base_dir',
-        '_CONFIG_FILE_PATH': 'config_file_path',
-        '_paths_initialized': 'paths_initialized',
-        '_config_object': 'config_object',
-        '_config_loaded': 'config_loaded'
+        '_BASE_DIR': ('base_dir', 'get_base_dir()'),
+        '_CONFIG_FILE_PATH': ('config_file_path', 'get_config_file_path()'),
+        '_paths_initialized': ('paths_initialized', 'are_paths_initialized()'),
+        '_config_object': ('config_object', 'get_config()'),
+        '_config_loaded': ('config_loaded', 'is_config_loaded()'),
+        '_get_config_paths': ('get_config_paths', 'get_config_paths()')
     }
+    "Словарь соответствия: имя -> (атрибут в _cm, рекомендуемая публичная замена)"
 
     if name in remap:
-        warnings.warn(
-            f"Прямое обращение к 'chutils.config.{name}' устарело и будет удалено в будущих версиях. "
-            f"Используйте публичный API модуля.",
-            DeprecationWarning,
-            stacklevel=2
-        )
+        cm_attr, suggestion = remap[name]
+        msg = f"Прямое обращение к 'chutils.config.{name}' устарело и будет удалено в будущих версиях."
+        if suggestion:
+            msg += f" Используйте {suggestion}."
+        else:
+            msg += " Используйте публичный API модуля."
+
+        warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
         # Если пути еще не инициализированы, инициализируем их при первом обращении
-        if name in ['_BASE_DIR', '_CONFIG_FILE_PATH'] and not _cm.paths_initialized:
+        if name in ['_BASE_DIR', '_CONFIG_FILE_PATH', '_get_config_paths'] and not _cm.paths_initialized:
             _cm.initialize_paths(find_project_root)
 
-        return getattr(_cm, remap[name])
+        return getattr(_cm, cm_attr)
 
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
@@ -156,6 +161,31 @@ def is_config_loaded() -> bool:
         True, если кэш конфигурации заполнен.
     """
     return _cm.config_loaded
+
+
+def are_paths_initialized() -> bool:
+    """
+    Проверяет, были ли инициализированы пути к проекту и файлам конфигурации.
+
+    Returns:
+        True, если пути определены.
+    """
+    return _cm.paths_initialized
+
+
+def get_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+    """
+    Возвращает пути к основному и локальному файлам конфигурации.
+
+    Args:
+        cfg_file: Опциональный путь к основному файлу.
+
+    Returns:
+        Кортеж (путь_к_основному, путь_к_локальному).
+    """
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+    return _cm.get_config_paths(cfg_file)
 
 
 def _check_pydantic():
