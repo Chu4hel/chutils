@@ -4,26 +4,30 @@ from abc import ABC, abstractmethod
 
 class BaseCommand(ABC):
     """
-    Базовый класс для всех команд CLI.
-    Определяет интерфейс для регистрации аргументов и выполнения команды.
+    Абстрактный базовый класс для всех команд CLI chutils.
+    
+    Определяет единый интерфейс для регистрации подкоманд в argparse
+    и выполнения связанной с ними бизнес-логики.
     """
 
     @abstractmethod
     def register(self, subparsers: argparse._SubParsersAction):
         """
-        Регистрирует подкоманду и её аргументы.
+        Регистрирует подкоманду, её описание и аргументы в основном парсере.
         
         Args:
-            subparsers: Объект subparsers из основного парсера.
+            subparsers: Объект subparsers, полученный из ArgumentParser.add_subparsers().
         """
         pass
 
     @abstractmethod
     def handle(self, args: argparse.Namespace):
         """
-        Выполняет логику команды.
+        Основной метод выполнения команды.
+        
+        Вызывается диспетчером CLI после успешного парсинга аргументов.
         
         Args:
-            args: Распарсенные аргументы командной строки.
+            args: Объект Namespace с распарсенными аргументами командной строки.
         """
         pass

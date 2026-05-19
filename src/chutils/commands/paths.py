@@ -7,11 +7,24 @@ from .base import BaseCommand
 
 
 class ShowPathsCommand(BaseCommand):
-    """Отображение путей поиска конфигурации."""
+    """
+    Диагностика путей поиска файлов конфигурации.
+    
+    Показывает корень проекта, обнаруженные файлы и список маркеров,
+    которые библиотека использует для поиска настроек.
+    """
 
     def register(self, subparsers: argparse._SubParsersAction):
-        show_paths_parser = subparsers.add_parser("show-paths", help="Показать пути поиска конфигурации")
-        show_paths_parser.add_argument("--json", action="store_true", help="Вывод в формате JSON")
+        show_paths_parser = subparsers.add_parser(
+            "show-paths", 
+            help="Показать пути поиска конфигурации",
+            description="Отображение путей, которые chutils использует для загрузки настроек."
+        )
+        show_paths_parser.add_argument(
+            "--json", 
+            action="store_true", 
+            help="Вывод информации в формате JSON для автоматической обработки"
+        )
         show_paths_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace):

@@ -8,24 +8,47 @@ from .base import BaseCommand
 
 
 class SecretsCommand(BaseCommand):
-    """Управление секретами в системном хранилище."""
+    """
+    Управление секретами в системном хранилище (Keyring).
+    
+    Позволяет безопасно сохранять и удалять API-ключи, пароли и другие
+    чувствительные данные, не сохраняя их в открытом виде в коде или конфигах.
+    """
 
     def register(self, subparsers: argparse._SubParsersAction):
-        secrets_parser = subparsers.add_parser("secrets", help="Управление секретами")
+        secrets_parser = subparsers.add_parser(
+            "secrets", 
+            help="Управление секретами в системном хранилище",
+            description="Команды для работы с системным хранилищем ключей (Windows Credential Manager, Keychain, и т.д.)"
+        )
         secrets_parser.set_defaults(handler=self.handle)
-        secrets_subparsers = secrets_parser.add_subparsers(dest="subcommand", help="Действия с секретами")
+        secrets_subparsers = secrets_parser.add_subparsers(dest="subcommand", help="Доступные действия")
 
         # secrets set <key> <value>
-        set_parser = secrets_subparsers.add_parser("set", help="Сохранить секрет")
-        set_parser.add_argument("key", help="Имя ключа")
+        set_parser = secrets_subparsers.add_parser(
+            "set", 
+            help="Сохранить или обновить секрет",
+            description="Сохраняет зашифрованное значение в системное хранилище."
+        )
+        set_parser.add_argument("key", help="Имя ключа (например, DB_PASSWORD)")
         set_parser.add_argument("value", help="Значение секрета")
-        set_parser.add_argument("-s", "--service", help="Имя сервиса (service_name) для keyring")
+        set_parser.add_argument(
+            "-s", "--service", 
+            help="Имя сервиса (service_name). По умолчанию берется из Secrets.service_name в конфиге."
+        )
         set_parser.set_defaults(handler=self.handle_set)
 
         # secrets delete <key>
-        delete_parser = secrets_subparsers.add_parser("delete", help="Удалить секрет")
-        delete_parser.add_argument("key", help="Имя ключа")
-        delete_parser.add_argument("-s", "--service", help="Имя сервиса (service_name) для keyring")
+        delete_parser = secrets_subparsers.add_parser(
+            "delete", 
+            help="Удалить секрет из хранилища",
+            description="Навсегда удаляет указанный ключ из системного хранилища."
+        )
+        delete_parser.add_argument("key", help="Имя ключа для удаления")
+        delete_parser.add_argument(
+            "-s", "--service", 
+            help="Имя сервиса (service_name). Должно совпадать с тем, что использовалось при сохранении."
+        )
         delete_parser.set_defaults(handler=self.handle_delete)
 
     def handle(self, args: argparse.Namespace):

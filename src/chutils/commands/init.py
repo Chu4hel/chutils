@@ -5,11 +5,24 @@ from .base import BaseCommand
 
 
 class InitCommand(BaseCommand):
-    """Инициализация проекта и создание шаблона конфигурации."""
+    """
+    Инициализация нового проекта с использованием chutils.
+    
+    Создает базовый файл config.yml с рекомендуемыми настройками и
+    обновляет .gitignore для предотвращения утечки секретов и логов.
+    """
 
     def register(self, subparsers: argparse._SubParsersAction):
-        init_parser = subparsers.add_parser("init", help="Инициализировать проект")
-        init_parser.add_argument("-y", "--yes", action="store_true", help="Автоматически отвечать 'да' на все вопросы")
+        init_parser = subparsers.add_parser(
+            "init", 
+            help="Инициализировать новый проект",
+            description="Быстрое создание структуры конфигурации и настройка исключений git."
+        )
+        init_parser.add_argument(
+            "-y", "--yes", 
+            action="store_true", 
+            help="Автоматически отвечать 'да' на все вопросы (использовать настройки по умолчанию)"
+        )
         init_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace):

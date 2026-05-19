@@ -8,11 +8,23 @@ from .utils import _import_string
 
 
 class ValidateCommand(BaseCommand):
-    """Валидация текущей конфигурации через Pydantic-модели."""
+    """
+    Валидация конфигурации проекта.
+    
+    Проверяет, что текущие файлы конфигурации (YAML, JSON или INI) 
+    соответствуют структуре и типам данных заданной Pydantic-модели.
+    """
 
     def register(self, subparsers: argparse._SubParsersAction):
-        validate_parser = subparsers.add_parser("validate", help="Валидация конфигурации")
-        validate_parser.add_argument("-m", "--model", help="Путь к Pydantic модели (например, 'src.context.Settings')")
+        validate_parser = subparsers.add_parser(
+            "validate", 
+            help="Проверить корректность конфигурации",
+            description="Валидация настроек с использованием Pydantic моделей."
+        )
+        validate_parser.add_argument(
+            "-m", "--model", 
+            help="Путь к модели (например, 'myapp.context:Settings'). Если не указан, ищет 'Settings' в context.py/config.py."
+        )
         validate_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace):
