@@ -30,10 +30,10 @@ def test_callback_registration():
     mock_callback = MagicMock()
     on_config_change(mock_callback)
 
-    assert mock_callback in _cm.callbacks
+    assert mock_callback in _cm.get_callbacks()
 
     # Вызываем коллбеки напрямую через менеджер
-    for cb in _cm.callbacks:
+    for cb in _cm.get_callbacks():
         cb()
     mock_callback.assert_called_once()
 
