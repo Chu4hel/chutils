@@ -20,7 +20,6 @@
 import asyncio
 import logging
 import os
-import time
 import warnings
 from pathlib import Path
 from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union, Tuple
@@ -222,40 +221,42 @@ def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
     # Поддержка старых тестов: синхронизируем состояние, если оно было изменено напрямую в модуле
     _sync_legacy_state()
 
-    config_data = _cm.config_object
-
-    if not (_cm.config_loaded and config_data is not None):
+    def _do_load():
         # Гарантируем инициализацию путей
         if not _cm.paths_initialized:
             _cm.initialize_paths(find_project_root)
 
-        main_path, local_path = _cm.get_config_paths()
-        main_config: Dict = {}
-        local_config: Dict = {}
+        _cm.acquire_file_lock()
+        try:
+            main_path, local_path = _cm.get_config_paths()
+            main_config: Dict = {}
+            local_config: Dict = {}
 
-        def load_from_path(path: str) -> Dict:
-            ext = Path(path).suffix.lower()
-            provider = _PROVIDERS.get(ext)
-            if provider:
-                data = provider.load(path)
-                _get_logger().debug("Конфигурация загружена из %s (%s)", path, ext)
-                return data
-            _get_logger().warning("Неподдерживаемый формат файла конфигурации: %s", path)
-            return {}
+            def load_from_path(path: str) -> Dict:
+                ext = Path(path).suffix.lower()
+                provider = _PROVIDERS.get(ext)
+                if provider:
+                    data = provider.load(path)
+                    _get_logger().debug("Конфигурация загружена из %s (%s)", path, ext)
+                    return data
+                _get_logger().warning("Неподдерживаемый формат файла конфигурации: %s", path)
+                return {}
 
-        if main_path and Path(main_path).exists():
-            main_config = load_from_path(main_path)
-        else:
-            _get_logger().debug("Основной файл конфигурации не найден или не указан.")
+            if main_path and Path(main_path).exists():
+                main_config = load_from_path(main_path)
+            else:
+                _get_logger().debug("Основной файл конфигурации не найден или не указан.")
 
-        if local_path and Path(local_path).exists():
-            local_config = load_from_path(local_path)
-        else:
-            _get_logger().debug("Локальный файл конфигурации не найден или не указан.")
+            if local_path and Path(local_path).exists():
+                local_config = load_from_path(local_path)
+            else:
+                _get_logger().debug("Локальный файл конфигурации не найден или не указан.")
 
-        config_data = _merge_configs(main_config, local_config)
-        _cm.config_object = config_data
-        _cm.config_loaded = True
+            return _merge_configs(main_config, local_config)
+        finally:
+            _cm.release_file_lock()
+
+    config_data = _cm.load_config_safe(_do_load)
 
     if model is not None:
         if not _check_pydantic():
@@ -346,8 +347,7 @@ def save_config_value(
 
     if not notify:
         # Фиксируем время внутреннего сохранения для подавления Hot-Reload
-        _cm._last_internal_save_time = time.monotonic()
-
+        _cm.mark_internal_save()
     ext = Path(path).suffix.lower()
     provider = _PROVIDERS.get(ext)
 
@@ -355,13 +355,16 @@ def save_config_value(
         _get_logger().warning("Сохранение для формата %s не поддерживается.", ext)
         return False
 
-    success = provider.save(path, section, key, value)
-    if success:
-        _get_logger().debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
-        # Сбрасываем кэш
-        _cm.config_object = None
-        _cm.config_loaded = False
-        return True
+    _cm.acquire_file_lock()
+    try:
+        success = provider.save(path, section, key, value)
+        if success:
+            _get_logger().debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
+            # Сбрасываем кэш
+            _cm.clear_cache()
+            return True
+    finally:
+        _cm.release_file_lock()
 
     return False
 

@@ -20,8 +20,7 @@ def on_config_change(callback: Callable[[], None]) -> None:
     Args:
         callback: Функция без аргументов.
     """
-    if callback not in _cm.callbacks:
-        _cm.callbacks.append(callback)
+    if _cm.add_callback(callback):
         logger.debug("Зарегистрирован коллбэк на изменение конфигурации: %s",
                      getattr(callback, '__name__', str(callback)))
 
@@ -49,9 +48,7 @@ class ConfigChangeHandler:
         current_time = time.monotonic()
 
         # Подавляем уведомление, если это было внутреннее сохранение с notify=False
-        # Используем небольшой запас времени (0.5 сек) для синхронизации событий ОС
-        if current_time - _cm._last_internal_save_time < 0.5:
-            _cm._last_internal_save_time = 0.0  # Сбрасываем флаг
+        if _cm.check_internal_save(0.5):
             logger.debug("Hot-Reload подавлен (внутреннее сохранение).")
             return
 
@@ -62,11 +59,10 @@ class ConfigChangeHandler:
         logger.info("Обнаружено изменение конфигурации. Сброс кэша...")
 
         # Сбрасываем кэш
-        _cm.config_object = None
-        _cm.config_loaded = False
+        _cm.clear_cache()
 
         # Вызываем коллбэки
-        for callback in _cm.callbacks:
+        for callback in _cm.get_callbacks():
             try:
                 callback()
             except Exception as e:
