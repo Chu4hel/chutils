@@ -1,7 +1,9 @@
 import argparse
+import importlib
 import json
 import os
 import sys
+from typing import Any
 
 from chutils import config
 from chutils.secret_manager import SecretManager
@@ -131,6 +133,69 @@ Secrets:
         print(f"[SKIP] Файл {gitignore_path} уже содержит необходимые исключения.")
 
 
+def _import_string(import_str: str) -> Any:
+    """Импортирует объект по строковому пути (например, 'package.module.Class')."""
+    try:
+        if ':' in import_str:
+            module_name, obj_name = import_str.split(':', 1)
+        else:
+            module_name, obj_name = import_str.rsplit('.', 1)
+
+        module = importlib.import_module(module_name)
+        return getattr(module, obj_name)
+    except (ImportError, AttributeError, ValueError):
+        return None
+
+
+def handle_validate(args: argparse.Namespace):
+    """Обработчик команды валидации конфигурации."""
+    print("--- Валидация конфигурации ---")
+
+    model_class = None
+    if args.model:
+        model_class = _import_string(args.model)
+        if not model_class:
+            print(f"[ERROR] Не удалось импортировать модель '{args.model}'.")
+            sys.exit(1)
+    else:
+        # Авто-обнаружение модели
+        search_paths = [
+            "src.context:Settings", "src.config:Settings",
+            "context:Settings", "config:Settings"
+        ]
+        print("[INFO] Поиск Pydantic модели (Settings)...")
+        for path in search_paths:
+            model_class = _import_string(path)
+            if model_class:
+                print(f"[OK] Найдена модель: {path}")
+                break
+
+        if not model_class:
+            print("[ERROR] Pydantic модель не найдена. Укажите путь через --model.")
+            sys.exit(1)
+
+    try:
+        from pydantic import ValidationError
+    except ImportError:
+        print("[ERROR] Пакет 'pydantic' не установлен. Установите его: pip install pydantic")
+        sys.exit(1)
+
+    try:
+        # Пытаемся загрузить конфиг через модель
+        config.get_config(model=model_class)
+        print("[OK] Конфигурация успешно прошла валидацию.")
+    except ValidationError as e:
+        print("\n[FAIL] Ошибки валидации:")
+        for error in e.errors():
+            loc = " -> ".join(str(i) for i in error['loc'])
+            msg = error['msg']
+            print(f"  - {loc}: {msg}")
+        sys.exit(1)
+    except Exception as e:
+        print(f"[ERROR] Произошла ошибка при валидации: {e}")
+        sys.exit(1)
+
+
 def main():
     """Точка входа в CLI."""
     parser = argparse.ArgumentParser(
@@ -162,6 +227,10 @@ def main():
     init_parser = subparsers.add_parser("init", help="Инициализировать проект")
     init_parser.add_argument("-y", "--yes", action="store_true", help="Автоматически отвечать 'да' на все вопросы")
 
+    # validate
+    validate_parser = subparsers.add_parser("validate", help="Валидация конфигурации")
+    validate_parser.add_argument("-m", "--model", help="Путь к Pydantic модели (например, 'src.context.Settings')")
+
     args = parser.parse_args()
 
     if args.command == "secrets":
@@ -175,6 +244,8 @@ def main():
         handle_show_paths(args)
     elif args.command == "init":
         handle_init(args)
+    elif args.command == "validate":
+        handle_validate(args)
     else:
         parser.print_help()
 
