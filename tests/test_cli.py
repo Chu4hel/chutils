@@ -6,7 +6,7 @@ from chutils.cli import main
 
 def test_cli_secrets_set_parsing(mocker):
     """Проверяет корректность парсинга команды 'secrets set'."""
-    mock_sm = mocker.patch("chutils.cli.SecretManager")
+    mock_sm = mocker.patch("chutils.commands.secrets.SecretManager")
     mock_sm.return_value.save_secret.return_value = True
 
     # Эмулируем аргументы командной строки
@@ -25,7 +25,7 @@ def test_cli_secrets_set_parsing(mocker):
 
 def test_cli_secrets_delete_parsing(mocker):
     """Проверяет корректность парсинга команды 'secrets delete'."""
-    mock_sm = mocker.patch("chutils.cli.SecretManager")
+    mock_sm = mocker.patch("chutils.commands.secrets.SecretManager")
     mock_sm.return_value.delete_secret.return_value = True
 
     # Эмулируем аргументы командной строки
@@ -123,7 +123,8 @@ def test_cli_init_non_interactive(mocker, capsys):
 def test_cli_validate_success(mocker, capsys):
     """Проверяет успешную валидацию."""
     mock_model = mocker.Mock()
-    mocker.patch("chutils.cli._import_string", return_value=mock_model)
+    # ИСПРАВЛЕНО: Путь к патчу изменен на новый модульный путь
+    mocker.patch("chutils.commands.validate._import_string", return_value=mock_model)
     mocker.patch("chutils.config.get_config", return_value={})
 
     test_args = ["chutils", "validate", "-m", "myapp.Settings"]
@@ -142,15 +143,10 @@ def test_cli_validate_fail(mocker, capsys):
     from pydantic import ValidationError
 
     mock_model = mocker.Mock()
-    mocker.patch("chutils.cli._import_string", return_value=mock_model)
+    # ИСПРАВЛЕНО: Путь к патчу изменен на новый модульный путь
+    mocker.patch("chutils.commands.validate._import_string", return_value=mock_model)
 
     # Эмулируем ошибку Pydantic
-    # Для создания реальной ValidationError нужно много бойлерплейта, 
-    # поэтому просто мокаем исключение с нужным интерфейсом
-    class MockError(Exception):
-        def errors(self):
-            return [{'loc': ('Logging', 'level'), 'msg': 'field required'}]
-
     mocker.patch("chutils.config.get_config", side_effect=ValidationError.from_exception_data("Model", []))
     # Переопределим errors для простоты теста
     mocker.patch.object(ValidationError, 'errors',
