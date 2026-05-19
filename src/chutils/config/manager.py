@@ -18,6 +18,14 @@ class _ConfigManager:
     """
     _instance = None
 
+    # Список маркеров, по которым ищется корень проекта и конфигурационные файлы.
+    # Порядок в списке определяет приоритет при поиске.
+    CONFIG_MARKERS = [
+        'config.yml', 'config.yaml', 'config.ini', 'config.json',
+        'config.local.yml', 'config.local.yaml', 'config.local.ini', 'config.local.json',
+        'pyproject.toml'
+    ]
+
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(_ConfigManager, cls).__new__(cls)
@@ -49,17 +57,12 @@ class _ConfigManager:
         except OSError:
             current_dir = Path('.')
 
-        markers = [
-            'config.yml', 'config.yaml', 'config.ini', 'config.json',
-            'config.local.yml', 'config.local.yaml', 'config.local.ini', 'config.local.json',
-            'pyproject.toml'
-        ]
-        project_root = find_root_func(current_dir, markers)
+        project_root = find_root_func(current_dir, self.CONFIG_MARKERS)
 
         if project_root:
             self.base_dir = str(project_root)
             # Находим, какой именно конфигурационный файл был найден
-            for marker in markers:
+            for marker in self.CONFIG_MARKERS:
                 if (project_root / marker).is_file() and marker.startswith('config'):
                     self.config_file_path = str(project_root / marker)
                     break
