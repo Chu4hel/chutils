@@ -5,7 +5,9 @@
 
 import json
 import logging
+import os
 import re
+import tempfile
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict
@@ -14,6 +16,25 @@ import yaml
 
 # Настраиваем локальный логгер
 logger = logging.getLogger(__name__)
+
+
+def _atomic_write(path: str, content_writer_func: Any):
+    """
+    Вспомогательная функция для атомарной записи в файл через временный файл.
+    """
+    dir_path = os.path.dirname(os.path.abspath(path))
+    # Создаем временный файл в той же директории, чтобы гарантировать нахождение на одном разделе (нужно для os.replace)
+    fd, temp_path = tempfile.mkstemp(dir=dir_path, text=True)
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            content_writer_func(f)
+
+        # Атомарная замена (на Windows заменит существующий файл)
+        os.replace(temp_path, path)
+    except Exception as e:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        raise e
 
 
 class ConfigProvider(ABC):
@@ -73,8 +94,10 @@ class YamlConfigProvider(ConfigProvider):
                 data[section] = {}
             data[section][key] = value
 
-            with open(path, 'w', encoding='utf-8') as f:
+            def writer(f):
                 yaml.dump(data, f, allow_unicode=True, sort_keys=False)
+
+            _atomic_write(path, writer)
             return True
         except Exception as e:
             logger.error("Ошибка при сохранении в YAML файл %s: %s", path, e)
@@ -108,8 +131,10 @@ class JsonConfigProvider(ConfigProvider):
                 data[section] = {}
             data[section][key] = value
 
-            with open(path, 'w', encoding='utf-8') as f:
+            def writer(f):
                 json.dump(data, f, indent=4, ensure_ascii=False)
+
+            _atomic_write(path, writer)
             return True
         except Exception as e:
             logger.error("Ошибка при сохранении в JSON файл %s: %s", path, e)
@@ -212,10 +237,12 @@ class IniConfigProvider(ConfigProvider):
 
         if updated:
             try:
-                with open(path, 'w', encoding='utf-8') as f:
+                def writer(f):
                     f.writelines(new_lines)
+
+                _atomic_write(path, writer)
                 return True
-            except IOError as e:
+            except Exception as e:
                 logger.error("Ошибка записи в файл %s при сохранении: %s", path, e)
                 return False
         return False
