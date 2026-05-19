@@ -148,10 +148,12 @@ db_cfg = get_config_section("Database", model=MyDbModel)
 ```python
 from chutils import start_config_watcher, on_config_change, get_config_value
 
+
 def reload_logic():
     print("Конфигурация обновилась!")
     # Здесь можно обновить состояние приложения
     db_url = get_config_value("Database", "url")
+
 
 # Регистрируем коллбэк
 on_config_change(reload_logic)
@@ -275,6 +277,58 @@ from chutils.decorators import retry
 def fetch_data():
     # Будет повторено до 3 раз при возникновении любого Exception
     ...
+```
+
+## Интерфейс командной строки (CLI)
+
+Библиотека включает в себя набор утилит `chutils` для ускорения разработки и отладки.
+
+### 1. Инициализация проекта
+
+Быстрое создание базовой конфигурации и правил `.gitignore`:
+
+```bash
+# Интерактивный режим
+chutils init
+
+# Быстрый режим (используются значения по умолчанию)
+chutils init -y
+```
+
+### 2. Валидация конфигурации
+
+Проверьте, соответствуют ли ваши файлы конфигурации Pydantic-моделям:
+
+```bash
+# Автоматический поиск класса 'Settings' в context.py или config.py
+chutils validate
+
+# Указание конкретного пути к модели
+chutils validate --model src.settings:AppConfig
+```
+
+### 3. Отладка путей поиска
+
+Узнайте, где именно библиотека ищет файлы настроек и какой у них приоритет:
+
+```bash
+# Обычный текстовый вывод
+chutils show-paths
+
+# Машиночитаемый JSON
+chutils show-paths --json
+```
+
+### 4. Управление секретами
+
+Управляйте секретами в системном хранилище (keyring) напрямую из терминала:
+
+```bash
+# Сохранить секрет
+chutils secrets set API_KEY "your-secret-value" --service my_app
+
+# Удалить секрет
+chutils secrets delete API_KEY --service my_app
 ```
 
 ## Лицензия

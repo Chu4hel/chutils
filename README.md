@@ -258,8 +258,56 @@ from chutils.decorators import retry
 
 @retry(retries=3, delay=1.0, backoff=2.0)
 def fetch_data():
-    # Will be retried up to 3 times on any Exception
-    ...
+   # Will be retried up to 3 times on any Exception
+   ...
+```
+
+## Command Line Interface (CLI)
+
+`chutils` includes a set of tools to speed up development and debugging.
+
+### 1. Initialize Project
+
+Quickly set up a new project with a default configuration and `.gitignore` rules:
+```bash
+# Interactive mode
+chutils init
+
+# Non-interactive mode (default values)
+chutils init -y
+```
+
+### 2. Validate Configuration
+
+Check if your configuration files match your Pydantic models:
+```bash
+# Automatically finds 'Settings' class in context.py or config.py
+chutils validate
+
+# Explicitly specify the model path
+chutils validate --model src.settings:AppConfig
+```
+
+### 3. Debug Search Paths
+
+See exactly where `chutils` is looking for configuration files:
+```bash
+# Human-readable output
+chutils show-paths
+
+# JSON output for automation
+chutils show-paths --json
+```
+
+### 4. Manage Secrets
+
+Manage your system keyring secrets directly from the terminal:
+```bash
+# Set a secret
+chutils secrets set API_KEY "your-secret-value" --service my_app
+
+# Delete a secret
+chutils secrets delete API_KEY --service my_app
 ```
 
 ## License
