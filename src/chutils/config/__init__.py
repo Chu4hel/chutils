@@ -38,6 +38,11 @@ from .watcher import (
     start_config_watcher,
     stop_config_watcher,
 )
+from .generator import (
+    generate_yaml_template,
+    generate_env_template,
+    generate_json_schema,
+)
 
 if TYPE_CHECKING:
     from ..logger import ChutilsLogger
@@ -69,7 +74,10 @@ __all__ = [
     'get_config_paths',
     'on_config_change',
     'start_config_watcher',
-    'stop_config_watcher'
+    'stop_config_watcher',
+    'generate_yaml_template',
+    'generate_env_template',
+    'generate_json_schema'
 ]
 
 

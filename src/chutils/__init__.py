@@ -64,6 +64,9 @@ _LAZY_MAPPING = {
     'start_config_watcher': ('.config', 'start_config_watcher'),
     'stop_config_watcher': ('.config', 'stop_config_watcher'),
     'on_config_change': ('.config', 'on_config_change'),
+    'generate_yaml_template': ('.config', 'generate_yaml_template'),
+    'generate_env_template': ('.config', 'generate_env_template'),
+    'generate_json_schema': ('.config', 'generate_json_schema'),
 
     # logger
     'setup_logger': ('.logger', 'setup_logger'),

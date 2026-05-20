@@ -32,6 +32,11 @@ members:
 - get_base_dir
 - get_config_file_path
 - is_config_loaded
+- are_paths_initialized
+- get_config_paths
+- generate_yaml_template
+- generate_env_template
+- generate_json_schema
 
 ## Модуль `logger`
 
@@ -64,6 +69,16 @@ members:
 - register_cleanup
 - setup_graceful_shutdown
 
+## Модуль `cache` (Умное кэширование)
+
+::: chutils.cache
+options:
+members:
+
+- cache_with_ttl
+- BaseCacheBackend
+- InMemoryCacheBackend
+
 ## Модуль `secret_manager`
 
 ::: chutils.secret_manager
@@ -87,3 +102,7 @@ members:
 - retry
 - log_function_details
 - timeout
+
+## Исключения
+
+::: chutils.exceptions
