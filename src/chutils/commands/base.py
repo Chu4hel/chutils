@@ -1,6 +1,8 @@
 import argparse
 from abc import ABC, abstractmethod
 
+from chutils.cli_utils import get_console
+
 
 class BaseCommand(ABC):
     """
@@ -9,6 +11,9 @@ class BaseCommand(ABC):
     Определяет единый интерфейс для регистрации подкоманд в argparse
     и выполнения связанной с ними бизнес-логики.
     """
+
+    def __init__(self):
+        self.console = get_console()
 
     @abstractmethod
     def register(self, subparsers: argparse._SubParsersAction):
