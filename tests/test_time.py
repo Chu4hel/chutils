@@ -2,7 +2,7 @@ from datetime import datetime, timezone, timedelta
 
 import pytest
 
-from chutils.time import utc_now, _ensure_aware_utc, parse_datetime
+from chutils.time import utc_now, _ensure_aware_utc, parse_datetime, humanize_timedelta
 
 
 def test_utc_now():
@@ -60,3 +60,44 @@ def test_parse_datetime_iso_strings():
 def test_parse_datetime_invalid():
     with pytest.raises(ValueError):
         parse_datetime("not a date")
+
+
+def test_humanize_timedelta_ru():
+    now = utc_now()
+
+    assert humanize_timedelta(now - timedelta(seconds=5), locale='ru') == "только что"
+    assert humanize_timedelta(now - timedelta(minutes=1), locale='ru') == "1 минуту назад"
+    assert humanize_timedelta(now - timedelta(minutes=2), locale='ru') == "2 минуты назад"
+    assert humanize_timedelta(now - timedelta(minutes=5), locale='ru') == "5 минут назад"
+    assert humanize_timedelta(now - timedelta(hours=1), locale='ru') == "1 час назад"
+    assert humanize_timedelta(now - timedelta(days=1), locale='ru') == "вчера"
+    assert humanize_timedelta(now + timedelta(days=1), locale='ru') == "завтра"
+    assert humanize_timedelta(now - timedelta(days=365), locale='ru') == "1 год назад"
+    assert humanize_timedelta(now - timedelta(days=365 * 5), locale='ru') == "5 лет назад"
+
+
+def test_humanize_timedelta_en():
+    now = utc_now()
+
+    assert humanize_timedelta(now - timedelta(seconds=5), locale='en') == "just now"
+    assert humanize_timedelta(now - timedelta(minutes=1), locale='en') == "1 minute ago"
+    assert humanize_timedelta(now - timedelta(minutes=2), locale='en') == "2 minutes ago"
+    assert humanize_timedelta(now - timedelta(hours=1), locale='en') == "1 hour ago"
+    assert humanize_timedelta(now - timedelta(days=1), locale='en') == "yesterday"
+    assert humanize_timedelta(now + timedelta(days=1), locale='en') == "tomorrow"
+    assert humanize_timedelta(now - timedelta(days=365), locale='en') == "1 year ago"
+    assert humanize_timedelta(now - timedelta(days=365 * 2), locale='en') == "2 years ago"
+
+
+def test_humanize_timedelta_custom_locale():
+    now = utc_now()
+    custom = {
+        'fr': {
+            'now': 'maintenant',
+            'past': 'il y a {n} {unit}',
+            'units': {
+                'minute': ('minute', 'minutes'),
+            }
+        }
+    }
+    assert humanize_timedelta(now - timedelta(minutes=5), locale='fr', custom_locales=custom) == "il y a 5 minutes"
