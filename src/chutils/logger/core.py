@@ -21,6 +21,32 @@ from .masking import SecretMaskingFilter, _GLOBAL_MASKS, _update_mask_re
 from .. import config
 from ..context import ContextFilter
 
+# --- Опциональная интеграция с Rich ---
+
+RICH_AVAILABLE = False
+try:
+    from rich.logging import RichHandler
+    from rich.console import Console
+
+    RICH_AVAILABLE = True
+except ImportError:
+    pass
+
+
+def is_rich_enabled() -> bool:
+    """
+    Проверяет, доступен ли Rich и не отключены ли цвета через переменные окружения.
+    """
+    if not RICH_AVAILABLE:
+        return False
+
+    # Проверка стандартных переменных отключения цвета
+    no_color = os.getenv("NO_COLOR", "").lower() in ["true", "1", "yes", "y"]
+    ch_no_color = os.getenv("CH_NO_COLOR", "").lower() in ["true", "1", "yes", "y"]
+
+    return not (no_color or ch_no_color)
+
+
 # --- Пользовательские уровни логирования ---
 
 DEVDEBUG_LEVEL_NUM = 9
@@ -324,8 +350,19 @@ def setup_logger(
     else:
         formatter = logging.Formatter(log_format)
 
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(formatter)
+    if is_rich_enabled() and not final_json_format:
+        console_handler = RichHandler(
+            rich_tracebacks=True,
+            markup=True,
+            tracebacks_show_locals=True,
+            show_time=not env_no_time,
+            show_path=False  # По умолчанию Rich показывает путь к файлу, в библиотеке это может быть лишним
+        )
+        # RichHandler использует свои настройки отображения времени и уровней
+    else:
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(formatter)
+
     console_handler.setLevel(level_int)
     logger.addHandler(console_handler)
 
