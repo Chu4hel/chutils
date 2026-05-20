@@ -77,3 +77,10 @@ class OptionalDependencyError(ChutilsException):
 class ChutilsTimeoutError(ChutilsException):
     """Ошибка: превышено время ожидания выполнения операции."""
     pass
+
+
+# --- Cache Exceptions ---
+
+class CacheError(ChutilsException):
+    """Общая ошибка кэширования."""
+    pass

@@ -44,6 +44,7 @@ _LAZY_MAPPING = {
     'logger': ('.logger', None),
     'secret_manager': ('.secret_manager', None),
     'decorators': ('.decorators', None),
+    'cache': ('.cache', None),
     'exceptions': ('.exceptions', None),
     'context': ('.context', None),
 
