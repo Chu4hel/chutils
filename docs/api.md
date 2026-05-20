@@ -110,6 +110,11 @@ members:
 
 ::: chutils.secret_manager
 
+## Модуль `config.diagnostics` (Отладка конфигурации)
+
+::: chutils.config.diagnostics
+handler: python
+
 ## Модуль `fs`
 
 ::: chutils.fs

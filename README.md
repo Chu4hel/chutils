@@ -37,6 +37,7 @@ Every time you start a new project, you have to solve the same tasks:
 - **🚀 CLI Booster:** Turn any function into a CLI tool in seconds using the `@cli_command` decorator with automatic type
   mapping and docstring parsing.
 - **⏰ Painless Datetime:** Always-aware UTC time utilities, smart parsing, and human-readable time intervals.
+- **🔍 Config Diagnostics:** Interactive trace of configuration sources and priorities via `config debug` command.
 - **🔄 Hot-Reload:** Support for automatic configuration reloading on file changes without restart (requires
   `pip install chutils[watch]`).
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.
@@ -322,6 +323,14 @@ chutils secrets set API_KEY "your-secret-value" --service my_app
 
 # Delete a secret
 chutils secrets delete API_KEY --service my_app
+```
+
+### 5. Debug Configuration
+
+Trace exactly where each configuration value comes from:
+
+```bash
+chutils config debug
 ```
 
 ## License

@@ -516,21 +516,21 @@ from chutils import cli_command
 
 @cli_command
 def copy_files(source: Path, dest: Path, verbose: bool = False):
-   """
-   Утилита для копирования файлов.
-
-   Args:
-       source (Path): Путь к исходному файлу.
-       dest (Path): Путь назначения.
-       verbose (bool): Выводить подробную информацию.
-   """
-   if verbose:
-      print(f"Копируем из {source} в {dest}")
-   # Логика...
+    """
+    Утилита для копирования файлов.
+ 
+    Args:
+        source (Path): Путь к исходному файлу.
+        dest (Path): Путь назначения.
+        verbose (bool): Выводить подробную информацию.
+    """
+    if verbose:
+        print(f"Копируем из {source} в {dest}")
+    # Логика...
 
 
 if __name__ == "__main__":
-   copy_files()
+    copy_files()
 ```
 
 Теперь вы можете запустить его из терминала:
@@ -561,8 +561,47 @@ if __name__ == "__main__":
     process_batch()
 ```
 
-Запуск:
+## 13. Отладка и диагностика конфигурации (Config Diagnostics)
+
+Если вы не понимаете, почему значение ключа в приложении отличается от того, что написано в `config.yml`, используйте
+интерактивный отладчик.
+
+### Использование через CLI
+
+Команда `config debug` покажет всю историю изменений для каждого ключа: откуда он был загружен изначально и чем перекрыт
+позже.
 
 ```bash
-python my_tool.py 101 102 103 --retry 5
+# Показать дерево конфигурации (по умолчанию)
+chutils config debug
+
+# Вывод в виде таблицы
+chutils config debug --format table
+
+# Показать секретные значения (по умолчанию они маскируются)
+chutils config debug --show-secrets
+
+# Экспорт в JSON для анализа
+chutils config debug --format json > config_trace.json
+```
+
+### Использование через API
+
+Вы можете включить трассировку и получить данные программно:
+
+```python
+from chutils.config.manager import _cm
+from chutils.config import get_config
+from chutils.config.diagnostics import format_trace
+
+# 1. Включаем сбор метаданных
+_cm.tracing_enabled = True
+
+# 2. Сбрасываем кэш и загружаем конфиг
+_cm.clear_cache()
+get_config()
+
+# 3. Получаем и форматируем отчет
+trace = _cm.get_trace()
+print(format_trace(trace, format_type='tree'))
 ```
