@@ -1,3 +1,5 @@
+import os
+
 import yaml
 
 from chutils.config import get_config, _cm
@@ -52,3 +54,26 @@ def test_env_specific_loading(tmp_path, monkeypatch):
     monkeypatch.setenv("CH_APP_PORT", "9000")
     from chutils.config import get_config_value
     assert get_config_value("App", "port") == "9000"
+
+
+def test_env_loading_precedence(tmp_path, monkeypatch):
+    """Проверка приоритета: local > env > base."""
+    project_root = tmp_path / "project"
+    project_root.mkdir()
+
+    (project_root / "config.yml").write_text("Key: base")
+    (project_root / "config.production.yml").write_text("Key: env")
+    (project_root / "config.local.yml").write_text("Key: local")
+
+    _cm._reset()
+    monkeypatch.chdir(project_root)
+    monkeypatch.setenv("CH_ENV", "production")
+
+    config = get_config()
+    assert config["Key"] == "local"
+
+    # Удаляем локальный, должен подхватиться env
+    os.remove(project_root / "config.local.yml")
+    _cm.clear_cache()
+    config = get_config()
+    assert config["Key"] == "env"
