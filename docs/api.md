@@ -49,6 +49,7 @@ members:
 ::: chutils.context
 options:
 members:
+
 - bind_context
 - unbind_context
 - clear_context
@@ -57,6 +58,15 @@ members:
 ## Модуль `secret_manager`
 
 ::: chutils.secret_manager
+
+## Модуль `fs`
+
+::: chutils.fs
+options:
+members:
+- ensure_dir
+- atomic_write
+- get_temp_file
 
 ## Декораторы
 

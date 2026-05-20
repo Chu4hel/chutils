@@ -231,4 +231,39 @@ chutils secrets delete STRIPE_KEY
 
 # Указать конкретный сервис (по умолчанию - имя текущей папки)
 chutils secrets set AWS_SECRET "..." --service my-production-app
+
+## 7. Работа с файловой системой
+
+### Безопасная запись данных
+
+Используйте `atomic_write`, чтобы гарантировать, что файл не будет поврежден при сбое питания или внезапной остановке процесса. Данные сначала записываются во временный файл, который затем атомарно заменяет целевой.
+
+```python
+from chutils.fs import atomic_write
+
+config_data = {"version": 1, "settings": {"theme": "dark"}}
+
+# Автоматически сериализует в JSON, так как расширение .json
+atomic_write("settings.json", config_data)
+
+# Автоматически сериализует в YAML, так как расширение .yaml
+atomic_write("settings.yaml", config_data)
+
+# Запись обычного текста
+atomic_write("hello.txt", "Hello world")
+```
+
+### Временные файлы с авто-удалением
+
+Контекстный менеджер `get_temp_file` создает временный файл и гарантированно удаляет его при выходе из блока `with`.
+
+```python
+from chutils.fs import get_temp_file
+
+with get_temp_file(suffix=".tmp") as temp_path:
+    # Делаем что-то с временным файлом
+    temp_path.write_text("temporary content")
+    print(f"Путь к файлу: {temp_path}")
+
+# Здесь файл уже удален
 ```
