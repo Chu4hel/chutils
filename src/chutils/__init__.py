@@ -60,6 +60,18 @@ from .logger import (
     SafeTimedRotatingFileHandler
 )
 from .secret_manager import SecretManager
+from .exceptions import (
+    ChutilsException,
+    ConfigError,
+    ConfigLoadError,
+    ConfigParseError,
+    SecretError,
+    SecretNotFoundError,
+    SecretProviderError,
+    LoggerConfigurationError,
+    WatcherInitializationError,
+    OptionalDependencyError,
+)
 
 
 def init(base_dir: str):
@@ -124,4 +136,16 @@ __all__ = [
     'log_function_details',
     'retry',
     'timeout',
+
+    # Исключения
+    'ChutilsException',
+    'ConfigError',
+    'ConfigLoadError',
+    'ConfigParseError',
+    'SecretError',
+    'SecretNotFoundError',
+    'SecretProviderError',
+    'LoggerConfigurationError',
+    'WatcherInitializationError',
+    'OptionalDependencyError',
 ]
