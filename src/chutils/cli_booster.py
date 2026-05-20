@@ -8,9 +8,10 @@
 import argparse
 import asyncio
 import inspect
+import re
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable, TypeVar, Dict
 
 # Тип для декорируемой функции
 F = TypeVar("F", bound=Callable[..., Any])
@@ -57,23 +58,44 @@ def cli_command(func: F) -> F:
 
 def _create_parser(func: Callable, sig: inspect.Signature) -> argparse.ArgumentParser:
     """Создает ArgumentParser на основе сигнатуры функции."""
+    doc_help = _parse_docstring(func.__doc__)
+
     parser = argparse.ArgumentParser(
-        description=func.__doc__,
+        description=func.__doc__.strip().split('\n\n')[0] if func.__doc__ else None,
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-
     for name, param in sig.parameters.items():
-        _add_argument(parser, name, param)
+        _add_argument(parser, name, param, doc_help.get(name))
 
     return parser
 
 
-def _add_argument(parser: argparse.ArgumentParser, name: str, param: inspect.Parameter):
+def _parse_docstring(docstring: str) -> Dict[str, str]:
+    """
+    Парсит docstring в стиле Google для извлечения описаний аргументов.
+    """
+    if not docstring:
+        return {}
+
+    arg_help = {}
+    # Регулярка для поиска секции Args
+    args_section = re.search(r"Args:\s*(.*?)(\n\n|\n[A-Z]|$)", docstring, re.DOTALL)
+    if args_section:
+        content = args_section.group(1)
+        # Регулярка для поиска отдельных аргументов: "name (type): description"
+        matches = re.findall(r"^\s*([a-zA-Z_0-9]+)\s*(\(.*?\))?:\s*(.*?)$", content, re.MULTILINE)
+        for name, _, desc in matches:
+            arg_help[name] = desc.strip()
+
+    return arg_help
+
+
+def _add_argument(parser: argparse.ArgumentParser, name: str, param: inspect.Parameter, help_text: str = None):
     """Добавляет аргумент в парсер на основе параметра функции."""
     name_cli = name.replace("_", "-")
 
     kwargs = {
-        "help": f"Аргумент {name}",
+        "help": help_text or f"Аргумент {name}",
     }
 
     # Позиционный или опциональный

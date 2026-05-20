@@ -77,3 +77,29 @@ def test_cli_command_no_annotations():
         with patch.object(sys, "argv", ["script.py", "val1", "--b", "20"]):
             result = no_types()
             assert result == "val1-20"
+
+
+def test_cli_command_docstring_parsing():
+    @cli_command
+    def documented(name: str, age: int = 18):
+        """
+        Тестовая функция.
+
+        Args:
+            name (str): Имя пользователя.
+            age (int): Возраст пользователя.
+        """
+        return f"{name}-{age}"
+
+    # Проверяем через создание парсера напрямую
+    import inspect
+    from chutils.cli_booster import _create_parser
+
+    sig = inspect.signature(documented)
+    parser = _create_parser(documented, sig)
+
+    # Ищем аргументы в парсере
+    actions = {a.dest: a.help for a in parser._actions}
+    assert actions["name"] == "Имя пользователя."
+    assert actions["age"] == "Возраст пользователя."
+    assert parser.description == "Тестовая функция."
