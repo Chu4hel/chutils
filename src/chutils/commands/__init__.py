@@ -14,10 +14,12 @@ def get_commands() -> List[Type[BaseCommand]]:
     from .init import InitCommand
     from .validate import ValidateCommand
     from .paths import ShowPathsCommand
+    from .template import TemplateCommand
 
     return [
         SecretsCommand,
         InitCommand,
         ValidateCommand,
-        ShowPathsCommand
+        ShowPathsCommand,
+        TemplateCommand
     ]
