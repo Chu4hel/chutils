@@ -1,7 +1,9 @@
 import logging
 import os
 
-from chutils.secret_manager import SecretManager, NoKeyringError
+from keyring.errors import NoKeyringError
+
+from chutils.secret_manager import SecretManager
 
 
 def test_get_secret_no_keyring_warning(project_with_marker, mocker, caplog):
@@ -9,17 +11,16 @@ def test_get_secret_no_keyring_warning(project_with_marker, mocker, caplog):
     Проверяет, что без флага отключения выводится предупреждение при отсутствии keyring.
     """
     fs, project_root = project_with_marker
-    mocker.patch("chutils.secret_manager.keyring.get_password", side_effect=NoKeyringError)
+    mocker.patch("chutils.secret_manager.providers.keyring.get_password", side_effect=NoKeyringError)
 
-    # Сбрасываем состояние модуля
-    from chutils import secret_manager
-    secret_manager._dotenv_loaded = False
-    secret_manager._dotenv_values = None
-    secret_manager._module_logger = None  # Сбрасываем логгер
+    # Сбрасываем состояние
+    from chutils import config as chutils_config
+    chutils_config._cm._reset()
 
     sm = SecretManager("test_app")
-    # Включаем propagation для тестов, так как setup_logger его выключает
-    secret_manager._get_logger().propagate = True
+    # Включаем propagation для тестов
+    from chutils.secret_manager import providers
+    providers._get_logger().propagate = True
 
     with caplog.at_level(logging.WARNING):
         result = sm.get_secret("ANY_KEY")
@@ -33,19 +34,17 @@ def test_get_secret_suppress_keyring_warning_via_env(project_with_marker, mocker
     Проверяет, что при CH_DISABLE_KEYRING_WARNING=true предупреждение подавляется.
     """
     fs, project_root = project_with_marker
-    mock_get = mocker.patch("chutils.secret_manager.keyring.get_password")
+    mock_get = mocker.patch("chutils.secret_manager.providers.keyring.get_password")
 
     os.environ["CH_DISABLE_KEYRING_WARNING"] = "true"
     try:
-        # Сбрасываем состояние модуля
-        from chutils import secret_manager, config as chutils_config
-        secret_manager._dotenv_loaded = False
-        secret_manager._dotenv_values = None
-        secret_manager._module_logger = None
-        chutils_config._cm._reset()  # Используем менеджер напрямую для сброса
+        # Сбрасываем состояние
+        from chutils import config as chutils_config
+        chutils_config._cm._reset()
 
         sm = SecretManager("test_app")
-        secret_manager._get_logger().propagate = True
+        from chutils.secret_manager import providers
+        providers._get_logger().propagate = True
 
         with caplog.at_level(logging.WARNING):
             result = sm.get_secret("ANY_KEY")
@@ -65,7 +64,7 @@ def test_get_secret_suppress_keyring_warning_via_config(project_with_marker, moc
     Проверяет, что при disable_keyring: true в конфиге предупреждение подавляется.
     """
     fs, project_root = project_with_marker
-    mock_get = mocker.patch("chutils.secret_manager.keyring.get_password")
+    mock_get = mocker.patch("chutils.secret_manager.providers.keyring.get_password")
 
     content = """
 secrets:
@@ -73,18 +72,16 @@ secrets:
 """
     fs.create_file(project_root / "config.yml", contents=content)
 
-    # Сбрасываем состояние модуля через менеджер
-    from chutils import secret_manager, config as chutils_config
-    secret_manager._dotenv_loaded = False
-    secret_manager._dotenv_values = None
-    secret_manager._module_logger = None
+    # Сбрасываем состояние
+    from chutils import config as chutils_config
     chutils_config._cm._reset()
 
     # Переходим в корень фейкового проекта для автообнаружения конфига
     os.chdir(project_root)
 
     sm = SecretManager("test_app")
-    secret_manager._get_logger().propagate = True
+    from chutils.secret_manager import providers
+    providers._get_logger().propagate = True
 
     with caplog.at_level(logging.WARNING):
         result = sm.get_secret("ANY_KEY")

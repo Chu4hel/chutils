@@ -1,6 +1,7 @@
 import pytest
+from keyring.errors import NoKeyringError, PasswordDeleteError
 
-from chutils.secret_manager import SecretManager, NoKeyringError, PasswordDeleteError
+from chutils.secret_manager import SecretManager
 
 SERVICE_NAME = "my_test_app"
 
@@ -25,9 +26,9 @@ def test_init_fallback_to_project_path(project_with_marker, monkeypatch):
     fs, project_root = project_with_marker
 
     # Полностью сбрасываем состояние модулей, чтобы они переинициализировались
-    from chutils import secret_manager, config as chutils_config
-    monkeypatch.setattr(secret_manager, '_dotenv_loaded', False)
-    monkeypatch.setattr(secret_manager, '_dotenv_values', None)
+    from chutils import config as chutils_config
+
+    # Сбрасываем кэш конфигурации
     chutils_config._cm._reset()
 
     # Переходим в корень фейкового проекта
@@ -38,13 +39,13 @@ def test_init_fallback_to_project_path(project_with_marker, monkeypatch):
 
     # Ожидаем, что service_name будет равен "префикс + путь_к_проекту"
     found_project_path = chutils_config.get_base_dir()
-    expected_service_name = sm.prefix + found_project_path
+    expected_service_name = sm.prefix + str(found_project_path)
     assert sm.service_name == expected_service_name
 
 
 def test_save_secret_success(secret_manager, mocker):
     """Проверяет успешное сохранение секрета."""
-    mock_set = mocker.patch("chutils.secret_manager.keyring.set_password")
+    mock_set = mocker.patch("chutils.secret_manager.providers.keyring.set_password")
     result = secret_manager.save_secret("my_key", "my_value")
     mock_set.assert_called_once_with(secret_manager.service_name, "my_key", "my_value")
     assert result is True
@@ -52,8 +53,8 @@ def test_save_secret_success(secret_manager, mocker):
 
 def test_save_secret_no_keyring_error(secret_manager, mocker):
     """Проверяет обработку ошибки NoKeyringError при сохранении."""
-    # Мокаем весь модуль, чтобы избежать побочных эффектов от его внутренней логики
-    mock_keyring = mocker.patch("chutils.secret_manager.keyring")
+    # Мокаем в providers, так как KeyringProvider использует keyring оттуда
+    mock_keyring = mocker.patch("chutils.secret_manager.providers.keyring")
     mock_keyring.set_password.side_effect = NoKeyringError
     result = secret_manager.save_secret("my_key", "my_value")
     assert result is False
@@ -61,7 +62,7 @@ def test_save_secret_no_keyring_error(secret_manager, mocker):
 
 def test_get_secret_success(secret_manager, mocker):
     """Проверяет успешное получение существующего секрета."""
-    mock_get = mocker.patch("chutils.secret_manager.keyring.get_password")
+    mock_get = mocker.patch("chutils.secret_manager.providers.keyring.get_password")
     mock_get.return_value = "my_secret_value"
     result = secret_manager.get_secret("my_key")
     mock_get.assert_called_once_with(secret_manager.service_name, "my_key")
@@ -70,7 +71,7 @@ def test_get_secret_success(secret_manager, mocker):
 
 def test_get_secret_not_found(secret_manager, mocker):
     """Проверяет получение несуществующего секрета."""
-    mock_get = mocker.patch("chutils.secret_manager.keyring.get_password")
+    mock_get = mocker.patch("chutils.secret_manager.providers.keyring.get_password")
     mock_get.return_value = None
     result = secret_manager.get_secret("non_existent_key")
     assert result is None
@@ -78,8 +79,8 @@ def test_get_secret_not_found(secret_manager, mocker):
 
 def test_delete_secret_success(secret_manager, mocker):
     """Проверяет успешное удаление секрета."""
-    mock_get = mocker.patch("chutils.secret_manager.keyring.get_password", return_value="some_value")
-    mock_delete = mocker.patch("chutils.secret_manager.keyring.delete_password")
+    mock_get = mocker.patch("chutils.secret_manager.providers.keyring.get_password", return_value="some_value")
+    mock_delete = mocker.patch("chutils.secret_manager.providers.keyring.delete_password")
 
     result = secret_manager.delete_secret("my_key")
 
@@ -90,11 +91,13 @@ def test_delete_secret_success(secret_manager, mocker):
 
 def test_delete_secret_not_found(secret_manager, mocker):
     """Проверяет удаление несуществующего секрета."""
-    mock_get = mocker.patch("chutils.secret_manager.keyring.get_password", return_value=None)
-    mock_delete = mocker.patch("chutils.secret_manager.keyring.delete_password")
+    mock_get = mocker.patch("chutils.secret_manager.providers.keyring.get_password", return_value=None)
+    mock_delete = mocker.patch("chutils.secret_manager.providers.keyring.delete_password")
 
     result = secret_manager.delete_secret("non_existent_key")
 
+    # В новой реализации delete_secret опрашивает всех провайдеров
+    # KeyringProvider.delete проверяет наличие перед удалением
     mock_get.assert_called_once_with(secret_manager.service_name, "non_existent_key")
     mock_delete.assert_not_called()
     assert result is True
@@ -102,8 +105,7 @@ def test_delete_secret_not_found(secret_manager, mocker):
 
 def test_delete_secret_error(secret_manager, mocker):
     """Проверяет обработку ошибки при удалении."""
-    # Мокаем весь модуль, чтобы избежать побочных эффектов
-    mock_keyring = mocker.patch("chutils.secret_manager.keyring")
+    mock_keyring = mocker.patch("chutils.secret_manager.providers.keyring")
     mock_keyring.get_password.return_value = "some_value"
     mock_keyring.delete_password.side_effect = PasswordDeleteError
 
@@ -130,7 +132,7 @@ def test_init_with_custom_prefix():
     assert sm_no_prefix.service_name == SERVICE_NAME
 
 
-def test_get_secret_from_dotenv(project_with_marker, mocker):
+def test_get_secret_from_dotenv(project_with_marker, mocker, monkeypatch):
     """
     Проверяет, что секрет может быть получен из .env файла, если его нет в keyring.
     """
@@ -139,12 +141,12 @@ def test_get_secret_from_dotenv(project_with_marker, mocker):
     # Создаем фейковый .env файл
     fs.create_file(project_root / ".env", contents="MY_DOTENV_SECRET=dotenv_value")
     # Убеждаемся, что keyring ничего не вернет
-    mocker.patch("chutils.secret_manager.keyring.get_password", return_value=None)
+    mocker.patch("chutils.secret_manager.providers.keyring.get_password", return_value=None)
 
-    # Сбрасываем состояние модуля, чтобы он пере-загрузил .env
-    from chutils import secret_manager
-    secret_manager._dotenv_loaded = False
-    secret_manager._dotenv_values = None
+    # Сбрасываем состояние
+    from chutils import config
+    config._cm._reset()
+    monkeypatch.setattr("chutils.config.get_base_dir", lambda: project_root)
 
     # --- Действие ---
     sm = SecretManager("my_app_for_dotenv")
@@ -154,7 +156,7 @@ def test_get_secret_from_dotenv(project_with_marker, mocker):
     assert result == "dotenv_value"
 
 
-def test_get_secret_prioritizes_keyring(project_with_marker, mocker):
+def test_get_secret_prioritizes_keyring(project_with_marker, mocker, monkeypatch):
     """
     Проверяет, что keyring имеет приоритет над .env файлом.
     """
@@ -162,12 +164,12 @@ def test_get_secret_prioritizes_keyring(project_with_marker, mocker):
     fs, project_root = project_with_marker
     fs.create_file(project_root / ".env", contents="SHARED_SECRET=dotenv_value")
     # Keyring возвращает свое значение
-    mocker.patch("chutils.secret_manager.keyring.get_password", return_value="keyring_value")
+    mocker.patch("chutils.secret_manager.providers.keyring.get_password", return_value="keyring_value")
 
-    # Сбрасываем состояние модуля
-    from chutils import secret_manager
-    secret_manager._dotenv_loaded = False
-    secret_manager._dotenv_values = None
+    # Сбрасываем состояние
+    from chutils import config
+    config._cm._reset()
+    monkeypatch.setattr("chutils.config.get_base_dir", lambda: project_root)
 
     # --- Действие ---
     sm = SecretManager("my_app_for_dotenv")
