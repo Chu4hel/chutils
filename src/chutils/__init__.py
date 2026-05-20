@@ -87,6 +87,9 @@ _LAZY_MAPPING = {
     'register_cleanup': ('.lifecycle', 'register_cleanup'),
     'setup_graceful_shutdown': ('.lifecycle', 'setup_graceful_shutdown'),
 
+    # cli_booster
+    'cli_command': ('.cli_booster', 'cli_command'),
+
     # time
     'utc_now': ('.time', 'utc_now'),
     'parse_datetime': ('.time', 'parse_datetime'),

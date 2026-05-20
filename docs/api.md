@@ -69,6 +69,14 @@ members:
 - register_cleanup
 - setup_graceful_shutdown
 
+## Модуль `cli_booster` (Быстрое создание CLI)
+
+::: chutils.cli_booster
+options:
+members:
+
+- cli_command
+
 ## Модуль `time` (Работа со временем)
 
 ::: chutils.time
