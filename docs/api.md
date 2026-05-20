@@ -87,6 +87,16 @@ members:
 - parse_datetime
 - humanize_timedelta
 
+## Модуль `tracing` (Распределенное трассирование)
+
+::: chutils.tracing
+options:
+members:
+
+- trace
+- setup_tracing
+- IS_OTEL_AVAILABLE
+
 ## Модуль `features` (Фича-флаги)
 
 ::: chutils.features

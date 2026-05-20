@@ -37,6 +37,7 @@ Every time you start a new project, you have to solve the same tasks:
 - **🚀 CLI Booster:** Turn any function into a CLI tool in seconds using the `@cli_command` decorator with automatic type
   mapping and docstring parsing.
 - **⏰ Painless Datetime:** Always-aware UTC time utilities, smart parsing, and human-readable time intervals.
+- **📡 Distributed Tracing:** Seamless OpenTelemetry integration with `@trace` decorator and automatic log correlation.
 - **🔍 Config Diagnostics:** Interactive trace of configuration sources and priorities via `config debug` command.
 - **🔄 Hot-Reload:** Support for automatic configuration reloading on file changes without restart (requires
   `pip install chutils[watch]`).

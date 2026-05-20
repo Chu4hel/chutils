@@ -605,3 +605,51 @@ get_config()
 trace = _cm.get_trace()
 print(format_trace(trace, format_type='tree'))
 ```
+
+## 14. Распределенное трассирование (OpenTelemetry)
+
+`chutils` предоставляет легковесную интеграцию с OpenTelemetry для отслеживания пути выполнения запросов и связи логов с
+трассами.
+
+### Установка
+
+Функционал трассировки является опциональным:
+
+```bash
+pip install chutils[otel]
+```
+
+### Быстрый старт
+
+1. Настройте сбор трасс в начале вашего приложения:
+
+```python
+from chutils import setup_tracing
+
+# Настройка вывода трасс в консоль (для локальной разработки)
+setup_tracing(service_name="my_service", exporter_type="console")
+```
+
+2. Используйте декоратор `@trace` для функций, которые хотите отслеживать:
+
+```python
+from chutils import trace, setup_logger
+
+logger = setup_logger()
+
+
+@trace(capture_kwargs=True)
+def process_order(order_id: int):
+    logger.info("Начинаем обработку заказа")
+    # ... логика ...
+    return True
+```
+
+### Особенности
+
+- **Связь с логами:** В текстовых логах автоматически появятся `[trace_id=... span_id=...]`. В JSON логах эти поля будут
+  вынесены на верхний уровень.
+- **Async:** Декоратор `@trace` полностью поддерживает асинхронные функции.
+- **OTLP:** Для промышленного использования (Jaeger, Grafana Tempo) используйте `exporter_type="otlp"`.
+- **Zero Overhead:** Если пакеты `opentelemetry` не установлены, декоратор `@trace` не создает никаких накладных
+  расходов.
