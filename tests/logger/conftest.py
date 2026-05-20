@@ -82,16 +82,16 @@ def reset_chutils_state(monkeypatch):
     Сбрасывает глобальное состояние модулей config и logger.
     Позволяет тестам инициализировать пути "с чистого листа".
     """
-    from chutils import logger as chutils_logger
+    from chutils.logger import core as chutils_logger_core
     from chutils import config as chutils_config
 
     # Сбрасываем состояние через менеджер напрямую
     chutils_config._cm._reset()
 
     # Сбрасываем logger
-    monkeypatch.setattr(chutils_logger, '_LOG_DIR', None)
-    monkeypatch.setattr(chutils_logger, '_initialization_message_shown', False)
-    monkeypatch.setattr(chutils_logger, '_file_handler_cache', {})
+    monkeypatch.setattr(chutils_logger_core, '_LOG_DIR', None)
+    monkeypatch.setattr(chutils_logger_core, '_initialization_message_shown', False)
+    monkeypatch.setattr(chutils_logger_core, '_file_handler_cache', {})
 
 
 @pytest.fixture

@@ -18,7 +18,7 @@ MyAuditLogger:
 """
     fs.create_file(project_root / "config.yml", contents=config_content)
 
-    mock_handler = mocker.patch("chutils.logger.SafeTimedRotatingFileHandler")
+    mock_handler = mocker.patch("chutils.logger.core.SafeTimedRotatingFileHandler")
     mock_handler.return_value.level = logging.NOTSET
 
     logger = setup_logger(
@@ -48,7 +48,7 @@ MyAuditLogger:
 """
     fs.create_file(project_root / "config.yml", contents=config_content)
 
-    mock_handler = mocker.patch("chutils.logger.SafeTimedRotatingFileHandler")
+    mock_handler = mocker.patch("chutils.logger.core.SafeTimedRotatingFileHandler")
     mock_handler.return_value.level = logging.NOTSET
 
     logger = setup_logger("another_app", force_reconfigure=True)
@@ -74,7 +74,7 @@ log_file_name = audit.log
 """
     fs.create_file(project_root / "config.ini", contents=config_content)
 
-    mock_handler = mocker.patch("chutils.logger.SafeTimedRotatingFileHandler")
+    mock_handler = mocker.patch("chutils.logger.core.SafeTimedRotatingFileHandler")
     mock_handler.return_value.level = logging.NOTSET
 
     logger = setup_logger(
@@ -104,7 +104,7 @@ log_file_name = audit.log
 """
     fs.create_file(project_root / "config.ini", contents=config_content)
 
-    mock_handler = mocker.patch("chutils.logger.SafeTimedRotatingFileHandler")
+    mock_handler = mocker.patch("chutils.logger.core.SafeTimedRotatingFileHandler")
     mock_handler.return_value.level = logging.NOTSET
 
     logger = setup_logger("another_app", force_reconfigure=True)

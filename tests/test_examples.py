@@ -1,8 +1,10 @@
 import logging
 
-import chutils
 import pytest
+
+import chutils
 from chutils.decorators import log_function_details
+from chutils.logger import core as logger_core
 # Импортируем нужные функции и классы из библиотеки
 from chutils.logger import setup_logger, DEVDEBUG_LEVEL_NUM
 
@@ -20,7 +22,7 @@ def clean_logging_state(caplog, tmp_path):
     original_config_loaded = chutils.config.is_config_loaded()
 
     # Кэшируем глобальные состояния для логгера и декоратора
-    original_log_dir = chutils.logger._LOG_DIR
+    original_log_dir = logger_core._LOG_DIR
     original_module_logger = chutils.decorators._module_logger
 
     # Сбрасываем кэши в модулях chutils
@@ -29,11 +31,11 @@ def clean_logging_state(caplog, tmp_path):
     log_dir_for_test.mkdir(exist_ok=True)
 
     chutils.config._cm._reset()
-    chutils.logger._file_handler_cache.clear()
-    chutils.logger._initialization_message_shown = False
+    logger_core._file_handler_cache.clear()
+    logger_core._initialization_message_shown = False
 
     # ВАЖНО: Очищаем путь директории и инстанс логгера, чтобы не было "утечек" между тестами
-    chutils.logger._LOG_DIR = None
+    logger_core._LOG_DIR = None
     chutils.decorators._module_logger = None
 
     # Очищаем все логгеры, которые были созданы в предыдущих тестах
@@ -51,7 +53,7 @@ def clean_logging_state(caplog, tmp_path):
     chutils.config._cm.config_file_path = original_config_path
     chutils.config._cm.config_object = original_config_object
     chutils.config._cm.config_loaded = original_config_loaded
-    chutils.logger._LOG_DIR = original_log_dir
+    logger_core._LOG_DIR = original_log_dir
     chutils.decorators._module_logger = original_module_logger
 
 

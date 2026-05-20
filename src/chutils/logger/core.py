@@ -354,6 +354,10 @@ def setup_logger(
                         try:
                             final_at_time = datetime.time.fromisoformat(final_at_time)
                         except (TypeError, ValueError):
+                            logger.error(
+                                "Неверный формат времени '%s' для 'at_time' в конфиге. Используется None.",
+                                final_at_time
+                            )
                             final_at_time = None
                     if final_at_time is not None:
                         rotation_kwargs['atTime'] = final_at_time

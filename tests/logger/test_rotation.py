@@ -125,8 +125,8 @@ def test_rotation_with_shared_handler_no_error(project_with_marker, monkeypatch)
     from chutils import config as chutils_config
     chutils_config._cm.paths_initialized = False
     # Сбрасываем кэш обработчиков перед тестом
-    from chutils import logger as chutils_logger
-    monkeypatch.setattr(chutils_logger, '_file_handler_cache', {})
+    from chutils.logger import core as chutils_logger_core
+    monkeypatch.setattr(chutils_logger_core, '_file_handler_cache', {})
     os.chdir(project_root)
 
     log_file = "shared_rotation.log"

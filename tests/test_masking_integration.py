@@ -14,9 +14,9 @@ def test_secret_manager_masking_integration(caplog, monkeypatch):
     monkeypatch.setenv(secret_key, secret_value)
 
     # Сбрасываем глобальные маски для чистоты теста
-    import chutils.logger
-    chutils.logger._GLOBAL_MASKS.clear()
-    chutils.logger._update_mask_re()
+    from chutils.logger import masking as chutils_masking
+    chutils_masking._GLOBAL_MASKS.clear()
+    chutils_masking._update_mask_re()
 
     # 2. Инициализируем SecretManager и получаем секрет
     sm = SecretManager("test_service")
@@ -43,9 +43,9 @@ def test_secret_manager_masking_opt_out(caplog, monkeypatch):
     secret_value = "VisibleSecret_999"
     monkeypatch.setenv(secret_key, secret_value)
 
-    import chutils.logger
-    chutils.logger._GLOBAL_MASKS.clear()
-    chutils.logger._update_mask_re()
+    from chutils.logger import masking as chutils_masking
+    chutils_masking._GLOBAL_MASKS.clear()
+    chutils_masking._update_mask_re()
 
     # Инициализируем с auto_mask_logs=False
     sm = SecretManager("test_opt_out", auto_mask_logs=False)

@@ -15,7 +15,7 @@ from .core import (
     DEVDEBUG_LEVEL_NUM,
     MEDIUMDEBUG_LEVEL_NUM
 )
-from .formatters import ChutilsJsonFormatter
+from .formatters import ChutilsJsonFormatter, JSON_LOGGER_AVAILABLE
 from .handlers import (
     SafeTimedRotatingFileHandler,
     CompressingRotatingFileHandler,
@@ -29,6 +29,7 @@ __all__ = [
     'LogLevel',
     'SecretMaskingFilter',
     'ChutilsJsonFormatter',
+    'JSON_LOGGER_AVAILABLE',
     'SafeTimedRotatingFileHandler',
     'CompressingRotatingFileHandler',
     'CompressingTimedRotatingFileHandler',

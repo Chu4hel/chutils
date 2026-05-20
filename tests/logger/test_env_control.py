@@ -1,7 +1,7 @@
 import logging
 import os
 
-from chutils import logger as chutils_logger
+from chutils.logger import core as chutils_logger_core
 
 
 def test_log_no_time_env_var(monkeypatch, capsys):
@@ -9,7 +9,7 @@ def test_log_no_time_env_var(monkeypatch, capsys):
     monkeypatch.setenv("CH_LOG_NO_TIME", "true")
 
     # Принудительно перенастраиваем логгер
-    test_logger = chutils_logger.setup_logger("test_no_time", force_reconfigure=True)
+    test_logger = chutils_logger_core.setup_logger("test_no_time", force_reconfigure=True)
     test_logger.info("Test message without time")
 
     captured = capsys.readouterr()
@@ -17,7 +17,6 @@ def test_log_no_time_env_var(monkeypatch, capsys):
     # Ожидаем отсутствие даты в начале строки
     assert "Test message without time" in captured.err
     # Простейшая проверка: строка не должна начинаться с цифр года (20xx)
-    # Или более надежно: в строке не должно быть шаблона даты
     import re
     # Регулярка для даты ГГГГ-ММ-ДД
     date_pattern = r"\d{4}-\d{2}-\d{2}"
@@ -29,10 +28,10 @@ def test_log_no_file_env_var(monkeypatch, tmp_path):
     monkeypatch.setenv("CH_LOG_NO_FILE", "1")
     log_file = tmp_path / "should_not_exist.log"
 
-    # Сбрасываем кэш обработчиков, если он есть
-    chutils_logger._file_handler_cache.clear()
+    # Сбрасываем кэш обработчиков
+    chutils_logger_core._file_handler_cache.clear()
 
-    test_logger = chutils_logger.setup_logger(
+    test_logger = chutils_logger_core.setup_logger(
         "test_no_file",
         log_file_name=str(log_file),
         force_reconfigure=True
@@ -51,10 +50,10 @@ def test_env_vars_priority_over_params(monkeypatch, capsys, tmp_path):
     monkeypatch.setenv("CH_LOG_NO_FILE", "true")
 
     log_file = tmp_path / "priority_test.log"
-    chutils_logger._file_handler_cache.clear()
+    chutils_logger_core._file_handler_cache.clear()
 
     # Передаем параметры, которые должны быть проигнорированы
-    test_logger = chutils_logger.setup_logger(
+    test_logger = chutils_logger_core.setup_logger(
         "test_priority",
         log_file_name=str(log_file),
         force_reconfigure=True

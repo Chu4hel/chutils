@@ -30,7 +30,7 @@ Logging:
     logging.getLogger('chutils.config').setLevel(logging.DEBUG)
 
     # Мокаем SafeTimedRotatingFileHandler
-    mock_file_handler = mocker.patch("chutils.logger.SafeTimedRotatingFileHandler")
+    mock_file_handler = mocker.patch("chutils.logger.core.SafeTimedRotatingFileHandler")
     mock_file_handler.return_value.level = logging.NOTSET  # Устанавливаем уровень для мока
 
     # Указываем кастомное имя файла
@@ -78,7 +78,7 @@ def test_multiple_loggers_different_files(project_with_marker, mocker, caplog, r
     os.chdir(project_root)
 
     # Мокаем SafeTimedRotatingFileHandler
-    mock_file_handler = mocker.patch("chutils.logger.SafeTimedRotatingFileHandler")
+    mock_file_handler = mocker.patch("chutils.logger.core.SafeTimedRotatingFileHandler")
 
     # Настраиваем два логгера с разными файлами
     with caplog.at_level(logging.DEBUG):
