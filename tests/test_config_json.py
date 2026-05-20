@@ -10,6 +10,7 @@ from chutils.config import (
     save_config_value,
     get_config_file_path
 )
+from chutils.exceptions import ConfigParseError
 
 
 @pytest.fixture(autouse=True)
@@ -80,13 +81,14 @@ def test_save_config_value_json(fs):
     assert data["Section1"]["key1"] == "new_val"
 
 
-def test_invalid_json_handling(fs, caplog):
+def test_invalid_json_handling(fs):
     """Тест обработки некорректного JSON."""
     root_path = "/app" if os.name != 'nt' else "C:/app"
     fs.create_file(os.path.join(root_path, "pyproject.toml"))
     fs.create_file(os.path.join(root_path, "config.json"), contents='{"invalid": json')
     fs.cwd = root_path
 
-    config = get_config()
-    assert config == {}
-    assert "Ошибка чтения" in caplog.text
+    _initialize_paths()
+
+    with pytest.raises(ConfigParseError):
+        get_config()

@@ -14,6 +14,8 @@ from typing import Any, Dict
 
 import yaml
 
+from chutils.exceptions import ConfigLoadError, ConfigParseError
+
 # Настраиваем локальный логгер
 logger = logging.getLogger(__name__)
 
@@ -81,9 +83,12 @@ class YamlConfigProvider(ConfigProvider):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 return yaml.safe_load(f) or {}
-        except (yaml.YAMLError, FileNotFoundError) as e:
-            logger.critical("Ошибка чтения YAML файла конфигурации %s: %s", path, e)
-            return {}
+        except FileNotFoundError:
+            raise ConfigLoadError(f"Файл конфигурации не найден: {path}", path=path)
+        except yaml.YAMLError as e:
+            raise ConfigParseError(f"Ошибка парсинга YAML в файле {path}: {e}", path=path)
+        except Exception as e:
+            raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
         try:
@@ -113,9 +118,12 @@ class JsonConfigProvider(ConfigProvider):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 return json.load(f) or {}
-        except (json.JSONDecodeError, FileNotFoundError) as e:
-            logger.critical("Ошибка чтения JSON файла конфигурации %s: %s", path, e)
-            return {}
+        except FileNotFoundError:
+            raise ConfigLoadError(f"Файл конфигурации не найден: {path}", path=path)
+        except json.JSONDecodeError as e:
+            raise ConfigParseError(f"Ошибка парсинга JSON в файле {path}: {e}", path=path)
+        except Exception as e:
+            raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
         try:
@@ -158,9 +166,12 @@ class IniConfigProvider(ConfigProvider):
                 parser.read_string(f.read())
                 flat_ini_config = {s: dict(parser.items(s)) for s in parser.sections()}
                 return self._nest_func(flat_ini_config)
-        except (configparser.Error, FileNotFoundError) as e:
-            logger.critical("Ошибка чтения INI файла конфигурации %s: %s", path, e)
-            return {}
+        except FileNotFoundError:
+            raise ConfigLoadError(f"Файл конфигурации не найден: {path}", path=path)
+        except configparser.Error as e:
+            raise ConfigParseError(f"Ошибка парсинга INI в файле {path}: {e}", path=path)
+        except Exception as e:
+            raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
         if not Path(path).exists():

@@ -1,6 +1,7 @@
 import asyncio
 from typing import Optional, List, TYPE_CHECKING
 
+from chutils.exceptions import SecretError
 from .providers import SecretProvider, KeyringProvider, DotEnvProvider, EnvProvider
 from .. import config
 
@@ -47,6 +48,9 @@ class SecretManager:
             prefix: Префикс для имени сервиса (по умолчанию "Chutils_").
             auto_mask_logs: Если True, полученные секреты будут маскироваться в логах.
             providers: Список провайдеров. Если None, создается стандартная цепочка.
+
+        Raises:
+            SecretError: Если не удалось автоматически определить `service_name`.
         """
         self.auto_mask_logs = auto_mask_logs
 
@@ -68,7 +72,7 @@ class SecretManager:
             final_prefix = config.get_config_value('Secrets', 'prefix', fallback=self.prefix)
 
         if not final_service_name:
-            raise ValueError("Не удалось определить service_name.")
+            raise SecretError("Не удалось определить service_name.")
 
         self.service_name: str = final_prefix + final_service_name
 

@@ -10,6 +10,8 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Union, Any, ContextManager
 
+from chutils.exceptions import OptionalDependencyError
+
 try:
     import yaml
 
@@ -55,6 +57,10 @@ def atomic_write(
         mode: Режим открытия файла ('w' или 'wb').
         encoding: Кодировка (только для текстового режима).
         **kwargs: Дополнительные аргументы для json.dump или yaml.dump.
+
+    Raises:
+        OptionalDependencyError: Если выполняется запись в YAML, но пакет `pyyaml` не установлен.
+        OSError: При ошибках ввода-вывода.
     """
     target_path = Path(file_path)
     parent_dir = target_path.parent
@@ -73,7 +79,10 @@ def atomic_write(
                 json.dump(data, f, **kwargs)
         elif suffix in ('.yml', '.yaml') and isinstance(data, (dict, list)):
             if not YAML_AVAILABLE:
-                raise ImportError("Пакет 'pyyaml' не установлен. Автоматическая сериализация YAML невозможна.")
+                raise OptionalDependencyError(
+                    "Пакет 'pyyaml' не установлен. Автоматическая сериализация YAML невозможна.",
+                    dependency="pyyaml"
+                )
             with os.fdopen(fd, mode, encoding=None if is_binary else encoding) as f:
                 yaml.dump(data, f, **kwargs)
         else:

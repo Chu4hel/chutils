@@ -72,3 +72,8 @@ class WatcherInitializationError(ChutilsException):
 class OptionalDependencyError(ChutilsException):
     """Ошибка: отсутствует опциональная зависимость (например, watchdog)."""
     pass
+
+
+class ChutilsTimeoutError(ChutilsException):
+    """Ошибка: превышено время ожидания выполнения операции."""
+    pass

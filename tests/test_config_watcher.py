@@ -12,14 +12,15 @@ from chutils.config import (
     stop_config_watcher
 )
 from chutils.config.watcher import ConfigChangeHandler
+from chutils.exceptions import OptionalDependencyError
 
 
 def test_graceful_degradation_no_watchdog(mocker):
-    """Тест: start_config_watcher бросает ImportError, если watchdog не установлен."""
+    """Тест: start_config_watcher бросает OptionalDependencyError, если watchdog не установлен."""
     # Эмулируем отсутствие watchdog
     mocker.patch.dict(sys.modules, {'watchdog': None, 'watchdog.observers': None, 'watchdog.events': None})
 
-    with pytest.raises(ImportError) as excinfo:
+    with pytest.raises(OptionalDependencyError) as excinfo:
         start_config_watcher()
     assert "watchdog" in str(excinfo.value).lower()
 
@@ -140,18 +141,18 @@ def test_internal_save_suppression(mocker):
 
     # 1. Сохраняем с notify=False
     save_config_value("Section", "Key", "Value", notify=False)
-    
+
     # Имитируем событие от ОС
     handler._on_modified()
-    
+
     # Коллбэк НЕ должен быть вызван
     mock_callback.assert_not_called()
 
     # 2. Сохраняем с notify=True (по умолчанию)
     save_config_value("Section", "Key", "Value2", notify=True)
-    
+
     # Имитируем событие от ОС
     handler._on_modified()
-    
+
     # Коллбэк ДОЛЖЕН быть вызван
     mock_callback.assert_called_once()

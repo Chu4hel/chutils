@@ -24,6 +24,7 @@ import warnings
 from pathlib import Path
 from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union, Tuple
 
+from chutils.exceptions import ConfigParseError, OptionalDependencyError
 from .manager import _cm
 from .providers import get_providers
 from .utils import find_project_root, _merge_configs, _nest_ini_dict, _get_typed_value
@@ -217,6 +218,11 @@ def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
     Returns:
        Словарь со всей конфигурацией проекта или экземпляр Pydantic модели.
        Если файлы не найдены, возвращается пустой словарь (или ошибка валидации модели).
+
+    Raises:
+        ConfigLoadError: Если произошла ошибка при чтении файлов конфигурации.
+        ConfigParseError: Если файлы конфигурации содержат синтаксические ошибки.
+        OptionalDependencyError: Если передана `model`, но пакет `pydantic` не установлен.
     """
     # Поддержка старых тестов: синхронизируем состояние, если оно было изменено напрямую в модуле
     _sync_legacy_state()
@@ -260,9 +266,10 @@ def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
 
     if model is not None:
         if not _check_pydantic():
-            raise ImportError(
+            raise OptionalDependencyError(
                 "Pydantic is required for configuration validation. "
-                "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
+                "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'.",
+                dependency="pydantic"
             )
         return model(**config_data)
 
@@ -510,7 +517,7 @@ def get_config_boolean(section: str, key: str, fallback: bool = False, config: O
             return True
         if s in ['false', '0', 'f', 'n', 'no']:
             return False
-        raise ValueError(f"Invalid boolean value: {v}")
+        raise ConfigParseError(f"Invalid boolean value: {v}", section=section, key=key, value=v)
 
     return _get_typed_value(section, key, bool_converter, fallback, get_config_value, config, type_name="bool")
 
@@ -538,7 +545,7 @@ def get_config_list(
     def list_converter(v: Any) -> List:
         if isinstance(v, list):
             return v
-        raise ValueError(f"Value is not a list: {v}")
+        raise ConfigParseError(f"Value is not a list: {v}", section=section, key=key, value=v)
 
     return _get_typed_value(section, key, list_converter, actual_fallback, get_config_value, config, type_name="list")
 
@@ -579,6 +586,11 @@ def get_config_section(
     Returns:
         Словарь с содержимым секции или экземпляр Pydantic модели.
         Если `fallback` не указан и секция не найдена, возвращается пустой словарь.
+
+    Raises:
+        ConfigLoadError: Если произошла ошибка при чтении файлов конфигурации.
+        ConfigParseError: Если файлы конфигурации содержат синтаксические ошибки.
+        OptionalDependencyError: Если передана `model`, но пакет `pydantic` не установлен.
     """
     if config is None:
         config = get_config()
@@ -587,9 +599,10 @@ def get_config_section(
 
     if model is not None:
         if not _check_pydantic():
-            raise ImportError(
+            raise OptionalDependencyError(
                 "Pydantic is required for configuration validation. "
-                "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
+                "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'.",
+                dependency="pydantic"
             )
         return model(**section_data)
 

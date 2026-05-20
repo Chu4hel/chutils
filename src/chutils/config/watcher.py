@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 from typing import List, Callable
 
+from chutils.exceptions import OptionalDependencyError
 from .manager import _cm
 from .utils import find_project_root
 
@@ -79,14 +80,15 @@ def start_config_watcher() -> bool:
         True, если watcher успешно запущен.
 
     Raises:
-        ImportError: Если пакет watchdog не установлен.
+        OptionalDependencyError: Если пакет `watchdog` не установлен.
     """
     try:
         from watchdog.observers import Observer
     except ImportError:
-        raise ImportError(
+        raise OptionalDependencyError(
             "Пакет 'watchdog' необходим для работы hot-reload. "
-            "Установите его с помощью 'pip install chutils[watch]' или 'poetry add watchdog'."
+            "Установите его с помощью 'pip install chutils[watch]' или 'poetry add watchdog'.",
+            dependency="watchdog"
         )
 
     if _cm.observer and _cm.observer.is_alive():

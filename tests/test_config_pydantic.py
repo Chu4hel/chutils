@@ -2,6 +2,7 @@ import pytest
 
 from chutils import config
 from chutils.config import get_config, get_config_section
+from chutils.exceptions import OptionalDependencyError
 
 # Пытаемся импортировать pydantic для создания тестовых моделей
 try:
@@ -115,14 +116,14 @@ async def test_aget_config_with_model(config_fs):
 
 
 def test_get_config_section_import_error(config_fs, monkeypatch):
-    """Тест выброса ImportError в get_config_section, если pydantic не установлен."""
+    """Тест выброса OptionalDependencyError в get_config_section, если pydantic не установлен."""
     monkeypatch.setattr(config, '_check_pydantic', lambda: False)
 
     fs, project_root = config_fs
     fs.create_file(project_root / "config.yml", contents="Database:\n  host: localhost")
     config._cm._reset()
 
-    with pytest.raises(ImportError, match="Pydantic is required"):
+    with pytest.raises(OptionalDependencyError, match="Pydantic is required"):
         get_config_section("Database", model=DbConfig)
 
 
@@ -146,7 +147,7 @@ def test_import_error_when_pydantic_missing(config_fs, monkeypatch):
         class DummyModel:
             def __init__(self, **kwargs): pass
 
-        with pytest.raises(ImportError, match="Pydantic is required"):
+        with pytest.raises(OptionalDependencyError, match="Pydantic is required"):
             get_config(model=DummyModel)
 
     finally:

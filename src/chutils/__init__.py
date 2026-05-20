@@ -54,12 +54,6 @@ from .config import (
 )
 from .context import bind_context, unbind_context, clear_context
 from .decorators import log_function_details, retry, timeout
-from .logger import (
-    setup_logger,
-    ChutilsLogger,
-    SafeTimedRotatingFileHandler
-)
-from .secret_manager import SecretManager
 from .exceptions import (
     ChutilsException,
     ConfigError,
@@ -71,7 +65,14 @@ from .exceptions import (
     LoggerConfigurationError,
     WatcherInitializationError,
     OptionalDependencyError,
+    ChutilsTimeoutError,
 )
+from .logger import (
+    setup_logger,
+    ChutilsLogger,
+    SafeTimedRotatingFileHandler
+)
+from .secret_manager import SecretManager
 
 
 def init(base_dir: str):
@@ -89,7 +90,10 @@ def init(base_dir: str):
         ValueError: Если указанная директория не существует.
     """
     if not os.path.isdir(base_dir):
-        raise ValueError(f"Указанная директория base_dir не существует или не является директорией: {base_dir}")
+        raise ChutilsException(
+            f"Указанная директория base_dir не существует или не является директорией: {base_dir}",
+            base_dir=base_dir
+        )
 
     # Вручную устанавливаем базовую директорию через менеджер состояний.
     config._cm.base_dir = base_dir
@@ -148,4 +152,5 @@ __all__ = [
     'LoggerConfigurationError',
     'WatcherInitializationError',
     'OptionalDependencyError',
+    'ChutilsTimeoutError',
 ]

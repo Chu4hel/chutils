@@ -11,6 +11,8 @@ import random
 import time
 from typing import Optional, TYPE_CHECKING, Tuple, Type, Any, Callable, TypeVar
 
+from .exceptions import ChutilsTimeoutError
+
 if TYPE_CHECKING:
     from .logger import ChutilsLogger
 
@@ -159,13 +161,13 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable:
     Args:
         seconds: Максимальное время выполнения в секундах.
         fallback: Значение, которое будет возвращено при таймауте.
-            Если не указано, выбрасывается `TimeoutError`.
+            Если не указано, выбрасывается `ChutilsTimeoutError`.
 
     Returns:
         Декоратор функции.
 
     Raises:
-        TimeoutError: Если время выполнения превышено и `fallback` не указан.
+        ChutilsTimeoutError: Если время выполнения превышено и `fallback` не указан.
     """
 
     def decorator(func: Callable) -> Callable:
@@ -176,7 +178,11 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable:
                     return await asyncio.wait_for(func(*args, **kwargs), timeout=seconds)
                 except (asyncio.TimeoutError, TimeoutError):
                     if fallback is _NO_FALLBACK:
-                        raise TimeoutError(f"Function {func.__name__} timed out after {seconds} seconds")
+                        raise ChutilsTimeoutError(
+                            f"Function {func.__name__} timed out after {seconds} seconds",
+                            function=func.__name__,
+                            timeout=seconds
+                        )
                     return fallback
 
             return async_wrapper
@@ -190,7 +196,11 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable:
                         return future.result(timeout=seconds)
                     except concurrent.futures.TimeoutError:
                         if fallback is _NO_FALLBACK:
-                            raise TimeoutError(f"Function {func.__name__} timed out after {seconds} seconds")
+                            raise ChutilsTimeoutError(
+                                f"Function {func.__name__} timed out after {seconds} seconds",
+                                function=func.__name__,
+                                timeout=seconds
+                            )
                         return fallback
 
             return sync_wrapper

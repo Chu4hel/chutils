@@ -4,6 +4,7 @@ import time
 import pytest
 
 from chutils.decorators import timeout, retry
+from chutils.exceptions import ChutilsTimeoutError
 
 
 # --- Combined Tests ---
@@ -12,7 +13,7 @@ def test_timeout_with_retry_sync():
     """Проверяет совместную работу @timeout и @retry для синхронной функции."""
     call_count = 0
 
-    @retry(retries=2, delay=0.1)
+    @retry(retries=2, delay=0.1, exceptions=(ChutilsTimeoutError,))
     @timeout(0.1)
     def fluky_slow_func():
         nonlocal call_count
@@ -31,7 +32,7 @@ async def test_timeout_with_retry_async():
     """Проверяет совместную работу @timeout и @retry для асинхронной функции."""
     call_count = 0
 
-    @retry(retries=2, delay=0.1)
+    @retry(retries=2, delay=0.1, exceptions=(ChutilsTimeoutError,))
     @timeout(0.1)
     async def fluky_slow_async_func():
         nonlocal call_count
@@ -58,14 +59,14 @@ def test_timeout_sync_success():
 
 
 def test_timeout_sync_failure():
-    """Проверяет выброс TimeoutError для долгой синхронной функции."""
+    """Проверяет выброс ChutilsTimeoutError для долгой синхронной функции."""
 
     @timeout(0.1)
     def slow_func():
         time.sleep(0.3)
         return "too slow"
 
-    with pytest.raises(TimeoutError):
+    with pytest.raises(ChutilsTimeoutError):
         slow_func()
 
 
@@ -108,14 +109,14 @@ async def test_timeout_async_success():
 
 @pytest.mark.asyncio
 async def test_timeout_async_failure():
-    """Проверяет выброс TimeoutError для долгой асинхронной функции."""
+    """Проверяет выброс ChutilsTimeoutError для долгой асинхронной функции."""
 
     @timeout(0.1)
     async def slow_async_func():
         await asyncio.sleep(0.3)
         return "too slow"
 
-    with pytest.raises(TimeoutError):
+    with pytest.raises(ChutilsTimeoutError):
         await slow_async_func()
 
 
