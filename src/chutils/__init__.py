@@ -47,6 +47,7 @@ _LAZY_MAPPING = {
     'cache': ('.cache', None),
     'exceptions': ('.exceptions', None),
     'context': ('.context', None),
+    'lifecycle': ('.lifecycle', None),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -73,6 +74,10 @@ _LAZY_MAPPING = {
     'bind_context': ('.context', 'bind_context'),
     'unbind_context': ('.context', 'unbind_context'),
     'clear_context': ('.context', 'clear_context'),
+
+    # lifecycle
+    'register_cleanup': ('.lifecycle', 'register_cleanup'),
+    'setup_graceful_shutdown': ('.lifecycle', 'setup_graceful_shutdown'),
 
     # secret_manager
     'SecretManager': ('.secret_manager', 'SecretManager'),

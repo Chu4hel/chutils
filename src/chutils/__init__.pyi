@@ -88,6 +88,13 @@ def unbind_context(*args: str) -> None: ...
 def clear_context() -> None: ...
 
 
+# --- lifecycle ---
+def register_cleanup(func: Callable[..., Any]) -> Callable[..., Any]: ...
+
+
+def setup_graceful_shutdown() -> None: ...
+
+
 # --- secret_manager ---
 class SecretManager:
     def __init__(self, service_name: Optional[str] = None, prefix: Optional[str] = None, auto_mask_logs: bool = True,
@@ -163,3 +170,4 @@ from . import secret_manager as secret_manager
 from . import decorators as decorators
 from . import exceptions as exceptions
 from . import context as context
+from . import lifecycle as lifecycle
