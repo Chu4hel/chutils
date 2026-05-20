@@ -49,6 +49,7 @@ _LAZY_MAPPING = {
     'context': ('.context', None),
     'lifecycle': ('.lifecycle', None),
     'time': ('.time', None),
+    'tracing': ('.tracing', None),
 
     # config
     'get_config': ('.config', 'get_config'),
