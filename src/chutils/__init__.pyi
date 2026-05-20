@@ -1,6 +1,5 @@
+import datetime
 import logging
-from datetime import datetime
-from logging import Handler
 from typing import Any, Optional, List, Dict, Type, TypeVar, Union, Tuple, Callable
 
 # Тип для Pydantic моделей
@@ -89,17 +88,18 @@ class ChutilsLogger(logging.Logger):
 
 
 def setup_logger(name: Optional[str] = None, level: Optional[Union[str, int]] = None,
-                 log_file: Optional[str] = None) -> ChutilsLogger: ...
+                 log_file: Optional[str] = None, config_section_name: Optional[str] = None,
+                 json_format: Optional[bool] = None, use_async: Optional[bool] = None) -> ChutilsLogger: ...
 
 
-class SafeTimedRotatingFileHandler(Handler): ...
+class SafeTimedRotatingFileHandler(logging.Handler): ...
 
 
 # --- context ---
-def bind_context(**kwargs: Any) -> None: ...
+def bind_context(**kwargs: Any) -> Any: ...
 
 
-def unbind_context(*args: str) -> None: ...
+def unbind_context(token: Any) -> None: ...
 
 
 def clear_context() -> None: ...
@@ -117,13 +117,13 @@ def cli_command(func: F) -> F: ...
 
 
 # --- time ---
-def utc_now() -> datetime: ...
+def utc_now() -> datetime.datetime: ...
 
 
-def parse_datetime(value: Union[str, int, float]) -> datetime: ...
+def parse_datetime(value: Union[str, int, float]) -> datetime.datetime: ...
 
 
-def humanize_timedelta(dt: datetime, locale: str = 'ru', custom_locales: Optional[dict] = None) -> str: ...
+def humanize_timedelta(dt: datetime.datetime, locale: str = 'ru', custom_locales: Optional[dict] = None) -> str: ...
 
 
 # --- secret_manager ---
@@ -144,6 +144,25 @@ class SecretManager:
     async def asave_secret(self, key: str, value: str) -> bool: ...
 
     async def adelete_secret(self, key: str) -> bool: ...
+
+
+# --- tracing ---
+IS_OTEL_AVAILABLE: bool
+
+
+def trace(
+        name: Optional[Any] = None,
+        attributes: Optional[Dict[str, Any]] = None,
+        capture_kwargs: bool = False,
+) -> Callable[[F], F]: ...
+
+
+def setup_tracing(
+        service_name: str,
+        exporter_type: str = "console",
+        otlp_endpoint: Optional[str] = None,
+        otlp_protocol: str = "grpc",
+) -> bool: ...
 
 
 # --- decorators ---
@@ -205,8 +224,3 @@ from . import lifecycle as lifecycle
 from . import features as features
 from . import time as time
 from . import tracing as tracing
-from . import exceptions as exceptions
-from . import context as context
-from . import lifecycle as lifecycle
-from . import features as features
-from . import time as time

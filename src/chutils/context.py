@@ -43,6 +43,19 @@ class ContextFilter(logging.Filter):
 
     def filter(self, record: logging.LogRecord) -> bool:
         ctx = get_context()
+
+        # Добавляем данные трассировки OpenTelemetry, если они доступны
+        try:
+            from .tracing import get_current_trace_context
+            trace_ctx = get_current_trace_context()
+            if trace_ctx:
+                ctx.update(trace_ctx)
+                # Также добавляем как индивидуальные атрибуты для форматтеров
+                for key, value in trace_ctx.items():
+                    setattr(record, key, value)
+        except (ImportError, AttributeError):
+            pass
+
         record.context_dict = ctx
 
         if not ctx:

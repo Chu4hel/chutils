@@ -35,6 +35,84 @@ def get_tracer(name: str = "chutils") -> Any:
     return None
 
 
+def get_current_trace_context() -> Optional[dict[str, str]]:
+    """
+    Возвращает текущие trace_id и span_id, если трассировка активна.
+
+    Returns:
+        Словарь с trace_id и span_id или None.
+    """
+    if not IS_OTEL_AVAILABLE or not otel_trace:
+        return None
+
+    span = otel_trace.get_current_span()
+    span_context = span.get_span_context()
+
+    if not span_context.is_valid:
+        return None
+
+    return {
+        "trace_id": format(span_context.trace_id, "032x"),
+        "span_id": format(span_context.span_id, "016x"),
+    }
+
+
+def setup_tracing(
+        service_name: str,
+        exporter_type: str = "console",
+        otlp_endpoint: Optional[str] = None,
+        otlp_protocol: str = "grpc",
+) -> bool:
+    """
+    Настраивает OpenTelemetry SDK для сбора трасс.
+
+    Args:
+        service_name: Имя сервиса для отображения в трассах.
+        exporter_type: Тип экспортера: 'console' или 'otlp'.
+        otlp_endpoint: URL эндпоинта для OTLP (например, http://localhost:4317).
+        otlp_protocol: Протокол для OTLP: 'grpc' или 'http/protobuf'.
+
+    Returns:
+        True, если настройка выполнена успешно, False если OTel недоступен.
+    """
+    if not IS_OTEL_AVAILABLE:
+        return False
+
+    try:
+        from opentelemetry.sdk.resources import SERVICE_NAME, Resource
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+        # Создаем ресурс
+        resource = Resource(attributes={SERVICE_NAME: service_name})
+
+        # Настраиваем провайдер
+        provider = TracerProvider(resource=resource)
+        otel_trace.set_tracer_provider(provider)
+
+        # Настраиваем экспортер
+        if exporter_type == "console":
+            from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+            exporter = ConsoleSpanExporter()
+        elif exporter_type == "otlp":
+            if otlp_protocol == "grpc":
+                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+            else:
+                from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+
+            exporter = OTLPSpanExporter(endpoint=otlp_endpoint)
+        else:
+            return False
+
+        # Добавляем процессор
+        processor = BatchSpanProcessor(exporter)
+        provider.add_span_processor(processor)
+
+        return True
+    except Exception:
+        return False
+
+
 def trace(
         name: Optional[Any] = None,
         attributes: Optional[dict[str, Any]] = None,

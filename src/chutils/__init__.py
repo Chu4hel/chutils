@@ -104,6 +104,11 @@ _LAZY_MAPPING = {
     'retry': ('.decorators', 'retry'),
     'timeout': ('.decorators', 'timeout'),
 
+    # tracing
+    'trace': ('.tracing', 'trace'),
+    'setup_tracing': ('.tracing', 'setup_tracing'),
+    'IS_OTEL_AVAILABLE': ('.tracing', 'IS_OTEL_AVAILABLE'),
+
     # exceptions
     'ChutilsException': ('.exceptions', 'ChutilsException'),
     'ConfigError': ('.exceptions', 'ConfigError'),
