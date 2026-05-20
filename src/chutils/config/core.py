@@ -11,9 +11,9 @@ from pathlib import Path
 from typing import Any, Optional, Dict, TYPE_CHECKING, TypeVar, Type, Union
 
 from chutils.exceptions import OptionalDependencyError
+from . import utils
 from .manager import _cm
 from .providers import get_providers
-from . import utils
 
 if TYPE_CHECKING:
     from pydantic import BaseModel
@@ -75,19 +75,29 @@ def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
 
             # Последовательно загружаем и объединяем файлы в порядке приоритета
             if main_path and Path(main_path).exists():
-                utils.deep_merge(config_data, load_from_path(main_path))
+                data = load_from_path(main_path)
+                _cm.record_trace_dict(data, main_path)
+                utils.deep_merge(config_data, data)
             else:
                 logger.debug("Основной файл конфигурации не найден или не указан.")
 
             if env_path and Path(env_path).exists():
-                utils.deep_merge(config_data, load_from_path(env_path))
+                data = load_from_path(env_path)
+                _cm.record_trace_dict(data, env_path)
+                utils.deep_merge(config_data, data)
             else:
                 logger.debug("Конфигурационный файл окружения не найден.")
 
             if local_path and Path(local_path).exists():
-                utils.deep_merge(config_data, load_from_path(local_path))
+                data = load_from_path(local_path)
+                _cm.record_trace_dict(data, local_path)
+                utils.deep_merge(config_data, data)
             else:
                 logger.debug("Локальный файл конфигурации не найден или не указан.")
+
+            # Записываем переменные окружения в трассировку
+            if _cm.tracing_enabled:
+                _cm.trace_env_vars()
 
             return config_data
         finally:

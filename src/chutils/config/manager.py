@@ -52,6 +52,92 @@ class _ConfigManager:
             self._callbacks: List = []
             self._last_reload_time: float = 0.0
             self._last_internal_save_time: float = 0.0
+            self._tracing_enabled: bool = False
+            self._trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
+
+    @property
+    def tracing_enabled(self) -> bool:
+        with self._lock:
+            return self._tracing_enabled
+
+    @tracing_enabled.setter
+    def tracing_enabled(self, value: bool):
+        with self._lock:
+            self._tracing_enabled = value
+            if not value:
+                self._trace_data = {}
+
+    def record_trace(self, section: str, key: str, value: Any, source: str):
+        """Записывает историю изменения значения ключа."""
+        with self._lock:
+            if not self._tracing_enabled:
+                return
+
+            s_key = section.lower()
+            k_key = key.lower()
+
+            if s_key not in self._trace_data:
+                self._trace_data[s_key] = {}
+            if k_key not in self._trace_data[s_key]:
+                self._trace_data[s_key][k_key] = []
+
+            # Добавляем в историю
+            self._trace_data[s_key][k_key].append({
+                "source": source,
+                "value": value
+            })
+
+    def get_trace(self) -> Dict[str, Dict[str, List[Dict[str, Any]]]]:
+        """Возвращает собранные данные трассировки."""
+        with self._lock:
+            import copy
+            return copy.deepcopy(self._trace_data)
+
+    def record_trace_dict(self, data: Dict[str, Any], source: str):
+        """Записывает все значения из словаря в трассировку."""
+        with self._lock:
+            if not self._tracing_enabled:
+                return
+
+            for section, keys in data.items():
+                if isinstance(keys, dict):
+                    for key, value in keys.items():
+                        self.record_trace(section, key, value, source)
+                else:
+                    # Корневые ключи (если есть) рассматриваем как принадлежащие секции 'default'
+                    # или игнорируем, если архитектура предполагает только секции.
+                    # В chutils основные конфиги - это секции.
+                    self.record_trace("default", section, keys, source)
+
+    def trace_env_vars(self):
+        """Сканирует переменные окружения и записывает их в трассировку."""
+        import os
+        with self._lock:
+            if not self._tracing_enabled:
+                return
+
+            # Проверка глобального флага отключения переопределения через ENV
+            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")
+            if disable_env_override:
+                return
+
+            for env_key, env_value in os.environ.items():
+                if env_key.startswith("CH_") and env_key not in ("CH_ENV", "CH_DISABLE_ENV_OVERRIDE",
+                                                                 "CH_DISABLE_KEYRING_WARNING"):
+                    # Шаблон: CH_[SECTION]_[KEY]
+                    # Пытаемся разбить по первому нижнему подчеркиванию после CH_
+                    # Это упрощенный парсинг, так как секция или ключ сами могут содержать _
+                    # Но согласно спецификации, мы берем CH_SECTION_KEY.
+                    parts = env_key[3:].split('_', 1)
+                    if len(parts) == 2:
+                        section, key = parts
+                        # Мы сохраняем в нижнем регистре для консистентности с ключами из файлов
+                        self.record_trace(section.lower(), key.lower(), env_value, "env")
+
+            # Специфический ключ для secrets
+            secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")
+            if secrets_env is not None:
+                self.record_trace("secrets", "disable_keyring", secrets_env, "env")
 
     @property
     def base_dir(self) -> Optional[str]:
