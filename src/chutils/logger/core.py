@@ -3,13 +3,15 @@
 Содержит основной класс логгера и функцию инициализации.
 """
 
+import atexit
 import datetime
 import logging
 import logging.handlers
 import os
+import queue
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Any
+from typing import Optional, Any, List, Union
 
 from .formatters import JSON_LOGGER_AVAILABLE, ChutilsJsonFormatter
 from .handlers import (
@@ -17,9 +19,36 @@ from .handlers import (
     CompressingRotatingFileHandler,
     CompressingTimedRotatingFileHandler
 )
-from .masking import SecretMaskingFilter, _GLOBAL_MASKS, _update_mask_re
+from .masking import (
+    SecretMaskingFilter,
+    _GLOBAL_MASKS,
+    _CUSTOM_PATTERNS,
+    _update_mask_re,
+    PREDEFINED_PATTERNS
+)
 from .. import config
 from ..context import ContextFilter
+
+# --- Глобальное состояние для асинхронного логирования ---
+
+_async_listeners: List[logging.handlers.QueueListener] = []
+
+
+def _stop_all_async_loggers():
+    """
+    Останавливает все активные асинхронные слушатели логов.
+    Вызывается автоматически при выходе из приложения.
+    """
+    global _async_listeners
+    for listener in _async_listeners:
+        try:
+            listener.stop()
+        except Exception:
+            pass
+    _async_listeners.clear()
+
+
+atexit.register(_stop_all_async_loggers)
 
 # --- Опциональная интеграция с Rich ---
 
@@ -192,6 +221,9 @@ def setup_logger(
         utc: Optional[bool] = None,
         at_time: Optional[datetime.time] = None,
         json_format: Optional[bool] = None,
+        use_async: Optional[bool] = None,
+        custom_patterns: Optional[List[str]] = None,
+        use_predefined_patterns: Optional[List[Union[str, List[str]]]] = None,
         **kwargs: Any
 ) -> ChutilsLogger:
     """
@@ -212,6 +244,14 @@ def setup_logger(
     - **По размеру (`rotation_type='size'`)**: Ротация при достижении `max_bytes`.
     - **Сжатие**: Если `compress=True`, старые логи сжимаются в `.gz`.
 
+    ### Асинхронность:
+    - Если `use_async=True`, логи записываются в очередь и обрабатываются в отдельном потоке.
+    - Очередь блокирующая, что предотвращает потерю сообщений при переполнении.
+
+    ### Маскирование:
+    - Автоматическая замена секретов и паттернов на `[MASKED]`.
+    - Поддержка предустановленных паттернов PII (`email`, `phone`, `credit_card`, `ssn`).
+
     Args:
         name: Имя логгера. `app_logger` по умолчанию.
         config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').
@@ -229,6 +269,10 @@ def setup_logger(
         interval: Для 'time'. Кратность интервала.
         utc: Для 'time'. Использовать ли UTC время для имен файлов.
         at_time: Для 'time'. Время ротации (для when='midnight').
+        json_format: Использовать ли JSON формат для логов.
+        use_async: Использовать ли асинхронное логирование.
+        custom_patterns: Список регулярных выражений для маскирования.
+        use_predefined_patterns: Список имен предустановленных паттернов для маскирования.
 
         **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`).
 
@@ -245,6 +289,16 @@ def setup_logger(
         specific_settings = cfg.get(config_section_name, {})
 
     final_logger_settings = {**default_settings, **specific_settings}
+
+    # --- Определение флага асинхронности ---
+    if use_async is not None:
+        final_use_async = use_async
+    else:
+        config_async = final_logger_settings.get('use_async', False)
+        if isinstance(config_async, str):
+            final_use_async = config_async.lower() in ["true", "1", "yes", "y"]
+        else:
+            final_use_async = bool(config_async)
 
     # --- Определение флага JSON формата ---
     env_json_val = os.getenv("CH_LOG_JSON", "").lower()
@@ -364,7 +418,9 @@ def setup_logger(
         console_handler.setFormatter(formatter)
 
     console_handler.setLevel(level_int)
-    logger.addHandler(console_handler)
+
+    # Список обработчиков, которые будут добавлены либо в логгер напрямую, либо в QueueListener
+    target_handlers: List[logging.Handler] = [console_handler]
 
     if not env_no_file and log_dir and final_log_file_name:
         log_file_path = Path(final_log_file_name) if Path(final_log_file_name).is_absolute() else Path(
@@ -411,12 +467,32 @@ def setup_logger(
                 file_handler = None
 
         if file_handler:
-            logger.addHandler(file_handler)
+            target_handlers.append(file_handler)
     elif not _initialization_message_shown:
         logger.warning("Директория для логов не настроена. Файловое логирование отключено.")
         _initialization_message_shown = True
 
+    # --- Применение обработчиков (Асинхронно или Синхронно) ---
+    if final_use_async:
+        # ТЗ требует Blocking Safe поведение для предотвращения потери логов.
+        # Устанавливаем разумный предел очереди. Если она переполнится, 
+        # основной поток заблокируется до тех пор, пока в очереди не появится место.
+        max_queue_size = int(final_logger_settings.get('async_max_queue_size', 10000))
+        log_queue: queue.Queue = queue.Queue(max_queue_size)
+
+        queue_handler = logging.handlers.QueueHandler(log_queue)
+        logger.addHandler(queue_handler)
+
+        listener = logging.handlers.QueueListener(log_queue, *target_handlers, respect_handler_level=True)
+        listener.start()
+        _async_listeners.append(listener)
+    else:
+        for handler in target_handlers:
+            logger.addHandler(handler)
+
     # --- Маскирование ---
+
+    # 1. Литеральные строки из конфига (старое поведение)
     mask_patterns = final_logger_settings.get('mask_patterns', [])
     if isinstance(mask_patterns, list):
         for pattern in mask_patterns:
@@ -427,6 +503,30 @@ def setup_logger(
                 _GLOBAL_MASKS.add(secret_value)
             elif isinstance(pattern, str):
                 _GLOBAL_MASKS.add(pattern)
+
+    # 2. Кастомные регулярные выражения из конфига
+    config_custom_patterns = final_logger_settings.get('custom_mask_patterns', [])
+    if isinstance(config_custom_patterns, list):
+        for p in config_custom_patterns:
+            if p and isinstance(p, str):
+                _CUSTOM_PATTERNS.add(p)
+
+    # 3. Предустановленные паттерны из конфига
+    config_predefined = final_logger_settings.get('use_predefined_masking', [])
+    if isinstance(config_predefined, list):
+        for name in config_predefined:
+            if name in PREDEFINED_PATTERNS:
+                _CUSTOM_PATTERNS.add(PREDEFINED_PATTERNS[name])
+
+    # 4. Программные паттерны через аргументы
+    if custom_patterns:
+        for p in custom_patterns:
+            _CUSTOM_PATTERNS.add(p)
+
+    if use_predefined_patterns:
+        for name in use_predefined_patterns:
+            if isinstance(name, str) and name in PREDEFINED_PATTERNS:
+                _CUSTOM_PATTERNS.add(PREDEFINED_PATTERNS[name])
 
     _update_mask_re()
 

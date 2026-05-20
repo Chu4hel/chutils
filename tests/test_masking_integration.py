@@ -31,8 +31,8 @@ def test_secret_manager_masking_integration(caplog, monkeypatch):
         logger.info(f"Connecting with password: {secret_value}")
 
     assert secret_value not in caplog.text
-    assert "***" in caplog.text
-    assert "Connecting with password: ***" in caplog.text
+    assert "[MASKED]" in caplog.text
+    assert "Connecting with password: [MASKED]" in caplog.text
 
 
 def test_secret_manager_masking_opt_out(caplog, monkeypatch):
@@ -58,4 +58,4 @@ def test_secret_manager_masking_opt_out(caplog, monkeypatch):
         logger.info(f"Secret value: {secret_value}")
 
     assert secret_value in caplog.text
-    assert "***" not in caplog.text
+    assert "[MASKED]" not in caplog.text

@@ -16,8 +16,8 @@ def test_manual_masking(caplog):
         logger.info(f"User login with password: {secret}")
 
     assert secret not in caplog.text
-    assert "***" in caplog.text
-    assert "User login with password: ***" in caplog.text
+    assert "[MASKED]" in caplog.text
+    assert "User login with password: [MASKED]" in caplog.text
 
 
 def test_multiple_masks(caplog):
@@ -34,7 +34,7 @@ def test_multiple_masks(caplog):
 
     assert s1 not in caplog.text
     assert s2 not in caplog.text
-    assert "Values: *** and ***" in caplog.text
+    assert "Values: [MASKED] and [MASKED]" in caplog.text
 
 
 def test_masking_disabled_by_env(caplog, monkeypatch):
@@ -51,4 +51,4 @@ def test_masking_disabled_by_env(caplog, monkeypatch):
         logger.info(f"Secret is {secret}")
 
     assert secret in caplog.text
-    assert "***" not in caplog.text
+    assert "[MASKED]" not in caplog.text

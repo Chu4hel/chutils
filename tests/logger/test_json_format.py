@@ -78,7 +78,7 @@ def test_json_format_masking_integration(capsys, monkeypatch):
         pytest.fail("JSON лог не найден в выводе")
 
     assert "supersecret123" not in log_json["message"]
-    assert "***" in log_json["message"]
+    assert "[MASKED]" in log_json["message"]
 
 
 def test_json_format_from_config(config_fs, capsys):
