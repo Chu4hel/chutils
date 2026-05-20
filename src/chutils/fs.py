@@ -6,8 +6,9 @@
 import json
 import os
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Union, Any
+from typing import Union, Any, ContextManager
 
 try:
     import yaml
@@ -90,3 +91,31 @@ def atomic_write(
                 pass
             temp_path.unlink(missing_ok=True)
         raise
+
+
+@contextmanager
+def get_temp_file(suffix: str = '') -> ContextManager[Path]:
+    """
+    Контекстный менеджер для работы с временным файлом.
+    Файл автоматически удаляется при выходе из блока with.
+
+    Args:
+        suffix: Суффикс (расширение) временного файла.
+
+    Yields:
+        Объект pathlib.Path к временному файлу.
+    """
+    # Создаем временный файл
+    fd, temp_path_str = tempfile.mkstemp(suffix=suffix)
+    temp_path = Path(temp_path_str)
+
+    # Закрываем дескриптор сразу, так как пользователю нужен путь,
+    # и он сам откроет его в нужном режиме.
+    os.close(fd)
+
+    try:
+        yield temp_path
+    finally:
+        # Гарантированное удаление
+        if temp_path.exists():
+            temp_path.unlink(missing_ok=True)

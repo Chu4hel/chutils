@@ -119,3 +119,34 @@ def test_atomic_write_failure(tmp_path, monkeypatch):
     # Проверяем, что в директории нет временных файлов .tmp
     temp_files = list(tmp_path.glob("*.tmp"))
     assert len(temp_files) == 0
+
+
+def test_get_temp_file(tmp_path):
+    """Проверка контекстного менеджера временных файлов."""
+    from chutils.fs import get_temp_file
+
+    with get_temp_file(suffix=".test") as temp_path:
+        assert isinstance(temp_path, Path)
+        assert temp_path.exists()
+        assert temp_path.suffix == ".test"
+
+        # Проверяем запись
+        temp_path.write_text("temp data")
+        assert temp_path.read_text() == "temp data"
+
+    # После выхода из блока файл должен быть удален
+    assert not temp_path.exists()
+
+
+def test_get_temp_file_exception(tmp_path):
+    """Проверка удаления временного файла при исключении."""
+    from chutils.fs import get_temp_file
+
+    try:
+        with get_temp_file() as temp_path:
+            assert temp_path.exists()
+            raise RuntimeError("Test error")
+    except RuntimeError:
+        pass
+
+    assert not temp_path.exists()
