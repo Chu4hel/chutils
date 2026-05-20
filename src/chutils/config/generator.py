@@ -11,8 +11,14 @@ try:
 
     PYDANTIC_AVAILABLE = True
 except ImportError:
-    BaseModel = Any  # type: ignore
-    FieldInfo = Any  # type: ignore
+    class BaseModel:  # type: ignore
+        """Заглушка для работы без Pydantic."""
+        pass
+
+    class FieldInfo:  # type: ignore
+        """Заглушка для работы без Pydantic."""
+        pass
+
     PYDANTIC_AVAILABLE = False
 
 
