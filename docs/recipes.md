@@ -509,22 +509,28 @@ print(humanize_timedelta(past_date, locale='en'))  # "5 minutes ago"
 
 ```python
 # my_tool.py
-from chutils import cli_command
 from pathlib import Path
+
+from chutils import cli_command
 
 
 @cli_command
 def copy_files(source: Path, dest: Path, verbose: bool = False):
-    """
-    Утилита для копирования файлов.
-    """
-    if verbose:
-        print(f"Копируем из {source} в {dest}")
-    # Логика...
+   """
+   Утилита для копирования файлов.
+
+   Args:
+       source (Path): Путь к исходному файлу.
+       dest (Path): Путь назначения.
+       verbose (bool): Выводить подробную информацию.
+   """
+   if verbose:
+      print(f"Копируем из {source} в {dest}")
+   # Логика...
 
 
 if __name__ == "__main__":
-    copy_files()
+   copy_files()
 ```
 
 Теперь вы можете запустить его из терминала:
