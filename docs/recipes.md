@@ -446,3 +446,117 @@ shutdown:
 2. **Log and Continue:** Если одна из функций выбросит исключение, `chutils` залогирует ошибку и продолжит выполнение
    остальных функций.
 3. **Кроссплатформенность:** На Windows перехватываются `SIGINT` и `SIGTERM`, на Linux/Unix дополнительно `SIGHUP`.
+
+## 11. Работа со временем (Painless Datetime)
+
+Модуль `chutils.time` обеспечивает "UTC-first" подход, гарантируя, что вы всегда работаете с осведомленными (timezone
+aware) объектами времени.
+
+### Получение текущего времени в UTC
+
+```python
+from chutils import utc_now
+
+# Возвращает datetime с tzinfo=timezone.utc
+now = utc_now()
+print(f"Текущее время: {now}")
+```
+
+### Умный парсинг дат
+
+Функция `parse_datetime` поддерживает ISO строки, UNIX-таймстампы (в секундах и миллисекундах) и автоматически приводит
+их к UTC.
+
+```python
+from chutils import parse_datetime
+
+# ISO 8601
+dt1 = parse_datetime("2023-10-27T12:00:00")
+
+# UNIX Timestamp (секунды)
+dt2 = parse_datetime(1698400000)
+
+# UNIX Timestamp (миллисекунды)
+dt3 = parse_datetime(1698400000000)
+
+# Если установлена библиотека chutils[date], поддерживается любой формат:
+# dt4 = parse_datetime("27 Oct 2023 12:00")
+```
+
+### Человекочитаемая разница во времени
+
+Превращает разницу между датами в понятные строки на русском или английском языке.
+
+```python
+from datetime import timedelta
+from chutils import utc_now, humanize_timedelta
+
+now = utc_now()
+past_date = now - timedelta(minutes=5)
+future_date = now + timedelta(days=1)
+
+print(humanize_timedelta(past_date))  # "5 минут назад"
+print(humanize_timedelta(future_date))  # "завтра"
+print(humanize_timedelta(past_date, locale='en'))  # "5 minutes ago"
+```
+
+## 12. Быстрое создание CLI (CLI Booster)
+
+Декоратор `@cli_command` позволяет превратить любую функцию в полноценный CLI-инструмент за одну секунду. Он
+автоматически создает парсер аргументов на основе сигнатуры функции.
+
+### Простой скрипт
+
+```python
+# my_tool.py
+from chutils import cli_command
+from pathlib import Path
+
+
+@cli_command
+def copy_files(source: Path, dest: Path, verbose: bool = False):
+    """
+    Утилита для копирования файлов.
+    """
+    if verbose:
+        print(f"Копируем из {source} в {dest}")
+    # Логика...
+
+
+if __name__ == "__main__":
+    copy_files()
+```
+
+Теперь вы можете запустить его из терминала:
+
+```bash
+python my_tool.py /tmp/src /tmp/dst --verbose
+python my_tool.py --help
+```
+
+### Асинхронные команды и списки
+
+`CLI Booster` отлично справляется с асинхронностью и списками аргументов.
+
+```python
+import asyncio
+from chutils import cli_command
+
+
+@cli_command
+async def process_batch(ids: list[int], retry: int = 3):
+    """Обработка списка ID с повторами."""
+    for item_id in ids:
+        print(f"Processing {item_id} (retries: {retry})")
+        await asyncio.sleep(0.1)
+
+
+if __name__ == "__main__":
+    process_batch()
+```
+
+Запуск:
+
+```bash
+python my_tool.py 101 102 103 --retry 5
+```
