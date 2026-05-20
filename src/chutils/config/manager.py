@@ -187,12 +187,13 @@ class _ConfigManager:
 
             self.paths_initialized = True
 
-    def get_config_paths(self, cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+    def get_config_paths(self, cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]:
         """
-        Возвращает пути к основному и локальному файлам конфигурации.
+        Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
         """
         with self._lock:
             main_config_path: Optional[str] = None
+            env_config_path: Optional[str] = None
             local_config_path: Optional[str] = None
 
             if cfg_file:
@@ -204,13 +205,24 @@ class _ConfigManager:
             if main_config_path:
                 main_path_obj = Path(main_config_path)
                 file_ext = main_path_obj.suffix.lower()
+
+                # 1. Специфичный для окружения (например, config.production.yml)
+                import os
+                ch_env = os.getenv("CH_ENV", "development")
+                env_file_name = f"{main_path_obj.stem}.{ch_env}{file_ext}"
+                potential_env_path = main_path_obj.parent / env_file_name
+                if potential_env_path.exists():
+                    env_config_path = str(potential_env_path)
+                    logger.debug("Найден конфигурационный файл окружения (%s): %s", ch_env, env_config_path)
+
+                # 2. Локальное (config.local.yml)
                 local_file_name = f"{main_path_obj.stem}.local{file_ext}"
                 potential_local_path = main_path_obj.parent / local_file_name
                 if potential_local_path.exists():
                     local_config_path = str(potential_local_path)
                     logger.debug("Найден локальный файл конфигурации: %s", local_config_path)
 
-            return main_config_path, local_config_path
+            return main_config_path, env_config_path, local_config_path
 
     def clear_cache(self):
         """Сбрасывает кэш загруженной конфигурации атомарно."""

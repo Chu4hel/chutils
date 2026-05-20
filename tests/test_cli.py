@@ -64,7 +64,7 @@ def test_cli_show_paths(mocker, capsys):
     # Мокаем конфиг, чтобы не зависеть от окружения
     mocker.patch("chutils.config.are_paths_initialized", return_value=True)
     mocker.patch("chutils.config.get_base_dir", return_value="/abs/path/project")
-    mocker.patch("chutils.config.get_config_paths", return_value=("/abs/path/project/config.yml", None))
+    mocker.patch("chutils.config.get_config_paths", return_value=("/abs/path/project/config.yml", None, None))
 
     test_args = ["chutils", "show-paths"]
     mocker.patch.object(sys, 'argv', test_args)
@@ -83,7 +83,7 @@ def test_cli_show_paths_json(mocker, capsys):
     mocker.patch("chutils.config.are_paths_initialized", return_value=True)
     mocker.patch("chutils.config.get_base_dir", return_value="/abs/path/project")
     mocker.patch("chutils.config.get_config_paths",
-                 return_value=("/abs/path/project/config.yml", "/abs/path/project/config.local.yml"))
+                 return_value=("/abs/path/project/config.yml", None, "/abs/path/project/config.local.yml"))
 
     test_args = ["chutils", "show-paths", "--json"]
     mocker.patch.object(sys, 'argv', test_args)

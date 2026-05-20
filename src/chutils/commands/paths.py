@@ -35,11 +35,12 @@ class ShowPathsCommand(BaseCommand):
             config.get_base_dir()
 
         base_dir = config.get_base_dir()
-        main_path, local_path = config.get_config_paths()
+        main_path, env_path, local_path = config.get_config_paths()
 
         paths_data = {
             "base_dir": base_dir,
             "main_config": main_path,
+            "env_config": env_path,
             "local_config": local_path,
             "search_markers": _cm.CONFIG_MARKERS
         }
@@ -48,6 +49,7 @@ class ShowPathsCommand(BaseCommand):
             print(json.dumps(paths_data, indent=4, ensure_ascii=False))
         else:
             from chutils.cli_utils import RICH_AVAILABLE
+            import os
 
             if RICH_AVAILABLE and not os.getenv("CH_NO_RICH"):
                 from rich.table import Table
@@ -58,6 +60,7 @@ class ShowPathsCommand(BaseCommand):
 
                 table.add_row("Корень проекта", base_dir or "[red]Не найден[/red]")
                 table.add_row("Основной конфиг", main_path or "[red]Не найден[/red]")
+                table.add_row("Конфиг окружения", env_path or "[red]Не найден[/red]")
                 table.add_row("Локальный конфиг", local_path or "[red]Не найден[/red]")
 
                 self.console.print(table)
@@ -68,6 +71,7 @@ class ShowPathsCommand(BaseCommand):
             else:
                 print(f"Корень проекта: {base_dir or 'Не найден'}")
                 print(f"Основной конфиг: {main_path or 'Не найден'}")
+                print(f"Конфиг окружения: {env_path or 'Не найден'}")
                 print(f"Локальный конфиг: {local_path or 'Не найден'}")
                 print("\nСписок маркеров для поиска (в порядке приоритета):")
                 for marker in _cm.CONFIG_MARKERS:

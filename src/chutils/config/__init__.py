@@ -173,15 +173,15 @@ def are_paths_initialized() -> bool:
     return _cm.paths_initialized
 
 
-def get_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+def get_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     """
-    Возвращает пути к основному и локальному файлам конфигурации.
+    Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
 
     Args:
         cfg_file: Опциональный путь к основному файлу.
 
     Returns:
-        Кортеж (путь_к_основному, путь_к_локальному).
+        Кортеж (путь_к_основному, путь_к_окружению, путь_к_локальному).
     """
     if not _cm.paths_initialized:
         _cm.initialize_paths(find_project_root)
@@ -212,6 +212,12 @@ def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
     Результат кэшируется. Повторные вызовы возвращают кэшированный объект,
     если он не был сброшен (например, при сохранении нового значения).
 
+    Порядок применения конфигураций (от меньшего приоритета к большему):
+    1. Основной файл (config.yml)
+    2. Файл окружения (config.{CH_ENV}.yml)
+    3. Локальный файл (config.local.yml)
+    4. Переменные окружения (CH_SECTION_KEY)
+
     Args:
         model: Опциональный класс Pydantic модели для валидации.
 
@@ -234,9 +240,8 @@ def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
 
         _cm.acquire_file_lock()
         try:
-            main_path, local_path = _cm.get_config_paths()
-            main_config: Dict = {}
-            local_config: Dict = {}
+            main_path, env_path, local_path = _cm.get_config_paths()
+            config_data: Dict = {}
 
             def load_from_path(path: str) -> Dict:
                 ext = Path(path).suffix.lower()
@@ -248,17 +253,23 @@ def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
                 _get_logger().warning("Неподдерживаемый формат файла конфигурации: %s", path)
                 return {}
 
+            # Последовательно загружаем и объединяем файлы в порядке приоритета
             if main_path and Path(main_path).exists():
-                main_config = load_from_path(main_path)
+                deep_merge(config_data, load_from_path(main_path))
             else:
                 _get_logger().debug("Основной файл конфигурации не найден или не указан.")
 
+            if env_path and Path(env_path).exists():
+                deep_merge(config_data, load_from_path(env_path))
+            else:
+                _get_logger().debug("Конфигурационный файл окружения не найден.")
+
             if local_path and Path(local_path).exists():
-                local_config = load_from_path(local_path)
+                deep_merge(config_data, load_from_path(local_path))
             else:
                 _get_logger().debug("Локальный файл конфигурации не найден или не указан.")
 
-            return deep_merge(main_config, local_config)
+            return config_data
         finally:
             _cm.release_file_lock()
 
@@ -341,7 +352,7 @@ def save_config_value(
     if cfg_file:
         path = cfg_file
     else:
-        main_path, local_path = _cm.get_config_paths()
+        main_path, env_path, local_path = _cm.get_config_paths()
         if save_to_local and local_path:
             path = local_path
             _get_logger().debug("Для сохранения выбран локальный файл конфигурации: %s", path)
