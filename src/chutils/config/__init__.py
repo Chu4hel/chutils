@@ -27,7 +27,7 @@ from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, over
 from chutils.exceptions import ConfigParseError, OptionalDependencyError
 from .manager import _cm
 from .providers import get_providers
-from .utils import find_project_root, _merge_configs, _nest_ini_dict, _get_typed_value
+from .utils import find_project_root, deep_merge, _nest_ini_dict, _get_typed_value
 from .watcher import (
     on_config_change,
     start_config_watcher,
@@ -258,7 +258,7 @@ def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
             else:
                 _get_logger().debug("Локальный файл конфигурации не найден или не указан.")
 
-            return _merge_configs(main_config, local_config)
+            return deep_merge(main_config, local_config)
         finally:
             _cm.release_file_lock()
 

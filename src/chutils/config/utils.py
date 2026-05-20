@@ -36,25 +36,26 @@ def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
     return None
 
 
-def _merge_configs(main_config: Dict, local_config: Dict) -> Dict:
+def deep_merge(dict1: Dict, dict2: Dict) -> Dict:
     """
-    Рекурсивно объединяет два словаря конфигурации.
+    Рекурсивно объединяет два словаря.
 
-    Значения из `local_config` имеют приоритет и переопределяют значения из `main_config`.
+    Значения из `dict2` имеют приоритет и переопределяют значения из `dict1`.
+    Изменяет `dict1` на месте.
 
     Args:
-        main_config: Основной словарь конфигурации.
-        local_config: Словарь с локальными переопределениями.
+        dict1: Базовый словарь.
+        dict2: Словарь с переопределениями.
 
     Returns:
-        Объединенный словарь конфигурации.
+        Объединенный словарь.
     """
-    for key, value in local_config.items():
-        if key in main_config and isinstance(main_config[key], dict) and isinstance(value, dict):
-            main_config[key] = _merge_configs(main_config[key], value)
+    for key, value in dict2.items():
+        if key in dict1 and isinstance(dict1[key], dict) and isinstance(value, dict):
+            dict1[key] = deep_merge(dict1[key], value)
         else:
-            main_config[key] = value
-    return main_config
+            dict1[key] = value
+    return dict1
 
 
 def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
