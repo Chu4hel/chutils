@@ -36,20 +36,21 @@ def cli_command(func: F) -> F:
         if args or kwargs:
             return _execute(func, *args, **kwargs)
 
-        # Если вызов без аргументов, проверяем, нужно ли парсить CLI
-        # Мы парсим CLI только если скрипт запущен напрямую или через обертку
-        # Простая эвристика: если sys.argv[0] похож на исполняемый файл
-        # и мы вызваны без аргументов в коде.
+        # Проверяем, запущен ли скрипт напрямую
+        # Инспектируем кадр стека, который вызвал wrapper
+        caller_frame = inspect.currentframe().f_back
+        if caller_frame and caller_frame.f_globals.get("__name__") == "__main__":
+            # Интроспекция сигнатуры и парсинг CLI
+            sig = inspect.signature(func)
+            parser = _create_parser(func, sig)
 
-        # Интроспекция сигнатуры
-        sig = inspect.signature(func)
-        parser = _create_parser(func, sig)
+            # Парсинг аргументов CLI
+            parsed_args = parser.parse_args()
+            func_args = vars(parsed_args)
+            return _execute(func, **func_args)
 
-        # Парсинг аргументов CLI
-        parsed_args = parser.parse_args()
-        func_args = vars(parsed_args)
-
-        return _execute(func, **func_args)
+        # Если вызвано не из __main__, просто вызываем функцию без аргументов
+        return _execute(func)
 
     return wrapper  # type: ignore
 
@@ -109,5 +110,12 @@ def _add_argument(parser: argparse.ArgumentParser, name: str, param: inspect.Par
 def _execute(func: Callable, *args, **kwargs):
     """Выполняет функцию, учитывая её асинхронность."""
     if inspect.iscoroutinefunction(func):
-        return asyncio.run(func(*args, **kwargs))
+        try:
+            # Проверяем, есть ли запущенный цикл событий
+            asyncio.get_running_loop()
+            # Если мы уже в асинхронном цикле, возвращаем корутину для await
+            return func(*args, **kwargs)
+        except RuntimeError:
+            # Если цикла нет (CLI или синхронный вызов), запускаем новый
+            return asyncio.run(func(*args, **kwargs))
     return func(*args, **kwargs)
