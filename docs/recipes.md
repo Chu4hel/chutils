@@ -4,6 +4,39 @@
 
 ## 1. Логирование
 
+### Асинхронное логирование (Performance)
+
+Для высоконагруженных приложений запись логов в файл или консоль может стать «бутылочным горлышком». Включите
+асинхронный режим, чтобы вынести запись в фоновый поток.
+
+```python
+from chutils import setup_logger
+
+# Включение асинхронного режима
+logger = setup_logger(use_async=True)
+
+# Теперь основной поток не будет ждать завершения записи на диск
+logger.info("Это сообщение будет обработано в фоновом потоке")
+```
+
+### Расширенное маскирование PII
+
+`chutils` может автоматически скрывать чувствительные данные (email, карты) не только по конкретным значениям, но и по
+паттернам.
+
+```python
+from chutils import setup_logger
+
+# Настройка автоматического маскирования email и телефонов
+logger = setup_logger(
+    use_predefined_patterns=["email", "phone"],
+    custom_patterns=[r"ID-\d{4}"]  # Свои регулярные выражения
+)
+
+# Выведет: "Contact user [MASKED] at [MASKED]"
+logger.info("Contact user ID-1234 at test@example.com")
+```
+
 ### Несколько логгеров для разных модулей
 
 Если ваше приложение состоит из нескольких крупных компонентов, удобно разделять их логи.
@@ -53,14 +86,17 @@ import asyncio
 
 logger = setup_logger()
 
+
 async def deep_nested_function():
     # Нам не нужно передавать request_id сюда, он подхватится сам!
     logger.info("Лог из глубины приложения")
+
 
 async def handle_request(request_id: str):
     bind_context(request_id=request_id)
     logger.info("Начало обработки")
     await deep_nested_function()
+
 
 # В асинхронном цикле контексты изолированы
 asyncio.gather(
@@ -124,21 +160,23 @@ DB_PASSWORD="my-safe-password"
 
 ```python
 from chutils import (
-    setup_logger, 
-    start_config_watcher, 
-    on_config_change, 
+    setup_logger,
+    start_config_watcher,
+    on_config_change,
     get_config_value
 )
 
 logger = setup_logger()
 
+
 def update_app_state():
     # Читаем новые значения
     new_limit = get_config_value("App", "rate_limit", 100)
     logger.info(f"Лимит обновлен: {new_limit}")
-    
+
     # Здесь можно обновить объект приложения или глобальное состояние
     # app.rate_limiter.set_limit(new_limit)
+
 
 # 1. Подписываемся на изменения
 on_config_change(update_app_state)
@@ -149,7 +187,8 @@ start_config_watcher()
 
 ### Использование с Pydantic моделями
 
-При каждом изменении файла кэш `get_config()` сбрасывается, поэтому вы всегда будете получать свежую провалидированную модель.
+При каждом изменении файла кэш `get_config()` сбрасывается, поэтому вы всегда будете получать свежую провалидированную
+модель.
 
 ```python
 def on_reload():
@@ -186,20 +225,24 @@ process_heavy_task([1, 2, 3])
 
 ### Строгая типизация всей конфигурации
 
-Вы можете описать ожидаемую структуру вашего `config.yml` в виде Pydantic моделей для автоматической валидации при загрузке.
+Вы можете описать ожидаемую структуру вашего `config.yml` в виде Pydantic моделей для автоматической валидации при
+загрузке.
 
 ```python
 from pydantic import BaseModel, Field
 from chutils import get_config
 
+
 class DbConfig(BaseModel):
     host: str
     port: int
+
 
 class AppConfig(BaseModel):
     name: str
     version: str
     db: DbConfig = Field(alias="Database")
+
 
 # Валидация и автодополнение
 cfg = get_config(model=AppConfig)
