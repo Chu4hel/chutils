@@ -55,6 +55,15 @@ members:
 - clear_context
 - ContextFilter
 
+## Модуль `lifecycle` (Управление жизненным циклом)
+
+::: chutils.lifecycle
+options:
+members:
+
+- register_cleanup
+- setup_graceful_shutdown
+
 ## Модуль `secret_manager`
 
 ::: chutils.secret_manager
@@ -64,6 +73,7 @@ members:
 ::: chutils.fs
 options:
 members:
+
 - ensure_dir
 - atomic_write
 - get_temp_file

@@ -384,3 +384,65 @@ with get_temp_file(suffix=".tmp") as temp_path:
 
 # Здесь файл уже удален
 ```
+
+## 10. Graceful Shutdown (Управление жизненным циклом)
+
+Механизм корректного завершения работы приложения позволяет выполнить необходимые действия по очистке ресурсов (закрытие
+соединений с БД, логов, сокетов) при получении сигналов от ОС (например, `Ctrl+C`).
+
+### Регистрация функций очистки
+
+Используйте декоратор `@register_cleanup` для регистрации как синхронных, так и асинхронных функций.
+
+```python
+import asyncio
+from chutils import register_cleanup, setup_graceful_shutdown
+
+
+@register_cleanup
+async def close_db():
+    print("Closing database connections...")
+    await asyncio.sleep(0.1)  # Имитация работы
+    print("DB connections closed.")
+
+
+@register_cleanup
+def cleanup_temp_files():
+    print("Deleting temporary files...")
+
+
+# В начале работы приложения активируйте перехват сигналов
+setup_graceful_shutdown()
+
+
+# Пример работы асинхронного цикла
+async def main():
+    print("App is running... Press Ctrl+C to stop.")
+    while True:
+        await asyncio.sleep(1)
+
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass
+```
+
+### Настройка таймаута
+
+По умолчанию на выполнение всех функций очистки дается 10 секунд. Вы можете изменить это значение в `config.yml`:
+
+```yaml
+# config.yml
+shutdown:
+  timeout: 5 # Таймаут в секундах
+```
+
+### Особенности работы
+
+1. **LIFO (Last-In-First-Out):** Функции выполняются в обратном порядке их регистрации. Это удобно, если ресурсы зависят
+   друг от друга (например, сначала закрыть логгер, потом БД).
+2. **Log and Continue:** Если одна из функций выбросит исключение, `chutils` залогирует ошибку и продолжит выполнение
+   остальных функций.
+3. **Кроссплатформенность:** На Windows перехватываются `SIGINT` и `SIGTERM`, на Linux/Unix дополнительно `SIGHUP`.
