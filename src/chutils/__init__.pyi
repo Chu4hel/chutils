@@ -111,6 +111,16 @@ def register_cleanup(func: Callable[..., Any]) -> Callable[..., Any]: ...
 def setup_graceful_shutdown() -> None: ...
 
 
+# --- time ---
+def utc_now() -> datetime: ...
+
+
+def parse_datetime(value: Union[str, int, float]) -> datetime: ...
+
+
+def humanize_timedelta(dt: datetime, locale: str = 'ru', custom_locales: Optional[dict] = None) -> str: ...
+
+
 # --- secret_manager ---
 class SecretManager:
     def __init__(self, service_name: Optional[str] = None, prefix: Optional[str] = None, auto_mask_logs: bool = True,
@@ -188,3 +198,4 @@ from . import exceptions as exceptions
 from . import context as context
 from . import lifecycle as lifecycle
 from . import features as features
+from . import time as time

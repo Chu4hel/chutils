@@ -18,11 +18,13 @@ pydantic = ["pydantic (>=2.13.4,<3.0.0)"]
 json = ["python-json-logger (>=3.2.1)"]
 watch = ["watchdog (>=6.0.0)"]
 rich = ["rich (>=15.0.0)"]
+date = ["python-dateutil (>=2.9.0)"]
 full = [
     "pydantic (>=2.13.4)",
     "python-json-logger (>=3.2.1)",
     "watchdog (>=6.0.0)",
-    "rich (>=15.0.0)"
+    "rich (>=15.0.0)",
+    "python-dateutil (>=2.9.0)"
 ]
 
 [project.scripts]

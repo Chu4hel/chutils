@@ -61,7 +61,7 @@ def test_rollout_strategy(features_setup):
 
     # Эти user_id подобраны так, чтобы один попадал в 50%, а другой нет
     assert is_feature_enabled("rollout_feature", {"user_id": "user1"}) is True
-    assert is_feature_enabled("rollout_feature", {"user_id": "user16"}) is False
+    assert is_feature_enabled("rollout_feature", {"user_id": "user2"}) is False
 
     # Без контекста должна быть выключена
     assert is_feature_enabled("rollout_feature") is False
@@ -147,4 +147,4 @@ def test_require_feature_with_context(features_setup):
         return "active"
 
     assert feature_func(context={"user_id": "user1"}) == "active"
-    assert feature_func(context={"user_id": "user16"}) is None
+    assert feature_func(context={"user_id": "user2"}) is None

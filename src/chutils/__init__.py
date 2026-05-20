@@ -48,6 +48,7 @@ _LAZY_MAPPING = {
     'exceptions': ('.exceptions', None),
     'context': ('.context', None),
     'lifecycle': ('.lifecycle', None),
+    'time': ('.time', None),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -85,6 +86,11 @@ _LAZY_MAPPING = {
     # lifecycle
     'register_cleanup': ('.lifecycle', 'register_cleanup'),
     'setup_graceful_shutdown': ('.lifecycle', 'setup_graceful_shutdown'),
+
+    # time
+    'utc_now': ('.time', 'utc_now'),
+    'parse_datetime': ('.time', 'parse_datetime'),
+    'humanize_timedelta': ('.time', 'humanize_timedelta'),
 
     # secret_manager
     'SecretManager': ('.secret_manager', 'SecretManager'),

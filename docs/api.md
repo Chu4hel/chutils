@@ -69,6 +69,16 @@ members:
 - register_cleanup
 - setup_graceful_shutdown
 
+## Модуль `time` (Работа со временем)
+
+::: chutils.time
+options:
+members:
+
+- utc_now
+- parse_datetime
+- humanize_timedelta
+
 ## Модуль `features` (Фича-флаги)
 
 ::: chutils.features
