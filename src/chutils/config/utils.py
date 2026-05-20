@@ -6,6 +6,8 @@ import logging
 from pathlib import Path
 from typing import Any, Optional, List, Dict
 
+from .providers import get_providers
+
 # Настраиваем локальный логгер
 logger = logging.getLogger(__name__)
 
@@ -80,6 +82,19 @@ def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
             else:
                 current_level = current_level.setdefault(part, {})
     return nested_dict
+
+
+def _check_pydantic():
+    """Проверяет наличие установленного пакета pydantic."""
+    try:
+        import pydantic
+        return True
+    except ImportError:
+        return False
+
+
+# Реестр провайдеров (использует _nest_ini_dict из этого же модуля)
+_PROVIDERS = get_providers(_nest_ini_dict)
 
 
 def _get_typed_value(

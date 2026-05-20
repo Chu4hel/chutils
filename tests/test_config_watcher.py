@@ -133,7 +133,7 @@ def test_internal_save_suppression(mocker):
     # Мокаем провайдер сохранения
     mock_provider = MagicMock()
     mock_provider.save.return_value = True
-    mocker.patch("chutils.config._PROVIDERS", {".yml": mock_provider})
+    mocker.patch("chutils.config.utils._PROVIDERS", {".yml": mock_provider})
 
     from chutils.config import save_config_value
     from chutils.config.watcher import ConfigChangeHandler

@@ -117,7 +117,7 @@ async def test_aget_config_with_model(config_fs):
 
 def test_get_config_section_import_error(config_fs, monkeypatch):
     """Тест выброса OptionalDependencyError в get_config_section, если pydantic не установлен."""
-    monkeypatch.setattr(config, '_check_pydantic', lambda: False)
+    monkeypatch.setattr("chutils.config.utils._check_pydantic", lambda: False)
 
     fs, project_root = config_fs
     fs.create_file(project_root / "config.yml", contents="Database:\n  host: localhost")
@@ -136,8 +136,8 @@ def test_import_error_when_pydantic_missing(config_fs, monkeypatch):
     original_pydantic = sys.modules.get('pydantic')
 
     try:
-        # Эмулируем отсутствие pydantic через мок внутренней функции
-        monkeypatch.setattr(config, '_check_pydantic', lambda: False)
+        # Эмулируем отсутствие pydantic через мок внутренней функции в utils
+        monkeypatch.setattr("chutils.config.utils._check_pydantic", lambda: False)
 
         fs, project_root = config_fs
         fs.create_file(project_root / "config.yml", contents="key: value")
