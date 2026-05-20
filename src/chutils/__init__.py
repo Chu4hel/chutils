@@ -68,6 +68,10 @@ _LAZY_MAPPING = {
     'generate_env_template': ('.config', 'generate_env_template'),
     'generate_json_schema': ('.config', 'generate_json_schema'),
 
+    # features
+    'is_feature_enabled': ('.features', 'is_feature_enabled'),
+    'require_feature': ('.features', 'require_feature'),
+
     # logger
     'setup_logger': ('.logger', 'setup_logger'),
     'ChutilsLogger': ('.logger', 'ChutilsLogger'),

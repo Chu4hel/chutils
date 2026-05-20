@@ -71,6 +71,13 @@ def generate_env_template(model_class: Type[T], prefix: str = "CH") -> str: ...
 def generate_json_schema(model_class: Type[T]) -> str: ...
 
 
+# --- features ---
+def is_feature_enabled(feature_name: str, context: Optional[Dict[str, Any]] = None) -> bool: ...
+
+
+def require_feature(feature_name: str, fallback: Optional[Callable[..., Any]] = None) -> Callable[[F], F]: ...
+
+
 # --- logger ---
 class ChutilsLogger(logging.Logger):
     def devdebug(self, msg: str, *args: Any, **kwargs: Any) -> None: ...
@@ -180,3 +187,4 @@ from . import decorators as decorators
 from . import exceptions as exceptions
 from . import context as context
 from . import lifecycle as lifecycle
+from . import features as features

@@ -107,6 +107,10 @@ def start_config_watcher() -> bool:
     if local_path and Path(local_path).exists():
         files_to_watch.append(local_path)
 
+    # Добавляем файл фича-флагов, если он есть
+    if _cm.features_file_path and Path(_cm.features_file_path).exists():
+        files_to_watch.append(_cm.features_file_path)
+
     if not files_to_watch:
         logger.warning("Нет файлов конфигурации для отслеживания.")
         return False

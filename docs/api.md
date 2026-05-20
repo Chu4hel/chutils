@@ -69,6 +69,15 @@ members:
 - register_cleanup
 - setup_graceful_shutdown
 
+## Модуль `features` (Фича-флаги)
+
+::: chutils.features
+options:
+members:
+
+- is_feature_enabled
+- require_feature
+
 ## Модуль `cache` (Умное кэширование)
 
 ::: chutils.cache

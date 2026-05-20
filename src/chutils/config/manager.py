@@ -42,9 +42,12 @@ class _ConfigManager:
         with self._lock:
             self._base_dir: Optional[str] = None
             self._config_file_path: Optional[str] = None
+            self._features_file_path: Optional[str] = None
             self._paths_initialized = False
             self._config_object: Optional[Dict] = None
+            self._features_object: Optional[Dict] = None
             self._config_loaded = False
+            self._features_loaded = False
             self._observer: Optional[Any] = None
             self._callbacks: List = []
             self._last_reload_time: float = 0.0
@@ -120,11 +123,47 @@ class _ConfigManager:
         with self._lock:
             self._last_reload_time = value
 
+    @property
+    def features_file_path(self) -> Optional[str]:
+        with self._lock:
+            return self._features_file_path
+
+    @features_file_path.setter
+    def features_file_path(self, value: Optional[str]):
+        with self._lock:
+            self._features_file_path = value
+
+    @property
+    def features_object(self) -> Optional[Dict]:
+        with self._lock:
+            return self._features_object
+
+    @features_object.setter
+    def features_object(self, value: Optional[Dict]):
+        with self._lock:
+            self._features_object = value
+
+    @property
+    def features_loaded(self) -> bool:
+        with self._lock:
+            return self._features_loaded
+
+    @features_loaded.setter
+    def features_loaded(self, value: bool):
+        with self._lock:
+            self._features_loaded = value
+
     def set_config(self, config_data: Dict[str, Any]):
         """Устанавливает новый объект конфигурации в кэш атомарно."""
         with self._lock:
             self._config_object = config_data
             self._config_loaded = True
+
+    def set_features(self, features_data: Dict[str, Any]):
+        """Устанавливает новый объект фича-флагов в кэш атомарно."""
+        with self._lock:
+            self._features_object = features_data
+            self._features_loaded = True
 
     def check_internal_save(self, threshold: float = 0.5) -> bool:
         """Проверяет, было ли недавнее внутреннее сохранение, и сбрасывает флаг."""
@@ -181,6 +220,13 @@ class _ConfigManager:
                     if (project_root / marker).is_file() and marker.startswith('config'):
                         self.config_file_path = str(project_root / marker)
                         break
+
+                # Находим features.yml (фича-флаги)
+                for marker in ['features.yml', 'features.yaml']:
+                    if (project_root / marker).is_file():
+                        self.features_file_path = str(project_root / marker)
+                        break
+
                 logger.debug("Корень проекта автоматически определен: %s", self.base_dir)
             else:
                 logger.warning("Не удалось автоматически найти корень проекта.")
@@ -225,10 +271,17 @@ class _ConfigManager:
             return main_config_path, env_config_path, local_config_path
 
     def clear_cache(self):
-        """Сбрасывает кэш загруженной конфигурации атомарно."""
+        """Сбрасывает кэш загруженной конфигурации и фича-флагов атомарно."""
         with self._lock:
             self._config_object = None
             self._config_loaded = False
+            self.clear_features_cache()
+
+    def clear_features_cache(self):
+        """Сбрасывает кэш фича-флагов атомарно."""
+        with self._lock:
+            self._features_object = None
+            self._features_loaded = False
 
     def load_config_safe(self, load_func: Any) -> Dict[str, Any]:
         """
@@ -249,6 +302,27 @@ class _ConfigManager:
             # Выполняем загрузку (может быть медленной I/O операцией)
             data = load_func()
             self.set_config(data)
+            return data
+
+    def load_features_safe(self, load_func: Any) -> Dict[str, Any]:
+        """
+        Потокобезопасно загружает фича-флаги, если они еще не загружены.
+        Использует loading_lock для предотвращения конкурентной загрузки из файлов.
+        """
+        # Атомарная проверка состояния кэша под основной блокировкой
+        with self._lock:
+            if self._features_loaded and self._features_object is not None:
+                return self._features_object
+
+        with self._loading_lock:
+            # Двойная проверка под блокировкой
+            with self._lock:
+                if self._features_loaded and self._features_object is not None:
+                    return self._features_object
+
+            # Выполняем загрузку
+            data = load_func()
+            self.set_features(data)
             return data
 
     def acquire_file_lock(self):
