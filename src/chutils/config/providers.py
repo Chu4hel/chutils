@@ -3,14 +3,17 @@
 Используют паттерн Стратегия для изоляции логики чтения и записи.
 """
 
+import base64
 import json
 import logging
 import os
 import re
 import tempfile
+import threading
+import urllib.request
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Tuple
 
 import yaml
 
@@ -257,6 +260,117 @@ class IniConfigProvider(ConfigProvider):
                 logger.error("Ошибка записи в файл %s при сохранении: %s", path, e)
                 return False
         return False
+
+
+class HttpConfigProvider:
+    """
+    Провайдер для загрузки конфигурации через HTTP/HTTPS.
+    Поддерживает Basic Auth и периодический опрос (polling).
+    """
+
+    def __init__(
+            self,
+            url: str,
+            username: Optional[str] = None,
+            password: Optional[str] = None,
+            timeout: int = 10,
+            nest_func: Optional[Any] = None
+    ):
+        self.url = url
+        self.username = username
+        self.password = password
+        self.timeout = timeout
+        self._nest_func = nest_func
+        self._cache: Dict[str, Any] = {}
+        self._polling_thread: Optional[threading.Thread] = None
+        self._stop_event = threading.Event()
+
+    def load(self) -> Dict[str, Any]:
+        """
+        Загружает конфигурацию из удаленного источника и парсит ее.
+        """
+        content, content_type = self.fetch()
+        data = self._parse_content(content, content_type)
+        self._cache = data
+        return data
+
+    def _parse_content(self, content: str, content_type: Optional[str]) -> Dict[str, Any]:
+        """
+        Парсит контент на основе Content-Type или расширения URL.
+        """
+        # Определяем формат
+        fmt = None
+        if content_type:
+            ct = content_type.lower()
+            if "json" in ct:
+                fmt = "json"
+            elif "yaml" in ct or "x-yaml" in ct:
+                fmt = "yaml"
+
+        if not fmt:
+            # Пробуем по расширению URL
+            ext = Path(self.url).suffix.lower()
+            if ext in ('.yml', '.yaml'):
+                fmt = "yaml"
+            elif ext == '.json':
+                fmt = "json"
+            elif ext == '.ini':
+                fmt = "ini"
+
+        # По умолчанию пробуем YAML (он наиболее универсален и часто совпадает с JSON)
+        if not fmt:
+            fmt = "yaml"
+
+        try:
+            if fmt == "json":
+                return json.loads(content) or {}
+            elif fmt == "yaml":
+                return yaml.safe_load(content) or {}
+            elif fmt == "ini":
+                import configparser
+                parser = configparser.ConfigParser()
+                parser.read_string(content)
+                flat_ini_config = {s: dict(parser.items(s)) for s in parser.sections()}
+                if self._nest_func:
+                    return self._nest_func(flat_ini_config)
+                return flat_ini_config
+        except Exception as e:
+            logger.error("Ошибка парсинга удаленного конфига (%s): %s", fmt, e)
+            raise ConfigParseError(f"Ошибка парсинга {fmt}: {e}", path=self.url)
+
+        return {}
+
+    def fetch(self) -> Tuple[str, Optional[str]]:
+        """
+        Загружает сырые данные из удаленного эндпоинта.
+
+        Returns:
+            Кортеж (контент, content_type).
+
+        Raises:
+            ConfigLoadError: Если произошла ошибка сети или авторизации.
+        """
+        req = urllib.request.Request(self.url)
+
+        if self.username and self.password:
+            auth_str = f"{self.username}:{self.password}"
+            encoded_auth = base64.b64encode(auth_str.encode('utf-8')).decode('utf-8')
+            req.add_header("Authorization", f"Basic {encoded_auth}")
+
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as response:
+                content = response.read().decode('utf-8')
+                content_type = response.headers.get("Content-Type")
+                return content, content_type
+        except urllib.error.HTTPError as e:
+            logger.error("HTTP ошибка при загрузке конфига с %s: %s", self.url, e)
+            raise ConfigLoadError(f"HTTP ошибка {e.code}: {e.reason}", path=self.url)
+        except urllib.error.URLError as e:
+            logger.error("Ошибка сети при загрузке конфига с %s: %s", self.url, e)
+            raise ConfigLoadError(f"Ошибка сети: {e.reason}", path=self.url)
+        except Exception as e:
+            logger.error("Непредвиденная ошибка при загрузке конфига с %s: %s", self.url, e)
+            raise ConfigLoadError(f"Непредвиденная ошибка: {e}", path=self.url)
 
 
 def get_providers(nest_func) -> Dict[str, ConfigProvider]:
