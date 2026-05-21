@@ -361,8 +361,8 @@ class HttpConfigProvider:
 
                 if isinstance(dynamic_interval, (int, float)) and dynamic_interval > 0:
                     if dynamic_interval != interval:
-                        logger.info("Интервал опроса изменен динамически: %ds -> %ds", interval, dynamic_interval)
-                        interval = int(dynamic_interval)
+                        logger.info("Интервал опроса изменен динамически: %ss -> %ss", interval, dynamic_interval)
+                        interval = float(dynamic_interval)
 
             except Exception as e:
                 logger.error("Ошибка при фоновом обновлении конфига с %s: %s", self.url, e)
