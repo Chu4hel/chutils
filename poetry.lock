@@ -2790,14 +2790,15 @@ type = ["pytest-mypy"]
 
 [extras]
 date = ["python-dateutil"]
-full = ["opentelemetry-api", "opentelemetry-exporter-otlp", "opentelemetry-sdk", "pydantic", "python-dateutil", "python-json-logger", "rich", "watchdog"]
+full = ["keyring", "opentelemetry-api", "opentelemetry-exporter-otlp", "opentelemetry-sdk", "pydantic", "python-dateutil", "python-json-logger", "rich", "watchdog"]
 json = ["python-json-logger"]
 otel = ["opentelemetry-api", "opentelemetry-exporter-otlp", "opentelemetry-sdk"]
 pydantic = ["pydantic"]
 rich = ["rich"]
+secrets = ["keyring"]
 watch = ["watchdog"]
 
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9, !=3.9.0, !=3.9.1"
-content-hash = "8cb53d9c2cc7597446d0ce553edb90a160dd511f0baef9f6df7fca7801ad3486"
+content-hash = "7df41033d4839858b52290b38c1ffdcf15008aa0832b27a90ab39f51d886f831"

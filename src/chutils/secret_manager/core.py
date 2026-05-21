@@ -1,4 +1,5 @@
 import asyncio
+import warnings
 from typing import Optional, List, TYPE_CHECKING
 
 from chutils.exceptions import SecretError
@@ -10,6 +11,38 @@ if TYPE_CHECKING:
 
 # Ленивая инициализация логгера модуля
 _module_logger: Optional['ChutilsLogger'] = None
+
+# Флаг для однократного вывода предупреждения о миграции
+_migration_warned = False
+
+
+def _warn_about_keyring_migration() -> None:
+    """
+    Выводит предупреждение о миграции keyring в опциональные зависимости (один раз за сессию).
+    """
+    global _migration_warned
+    if _migration_warned:
+        return
+
+    # Если пользователь СОВСЕМ выключил keyring, предупреждение о его миграции не нужно
+    if config.get_config_boolean('secrets', 'disable_keyring', fallback=False):
+        _migration_warned = True
+        return
+
+    # Отдельный флаг ТОЛЬКО для скрытия текста предупреждения
+    if config.get_config_boolean('secrets', 'disable_keyring_warning', fallback=False):
+        _migration_warned = True
+        return
+
+    warnings.warn(
+        "В версии 3.0.0 библиотека 'keyring' станет опциональной и будет удалена из основных зависимостей. "
+        "Чтобы избежать поломок в будущем, пожалуйста, обновите ваши зависимости на 'chutils[secrets]'. "
+        "После обновления зависимостей вы можете скрыть это сообщение, установив "
+        "CH_DISABLE_KEYRING_WARNING=true или secrets.disable_keyring_warning: true в конфиге.",
+        FutureWarning,
+        stacklevel=3
+    )
+    _migration_warned = True
 
 
 def _get_logger() -> 'ChutilsLogger':
@@ -52,6 +85,7 @@ class SecretManager:
         Raises:
             SecretError: Если не удалось автоматически определить `service_name`.
         """
+        _warn_about_keyring_migration()
         self.auto_mask_logs = auto_mask_logs
 
         # Определение service_name (логика сохранена для обратной совместимости)
