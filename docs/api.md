@@ -18,6 +18,7 @@ members:
 - get_config
 - aget_config
 - get_config_value
+- HttpConfigProvider
 - get_config_int
 - get_config_float
 - get_config_boolean

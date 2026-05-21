@@ -39,6 +39,7 @@ Every time you start a new project, you have to solve the same tasks:
 - **⏰ Painless Datetime:** Always-aware UTC time utilities, smart parsing, and human-readable time intervals.
 - **📡 Distributed Tracing:** Seamless OpenTelemetry integration with `@trace` decorator and automatic log correlation.
 - **🔍 Config Diagnostics:** Interactive trace of configuration sources and priorities via `config debug` command.
+- **🌐 Remote Configuration:** Load settings from HTTP/HTTPS endpoints with background polling and fallback support.
 - **🔄 Hot-Reload:** Support for automatic configuration reloading on file changes without restart (requires
   `pip install chutils[watch]`).
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.

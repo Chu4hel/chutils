@@ -653,3 +653,63 @@ def process_order(order_id: int):
 - **OTLP:** Для промышленного использования (Jaeger, Grafana Tempo) используйте `exporter_type="otlp"`.
 - **Zero Overhead:** Если пакеты `opentelemetry` не установлены, декоратор `@trace` не создает никаких накладных
   расходов.
+
+## 15. Дистанционная конфигурация (Remote Config)
+
+`chutils` позволяет загружать настройки из удаленных HTTP/HTTPS источников. Это полезно для централизованного управления
+конфигурациями в микросервисной архитектуре.
+
+### Быстрый старт
+
+Просто укажите URL при получении конфигурации:
+
+```python
+from chutils import get_config
+
+# Загрузка и объединение с локальными файлами
+config = get_config(remote_url="https://api.example.com/config.json")
+```
+
+### Периодический опрос (Polling)
+
+Вы можете настроить автоматическое фоновое обновление конфигурации:
+
+```python
+# Опрос каждые 60 секунд
+config = get_config(
+    remote_url="https://api.example.com/config.json",
+    polling_interval=60
+)
+```
+
+### Динамический интервал
+
+Вы можете управлять интервалом опроса прямо из удаленного конфига. Если в загруженных данных есть секция
+`RemoteConfig` (или `polling`) с ключом `interval`, `chutils` автоматически переключится на этот интервал.
+
+```json
+{
+  "RemoteConfig": {
+    "interval": 300
+  },
+  "Database": {
+    "host": "remote-db"
+  }
+}
+```
+
+### Авторизация и безопасность
+
+Для доступа к защищенным эндпоинтам используйте `remote_auth`:
+
+```python
+config = get_config(
+    remote_url="https://secure-config.local/app.yml",
+    remote_auth=("admin", "secret-token")
+)
+```
+
+### Отказоустойчивость (Fallback)
+
+Если удаленный сервер временно недоступен, `chutils` автоматически вернет последнюю успешно загруженную версию из
+памяти (кэша), чтобы приложение продолжало работать.
