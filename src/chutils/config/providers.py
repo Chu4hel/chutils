@@ -288,11 +288,84 @@ class HttpConfigProvider:
     def load(self) -> Dict[str, Any]:
         """
         Загружает конфигурацию из удаленного источника и парсит ее.
+        В случае ошибки возвращает закешированную версию (Fallback).
         """
-        content, content_type = self.fetch()
-        data = self._parse_content(content, content_type)
-        self._cache = data
-        return data
+        try:
+            content, content_type = self.fetch()
+            data = self._parse_content(content, content_type)
+            self._cache = data
+            return data
+        except Exception as e:
+            if self._cache:
+                logger.warning("Не удалось обновить удаленный конфиг (%s). Используем кэш.", e)
+                return self._cache
+            raise e
+
+    def start_polling(self, interval: int = 60):
+        """
+        Запускает фоновое обновление конфигурации.
+
+        Args:
+            interval: Интервал опроса в секундах.
+        """
+        if self._polling_thread and self._polling_thread.is_alive():
+            return
+
+        self._stop_event.clear()
+        self._polling_thread = threading.Thread(
+            target=self._polling_worker,
+            args=(interval,),
+            name="HttpConfigPolling",
+            daemon=True
+        )
+        self._polling_thread.start()
+        logger.debug("Запущен фоновый опрос для %s (интервал %ds)", self.url, interval)
+
+    def stop_polling(self):
+        """
+        Останавливает фоновое обновление.
+        """
+        self._stop_event.set()
+        if self._polling_thread:
+            self._polling_thread.join(timeout=2)
+            self._polling_thread = None
+        logger.debug("Опрос для %s остановлен", self.url)
+
+    def _polling_worker(self, interval: int):
+        """
+        Фоновый воркер для опроса.
+        """
+        while not self._stop_event.is_set():
+            # Ждем интервал, проверяя событие остановки каждые 0.5 сек для быстрой реакции
+            wait_remaining = interval
+            while wait_remaining > 0 and not self._stop_event.is_set():
+                time_to_wait = min(0.5, wait_remaining)
+                self._stop_event.wait(time_to_wait)
+                wait_remaining -= time_to_wait
+
+            if self._stop_event.is_set():
+                break
+
+            try:
+                # Пытаемся загрузить. Если успешно - кэш обновится внутри load()
+                new_data = self.load()
+
+                # Проверяем наличие динамического интервала в конфиге
+                # Секция 'polling' или 'RemoteConfig', ключ 'interval'
+                dynamic_interval = None
+                if isinstance(new_data, dict):
+                    # Ищем в разных возможных местах
+                    remote_meta = new_data.get('RemoteConfig') or new_data.get('polling')
+                    if isinstance(remote_meta, dict):
+                        dynamic_interval = remote_meta.get('interval')
+
+                if isinstance(dynamic_interval, (int, float)) and dynamic_interval > 0:
+                    if dynamic_interval != interval:
+                        logger.info("Интервал опроса изменен динамически: %ds -> %ds", interval, dynamic_interval)
+                        interval = int(dynamic_interval)
+
+            except Exception as e:
+                logger.error("Ошибка при фоновом обновлении конфига с %s: %s", self.url, e)
 
     def _parse_content(self, content: str, content_type: Optional[str]) -> Dict[str, Any]:
         """

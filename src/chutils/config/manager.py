@@ -54,6 +54,17 @@ class _ConfigManager:
             self._last_internal_save_time: float = 0.0
             self._tracing_enabled: bool = False
             self._trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
+            self._remote_provider: Optional[Any] = None
+
+    @property
+    def remote_provider(self) -> Optional[Any]:
+        with self._lock:
+            return self._remote_provider
+
+    @remote_provider.setter
+    def remote_provider(self, value: Optional[Any]):
+        with self._lock:
+            self._remote_provider = value
 
     @property
     def tracing_enabled(self) -> bool:

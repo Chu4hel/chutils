@@ -8,12 +8,12 @@
 import asyncio
 import logging
 from pathlib import Path
-from typing import Any, Optional, Dict, TYPE_CHECKING, TypeVar, Type, Union
+from typing import Any, Optional, Dict, TYPE_CHECKING, TypeVar, Type, Union, Tuple
 
 from chutils.exceptions import OptionalDependencyError
 from . import utils
 from .manager import _cm
-from .providers import get_providers
+from .providers import get_providers, HttpConfigProvider
 
 if TYPE_CHECKING:
     from pydantic import BaseModel
@@ -27,7 +27,12 @@ logger = logging.getLogger(__name__)
 _PROVIDERS = get_providers(utils._nest_ini_dict)
 
 
-def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
+def get_config(
+        model: Optional[Type[T]] = None,
+        remote_url: Optional[str] = None,
+        remote_auth: Optional[Tuple[str, str]] = None,
+        polling_interval: Optional[int] = None
+) -> Union[Dict[str, Any], T]:
     """
     Загружает и объединяет конфигурацию из всех доступных источников.
 
@@ -38,10 +43,15 @@ def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
     1. Основной файл (config.yml)
     2. Файл окружения (config.{CH_ENV}.yml)
     3. Локальный файл (config.local.yml)
-    4. Переменные окружения (CH_SECTION_KEY)
+    4. Удаленный источник (если указан remote_url)
+    5. Переменные окружения (CH_SECTION_KEY)
 
     Args:
         model: Опциональный класс Pydantic модели для валидации.
+        remote_url: URL для загрузки удаленной конфигурации.
+        remote_auth: Кортеж (login, password) для Basic Auth.
+        polling_interval: Интервал опроса удаленного источника в секундах.
+            Если не указан, опрос не запускается.
 
     Returns:
        Словарь со всей конфигурацией проекта или экземпляр Pydantic модели.
@@ -94,6 +104,32 @@ def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
                 utils.deep_merge(config_data, data)
             else:
                 logger.debug("Локальный файл конфигурации не найден или не указан.")
+
+            # 4. Удаленный источник (HttpConfigProvider)
+            if remote_url:
+                username, password = remote_auth if remote_auth else (None, None)
+                if not _cm.remote_provider or _cm.remote_provider.url != remote_url:
+                    # Останавливаем старый опрос, если был
+                    if _cm.remote_provider:
+                        _cm.remote_provider.stop_polling()
+
+                    provider = HttpConfigProvider(
+                        url=remote_url,
+                        username=username,
+                        password=password,
+                        nest_func=utils._nest_ini_dict
+                    )
+                    _cm.remote_provider = provider
+
+                    if polling_interval:
+                        provider.start_polling(interval=polling_interval)
+
+                try:
+                    remote_data = _cm.remote_provider.load()
+                    _cm.record_trace_dict(remote_data, remote_url)
+                    utils.deep_merge(config_data, remote_data)
+                except Exception as e:
+                    logger.error("Ошибка загрузки удаленной конфигурации с %s: %s", remote_url, e)
 
             # Записываем переменные окружения в трассировку
             if _cm.tracing_enabled:
