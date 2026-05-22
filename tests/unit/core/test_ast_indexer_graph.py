@@ -42,6 +42,7 @@ def test_dependency_graph_weights(tmp_path):
     pkg = tmp_path / "chutils"
     pkg.mkdir()
     (pkg / "__init__.py").write_text("", encoding="utf-8")
+    (pkg / "core.py").write_text("", encoding="utf-8")  # Создаем цель для резолвера
 
     logic = pkg / "logic.py"
     logic.write_text("import chutils.core\nimport chutils.core\nfrom chutils import core", encoding="utf-8")

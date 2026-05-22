@@ -3,8 +3,9 @@
 """
 
 import ast
+import re
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Dict
 
 from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge
 
@@ -14,7 +15,12 @@ class Indexer:
 
     def __init__(self, root_path: str):
         self.root_path = Path(root_path).resolve()
-        self.project_root = self.root_path.parent if (self.root_path / "__init__.py").exists() else self.root_path
+        # Если это пакет (есть __init__), то база для путей - родитель (например, 'src' или корень проекта)
+        if (self.root_path / "__init__.py").exists():
+            self.project_root = self.root_path.parent
+        else:
+            self.project_root = self.root_path
+
         self._graph_map: Dict[str, Dict[str, int]] = {}  # {source: {target: weight}}
         self._public_symbols = self._discover_public_api()
 
@@ -27,19 +33,38 @@ class Indexer:
                 edges.append(GraphEdge(source=source, target=target, weight=weight))
         return edges
 
-    def _record_dependency(self, source: str, target_module: str):
+    def _resolve_module_path(self, module_path: str) -> str:
+        """Резолвит строку импорта в путь к модулю/пакету внутри проекта."""
+        parts = module_path.split('.')
+        current = ""
+        best_match = ""
+
+        for part in parts:
+            if not current:
+                current = part
+            else:
+                current = f"{current}/{part}"
+
+            # Проверяем, существует ли такой путь относительно project_root
+            full_path = self.project_root / current
+            if full_path.is_dir() or (full_path.with_suffix('.py')).is_file():
+                best_match = current
+
+        return best_match if best_match else module_path.replace('.', '/')
+
+    def _record_dependency(self, source: str, target_module: str, force_internal: bool = False):
         """Регистрирует связь между модулями."""
-        # Нам нужны только внутренние зависимости chutils
-        if not target_module.startswith("chutils") and not target_module.startswith("."):
+        # Нам нужны только внутренние зависимости chutils или принудительно помеченные
+        if not force_internal and not target_module.startswith("chutils") and not target_module.startswith("."):
             return
 
-        # Нормализуем путь цели (очень упрощенно)
-        # В реальной библиотеке chutils.* превращаем в путь
-        target_path = target_module.replace(".", "/")
-        if target_path.startswith("chutils"):
-            # Превращаем в путь от корня (src/chutils/...)
-            # Предполагаем структуру src/chutils
-            target_path = "src/" + target_path
+        # Нормализуем путь цели
+        if target_module.startswith(".") and not any(c.isalnum() for c in target_module):
+            # Если это чисто точки ('.', '..'), оставляем как есть
+            target_path = target_module
+        else:
+            # Пытаемся зарезолвить в реальный путь модуля
+            target_path = self._resolve_module_path(target_module)
 
         if source == target_path:
             return
@@ -86,11 +111,10 @@ class Indexer:
             dependency_graph=self._graph
         )
 
-    def _get_layer(self, name: str, docstring: str, is_module: bool = False) -> str:
+    def _get_layer(self, name: str, docstring: str) -> str:
         """Определяет слой абстракции."""
         # 1. Явный оверрайд в docstring
         if "@layer:" in docstring:
-            import re
             match = re.search(r"@layer:\s*(\w+)", docstring)
             if match:
                 return match.group(1).lower()
@@ -107,9 +131,12 @@ class Indexer:
 
     def _build_node_tree(self, current_path: Path) -> Node:
         """Рекурсивно строит дерево узлов (пакетов и модулей)."""
-        rel_path = str(current_path.relative_to(self.project_root.parent)).replace("\\", "/")
+        # rel_path теперь всегда строится от project_root (например, 'chutils/core')
+        rel_path = str(current_path.relative_to(self.project_root)).replace("\\", "/")
         if rel_path.endswith(".py"):
             rel_path = rel_path[:-3]
+        if rel_path == ".":
+            rel_path = current_path.name
 
         is_pkg = (current_path / "__init__.py").exists()
         node_type = "package" if is_pkg else "module"
@@ -129,7 +156,7 @@ class Indexer:
             name=current_path.name.replace(".py", ""),
             path=rel_path,
             type=node_type,
-            layer=self._get_layer(current_path.name.replace(".py", ""), docstring, True),
+            layer=self._get_layer(current_path.name.replace(".py", ""), docstring),
             docstring=docstring,
             summary=docstring.split('\n')[0] if docstring else ""
         )
@@ -141,11 +168,22 @@ class Indexer:
                     for alias in item.names:
                         self._record_dependency(rel_path, alias.name)
                 elif isinstance(item, ast.ImportFrom):
-                    if item.module:
-                        self._record_dependency(rel_path, item.module)
-                    elif item.level > 0:
-                        # Относительный импорт (from . import ...)
-                        self._record_dependency(rel_path, "." * item.level)
+                    is_relative = item.level > 0
+                    base = item.module if item.module else "." * item.level
+
+                    if base:
+                        for alias in item.names:
+                            if alias.name == "*":
+                                self._record_dependency(rel_path, base, force_internal=is_relative)
+                                continue
+
+                            if is_relative:
+                                # Для относительных импортов в тестах ожидается база ('.', '..')
+                                self._record_dependency(rel_path, base, force_internal=True)
+                            else:
+                                # Для абсолютных строим полный путь 'chutils.core'
+                                target = f"{base}.{alias.name}"
+                                self._record_dependency(rel_path, target)
 
         if is_pkg:
             # Обработка пакета
@@ -221,7 +259,6 @@ class Indexer:
                     breadcrumbs.decorators.append(f"{dec.func.value.id}.{dec.func.attr}")
 
         # Теги из docstring (:tag:)
-        import re
         tags = re.findall(r":([\w-]+):", docstring)
         breadcrumbs.tags = list(set(tags))
 
