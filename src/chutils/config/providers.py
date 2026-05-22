@@ -3,17 +3,43 @@
 Используют паттерн Стратегия для изоляции логики чтения и записи.
 """
 
+import base64
 import json
 import logging
+import os
 import re
+import tempfile
+import threading
+import urllib.request
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Tuple
 
 import yaml
 
+from chutils.exceptions import ConfigLoadError, ConfigParseError
+
 # Настраиваем локальный логгер
 logger = logging.getLogger(__name__)
+
+
+def _atomic_write(path: str, content_writer_func: Any):
+    """
+    Вспомогательная функция для атомарной записи в файл через временный файл.
+    """
+    dir_path = os.path.dirname(os.path.abspath(path))
+    # Создаем временный файл в той же директории, чтобы гарантировать нахождение на одном разделе (нужно для os.replace)
+    fd, temp_path = tempfile.mkstemp(dir=dir_path, text=True)
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            content_writer_func(f)
+
+        # Атомарная замена (на Windows заменит существующий файл)
+        os.replace(temp_path, path)
+    except Exception as e:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        raise e
 
 
 class ConfigProvider(ABC):
@@ -60,9 +86,12 @@ class YamlConfigProvider(ConfigProvider):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 return yaml.safe_load(f) or {}
-        except (yaml.YAMLError, FileNotFoundError) as e:
-            logger.critical("Ошибка чтения YAML файла конфигурации %s: %s", path, e)
-            return {}
+        except FileNotFoundError:
+            raise ConfigLoadError(f"Файл конфигурации не найден: {path}", path=path)
+        except yaml.YAMLError as e:
+            raise ConfigParseError(f"Ошибка парсинга YAML в файле {path}: {e}", path=path)
+        except Exception as e:
+            raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
         try:
@@ -73,8 +102,10 @@ class YamlConfigProvider(ConfigProvider):
                 data[section] = {}
             data[section][key] = value
 
-            with open(path, 'w', encoding='utf-8') as f:
+            def writer(f):
                 yaml.dump(data, f, allow_unicode=True, sort_keys=False)
+
+            _atomic_write(path, writer)
             return True
         except Exception as e:
             logger.error("Ошибка при сохранении в YAML файл %s: %s", path, e)
@@ -90,9 +121,12 @@ class JsonConfigProvider(ConfigProvider):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 return json.load(f) or {}
-        except (json.JSONDecodeError, FileNotFoundError) as e:
-            logger.critical("Ошибка чтения JSON файла конфигурации %s: %s", path, e)
-            return {}
+        except FileNotFoundError:
+            raise ConfigLoadError(f"Файл конфигурации не найден: {path}", path=path)
+        except json.JSONDecodeError as e:
+            raise ConfigParseError(f"Ошибка парсинга JSON в файле {path}: {e}", path=path)
+        except Exception as e:
+            raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
         try:
@@ -108,8 +142,10 @@ class JsonConfigProvider(ConfigProvider):
                 data[section] = {}
             data[section][key] = value
 
-            with open(path, 'w', encoding='utf-8') as f:
+            def writer(f):
                 json.dump(data, f, indent=4, ensure_ascii=False)
+
+            _atomic_write(path, writer)
             return True
         except Exception as e:
             logger.error("Ошибка при сохранении в JSON файл %s: %s", path, e)
@@ -133,9 +169,12 @@ class IniConfigProvider(ConfigProvider):
                 parser.read_string(f.read())
                 flat_ini_config = {s: dict(parser.items(s)) for s in parser.sections()}
                 return self._nest_func(flat_ini_config)
-        except (configparser.Error, FileNotFoundError) as e:
-            logger.critical("Ошибка чтения INI файла конфигурации %s: %s", path, e)
-            return {}
+        except FileNotFoundError:
+            raise ConfigLoadError(f"Файл конфигурации не найден: {path}", path=path)
+        except configparser.Error as e:
+            raise ConfigParseError(f"Ошибка парсинга INI в файле {path}: {e}", path=path)
+        except Exception as e:
+            raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
         if not Path(path).exists():
@@ -212,13 +251,199 @@ class IniConfigProvider(ConfigProvider):
 
         if updated:
             try:
-                with open(path, 'w', encoding='utf-8') as f:
+                def writer(f):
                     f.writelines(new_lines)
+
+                _atomic_write(path, writer)
                 return True
-            except IOError as e:
+            except Exception as e:
                 logger.error("Ошибка записи в файл %s при сохранении: %s", path, e)
                 return False
         return False
+
+
+class HttpConfigProvider:
+    """
+    Провайдер для загрузки конфигурации через HTTP/HTTPS.
+    Поддерживает Basic Auth и периодический опрос (polling).
+    """
+
+    def __init__(
+            self,
+            url: str,
+            username: Optional[str] = None,
+            password: Optional[str] = None,
+            timeout: int = 10,
+            nest_func: Optional[Any] = None
+    ):
+        self.url = url
+        self.username = username
+        self.password = password
+        self.timeout = timeout
+        self._nest_func = nest_func
+        self._cache: Dict[str, Any] = {}
+        self._polling_thread: Optional[threading.Thread] = None
+        self._stop_event = threading.Event()
+
+    def load(self) -> Dict[str, Any]:
+        """
+        Загружает конфигурацию из удаленного источника и парсит ее.
+        В случае ошибки возвращает закешированную версию (Fallback).
+        """
+        try:
+            content, content_type = self.fetch()
+            data = self._parse_content(content, content_type)
+            self._cache = data
+            return data
+        except Exception as e:
+            if self._cache:
+                logger.warning("Не удалось обновить удаленный конфиг (%s). Используем кэш.", e)
+                return self._cache
+            raise e
+
+    def start_polling(self, interval: int = 60):
+        """
+        Запускает фоновое обновление конфигурации.
+
+        Args:
+            interval: Интервал опроса в секундах.
+        """
+        if self._polling_thread and self._polling_thread.is_alive():
+            return
+
+        self._stop_event.clear()
+        self._polling_thread = threading.Thread(
+            target=self._polling_worker,
+            args=(interval,),
+            name="HttpConfigPolling",
+            daemon=True
+        )
+        self._polling_thread.start()
+        logger.debug("Запущен фоновый опрос для %s (интервал %ds)", self.url, interval)
+
+    def stop_polling(self):
+        """
+        Останавливает фоновое обновление.
+        """
+        self._stop_event.set()
+        if self._polling_thread:
+            self._polling_thread.join(timeout=2)
+            self._polling_thread = None
+        logger.debug("Опрос для %s остановлен", self.url)
+
+    def _polling_worker(self, interval: int):
+        """
+        Фоновый воркер для опроса.
+        """
+        while not self._stop_event.is_set():
+            # Ждем интервал, проверяя событие остановки каждые 0.5 сек для быстрой реакции
+            wait_remaining = interval
+            while wait_remaining > 0 and not self._stop_event.is_set():
+                time_to_wait = min(0.5, wait_remaining)
+                self._stop_event.wait(time_to_wait)
+                wait_remaining -= time_to_wait
+
+            if self._stop_event.is_set():
+                break
+
+            try:
+                # Пытаемся загрузить. Если успешно - кэш обновится внутри load()
+                new_data = self.load()
+
+                # Проверяем наличие динамического интервала в конфиге
+                # Секция 'polling' или 'RemoteConfig', ключ 'interval'
+                dynamic_interval = None
+                if isinstance(new_data, dict):
+                    # Ищем в разных возможных местах
+                    remote_meta = new_data.get('RemoteConfig') or new_data.get('polling')
+                    if isinstance(remote_meta, dict):
+                        dynamic_interval = remote_meta.get('interval')
+
+                if isinstance(dynamic_interval, (int, float)) and dynamic_interval > 0:
+                    if dynamic_interval != interval:
+                        logger.info("Интервал опроса изменен динамически: %ss -> %ss", interval, dynamic_interval)
+                        interval = float(dynamic_interval)
+
+            except Exception as e:
+                logger.error("Ошибка при фоновом обновлении конфига с %s: %s", self.url, e)
+
+    def _parse_content(self, content: str, content_type: Optional[str]) -> Dict[str, Any]:
+        """
+        Парсит контент на основе Content-Type или расширения URL.
+        """
+        # Определяем формат
+        fmt = None
+        if content_type:
+            ct = content_type.lower()
+            if "json" in ct:
+                fmt = "json"
+            elif "yaml" in ct or "x-yaml" in ct:
+                fmt = "yaml"
+
+        if not fmt:
+            # Пробуем по расширению URL
+            ext = Path(self.url).suffix.lower()
+            if ext in ('.yml', '.yaml'):
+                fmt = "yaml"
+            elif ext == '.json':
+                fmt = "json"
+            elif ext == '.ini':
+                fmt = "ini"
+
+        # По умолчанию пробуем YAML (он наиболее универсален и часто совпадает с JSON)
+        if not fmt:
+            fmt = "yaml"
+
+        try:
+            if fmt == "json":
+                return json.loads(content) or {}
+            elif fmt == "yaml":
+                return yaml.safe_load(content) or {}
+            elif fmt == "ini":
+                import configparser
+                parser = configparser.ConfigParser()
+                parser.read_string(content)
+                flat_ini_config = {s: dict(parser.items(s)) for s in parser.sections()}
+                if self._nest_func:
+                    return self._nest_func(flat_ini_config)
+                return flat_ini_config
+        except Exception as e:
+            logger.error("Ошибка парсинга удаленного конфига (%s): %s", fmt, e)
+            raise ConfigParseError(f"Ошибка парсинга {fmt}: {e}", path=self.url)
+
+        return {}
+
+    def fetch(self) -> Tuple[str, Optional[str]]:
+        """
+        Загружает сырые данные из удаленного эндпоинта.
+
+        Returns:
+            Кортеж (контент, content_type).
+
+        Raises:
+            ConfigLoadError: Если произошла ошибка сети или авторизации.
+        """
+        req = urllib.request.Request(self.url)
+
+        if self.username and self.password:
+            auth_str = f"{self.username}:{self.password}"
+            encoded_auth = base64.b64encode(auth_str.encode('utf-8')).decode('utf-8')
+            req.add_header("Authorization", f"Basic {encoded_auth}")
+
+        try:
+            with urllib.request.urlopen(req, timeout=self.timeout) as response:
+                content = response.read().decode('utf-8')
+                content_type = response.headers.get("Content-Type")
+                return content, content_type
+        except urllib.error.HTTPError as e:
+            logger.error("HTTP ошибка при загрузке конфига с %s: %s", self.url, e)
+            raise ConfigLoadError(f"HTTP ошибка {e.code}: {e.reason}", path=self.url)
+        except urllib.error.URLError as e:
+            logger.error("Ошибка сети при загрузке конфига с %s: %s", self.url, e)
+            raise ConfigLoadError(f"Ошибка сети: {e.reason}", path=self.url)
+        except Exception as e:
+            logger.error("Непредвиденная ошибка при загрузке конфига с %s: %s", self.url, e)
+            raise ConfigLoadError(f"Непредвиденная ошибка: {e}", path=self.url)
 
 
 def get_providers(nest_func) -> Dict[str, ConfigProvider]:

@@ -32,34 +32,122 @@
 
 """
 
+import importlib
 import os
+from typing import Any
 
-from . import config
-from . import logger
-from .config import (
-    get_config,
-    get_config_value,
-    get_config_int,
-    get_config_float,
-    get_config_boolean,
-    get_config_list,
-    get_config_section,
-    get_config_path,
-    aget_config,
-    save_config_value,
-    asave_config_value,
-    start_config_watcher,
-    stop_config_watcher,
-    on_config_change,
-)
-from .context import bind_context, unbind_context, clear_context
-from .decorators import log_function_details, retry, timeout
-from .logger import (
-    setup_logger,
-    ChutilsLogger,
-    SafeTimedRotatingFileHandler
-)
-from .secret_manager import SecretManager
+# Словарь соответствия имен атрибутов их модулям и именам внутри этих модулей.
+# Формат: 'имя_атрибута': ('относительный_путь_к_модулю', 'имя_в_модуле' или None для самого модуля)
+_LAZY_MAPPING = {
+    # modules
+    'config': ('.config', None),
+    'logger': ('.logger', None),
+    'secret_manager': ('.secret_manager', None),
+    'decorators': ('.decorators', None),
+    'cache': ('.cache', None),
+    'exceptions': ('.exceptions', None),
+    'context': ('.context', None),
+    'lifecycle': ('.lifecycle', None),
+    'time': ('.time', None),
+    'tracing': ('.tracing', None),
+    'testing': ('.testing', None),
+
+    # config
+    'get_config': ('.config', 'get_config'),
+    'get_config_value': ('.config', 'get_config_value'),
+    'get_config_int': ('.config', 'get_config_int'),
+    'get_config_float': ('.config', 'get_config_float'),
+    'get_config_boolean': ('.config', 'get_config_boolean'),
+    'get_config_list': ('.config', 'get_config_list'),
+    'get_config_section': ('.config', 'get_config_section'),
+    'get_config_path': ('.config', 'get_config_path'),
+    'aget_config': ('.config', 'aget_config'),
+    'save_config_value': ('.config', 'save_config_value'),
+    'asave_config_value': ('.config', 'asave_config_value'),
+    'start_config_watcher': ('.config', 'start_config_watcher'),
+    'stop_config_watcher': ('.config', 'stop_config_watcher'),
+    'on_config_change': ('.config', 'on_config_change'),
+    'generate_yaml_template': ('.config', 'generate_yaml_template'),
+    'generate_env_template': ('.config', 'generate_env_template'),
+    'generate_json_schema': ('.config', 'generate_json_schema'),
+
+    # features
+    'is_feature_enabled': ('.features', 'is_feature_enabled'),
+    'require_feature': ('.features', 'require_feature'),
+
+    # logger
+    'setup_logger': ('.logger', 'setup_logger'),
+    'ChutilsLogger': ('.logger', 'ChutilsLogger'),
+    'SafeTimedRotatingFileHandler': ('.logger', 'SafeTimedRotatingFileHandler'),
+
+    # context
+    'bind_context': ('.context', 'bind_context'),
+    'unbind_context': ('.context', 'unbind_context'),
+    'clear_context': ('.context', 'clear_context'),
+
+    # lifecycle
+    'register_cleanup': ('.lifecycle', 'register_cleanup'),
+    'setup_graceful_shutdown': ('.lifecycle', 'setup_graceful_shutdown'),
+
+    # cli_booster
+    'cli_command': ('.cli_booster', 'cli_command'),
+
+    # time
+    'utc_now': ('.time', 'utc_now'),
+    'parse_datetime': ('.time', 'parse_datetime'),
+    'humanize_timedelta': ('.time', 'humanize_timedelta'),
+
+    # secret_manager
+    'SecretManager': ('.secret_manager', 'SecretManager'),
+
+    # decorators
+    'log_function_details': ('.decorators', 'log_function_details'),
+    'retry': ('.decorators', 'retry'),
+    'timeout': ('.decorators', 'timeout'),
+
+    # tracing
+    'trace': ('.tracing', 'trace'),
+    'setup_tracing': ('.tracing', 'setup_tracing'),
+    'IS_OTEL_AVAILABLE': ('.tracing', 'IS_OTEL_AVAILABLE'),
+
+    # exceptions
+    'ChutilsException': ('.exceptions', 'ChutilsException'),
+    'ConfigError': ('.exceptions', 'ConfigError'),
+    'ConfigLoadError': ('.exceptions', 'ConfigLoadError'),
+    'ConfigParseError': ('.exceptions', 'ConfigParseError'),
+    'SecretError': ('.exceptions', 'SecretError'),
+    'SecretNotFoundError': ('.exceptions', 'SecretNotFoundError'),
+    'SecretProviderError': ('.exceptions', 'SecretProviderError'),
+    'LoggerConfigurationError': ('.exceptions', 'LoggerConfigurationError'),
+    'WatcherInitializationError': ('.exceptions', 'WatcherInitializationError'),
+    'OptionalDependencyError': ('.exceptions', 'OptionalDependencyError'),
+    'ChutilsTimeoutError': ('.exceptions', 'ChutilsTimeoutError'),
+}
+
+
+def __getattr__(name: str) -> Any:
+    """
+    Реализация ленивой загрузки согласно PEP 562.
+    Вызывается при обращении к атрибутам модуля, которые не определены явно.
+    """
+    if name in _LAZY_MAPPING:
+        mod_path, attr_name = _LAZY_MAPPING[name]
+        module = importlib.import_module(mod_path, __name__)
+        if attr_name is None:
+            return module
+        return getattr(module, attr_name)
+
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def __dir__():
+    """
+    Возвращает список всех доступных атрибутов для поддержки автодополнения и интроспекции.
+    """
+    return sorted(list(_LAZY_MAPPING.keys()) + [
+        'init', '__all__', '__doc__', '__file__', '__path__',
+        '__name__', '__package__', '__spec__'
+    ])
 
 
 def init(base_dir: str):
@@ -74,54 +162,23 @@ def init(base_dir: str):
         base_dir (str): Абсолютный путь к корневой директории проекта.
 
     Raises:
-        ValueError: Если указанная директория не существует.
+        ChutilsException: Если указанная директория не существует.
     """
     if not os.path.isdir(base_dir):
-        raise ValueError(f"Указанная директория base_dir не существует или не является директорией: {base_dir}")
+        # Импортируем исключение лениво
+        from .exceptions import ChutilsException
+        raise ChutilsException(
+            f"Указанная директория base_dir не существует или не является директорией: {base_dir}",
+            base_dir=base_dir
+        )
 
     # Вручную устанавливаем базовую директорию через менеджер состояний.
-    config._cm.base_dir = base_dir
-    config._cm.paths_initialized = True
+    from .config.manager import _cm
+    _cm.base_dir = base_dir
+    _cm.paths_initialized = True
 
     print(f"Пакет chutils вручную инициализирован с базовой директорией: {base_dir}")
 
 
 # --- Определение публичного API (`__all__`) ---
-# Определяет, что будет импортировано при `from chutils import *`
-
-__all__ = [
-    # Основная функция ручной инициализации
-    'init',
-
-    # Функции и классы из модуля config
-    'get_config',
-    'get_config_value',
-    'get_config_int',
-    'get_config_float',
-    'get_config_boolean',
-    'get_config_list',
-    'get_config_section',
-    'get_config_path',
-    'aget_config',
-    "save_config_value",
-    'asave_config_value',
-    'start_config_watcher',
-    'stop_config_watcher',
-    'on_config_change',
-
-    # Функции и классы из модуля logger
-    'setup_logger',
-    'ChutilsLogger',
-    'SafeTimedRotatingFileHandler',
-    'bind_context',
-    'unbind_context',
-    'clear_context',
-
-    # Классы из модуля secret_manager
-    'SecretManager',
-
-    # Декораторы
-    'log_function_details',
-    'retry',
-    'timeout',
-]
+__all__ = list(_LAZY_MAPPING.keys()) + ['init']

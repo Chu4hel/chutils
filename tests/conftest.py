@@ -5,7 +5,8 @@ import pytest
 
 @pytest.fixture
 def config_fs(fs):  # fs - это фикстура из pyfakefs
-    from chutils import config, logger
+    from chutils import config
+    from chutils.logger import core as logger_core
     """
     Настраивает фейковую файловую систему и сбрасывает состояние модулей config и logger.
     """
@@ -13,9 +14,9 @@ def config_fs(fs):  # fs - это фикстура из pyfakefs
     config._cm._reset()
 
     # Сброс состояния модуля logger
-    logger._LOG_DIR = None
-    logger._file_handler_cache.clear()
-    logger._initialization_message_shown = False
+    logger_core._LOG_DIR = None
+    logger_core._file_handler_cache.clear()
+    logger_core._initialization_message_shown = False
 
     # Создание файловой структуры
     project_root = Path("/home/user/project")

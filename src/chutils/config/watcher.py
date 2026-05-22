@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 from typing import List, Callable
 
+from chutils.exceptions import OptionalDependencyError
 from .manager import _cm
 from .utils import find_project_root
 
@@ -20,8 +21,7 @@ def on_config_change(callback: Callable[[], None]) -> None:
     Args:
         callback: Функция без аргументов.
     """
-    if callback not in _cm.callbacks:
-        _cm.callbacks.append(callback)
+    if _cm.add_callback(callback):
         logger.debug("Зарегистрирован коллбэк на изменение конфигурации: %s",
                      getattr(callback, '__name__', str(callback)))
 
@@ -49,9 +49,7 @@ class ConfigChangeHandler:
         current_time = time.monotonic()
 
         # Подавляем уведомление, если это было внутреннее сохранение с notify=False
-        # Используем небольшой запас времени (0.5 сек) для синхронизации событий ОС
-        if current_time - _cm._last_internal_save_time < 0.5:
-            _cm._last_internal_save_time = 0.0  # Сбрасываем флаг
+        if _cm.check_internal_save(0.5):
             logger.debug("Hot-Reload подавлен (внутреннее сохранение).")
             return
 
@@ -62,11 +60,10 @@ class ConfigChangeHandler:
         logger.info("Обнаружено изменение конфигурации. Сброс кэша...")
 
         # Сбрасываем кэш
-        _cm.config_object = None
-        _cm.config_loaded = False
+        _cm.clear_cache()
 
         # Вызываем коллбэки
-        for callback in _cm.callbacks:
+        for callback in _cm.get_callbacks():
             try:
                 callback()
             except Exception as e:
@@ -83,14 +80,15 @@ def start_config_watcher() -> bool:
         True, если watcher успешно запущен.
 
     Raises:
-        ImportError: Если пакет watchdog не установлен.
+        OptionalDependencyError: Если пакет `watchdog` не установлен.
     """
     try:
         from watchdog.observers import Observer
     except ImportError:
-        raise ImportError(
+        raise OptionalDependencyError(
             "Пакет 'watchdog' необходим для работы hot-reload. "
-            "Установите его с помощью 'pip install chutils[watch]' или 'poetry add watchdog'."
+            "Установите его с помощью 'pip install chutils[watch]' или 'poetry add watchdog'.",
+            dependency="watchdog"
         )
 
     if _cm.observer and _cm.observer.is_alive():
@@ -100,12 +98,18 @@ def start_config_watcher() -> bool:
     if not _cm.paths_initialized:
         _cm.initialize_paths(find_project_root)
 
-    main_path, local_path = _cm.get_config_paths()
+    main_path, env_path, local_path = _cm.get_config_paths()
     files_to_watch = []
     if main_path and Path(main_path).exists():
         files_to_watch.append(main_path)
+    if env_path and Path(env_path).exists():
+        files_to_watch.append(env_path)
     if local_path and Path(local_path).exists():
         files_to_watch.append(local_path)
+
+    # Добавляем файл фича-флагов, если он есть
+    if _cm.features_file_path and Path(_cm.features_file_path).exists():
+        files_to_watch.append(_cm.features_file_path)
 
     if not files_to_watch:
         logger.warning("Нет файлов конфигурации для отслеживания.")

@@ -34,6 +34,12 @@ Every time you start a new project, you have to solve the same tasks:
   box. It returns a custom logger with additional debug levels (`devdebug`, `mediumdebug`).
 - **🔒 Secure Secret Storage:** The `secret_manager` module provides a simple interface for saving and retrieving secrets
   via the system `keyring`, with a fallback to `.env` files.
+- **🚀 CLI Booster:** Turn any function into a CLI tool in seconds using the `@cli_command` decorator with automatic type
+  mapping and docstring parsing.
+- **⏰ Painless Datetime:** Always-aware UTC time utilities, smart parsing, and human-readable time intervals.
+- **📡 Distributed Tracing:** Seamless OpenTelemetry integration with `@trace` decorator and automatic log correlation.
+- **🔍 Config Diagnostics:** Interactive trace of configuration sources and priorities via `config debug` command.
+- **🌐 Remote Configuration:** Load settings from HTTP/HTTPS endpoints with background polling and fallback support.
 - **🔄 Hot-Reload:** Support for automatic configuration reloading on file changes without restart (requires
   `pip install chutils[watch]`).
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.
@@ -249,8 +255,15 @@ In environments like Docker or CI/CD where `keyring` is unavailable, you can sup
 - `@log_function_details`: Logs arguments, execution time, and result (uses `DEVDEBUG` level).
 - `@timeout(seconds, fallback)`: Limits function execution time. Supports sync/async and optional fallback.
 - `@retry`: Automatically retries a function if it fails. Supports sync/async, backoff, jitter, and exception filtering.
+- `@cli_command`: Turns any function into a standalone CLI script with automatic argument parsing.
 
-#### Example of @retry usage:
+### Time & Dates (`chutils.time`)
+
+- `utc_now()`: Returns a timezone-aware UTC datetime.
+- `parse_datetime(value)`: Smart parsing of strings and timestamps into UTC.
+- `humanize_timedelta(dt)`: Returns human-readable strings like "5 minutes ago" or "tomorrow".
+
+### Example of @retry usage:
 
 ```python
 from chutils.decorators import retry
@@ -260,6 +273,66 @@ from chutils.decorators import retry
 def fetch_data():
     # Will be retried up to 3 times on any Exception
     ...
+```
+
+## Command Line Interface (CLI)
+
+`chutils` includes a set of tools to speed up development and debugging.
+
+### 1. Initialize Project
+
+Quickly set up a new project with a default configuration and `.gitignore` rules:
+
+```bash
+# Interactive mode
+chutils init
+
+# Non-interactive mode (default values)
+chutils init -y
+```
+
+### 2. Validate Configuration
+
+Check if your configuration files match your Pydantic models:
+
+```bash
+# Automatically finds 'Settings' class in context.py or config.py
+chutils validate
+
+# Explicitly specify the model path
+chutils validate --model src.settings:AppConfig
+```
+
+### 3. Debug Search Paths
+
+See exactly where `chutils` is looking for configuration files:
+
+```bash
+# Human-readable output
+chutils show-paths
+
+# JSON output for automation
+chutils show-paths --json
+```
+
+### 4. Manage Secrets
+
+Manage your system keyring secrets directly from the terminal:
+
+```bash
+# Set a secret
+chutils secrets set API_KEY "your-secret-value" --service my_app
+
+# Delete a secret
+chutils secrets delete API_KEY --service my_app
+```
+
+### 5. Debug Configuration
+
+Trace exactly where each configuration value comes from:
+
+```bash
+chutils config debug
 ```
 
 ## License

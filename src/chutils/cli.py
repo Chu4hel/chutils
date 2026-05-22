@@ -1,66 +1,52 @@
 import argparse
 import sys
 
-from chutils import config
-from chutils.secret_manager import SecretManager
-
-
-def handle_secrets_set(args: argparse.Namespace):
-    """Обработчик команды сохранения секрета."""
-    service_name = args.service or config.get_config_value("Secrets", "service_name", "")
-    sm = SecretManager(service_name)
-
-    if sm.save_secret(args.key, args.value):
-        print(f"[OK] Секрет '{args.key}' успешно сохранен в системном хранилище.")
-    else:
-        print(f"[ERROR] Не удалось сохранить секрет '{args.key}'. Проверьте доступность keyring.")
-        sys.exit(1)
-
-
-def handle_secrets_delete(args: argparse.Namespace):
-    """Обработчик команды удаления секрета."""
-    service_name = args.service or config.get_config_value("Secrets", "service_name", "")
-    sm = SecretManager(service_name)
-
-    if sm.delete_secret(args.key):
-        print(f"[OK] Секрет '{args.key}' успешно удален.")
-    else:
-        print(f"[ERROR] Не удалось удалить секрет '{args.key}' или он не существовал.")
-        sys.exit(1)
+from chutils.commands import get_commands
 
 
 def main():
     """Точка входа в CLI."""
     parser = argparse.ArgumentParser(
         prog="chutils",
-        description="Набор утилит chutils для командной строки."
+        description="""
+Набор утилит chutils для командной строки.
+Помогает инициализировать проекты, управлять секретами и проверять конфигурацию.
+""",
+        epilog="""
+Примеры использования:
+  chutils init -y
+  chutils secrets set API_KEY "value"
+  chutils validate --model myapp.config:Settings
+  chutils show-paths --json
+""",
+        formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    subparsers = parser.add_subparsers(dest="command", help="Команды")
+    subparsers = parser.add_subparsers(
+        title="Доступные команды",
+        dest="command", 
+        metavar="COMMAND",
+        help="Используйте 'chutils COMMAND --help' для получения справки по конкретной команде"
+    )
 
-    # Секция секретов
-    secrets_parser = subparsers.add_parser("secrets", help="Управление секретами")
-    secrets_subparsers = secrets_parser.add_subparsers(dest="subcommand", help="Действия с секретами")
+    # Регистрируем все доступные команды
+    for cmd_class in get_commands():
+        cmd_instance = cmd_class()
+        cmd_instance.register(subparsers)
 
-    # secrets set <key> <value>
-    set_parser = secrets_subparsers.add_parser("set", help="Сохранить секрет")
-    set_parser.add_argument("key", help="Имя ключа")
-    set_parser.add_argument("value", help="Значение секрета")
-    set_parser.add_argument("-s", "--service", help="Имя сервиса (service_name) для keyring")
-
-    # secrets delete <key>
-    delete_parser = secrets_subparsers.add_parser("delete", help="Удалить секрет")
-    delete_parser.add_argument("key", help="Имя ключа")
-    delete_parser.add_argument("-s", "--service", help="Имя сервиса (service_name) для keyring")
+    # Если аргументы не переданы, выводим help
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(0)
 
     args = parser.parse_args()
 
-    if args.command == "secrets":
-        if args.subcommand == "set":
-            handle_secrets_set(args)
-        elif args.subcommand == "delete":
-            handle_secrets_delete(args)
-        else:
-            secrets_parser.print_help()
+    # Диспетчеризация выполнения
+    if hasattr(args, 'handler'):
+        try:
+            args.handler(args)
+        except Exception as e:
+            print(f"[ERROR] Ошибка при выполнении команды: {e}")
+            sys.exit(1)
     else:
         parser.print_help()
 
