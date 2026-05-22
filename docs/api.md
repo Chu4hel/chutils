@@ -149,3 +149,10 @@ members:
 ## Исключения
 
 ::: chutils.exceptions
+
+## Тестирование
+
+Подробную информацию о pytest-фикстурах для тестирования приложений с `chutils` см. в
+разделе [Тестирование с chutils](./testing.md).
+
+::: chutils.testing
