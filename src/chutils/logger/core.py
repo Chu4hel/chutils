@@ -26,10 +26,8 @@ from .masking import (
     _update_mask_re,
     PREDEFINED_PATTERNS
 )
-from .. import config
-from ..cli_utils import get_console
+from .. import config, env
 from ..context import ContextFilter
-from ..env import is_rich_enabled
 
 # --- Глобальное состояние для асинхронного логирования ---
 
@@ -380,7 +378,7 @@ def setup_logger(
     else:
         formatter = logging.Formatter(log_format)
 
-    if is_rich_enabled() and not final_json_format:
+    if env.is_rich_enabled() and not final_json_format:
         from rich.logging import RichHandler
         from chutils.cli_utils import get_console
         console_handler = RichHandler(

@@ -7,7 +7,7 @@ from chutils.exceptions import OptionalDependencyError
 
 from .manager import _cm
 from .utils import find_project_root
-from ..env import WATCHDOG_AVAILABLE
+from .. import env
 
 # Настраиваем логгер
 logger = logging.getLogger(__name__)
@@ -84,7 +84,7 @@ def start_config_watcher() -> bool:
     Raises:
         OptionalDependencyError: Если пакет `watchdog` не установлен.
     """
-    if not WATCHDOG_AVAILABLE:
+    if not env.WATCHDOG_AVAILABLE:
         raise OptionalDependencyError(
             "Пакет 'watchdog' необходим для работы hot-reload. "
             "Установите его с помощью 'pip install chutils[watch]' или 'poetry add watchdog'.",

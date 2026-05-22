@@ -15,10 +15,10 @@ from chutils.config.watcher import ConfigChangeHandler
 from chutils.exceptions import OptionalDependencyError
 
 
-def test_graceful_degradation_no_watchdog(mocker):
+def test_graceful_degradation_no_watchdog(monkeypatch):
     """Тест: start_config_watcher бросает OptionalDependencyError, если watchdog не установлен."""
-    # Эмулируем отсутствие watchdog
-    mocker.patch.dict(sys.modules, {'watchdog': None, 'watchdog.observers': None, 'watchdog.events': None})
+    # Эмулируем отсутствие watchdog через централизованный флаг
+    monkeypatch.setattr("chutils.env.WATCHDOG_AVAILABLE", False)
 
     with pytest.raises(OptionalDependencyError) as excinfo:
         start_config_watcher()
