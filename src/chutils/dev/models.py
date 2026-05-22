@@ -21,6 +21,7 @@ class Symbol(BaseModel):
     """Описание функции, класса или константы."""
     name: str
     type: str  # function, class, constant, method
+    layer: str = "internal"  # public, private, internal, infrastructure
     signature: Optional[str] = None
     summary: str = ""
     docstring: Optional[str] = None
