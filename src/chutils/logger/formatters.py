@@ -10,8 +10,12 @@ try:
     except ImportError:
         from pythonjsonlogger import jsonlogger
     JSON_LOGGER_AVAILABLE = True
+except ImportError:
+    JSON_LOGGER_AVAILABLE = False
+    jsonlogger = None
 
 
+if JSON_LOGGER_AVAILABLE:
     class ChutilsJsonFormatter(jsonlogger.JsonFormatter):
         """
         Кастомный JSON-форматтер, который группирует контекстные данные
@@ -40,6 +44,5 @@ try:
                 log_record['trace_id'] = record.trace_id
             if 'span_id' not in log_record and hasattr(record, 'span_id'):
                 log_record['span_id'] = record.span_id
-
-except ImportError:
-    JSON_LOGGER_AVAILABLE = False
+else:
+    ChutilsJsonFormatter = None
