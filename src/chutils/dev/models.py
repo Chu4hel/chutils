@@ -20,8 +20,10 @@ class Breadcrumbs(BaseModel):
 class Symbol(BaseModel):
     """Описание функции, класса или константы."""
     name: str
-    type: str  # function, class, constant, method
-    layer: str = "internal"  # public, private, internal, infrastructure
+    type: str
+    """function, class, constant, method"""
+    layer: str = "internal"
+    """public, private, internal, infrastructure"""
     signature: Optional[str] = None
     summary: str = ""
     docstring: Optional[str] = None
@@ -32,9 +34,12 @@ class Symbol(BaseModel):
 class Node(BaseModel):
     """Узел дерева (пакет или модуль)."""
     name: str
-    path: str  # Относительный путь от корня проекта
-    type: str  # package, module
-    layer: str = "internal"  # public, private, internal, infrastructure
+    path: str
+    """Относительный путь от корня проекта"""
+    type: str
+    """package, module"""
+    layer: str = "internal"
+    """public, private, internal, infrastructure"""
     summary: str = ""
     docstring: Optional[str] = None
     children: List["Node"] = Field(default_factory=list)
@@ -43,9 +48,12 @@ class Node(BaseModel):
 
 class GraphEdge(BaseModel):
     """Связь в графе зависимостей."""
-    source: str  # Путь к исходному модулю
-    target: str  # Путь к целевому модулю
-    weight: int = 1  # Количество импортов/вызовов
+    source: str
+    """Путь к исходному модулю"""
+    target: str
+    """Путь к целевому модулю"""
+    weight: int = 1
+    """Количество импортов/вызовов"""
 
 
 class ProjectIndex(BaseModel):
