@@ -95,7 +95,8 @@ class ConfigCommand(BaseCommand):
         if args.format == 'json':
             print(output)
         else:
-            self.console.print(output)
+            # Отключаем markup, так как в текстовом режиме [section] воспринимается как тег и удаляется
+            self.console.print(output, markup=False)
 
     def handle_generate_schema(self, args: argparse.Namespace):
         """Обработчик команды генерации JSON Schema."""
