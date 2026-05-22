@@ -133,7 +133,11 @@ class DevCommand(BaseCommand):
             self.console.print(
                 f"[bold green] [OK] [/bold green] Контекст успешно сохранен в: [cyan]{args.output}[/cyan]")
         else:
-            self.console.print("\n" + output_content)
+            if args.format == "json":
+                # В stdout выводим чистый JSON для парсинга ИИ
+                print(output_content)
+            else:
+                self.console.print("\n" + output_content)
 
     def _handle_tree_index(self, args: argparse.Namespace):
         """Генерация иерархического индекса (Phase 5)."""
