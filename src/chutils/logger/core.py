@@ -405,7 +405,9 @@ def setup_logger(
         formatter = logging.Formatter(log_format)
 
     if is_rich_enabled() and not final_json_format:
+        from chutils.cli_utils import get_console
         console_handler = RichHandler(
+            console=get_console(stderr=True),
             rich_tracebacks=True,
             markup=True,
             tracebacks_show_locals=True,

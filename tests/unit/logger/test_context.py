@@ -2,7 +2,6 @@ import asyncio
 import json
 
 import pytest
-
 from chutils import bind_context, unbind_context, clear_context
 from chutils.logger import setup_logger
 
@@ -52,8 +51,11 @@ def test_bind_unbind_clear():
     assert get_context() == {}
 
 
-def test_text_log_context_attribute(capsys):
+def test_text_log_context_attribute(capsys, monkeypatch):
     """Проверяет наличие %(context)s в текстовом логе."""
+    # Отключаем Rich для предсказуемого текстового вывода через стандартный Formatter
+    monkeypatch.setenv("CH_NO_RICH", "1")
+
     clear_context()
     logger = setup_logger(name="text_ctx_test", json_format=False, force_reconfigure=True)
 

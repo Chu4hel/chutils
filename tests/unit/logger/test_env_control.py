@@ -7,6 +7,8 @@ from chutils.logger import core as chutils_logger_core
 def test_log_no_time_env_var(monkeypatch, capsys):
     """Проверка удаления даты/времени из лога при CH_LOG_NO_TIME=1."""
     monkeypatch.setenv("CH_LOG_NO_TIME", "true")
+    # Отключаем Rich для предсказуемого текстового вывода
+    monkeypatch.setenv("CH_NO_RICH", "1")
 
     # Принудительно перенастраиваем логгер
     test_logger = chutils_logger_core.setup_logger("test_no_time", force_reconfigure=True)
@@ -48,6 +50,8 @@ def test_env_vars_priority_over_params(monkeypatch, capsys, tmp_path):
     """Проверка того, что переменные окружения имеют приоритет над параметрами setup_logger."""
     monkeypatch.setenv("CH_LOG_NO_TIME", "yes")
     monkeypatch.setenv("CH_LOG_NO_FILE", "true")
+    # Отключаем Rich для предсказуемого текстового вывода
+    monkeypatch.setenv("CH_NO_RICH", "1")
 
     log_file = tmp_path / "priority_test.log"
     chutils_logger_core._file_handler_cache.clear()

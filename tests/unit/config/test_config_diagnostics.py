@@ -35,15 +35,17 @@ def test_format_json_masking():
     assert parsed_raw["auth"]["password"][0]["value"] == "secret"
 
 
-def test_format_table_text_fallback():
+def test_format_table_text_fallback(monkeypatch):
     """Проверяет текстовый вывод таблицы (без Rich)."""
+    # Принудительно отключаем Rich для теста
+    monkeypatch.setenv("CH_NO_RICH", "1")
+
     trace_data = {
         "db": {
             "host": [{"source": "config.yml", "value": "localhost"}, {"source": "env", "value": "prod"}]
         }
     }
 
-    # Принудительно отключаем Rich для теста, если он есть, через мок или просто проверяем наличие строк
     output = format_trace(trace_data, format_type='table')
     assert "[db] host = prod" in output
     assert "<- env: prod" in output

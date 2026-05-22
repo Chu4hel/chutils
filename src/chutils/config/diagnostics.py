@@ -59,9 +59,13 @@ def _format_json(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_se
 
 def _format_table(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_secrets: bool) -> str:
     """Форматирует трассировку в таблицу (Rich или текст)."""
+    from chutils.cli_utils import is_color_enabled
+    import os
+
+    use_rich = RICH_AVAILABLE and is_color_enabled() and not os.getenv("CH_NO_RICH")
     console = get_console()
 
-    if RICH_AVAILABLE:
+    if use_rich:
         from rich.table import Table
         table = Table(title="Трассировка конфигурации (Diagnostics)", show_lines=True)
         table.add_column("Секция", style="cyan")
@@ -100,9 +104,13 @@ def _format_table(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_s
 
 def _format_tree(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_secrets: bool) -> str:
     """Форматирует трассировку в дерево (Rich или текст)."""
+    from chutils.cli_utils import is_color_enabled
+    import os
+
+    use_rich = RICH_AVAILABLE and is_color_enabled() and not os.getenv("CH_NO_RICH")
     console = get_console()
 
-    if RICH_AVAILABLE:
+    if use_rich:
         from rich.tree import Tree
         root = Tree("📁 [bold blue]Configuration Root[/bold blue]")
 
