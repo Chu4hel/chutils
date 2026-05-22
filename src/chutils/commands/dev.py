@@ -1,4 +1,9 @@
 import argparse
+import inspect
+import json
+from pathlib import Path
+
+import chutils
 
 from .base import BaseCommand
 
@@ -35,6 +40,16 @@ class DevCommand(BaseCommand):
             "-o", "--output",
             help="Путь к файлу для сохранения (если не указан, выводит в консоль)"
         )
+        gen_parser.add_argument(
+            "--tree",
+            action="store_true",
+            help="Генерировать иерархический семантический индекс (JSON дерево)"
+        )
+        gen_parser.add_argument(
+            "--no-weights",
+            action="store_true",
+            help="Не включать веса зависимостей в графе (только для --tree)"
+        )
         gen_parser.set_defaults(handler=self.handle_generate_context)
 
     def handle(self, args: argparse.Namespace):
@@ -43,12 +58,11 @@ class DevCommand(BaseCommand):
 
     def handle_generate_context(self, args: argparse.Namespace):
         """Обработчик генерации контекста."""
-        import inspect
-        import json
-        import chutils
-
         # Используем stderr для статусных сообщений, чтобы не портить stdout (особенно для JSON)
         self.err_console.print("[bold yellow]Генерация контекста API...[/bold yellow]", style="yellow")
+
+        if args.tree:
+            return self._handle_tree_index(args)
 
         api_data = []
 
@@ -114,3 +128,35 @@ class DevCommand(BaseCommand):
                 f"[bold green] [OK] [/bold green] Контекст успешно сохранен в: [cyan]{args.output}[/cyan]")
         else:
             self.console.print("\n" + output_content)
+
+    def _handle_tree_index(self, args: argparse.Namespace):
+        """Генерация иерархического индекса (Phase 5)."""
+        from chutils.dev.ast_indexer import Indexer
+
+        try:
+            # Находим путь к пакету chutils
+            pkg_path = Path(chutils.__file__).parent
+
+            indexer = Indexer(str(pkg_path))
+            index = indexer.index()
+
+            # Если указано --no-weights, обнуляем веса в графе
+            if args.no_weights:
+                for edge in index.dependency_graph:
+                    edge.weight = 1
+
+            # Семантический индекс всегда в JSON
+            output_content = index.model_dump_json(indent=2)
+
+            if args.output:
+                with open(args.output, "w", encoding="utf-8") as f:
+                    f.write(output_content)
+                self.console.print(
+                    f"[bold green] [OK] [/bold green] Иерархический индекс успешно сохранен в: [cyan]{args.output}[/cyan]")
+            else:
+                # В stdout выводим чистый JSON для парсинга ИИ
+                print(output_content)
+
+        except Exception as e:
+            self.console.print(f"[bold red]Ошибка при генерации индекса:[/bold red] {e}")
+            raise SystemExit(1)
