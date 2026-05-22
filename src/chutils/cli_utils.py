@@ -1,25 +1,13 @@
-import os
 import re
 import sys
 from typing import Any
 
-# Пытаемся импортировать rich
-RICH_AVAILABLE = False
-try:
+from .env import RICH_AVAILABLE, is_rich_enabled
+
+if RICH_AVAILABLE:
     from rich.console import Console
     from rich.table import Table
     from rich.panel import Panel
-
-    RICH_AVAILABLE = True
-except ImportError:
-    pass
-
-
-def is_color_enabled() -> bool:
-    """Проверяет, включена ли цветовая индикация."""
-    no_color = os.getenv("NO_COLOR", "").lower() in ["true", "1", "yes", "y"]
-    ch_no_color = os.getenv("CH_NO_COLOR", "").lower() in ["true", "1", "yes", "y"]
-    return not (no_color or ch_no_color)
 
 
 class FallbackConsole:
@@ -79,7 +67,7 @@ def get_console(stderr: bool = False) -> Any:
     if stderr:
         if _err_console is not None:
             return _err_console
-        if RICH_AVAILABLE and is_color_enabled():
+        if is_rich_enabled():
             _err_console = Console(stderr=True)
         else:
             _err_console = FallbackConsole(stderr=True)
@@ -88,7 +76,7 @@ def get_console(stderr: bool = False) -> Any:
     if _console is not None:
         return _console
 
-    if RICH_AVAILABLE and is_color_enabled():
+    if is_rich_enabled():
         _console = Console()
     else:
         _console = FallbackConsole()

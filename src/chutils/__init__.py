@@ -88,7 +88,6 @@ _LAZY_MAPPING = {
     'LogLevel': ('.logger', 'LogLevel'),
     'SecretMaskingFilter': ('.logger', 'SecretMaskingFilter'),
     'ChutilsJsonFormatter': ('.logger', 'ChutilsJsonFormatter'),
-    'JSON_LOGGER_AVAILABLE': ('.logger', 'JSON_LOGGER_AVAILABLE'),
     'SafeTimedRotatingFileHandler': ('.logger', 'SafeTimedRotatingFileHandler'),
     'CompressingRotatingFileHandler': ('.logger', 'CompressingRotatingFileHandler'),
     'CompressingTimedRotatingFileHandler': ('.logger', 'CompressingTimedRotatingFileHandler'),
@@ -97,7 +96,15 @@ _LAZY_MAPPING = {
 
     # cli_utils
     'get_console': ('.cli_utils', 'get_console'),
-    'RICH_AVAILABLE': ('.cli_utils', 'RICH_AVAILABLE'),
+
+    # env (Discovery)
+    'is_rich_enabled': ('.env', 'is_rich_enabled'),
+    'is_otel_enabled': ('.env', 'is_otel_enabled'),
+    'RICH_AVAILABLE': ('.env', 'RICH_AVAILABLE'),
+    'PYDANTIC_AVAILABLE': ('.env', 'PYDANTIC_AVAILABLE'),
+    'WATCHDOG_AVAILABLE': ('.env', 'WATCHDOG_AVAILABLE'),
+    'JSON_LOGGER_AVAILABLE': ('.env', 'JSON_LOGGER_AVAILABLE'),
+    'OTEL_AVAILABLE': ('.env', 'OTEL_AVAILABLE'),
 
     # cache
     'cache_with_ttl': ('.cache', 'cache_with_ttl'),

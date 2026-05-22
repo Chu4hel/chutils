@@ -7,17 +7,22 @@ import json
 from pathlib import Path
 from typing import Optional, Type, Union
 
-try:
-    from pydantic import BaseModel
+from ..env import PYDANTIC_AVAILABLE
 
-    PYDANTIC_AVAILABLE = True
-except ImportError:
+if PYDANTIC_AVAILABLE:
+    try:
+        from pydantic import BaseModel
+    except ImportError:
+        # Редкий случай рассинхрона
+        PYDANTIC_AVAILABLE = False
+
+
+        class BaseModel:  # type: ignore
+            pass
+else:
     class BaseModel:  # type: ignore
         """Заглушка для работы без Pydantic."""
         pass
-
-
-    PYDANTIC_AVAILABLE = False
 
 
 def _check_pydantic() -> None:

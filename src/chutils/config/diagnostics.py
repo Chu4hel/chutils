@@ -5,7 +5,8 @@
 import json
 from typing import Dict, List, Any
 
-from chutils.cli_utils import RICH_AVAILABLE, get_console
+from chutils.cli_utils import get_console
+from chutils.env import is_rich_enabled
 
 # Список ключевых слов, значения которых должны маскироваться по умолчанию
 SECRET_KEYWORDS = {
@@ -59,10 +60,7 @@ def _format_json(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_se
 
 def _format_table(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_secrets: bool) -> str:
     """Форматирует трассировку в таблицу (Rich или текст)."""
-    from chutils.cli_utils import is_color_enabled
-    import os
-
-    use_rich = RICH_AVAILABLE and is_color_enabled() and not os.getenv("CH_NO_RICH")
+    use_rich = is_rich_enabled()
     console = get_console()
 
     if use_rich:
@@ -104,10 +102,7 @@ def _format_table(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_s
 
 def _format_tree(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_secrets: bool) -> str:
     """Форматирует трассировку в дерево (Rich или текст)."""
-    from chutils.cli_utils import is_color_enabled
-    import os
-
-    use_rich = RICH_AVAILABLE and is_color_enabled() and not os.getenv("CH_NO_RICH")
+    use_rich = is_rich_enabled()
     console = get_console()
 
     if use_rich:

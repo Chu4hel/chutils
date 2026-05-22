@@ -27,7 +27,9 @@ from .masking import (
     PREDEFINED_PATTERNS
 )
 from .. import config
+from ..cli_utils import get_console
 from ..context import ContextFilter
+from ..env import is_rich_enabled
 
 # --- Глобальное состояние для асинхронного логирования ---
 
@@ -49,32 +51,6 @@ def _stop_all_async_loggers():
 
 
 atexit.register(_stop_all_async_loggers)
-
-# --- Опциональная интеграция с Rich ---
-
-RICH_AVAILABLE = False
-try:
-    from rich.logging import RichHandler
-    from rich.console import Console
-
-    RICH_AVAILABLE = True
-except ImportError:
-    pass
-
-
-def is_rich_enabled() -> bool:
-    """
-    Проверяет, доступен ли Rich и не отключены ли цвета через переменные окружения.
-    """
-    if not RICH_AVAILABLE:
-        return False
-
-    # Проверка стандартных переменных отключения цвета
-    no_color = os.getenv("NO_COLOR", "").lower() in ["true", "1", "yes", "y"]
-    ch_no_color = os.getenv("CH_NO_COLOR", "").lower() in ["true", "1", "yes", "y"]
-
-    return not (no_color or ch_no_color)
-
 
 # --- Пользовательские уровни логирования ---
 
@@ -405,6 +381,7 @@ def setup_logger(
         formatter = logging.Formatter(log_format)
 
     if is_rich_enabled() and not final_json_format:
+        from rich.logging import RichHandler
         from chutils.cli_utils import get_console
         console_handler = RichHandler(
             console=get_console(stderr=True),

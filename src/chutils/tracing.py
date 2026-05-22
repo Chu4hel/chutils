@@ -9,15 +9,21 @@ import functools
 import inspect
 from typing import Any, Callable, Optional, TypeVar, cast
 
+from .env import OTEL_AVAILABLE
+
 T = TypeVar("T", bound=Callable[..., Any])
 
-try:
-    from opentelemetry import trace as otel_trace
+# Совместимость с внутренним кодом
+IS_OTEL_AVAILABLE = OTEL_AVAILABLE
 
-    IS_OTEL_AVAILABLE = True
-except ImportError:
+if IS_OTEL_AVAILABLE:
+    try:
+        from opentelemetry import trace as otel_trace
+    except ImportError:
+        otel_trace = None  # type: ignore
+        IS_OTEL_AVAILABLE = False
+else:
     otel_trace = None  # type: ignore
-    IS_OTEL_AVAILABLE = False
 
 
 def get_tracer(name: str = "chutils") -> Any:

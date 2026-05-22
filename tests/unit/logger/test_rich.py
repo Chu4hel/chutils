@@ -2,9 +2,8 @@ import logging
 from unittest.mock import MagicMock
 
 import pytest
-
+from chutils.env import is_rich_enabled
 from chutils.logger import setup_logger
-from chutils.logger.core import is_rich_enabled
 
 
 @pytest.fixture
@@ -13,9 +12,9 @@ def mock_rich(monkeypatch, mocker):
     Мокаем наличие Rich.
     """
     mock_handler_instance = MagicMock(spec=logging.Handler)
-    # Патчим RICH_AVAILABLE в модуле core
-    monkeypatch.setattr("chutils.logger.core.RICH_AVAILABLE", True)
-    # Патчим сам класс RichHandler, чтобы он возвращал наш мок. 
+    # Патчим RICH_AVAILABLE в модуле cli_utils
+    monkeypatch.setattr("chutils.cli_utils.RICH_AVAILABLE", True)
+    # Патчим сам класс RichHandler в core, чтобы он возвращал наш мок. 
     # Используем create=True на случай, если при первом импорте rich не был доступен.
     mocker.patch("chutils.logger.core.RichHandler", return_value=mock_handler_instance, create=True)
     return mock_handler_instance
@@ -52,7 +51,8 @@ def test_rich_handler_not_used_when_rich_unavailable(monkeypatch, reset_chutils_
     """
     Проверяет, что при отсутствии rich используется стандартный StreamHandler.
     """
-    monkeypatch.setattr("chutils.logger.core.RICH_AVAILABLE", False)
+    monkeypatch.setattr("chutils.cli_utils.RICH_AVAILABLE",
+                        False)
 
     logger = setup_logger("test_no_rich", force_reconfigure=True)
 
@@ -64,7 +64,8 @@ def test_is_rich_enabled_logic(monkeypatch):
     """
     Проверяет логику функции is_rich_enabled.
     """
-    monkeypatch.setattr("chutils.logger.core.RICH_AVAILABLE", True)
+    monkeypatch.setattr("chutils.cli_utils.RICH_AVAILABLE",
+                        True)
 
     monkeypatch.delenv("NO_COLOR", raising=False)
     monkeypatch.delenv("CH_NO_COLOR", raising=False)

@@ -2,18 +2,22 @@
 Форматтеры для логов.
 """
 
-try:
+from chutils.env import JSON_LOGGER_AVAILABLE
+
+if JSON_LOGGER_AVAILABLE:
     try:
-        from pythonjsonlogger import json as json_mod
+        try:
+            from pythonjsonlogger import json as json_mod
 
-        jsonlogger = json_mod
+            jsonlogger = json_mod
+        except ImportError:
+            from pythonjsonlogger import jsonlogger
     except ImportError:
-        from pythonjsonlogger import jsonlogger
-    JSON_LOGGER_AVAILABLE = True
-except ImportError:
-    JSON_LOGGER_AVAILABLE = False
+        # Редкий случай, когда spec найден, но импорт не удался
+        JSON_LOGGER_AVAILABLE = False
+else:
+    ChutilsJsonFormatter = None
     jsonlogger = None
-
 
 if JSON_LOGGER_AVAILABLE:
     class ChutilsJsonFormatter(jsonlogger.JsonFormatter):
