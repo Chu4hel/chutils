@@ -70,7 +70,7 @@ def get_config(
 
         _cm.acquire_file_lock()
         try:
-            main_path, env_path, local_path = _cm.get_config_paths()
+            main_path, env_path, local_path = _cm.get_all_config_paths()
             config_data: Dict = {}
 
             def load_from_path(path: str) -> Dict:
@@ -207,7 +207,7 @@ def save_config_value(
     if cfg_file:
         path = cfg_file
     else:
-        main_path, env_path, local_path = _cm.get_config_paths()
+        main_path, _, local_path = _cm.get_all_config_paths()
         if save_to_local and local_path:
             path = local_path
             logger.debug("Для сохранения выбран локальный файл конфигурации: %s", path)

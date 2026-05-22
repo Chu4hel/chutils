@@ -70,6 +70,13 @@ _LAZY_MAPPING = {
     'generate_yaml_template': ('.config', 'generate_yaml_template'),
     'generate_env_template': ('.config', 'generate_env_template'),
     'generate_json_schema': ('.config', 'generate_json_schema'),
+    'get_base_dir': ('.config', 'get_base_dir'),
+    'get_config_file_path': ('.config', 'get_config_file_path'),
+    'is_config_loaded': ('.config', 'is_config_loaded'),
+    'are_paths_initialized': ('.config', 'are_paths_initialized'),
+    'get_config_paths': ('.config', 'get_config_paths'),
+    'get_all_config_paths': ('.config', 'get_all_config_paths'),
+    'export_schema': ('.config', 'export_schema'),
 
     # features
     'is_feature_enabled': ('.features', 'is_feature_enabled'),
@@ -78,7 +85,24 @@ _LAZY_MAPPING = {
     # logger
     'setup_logger': ('.logger', 'setup_logger'),
     'ChutilsLogger': ('.logger', 'ChutilsLogger'),
+    'LogLevel': ('.logger', 'LogLevel'),
+    'SecretMaskingFilter': ('.logger', 'SecretMaskingFilter'),
+    'ChutilsJsonFormatter': ('.logger', 'ChutilsJsonFormatter'),
+    'JSON_LOGGER_AVAILABLE': ('.logger', 'JSON_LOGGER_AVAILABLE'),
     'SafeTimedRotatingFileHandler': ('.logger', 'SafeTimedRotatingFileHandler'),
+    'CompressingRotatingFileHandler': ('.logger', 'CompressingRotatingFileHandler'),
+    'CompressingTimedRotatingFileHandler': ('.logger', 'CompressingTimedRotatingFileHandler'),
+    'DEVDEBUG_LEVEL_NUM': ('.logger', 'DEVDEBUG_LEVEL_NUM'),
+    'MEDIUMDEBUG_LEVEL_NUM': ('.logger', 'MEDIUMDEBUG_LEVEL_NUM'),
+
+    # cli_utils
+    'get_console': ('.cli_utils', 'get_console'),
+    'RICH_AVAILABLE': ('.cli_utils', 'RICH_AVAILABLE'),
+
+    # cache
+    'cache_with_ttl': ('.cache', 'cache_with_ttl'),
+    'BaseCacheBackend': ('.cache', 'BaseCacheBackend'),
+    'InMemoryCacheBackend': ('.cache', 'InMemoryCacheBackend'),
 
     # context
     'bind_context': ('.context', 'bind_context'),
@@ -122,6 +146,7 @@ _LAZY_MAPPING = {
     'WatcherInitializationError': ('.exceptions', 'WatcherInitializationError'),
     'OptionalDependencyError': ('.exceptions', 'OptionalDependencyError'),
     'ChutilsTimeoutError': ('.exceptions', 'ChutilsTimeoutError'),
+    'CacheError': ('.exceptions', 'CacheError'),
 }
 
 

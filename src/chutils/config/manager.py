@@ -330,7 +330,16 @@ class _ConfigManager:
 
             self.paths_initialized = True
 
-    def get_config_paths(self, cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+    def get_config_paths(self, cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+        """
+        Возвращает пути к основному и локальному файлам конфигурации (Legacy API).
+        
+        Для получения всех путей (включая env) используйте get_all_config_paths().
+        """
+        main, _, local = self.get_all_config_paths(cfg_file)
+        return main, local
+
+    def get_all_config_paths(self, cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]:
         """
         Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
         """

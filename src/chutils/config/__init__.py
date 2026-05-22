@@ -73,6 +73,7 @@ __all__ = [
     'is_config_loaded',
     'are_paths_initialized',
     'get_config_paths',
+    'get_all_config_paths',
     'on_config_change',
     'start_config_watcher',
     'stop_config_watcher',
@@ -207,7 +208,25 @@ def are_paths_initialized() -> bool:
     return _cm.paths_initialized
 
 
-def get_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+def get_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+    """
+    Возвращает пути к основному и локальному файлам конфигурации.
+
+    Legacy API для обратной совместимости. Возвращает кортеж из 2 элементов.
+    Для получения всех путей (включая env) используйте get_all_config_paths().
+
+    Args:
+        cfg_file: Опциональный путь к основному файлу.
+
+    Returns:
+        Кортеж (путь_к_основному, путь_к_локальному).
+    """
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+    return _cm.get_config_paths(cfg_file)
+
+
+def get_all_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     """
     Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
 
@@ -219,4 +238,4 @@ def get_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Opt
     """
     if not _cm.paths_initialized:
         _cm.initialize_paths(find_project_root)
-    return _cm.get_config_paths(cfg_file)
+    return _cm.get_all_config_paths(cfg_file)

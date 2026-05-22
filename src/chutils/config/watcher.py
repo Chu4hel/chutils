@@ -98,7 +98,7 @@ def start_config_watcher() -> bool:
     if not _cm.paths_initialized:
         _cm.initialize_paths(find_project_root)
 
-    main_path, env_path, local_path = _cm.get_config_paths()
+    main_path, env_path, local_path = _cm.get_all_config_paths()
     files_to_watch = []
     if main_path and Path(main_path).exists():
         files_to_watch.append(main_path)

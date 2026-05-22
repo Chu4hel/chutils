@@ -35,7 +35,7 @@ class ShowPathsCommand(BaseCommand):
             config.get_base_dir()
 
         base_dir = config.get_base_dir()
-        main_path, env_path, local_path = config.get_config_paths()
+        main_path, env_path, local_path = config.get_all_config_paths()
 
         paths_data = {
             "base_dir": base_dir,
