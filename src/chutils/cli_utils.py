@@ -1,4 +1,6 @@
 import os
+import re
+import sys
 from typing import Any
 
 # Пытаемся импортировать rich
@@ -26,12 +28,10 @@ class FallbackConsole:
     """
 
     def __init__(self, stderr: bool = False):
-        import sys
-        self.file = sys.stderr if stderr else sys.stdout
+        self._is_stderr = stderr
 
     def _strip_markup(self, text: str) -> str:
         """Удаляет простейшие теги rich типа [bold]."""
-        import re
         return re.sub(r"\[/?[\w\s,=#]*\]", "", text)
 
     def print(self, *args, **kwargs):
@@ -41,9 +41,10 @@ class FallbackConsole:
         markup = kwargs.pop("markup", True)
         kwargs.pop("highlight", None)
 
-        # Устанавливаем файл для вывода, если он не задан явно
+        # Устанавливаем файл для вывода, если он не задан явно.
+        # Берем sys.stdout/stderr прямо сейчас, чтобы подхватить подмену в тестах.
         if "file" not in kwargs:
-            kwargs["file"] = self.file
+            kwargs["file"] = sys.stderr if self._is_stderr else sys.stdout
 
         processed_args = []
         for arg in args:
@@ -61,7 +62,8 @@ class FallbackConsole:
         print(*processed_args, **kwargs)
 
     def rule(self, title=""):
-        print(f"\n--- {title} ---\n", file=self.file)
+        f = sys.stderr if self._is_stderr else sys.stdout
+        print(f"\n--- {title} ---\n", file=f)
 
 
 _console = None
