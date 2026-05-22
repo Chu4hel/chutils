@@ -15,8 +15,39 @@ class Indexer:
     def __init__(self, root_path: str):
         self.root_path = Path(root_path).resolve()
         self.project_root = self.root_path.parent if (self.root_path / "__init__.py").exists() else self.root_path
-        self._graph: List[GraphEdge] = []
+        self._graph_map: Dict[str, Dict[str, int]] = {}  # {source: {target: weight}}
         self._public_symbols = self._discover_public_api()
+
+    @property
+    def _graph(self) -> List[GraphEdge]:
+        """Преобразует внутреннюю карту в список GraphEdge."""
+        edges = []
+        for source, targets in self._graph_map.items():
+            for target, weight in targets.items():
+                edges.append(GraphEdge(source=source, target=target, weight=weight))
+        return edges
+
+    def _record_dependency(self, source: str, target_module: str):
+        """Регистрирует связь между модулями."""
+        # Нам нужны только внутренние зависимости chutils
+        if not target_module.startswith("chutils") and not target_module.startswith("."):
+            return
+
+        # Нормализуем путь цели (очень упрощенно)
+        # В реальной библиотеке chutils.* превращаем в путь
+        target_path = target_module.replace(".", "/")
+        if target_path.startswith("chutils"):
+            # Превращаем в путь от корня (src/chutils/...)
+            # Предполагаем структуру src/chutils
+            target_path = "src/" + target_path
+
+        if source == target_path:
+            return
+
+        if source not in self._graph_map:
+            self._graph_map[source] = {}
+
+        self._graph_map[source][target_path] = self._graph_map[source].get(target_path, 0) + 1
 
     def _discover_public_api(self) -> set:
         """Парсит основной __init__.py для поиска публичных экспортов."""
@@ -77,12 +108,15 @@ class Indexer:
     def _build_node_tree(self, current_path: Path) -> Node:
         """Рекурсивно строит дерево узлов (пакетов и модулей)."""
         rel_path = str(current_path.relative_to(self.project_root.parent)).replace("\\", "/")
+        if rel_path.endswith(".py"):
+            rel_path = rel_path[:-3]
 
         is_pkg = (current_path / "__init__.py").exists()
         node_type = "package" if is_pkg else "module"
 
-        # Получаем docstring для модуля/пакета
+        # Получаем docstring и AST для модуля/пакета
         docstring = ""
+        tree = None
         init_file = current_path / "__init__.py" if is_pkg else current_path
         if init_file.exists():
             try:
@@ -100,31 +134,39 @@ class Indexer:
             summary=docstring.split('\n')[0] if docstring else ""
         )
 
+        # Анализ зависимостей
+        if tree:
+            for item in tree.body:
+                if isinstance(item, ast.Import):
+                    for alias in item.names:
+                        self._record_dependency(rel_path, alias.name)
+                elif isinstance(item, ast.ImportFrom):
+                    if item.module:
+                        self._record_dependency(rel_path, item.module)
+                    elif item.level > 0:
+                        # Относительный импорт (from . import ...)
+                        self._record_dependency(rel_path, "." * item.level)
+
         if is_pkg:
             # Обработка пакета
             for item in sorted(current_path.iterdir()):
                 if item.is_dir() and not item.name.startswith((".",)) and item.name != "__pycache__":
-                    # Мы не пропускаем папки начинающиеся с _, но помечаем их как private
                     node.children.append(self._build_node_tree(item))
                 elif item.suffix == ".py" and item.name != "__init__.py":
                     node.children.append(self._build_node_tree(item))
 
-            # Парсим сам __init__.py для символов пакета
-            if init_file.exists():
-                node.symbols = self._parse_file_symbols(init_file)
+            # Извлекаем символы из __init__.py (уже распаршен выше)
+            if tree:
+                node.symbols = self._extract_symbols(tree)
         else:
             # Обработка отдельного модуля
-            node.symbols = self._parse_file_symbols(current_path)
+            if tree:
+                node.symbols = self._extract_symbols(tree)
 
         return node
 
-    def _parse_file_symbols(self, file_path: Path) -> List[Symbol]:
-        """Извлекает символы из файла через AST."""
-        try:
-            tree = ast.parse(file_path.read_text(encoding="utf-8"))
-        except Exception:
-            return []
-
+    def _extract_symbols(self, tree: ast.AST) -> List[Symbol]:
+        """Извлекает символы из дерева AST."""
         symbols = []
         for top_level in tree.body:
             if isinstance(top_level, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -133,17 +175,15 @@ class Indexer:
                 cls_symbol = self._build_symbol(top_level, "class")
                 symbols.append(cls_symbol)
             elif isinstance(top_level, ast.Assign):
-                # Простые константы (только для верхнего уровня)
+                # Простые константы
                 for target in top_level.targets:
                     if isinstance(target, ast.Name):
-                        doc = ""  # У констант в ast нет докстрингов напрямую ниже
                         symbols.append(Symbol(
                             name=target.id,
                             type="constant",
                             line_number=top_level.lineno,
-                            layer=self._get_layer(target.id, doc)
+                            layer=self._get_layer(target.id, "")
                         ))
-
         return symbols
 
     def _build_symbol(self, node: Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef], sym_type: str) -> Symbol:
