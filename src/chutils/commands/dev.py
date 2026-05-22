@@ -28,7 +28,13 @@ class DevCommand(BaseCommand):
         gen_parser = dev_subparsers.add_parser(
             "generate-context",
             help="Сгенерировать карту публичного API (экспорты)",
-            description="Сканирует chutils и создает отчет о доступных функциях, классах и декораторах."
+            description="Сканирует chutils и создает отчет о доступных функциях, классах и декораторах.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev generate-context -o api_map.md
+  chutils dev generate-context --tree -o project_index.json
+  chutils dev generate-context -f json --no-weights
+"""
         )
         gen_parser.add_argument(
             "-f", "--format",

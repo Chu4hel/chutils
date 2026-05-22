@@ -27,7 +27,12 @@ class SecretsCommand(BaseCommand):
         set_parser = secrets_subparsers.add_parser(
             "set",
             help="Сохранить или обновить секрет",
-            description="Сохраняет зашифрованное значение в системное хранилище."
+            description="Сохраняет зашифрованное значение в системное хранилище.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils secrets set DB_PASSWORD "mypassword"
+  chutils secrets set STRIPE_KEY "sk_test_..." --service my_app
+"""
         )
         set_parser.add_argument("key", help="Имя ключа (например, DB_PASSWORD)")
         set_parser.add_argument("value", help="Значение секрета")
@@ -41,7 +46,12 @@ class SecretsCommand(BaseCommand):
         delete_parser = secrets_subparsers.add_parser(
             "delete",
             help="Удалить секрет из хранилища",
-            description="Навсегда удаляет указанный ключ из системного хранилища."
+            description="Навсегда удаляет указанный ключ из системного хранилища.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils secrets delete DB_PASSWORD
+  chutils secrets delete STRIPE_KEY --service my_app
+"""
         )
         delete_parser.add_argument("key", help="Имя ключа для удаления")
         delete_parser.add_argument(

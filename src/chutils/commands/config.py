@@ -25,7 +25,13 @@ class ConfigCommand(BaseCommand):
         debug_parser = config_subparsers.add_parser(
             "debug",
             help="Интерактивный отладчик конфигурации (Trace)",
-            description="Показывает итоговую конфигурацию и историю её изменения из разных источников."
+            description="Показывает итоговую конфигурацию и историю её изменения из разных источников.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils config debug
+  chutils config debug --format table
+  chutils config debug --show-secrets --format json
+"""
         )
         debug_parser.add_argument(
             "-f", "--format",
@@ -44,7 +50,12 @@ class ConfigCommand(BaseCommand):
         schema_parser = config_subparsers.add_parser(
             "generate-schema",
             help="Генерация JSON Schema на основе Pydantic модели",
-            description="Создает JSON схему для валидации файлов конфигурации в IDE или AI-агентах."
+            description="Создает JSON схему для валидации файлов конфигурации в IDE или AI-агентах.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils config generate-schema --model my_app.models:Settings -o config.schema.json
+  chutils config generate-schema --model chutils.config.schema:TestModel --stdout
+"""
         )
         schema_parser.add_argument(
             "--model",
