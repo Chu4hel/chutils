@@ -331,6 +331,31 @@ from chutils import get_config_section
 db_cfg = get_config_section("Database", model=DbConfig)
 ```
 
+### Интеграция с IDE (VSCode, PyCharm) через JSON Schema
+
+Чтобы получить автодополнение и проверку типов прямо в YAML файле, вы можете сгенерировать JSON Schema для вашей
+Pydantic модели и подключить её.
+
+1. **Генерация схемы:**
+   ```bash
+   chutils config generate-schema --model my_app.models:Settings -o .config.schema.json
+   ```
+
+2. **Подключение в VSCode:**
+   Добавьте "магический комментарий" в начало вашего `config.yml`:
+   ```yaml
+   # yaml-language-server: $schema=./.config.schema.json
+   
+   Database:
+     host: localhost
+     port: 5432
+   ```
+   *Требуется расширение "YAML" от Red Hat.*
+
+3. **Подключение в PyCharm:**
+    - Перейдите в `Settings` -> `Languages & Frameworks` -> `Schemas and DTDs` -> `JSON Schema Mappings`.
+    - Добавьте новую схему, укажите путь к `.config.schema.json` и выберите ваш файл `config.yml`.
+
 ## 8. Утилита командной строки (CLI)
 
 ### Управление секретами без кода

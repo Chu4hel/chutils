@@ -38,6 +38,8 @@ members:
 - generate_yaml_template
 - generate_env_template
 - generate_json_schema
+- export_schema
+- import_model_class
 
 ## Модуль `logger`
 

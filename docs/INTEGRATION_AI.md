@@ -37,8 +37,19 @@ with bind_context(request_id="unique-uuid"):
 - `chutils init -y`: Быстрая инициализация проекта (создает конфиг и .gitignore).
 - `chutils secrets set KEY VALUE`: Сохранение секрета в Keyring.
 - `chutils validate -m my_app.models:Settings`: Валидация текущего конфига через Pydantic модель.
+- `chutils config generate-schema --model my_app.models:Settings -o config.schema.json`: Генерация JSON Schema для
+  автодополнения и Schema-First DX.
 
-## 4. Схема конфигурации (Пример)
+## 4. Схема конфигурации и Schema-First DX
+
+Для обеспечения максимальной точности генерации конфигурации AI-агентами рекомендуется генерировать и предоставлять им
+JSON Schema вашей модели настроек.
+
+1. Сгенерируйте схему: `chutils config generate-schema --model my_app.models:Settings > schema.json`
+2. Передайте содержимое `schema.json` в контекст AI-агента. Это позволит ему генерировать строго валидные YAML/JSON
+   файлы.
+
+## 5. Пример структуры (YAML)
 
 ```yaml
 Logging:
