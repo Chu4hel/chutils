@@ -34,4 +34,4 @@
 
 - [AI Hints](./docs/ai_hints.md)
 - [Integration Guide](./docs/INTEGRATION_AI.md)
-- [Public API Map](./api_map.md) (генерируется через `chutils dev generate-context`)
+- [Public API Map](./api_map.md) (генерируется через `chutils dev generate-context -o api_map.md`)
