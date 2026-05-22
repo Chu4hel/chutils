@@ -14,6 +14,7 @@ class BaseCommand(ABC):
 
     def __init__(self):
         self.console = get_console()
+        self.err_console = get_console(stderr=True)
 
     @abstractmethod
     def register(self, subparsers: argparse._SubParsersAction):

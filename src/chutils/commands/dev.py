@@ -45,18 +45,13 @@ class DevCommand(BaseCommand):
         """Обработчик генерации контекста."""
         import inspect
         import json
-        import sys
         import chutils
 
         # Используем stderr для статусных сообщений, чтобы не портить stdout (особенно для JSON)
-        err_console = self.console
-        if hasattr(self.console, "file") and self.console.file != sys.stderr:
-            from rich.console import Console
-            err_console = Console(stderr=True)
-
-        err_console.print("[bold yellow]Генерация контекста API...[/bold yellow]", style="yellow")
+        self.err_console.print("[bold yellow]Генерация контекста API...[/bold yellow]", style="yellow")
 
         api_data = []
+
         # Получаем список всех публичных атрибутов chutils
         public_attrs = [attr for attr in dir(chutils) if not attr.startswith('_')]
 
