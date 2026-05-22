@@ -2,8 +2,7 @@
 Генератор шаблонов и схем конфигурации на основе Pydantic моделей.
 """
 
-import json
-from typing import Any, Type
+from typing import Type
 
 try:
     from pydantic import BaseModel
@@ -15,9 +14,11 @@ except ImportError:
         """Заглушка для работы без Pydantic."""
         pass
 
+
     class FieldInfo:  # type: ignore
         """Заглушка для работы без Pydantic."""
         pass
+
 
     PYDANTIC_AVAILABLE = False
 
@@ -129,6 +130,5 @@ def generate_json_schema(model_class: Type[BaseModel]) -> str:
     """
     Генерирует JSON схему на основе Pydantic модели.
     """
-    _check_pydantic()
-    schema = model_class.model_json_schema()
-    return json.dumps(schema, indent=4, ensure_ascii=False)
+    from .schema import export_schema
+    return export_schema(model_class)
