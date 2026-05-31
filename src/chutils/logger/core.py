@@ -264,6 +264,16 @@ def setup_logger(
 
     final_logger_settings = {**default_settings, **specific_settings}
 
+    # --- Настройка ширины консоли ---
+    cli_settings = cfg.get('CLI', {})
+    config_width = cli_settings.get('console_width')
+    if config_width is not None:
+        try:
+            from chutils.cli_utils import set_console_width
+            set_console_width(int(config_width))
+        except (ValueError, TypeError, ImportError):
+            pass
+
     # --- Определение флага асинхронности ---
     if use_async is not None:
         final_use_async = use_async

@@ -1,6 +1,8 @@
+import os
 import re
+import shutil
 import sys
-from typing import Any
+from typing import Any, Optional
 
 from .env import RICH_AVAILABLE, is_rich_enabled
 
@@ -60,6 +62,32 @@ class FallbackConsole:
 
 _console = None
 _err_console = None
+_console_width: Optional[int] = None
+
+
+def set_console_width(width: int):
+    """
+    Устанавливает ширину консоли и сбрасывает кэшированные экземпляры консолей.
+    """
+    global _console_width, _console, _err_console
+    _console_width = width
+    _console = None
+    _err_console = None
+
+
+def _get_default_width() -> Optional[int]:
+    """Определяет ширину консоли по умолчанию с учетом IDE."""
+    if _console_width is not None:
+        return _console_width
+
+    # Пытаемся определить размер терминала
+    width, _ = shutil.get_terminal_size(fallback=(80, 24))
+
+    # Специфичное поведение для PyCharm (часто ограничивает ширину в 80 символов при запуске логов)
+    if os.getenv("PYCHARM_HOSTED") == "1" and width == 80:
+        return 140
+
+    return width
 
 
 def get_console(stderr: bool = False) -> Any:
@@ -72,7 +100,7 @@ def get_console(stderr: bool = False) -> Any:
         if _err_console is not None:
             return _err_console
         if is_rich_enabled():
-            _err_console = Console(stderr=True)
+            _err_console = Console(stderr=True, width=_get_default_width())
         else:
             _err_console = FallbackConsole(stderr=True)
         return _err_console
@@ -81,7 +109,7 @@ def get_console(stderr: bool = False) -> Any:
         return _console
 
     if is_rich_enabled():
-        _console = Console()
+        _console = Console(width=_get_default_width())
     else:
         _console = FallbackConsole()
     return _console
