@@ -298,8 +298,9 @@ class Indexer:
         if isinstance(node, ast.ClassDef):
             # Извлекаем базы
             for base in node.bases:
+                base_path = ""
                 if isinstance(base, ast.Name):
-                    symbol.bases.append(self._resolve_base_class(base.id))
+                    base_path = self._resolve_base_class(base.id)
                 elif isinstance(base, ast.Attribute):
                     # Случай типа pydantic.BaseModel
                     parts = []
@@ -309,9 +310,16 @@ class Indexer:
                         curr = curr.value
                     if isinstance(curr, ast.Name):
                         parts.append(curr.id)
-                    symbol.bases.append(".".join(reversed(parts)))
+                    base_path = ".".join(reversed(parts))
+
+                if base_path:
+                    symbol.bases.append(base_path)
+                    # Если наследуется от ABC, помечаем класс как абстрактный
+                    if base_path in ("ABC", "abc.ABC", "abc.ABCMeta"):
+                        symbol.breadcrumbs.is_abstract = True
 
             # Извлекаем методы
+            has_abstract_methods = False
             for item in node.body:
                 if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
                     # Фильтрация: оставляем публичные, защищенные (_) и __init__.
@@ -321,7 +329,13 @@ class Indexer:
                         continue
 
                     method_symbol = self._build_symbol(item, "method")
+                    if method_symbol.breadcrumbs.is_abstract:
+                        has_abstract_methods = True
 
                     symbol.children.append(method_symbol)
+
+            # Если есть абстрактные методы, класс тоже абстрактный
+            if has_abstract_methods:
+                symbol.breadcrumbs.is_abstract = True
 
         return symbol
