@@ -6,7 +6,10 @@ from chutils.config import get_config_value, get_config_int, get_config_boolean
 
 @pytest.fixture(autouse=True)
 def clear_env():
-    """Очищает переменные окружения перед каждым тестом."""
+    """Очищает переменные окружения и кэш конфигурации перед каждым тестом."""
+    from chutils.config.manager import _cm
+    _cm.clear_cache()
+    
     keys_to_clear = [k for k in os.environ if k.startswith("CH_")]
     for k in keys_to_clear:
         del os.environ[k]

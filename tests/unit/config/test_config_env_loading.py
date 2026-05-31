@@ -52,6 +52,7 @@ def test_env_specific_loading(tmp_path, monkeypatch):
 
     # 3. Тест приоритета: ENV > local > env-specific > base
     monkeypatch.setenv("CH_APP_PORT", "9000")
+    _cm.clear_cache()
     from chutils.config import get_config_value
     assert get_config_value("App", "port") == "9000"
 
