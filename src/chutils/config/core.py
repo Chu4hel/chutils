@@ -7,6 +7,7 @@
 
 import asyncio
 import logging
+import os
 from pathlib import Path
 from typing import Any, Optional, Dict, TYPE_CHECKING, TypeVar, Type, Union, Tuple
 
@@ -130,6 +131,48 @@ def get_config(
                     utils.deep_merge(config_data, remote_data)
                 except Exception as e:
                     logger.error("Ошибка загрузки удаленной конфигурации с %s: %s", remote_url, e)
+
+            # 5. Переменные окружения (CH_SECTION_KEY)
+            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")
+            if not disable_env_override:
+                env_overrides = {}
+                for env_key, env_value in os.environ.items():
+                    if env_key.startswith("CH_") and env_key not in ("CH_ENV", "CH_DISABLE_ENV_OVERRIDE",
+                                                                     "CH_DISABLE_KEYRING_WARNING"):
+                        parts = env_key[3:].split('_', 1)
+                        if len(parts) == 2:
+                            section, key = parts
+                            section_lower = section.lower()
+                            key_lower = key.lower()
+
+                            # Попытка найти существующий регистр секции
+                            actual_sec = section_lower
+                            for existing_sec in config_data.keys():
+                                if existing_sec.lower() == section_lower:
+                                    actual_sec = existing_sec
+                                    break
+
+                            # Попытка найти существующий регистр ключа
+                            actual_key = key_lower
+                            if actual_sec in config_data and isinstance(config_data[actual_sec], dict):
+                                for existing_key in config_data[actual_sec].keys():
+                                    if existing_key.lower() == key_lower:
+                                        actual_key = existing_key
+                                        break
+
+                            if actual_sec not in env_overrides:
+                                env_overrides[actual_sec] = {}
+                            env_overrides[actual_sec][actual_key] = env_value
+
+                # Специфический ключ для secrets
+                secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")
+                if secrets_env is not None:
+                    if "secrets" not in env_overrides:
+                        env_overrides["secrets"] = {}
+                    env_overrides["secrets"]["disable_keyring"] = secrets_env
+
+                if env_overrides:
+                    utils.deep_merge(config_data, env_overrides)
 
             # Записываем переменные окружения в трассировку
             if _cm.tracing_enabled:
