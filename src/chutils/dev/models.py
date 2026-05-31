@@ -12,6 +12,7 @@ class Breadcrumbs(BaseModel):
     is_async: bool = False
     is_thread_safe: bool = False
     is_heavy: bool = False
+    is_abstract: bool = False
     decorators: List[str] = Field(default_factory=list)
     tags: List[str] = Field(default_factory=list)
     custom_metadata: Dict[str, Any] = Field(default_factory=dict)
@@ -29,6 +30,10 @@ class Symbol(BaseModel):
     docstring: Optional[str] = None
     breadcrumbs: Breadcrumbs = Field(default_factory=Breadcrumbs)
     line_number: int = 0
+    bases: List[str] = Field(default_factory=list)
+    """Базовые классы (для классов)"""
+    children: List["Symbol"] = Field(default_factory=list)
+    """Вложенные символы (например, методы класса)"""
 
 
 class Node(BaseModel):

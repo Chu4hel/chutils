@@ -3,6 +3,23 @@ import json
 from chutils.dev.models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge
 
 
+def test_symbol_with_nested_structure():
+    """Тест сериализации символа с базовыми классами и вложенными методами."""
+    method = Symbol(name="save", type="method")
+    cls_symbol = Symbol(
+        name="Database",
+        type="class",
+        bases=["BaseModel", "StorageMixin"],
+        children=[method]
+    )
+
+    data = cls_symbol.model_dump()
+    assert data["name"] == "Database"
+    assert data["bases"] == ["BaseModel", "StorageMixin"]
+    assert len(data["children"]) == 1
+    assert data["children"][0]["name"] == "save"
+
+
 def test_project_index_serialization():
     """Тест сериализации корневого объекта индекса в JSON."""
 

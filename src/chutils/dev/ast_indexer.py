@@ -22,6 +22,8 @@ class Indexer:
             self.project_root = self.root_path
 
         self._graph_map: Dict[str, Dict[str, int]] = {}  # {source: {target: weight}}
+        self._current_imports: Dict[str, str] = {}
+        """Карта импортов текущего модуля {asname: full_path}"""
         self._public_symbols = self._discover_public_api()
 
     @property
@@ -162,11 +164,13 @@ class Indexer:
         )
 
         # Анализ зависимостей
+        self._current_imports = {}
         if tree:
             for item in tree.body:
                 if isinstance(item, ast.Import):
                     for alias in item.names:
                         self._record_dependency(rel_path, alias.name)
+                        self._current_imports[alias.asname or alias.name] = alias.name
                 elif isinstance(item, ast.ImportFrom):
                     is_relative = item.level > 0
                     base = item.module if item.module else "." * item.level
@@ -176,6 +180,9 @@ class Indexer:
                             if alias.name == "*":
                                 self._record_dependency(rel_path, base, force_internal=is_relative)
                                 continue
+
+                            full_name = f"{base}.{alias.name}" if not is_relative else f"{base}{alias.name}"
+                            self._current_imports[alias.asname or alias.name] = full_name
 
                             if is_relative:
                                 # Для относительных импортов в тестах ожидается база ('.', '..')
@@ -224,6 +231,10 @@ class Indexer:
                         ))
         return symbols
 
+    def _resolve_base_class(self, base_name: str) -> str:
+        """Разрешает имя базового класса в полный путь импорта."""
+        return self._current_imports.get(base_name, base_name)
+
     def _build_symbol(self, node: Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef], sym_type: str) -> Symbol:
         """Создает объект Symbol из узла AST."""
         docstring = ast.get_docstring(node) or ""
@@ -248,15 +259,21 @@ class Indexer:
 
         # Декораторы
         for dec in node.decorator_list:
+            dec_name = ""
             if isinstance(dec, ast.Name):
-                breadcrumbs.decorators.append(dec.id)
+                dec_name = dec.id
             elif isinstance(dec, ast.Attribute) and isinstance(dec.value, ast.Name):
-                breadcrumbs.decorators.append(f"{dec.value.id}.{dec.attr}")
+                dec_name = f"{dec.value.id}.{dec.attr}"
             elif isinstance(dec, ast.Call):
                 if isinstance(dec.func, ast.Name):
-                    breadcrumbs.decorators.append(dec.func.id)
+                    dec_name = dec.func.id
                 elif isinstance(dec.func, ast.Attribute) and isinstance(dec.func.value, ast.Name):
-                    breadcrumbs.decorators.append(f"{dec.func.value.id}.{dec.func.attr}")
+                    dec_name = f"{dec.func.value.id}.{dec.func.attr}"
+
+            if dec_name:
+                breadcrumbs.decorators.append(dec_name)
+                if dec_name == "abstractmethod" or dec_name.endswith(".abstractmethod"):
+                    breadcrumbs.is_abstract = True
 
         # Теги из docstring (:tag:)
         tags = re.findall(r":([\w-]+):", docstring)
@@ -267,7 +284,7 @@ class Indexer:
         if "heavy" in breadcrumbs.tags:
             breadcrumbs.is_heavy = True
 
-        return Symbol(
+        symbol = Symbol(
             name=node.name,
             type=sym_type,
             signature=signature,
@@ -277,3 +294,34 @@ class Indexer:
             line_number=node.lineno,
             layer=self._get_layer(node.name, docstring)
         )
+
+        if isinstance(node, ast.ClassDef):
+            # Извлекаем базы
+            for base in node.bases:
+                if isinstance(base, ast.Name):
+                    symbol.bases.append(self._resolve_base_class(base.id))
+                elif isinstance(base, ast.Attribute):
+                    # Случай типа pydantic.BaseModel
+                    parts = []
+                    curr = base
+                    while isinstance(curr, ast.Attribute):
+                        parts.append(curr.attr)
+                        curr = curr.value
+                    if isinstance(curr, ast.Name):
+                        parts.append(curr.id)
+                    symbol.bases.append(".".join(reversed(parts)))
+
+            # Извлекаем методы
+            for item in node.body:
+                if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    # Фильтрация: оставляем публичные, защищенные (_) и __init__.
+                    # Отбрасываем остальные dunder-методы (__dunder__) и приватные (__private).
+                    name = item.name
+                    if name.startswith("__") and name != "__init__":
+                        continue
+
+                    method_symbol = self._build_symbol(item, "method")
+
+                    symbol.children.append(method_symbol)
+
+        return symbol
