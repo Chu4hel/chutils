@@ -1,0 +1,2731 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Простые утилиты для конфигурации, логирования и секретов в Python.">
+      
+      
+        <meta name="author" content="Chu4hel">
+      
+      
+        <link rel="canonical" href="https://Chu4hel.github.io/chutils/recipes/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../api/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Рецепты - chutils</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href=".." title="chutils" class="md-header__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            chutils
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Рецепты
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Рецепты
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Справочник API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_RU/" class="md-tabs__link">
+          
+  
+  
+  Проект
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="chutils" class="md-nav__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    chutils
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Логирование
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Логирование">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронное логирование (Performance)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Расширенное маскирование PII
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Несколько логгеров для разных модулей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка через конфигурационный файл
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastapi-asyncio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Контекстное логирование в FastAPI / asyncio
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-smart-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Кэширование (Smart Caching)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Кэширование (Smart Caching)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Как это работает
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Основные возможности
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Работа с конфигурацией
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Работа с конфигурацией">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование относительных путей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальные переопределения
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Специфичные для окружения конфигурации
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Управление секретами
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Управление секретами">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-ci-cd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование в Docker / CI-CD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-hot-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Hot-Reload конфигурации
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Hot-Reload конфигурации">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматическое обновление состояния приложения
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pydantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование с Pydantic моделями
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Декораторы
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Декораторы">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Отладка производительности
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-pydantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Валидация через Pydantic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Валидация через Pydantic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Строгая типизация всей конфигурации
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация отдельной секции
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ide-vscode-pycharm-json-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Интеграция с IDE (VSCode, PyCharm) через JSON Schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Утилита командной строки (CLI)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Утилита командной строки (CLI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Управление секретами без кода
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Работа с файловой системой
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Работа с файловой системой">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Безопасная запись данных
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Временные файлы с авто-удалением
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-graceful-shutdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Graceful Shutdown (Управление жизненным циклом)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Graceful Shutdown (Управление жизненным циклом)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Регистрация функций очистки
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка таймаута
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Особенности работы
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-painless-datetime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Работа со временем (Painless Datetime)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Работа со временем (Painless Datetime)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#utc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Получение текущего времени в UTC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Умный парсинг дат
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Человекочитаемая разница во времени
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-cli-cli-booster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Быстрое создание CLI (CLI Booster)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Быстрое создание CLI (CLI Booster)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Простой скрипт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронные команды и списки
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-config-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Отладка и диагностика конфигурации (Config Diagnostics)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Отладка и диагностика конфигурации (Config Diagnostics)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование через CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование через API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-opentelemetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Распределенное трассирование (OpenTelemetry)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Распределенное трассирование (OpenTelemetry)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Установка
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Особенности
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-remote-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15. Дистанционная конфигурация (Remote Config)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="15. Дистанционная конфигурация (Remote Config)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Периодический опрос (Polling)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Динамический интервал
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Авторизация и безопасность
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Отказоустойчивость (Fallback)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-ai-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16. Инструменты разработчика и AI-контекст
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="16. Инструменты разработчика и AI-контекст">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генерация карты API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генерация семантического индекса для AI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проект
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Проект
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор (RU)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CODE_OF_CONDUCT_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Кодекс поведения
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CONTRIBUTING_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Правила участия
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Логирование
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Логирование">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронное логирование (Performance)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Расширенное маскирование PII
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Несколько логгеров для разных модулей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка через конфигурационный файл
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastapi-asyncio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Контекстное логирование в FastAPI / asyncio
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-smart-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Кэширование (Smart Caching)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Кэширование (Smart Caching)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Как это работает
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Основные возможности
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Работа с конфигурацией
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Работа с конфигурацией">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование относительных путей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальные переопределения
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Специфичные для окружения конфигурации
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Управление секретами
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Управление секретами">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-ci-cd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование в Docker / CI-CD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-hot-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Hot-Reload конфигурации
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Hot-Reload конфигурации">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматическое обновление состояния приложения
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pydantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование с Pydantic моделями
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Декораторы
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Декораторы">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Отладка производительности
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-pydantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Валидация через Pydantic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Валидация через Pydantic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Строгая типизация всей конфигурации
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация отдельной секции
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ide-vscode-pycharm-json-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Интеграция с IDE (VSCode, PyCharm) через JSON Schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Утилита командной строки (CLI)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Утилита командной строки (CLI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Управление секретами без кода
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Работа с файловой системой
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Работа с файловой системой">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Безопасная запись данных
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Временные файлы с авто-удалением
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-graceful-shutdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Graceful Shutdown (Управление жизненным циклом)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Graceful Shutdown (Управление жизненным циклом)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Регистрация функций очистки
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка таймаута
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Особенности работы
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-painless-datetime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Работа со временем (Painless Datetime)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Работа со временем (Painless Datetime)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#utc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Получение текущего времени в UTC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Умный парсинг дат
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Человекочитаемая разница во времени
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-cli-cli-booster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Быстрое создание CLI (CLI Booster)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Быстрое создание CLI (CLI Booster)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Простой скрипт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронные команды и списки
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-config-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Отладка и диагностика конфигурации (Config Diagnostics)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Отладка и диагностика конфигурации (Config Diagnostics)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование через CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование через API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-opentelemetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Распределенное трассирование (OpenTelemetry)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Распределенное трассирование (OpenTelemetry)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Установка
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Особенности
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-remote-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15. Дистанционная конфигурация (Remote Config)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="15. Дистанционная конфигурация (Remote Config)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Периодический опрос (Polling)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Динамический интервал
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Авторизация и безопасность
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Отказоустойчивость (Fallback)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-ai-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16. Инструменты разработчика и AI-контекст
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="16. Инструменты разработчика и AI-контекст">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генерация карты API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генерация семантического индекса для AI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="_1">Рецепты и полезные советы</h1>
+<p>В этом разделе собраны практические примеры решения типичных задач с помощью <strong>chutils</strong>.</p>
+<h2 id="1">1. Логирование</h2>
+<h3 id="performance">Асинхронное логирование (Performance)</h3>
+<p>Для высоконагруженных приложений запись логов в файл или консоль может стать «бутылочным горлышком». Включите
+асинхронный режим, чтобы вынести запись в фоновый поток.</p>
+<pre><code class="language-python">from chutils import setup_logger
+
+# Включение асинхронного режима
+logger = setup_logger(use_async=True)
+
+# Теперь основной поток не будет ждать завершения записи на диск
+logger.info(&quot;Это сообщение будет обработано в фоновом потоке&quot;)
+</code></pre>
+<h3 id="pii">Расширенное маскирование PII</h3>
+<p><code>chutils</code> может автоматически скрывать чувствительные данные (email, карты) не только по конкретным значениям, но и по
+паттернам.</p>
+<pre><code class="language-python">from chutils import setup_logger
+
+# Настройка автоматического маскирования email и телефонов
+logger = setup_logger(
+    use_predefined_patterns=[&quot;email&quot;, &quot;phone&quot;],
+    custom_patterns=[r&quot;ID-\d{4}&quot;]  # Свои регулярные выражения
+)
+
+# Выведет: &quot;Contact user [MASKED] at [MASKED]&quot;
+logger.info(&quot;Contact user ID-1234 at test@example.com&quot;)
+</code></pre>
+<h3 id="_2">Несколько логгеров для разных модулей</h3>
+<p>Если ваше приложение состоит из нескольких крупных компонентов, удобно разделять их логи.</p>
+<pre><code class="language-python">from chutils import setup_logger
+
+# Логгер для сетевого модуля (только ошибки в файл network.log)
+net_logger = setup_logger(&quot;network&quot;, log_level=&quot;ERROR&quot;, log_file_name=&quot;network.log&quot;)
+
+# Логгер для ядра (детальная отладка в консоль и core.log)
+core_logger = setup_logger(&quot;core&quot;, log_level=&quot;DEVDEBUG&quot;, log_file_name=&quot;core.log&quot;)
+
+net_logger.error(&quot;Ошибка соединения!&quot;)
+core_logger.devdebug(&quot;Состояние объекта: %s&quot;, obj_data)
+</code></pre>
+<h3 id="_3">Настройка через конфигурационный файл</h3>
+<p>Вы можете централизованно управлять всеми логгерами в <code>config.yml</code>:</p>
+<pre><code class="language-yaml"># config.yml
+Logging:
+  log_level: INFO
+  rotation_type: time
+
+AuditLogger:
+  log_level: DEBUG
+  log_file_name: &quot;audit.log&quot;
+</code></pre>
+<p>В коде:</p>
+<pre><code class="language-python"># Использует секцию AuditLogger
+audit_logger = setup_logger(&quot;audit&quot;, config_section_name=&quot;AuditLogger&quot;)
+</code></pre>
+<h3 id="fastapi-asyncio">Контекстное логирование в FastAPI / asyncio</h3>
+<p>Если вы хотите автоматически добавлять ID запроса во все логи без передачи его через аргументы функций.</p>
+<pre><code class="language-python">from chutils import setup_logger, bind_context
+import asyncio
+
+logger = setup_logger()
+
+
+async def deep_nested_function():
+    # Нам не нужно передавать request_id сюда, он подхватится сам!
+    logger.info(&quot;Лог из глубины приложения&quot;)
+
+
+async def handle_request(request_id: str):
+    bind_context(request_id=request_id)
+    logger.info(&quot;Начало обработки&quot;)
+    await deep_nested_function()
+
+
+# В асинхронном цикле контексты изолированы
+asyncio.gather(
+    handle_request(&quot;REQ-1&quot;),
+    handle_request(&quot;REQ-2&quot;)
+)
+</code></pre>
+<h2 id="2-smart-caching">2. Кэширование (Smart Caching)</h2>
+<p>Используйте декоратор <code>@cache_with_ttl</code> для автоматического сохранения результатов тяжелых функций. Он поддерживает как
+обычные функции, так и асинхронные корутины.</p>
+<h3 id="_4">Как это работает</h3>
+<p>Кэширование <strong>строго привязано к аргументам функции</strong>. При каждом вызове декоратор генерирует уникальный ключ на основе:</p>
+<ol>
+<li>Полного имени функции (включая модуль).</li>
+<li>Всех позиционных аргументов (<code>args</code>).</li>
+<li>Всех именованных аргументов (<code>kwargs</code>).</li>
+</ol>
+<p>Это значит, что вызовы с разными данными будут кэшироваться независимо:</p>
+<pre><code class="language-python">@cache_with_ttl(ttl=60)
+def calculate_price(item_id: int, discount: float = 0.0):
+    # Вычисления...
+    return final_price
+
+
+# Разные аргументы = разные записи в кэше
+calculate_price(1)  # Вычислится и сохранится для key_1
+calculate_price(2)  # Вычислится и сохранится для key_2
+calculate_price(1, 0.1)  # Вычислится и сохранится для key_3
+calculate_price(1)  # Вернется из кэша (мгновенно)
+</code></pre>
+<h3 id="_5">Примеры использования</h3>
+<pre><code class="language-python">import asyncio
+
+from chutils.cache import cache_with_ttl
+
+
+# Кэшируем результат на 60 секунд
+@cache_with_ttl(ttl=60)
+def get_heavy_data(user_id: int):
+    print(f&quot;Вычисляем данные для {user_id}...&quot;)
+    return {&quot;id&quot;: user_id, &quot;data&quot;: &quot;...&quot;}
+
+
+# Асинхронный кэш с префиксом ключа
+@cache_with_ttl(ttl=300, key_prefix=&quot;api_response&quot;)
+async def fetch_remote_api(url: str):
+    await asyncio.sleep(1)  # Имитация задержки
+    return {&quot;url&quot;: url, &quot;status&quot;: &quot;ok&quot;}
+</code></pre>
+<h3 id="_6">Основные возможности</h3>
+<p>Декоратор обладает встроенной защитой от <strong>Cache Stampede</strong>: если несколько потоков или тасок одновременно вызовут
+функцию с одним и тем же ключом, реальное вычисление выполнит только первый, а остальные дождутся его результата и
+возьмут его из кэша.</p>
+<h2 id="3">3. Работа с конфигурацией</h2>
+<h3 id="_7">Использование относительных путей</h3>
+<p><code>chutils</code> умеет автоматически делать пути абсолютными относительно корня проекта.</p>
+<pre><code class="language-yaml"># config.yml
+Paths:
+  upload_dir: &quot;data/uploads&quot;
+</code></pre>
+<p>В коде:</p>
+<pre><code class="language-python">from chutils import get_config_path
+
+# Если корень /home/user/project, вернет /home/user/project/data/uploads
+upload_path = get_config_path(&quot;Paths&quot;, &quot;upload_dir&quot;)
+</code></pre>
+<h3 id="_8">Локальные переопределения</h3>
+<p>Создайте <code>config.local.yml</code> (и добавьте его в <code>.gitignore</code>), чтобы переопределить настройки для разработки:</p>
+<pre><code class="language-yaml"># config.local.yml
+Database:
+  host: &quot;localhost&quot; # На сервере будет production.db.com
+</code></pre>
+<h3 id="_9">Специфичные для окружения конфигурации</h3>
+<p>Вы можете создавать отдельные файлы настроек для разных сред развертывания (например, <code>staging</code>, <code>production</code>).
+Библиотека автоматически подхватит нужный файл на основе переменной окружения <code>CH_ENV</code>.</p>
+<ol>
+<li>Создайте файл <code>config.production.yml</code>.</li>
+<li>Установите <code>CH_ENV=production</code> в вашей среде.</li>
+</ol>
+<p><strong>Приоритет загрузки (от высшего к низшему):</strong></p>
+<ol>
+<li>Переменные окружения (<code>CH_SECTION_KEY</code>).</li>
+<li>Локальный файл (<code>config.local.yml</code>).</li>
+<li>Файл окружения (<code>config.{CH_ENV}.yml</code>).</li>
+<li>Основной файл (<code>config.yml</code>).</li>
+</ol>
+<h2 id="4">4. Управление секретами</h2>
+<h3 id="docker-ci-cd">Использование в Docker / CI-CD</h3>
+<p>В изолированных средах системное хранилище (Keyring) часто недоступно. Чтобы избежать лишних предупреждений и ошибок:</p>
+<ol>
+<li>Установите переменную окружения <code>CH_DISABLE_KEYRING_WARNING=true</code>.</li>
+<li>Используйте <code>.env</code> файл для хранения секретов.</li>
+</ol>
+<pre><code class="language-dotenv"># .env
+DB_PASSWORD=&quot;my-safe-password&quot;
+</code></pre>
+<p><code>SecretManager</code> автоматически подхватит это значение.</p>
+<h2 id="5-hot-reload">5. Hot-Reload конфигурации</h2>
+<h3 id="_10">Автоматическое обновление состояния приложения</h3>
+<p>Если ваше приложение должно менять свое поведение (например, уровень логирования или лимиты) без перезагрузки.</p>
+<pre><code class="language-python">from chutils import (
+    setup_logger,
+    start_config_watcher,
+    on_config_change,
+    get_config_value
+)
+
+logger = setup_logger()
+
+
+def update_app_state():
+    # Читаем новые значения
+    new_limit = get_config_value(&quot;App&quot;, &quot;rate_limit&quot;, 100)
+    logger.info(f&quot;Лимит обновлен: {new_limit}&quot;)
+
+    # Здесь можно обновить объект приложения или глобальное состояние
+    # app.rate_limiter.set_limit(new_limit)
+
+
+# 1. Подписываемся на изменения
+on_config_change(update_app_state)
+
+# 2. Запускаем мониторинг
+start_config_watcher()
+</code></pre>
+<h3 id="pydantic">Использование с Pydantic моделями</h3>
+<p>При каждом изменении файла кэш <code>get_config()</code> сбрасывается, поэтому вы всегда будете получать свежую провалидированную
+модель.</p>
+<pre><code class="language-python">def on_reload():
+    # При вызове заново будет создана новая модель с актуальными данными
+    cfg = get_config(model=AppConfig)
+    print(f&quot;Новое имя приложения: {cfg.name}&quot;)
+</code></pre>
+<h2 id="6">6. Декораторы</h2>
+<h3 id="_11">Отладка производительности</h3>
+<p>Используйте декоратор <code>@log_function_details</code> для быстрого анализа работы функций без изменения их кода.</p>
+<pre><code class="language-python">from chutils import log_function_details, setup_logger
+
+# Важно: установите уровень DEVDEBUG, чтобы увидеть вывод декоратора
+setup_logger(log_level=&quot;DEVDEBUG&quot;)
+
+
+@log_function_details
+def process_heavy_task(data):
+    # Какая-то логика...
+    return True
+
+
+process_heavy_task([1, 2, 3])
+</code></pre>
+<p>В логах появится время выполнения с точностью до миллисекунд и переданные аргументы.</p>
+<h2 id="7-pydantic">7. Валидация через Pydantic</h2>
+<h3 id="_12">Строгая типизация всей конфигурации</h3>
+<p>Вы можете описать ожидаемую структуру вашего <code>config.yml</code> в виде Pydantic моделей для автоматической валидации при
+загрузке.</p>
+<pre><code class="language-python">from pydantic import BaseModel, Field
+from chutils import get_config
+
+
+class DbConfig(BaseModel):
+    host: str
+    port: int
+
+
+class AppConfig(BaseModel):
+    name: str
+    version: str
+    db: DbConfig = Field(alias=&quot;Database&quot;)
+
+
+# Валидация и автодополнение
+cfg = get_config(model=AppConfig)
+print(f&quot;Подключение к {cfg.db.host}:{cfg.db.port}&quot;)
+</code></pre>
+<h3 id="_13">Валидация отдельной секции</h3>
+<p>Если вам нужна только часть настроек:</p>
+<pre><code class="language-python">from chutils import get_config_section
+
+db_cfg = get_config_section(&quot;Database&quot;, model=DbConfig)
+</code></pre>
+<h3 id="ide-vscode-pycharm-json-schema">Интеграция с IDE (VSCode, PyCharm) через JSON Schema</h3>
+<p>Чтобы получить автодополнение и проверку типов прямо в YAML файле, вы можете сгенерировать JSON Schema для вашей
+Pydantic модели и подключить её.</p>
+<ol>
+<li>
+<p><strong>Генерация схемы:</strong>
+   <code>bash
+   chutils config generate-schema --model my_app.models:Settings -o .config.schema.json</code></p>
+</li>
+<li>
+<p><strong>Подключение в VSCode:</strong>
+   Добавьте "магический комментарий" в начало вашего <code>config.yml</code>:
+   ```yaml
+   # yaml-language-server: $schema=./.config.schema.json</p>
+</li>
+</ol>
+<p>Database:
+     host: localhost
+     port: 5432
+   ```
+   <em>Требуется расширение "YAML" от Red Hat.</em></p>
+<ol>
+<li><strong>Подключение в PyCharm:</strong><ul>
+<li>Перейдите в <code>Settings</code> -&gt; <code>Languages &amp; Frameworks</code> -&gt; <code>Schemas and DTDs</code> -&gt; <code>JSON Schema Mappings</code>.</li>
+<li>Добавьте новую схему, укажите путь к <code>.config.schema.json</code> и выберите ваш файл <code>config.yml</code>.</li>
+</ul>
+</li>
+</ol>
+<h2 id="8-cli">8. Утилита командной строки (CLI)</h2>
+<h3 id="_14">Управление секретами без кода</h3>
+<p>Используйте команду <code>chutils</code>, чтобы быстро настроить секреты в окружении разработки или на сервере.</p>
+<pre><code class="language-bash"># Сохранить API ключ
+chutils secrets set STRIPE_KEY &quot;sk_test_...&quot;
+
+# Удалить секрет
+chutils secrets delete STRIPE_KEY
+
+# Указать конкретный сервис (по умолчанию - имя текущей папки)
+chutils secrets set AWS_SECRET &quot;...&quot; --service my-production-app
+</code></pre>
+<h2 id="9">9. Работа с файловой системой</h2>
+<h3 id="_15">Безопасная запись данных</h3>
+<p>Используйте <code>atomic_write</code>, чтобы гарантировать, что файл не будет поврежден при сбое питания или внезапной остановке
+процесса. Данные сначала записываются во временный файл, который затем атомарно заменяет целевой.</p>
+<pre><code class="language-python">from chutils.fs import atomic_write
+
+config_data = {&quot;version&quot;: 1, &quot;settings&quot;: {&quot;theme&quot;: &quot;dark&quot;}}
+
+# Автоматически сериализует в JSON, так как расширение .json
+atomic_write(&quot;settings.json&quot;, config_data)
+
+# Автоматически сериализует в YAML, так как расширение .yaml
+atomic_write(&quot;settings.yaml&quot;, config_data)
+
+# Запись обычного текста
+atomic_write(&quot;hello.txt&quot;, &quot;Hello world&quot;)
+</code></pre>
+<h3 id="-">Временные файлы с авто-удалением</h3>
+<p>Контекстный менеджер <code>get_temp_file</code> создает временный файл и гарантированно удаляет его при выходе из блока <code>with</code>.</p>
+<pre><code class="language-python">from chutils.fs import get_temp_file
+
+with get_temp_file(suffix=&quot;.tmp&quot;) as temp_path:
+    # Делаем что-то с временным файлом
+    temp_path.write_text(&quot;temporary content&quot;)
+    print(f&quot;Путь к файлу: {temp_path}&quot;)
+
+# Здесь файл уже удален
+</code></pre>
+<h2 id="10-graceful-shutdown">10. Graceful Shutdown (Управление жизненным циклом)</h2>
+<p>Механизм корректного завершения работы приложения позволяет выполнить необходимые действия по очистке ресурсов (закрытие
+соединений с БД, логов, сокетов) при получении сигналов от ОС (например, <code>Ctrl+C</code>).</p>
+<h3 id="_16">Регистрация функций очистки</h3>
+<p>Используйте декоратор <code>@register_cleanup</code> для регистрации как синхронных, так и асинхронных функций.</p>
+<pre><code class="language-python">import asyncio
+from chutils import register_cleanup, setup_graceful_shutdown
+
+
+@register_cleanup
+async def close_db():
+    print(&quot;Closing database connections...&quot;)
+    await asyncio.sleep(0.1)  # Имитация работы
+    print(&quot;DB connections closed.&quot;)
+
+
+@register_cleanup
+def cleanup_temp_files():
+    print(&quot;Deleting temporary files...&quot;)
+
+
+# В начале работы приложения активируйте перехват сигналов
+setup_graceful_shutdown()
+
+
+# Пример работы асинхронного цикла
+async def main():
+    print(&quot;App is running... Press Ctrl+C to stop.&quot;)
+    while True:
+        await asyncio.sleep(1)
+
+
+if __name__ == &quot;__main__&quot;:
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass
+</code></pre>
+<h3 id="_17">Настройка таймаута</h3>
+<p>По умолчанию на выполнение всех функций очистки дается 10 секунд. Вы можете изменить это значение в <code>config.yml</code>:</p>
+<pre><code class="language-yaml"># config.yml
+shutdown:
+  timeout: 5 # Таймаут в секундах
+</code></pre>
+<h3 id="_18">Особенности работы</h3>
+<ol>
+<li><strong>LIFO (Last-In-First-Out):</strong> Функции выполняются в обратном порядке их регистрации. Это удобно, если ресурсы зависят
+   друг от друга (например, сначала закрыть логгер, потом БД).</li>
+<li><strong>Log and Continue:</strong> Если одна из функций выбросит исключение, <code>chutils</code> залогирует ошибку и продолжит выполнение
+   остальных функций.</li>
+<li><strong>Кроссплатформенность:</strong> На Windows перехватываются <code>SIGINT</code> и <code>SIGTERM</code>, на Linux/Unix дополнительно <code>SIGHUP</code>.</li>
+</ol>
+<h2 id="11-painless-datetime">11. Работа со временем (Painless Datetime)</h2>
+<p>Модуль <code>chutils.time</code> обеспечивает "UTC-first" подход, гарантируя, что вы всегда работаете с осведомленными (timezone
+aware) объектами времени.</p>
+<h3 id="utc">Получение текущего времени в UTC</h3>
+<pre><code class="language-python">from chutils import utc_now
+
+# Возвращает datetime с tzinfo=timezone.utc
+now = utc_now()
+print(f&quot;Текущее время: {now}&quot;)
+</code></pre>
+<h3 id="_19">Умный парсинг дат</h3>
+<p>Функция <code>parse_datetime</code> поддерживает ISO строки, UNIX-таймстампы (в секундах и миллисекундах) и автоматически приводит
+их к UTC.</p>
+<pre><code class="language-python">from chutils import parse_datetime
+
+# ISO 8601
+dt1 = parse_datetime(&quot;2023-10-27T12:00:00&quot;)
+
+# UNIX Timestamp (секунды)
+dt2 = parse_datetime(1698400000)
+
+# UNIX Timestamp (миллисекунды)
+dt3 = parse_datetime(1698400000000)
+
+# Если установлена библиотека chutils[date], поддерживается любой формат:
+# dt4 = parse_datetime(&quot;27 Oct 2023 12:00&quot;)
+</code></pre>
+<h3 id="_20">Человекочитаемая разница во времени</h3>
+<p>Превращает разницу между датами в понятные строки на русском или английском языке.</p>
+<pre><code class="language-python">from datetime import timedelta
+from chutils import utc_now, humanize_timedelta
+
+now = utc_now()
+past_date = now - timedelta(minutes=5)
+future_date = now + timedelta(days=1)
+
+print(humanize_timedelta(past_date))  # &quot;5 минут назад&quot;
+print(humanize_timedelta(future_date))  # &quot;завтра&quot;
+print(humanize_timedelta(past_date, locale='en'))  # &quot;5 minutes ago&quot;
+</code></pre>
+<h2 id="12-cli-cli-booster">12. Быстрое создание CLI (CLI Booster)</h2>
+<p>Декоратор <code>@cli_command</code> позволяет превратить любую функцию в полноценный CLI-инструмент за одну секунду. Он
+автоматически создает парсер аргументов на основе сигнатуры функции.</p>
+<h3 id="_21">Простой скрипт</h3>
+<pre><code class="language-python"># my_tool.py
+from pathlib import Path
+
+from chutils import cli_command
+
+
+@cli_command
+def copy_files(source: Path, dest: Path, verbose: bool = False):
+    &quot;&quot;&quot;
+    Утилита для копирования файлов.
+
+    Args:
+        source (Path): Путь к исходному файлу.
+        dest (Path): Путь назначения.
+        verbose (bool): Выводить подробную информацию.
+    &quot;&quot;&quot;
+    if verbose:
+        print(f&quot;Копируем из {source} в {dest}&quot;)
+    # Логика...
+
+
+if __name__ == &quot;__main__&quot;:
+    copy_files()
+</code></pre>
+<p>Теперь вы можете запустить его из терминала:</p>
+<pre><code class="language-bash">python my_tool.py /tmp/src /tmp/dst --verbose
+python my_tool.py --help
+</code></pre>
+<h3 id="_22">Асинхронные команды и списки</h3>
+<p><code>CLI Booster</code> отлично справляется с асинхронностью и списками аргументов.</p>
+<pre><code class="language-python">import asyncio
+from chutils import cli_command
+
+
+@cli_command
+async def process_batch(ids: list[int], retry: int = 3):
+    &quot;&quot;&quot;Обработка списка ID с повторами.&quot;&quot;&quot;
+    for item_id in ids:
+        print(f&quot;Processing {item_id} (retries: {retry})&quot;)
+        await asyncio.sleep(0.1)
+
+
+if __name__ == &quot;__main__&quot;:
+    process_batch()
+</code></pre>
+<h2 id="13-config-diagnostics">13. Отладка и диагностика конфигурации (Config Diagnostics)</h2>
+<p>Если вы не понимаете, почему значение ключа в приложении отличается от того, что написано в <code>config.yml</code>, используйте
+интерактивный отладчик.</p>
+<h3 id="cli">Использование через CLI</h3>
+<p>Команда <code>config debug</code> покажет всю историю изменений для каждого ключа: откуда он был загружен изначально и чем перекрыт
+позже.</p>
+<pre><code class="language-bash"># Показать дерево конфигурации (по умолчанию)
+chutils config debug
+
+# Вывод в виде таблицы
+chutils config debug --format table
+
+# Показать секретные значения (по умолчанию они маскируются)
+chutils config debug --show-secrets
+
+# Экспорт в JSON для анализа
+chutils config debug --format json &gt; config_trace.json
+</code></pre>
+<h3 id="api">Использование через API</h3>
+<p>Вы можете включить трассировку и получить данные программно:</p>
+<pre><code class="language-python">from chutils.config.manager import _cm
+from chutils.config import get_config
+from chutils.config.diagnostics import format_trace
+
+# 1. Включаем сбор метаданных
+_cm.tracing_enabled = True
+
+# 2. Сбрасываем кэш и загружаем конфиг
+_cm.clear_cache()
+get_config()
+
+# 3. Получаем и форматируем отчет
+trace = _cm.get_trace()
+print(format_trace(trace, format_type='tree'))
+</code></pre>
+<h2 id="14-opentelemetry">14. Распределенное трассирование (OpenTelemetry)</h2>
+<p><code>chutils</code> предоставляет легковесную интеграцию с OpenTelemetry для отслеживания пути выполнения запросов и связи логов с
+трассами.</p>
+<h3 id="_23">Установка</h3>
+<p>Функционал трассировки является опциональным:</p>
+<pre><code class="language-bash">pip install chutils[otel]
+</code></pre>
+<h3 id="_24">Быстрый старт</h3>
+<ol>
+<li>Настройте сбор трасс в начале вашего приложения:</li>
+</ol>
+<pre><code class="language-python">from chutils import setup_tracing
+
+# Настройка вывода трасс в консоль (для локальной разработки)
+setup_tracing(service_name=&quot;my_service&quot;, exporter_type=&quot;console&quot;)
+</code></pre>
+<ol>
+<li>Используйте декоратор <code>@trace</code> для функций, которые хотите отслеживать:</li>
+</ol>
+<pre><code class="language-python">from chutils import trace, setup_logger
+
+logger = setup_logger()
+
+
+@trace(capture_kwargs=True)
+def process_order(order_id: int):
+    logger.info(&quot;Начинаем обработку заказа&quot;)
+    # ... логика ...
+    return True
+</code></pre>
+<h3 id="_25">Особенности</h3>
+<ul>
+<li><strong>Связь с логами:</strong> В текстовых логах автоматически появятся <code>[trace_id=... span_id=...]</code>. В JSON логах эти поля будут
+  вынесены на верхний уровень.</li>
+<li><strong>Async:</strong> Декоратор <code>@trace</code> полностью поддерживает асинхронные функции.</li>
+<li><strong>OTLP:</strong> Для промышленного использования (Jaeger, Grafana Tempo) используйте <code>exporter_type="otlp"</code>.</li>
+<li><strong>Zero Overhead:</strong> Если пакеты <code>opentelemetry</code> не установлены, декоратор <code>@trace</code> не создает никаких накладных
+  расходов.</li>
+</ul>
+<h2 id="15-remote-config">15. Дистанционная конфигурация (Remote Config)</h2>
+<p><code>chutils</code> позволяет загружать настройки из удаленных HTTP/HTTPS источников. Это полезно для централизованного управления
+конфигурациями в микросервисной архитектуре.</p>
+<h3 id="_26">Быстрый старт</h3>
+<p>Просто укажите URL при получении конфигурации:</p>
+<pre><code class="language-python">from chutils import get_config
+
+# Загрузка и объединение с локальными файлами
+config = get_config(remote_url=&quot;https://api.example.com/config.json&quot;)
+</code></pre>
+<h3 id="polling">Периодический опрос (Polling)</h3>
+<p>Вы можете настроить автоматическое фоновое обновление конфигурации:</p>
+<pre><code class="language-python"># Опрос каждые 60 секунд
+config = get_config(
+    remote_url=&quot;https://api.example.com/config.json&quot;,
+    polling_interval=60
+)
+</code></pre>
+<h3 id="_27">Динамический интервал</h3>
+<p>Вы можете управлять интервалом опроса прямо из удаленного конфига. Если в загруженных данных есть секция
+<code>RemoteConfig</code> (или <code>polling</code>) с ключом <code>interval</code>, <code>chutils</code> автоматически переключится на этот интервал.</p>
+<pre><code class="language-json">{
+  &quot;RemoteConfig&quot;: {
+    &quot;interval&quot;: 300
+  },
+  &quot;Database&quot;: {
+    &quot;host&quot;: &quot;remote-db&quot;
+  }
+}
+</code></pre>
+<h3 id="_28">Авторизация и безопасность</h3>
+<p>Для доступа к защищенным эндпоинтам используйте <code>remote_auth</code>:</p>
+<pre><code class="language-python">config = get_config(
+    remote_url=&quot;https://secure-config.local/app.yml&quot;,
+    remote_auth=(&quot;admin&quot;, &quot;secret-token&quot;)
+)
+</code></pre>
+<h3 id="fallback">Отказоустойчивость (Fallback)</h3>
+<p>Если удаленный сервер временно недоступен, <code>chutils</code> автоматически вернет последнюю успешно загруженную версию из
+памяти (кэша), чтобы приложение продолжало работать.</p>
+<h2 id="16-ai-">16. Инструменты разработчика и AI-контекст</h2>
+<p>Если вы хотите быстро создать документацию по API вашего проекта или подготовить глубокий индекс для AI-агента.</p>
+<h3 id="api_1">Генерация карты API</h3>
+<p>Создает Markdown-файл со списком всех публичных функций, классов и их описаний.</p>
+<pre><code class="language-bash">chutils dev generate-context -o api_map.md
+</code></pre>
+<h3 id="ai">Генерация семантического индекса для AI</h3>
+<p>Генерирует JSON-дерево проекта (через AST), которое включает связи между модулями, веса зависимостей и метаданные символов. Это "золотой стандарт" контекста для современных LLM.</p>
+<pre><code class="language-bash">chutils dev generate-context --tree -o project_index.json
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
