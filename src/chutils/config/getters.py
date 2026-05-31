@@ -205,7 +205,15 @@ def get_config_section(
     if config is None:
         config = get_config()
 
-    section_data = config.get(section_name, fallback if fallback is not None else {})
+    section_data = config.get(section_name)
+    if section_data is None:
+        # Case-insensitive fallback
+        for k, v in config.items():
+            if k.lower() == section_name.lower():
+                section_data = v
+                break
+        else:
+            section_data = fallback if fallback is not None else {}
 
     if model is not None:
         if not utils._check_pydantic():

@@ -166,6 +166,7 @@ class IniConfigProvider(ConfigProvider):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 parser = configparser.ConfigParser()
+                parser.optionxform = str  # Сохраняем регистр ключей
                 parser.read_string(f.read())
                 flat_ini_config = {s: dict(parser.items(s)) for s in parser.sections()}
                 return self._nest_func(flat_ini_config)
