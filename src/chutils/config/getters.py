@@ -6,7 +6,6 @@
 """
 
 import logging
-import os
 from pathlib import Path
 from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union
 
@@ -29,9 +28,7 @@ def get_config_value(section: str, key: str, fallback: Any = None, config: Optio
     Получает произвольное значение из конфигурации.
 
     Если значение не найдено или оно пустое, возвращает `fallback`.
-    Для ключа `disable_keyring` в секции `secrets` проверяет переменную окружения.
-
-    Также поддерживает универсальное переопределение через переменные окружения
+    Поддерживает универсальное переопределение через переменные окружения
     по шаблону `CH_[SECTION]_[KEY]`, если не установлено `CH_DISABLE_ENV_OVERRIDE=true`.
 
     Args:
@@ -43,27 +40,24 @@ def get_config_value(section: str, key: str, fallback: Any = None, config: Optio
     Returns:
         Значение из конфигурации или `fallback`.
     """
-    # 1. Проверка глобального флага отключения переопределения через ENV
-    disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")
-
-    if not disable_env_override:
-        # 2. Проверка универсального переопределения CH_[SECTION]_[KEY]
-        # Используем верхний регистр для поиска в ENV согласно спецификации
-        env_key = f"CH_{section.upper()}_{key.upper()}"
-        env_value = os.getenv(env_key)
-        if env_value is not None:
-            return env_value
-
-    # Проверка переменных окружения для специфических ключей (FR3: приоритет над конфигом)
-    if section == "secrets" and key == "disable_keyring":
-        env_val = os.getenv("CH_DISABLE_KEYRING_WARNING")
-        if env_val is not None:
-            return env_val
-
     if config is None:
         config = get_config()
 
-    value = config.get(section, {}).get(key)
+    section_data = config.get(section)
+    if section_data is None:
+        for k, v in config.items():
+            if k.lower() == section.lower():
+                section_data = v
+                break
+        else:
+            section_data = {}
+
+    value = section_data.get(key)
+    if value is None:
+        for k, v in section_data.items():
+            if k.lower() == key.lower():
+                value = v
+                break
 
     # Если значение не найдено или является пустой строкой, возвращаем fallback
     if value is None or value == '':
