@@ -1291,7 +1291,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 76,
+                    "line_number": 86,
                     "bases": [],
                     "children": []
                   },
@@ -1311,7 +1311,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 80,
+                    "line_number": 90,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_extract_defaults",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, model_class)",
+                    "summary": "Рекурсивно извлекает значения по умолчанию из Pydantic модели.",
+                    "docstring": "Рекурсивно извлекает значения по умолчанию из Pydantic модели.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 137,
                     "bases": [],
                     "children": []
                   },
@@ -1331,7 +1351,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 112,
+                    "line_number": 165,
                     "bases": [],
                     "children": []
                   }
