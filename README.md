@@ -31,7 +31,8 @@ Every time you start a new project, you have to solve the same tasks:
   file. It uses **lazy initialization** — no heavy operations until you actually need them.
 - **⚙️ Flexible Configuration:** Support for `YAML` and `INI` formats. Simple functions for retrieving typed data.
 - **✍️ Advanced Logger:** The `setup_logger()` function configures logging to the console and rotating files out of the
-  box. It returns a custom logger with additional debug levels (`devdebug`, `mediumdebug`).
+  box. Includes **automatic secret masking** and **smart console width detection** for IDEs (PyCharm, etc.).
+  It returns a custom logger with additional debug levels (`devdebug`, `mediumdebug`).
 - **🔒 Secure Secret Storage:** The `secret_manager` module provides a simple interface for saving and retrieving secrets
   via the system `keyring`, with a fallback to `.env` files.
 - **🚀 CLI Booster:** Turn any function into a CLI tool in seconds using the `@cli_command` decorator with automatic type
