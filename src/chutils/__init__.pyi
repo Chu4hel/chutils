@@ -71,6 +71,27 @@ def generate_env_template(model_class: Type[T], prefix: str = "CH") -> str: ...
 def generate_json_schema(model_class: Type[T]) -> str: ...
 
 
+def get_base_dir() -> Optional[str]: ...
+
+
+def get_config_file_path() -> Optional[str]: ...
+
+
+def is_config_loaded() -> bool: ...
+
+
+def are_paths_initialized() -> bool: ...
+
+
+def get_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]: ...
+
+
+def get_all_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]: ...
+
+
+def export_schema(model: Union[Type[T], str], output_path: Optional[Union[str, Any]] = None) -> str: ...
+
+
 # --- features ---
 def is_feature_enabled(feature_name: str, context: Optional[Dict[str, Any]] = None) -> bool: ...
 
@@ -92,7 +113,29 @@ def setup_logger(name: Optional[str] = None, level: Optional[Union[str, int]] = 
                  json_format: Optional[bool] = None, use_async: Optional[bool] = None) -> ChutilsLogger: ...
 
 
+class LogLevel: ...
+
+
+def get_console(stderr: bool = False) -> Any: ...
+
+
+class SecretMaskingFilter(logging.Filter): ...
+
+
+class ChutilsJsonFormatter(logging.Formatter): ...
+
+
 class SafeTimedRotatingFileHandler(logging.Handler): ...
+
+
+class CompressingRotatingFileHandler(logging.Handler): ...
+
+
+class CompressingTimedRotatingFileHandler(logging.Handler): ...
+
+
+DEVDEBUG_LEVEL_NUM: int
+MEDIUMDEBUG_LEVEL_NUM: int
 
 
 # --- context ---
@@ -124,6 +167,20 @@ def parse_datetime(value: Union[str, int, float]) -> datetime.datetime: ...
 
 
 def humanize_timedelta(dt: datetime.datetime, locale: str = 'ru', custom_locales: Optional[dict] = None) -> str: ...
+
+
+# --- env (Discovery) ---
+def is_rich_enabled() -> bool: ...
+
+
+def is_otel_enabled() -> bool: ...
+
+
+RICH_AVAILABLE: bool
+PYDANTIC_AVAILABLE: bool
+WATCHDOG_AVAILABLE: bool
+JSON_LOGGER_AVAILABLE: bool
+OTEL_AVAILABLE: bool
 
 
 # --- secret_manager ---
