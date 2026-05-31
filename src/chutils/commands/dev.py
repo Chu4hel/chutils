@@ -81,6 +81,14 @@ class DevCommand(BaseCommand):
                 obj_type = "module"
                 signature = ""
                 doc = inspect.getdoc(obj) or ""
+
+                # Очистка мусорной документации для констант примитивных типов
+                if not inspect.isclass(obj) and not inspect.isfunction(obj) and not inspect.ismodule(obj):
+                    if isinstance(obj, (bool, int, float, str, type(None))):
+                        # Если doc совпадает с docstring типа, значит это автогенерированный мусор
+                        if doc == inspect.getdoc(type(obj)):
+                            doc = ""
+
                 summary = doc.split('\n')[0] if doc else ""
 
                 if inspect.isfunction(obj):

@@ -379,7 +379,7 @@
                 },
                 "line_number": 8,
                 "bases": [
-                  "baseBaseCacheBackend"
+                  ".base.BaseCacheBackend"
                 ],
                 "children": [
                   {
@@ -1252,7 +1252,7 @@
                 },
                 "line_number": 10,
                 "bases": [
-                  "baseBaseCommand"
+                  ".base.BaseCommand"
                 ],
                 "children": [
                   {
@@ -1366,7 +1366,7 @@
                 },
                 "line_number": 11,
                 "bases": [
-                  "baseBaseCommand"
+                  ".base.BaseCommand"
                 ],
                 "children": [
                   {
@@ -1445,7 +1445,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 142,
+                    "line_number": 150,
                     "bases": [],
                     "children": []
                   }
@@ -1480,7 +1480,7 @@
                 },
                 "line_number": 7,
                 "bases": [
-                  "baseBaseCommand"
+                  ".base.BaseCommand"
                 ],
                 "children": [
                   {
@@ -1574,7 +1574,7 @@
                 },
                 "line_number": 9,
                 "bases": [
-                  "baseBaseCommand"
+                  ".base.BaseCommand"
                 ],
                 "children": [
                   {
@@ -1648,7 +1648,7 @@
                 },
                 "line_number": 9,
                 "bases": [
-                  "baseBaseCommand"
+                  ".base.BaseCommand"
                 ],
                 "children": [
                   {
@@ -1762,7 +1762,7 @@
                 },
                 "line_number": 15,
                 "bases": [
-                  "baseBaseCommand"
+                  ".base.BaseCommand"
                 ],
                 "children": [
                   {
@@ -1867,7 +1867,7 @@
                 },
                 "line_number": 10,
                 "bases": [
-                  "baseBaseCommand"
+                  ".base.BaseCommand"
                 ],
                 "children": [
                   {
@@ -5221,7 +5221,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 213,
+                    "line_number": 218,
                     "bases": [],
                     "children": []
                   },
@@ -5241,7 +5241,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 234,
+                    "line_number": 239,
                     "bases": [],
                     "children": []
                   },
@@ -5261,7 +5261,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 238,
+                    "line_number": 243,
                     "bases": [],
                     "children": []
                   }
@@ -8632,32 +8632,32 @@
   "dependency_graph": [
     {
       "source": "chutils/cache",
-      "target": "base",
+      "target": "/base",
       "weight": 1
     },
     {
       "source": "chutils/cache",
-      "target": "decorator",
+      "target": "/decorator",
       "weight": 1
     },
     {
       "source": "chutils/cache",
-      "target": "in_memory",
+      "target": "/in_memory",
       "weight": 1
     },
     {
       "source": "chutils/cache/decorator",
-      "target": "in_memory",
+      "target": "/in_memory",
       "weight": 1
     },
     {
       "source": "chutils/cache/decorator",
-      "target": "utils",
+      "target": "/utils",
       "weight": 3
     },
     {
       "source": "chutils/cache/in_memory",
-      "target": "base",
+      "target": "/base",
       "weight": 1
     },
     {
@@ -8667,12 +8667,12 @@
     },
     {
       "source": "chutils/cli_utils",
-      "target": "env",
+      "target": "/env",
       "weight": 2
     },
     {
       "source": "chutils/commands",
-      "target": "base",
+      "target": "/base",
       "weight": 1
     },
     {
@@ -8697,7 +8697,7 @@
     },
     {
       "source": "chutils/commands/config",
-      "target": "base",
+      "target": "/base",
       "weight": 1
     },
     {
@@ -8707,12 +8707,12 @@
     },
     {
       "source": "chutils/commands/dev",
-      "target": "base",
+      "target": "/base",
       "weight": 1
     },
     {
       "source": "chutils/commands/init",
-      "target": "base",
+      "target": "/base",
       "weight": 1
     },
     {
@@ -8722,7 +8722,7 @@
     },
     {
       "source": "chutils/commands/paths",
-      "target": "base",
+      "target": "/base",
       "weight": 1
     },
     {
@@ -8737,17 +8737,17 @@
     },
     {
       "source": "chutils/commands/secrets",
-      "target": "base",
+      "target": "/base",
       "weight": 1
     },
     {
       "source": "chutils/commands/template",
-      "target": "base",
+      "target": "/base",
       "weight": 1
     },
     {
       "source": "chutils/commands/template",
-      "target": "config/generator",
+      "target": "//config/generator",
       "weight": 4
     },
     {
@@ -8757,47 +8757,47 @@
     },
     {
       "source": "chutils/commands/validate",
-      "target": "base",
+      "target": "/base",
       "weight": 1
     },
     {
       "source": "chutils/commands/validate",
-      "target": "utils",
+      "target": "/utils",
       "weight": 1
     },
     {
       "source": "chutils/config",
-      "target": "core",
+      "target": "/core",
       "weight": 5
     },
     {
       "source": "chutils/config",
-      "target": "generator",
+      "target": "/generator",
       "weight": 3
     },
     {
       "source": "chutils/config",
-      "target": "getters",
+      "target": "/getters",
       "weight": 7
     },
     {
       "source": "chutils/config",
-      "target": "manager",
+      "target": "/manager",
       "weight": 1
     },
     {
       "source": "chutils/config",
-      "target": "schema",
+      "target": "/schema",
       "weight": 2
     },
     {
       "source": "chutils/config",
-      "target": "utils",
+      "target": "/utils",
       "weight": 2
     },
     {
       "source": "chutils/config",
-      "target": "watcher",
+      "target": "/watcher",
       "weight": 3
     },
     {
@@ -8812,12 +8812,12 @@
     },
     {
       "source": "chutils/config/core",
-      "target": "manager",
+      "target": "/manager",
       "weight": 1
     },
     {
       "source": "chutils/config/core",
-      "target": "providers",
+      "target": "/providers",
       "weight": 2
     },
     {
@@ -8842,12 +8842,12 @@
     },
     {
       "source": "chutils/config/getters",
-      "target": "core",
+      "target": "/core",
       "weight": 1
     },
     {
       "source": "chutils/config/getters",
-      "target": "manager",
+      "target": "/manager",
       "weight": 1
     },
     {
@@ -8857,12 +8857,12 @@
     },
     {
       "source": "chutils/config/schema",
-      "target": "env",
+      "target": "//env",
       "weight": 1
     },
     {
       "source": "chutils/config/utils",
-      "target": "providers",
+      "target": "/providers",
       "weight": 1
     },
     {
@@ -8872,12 +8872,12 @@
     },
     {
       "source": "chutils/config/watcher",
-      "target": "manager",
+      "target": "/manager",
       "weight": 1
     },
     {
       "source": "chutils/config/watcher",
-      "target": "utils",
+      "target": "/utils",
       "weight": 1
     },
     {
@@ -8887,27 +8887,27 @@
     },
     {
       "source": "chutils/decorators",
-      "target": "exceptions",
+      "target": "/exceptions",
       "weight": 1
     },
     {
       "source": "chutils/dev/ast_indexer",
-      "target": "models",
+      "target": "/models",
       "weight": 5
     },
     {
       "source": "chutils/features",
-      "target": "config/core",
+      "target": "/config/core",
       "weight": 2
     },
     {
       "source": "chutils/features",
-      "target": "config/manager",
+      "target": "/config/manager",
       "weight": 1
     },
     {
       "source": "chutils/features",
-      "target": "config/utils",
+      "target": "/config/utils",
       "weight": 1
     },
     {
@@ -8922,37 +8922,37 @@
     },
     {
       "source": "chutils/logger",
-      "target": "core",
+      "target": "/core",
       "weight": 5
     },
     {
       "source": "chutils/logger",
-      "target": "formatters",
+      "target": "/formatters",
       "weight": 2
     },
     {
       "source": "chutils/logger",
-      "target": "handlers",
+      "target": "/handlers",
       "weight": 3
     },
     {
       "source": "chutils/logger",
-      "target": "masking",
+      "target": "/masking",
       "weight": 1
     },
     {
       "source": "chutils/logger/core",
-      "target": "formatters",
+      "target": "/formatters",
       "weight": 2
     },
     {
       "source": "chutils/logger/core",
-      "target": "handlers",
+      "target": "/handlers",
       "weight": 3
     },
     {
       "source": "chutils/logger/core",
-      "target": "masking",
+      "target": "/masking",
       "weight": 5
     },
     {
@@ -8962,7 +8962,7 @@
     },
     {
       "source": "chutils/logger/core",
-      "target": "context",
+      "target": "//context",
       "weight": 1
     },
     {
@@ -8972,12 +8972,12 @@
     },
     {
       "source": "chutils/secret_manager",
-      "target": "core",
+      "target": "/core",
       "weight": 1
     },
     {
       "source": "chutils/secret_manager",
-      "target": "providers",
+      "target": "/providers",
       "weight": 4
     },
     {
@@ -8987,7 +8987,7 @@
     },
     {
       "source": "chutils/secret_manager/core",
-      "target": "providers",
+      "target": "/providers",
       "weight": 4
     },
     {
@@ -9002,7 +9002,7 @@
     },
     {
       "source": "chutils/testing",
-      "target": "fixtures",
+      "target": "/fixtures",
       "weight": 3
     },
     {
@@ -9022,7 +9022,7 @@
     },
     {
       "source": "chutils/tracing",
-      "target": "env",
+      "target": "/env",
       "weight": 1
     }
   ]

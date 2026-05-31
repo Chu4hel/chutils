@@ -173,24 +173,29 @@ class Indexer:
                         self._current_imports[alias.asname or alias.name] = alias.name
                 elif isinstance(item, ast.ImportFrom):
                     is_relative = item.level > 0
-                    base = item.module if item.module else "." * item.level
+                    prefix = "." * item.level
+                    base_mod = item.module if item.module else ""
+                    full_base = prefix + base_mod
 
-                    if base:
+                    if full_base:
                         for alias in item.names:
                             if alias.name == "*":
-                                self._record_dependency(rel_path, base, force_internal=is_relative)
+                                self._record_dependency(rel_path, full_base, force_internal=is_relative)
                                 continue
 
-                            full_name = f"{base}.{alias.name}" if not is_relative else f"{base}{alias.name}"
+                            # Формируем полное имя: .base.ClassName или ClassName
+                            if base_mod:
+                                full_name = f"{full_base}.{alias.name}"
+                            else:
+                                full_name = f"{full_base}{alias.name}"
+
                             self._current_imports[alias.asname or alias.name] = full_name
 
                             if is_relative:
-                                # Для относительных импортов в тестах ожидается база ('.', '..')
-                                self._record_dependency(rel_path, base, force_internal=True)
+                                # Для относительных импортов регистрируем зависимость
+                                self._record_dependency(rel_path, full_base, force_internal=True)
                             else:
-                                # Для абсолютных строим полный путь 'chutils.core'
-                                target = f"{base}.{alias.name}"
-                                self._record_dependency(rel_path, target)
+                                self._record_dependency(rel_path, full_name)
 
         if is_pkg:
             # Обработка пакета
