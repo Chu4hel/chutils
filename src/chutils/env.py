@@ -19,6 +19,21 @@ JSON_LOGGER_AVAILABLE = _is_installed("pythonjsonlogger")
 OTEL_AVAILABLE = _is_installed("opentelemetry.trace")
 
 
+def has_pydantic() -> bool:
+    """Возвращает True, если Pydantic установлен."""
+    return PYDANTIC_AVAILABLE
+
+
+def has_rich() -> bool:
+    """Возвращает True, если Rich установлен."""
+    return RICH_AVAILABLE
+
+
+def has_watchdog() -> bool:
+    """Возвращает True, если Watchdog установлен."""
+    return WATCHDOG_AVAILABLE
+
+
 def is_rich_enabled() -> bool:
     """
     Централизованная проверка: доступен ли Rich и разрешен ли он настройками.

@@ -141,6 +141,16 @@ class DevCommand(BaseCommand):
 
     def _handle_tree_index(self, args: argparse.Namespace):
         """Генерация иерархического индекса (Phase 5)."""
+        from chutils.exceptions import OptionalDependencyError
+        from chutils.env import has_pydantic
+
+        if not has_pydantic():
+            raise OptionalDependencyError(
+                "Pydantic is required for generating hierarchical project index. "
+                "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'.",
+                dependency="pydantic"
+            )
+
         from chutils.dev.ast_indexer import Indexer
 
         try:

@@ -23,7 +23,7 @@ def main():
     )
     subparsers = parser.add_subparsers(
         title="Доступные команды",
-        dest="command", 
+        dest="command",
         metavar="COMMAND",
         help="Используйте 'chutils COMMAND --help' для получения справки по конкретной команде"
     )
@@ -42,8 +42,12 @@ def main():
 
     # Диспетчеризация выполнения
     if hasattr(args, 'handler'):
+        from chutils.exceptions import OptionalDependencyError
         try:
             args.handler(args)
+        except OptionalDependencyError as e:
+            print(f"\n[bold red][ERROR] Отсутствует необходимая зависимость:[/bold red] {e}")
+            sys.exit(1)
         except Exception as e:
             print(f"[ERROR] Ошибка при выполнении команды: {e}")
             sys.exit(1)

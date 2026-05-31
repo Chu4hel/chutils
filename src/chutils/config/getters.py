@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union
 
 from chutils.exceptions import ConfigParseError, OptionalDependencyError
+
 from . import utils
 from .core import get_config
 from .manager import _cm
@@ -216,7 +217,8 @@ def get_config_section(
             section_data = fallback if fallback is not None else {}
 
     if model is not None:
-        if not utils._check_pydantic():
+        from chutils.env import has_pydantic
+        if not has_pydantic():
             raise OptionalDependencyError(
                 "Pydantic is required for configuration validation. "
                 "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'.",

@@ -4,7 +4,12 @@
 
 from typing import Dict, List, Optional, Any
 
-from pydantic import BaseModel, Field
+try:
+    from pydantic import BaseModel, Field
+except ImportError:
+    # Заглушки для обеспечения возможности импорта модуля без pydantic
+    BaseModel = object
+    Field = lambda **kwargs: None
 
 
 class Breadcrumbs(BaseModel):
