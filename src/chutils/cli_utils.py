@@ -18,6 +18,10 @@ class FallbackConsole:
     def __init__(self, stderr: bool = False):
         self._is_stderr = stderr
 
+    @property
+    def file(self):
+        return sys.stderr if self._is_stderr else sys.stdout
+
     def _strip_markup(self, text: str) -> str:
         """Удаляет простейшие теги rich типа [bold]."""
         return re.sub(r"\[/?[\w\s,=#]*\]", "", text)

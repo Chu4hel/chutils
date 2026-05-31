@@ -6,7 +6,10 @@ import os
 
 def _is_installed(package_name: str) -> bool:
     """Проверяет наличие пакета в системе без его импорта."""
-    return importlib.util.find_spec(package_name) is not None
+    try:
+        return importlib.util.find_spec(package_name) is not None
+    except (ImportError, ModuleNotFoundError):
+        return False
 
 
 RICH_AVAILABLE = _is_installed("rich")
