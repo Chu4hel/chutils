@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Optional, Dict, TYPE_CHECKING, TypeVar, Type, Union, Tuple
 
 from chutils.exceptions import OptionalDependencyError
+
 from . import utils
 from .manager import _cm
 from .providers import get_providers, HttpConfigProvider
@@ -139,30 +140,55 @@ def get_config(
                 for env_key, env_value in os.environ.items():
                     if env_key.startswith("CH_") and env_key not in ("CH_ENV", "CH_DISABLE_ENV_OVERRIDE",
                                                                      "CH_DISABLE_KEYRING_WARNING"):
-                        parts = env_key[3:].split('_', 1)
-                        if len(parts) == 2:
-                            section, key = parts
-                            section_lower = section.lower()
-                            key_lower = key.lower()
+                        full_content = env_key[3:]
+                        if not full_content:
+                            continue
 
-                            # Попытка найти существующий регистр секции
-                            actual_sec = section_lower
+                        # Поиск подходящего разбиения на секцию и ключ
+                        # Находим все индексы '_'
+                        indices = [i for i, char in enumerate(full_content) if char == '_']
+
+                        best_match = None
+                        # Проверяем варианты от самого длинного имени секции к самому короткому
+                        # (это позволяет корректно обрабатывать вложенность или длинные имена)
+                        for idx in reversed(indices):
+                            s_candidate = full_content[:idx]
+                            k_candidate = full_content[idx + 1:]
+                            if not s_candidate or not k_candidate:
+                                continue
+
+                            # Проверяем, есть ли такая секция (регистронезависимо)
                             for existing_sec in config_data.keys():
-                                if existing_sec.lower() == section_lower:
+                                if existing_sec.lower() == s_candidate.lower():
+                                    # Нашли существующую секцию. Теперь поищем ключ в ней.
                                     actual_sec = existing_sec
+                                    actual_key = k_candidate.lower()
+
+                                    if isinstance(config_data[existing_sec], dict):
+                                        for existing_key in config_data[existing_sec].keys():
+                                            if existing_key.lower() == k_candidate.lower():
+                                                actual_key = existing_key
+                                                break
+
+                                    best_match = (actual_sec, actual_key)
                                     break
+                            if best_match:
+                                break
 
-                            # Попытка найти существующий регистр ключа
-                            actual_key = key_lower
-                            if actual_sec in config_data and isinstance(config_data[actual_sec], dict):
-                                for existing_key in config_data[actual_sec].keys():
-                                    if existing_key.lower() == key_lower:
-                                        actual_key = existing_key
-                                        break
+                        if best_match:
+                            actual_sec, actual_key = best_match
+                        else:
+                            # Если совпадений с существующими секциями нет,
+                            # используем стандартный сплит по первому '_'
+                            parts = full_content.split('_', 1)
+                            if len(parts) == 2:
+                                actual_sec, actual_key = parts[0].lower(), parts[1].lower()
+                            else:
+                                continue
 
-                            if actual_sec not in env_overrides:
-                                env_overrides[actual_sec] = {}
-                            env_overrides[actual_sec][actual_key] = env_value
+                        if actual_sec not in env_overrides:
+                            env_overrides[actual_sec] = {}
+                        env_overrides[actual_sec][actual_key] = env_value
 
                 # Специфический ключ для secrets
                 secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")
@@ -185,7 +211,8 @@ def get_config(
     config_data = _cm.load_config_safe(_do_load)
 
     if model is not None:
-        if not utils._check_pydantic():
+        from chutils.env import has_pydantic
+        if not has_pydantic():
             raise OptionalDependencyError(
                 "Pydantic is required for configuration validation. "
                 "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'.",
