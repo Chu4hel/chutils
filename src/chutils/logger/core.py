@@ -9,7 +9,6 @@ import logging
 import logging.handlers
 import os
 import queue
-from enum import Enum
 from pathlib import Path
 from typing import Optional, Any, List, Union
 
@@ -50,31 +49,18 @@ def _stop_all_async_loggers():
 
 atexit.register(_stop_all_async_loggers)
 
-# --- Пользовательские уровни логирования ---
+from .internal.levels import (
+    DEVDEBUG_LEVEL_NUM,
+    MEDIUMDEBUG_LEVEL_NUM,
+    LogLevel,
+    LogLevelsMixin,
+    init_custom_levels
+)
 
-DEVDEBUG_LEVEL_NUM = 9
-DEVDEBUG_LEVEL_NAME = "DEVDEBUG"
-MEDIUMDEBUG_LEVEL_NUM = 15
-MEDIUMDEBUG_LEVEL_NAME = "MEDIUMDEBUG"
-
-logging.addLevelName(MEDIUMDEBUG_LEVEL_NUM, MEDIUMDEBUG_LEVEL_NAME)
-logging.addLevelName(DEVDEBUG_LEVEL_NUM, DEVDEBUG_LEVEL_NAME)
-
-
-class LogLevel(str, Enum):
-    """
-    Перечисление для поддерживаемых уровней логирования.
-    """
-    DEVDEBUG = "DEVDEBUG"
-    DEBUG = "DEBUG"
-    MEDIUMDEBUG = "MEDIUMDEBUG"
-    INFO = "INFO"
-    WARNING = "WARNING"
-    ERROR = "ERROR"
-    CRITICAL = "CRITICAL"
+init_custom_levels()
 
 
-class ChutilsLogger(logging.Logger):
+class ChutilsLogger(logging.Logger, LogLevelsMixin):
     """
     Кастомный класс логгера, расширяющий стандартный `logging.Logger`.
 
@@ -98,30 +84,6 @@ class ChutilsLogger(logging.Logger):
         logger.devdebug("Максимально подробное сообщение")
         ```
     """
-
-    def mediumdebug(self, message: str, *args: Any, **kws: Any):
-        """
-        Логирует сообщение с уровнем MEDIUMDEBUG (15).
-
-        Args:
-            message: Сообщение для логирования.
-            *args: Аргументы форматирования.
-            **kws: Ключевые слова для логгера.
-        """
-        if self.isEnabledFor(MEDIUMDEBUG_LEVEL_NUM):
-            self._log(MEDIUMDEBUG_LEVEL_NUM, message, args, **kws)
-
-    def devdebug(self, message: str, *args: Any, **kws: Any):
-        """
-        Логирует сообщение с уровнем DEVDEBUG (9).
-
-        Args:
-            message: Сообщение для логирования.
-            *args: Аргументы форматирования.
-            **kws: Ключевые слова для логгера.
-        """
-        if self.isEnabledFor(DEVDEBUG_LEVEL_NUM):
-            self._log(DEVDEBUG_LEVEL_NUM, message, args, **kws)
 
     def add_mask(self, value: str):
         """
