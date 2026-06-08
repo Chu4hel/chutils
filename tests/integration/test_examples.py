@@ -53,7 +53,8 @@ def clean_logging_state(caplog, tmp_path):
     chutils.config._cm.config_file_path = original_config_path
     chutils.config._cm.config_object = original_config_object
     chutils.config._cm.config_loaded = original_config_loaded
-    logger_core._LOG_DIR = original_log_dir
+    from chutils.logger.internal import utils as logger_utils
+    logger_utils._LOG_DIR = original_log_dir
     chutils.decorators._module_logger = original_module_logger
 
 

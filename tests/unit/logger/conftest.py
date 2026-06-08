@@ -89,7 +89,8 @@ def reset_chutils_state(monkeypatch):
     chutils_config._cm._reset()
 
     # Сбрасываем logger
-    monkeypatch.setattr(chutils_logger_core, '_LOG_DIR', None)
+    from chutils.logger.internal import utils as logger_utils
+    monkeypatch.setattr(logger_utils, '_LOG_DIR', None)
     monkeypatch.setattr(chutils_logger_core, '_initialization_message_shown', False)
     monkeypatch.setattr(chutils_logger_core, '_file_handler_cache', {})
 

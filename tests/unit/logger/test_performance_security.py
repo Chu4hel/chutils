@@ -1,7 +1,7 @@
 import logging
 
 from chutils.logger import setup_logger
-from chutils.logger.core import _async_listeners
+from chutils.logger.internal.utils import _async_listeners, stop_all_async_loggers
 
 
 def test_async_logging_integration(reset_chutils_state):
@@ -78,8 +78,7 @@ def test_async_no_loss_on_shutdown(reset_chutils_state, tmp_path):
 
     # В реальном приложении atexit сработает сам.
     # Здесь мы симулируем остановку слушателей.
-    from chutils.logger.core import _stop_all_async_loggers
-    _stop_all_async_loggers()
+    stop_all_async_loggers()
 
     # Файл должен содержать сообщение (QueueListener.stop() делает flush)
     with open(log_file, "r") as f:

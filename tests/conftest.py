@@ -14,9 +14,11 @@ def config_fs(fs):  # fs - это фикстура из pyfakefs
     config._cm._reset()
 
     # Сброс состояния модуля logger
-    logger_core._LOG_DIR = None
+    from chutils.logger.internal import utils as logger_utils
     logger_core._file_handler_cache.clear()
     logger_core._initialization_message_shown = False
+    logger_utils._LOG_DIR = None
+    logger_utils._async_listeners.clear()
 
     # Создание файловой структуры
     project_root = Path("/home/user/project")

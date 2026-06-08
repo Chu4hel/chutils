@@ -25,30 +25,6 @@ from .masking import (
     _update_mask_re,
     PREDEFINED_PATTERNS
 )
-from .. import config, env
-from ..context import ContextFilter
-
-# --- Глобальное состояние для асинхронного логирования ---
-
-_async_listeners: List[logging.handlers.QueueListener] = []
-
-
-def _stop_all_async_loggers():
-    """
-    Останавливает все активные асинхронные слушатели логов.
-    Вызывается автоматически при выходе из приложения.
-    """
-    global _async_listeners
-    for listener in _async_listeners:
-        try:
-            listener.stop()
-        except Exception:
-            pass
-    _async_listeners.clear()
-
-
-atexit.register(_stop_all_async_loggers)
-
 from .internal.levels import (
     DEVDEBUG_LEVEL_NUM,
     MEDIUMDEBUG_LEVEL_NUM,
@@ -56,6 +32,17 @@ from .internal.levels import (
     LogLevelsMixin,
     init_custom_levels
 )
+from .internal.utils import (
+    get_log_dir,
+    stop_all_async_loggers,
+    register_async_listener
+)
+from .. import config, env
+from ..context import ContextFilter
+
+# --- Глобальное состояние ---
+
+atexit.register(stop_all_async_loggers)
 
 init_custom_levels()
 
@@ -104,41 +91,8 @@ logging.setLoggerClass(ChutilsLogger)
 
 # --- Глобальное состояние для "ленивой" инициализации ---
 
-_LOG_DIR: Optional[str] = None
 _file_handler_cache: dict[str, logging.FileHandler] = {}
 _initialization_message_shown = False
-
-
-def _get_log_dir() -> Optional[str]:
-    """
-    "Лениво" получает и кэширует путь к директории логов.
-
-    Создает директорию 'logs' в корне проекта при первом обращении.
-
-    Returns:
-        str: Путь к директории логов.
-        None (None): Если корень проекта не найден.
-    """
-    global _LOG_DIR
-    if _LOG_DIR is not None:
-        return _LOG_DIR
-
-    base_dir = config.get_base_dir()
-    if not base_dir:
-        logging.warning("Не удалось определить корень проекта, файловое логирование отключено.")
-        return None
-
-    log_path = Path(base_dir) / 'logs'
-    if not log_path.exists():
-        try:
-            log_path.mkdir(parents=True, exist_ok=True)
-            logging.info("Создана директория для логов: %s", log_path)
-        except OSError as e:
-            logging.error("Не удалось создать директорию для логов %s: %s", log_path, e)
-            return None
-
-    _LOG_DIR = str(log_path)
-    return _LOG_DIR
 
 
 def setup_logger(
@@ -330,7 +284,7 @@ def setup_logger(
     final_at_time = at_time if at_time is not None else final_logger_settings.get('at_time', None)
 
     # --- Настройка обработчиков ---
-    log_dir = _get_log_dir()
+    log_dir = get_log_dir()
 
     env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]
     env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in ["true", "1", "yes", "y"]
@@ -434,7 +388,7 @@ def setup_logger(
 
         listener = logging.handlers.QueueListener(log_queue, *target_handlers, respect_handler_level=True)
         listener.start()
-        _async_listeners.append(listener)
+        register_async_listener(listener)
     else:
         for handler in target_handlers:
             logger.addHandler(handler)
