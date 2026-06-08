@@ -1,22 +1,42 @@
 import logging
+import sys
 from unittest.mock import MagicMock
 
 import pytest
+
 from chutils.env import is_rich_enabled
 from chutils.logger import setup_logger
 
 
 @pytest.fixture
-def mock_rich(monkeypatch, mocker):
+def mock_rich(monkeypatch):
     """
-    Мокаем наличие Rich.
+    Мокаем наличие Rich, даже если библиотека не установлена.
     """
     mock_handler_instance = MagicMock(spec=logging.Handler)
+    mock_rich_logging = MagicMock()
+    mock_rich_logging.RichHandler.return_value = mock_handler_instance
+
+    mock_console_class = MagicMock()
+    mock_console_instance = MagicMock()
+    mock_console_class.return_value = mock_console_instance
+
+    # Имитируем наличие модулей в системе для всех импортов
+    monkeypatch.setitem(sys.modules, "rich", MagicMock())
+    monkeypatch.setitem(sys.modules, "rich.logging", mock_rich_logging)
+    monkeypatch.setitem(sys.modules, "rich.console", MagicMock(Console=mock_console_class))
+    monkeypatch.setitem(sys.modules, "rich.table", MagicMock(Table=MagicMock()))
+    monkeypatch.setitem(sys.modules, "rich.panel", MagicMock(Panel=MagicMock()))
+
     # Патчим RICH_AVAILABLE в модуле env
     monkeypatch.setattr("chutils.env.RICH_AVAILABLE", True)
-    # Патчим сам класс RichHandler в источнике (библиотеке rich),
-    # чтобы локальные импорты внутри функций setup_logger тоже получали мок.
-    mocker.patch("rich.logging.RichHandler", return_value=mock_handler_instance, create=True)
+
+    # Инъектируем в cli_utils, так как он мог быть уже импортирован с RICH_AVAILABLE=False
+    import chutils.cli_utils
+    monkeypatch.setattr(chutils.cli_utils, "Console", mock_console_class)
+    monkeypatch.setattr(chutils.cli_utils, "Table", MagicMock())
+    monkeypatch.setattr(chutils.cli_utils, "Panel", MagicMock())
+
     return mock_handler_instance
 
 

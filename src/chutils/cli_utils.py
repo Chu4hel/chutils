@@ -10,6 +10,10 @@ if RICH_AVAILABLE:
     from rich.console import Console
     from rich.table import Table
     from rich.panel import Panel
+else:
+    Console = None  # type: ignore
+    Table = None  # type: ignore
+    Panel = None  # type: ignore
 
 
 class FallbackConsole:
