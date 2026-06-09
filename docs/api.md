@@ -158,3 +158,12 @@ members:
 разделе [Тестирование с chutils](./testing.md).
 
 ::: chutils.testing
+
+## Модуль `dev` (AI-валидация и аудит)
+
+::: chutils.dev
+options:
+  members:
+    - Rule
+    - LintResult
+    - LinterEngine

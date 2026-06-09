@@ -51,6 +51,7 @@ _LAZY_MAPPING = {
     'time': ('.time', None),
     'tracing': ('.tracing', None),
     'testing': ('.testing', None),
+    'dev': ('.dev', None),
 
     # config
     'get_config': ('.config', 'get_config'),
