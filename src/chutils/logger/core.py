@@ -185,4 +185,4 @@ def setup_logger(
         at_time=at_time,
         custom_patterns=custom_patterns,
         use_predefined_patterns=use_predefined_patterns
-    )  # type: ignore
+    )

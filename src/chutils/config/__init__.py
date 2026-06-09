@@ -92,7 +92,8 @@ def _get_logger() -> 'ChutilsLogger':
     Returns:
         Экземпляр логгера (может быть ChutilsLogger, если инициализирован).
     """
-    return logger  # type: ignore
+    from typing import cast
+    return cast('ChutilsLogger', logger)
 
 
 def __getattr__(name: str) -> Any:

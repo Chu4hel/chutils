@@ -2,25 +2,25 @@
 Генератор шаблонов и схем конфигурации на основе Pydantic моделей.
 """
 
+import typing as t
 from typing import Type
 
-try:
+if t.TYPE_CHECKING:
     from pydantic import BaseModel
-    from pydantic.fields import FieldInfo
 
     PYDANTIC_AVAILABLE = True
-except ImportError:
-    class BaseModel:  # type: ignore
-        """Заглушка для работы без Pydantic."""
-        pass
+else:
+    try:
+        from pydantic import BaseModel
+
+        PYDANTIC_AVAILABLE = True
+    except ImportError:
+        class BaseModel:  # type: ignore[no-redef]
+            """Заглушка для работы без Pydantic."""
+            pass
 
 
-    class FieldInfo:  # type: ignore
-        """Заглушка для работы без Pydantic."""
-        pass
-
-
-    PYDANTIC_AVAILABLE = False
+        PYDANTIC_AVAILABLE = False
 
 
 def _check_pydantic():

@@ -1,28 +1,30 @@
 import threading
 import time
-from typing import Any, Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, TypeVar
 
 from .base import BaseCacheBackend
 
+T = TypeVar("T")
 
-class InMemoryCacheBackend(BaseCacheBackend):
+
+class InMemoryCacheBackend(BaseCacheBackend[T]):
     """
     Реализация кэша в оперативной памяти на базе словаря.
-    
+
     Поддерживает TTL, потокобезопасность и ленивую очистку просроченных записей.
     """
 
     def __init__(self) -> None:
         # Структура: {key: (value, expires_at)}
-        self._cache: Dict[str, Tuple[Any, Optional[float]]] = {}
+        self._cache: Dict[str, Tuple[T, Optional[float]]] = {}
         self._lock = threading.Lock()
 
-    def get(self, key: str) -> Any:
+    def get(self, key: str) -> Optional[T]:
         """Получить значение. Если просрочено - удаляет его."""
         with self._lock:
             return self._get_without_lock(key)
 
-    def _get_without_lock(self, key: str) -> Any:
+    def _get_without_lock(self, key: str) -> Optional[T]:
         """Внутренний метод получения без блокировки (для использования внутри других методов)."""
         if key not in self._cache:
             return None
@@ -34,7 +36,7 @@ class InMemoryCacheBackend(BaseCacheBackend):
 
         return value
 
-    def set(self, key: str, value: Any, ttl: Optional[int] = None) -> None:
+    def set(self, key: str, value: T, ttl: Optional[int] = None) -> None:
         """Сохранить значение с TTL."""
         expires_at = time.time() + ttl if ttl is not None else None
         with self._lock:

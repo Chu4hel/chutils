@@ -2,18 +2,24 @@ import os
 import re
 import shutil
 import sys
+import typing as t
 from typing import Any, Optional
 
 from .env import RICH_AVAILABLE, is_rich_enabled
 
-if RICH_AVAILABLE:
+if t.TYPE_CHECKING:
     from rich.console import Console
     from rich.table import Table
     from rich.panel import Panel
+
+if RICH_AVAILABLE:
+    from rich.console import Console  # type: ignore[no-redef]
+    from rich.table import Table  # type: ignore[no-redef]
+    from rich.panel import Panel  # type: ignore[no-redef]
 else:
-    Console = None  # type: ignore
-    Table = None  # type: ignore
-    Panel = None  # type: ignore
+    Console = None  # type: ignore[assignment, misc]
+    Table = None  # type: ignore[assignment, misc]
+    Panel = None  # type: ignore[assignment, misc]
 
 
 class FallbackConsole:

@@ -53,7 +53,9 @@ def _get_logger() -> 'ChutilsLogger':
     if _module_logger is None:
         from .. import logger as chutils_logger
         _module_logger = chutils_logger.setup_logger(__name__)
-    return _module_logger  # type: ignore
+
+    from typing import cast
+    return cast('ChutilsLogger', _module_logger)
 
 
 class SecretManager:

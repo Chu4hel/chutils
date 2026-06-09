@@ -9,15 +9,13 @@ import functools
 import inspect
 import random
 import time
-from typing import Optional, TYPE_CHECKING, Tuple, Type, Any, Callable, TypeVar
+from typing import Optional, TYPE_CHECKING, Tuple, Type, Any, Callable, Union
 
 from .exceptions import ChutilsTimeoutError
+from .typing import P, R
 
 if TYPE_CHECKING:
     from .logger import ChutilsLogger
-
-# Тип для декорируемой функции
-F = TypeVar("F", bound=Callable[..., Any])
 
 # Уникальный маркер для определения, был ли передан fallback (позволяет передавать None)
 _NO_FALLBACK = object()
@@ -37,7 +35,11 @@ def _get_logger() -> 'ChutilsLogger':
     if _module_logger is None:
         from . import logger as chutils_logger
         _module_logger = chutils_logger.setup_logger(__name__)
-    return _module_logger  # type: ignore
+
+    # Используем cast или проверку, чтобы избежать Any
+    if _module_logger is None:
+        raise RuntimeError("Не удалось инициализировать логгер модуля decorators")
+    return _module_logger
 
 
 def retry(
@@ -46,7 +48,7 @@ def retry(
         backoff: float = 2.0,
         jitter: bool = False,
         exceptions: Tuple[Type[Exception], ...] = (Exception,),
-) -> Callable:
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Декоратор для автоматического повторного выполнения функции при возникновении исключений.
 
@@ -61,14 +63,14 @@ def retry(
         Декоратор функции.
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
         if inspect.iscoroutinefunction(func):
             @functools.wraps(func)
-            async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
                 current_delay = delay
                 for i in range(retries + 1):
                     try:
-                        return await func(*args, **kwargs)
+                        return await func(*args, **kwargs)  # type: ignore[no-any-return]
                     except exceptions as e:
                         if i == retries:
                             raise
@@ -84,11 +86,14 @@ def retry(
 
                         await asyncio.sleep(sleep_time)
                         current_delay *= backoff
+                # MyPy может ругаться, что не все пути возвращают значение,
+                # но raise в цикле гарантирует выход или возврат.
+                raise RuntimeError("Unreachable")
 
-            return async_wrapper
+            return async_wrapper  # type: ignore[return-value]
         else:
             @functools.wraps(func)
-            def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
+            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
                 current_delay = delay
                 for i in range(retries + 1):
                     try:
@@ -108,13 +113,14 @@ def retry(
 
                         time.sleep(sleep_time)
                         current_delay *= backoff
+                raise RuntimeError("Unreachable")
 
-            return sync_wrapper
+            return sync_wrapper  # type: ignore[return-value]
 
     return decorator
 
 
-def log_function_details(func: F) -> F:
+def log_function_details(func: Callable[P, R]) -> Callable[P, R]:
     """
     Декоратор для логирования деталей вызова функции.
 
@@ -137,7 +143,7 @@ def log_function_details(func: F) -> F:
     """
 
     @functools.wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         _get_logger().devdebug("Вызов функции: %s() с аргументами %s и %s", func.__name__, args, kwargs)
         start_time = time.perf_counter()
         result = func(*args, **kwargs)
@@ -147,10 +153,10 @@ def log_function_details(func: F) -> F:
                                func.__name__, run_time, result)
         return result
 
-    return wrapper  # type: ignore
+    return wrapper
 
 
-def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable:
+def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Декоратор для ограничения времени выполнения функции.
 
@@ -170,12 +176,12 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable:
         ChutilsTimeoutError: Если время выполнения превышено и `fallback` не указан.
     """
 
-    def decorator(func: Callable) -> Callable:
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
         if inspect.iscoroutinefunction(func):
             @functools.wraps(func)
-            async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, Any]:
                 try:
-                    return await asyncio.wait_for(func(*args, **kwargs), timeout=seconds)
+                    return await asyncio.wait_for(func(*args, **kwargs), timeout=seconds)  # type: ignore[no-any-return]
                 except (asyncio.TimeoutError, TimeoutError):
                     if fallback is _NO_FALLBACK:
                         raise ChutilsTimeoutError(
@@ -185,10 +191,10 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable:
                         )
                     return fallback
 
-            return async_wrapper
+            return async_wrapper  # type: ignore[return-value]
         else:
             @functools.wraps(func)
-            def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
+            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, Any]:
                 # Используем ThreadPoolExecutor для запуска в отдельном потоке
                 with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
                     future = executor.submit(func, *args, **kwargs)
@@ -203,6 +209,6 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable:
                             )
                         return fallback
 
-            return sync_wrapper
+            return sync_wrapper  # type: ignore[return-value]
 
     return decorator

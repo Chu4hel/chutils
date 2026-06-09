@@ -7,11 +7,14 @@
 
 import functools
 import inspect
-from typing import Any, Callable, Optional, TypeVar, cast
+import typing as t
+from typing import Any, Callable, Optional, cast, Union
 
 from .env import OTEL_AVAILABLE
+from .typing import P, R
 
-T = TypeVar("T", bound=Callable[..., Any])
+if t.TYPE_CHECKING:
+    from opentelemetry import trace as otel_trace_mod
 
 # Совместимость с внутренним кодом
 IS_OTEL_AVAILABLE = OTEL_AVAILABLE
@@ -20,10 +23,10 @@ if IS_OTEL_AVAILABLE:
     try:
         from opentelemetry import trace as otel_trace
     except ImportError:
-        otel_trace = None  # type: ignore
+        otel_trace = None  # type: ignore[assignment]
         IS_OTEL_AVAILABLE = False
 else:
-    otel_trace = None  # type: ignore
+    otel_trace = None  # type: ignore[assignment]
 
 
 def get_tracer(name: str = "chutils") -> Any:
@@ -81,7 +84,7 @@ def setup_tracing(
     Returns:
         True, если настройка выполнена успешно, False если OTel недоступен.
     """
-    if not IS_OTEL_AVAILABLE:
+    if not IS_OTEL_AVAILABLE or not otel_trace:
         return False
 
     try:
@@ -120,7 +123,7 @@ def setup_tracing(
 
 
 def trace(
-        name: Optional[Any] = None,
+        name: Optional[Union[str, Callable[P, R]]] = None,
         attributes: Optional[dict[str, Any]] = None,
         capture_kwargs: bool = False,
 ) -> Any:
@@ -150,7 +153,7 @@ def trace(
         ```
     """
 
-    def decorator(func: T) -> T:
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
         if not IS_OTEL_AVAILABLE:
             return func
 
@@ -163,18 +166,18 @@ def trace(
 
         if inspect.iscoroutinefunction(func):
             @functools.wraps(func)
-            async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
                 actual_attributes = attributes.copy() if attributes else {}
                 if capture_kwargs:
                     actual_attributes.update({f"arg.{k}": v for k, v in kwargs.items()})
 
                 with tracer.start_as_current_span(span_name, attributes=actual_attributes):
-                    return await func(*args, **kwargs)
+                    return await func(*args, **kwargs)  # type: ignore[no-any-return]
 
-            return cast(T, async_wrapper)
+            return async_wrapper  # type: ignore[return-value]
         else:
             @functools.wraps(func)
-            def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
+            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
                 actual_attributes = attributes.copy() if attributes else {}
                 if capture_kwargs:
                     actual_attributes.update({f"arg.{k}": v for k, v in kwargs.items()})
@@ -182,11 +185,11 @@ def trace(
                 with tracer.start_as_current_span(span_name, attributes=actual_attributes):
                     return func(*args, **kwargs)
 
-            return cast(T, sync_wrapper)
+            return sync_wrapper  # type: ignore[return-value]
 
     # Поддержка использования без скобок: @trace
     if callable(name):
-        f = name
+        f = cast(Callable[P, R], name)
         name = None
         return decorator(f)
 

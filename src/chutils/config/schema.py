@@ -4,26 +4,22 @@
 
 import importlib
 import json
+import typing as t
 from pathlib import Path
 from typing import Optional, Type, Union
 
 from ..env import PYDANTIC_AVAILABLE
 from ..exceptions import OptionalDependencyError, ConfigParseError
 
-if PYDANTIC_AVAILABLE:
+if t.TYPE_CHECKING:
+    from pydantic import BaseModel
+else:
     try:
         from pydantic import BaseModel
     except ImportError:
-        # Редкий случай рассинхрона
-        PYDANTIC_AVAILABLE = False
-
-
-        class BaseModel:  # type: ignore
+        class BaseModel:  # type: ignore[no-redef]
+            """Заглушка для работы без Pydantic."""
             pass
-else:
-    class BaseModel:  # type: ignore
-        """Заглушка для работы без Pydantic."""
-        pass
 
 
 def _check_pydantic() -> None:
