@@ -22,7 +22,8 @@ def clean_logging_state(caplog, tmp_path):
     original_config_loaded = chutils.config.is_config_loaded()
 
     # Кэшируем глобальные состояния для логгера и декоратора
-    original_log_dir = logger_core._LOG_DIR
+    from chutils.logger.internal import utils as logger_utils
+    original_log_dir = logger_utils._LOG_DIR
     original_module_logger = chutils.decorators._module_logger
 
     # Сбрасываем кэши в модулях chutils
@@ -35,7 +36,7 @@ def clean_logging_state(caplog, tmp_path):
     logger_core._initialization_message_shown = False
 
     # ВАЖНО: Очищаем путь директории и инстанс логгера, чтобы не было "утечек" между тестами
-    logger_core._LOG_DIR = None
+    logger_utils._LOG_DIR = None
     chutils.decorators._module_logger = None
 
     # Очищаем все логгеры, которые были созданы в предыдущих тестах

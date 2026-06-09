@@ -25,6 +25,11 @@ class FallbackConsole:
         self._is_stderr = stderr
 
     @property
+    def width(self) -> int:
+        """Возвращает текущую установленную ширину консоли."""
+        return _get_default_width() or 80
+
+    @property
     def file(self):
         return sys.stderr if self._is_stderr else sys.stdout
 
