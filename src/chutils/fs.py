@@ -8,9 +8,9 @@ import os
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Union, Any, ContextManager
+from typing import Union, Any, ContextManager, Optional
 
-from chutils.exceptions import OptionalDependencyError
+from chutils.exceptions import OptionalDependencyError, PathTraversalError
 
 try:
     import yaml
@@ -18,6 +18,50 @@ try:
     YAML_AVAILABLE = True
 except ImportError:
     YAML_AVAILABLE = False
+
+
+def resolve_safe_path(path: Union[str, Path], base_dir: Optional[Union[str, Path]] = None) -> Path:
+    """
+    Безопасно разрешает путь относительно базовой директории.
+    Проверяет попытки выхода за пределы базовой директории (Path Traversal).
+
+    Args:
+        path: Путь для разрешения.
+        base_dir: Базовая директория. Если не указана, используется корень проекта из конфига.
+
+    Returns:
+        Разрешенный абсолютный путь (pathlib.Path).
+
+    Raises:
+        PathTraversalError: Если обнаружена попытка выхода за пределы base_dir.
+    """
+    if base_dir is None:
+        try:
+            from .config.core import get_base_dir
+            base_dir = get_base_dir()
+        except (ImportError, AttributeError):
+            base_dir = Path.cwd()
+
+    if not base_dir:
+        base_dir = Path.cwd()
+
+    p = Path(path)
+    base = Path(base_dir).resolve()
+
+    if p.is_absolute():
+        resolved = p.resolve()
+    else:
+        resolved = (base / p).resolve()
+
+    # Сравниваем разрешенные пути
+    if not str(resolved).startswith(str(base)):
+        raise PathTraversalError(
+            f"Обнаружена попытка выхода за пределы разрешенной директории: {path}",
+            attempted_path=path,
+            base_path=base_dir
+        )
+
+    return resolved
 
 
 def ensure_dir(path: Union[str, Path]) -> Path:

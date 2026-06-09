@@ -2,8 +2,9 @@ import json
 from unittest.mock import patch, MagicMock
 
 import pytest
-from chutils.config.schema import export_schema, import_model_class, PYDANTIC_AVAILABLE
 from pydantic import BaseModel, Field
+
+from chutils.config.schema import export_schema, import_model_class, PYDANTIC_AVAILABLE
 
 
 class SampleConfigModel(BaseModel):
@@ -27,27 +28,30 @@ def test_import_model_class():
 
 def test_import_model_class_invalid_format():
     """Тест ошибки формата пути."""
-    with pytest.raises(ValueError, match="Некорректный формат пути"):
+    from chutils.exceptions import ConfigParseError
+    with pytest.raises(ConfigParseError, match="Некорректный формат пути"):
         import_model_class("invalid_path")
 
 
 def test_import_model_class_not_found():
     """Тест ошибки отсутствия модуля или класса."""
+    from chutils.exceptions import ConfigParseError
     with patch("importlib.import_module") as mock_import:
         mock_import.side_effect = ImportError("Module not found")
-        with pytest.raises(ImportError, match="Не удалось импортировать модуль"):
+        with pytest.raises(ConfigParseError, match="Не удалось импортировать модуль"):
             import_model_class("non_existent_module:Model")
 
     with patch("importlib.import_module") as mock_import:
         mock_module = MagicMock()
         del mock_module.NonExistentModel
         mock_import.return_value = mock_module
-        with pytest.raises(ImportError, match="не найден в модуле"):
+        with pytest.raises(ConfigParseError, match="не найден в модуле"):
             import_model_class("some.module:NonExistentModel")
 
 
 def test_import_model_class_type_error():
     """Тест ошибки типа (не BaseModel)."""
+    from chutils.exceptions import ConfigParseError
 
     class NotABaseModel:
         pass
@@ -56,7 +60,7 @@ def test_import_model_class_type_error():
         mock_module = MagicMock()
         setattr(mock_module, "NotABaseModel", NotABaseModel)
         mock_import.return_value = mock_module
-        with pytest.raises(TypeError, match="не является подклассом"):
+        with pytest.raises(ConfigParseError, match="не является подклассом"):
             import_model_class("some.module:NotABaseModel")
 
 

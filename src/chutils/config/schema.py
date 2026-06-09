@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Optional, Type, Union
 
 from ..env import PYDANTIC_AVAILABLE
+from ..exceptions import OptionalDependencyError, ConfigParseError
 
 if PYDANTIC_AVAILABLE:
     try:
@@ -28,9 +29,10 @@ else:
 def _check_pydantic() -> None:
     """Проверяет наличие Pydantic."""
     if not PYDANTIC_AVAILABLE:
-        raise ImportError(
-            "Pydantic is required for JSON Schema generation. "
-            "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
+        raise OptionalDependencyError(
+            "Pydantic необходим для генерации JSON Schema.",
+            dependency="pydantic",
+            hint="Установите его: pip install chutils[pydantic] или poetry add pydantic"
         )
 
 
@@ -45,16 +47,15 @@ def import_model_class(model_path: str) -> Type[BaseModel]:
         Класс модели (BaseModel).
 
     Raises:
-        ValueError: Если формат пути некорректен.
-        ImportError: Если модуль или класс не найдены.
-        TypeError: Если найденный объект не является подклассом BaseModel.
+        ConfigParseError: Если формат пути некорректен или класс не найден.
+        OptionalDependencyError: Если Pydantic не установлен.
     """
     _check_pydantic()
 
     if ":" not in model_path:
-        raise ValueError(
-            f"Некорректный формат пути к модели: '{model_path}'. "
-            "Ожидается 'module.path:ClassName'."
+        raise ConfigParseError(
+            f"Некорректный формат пути к модели: '{model_path}'",
+            hint="Ожидается 'module.path:ClassName'. Пример: 'myapp.config:Settings'"
         )
 
     module_name, class_name = model_path.split(":", 1)
@@ -62,14 +63,23 @@ def import_model_class(model_path: str) -> Type[BaseModel]:
     try:
         module = importlib.import_module(module_name)
     except ImportError as e:
-        raise ImportError(f"Не удалось импортировать модуль '{module_name}': {e}")
+        raise ConfigParseError(
+            f"Не удалось импортировать модуль '{module_name}': {e}",
+            hint=f"Убедитесь, что модуль '{module_name}' существует и доступен для импорта."
+        )
 
     model_class = getattr(module, class_name, None)
     if model_class is None:
-        raise ImportError(f"Класс '{class_name}' не найден в модуле '{module_name}'.")
+        raise ConfigParseError(
+            f"Класс '{class_name}' не найден в модуле '{module_name}'.",
+            hint="Проверьте правильность написания имени класса."
+        )
 
     if not isinstance(model_class, type) or not issubclass(model_class, BaseModel):
-        raise TypeError(f"Объект '{model_path}' не является подклассом pydantic.BaseModel.")
+        raise ConfigParseError(
+            f"Объект '{model_path}' не является подклассом pydantic.BaseModel.",
+            hint="Ваша модель должна наследоваться от pydantic.BaseModel."
+        )
 
     return model_class
 

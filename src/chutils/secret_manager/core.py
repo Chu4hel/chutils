@@ -106,7 +106,10 @@ class SecretManager:
             final_prefix = config.get_config_value('Secrets', 'prefix', fallback=self.prefix)
 
         if not final_service_name:
-            raise SecretError("Не удалось определить service_name.")
+            raise SecretError(
+                "Не удалось автоматически определить 'service_name' для менеджера секретов.",
+                hint="Укажите 'service_name' явно при создании SecretManager или в секции [Secrets] файла конфигурации."
+            )
 
         self.service_name: str = final_prefix + final_service_name
 

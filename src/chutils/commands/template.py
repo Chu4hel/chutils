@@ -42,9 +42,13 @@ class TemplateCommand(BaseCommand):
 
     def handle(self, args: argparse.Namespace):
         """Обработчик команды генерации шаблона."""
+        from ..exceptions import CommandError, OptionalDependencyError
         if not PYDANTIC_AVAILABLE:
-            print("[ERROR] Pydantic не установлен. Установите его: pip install chutils[pydantic]")
-            sys.exit(1)
+            raise OptionalDependencyError(
+                "Pydantic не установлен.",
+                dependency="pydantic",
+                hint="Установите его: pip install chutils[pydantic] или poetry add pydantic"
+            )
 
         # 1. Динамический импорт модели
         try:
@@ -56,15 +60,24 @@ class TemplateCommand(BaseCommand):
                 if len(parts) == 2:
                     module_path, class_name = parts
                 else:
-                    raise ValueError("Некорректный формат пути к модели. Используйте 'module:Class' или 'module.Class'")
+                    raise CommandError(
+                        f"Некорректный формат пути к модели: '{args.model}'",
+                        hint="Используйте 'module:Class' или 'module.Class'. Пример: 'myapp.config:Settings'"
+                    )
 
             # Добавляем текущую директорию в path, чтобы можно было импортировать локальные модули
             sys.path.insert(0, str(Path.cwd()))
             module = importlib.import_module(module_path)
             model_class = getattr(module, class_name)
+        except (ImportError, AttributeError, CommandError) as e:
+            if isinstance(e, CommandError):
+                raise e
+            raise CommandError(
+                f"Не удалось импортировать модель '{args.model}': {e}",
+                hint="Убедитесь, что модуль существует и путь к классу указан верно."
+            ) from e
         except Exception as e:
-            print(f"[ERROR] Не удалось импортировать модель '{args.model}': {e}")
-            sys.exit(1)
+            raise CommandError(f"Непредвиденная ошибка при импорте модели: {e}") from e
 
         # 2. Генерация
         result = ""
@@ -76,17 +89,18 @@ class TemplateCommand(BaseCommand):
             elif args.format == "json-schema":
                 result = generate_json_schema(model_class)
         except Exception as e:
-            print(f"[ERROR] Ошибка при генерации шаблона: {e}")
-            sys.exit(1)
+            raise CommandError(f"Ошибка при генерации шаблона: {e}") from e
 
         # 3. Вывод
         if args.output:
             try:
                 with open(args.output, "w", encoding="utf-8") as f:
                     f.write(result)
-                print(f"[OK] Шаблон сохранен в {args.output}")
+                self.console.print(f"[green][OK] Шаблон сохранен в {args.output}[/green]")
             except Exception as e:
-                print(f"[ERROR] Не удалось сохранить файл: {e}")
-                sys.exit(1)
+                raise CommandError(
+                    f"Не удалось сохранить файл '{args.output}': {e}",
+                    hint="Проверьте права доступа к директории и корректность пути."
+                ) from e
         else:
             print(result)

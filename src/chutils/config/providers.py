@@ -87,9 +87,17 @@ class YamlConfigProvider(ConfigProvider):
             with open(path, 'r', encoding='utf-8') as f:
                 return yaml.safe_load(f) or {}
         except FileNotFoundError:
-            raise ConfigLoadError(f"Файл конфигурации не найден: {path}", path=path)
+            raise ConfigLoadError(
+                f"Файл конфигурации не найден: {path}",
+                hint="Убедитесь, что путь указан верно или создайте файл с помощью 'chutils init'.",
+                path=path
+            )
         except yaml.YAMLError as e:
-            raise ConfigParseError(f"Ошибка парсинга YAML в файле {path}: {e}", path=path)
+            raise ConfigParseError(
+                f"Ошибка парсинга YAML в файле {path}: {e}",
+                hint="Проверьте синтаксис YAML файла. Возможно, пропущены отступы или двоеточия.",
+                path=path
+            )
         except Exception as e:
             raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
@@ -122,9 +130,18 @@ class JsonConfigProvider(ConfigProvider):
             with open(path, 'r', encoding='utf-8') as f:
                 return json.load(f) or {}
         except FileNotFoundError:
-            raise ConfigLoadError(f"Файл конфигурации не найден: {path}", path=path)
+            raise ConfigLoadError(
+                f"Файл конфигурации не найден: {path}",
+                hint="Убедитесь, что путь указан верно или создайте файл с помощью 'chutils init'.",
+                path=path
+            )
         except json.JSONDecodeError as e:
-            raise ConfigParseError(f"Ошибка парсинга JSON в файле {path}: {e}", path=path)
+            raise ConfigParseError(
+                f"Ошибка парсинга JSON в файле {path}: {e}",
+                hint="Проверьте синтаксис JSON файла. "
+                     "Убедитесь в наличии кавычек у ключей и отсутствии лишних запятых.",
+                path=path
+            )
         except Exception as e:
             raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
@@ -171,9 +188,18 @@ class IniConfigProvider(ConfigProvider):
                 flat_ini_config = {s: dict(parser.items(s)) for s in parser.sections()}
                 return self._nest_func(flat_ini_config)
         except FileNotFoundError:
-            raise ConfigLoadError(f"Файл конфигурации не найден: {path}", path=path)
+            raise ConfigLoadError(
+                f"Файл конфигурации не найден: {path}",
+                hint="Убедитесь, что путь указан верно или создайте файл с помощью 'chutils init'.",
+                path=path
+            )
         except configparser.Error as e:
-            raise ConfigParseError(f"Ошибка парсинга INI в файле {path}: {e}", path=path)
+            raise ConfigParseError(
+                f"Ошибка парсинга INI в файле {path}: {e}",
+                hint="Проверьте синтаксис INI файла. "
+                     "Убедитесь в правильности заголовков секций [Section] и формата key=value.",
+                path=path
+            )
         except Exception as e:
             raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 

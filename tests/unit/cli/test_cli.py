@@ -1,7 +1,65 @@
 import sys
 
 import pytest
+
 from chutils.cli import main
+from chutils.exceptions import ChutilsException, PathTraversalError
+
+
+def test_cli_error_handler_with_hint(mocker, capsys):
+    """Проверяет отображение подсказок в глобальном обработчике ошибок CLI."""
+    # Мокаем команду, чтобы она кидала исключение с подсказкой
+    mock_handler = mocker.Mock(side_effect=ChutilsException("Something went wrong", hint="Check your settings"))
+
+    # Создаем фиктивный парсер с нашим обработчиком
+    mock_args = mocker.Mock()
+    mock_args.handler = mock_handler
+    mocker.patch("argparse.ArgumentParser.parse_args", return_value=mock_args)
+
+    test_args = ["chutils", "any_command"]
+    mocker.patch.object(sys, 'argv', test_args)
+
+    with pytest.raises(SystemExit) as e:
+        main()
+
+    assert e.value.code == 1
+    captured = capsys.readouterr()
+    assert "ОШИБКА: Something went wrong" in captured.err
+    # Проверяем наличие подсказки (может быть в панели Rich или просто текстом)
+    assert "Check your settings" in captured.err or "Check your settings" in captured.out
+
+
+def test_cli_path_traversal_logging(mocker, capsys):
+    """Проверяет специфичное логирование PathTraversalError в CLI."""
+    # Мокаем команду
+    mock_handler = mocker.Mock(side_effect=PathTraversalError(
+        "Path Traversal detected",
+        attempted_path="../../etc/passwd",
+        base_path="/app"
+    ))
+
+    mock_args = mocker.Mock()
+    mock_args.handler = mock_handler
+    mocker.patch("argparse.ArgumentParser.parse_args", return_value=mock_args)
+
+    # Мокаем логгер безопасности
+    mock_logger = mocker.patch("logging.getLogger")
+
+    test_args = ["chutils", "any_command"]
+    mocker.patch.object(sys, 'argv', test_args)
+
+    with pytest.raises(SystemExit) as e:
+        main()
+
+    assert e.value.code == 1
+    captured = capsys.readouterr()
+    assert "ОШИБКА БЕЗОПАСНОСТИ: Path Traversal detected" in captured.err
+
+    # Проверяем, что логгер безопасности был вызван с правильными данными
+    mock_logger.return_value.error.assert_called()
+    call_args = mock_logger.return_value.error.call_args[0]
+    assert "../../etc/passwd" in str(call_args)
+    assert "/app" in str(call_args)
 
 
 def test_cli_secrets_set_parsing(mocker):

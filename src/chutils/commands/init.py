@@ -75,7 +75,12 @@ class InitCommand(BaseCommand):
                             if len(parts) == 2:
                                 module_path, class_name = parts
                             else:
-                                raise ValueError("Формат модели должен быть 'module:Class' или 'module.Class'")
+                                from ..exceptions import CommandError
+                                raise CommandError(
+                                    f"Некорректный формат модели: '{args.model}'",
+                                    hint="Используйте формат 'module:Class' или 'module.Class'. "
+                                         "Пример: 'myapp.config:Settings'"
+                                )
 
                         sys.path.insert(0, str(Path.cwd()))
                         module = importlib.import_module(module_path)

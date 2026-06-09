@@ -3,7 +3,37 @@ from pathlib import Path
 
 import pytest
 
-from chutils.fs import ensure_dir, atomic_write
+from chutils.exceptions import PathTraversalError
+from chutils.fs import ensure_dir, atomic_write, resolve_safe_path
+
+
+def test_resolve_safe_path_valid(tmp_path):
+    """Проверка корректного разрешения пути."""
+    base = tmp_path / "app"
+    base.mkdir()
+
+    target = "data/config.json"
+    result = resolve_safe_path(target, base)
+
+    assert result.is_absolute()
+    assert str(result).endswith(Path(target).as_posix() if "/" in str(result) else str(Path(target)))
+    assert str(base) in str(result)
+
+
+def test_resolve_safe_path_traversal(tmp_path):
+    """Проверка защиты от Path Traversal."""
+    base = tmp_path / "app"
+    base.mkdir()
+
+    # Попытка выйти вверх
+    target = "../../etc/passwd"
+
+    with pytest.raises(PathTraversalError) as excinfo:
+        resolve_safe_path(target, base)
+
+    assert "Обнаружена попытка выхода" in str(excinfo.value)
+    assert excinfo.value.context["attempted_path"] == target
+    assert excinfo.value.context["base_path"] == str(base)
 
 
 def test_ensure_dir_str(tmp_path):

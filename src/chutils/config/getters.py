@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union
 
 from chutils.exceptions import ConfigParseError, OptionalDependencyError
-
 from . import utils
 from .core import get_config
 from .manager import _cm
@@ -127,7 +126,11 @@ def get_config_boolean(section: str, key: str, fallback: bool = False, config: O
             return True
         if s in ['false', '0', 'f', 'n', 'no']:
             return False
-        raise ConfigParseError(f"Invalid boolean value: {v}", section=section, key=key, value=v)
+        raise ConfigParseError(
+            f"Неверное булево значение для ключа '{key}': {v}",
+            hint="Допустимые значения: true/false, yes/no, 1/0, t/f.",
+            section=section, key=key, value=v
+        )
 
     return utils._get_typed_value(section, key, bool_converter, fallback, get_config_value, config, type_name="bool")
 
@@ -155,7 +158,11 @@ def get_config_list(
     def list_converter(v: Any) -> List:
         if isinstance(v, list):
             return v
-        raise ConfigParseError(f"Value is not a list: {v}", section=section, key=key, value=v)
+        raise ConfigParseError(
+            f"Значение для '{key}' не является списком: {v}",
+            hint="Убедитесь, что в конфигурации это поле представлено в виде списка (YAML: - item).",
+            section=section, key=key, value=v
+        )
 
     return utils._get_typed_value(section, key, list_converter, actual_fallback, get_config_value, config,
                                   type_name="list")
@@ -265,18 +272,12 @@ def get_config_path(
     if resolve_from_root and not path_obj.is_absolute() and base_dir:
         # Безопасное разрешение пути с проверкой на выход за пределы корня проекта (Path Traversal)
         try:
-            base_dir_obj = Path(base_dir).resolve()
-            resolved_path = (base_dir_obj / path_obj).resolve()
-
-            # Проверяем, что итоговый путь находится внутри базовой директории
-            if not str(resolved_path).startswith(str(base_dir_obj)):
-                # Логируем через стандартный логгер, так как logger здесь доступен
-                logger.warning(
-                    "Обнаружена попытка выхода за пределы корня проекта (Path Traversal). "
-                    "Путь '%s' отклонен. Возвращено значение по умолчанию.", path_str
-                )
-                return fallback
-            return str(resolved_path)
+            from chutils.fs import resolve_safe_path
+            from chutils.exceptions import PathTraversalError
+            return str(resolve_safe_path(path_str, base_dir))
+        except PathTraversalError as e:
+            # Пробрасываем исключение безопасности выше для перехвата в CLI
+            raise e
         except Exception as e:
             logger.error("Ошибка при разрешении пути '%s': %s", path_str, e)
             return fallback

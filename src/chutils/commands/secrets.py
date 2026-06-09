@@ -1,5 +1,4 @@
 import argparse
-import sys
 
 from chutils import config
 from chutils.secret_manager import SecretManager
@@ -66,26 +65,35 @@ class SecretsCommand(BaseCommand):
 
     def handle_set(self, args: argparse.Namespace):
         """Обработчик команды сохранения секрета."""
+        from ..exceptions import CommandError, SecretError
         service_name = args.service or config.get_config_value("Secrets", "service_name", "")
-        sm = SecretManager(service_name)
 
-        if sm.save_secret(args.key, args.value):
-            self.console.print(
-                f"[bold green] [OK] [/bold green] Секрет '{args.key}' успешно сохранен в системном хранилище.")
-        else:
-            self.console.print(
-                f"[bold red] [ERROR] [/bold red] Не удалось сохранить секрет '{args.key}'."
-                f" Проверьте доступность keyring.")
-            sys.exit(1)
+        try:
+            sm = SecretManager(service_name)
+            if sm.save_secret(args.key, args.value):
+                self.console.print(
+                    f"[bold green] [OK] [/bold green] Секрет '{args.key}' успешно сохранен в системном хранилище.")
+            else:
+                raise CommandError(
+                    f"Не удалось сохранить секрет '{args.key}'.",
+                    hint="Убедитесь, что системное хранилище (keyring) доступно и не заблокировано."
+                )
+        except SecretError as e:
+            raise CommandError(f"Ошибка менеджера секретов: {e.message}", hint=e.hint) from e
 
     def handle_delete(self, args: argparse.Namespace):
         """Обработчик команды удаления секрета."""
+        from ..exceptions import CommandError, SecretError
         service_name = args.service or config.get_config_value("Secrets", "service_name", "")
-        sm = SecretManager(service_name)
 
-        if sm.delete_secret(args.key):
-            self.console.print(f"[bold green] [OK] [/bold green] Секрет '{args.key}' успешно удален.")
-        else:
-            self.console.print(
-                f"[bold red] [ERROR] [/bold red] Не удалось удалить секрет '{args.key}' или он не существовал.")
-            sys.exit(1)
+        try:
+            sm = SecretManager(service_name)
+            if sm.delete_secret(args.key):
+                self.console.print(f"[bold green] [OK] [/bold green] Секрет '{args.key}' успешно удален.")
+            else:
+                raise CommandError(
+                    f"Не удалось удалить секрет '{args.key}' или он не существовал.",
+                    hint="Проверьте правильность ключа и имени сервиса."
+                )
+        except SecretError as e:
+            raise CommandError(f"Ошибка менеджера секретов: {e.message}", hint=e.hint) from e

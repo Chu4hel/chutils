@@ -1,24 +1,32 @@
 import typing as t
+from pathlib import Path
 
 
 class ChutilsException(Exception):
     """
     Базовый класс для всех исключений библиотеки chutils.
     
-    Поддерживает структурированный контекст ошибки через именованные аргументы.
+    Поддерживает структурированный контекст ошибки через именованные аргументы
+    и опциональную подсказку (hint) для пользователя.
     """
 
-    def __init__(self, message: str, **context: t.Any) -> None:
+    def __init__(self, message: str, hint: t.Optional[str] = None, **context: t.Any) -> None:
         super().__init__(message)
         self.message = message
+        self.hint = hint
         self.context = context
 
     def __str__(self) -> str:
-        if not self.context:
-            return self.message
+        parts = [self.message]
 
-        context_str = ", ".join(f"{k}={v!r}" for k, v in self.context.items())
-        return f"{self.message} [Контекст: {context_str}]"
+        if self.context:
+            context_str = ", ".join(f"{k}={v!r}" for k, v in self.context.items())
+            parts.append(f"[Контекст: {context_str}]")
+
+        if self.hint:
+            parts.append(f"\nСОВЕТ: {self.hint}")
+
+        return " ".join(parts)
 
 
 # --- Config Exceptions ---
@@ -77,6 +85,40 @@ class OptionalDependencyError(ChutilsException):
 class ChutilsTimeoutError(ChutilsException):
     """Ошибка: превышено время ожидания выполнения операции."""
     pass
+
+
+# --- Command Exceptions ---
+
+class CommandError(ChutilsException):
+    """Ошибка при выполнении CLI команды."""
+    pass
+
+
+# --- FS Exceptions ---
+
+class FileSystemError(ChutilsException):
+    """Общая ошибка при работе с файловой системой."""
+    pass
+
+
+class PathTraversalError(FileSystemError):
+    """
+    Ошибка безопасности: попытка выхода за пределы базовой директории (Path Traversal).
+    """
+
+    def __init__(
+            self,
+            message: str,
+            attempted_path: t.Union[str, Path] = "unknown",
+            base_path: t.Union[str, Path] = "unknown",
+            hint: t.Optional[str] = "Проверьте правильность пути или права доступа.",
+            **context: t.Any
+    ) -> None:
+        context.update({
+            "attempted_path": str(attempted_path),
+            "base_path": str(base_path)
+        })
+        super().__init__(message, hint=hint, **context)
 
 
 # --- Cache Exceptions ---

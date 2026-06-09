@@ -2,7 +2,6 @@ import argparse
 import sys
 
 from chutils import config
-
 from .base import BaseCommand
 from .utils import _import_string
 
@@ -17,26 +16,30 @@ class ValidateCommand(BaseCommand):
 
     def register(self, subparsers: argparse._SubParsersAction):
         validate_parser = subparsers.add_parser(
-            "validate", 
+            "validate",
             help="Проверить корректность конфигурации",
             description="Валидация настроек с использованием Pydantic моделей."
         )
         validate_parser.add_argument(
-            "-m", "--model", 
-            help="Путь к модели (например, 'myapp.context:Settings'). Если не указан, ищет 'Settings' в context.py/config.py."
+            "-m", "--model",
+            help="Путь к модели (например, 'myapp.context:Settings'). "
+                 "Если не указан, ищет 'Settings' в context.py/config.py."
         )
         validate_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace):
         """Обработчик команды валидации конфигурации."""
+        from ..exceptions import CommandError, OptionalDependencyError
         print("--- Валидация конфигурации ---")
 
         model_class = None
         if args.model:
             model_class = _import_string(args.model)
             if not model_class:
-                print(f"[ERROR] Не удалось импортировать модель '{args.model}'.")
-                sys.exit(1)
+                raise CommandError(
+                    f"Не удалось импортировать модель '{args.model}'.",
+                    hint="Убедитесь, что модуль существует и путь к классу указан верно в формате 'module:Class'."
+                )
         else:
             # Авто-обнаружение модели
             search_paths = [
@@ -51,26 +54,31 @@ class ValidateCommand(BaseCommand):
                     break
 
             if not model_class:
-                print("[ERROR] Pydantic модель не найдена. Укажите путь через --model.")
-                sys.exit(1)
+                raise CommandError(
+                    "Pydantic модель не найдена автоматически.",
+                    hint="Укажите путь к вашей Pydantic модели через аргумент --model. "
+                         "Пример: chutils validate --model myapp.config:Settings"
+                )
 
         try:
             from pydantic import ValidationError
         except ImportError:
-            print("[ERROR] Пакет 'pydantic' не установлен. Установите его: pip install pydantic")
-            sys.exit(1)
+            raise OptionalDependencyError(
+                "Пакет 'pydantic' не установлен.",
+                dependency="pydantic",
+                hint="Установите его для поддержки валидации: pip install chutils[pydantic]"
+            )
 
         try:
             # Пытаемся загрузить конфиг через модель
             config.get_config(model=model_class)
-            print("[OK] Конфигурация успешно прошла валидацию.")
+            self.console.print("[bold green][OK] Конфигурация успешно прошла валидацию.[/bold green]")
         except ValidationError as e:
-            print("\n[FAIL] Ошибки валидации:")
+            self.console.print("\n[bold red][FAIL] Ошибки валидации:[/bold red]")
             for error in e.errors():
                 loc = " -> ".join(str(i) for i in error['loc'])
                 msg = error['msg']
                 print(f"  - {loc}: {msg}")
             sys.exit(1)
         except Exception as e:
-            print(f"[ERROR] Произошла ошибка при валидации: {e}")
-            sys.exit(1)
+            raise CommandError(f"Произошла ошибка при валидации: {e}") from e
