@@ -133,7 +133,7 @@ def __getattr__(name: str) -> Any:
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
-def _initialize_paths():
+def _initialize_paths() -> None:
     """
     Внутренняя функция для инициализации путей (сохранена для обратной совместимости тестов).
     """
@@ -141,7 +141,7 @@ def _initialize_paths():
     _cm.initialize_paths(find_project_root)
 
 
-def _sync_legacy_state():
+def _sync_legacy_state() -> None:
     """
     Синхронизирует состояние и ОЧИЩАЕТ модуль от физических переменных,
     чтобы __getattr__ продолжал работать.

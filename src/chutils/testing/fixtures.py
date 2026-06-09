@@ -3,9 +3,10 @@ Pytest-фикстуры для тестирования приложений, и
 """
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Generator
 
 import pytest
+
 from chutils.config.manager import _cm
 from chutils.secret_manager.core import SecretManager
 from chutils.secret_manager.providers import SecretProvider
@@ -124,7 +125,7 @@ class LogCapture:
 
 
 @pytest.fixture
-def mock_chutils_config(monkeypatch: pytest.MonkeyPatch) -> ConfigMock:
+def mock_chutils_config(monkeypatch: pytest.MonkeyPatch) -> Generator[ConfigMock, None, None]:
     """
     Фикстура для мокирования конфигурации chutils.
 
@@ -142,7 +143,7 @@ def mock_chutils_config(monkeypatch: pytest.MonkeyPatch) -> ConfigMock:
 
 
 @pytest.fixture
-def mock_chutils_secrets(monkeypatch: pytest.MonkeyPatch) -> MockSecretProvider:
+def mock_chutils_secrets(monkeypatch: pytest.MonkeyPatch) -> Generator[MockSecretProvider, None, None]:
     """
     Фикстура для мокирования секретов chutils.
 
@@ -165,7 +166,7 @@ def mock_chutils_secrets(monkeypatch: pytest.MonkeyPatch) -> MockSecretProvider:
 
 
 @pytest.fixture
-def capture_chutils_logs() -> LogCapture:
+def capture_chutils_logs() -> Generator[LogCapture, None, None]:
     """
     Фикстура для перехвата логов.
 

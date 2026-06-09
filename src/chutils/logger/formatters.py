@@ -9,26 +9,32 @@ from typing import Any, TYPE_CHECKING
 
 from chutils.env import JSON_LOGGER_AVAILABLE
 
+_jsonlogger: Any = None
+
 if JSON_LOGGER_AVAILABLE:
     try:
         from pythonjsonlogger import jsonlogger
+
+        _jsonlogger = jsonlogger
     except ImportError:
         try:
             # Fallback for older versions or slightly different package structures
-            from pythonjsonlogger import json as jsonlogger  # type: ignore[no-redef]
+            from pythonjsonlogger import json as jsonlogger_alt
+
+            _jsonlogger = jsonlogger_alt
         except ImportError:
             JSON_LOGGER_AVAILABLE = False
-            jsonlogger = Any
+            _jsonlogger = None
 else:
-    jsonlogger = Any
+    _jsonlogger = None
 
 if TYPE_CHECKING:
     class _BaseFormatter(logging.Formatter):
         def add_fields(self, log_record: dict[str, Any], record: logging.LogRecord,
                        message_dict: dict[str, Any]) -> None: ...
 else:
-    if JSON_LOGGER_AVAILABLE and jsonlogger is not Any:
-        _BaseFormatter = jsonlogger.JsonFormatter
+    if JSON_LOGGER_AVAILABLE and _jsonlogger is not None:
+        _BaseFormatter = _jsonlogger.JsonFormatter
     else:
         _BaseFormatter = logging.Formatter
 

@@ -9,7 +9,7 @@ import functools
 import inspect
 import random
 import time
-from typing import Optional, TYPE_CHECKING, Tuple, Type, Any, Callable, Union
+from typing import Optional, TYPE_CHECKING, Tuple, Type, Any, Callable, Union, cast, Awaitable
 
 from .exceptions import ChutilsTimeoutError
 from .typing import P, R
@@ -70,7 +70,7 @@ def retry(
                 current_delay = delay
                 for i in range(retries + 1):
                     try:
-                        return await func(*args, **kwargs)  # type: ignore[no-any-return]
+                        return await cast(Awaitable[R], func(*args, **kwargs))
                     except exceptions as e:
                         if i == retries:
                             raise
@@ -90,7 +90,7 @@ def retry(
                 # но raise в цикле гарантирует выход или возврат.
                 raise RuntimeError("Unreachable")
 
-            return async_wrapper  # type: ignore[return-value]
+            return async_wrapper
         else:
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
@@ -115,7 +115,7 @@ def retry(
                         current_delay *= backoff
                 raise RuntimeError("Unreachable")
 
-            return sync_wrapper  # type: ignore[return-value]
+            return sync_wrapper
 
     return decorator
 
@@ -181,7 +181,7 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable[[Callable[
             @functools.wraps(func)
             async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, Any]:
                 try:
-                    return await asyncio.wait_for(func(*args, **kwargs), timeout=seconds)  # type: ignore[no-any-return]
+                    return cast(R, await asyncio.wait_for(cast(Awaitable[R], func(*args, **kwargs)), timeout=seconds))
                 except (asyncio.TimeoutError, TimeoutError):
                     if fallback is _NO_FALLBACK:
                         raise ChutilsTimeoutError(
@@ -191,7 +191,7 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable[[Callable[
                         )
                     return fallback
 
-            return async_wrapper  # type: ignore[return-value]
+            return async_wrapper
         else:
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, Any]:
@@ -209,6 +209,6 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable[[Callable[
                             )
                         return fallback
 
-            return sync_wrapper  # type: ignore[return-value]
+            return sync_wrapper
 
     return decorator

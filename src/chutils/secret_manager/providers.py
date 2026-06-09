@@ -27,8 +27,7 @@ def _get_logger() -> 'ChutilsLogger':
         from .. import logger as chutils_logger
         _module_logger = chutils_logger.setup_logger(__name__)
 
-    from typing import cast
-    return cast('ChutilsLogger', _module_logger)
+    return _module_logger
 
 
 class SecretProvider(ABC):
@@ -176,7 +175,7 @@ class DotEnvProvider(SecretProvider):
         self._loaded = False
         self._values: Dict[str, str] = {}
 
-    def _load_if_needed(self):
+    def _load_if_needed(self) -> None:
         """
         Загружает переменные из .env файла, если это еще не было сделано.
         """

@@ -11,7 +11,7 @@ import inspect
 import re
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, TypeVar, Dict
+from typing import Any, Callable, TypeVar, Dict, Optional
 
 from .typing import P, R
 
@@ -49,16 +49,18 @@ def cli_command(func: Callable[P, R]) -> Callable[P, R]:
 
         # Проверяем, запущен ли скрипт напрямую
         # Инспектируем кадр стека, который вызвал wrapper
-        caller_frame = inspect.currentframe().f_back
-        if caller_frame and caller_frame.f_globals.get("__name__") == "__main__":
-            # Интроспекция сигнатуры и парсинг CLI
-            sig = inspect.signature(func)
-            parser = _create_parser(func, sig)
+        caller_frame = inspect.currentframe()
+        if caller_frame and caller_frame.f_back:
+            caller_frame = caller_frame.f_back
+            if caller_frame.f_globals.get("__name__") == "__main__":
+                # Интроспекция сигнатуры и парсинг CLI
+                sig = inspect.signature(func)
+                parser = _create_parser(func, sig)
 
-            # Парсинг аргументов CLI
-            parsed_args = parser.parse_args()
-            func_args = vars(parsed_args)
-            return _execute(func, **func_args)  # type: ignore[no-any-return]
+                # Парсинг аргументов CLI
+                parsed_args = parser.parse_args()
+                func_args = vars(parsed_args)
+                return _execute(func, **func_args)  # type: ignore[no-any-return]
 
         # Если вызвано не из __main__, просто вызываем функцию без аргументов
         return _execute(func)  # type: ignore[no-any-return]
@@ -66,9 +68,9 @@ def cli_command(func: Callable[P, R]) -> Callable[P, R]:
     return wrapper
 
 
-def _create_parser(func: Callable, sig: inspect.Signature) -> argparse.ArgumentParser:
+def _create_parser(func: Callable[..., Any], sig: inspect.Signature) -> argparse.ArgumentParser:
     """Создает ArgumentParser на основе сигнатуры функции."""
-    doc_help = _parse_docstring(func.__doc__)
+    doc_help = _parse_docstring(func.__doc__ or "")
 
     parser = argparse.ArgumentParser(
         description=func.__doc__.strip().split('\n\n')[0] if func.__doc__ else None,
@@ -100,11 +102,12 @@ def _parse_docstring(docstring: str) -> Dict[str, str]:
     return arg_help
 
 
-def _add_argument(parser: argparse.ArgumentParser, name: str, param: inspect.Parameter, help_text: str = None):
+def _add_argument(parser: argparse.ArgumentParser, name: str, param: inspect.Parameter,
+                  help_text: Optional[str] = None) -> None:
     """Добавляет аргумент в парсер на основе параметра функции."""
     name_cli = name.replace("_", "-")
 
-    kwargs = {
+    kwargs: Dict[str, Any] = {
         "help": help_text or f"Аргумент {name}",
     }
 
@@ -139,7 +142,7 @@ def _add_argument(parser: argparse.ArgumentParser, name: str, param: inspect.Par
         parser.add_argument(name_cli, **kwargs)
 
 
-def _execute(func: Callable, *args, **kwargs):
+def _execute(func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
     """Выполняет функцию, учитывая её асинхронность."""
     if inspect.iscoroutinefunction(func):
         try:

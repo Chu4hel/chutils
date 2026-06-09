@@ -1,13 +1,13 @@
 import asyncio
 import functools
-from typing import Callable, Optional
+from typing import Callable, Optional, Any, cast, Awaitable
 
 from .in_memory import InMemoryCacheBackend
 from .utils import generate_cache_key, LockManager, AsyncLockManager
 from ..typing import P, R
 
 # Экземпляры по умолчанию
-_default_backend: InMemoryCacheBackend[R] = InMemoryCacheBackend()  # type: ignore[valid-type]
+_default_backend: InMemoryCacheBackend[Any] = InMemoryCacheBackend()
 _sync_lock_manager = LockManager()
 _async_lock_manager = AsyncLockManager()
 
@@ -30,7 +30,7 @@ def cache_with_ttl(
     Returns:
         Callable: Обернутая функция.
     """
-    cache: InMemoryCacheBackend[R] = backend or _default_backend  # type: ignore[assignment]
+    cache: InMemoryCacheBackend[R] = backend or _default_backend
 
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
         func_name = f"{func.__module__}.{func.__name__}"
@@ -57,7 +57,7 @@ def cache_with_ttl(
                         return value
 
                     # 3. Вычисляем значение
-                    result = await func(*args, **kwargs)  # type: ignore[no-any-return]
+                    result = await cast(Awaitable[R], func(*args, **kwargs))
 
                     # 4. Сохраняем в кэш
                     await cache.aset(key, result, ttl=ttl)
@@ -89,6 +89,6 @@ def cache_with_ttl(
                     cache.set(key, result, ttl=ttl)
                     return result
 
-        return wrapper  # type: ignore[return-value]
+        return cast(Callable[P, R], wrapper)
 
     return decorator

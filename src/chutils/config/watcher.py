@@ -46,7 +46,8 @@ class ConfigChangeHandler:
             return
 
         # Проверяем, что изменен именно один из наших файлов конфигурации
-        event_path = str(Path(event.src_path).absolute())
+        event_src_path = event.src_path if isinstance(event.src_path, str) else event.src_path.decode('utf-8')
+        event_path = str(Path(event_src_path).absolute())
         if event_path in self.watched_files:
             self._on_modified()
 

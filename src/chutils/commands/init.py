@@ -46,7 +46,7 @@ class InitCommand(BaseCommand):
 
         # Создаем config.yml
         config_path: str | None = "config.yml"
-        if os.path.exists(config_path):
+        if config_path and os.path.exists(config_path):
             if not args.yes:
                 try:
                     confirm = input(f"Файл {config_path} уже существует. Перезаписать? [y/N]: ").lower()

@@ -246,9 +246,11 @@ class LoggerBuilder:
         handler: logging.Handler
         if env_api.is_rich_enabled() and not self._should_use_json(json_format):
             from rich.logging import RichHandler
-            from chutils.cli_utils import get_console
+            from chutils.cli_utils import get_console, FallbackConsole
+
+            console_obj = get_console(stderr=True)
             handler = RichHandler(
-                console=get_console(stderr=True),
+                console=console_obj if not isinstance(console_obj, FallbackConsole) else None,
                 rich_tracebacks=True,
                 markup=True,
                 tracebacks_show_locals=True,

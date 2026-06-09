@@ -39,7 +39,7 @@ def get_log_dir() -> Optional[str]:
     return _LOG_DIR
 
 
-def stop_all_async_loggers():
+def stop_all_async_loggers() -> None:
     """
     Останавливает все активные асинхронные слушатели логов.
     """
@@ -52,7 +52,7 @@ def stop_all_async_loggers():
     _async_listeners.clear()
 
 
-def register_async_listener(listener: logging.handlers.QueueListener):
+def register_async_listener(listener: logging.handlers.QueueListener) -> None:
     """
     Регистрирует новый асинхронный слушатель.
     """

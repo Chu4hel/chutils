@@ -15,7 +15,7 @@ class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
     Он явно закрывает файловый поток перед вызовом стандартной логики ротации.
     """
 
-    def doRollover(self):
+    def doRollover(self) -> None:
         """
         Выполняет ротацию, закрывая текущий поток перед операцией.
         """
@@ -32,7 +32,7 @@ class CompressingRotatingFileHandler(logging.handlers.RotatingFileHandler):
     Обеспечивает корректную работу с цепочкой сжатых бэкапов.
     """
 
-    def doRollover(self):
+    def doRollover(self) -> None:
         """
         Выполняет ротацию логов с последующим сжатием старого файла.
 
@@ -91,7 +91,7 @@ class CompressingRotatingFileHandler(logging.handlers.RotatingFileHandler):
                 else:
                     os.remove(dfn_uncompressed)
             except Exception as e:
-                self.handleError(f"Ошибка при сжатии или удалении {dfn_uncompressed}: {e}")
+                self.handleError(f"Ошибка при сжатии или удалении {dfn_uncompressed}: {e}")  # type: ignore[arg-type]
 
 
 class CompressingTimedRotatingFileHandler(SafeTimedRotatingFileHandler):
@@ -99,7 +99,7 @@ class CompressingTimedRotatingFileHandler(SafeTimedRotatingFileHandler):
     Обработчик ротации по времени с поддержкой сжатия (gzip).
     """
 
-    def doRollover(self):
+    def doRollover(self) -> None:
         """
         Выполняет временную ротацию и сжимает полученные бэкапы.
         """
@@ -121,4 +121,4 @@ class CompressingTimedRotatingFileHandler(SafeTimedRotatingFileHandler):
                             f_out.writelines(f_in)
                     os.remove(source_file)  # Удаляем исходный несжатый файл
                 except Exception as e:
-                    self.handleError(f"Ошибка при сжатии файла {source_file}: {e}")
+                    self.handleError(f"Ошибка при сжатии файла {source_file}: {e}")  # type: ignore[arg-type]

@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 import inspect
 import typing as t
-from typing import Any, Callable, Optional, cast, Union
+from typing import Any, Callable, Optional, Union
 
 from .env import OTEL_AVAILABLE
 from .typing import P, R
@@ -182,11 +182,11 @@ def trace(
                 with tracer.start_as_current_span(span_name, attributes=actual_attributes):
                     return func(*args, **kwargs)
 
-            return sync_wrapper  # type: ignore[return-value]
+            return sync_wrapper
 
     # Поддержка использования без скобок: @trace
     if callable(name):
-        f = cast(Callable[P, R], name)
+        f = name
         name = None
         return decorator(f)
 

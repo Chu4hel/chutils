@@ -13,7 +13,7 @@ import inspect
 import logging
 import os
 from pathlib import Path
-from typing import Dict, Any, Optional, Callable, Union, cast
+from typing import Dict, Any, Optional, Callable, Union, cast, Awaitable
 
 from .config.core import _PROVIDERS, get_config
 from .config.manager import _cm
@@ -167,15 +167,15 @@ def require_feature(
             async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, None]:
                 context = cast(Optional[Dict[str, Any]], kwargs.get("context"))
                 if is_feature_enabled(feature_name, context):
-                    return await func(*args, **kwargs)  # type: ignore[no-any-return]
+                    return await cast(Awaitable[R], func(*args, **kwargs))
 
                 if fallback:
                     if inspect.iscoroutinefunction(fallback):
-                        return await fallback(*args, **kwargs)  # type: ignore[no-any-return]
-                    return fallback(*args, **kwargs)  # type: ignore[return-value]
+                        return cast(Union[R, None], await fallback(*args, **kwargs))
+                    return cast(Union[R, None], fallback(*args, **kwargs))
                 return None
 
-            return async_wrapper  # type: ignore[return-value]
+            return cast(Callable[P, Union[R, None]], async_wrapper)
         else:
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, None]:
@@ -184,9 +184,9 @@ def require_feature(
                     return func(*args, **kwargs)
 
                 if fallback:
-                    return fallback(*args, **kwargs)
+                    return cast(Union[R, None], fallback(*args, **kwargs))
                 return None
 
-            return sync_wrapper
+            return cast(Callable[P, Union[R, None]], sync_wrapper)
 
     return decorator

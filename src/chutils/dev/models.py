@@ -3,20 +3,18 @@
 """
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Any, cast, Type
+from typing import Dict, List, Optional, Any
 
 try:
     from pydantic import BaseModel, Field
 except ImportError:
     # Заглушки для обеспечения возможности импорта модуля без pydantic
-    BaseModel = cast(Type['BaseModel'], object)
+    class BaseModel:  # type: ignore[no-redef]
+        pass
 
 
-    def _field_fallback(**kwargs: Any) -> Any:
+    def Field(**kwargs: Any) -> Any:  # type: ignore[no-redef]
         return None
-
-
-    Field = cast(Any, _field_fallback)
 
 
 class Breadcrumbs(BaseModel):

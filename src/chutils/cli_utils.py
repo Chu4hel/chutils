@@ -14,18 +14,18 @@ if t.TYPE_CHECKING:
     from rich.table import Table as _RichTable
     from rich.panel import Panel as _RichPanel
 
-    ConsoleLike = Union[_RichConsole, FallbackConsole]
+    ConsoleLike = Union[_RichConsole, "FallbackConsole"]
 else:
     ConsoleLike = Any
 
 if RICH_AVAILABLE:
-    from rich.console import Console  # type: ignore[no-redef]
-    from rich.table import Table      # type: ignore[no-redef]
-    from rich.panel import Panel      # type: ignore[no-redef]
+    from rich.console import Console
+    from rich.table import Table
+    from rich.panel import Panel
 else:
     Console = None  # type: ignore[assignment, misc]
-    Table = None    # type: ignore[assignment, misc]
-    Panel = None    # type: ignore[assignment, misc]
+    Table = None  # type: ignore[assignment, misc]
+    Panel = None  # type: ignore[assignment, misc]
 
 
 class FallbackConsole:

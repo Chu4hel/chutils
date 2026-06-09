@@ -45,7 +45,7 @@ def _format_json(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_se
     """Форматирует трассировку в JSON."""
     if not show_secrets:
         # Глубокое копирование и маскирование
-        masked_data = {}
+        masked_data: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
         for section, keys in trace_data.items():
             masked_data[section] = {}
             for key, history in keys.items():
@@ -65,6 +65,7 @@ def _format_table(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_s
 
     if use_rich:
         from rich.table import Table
+        from rich.console import Console
         table = Table(title="Трассировка конфигурации (Diagnostics)", show_lines=True)
         table.add_column("Секция", style="cyan")
         table.add_column("Ключ", style="green")
@@ -83,9 +84,11 @@ def _format_table(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_s
 
                 table.add_row(section, key, final_val, "\n".join(history_lines))
 
-        with console.capture() as capture:
-            console.print(table)
-        return capture.get()
+        if isinstance(console, Console):
+            with console.capture() as capture:
+                console.print(table)
+            return capture.get()
+        return ""
     else:
         lines = ["=== Трассировка конфигурации ===", ""]
         for section in sorted(trace_data.keys()):
@@ -107,6 +110,7 @@ def _format_tree(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_se
 
     if use_rich:
         from rich.tree import Tree
+        from rich.console import Console
         root = Tree("📁 [bold blue]Configuration Root[/bold blue]")
 
         for section in sorted(trace_data.keys()):
@@ -124,8 +128,10 @@ def _format_tree(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_se
                         val = mask_value(key, item["value"], show_secrets)
                         key_node.add(f"[dim]Перекрыто из {item['source']}: {val}[/dim]")
 
-        with console.capture() as capture:
-            console.print(root)
-        return capture.get()
+        if isinstance(console, Console):
+            with console.capture() as capture:
+                console.print(root)
+            return capture.get()
+        return ""
     else:
         return _format_table(trace_data, show_secrets)  # Fallback to text list/table
