@@ -1,10 +1,9 @@
 import asyncio
 import functools
-from typing import Callable, Optional, Any, cast, Awaitable
+from typing import Callable, Optional, Any
 
 from .in_memory import InMemoryCacheBackend
 from .utils import generate_cache_key, LockManager, AsyncLockManager
-from ..typing import P, R
 
 # Экземпляры по умолчанию
 _default_backend: InMemoryCacheBackend[Any] = InMemoryCacheBackend()
@@ -16,8 +15,8 @@ def cache_with_ttl(
         ttl: int = 60,
         key_prefix: str = "",
         sliding: bool = True,
-        backend: Optional[InMemoryCacheBackend[R]] = None
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+        backend: Optional[InMemoryCacheBackend[Any]] = None
+) -> Callable[..., Any]:
     """
     Декоратор для кэширования результатов выполнения функций с поддержкой TTL.
 
@@ -30,15 +29,15 @@ def cache_with_ttl(
     Returns:
         Callable: Обернутая функция.
     """
-    cache: InMemoryCacheBackend[R] = backend or _default_backend
+    cache: InMemoryCacheBackend[Any] = backend or _default_backend
 
-    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         func_name = f"{func.__module__}.{func.__name__}"
         is_async = asyncio.iscoroutinefunction(func)
 
         if is_async:
             @functools.wraps(func)
-            async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            async def wrapper(*args: Any, **kwargs: Any) -> Any:
                 key = generate_cache_key(func_name, args, kwargs, prefix=key_prefix)
 
                 # 1. Пробуем получить из кэша
@@ -57,14 +56,14 @@ def cache_with_ttl(
                         return value
 
                     # 3. Вычисляем значение
-                    result = await cast(Awaitable[R], func(*args, **kwargs))
+                    result = await func(*args, **kwargs)
 
                     # 4. Сохраняем в кэш
                     await cache.aset(key, result, ttl=ttl)
                     return result
         else:
             @functools.wraps(func)
-            def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 key = generate_cache_key(func_name, args, kwargs, prefix=key_prefix)
 
                 # 1. Пробуем получить из кэша
@@ -89,6 +88,6 @@ def cache_with_ttl(
                     cache.set(key, result, ttl=ttl)
                     return result
 
-        return cast(Callable[P, R], wrapper)
+        return wrapper
 
     return decorator

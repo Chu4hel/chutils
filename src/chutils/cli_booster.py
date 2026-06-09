@@ -13,13 +13,11 @@ from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, TypeVar, Dict, Optional
 
-from .typing import P, R
-
 # Тип для декорируемой функции
 F = TypeVar("F", bound=Callable[..., Any])
 
 
-def cli_command(func: Callable[P, R]) -> Callable[P, R]:
+def cli_command(func: F) -> F:
     """
     Декоратор для превращения функции в CLI-команду.
 
@@ -42,10 +40,10 @@ def cli_command(func: Callable[P, R]) -> Callable[P, R]:
     """
 
     @wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         # Если аргументы переданы явно (вызов из кода), просто вызываем функцию
         if args or kwargs:
-            return _execute(func, *args, **kwargs)  # type: ignore[no-any-return]
+            return _execute(func, *args, **kwargs)
 
         # Проверяем, запущен ли скрипт напрямую
         # Инспектируем кадр стека, который вызвал wrapper
@@ -60,12 +58,12 @@ def cli_command(func: Callable[P, R]) -> Callable[P, R]:
                 # Парсинг аргументов CLI
                 parsed_args = parser.parse_args()
                 func_args = vars(parsed_args)
-                return _execute(func, **func_args)  # type: ignore[no-any-return]
+                return _execute(func, **func_args)
 
         # Если вызвано не из __main__, просто вызываем функцию без аргументов
-        return _execute(func)  # type: ignore[no-any-return]
+        return _execute(func)
 
-    return wrapper
+    return wrapper  # type: ignore[return-value]
 
 
 def _create_parser(func: Callable[..., Any], sig: inspect.Signature) -> argparse.ArgumentParser:

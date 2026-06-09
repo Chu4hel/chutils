@@ -13,12 +13,11 @@ import inspect
 import logging
 import os
 from pathlib import Path
-from typing import Dict, Any, Optional, Callable, Union, cast, Awaitable
+from typing import Dict, Any, Optional, Callable, cast
 
 from .config.core import _PROVIDERS, get_config
 from .config.manager import _cm
 from .config.utils import find_project_root
-from .typing import P, R
 
 logger = logging.getLogger(__name__)
 
@@ -141,8 +140,8 @@ def _evaluate_complex_feature(feature_name: str, config: Dict[str, Any], context
 
 def require_feature(
         feature_name: str,
-        fallback: Optional[Callable[P, R]] = None
-) -> Callable[[Callable[P, R]], Callable[P, Union[R, None]]]:
+        fallback: Optional[Callable[..., Any]] = None
+) -> Callable[..., Any]:
     """
     Декоратор для ограничения доступа к функции на основе фича-флага.
 
@@ -161,32 +160,32 @@ def require_feature(
         Декоратор.
     """
 
-    def decorator(func: Callable[P, R]) -> Callable[P, Union[R, None]]:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         if inspect.iscoroutinefunction(func):
             @functools.wraps(func)
-            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, None]:
+            async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 context = cast(Optional[Dict[str, Any]], kwargs.get("context"))
                 if is_feature_enabled(feature_name, context):
-                    return await cast(Awaitable[R], func(*args, **kwargs))
+                    return await func(*args, **kwargs)
 
                 if fallback:
                     if inspect.iscoroutinefunction(fallback):
-                        return cast(Union[R, None], await fallback(*args, **kwargs))
-                    return cast(Union[R, None], fallback(*args, **kwargs))
+                        return await fallback(*args, **kwargs)
+                    return fallback(*args, **kwargs)
                 return None
 
-            return cast(Callable[P, Union[R, None]], async_wrapper)
+            return async_wrapper
         else:
             @functools.wraps(func)
-            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, None]:
+            def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
                 context = cast(Optional[Dict[str, Any]], kwargs.get("context"))
                 if is_feature_enabled(feature_name, context):
                     return func(*args, **kwargs)
 
                 if fallback:
-                    return cast(Union[R, None], fallback(*args, **kwargs))
+                    return fallback(*args, **kwargs)
                 return None
 
-            return cast(Callable[P, Union[R, None]], sync_wrapper)
+            return sync_wrapper
 
     return decorator

@@ -90,7 +90,7 @@ def retry(
                 # но raise в цикле гарантирует выход или возврат.
                 raise RuntimeError("Unreachable")
 
-            return async_wrapper
+            return cast(Callable[..., Any], async_wrapper)
         else:
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
@@ -191,7 +191,7 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable[[Callable[
                         )
                     return fallback
 
-            return async_wrapper
+            return cast(Callable[..., Any], async_wrapper)
         else:
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, Any]:
