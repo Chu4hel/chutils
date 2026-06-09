@@ -1,4 +1,11 @@
 import json
+import sys
+
+from pydantic import BaseModel
+
+
+class Settings(BaseModel):
+    key: str = "val"
 
 
 def test_cli_show_paths_text(cli_runner, config_fs):
@@ -37,29 +44,32 @@ def test_cli_config_debug_json(cli_runner, config_fs):
     assert "app" in data
 
 
-def test_cli_template_yaml_stdout(cli_runner, config_fs, mocker):
-    """Проверяет генерацию YAML шаблона с агрессивным мокированием."""
-    fs, project_root = config_fs
-    from pydantic import BaseModel
-    class Settings(BaseModel):
-        key: str = "val"
-
-    # Патчим везде, где функция могла осесть
+def _patch_template_everywhere(mocker, val=None, side_effect=None):
+    """Надежное мокирование генератора в диагностических тестах."""
     targets = [
         "chutils.commands.template.generate_yaml_template",
         "src.chutils.commands.template.generate_yaml_template",
-        "chutils.config.generator.generate_yaml_template",
-        "src.chutils.config.generator.generate_yaml_template"
+        "chutils.config.generator.generate_yaml_template"
     ]
-    for target in targets:
+    for t in targets:
         try:
-            mocker.patch(target, return_value="key: val")
-        except (ImportError, AttributeError):
+            if side_effect:
+                mocker.patch(t, side_effect=side_effect)
+            else:
+                mocker.patch(t, return_value=val or "key: val")
+        except:
             pass
 
-    mocker.patch("chutils.commands.template.importlib.import_module")
-    mocker.patch("chutils.commands.template.getattr", return_value=Settings)
-    mocker.patch("chutils.commands.template.PYDANTIC_AVAILABLE", True)
+
+def test_cli_template_yaml_stdout(cli_runner, config_fs, mocker):
+    """Проверяет генерацию YAML шаблона в stdout."""
+    _patch_template_everywhere(mocker, val="key: val")
+    # Также патчим getattr в TemplateCommand
+    for mod in ["chutils.commands.template", "src.chutils.commands.template"]:
+        if mod in sys.modules:
+            mocker.patch(f"{mod}.importlib.import_module")
+            mocker.patch(f"{mod}.getattr", return_value=Settings)
+            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", True)
 
     result = cli_runner.invoke(["template", "-m", "models:Settings", "-f", "yaml"])
 
@@ -68,27 +78,14 @@ def test_cli_template_yaml_stdout(cli_runner, config_fs, mocker):
 
 
 def test_cli_template_save_file(cli_runner, config_fs, mocker):
-    """Проверяет сохранение шаблона в файл с агрессивным мокированием."""
+    """Проверяет сохранение шаблона в файл."""
     fs, project_root = config_fs
-    from pydantic import BaseModel
-    class Settings(BaseModel):
-        key: str = "val"
-
-    targets = [
-        "chutils.commands.template.generate_yaml_template",
-        "src.chutils.commands.template.generate_yaml_template",
-        "chutils.config.generator.generate_yaml_template",
-        "src.chutils.config.generator.generate_yaml_template"
-    ]
-    for target in targets:
-        try:
-            mocker.patch(target, return_value="key: val")
-        except (ImportError, AttributeError):
-            pass
-
-    mocker.patch("chutils.commands.template.importlib.import_module")
-    mocker.patch("chutils.commands.template.getattr", return_value=Settings)
-    mocker.patch("chutils.commands.template.PYDANTIC_AVAILABLE", True)
+    _patch_template_everywhere(mocker, val="key: val")
+    for mod in ["chutils.commands.template", "src.chutils.commands.template"]:
+        if mod in sys.modules:
+            mocker.patch(f"{mod}.importlib.import_module")
+            mocker.patch(f"{mod}.getattr", return_value=Settings)
+            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", True)
 
     result = cli_runner.invoke(["template", "-m", "models:Settings", "-o", "out.yml"])
 
@@ -96,3 +93,40 @@ def test_cli_template_save_file(cli_runner, config_fs, mocker):
     assert fs.exists("out.yml")
     with open("out.yml", "r") as f:
         assert "key: val" in f.read()
+
+
+def test_cli_template_no_pydantic(cli_runner, mocker):
+    """Проверяет команду template без Pydantic."""
+    for mod in ["chutils.commands.template", "src.chutils.commands.template"]:
+        if mod in sys.modules:
+            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", False)
+
+    result = cli_runner.invoke(["template", "-m", "m:M"])
+    assert result.exit_code == 1
+    assert "Pydantic не установлен" in result.stdout or "Pydantic не установлен" in result.stderr
+
+
+def test_cli_template_import_error(cli_runner, mocker):
+    """Проверяет обработку ImportError при импорте модели."""
+    for mod in ["chutils.commands.template", "src.chutils.commands.template"]:
+        if mod in sys.modules:
+            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", True)
+            mocker.patch(f"{mod}.importlib.import_module", side_effect=ImportError("Fail"))
+
+    result = cli_runner.invoke(["template", "-m", "m:M"])
+    assert result.exit_code == 1
+    assert "Не удалось импортировать модель" in result.stdout or "Не удалось импортировать модель" in result.stderr
+
+
+def test_cli_template_generation_error(cli_runner, mocker):
+    """Проверяет обработку ошибки генерации."""
+    _patch_template_everywhere(mocker, side_effect=Exception("Gen fail"))
+    for mod in ["chutils.commands.template", "src.chutils.commands.template"]:
+        if mod in sys.modules:
+            mocker.patch(f"{mod}.importlib.import_module")
+            mocker.patch(f"{mod}.getattr", return_value=Settings)
+            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", True)
+
+    result = cli_runner.invoke(["template", "-m", "m:M"])
+    assert result.exit_code == 1
+    assert "Ошибка при генерации шаблона" in result.stdout or "Ошибка при генерации шаблона" in result.stderr

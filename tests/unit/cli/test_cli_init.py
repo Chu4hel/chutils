@@ -1,4 +1,5 @@
 import os
+import sys
 
 
 def test_cli_init_success(cli_runner, config_fs):
@@ -31,26 +32,63 @@ def test_cli_init_already_exists_skip(cli_runner, config_fs, mocker):
         assert f.read() == "existing content"
 
 
-def test_cli_init_with_model(cli_runner, config_fs, mocker):
-    """Проверяет генерацию конфига на основе Pydantic модели с надежным мокированием."""
+def test_cli_init_model_no_pydantic(cli_runner, config_fs, mocker):
+    """Проверяет инициализацию с моделью без Pydantic."""
+    fs, project_root = config_fs
+
+    # Патчим PYDANTIC_AVAILABLE в генераторе
+    mocker.patch("chutils.config.generator.PYDANTIC_AVAILABLE", False)
+    # И на случай если он уже импортирован в init
+    for mod in ["chutils.commands.init", "src.chutils.commands.init"]:
+        if mod in sys.modules:
+            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", False, create=True)
+
+    result = cli_runner.invoke(["init", "-y", "-m", "m:M"])
+    assert result.exit_code == 0
+    assert "Pydantic не установлен" in result.stdout
+
+
+def test_cli_init_gitignore_already_contains(cli_runner, config_fs):
+    """Проверяет пропуск обновления .gitignore, если записи уже есть."""
+    fs, project_root = config_fs
+    # Список в коде init.py
+    entries = [
+        "config.local.yml", "config.local.yaml", "config.local.ini", "config.local.json",
+        "*.log", "logs/"
+    ]
+    contents = "\n".join(entries) + "\n"
+    fs.create_file(".gitignore", contents=contents)
+
+    result = cli_runner.invoke(["init", "-y"])
+    assert result.exit_code == 0
+    assert "уже содержит необходимые исключения" in result.stdout
+
+
+def test_cli_init_with_model_success(cli_runner, config_fs, mocker):
+    """Проверяет успешную генерацию на основе модели."""
     fs, project_root = config_fs
     from pydantic import BaseModel
     class Settings(BaseModel):
         api_key: str = "default_key"
 
-    # Патчим в источнике (оба варианта путей)
-    for path in ["chutils.config.generator", "src.chutils.config.generator"]:
+    # Патчим генератор ВЕЗДЕ
+    targets = [
+        "chutils.config.generator.generate_yaml_template",
+        "chutils.commands.init.generate_yaml_template",
+        "src.chutils.commands.init.generate_yaml_template"
+    ]
+    for t in targets:
         try:
-            mocker.patch(f"{path}.PYDANTIC_AVAILABLE", True)
-            mocker.patch(f"{path}.generate_yaml_template", return_value="api_key: default_key")
-        except ImportError:
+            mocker.patch(t, return_value="api_key: default_key")
+        except:
             pass
 
+    mocker.patch("chutils.config.generator.PYDANTIC_AVAILABLE", True)
     mocker.patch("importlib.import_module")
     mocker.patch("builtins.getattr", return_value=Settings)
 
-    result = cli_runner.invoke(["init", "-y", "-m", "myapp_config:Settings"])
-
+    result = cli_runner.invoke(["init", "-y", "-m", "myapp:Settings"])
     assert result.exit_code == 0
     with open("config.yml", "r") as f:
-        assert "api_key: default_key" in f.read()
+        content = f.read()
+        assert "api_key: default_key" in content

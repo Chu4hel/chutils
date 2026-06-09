@@ -74,9 +74,17 @@ class FallbackConsole:
                 # Если аргумент не строка (например, Table или Panel),
                 # пытаемся вывести его как-то осмысленно или просто repr.
                 if not isinstance(arg, str):
+                    is_panel = type(arg).__name__ == "Panel"
                     if hasattr(arg, "title") and getattr(arg, "title"):
-                        processed_args.append(f"=== {getattr(arg, 'title')} ===")
+                        processed_args.append(f"=== {self._strip_markup(str(getattr(arg, 'title')))} ===")
+                        if not is_panel:
+                            continue
+
+                    if is_panel:
+                        renderable = getattr(arg, "renderable", "")
+                        processed_args.append(self._strip_markup(str(renderable)))
                         continue
+
                 processed_args.append(arg)
 
         print(*processed_args, **kwargs)

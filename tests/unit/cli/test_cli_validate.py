@@ -1,3 +1,5 @@
+from unittest import mock
+
 from pydantic import BaseModel
 
 
@@ -69,3 +71,29 @@ def test_cli_validate_import_error(cli_runner, config_fs, mocker):
 
     assert result.exit_code == 1
     assert "Не удалось импортировать модель" in result.stderr or "Не удалось импортировать модель" in result.stdout
+
+
+def test_cli_validate_no_pydantic(cli_runner, config_fs, mocker):
+    """Проверяет поведение при отсутствии Pydantic."""
+    fs, project_root = config_fs
+    fs.create_file("config.yml", contents="key: val")
+
+    mocker.patch("chutils.commands.validate._import_string", return_value=Settings)
+
+    # Используем unittest.mock.patch.dict напрямую, чтобы избежать проблем с pytest-mock
+    with mock.patch.dict("sys.modules", {"pydantic": None}):
+        result = cli_runner.invoke(["validate", "-m", "m:M"])
+        assert result.exit_code == 1
+        assert "Пакет 'pydantic' не установлен" in result.stdout or "Пакет 'pydantic' не установлен" in result.stderr
+
+
+def test_cli_validate_unexpected_error(cli_runner, config_fs, mocker):
+    """Проверяет обработку непредвиденных ошибок."""
+    fs, project_root = config_fs
+    fs.create_file("config.yml", contents="key: val")
+    # Патчим _import_string, чтобы он бросал ошибку
+    mocker.patch("chutils.commands.validate._import_string", side_effect=RuntimeError("Boom"))
+
+    result = cli_runner.invoke(["validate", "-m", "m:M"])
+    assert result.exit_code == 1
+    assert "Boom" in result.stdout or "Boom" in result.stderr
