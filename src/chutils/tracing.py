@@ -18,7 +18,7 @@ IS_OTEL_AVAILABLE = OTEL_AVAILABLE
 if IS_OTEL_AVAILABLE:
     try:
         from opentelemetry import trace as otel_trace
-    except ImportError:
+    except Exception:
         otel_trace = None  # type: ignore[assignment]
         IS_OTEL_AVAILABLE = False
 else:

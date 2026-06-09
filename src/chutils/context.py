@@ -2,10 +2,16 @@ from __future__ import annotations
 
 import contextvars
 import logging
+import sys
 from typing import Any
 
-_context: contextvars.ContextVar[dict[str, Any]] = contextvars.ContextVar("_chutils_context", default={})
-"Хранилище контекста: словарь {ключ: значение}"
+# Предотвращаем раздвоение контекста при двойном импорте (например, chutils.context и src.chutils.context)
+_chutils_context_var = getattr(sys, "_chutils_context_var", None)
+if _chutils_context_var is None:
+    _chutils_context_var = contextvars.ContextVar("_chutils_context", default={})
+    setattr(sys, "_chutils_context_var", _chutils_context_var)
+
+_context: contextvars.ContextVar[dict[str, Any]] = _chutils_context_var
 
 
 def get_context() -> dict[str, Any]:
@@ -55,7 +61,7 @@ class ContextFilter(logging.Filter):
                 # Также добавляем как индивидуальные атрибуты для форматтеров
                 for key, value in trace_ctx.items():
                     setattr(record, key, value)
-        except (ImportError, AttributeError):
+        except Exception:
             pass
 
         record.context_dict = ctx
