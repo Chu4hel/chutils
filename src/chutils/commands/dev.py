@@ -151,6 +151,9 @@ class DevCommand(BaseCommand):
                 else:
                     obj_type = "constant"
 
+                import re
+                signature = re.sub(r' at 0x[0-9a-fA-F]+', '', signature)
+
                 api_data.append({
                     "name": attr_name,
                     "type": obj_type,
