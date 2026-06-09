@@ -43,8 +43,8 @@ def test_json_format_env_priority(capsys, monkeypatch):
 def test_json_format_graceful_degradation(capsys, monkeypatch):
     """Проверяет откат к обычному тексту, если пакет не установлен."""
     # Эмулируем отсутствие пакета через флаг
-    from chutils.logger import core as logger_core
-    monkeypatch.setattr(logger_core, "JSON_LOGGER_AVAILABLE", False)
+    from chutils.logger.internal import builder as logger_builder
+    monkeypatch.setattr(logger_builder, "JSON_LOGGER_AVAILABLE", False)
 
     logger_name = "json_missing_test"
     # setup_logger выведет предупреждение в stderr через свой StreamHandler
