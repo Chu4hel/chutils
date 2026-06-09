@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 from typing import Any
 
 from chutils import config
@@ -45,6 +46,8 @@ class ValidateCommand(BaseCommand):
                 )
         else:
             # Авто-обнаружение модели
+            # Добавляем текущую директорию в path
+            sys.path.insert(0, str(Path.cwd()))
             search_paths = [
                 "src.context:Settings", "src.config:Settings",
                 "context:Settings", "config:Settings"

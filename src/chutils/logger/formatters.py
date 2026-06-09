@@ -13,15 +13,16 @@ _jsonlogger: Any = None
 
 if JSON_LOGGER_AVAILABLE:
     try:
-        from pythonjsonlogger import jsonlogger
+        # Prefer new import path to avoid DeprecationWarning in version 3.2.0+
+        from pythonjsonlogger import json as _json_module
 
-        _jsonlogger = jsonlogger
+        _jsonlogger = _json_module
     except ImportError:
         try:
-            # Fallback for older versions or slightly different package structures
-            from pythonjsonlogger import json as jsonlogger_alt
+            # Fallback for older versions
+            from pythonjsonlogger import jsonlogger as _json_module_old
 
-            _jsonlogger = jsonlogger_alt
+            _jsonlogger = _json_module_old
         except ImportError:
             JSON_LOGGER_AVAILABLE = False
             _jsonlogger = None

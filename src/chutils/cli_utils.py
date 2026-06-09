@@ -45,9 +45,14 @@ class FallbackConsole:
     def file(self) -> t.TextIO:
         return sys.stderr if self._is_stderr else sys.stdout
 
-    def _strip_markup(self, text: str) -> str:
-        """Удаляет простейшие теги rich типа [bold]."""
-        return re.sub(r"\[/?[\w\s,=#]*\]", "", text)
+    @staticmethod
+    def _strip_markup(text: str) -> str:
+        """Удаляет теги rich, стараясь не трогать обычные квадратные скобки."""
+        # Регулярное выражение для поиска тегов rich: [style], [/style], [color], [#hex]
+        # Мы ищем слова, которые часто используются в стилях Rich, или коды цветов.
+        return re.sub(
+            r"\[/?(?:bold|italic|underline|strike|dim|reverse|blink|red|green|yellow|blue|magenta|cyan|white|black|grey|#[\da-fA-F]{3,6}|rgb\(\d+,\d+,\d+\)|on\s+\w+)[^\]]*\]",
+            "", text)
 
     def print(self, *args: Any, **kwargs: Any) -> None:
         # Игнорируем специфичные для Rich аргументы
