@@ -10,22 +10,22 @@ from typing import Any, Optional, Union
 from .env import RICH_AVAILABLE, is_rich_enabled
 
 if t.TYPE_CHECKING:
-    from rich.console import Console
-    from rich.table import Table
-    from rich.panel import Panel
+    from rich.console import Console as _RichConsole
+    from rich.table import Table as _RichTable
+    from rich.panel import Panel as _RichPanel
 
-    ConsoleLike = Union[Console, FallbackConsole]
+    ConsoleLike = Union[_RichConsole, FallbackConsole]
 else:
     ConsoleLike = Any
 
 if RICH_AVAILABLE:
-    from rich.console import Console as RichConsole
-    from rich.table import Table as RichTable
-    from rich.panel import Panel as RichPanel
+    from rich.console import Console  # type: ignore[no-redef]
+    from rich.table import Table      # type: ignore[no-redef]
+    from rich.panel import Panel      # type: ignore[no-redef]
 else:
-    RichConsole = None  # type: ignore
-    RichTable = None  # type: ignore
-    RichPanel = None  # type: ignore
+    Console = None  # type: ignore[assignment, misc]
+    Table = None    # type: ignore[assignment, misc]
+    Panel = None    # type: ignore[assignment, misc]
 
 
 class FallbackConsole:
@@ -121,8 +121,7 @@ def get_console(stderr: bool = False) -> ConsoleLike:
         if _err_console is not None:
             return _err_console
         if is_rich_enabled():
-            from rich.console import Console as RealConsole
-            _err_console = RealConsole(stderr=True, width=_get_default_width())
+            _err_console = Console(stderr=True, width=_get_default_width())
         else:
             _err_console = FallbackConsole(stderr=True)
         return _err_console
@@ -131,8 +130,7 @@ def get_console(stderr: bool = False) -> ConsoleLike:
         return _console
 
     if is_rich_enabled():
-        from rich.console import Console as RealConsole
-        _console = RealConsole(width=_get_default_width())
+        _console = Console(width=_get_default_width())
     else:
         _console = FallbackConsole()
     return _console
