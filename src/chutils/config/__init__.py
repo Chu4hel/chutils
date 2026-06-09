@@ -22,11 +22,6 @@ import warnings
 from typing import Any, Optional, TYPE_CHECKING, TypeVar, Tuple
 
 from .core import get_config, aget_config, save_config_value, asave_config_value, _PROVIDERS
-from .generator import (
-    generate_yaml_template,
-    generate_env_template,
-    generate_json_schema,
-)
 from .getters import (
     get_config_value,
     get_config_int,
@@ -37,7 +32,6 @@ from .getters import (
     get_config_path
 )
 from .manager import _cm
-from .schema import export_schema, import_model_class
 from .utils import find_project_root, _check_pydantic
 from .watcher import (
     on_config_change,
@@ -48,6 +42,12 @@ from .watcher import (
 if TYPE_CHECKING:
     from ..logger import ChutilsLogger
     from pydantic import BaseModel
+    from .generator import (
+        generate_yaml_template,
+        generate_env_template,
+        generate_json_schema,
+    )
+    from .schema import export_schema, import_model_class
 
 # Тип для Pydantic моделей
 T = TypeVar("T", bound="BaseModel")
@@ -98,12 +98,23 @@ def _get_logger() -> 'ChutilsLogger':
 
 def __getattr__(name: str) -> Any:
     """
-    Обеспечивает обратную совместимость для старых глобальных переменных.
-
-    Согласно PEP 562, эта функция вызывается при обращении к отсутствующим атрибутам модуля.
-    Мы используем её для перенаправления обращений к старым приватным переменным
-    в новый менеджер состояния с выводом предупреждения об устаревании.
+    Обеспечивает обратную совместимость для старых глобальных переменных
+    и ленивую загрузку экспортируемых функций генератора и схемы.
     """
+    lazy_imports = {
+        'generate_yaml_template': ('.generator', 'generate_yaml_template'),
+        'generate_env_template': ('.generator', 'generate_env_template'),
+        'generate_json_schema': ('.generator', 'generate_json_schema'),
+        'export_schema': ('.schema', 'export_schema'),
+        'import_model_class': ('.schema', 'import_model_class'),
+    }
+
+    if name in lazy_imports:
+        import importlib
+        mod_path, attr_name = lazy_imports[name]
+        module = importlib.import_module(mod_path, __package__ or __name__)
+        return getattr(module, attr_name)
+
     remap = {
         '_BASE_DIR': ('base_dir', 'get_base_dir()'),
         '_CONFIG_FILE_PATH': ('config_file_path', 'get_config_file_path()'),

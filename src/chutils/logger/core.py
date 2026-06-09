@@ -9,13 +9,6 @@ import atexit
 import logging
 from typing import Optional, Any, List, Union
 
-from .formatters import JSON_LOGGER_AVAILABLE, ChutilsJsonFormatter
-from .handlers import (
-    SafeTimedRotatingFileHandler,
-    CompressingRotatingFileHandler,
-    CompressingTimedRotatingFileHandler
-)
-from .internal.builder import LoggerBuilder
 from .internal.levels import (
     LogLevel,
     LogLevelsMixin,
@@ -37,12 +30,7 @@ __all__ = [
     'ChutilsLogger',
     'LogLevel',
     'DEVDEBUG_LEVEL_NUM',
-    'MEDIUMDEBUG_LEVEL_NUM',
-    'JSON_LOGGER_AVAILABLE',
-    'ChutilsJsonFormatter',
-    'SafeTimedRotatingFileHandler',
-    'CompressingRotatingFileHandler',
-    'CompressingTimedRotatingFileHandler'
+    'MEDIUMDEBUG_LEVEL_NUM'
 ]
 
 
@@ -168,6 +156,7 @@ def setup_logger(
     Returns:
         Настроенный экземпляр ChutilsLogger.
     """
+    from .internal.builder import LoggerBuilder
     builder = LoggerBuilder(name, config_section_name, **kwargs)
 
     return builder.build(
