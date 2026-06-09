@@ -46,7 +46,7 @@ def test_mock_chutils_secrets_isolation(mock_chutils_secrets):
 
 def test_capture_chutils_logs_basic(capture_chutils_logs):
     """Проверка базового перехвата сообщений."""
-    logger = setup_logger("test_logger")
+    logger = setup_logger("test_logger", force_reconfigure=True, use_async=False)
     logger.info("Hello fixture world")
 
     assert capture_chutils_logs.has_message("Hello fixture world")
@@ -57,8 +57,7 @@ def test_capture_chutils_logs_basic(capture_chutils_logs):
 def test_capture_chutils_logs_fields(capture_chutils_logs):
     """Проверка фильтрации логов по полям (контексту)."""
     clear_context()
-    logger = setup_logger("context_logger")
-
+    logger = setup_logger("context_logger", force_reconfigure=True, use_async=False)
     bind_context(request_id="abc-123", user="bob")
     logger.warning("Something happened")
 
@@ -78,7 +77,7 @@ def test_capture_chutils_logs_fields(capture_chutils_logs):
 
 def test_capture_chutils_logs_clear(capture_chutils_logs):
     """Проверка очистки перехваченных логов."""
-    logger = setup_logger("clear_logger")
+    logger = setup_logger("clear_logger", force_reconfigure=True, use_async=False)
     logger.info("Message 1")
     assert len(capture_chutils_logs.records) == 1
 
