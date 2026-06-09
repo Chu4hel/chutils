@@ -143,3 +143,98 @@ def _get_typed_value(
             value, key, section, t_name, fallback
         )
         return fallback
+
+
+def load_pyproject_toml(path: str) -> JSONDict:
+    """
+    Загружает и парсит секцию [tool.chutils.ai-lint] из pyproject.toml.
+
+    Использует tomllib (Python >= 3.11) или tomli, если доступны.
+    В качестве fallback использует простой строковый парсер для избежания
+    зависимостей на старых версиях Python.
+    """
+    try:
+        # Пробуем стандартный tomllib (Python 3.11+)
+        import tomllib
+        with open(path, "rb") as f:
+            data = tomllib.load(f)
+            tool_dict = data.get("tool", {})
+            if isinstance(tool_dict, dict):
+                chutils_dict = tool_dict.get("chutils", {})
+                if isinstance(chutils_dict, dict):
+                    ai_lint_dict = chutils_dict.get("ai-lint", {})
+                    if isinstance(ai_lint_dict, dict):
+                        return ai_lint_dict
+            return {}
+    except ImportError:
+        try:
+            # Пробуем tomli
+            import tomli
+            with open(path, "rb") as f:
+                data = tomli.load(f)
+                tool_dict = data.get("tool", {})
+                if isinstance(tool_dict, dict):
+                    chutils_dict = tool_dict.get("chutils", {})
+                    if isinstance(chutils_dict, dict):
+                        ai_lint_dict = chutils_dict.get("ai-lint", {})
+                        if isinstance(ai_lint_dict, dict):
+                            return ai_lint_dict
+                return {}
+        except ImportError:
+            # Ручной легковесный fallback парсер
+            return _parse_pyproject_toml_fallback(path)
+
+
+def _parse_pyproject_toml_fallback(path: str) -> JSONDict:
+    """
+    Ручной парсер для извлечения секции [tool.chutils.ai-lint] из TOML.
+    """
+    import ast
+
+    result: JSONDict = {}
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+    except Exception:
+        return result
+
+    in_section = False
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+
+        if line.startswith("["):
+            # Проверяем, наша ли это секция
+            section_name = line.strip("[]").strip()
+            if section_name == "tool.chutils.ai-lint":
+                in_section = True
+            else:
+                in_section = False
+            continue
+
+        if in_section:
+            if "=" in line:
+                key, val_str = line.split("=", 1)
+                key = key.strip()
+                val_str = val_str.strip()
+
+                # Парсим базовые типы (bool, int, float, list, str)
+                try:
+                    val = ast.literal_eval(val_str)
+                    result[key] = val
+                except Exception:
+                    if val_str.lower() == "true":
+                        result[key] = True
+                    elif val_str.lower() == "false":
+                        result[key] = False
+                    elif val_str.startswith("[") and val_str.endswith("]"):
+                        items = [item.strip(" '\"") for item in val_str[1:-1].split(",") if item.strip()]
+                        result[key] = items
+                    elif (val_str.startswith('"') and val_str.endswith('"')) or (
+                            val_str.startswith("'") and val_str.endswith("'")):
+                        result[key] = val_str[1:-1]
+                    else:
+                        result[key] = val_str
+
+    return result

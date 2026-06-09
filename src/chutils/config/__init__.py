@@ -48,6 +48,10 @@ if TYPE_CHECKING:
         generate_json_schema,
     )
     from .schema import export_schema, import_model_class
+    from .dev import (
+        load_ai_lint_config as load_ai_lint_config,
+        parse_chutils_ignore as parse_chutils_ignore,
+    )
 
 # Тип для Pydantic моделей
 T = TypeVar("T", bound="BaseModel")
@@ -81,7 +85,9 @@ __all__ = [
     'generate_env_template',
     'generate_json_schema',
     'export_schema',
-    'import_model_class'
+    'import_model_class',
+    'load_ai_lint_config',
+    'parse_chutils_ignore'
 ]
 
 
@@ -107,6 +113,8 @@ def __getattr__(name: str) -> Any:
         'generate_json_schema': ('.generator', 'generate_json_schema'),
         'export_schema': ('.schema', 'export_schema'),
         'import_model_class': ('.schema', 'import_model_class'),
+        'load_ai_lint_config': ('.dev', 'load_ai_lint_config'),
+        'parse_chutils_ignore': ('.dev', 'parse_chutils_ignore'),
     }
 
     if name in lazy_imports:

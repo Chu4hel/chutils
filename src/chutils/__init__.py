@@ -77,6 +77,8 @@ _LAZY_MAPPING = {
     'get_config_paths': ('.config', 'get_config_paths'),
     'get_all_config_paths': ('.config', 'get_all_config_paths'),
     'export_schema': ('.config', 'export_schema'),
+    'load_ai_lint_config': ('.config', 'load_ai_lint_config'),
+    'parse_chutils_ignore': ('.config', 'parse_chutils_ignore'),
 
     # features
     'is_feature_enabled': ('.features', 'is_feature_enabled'),
