@@ -5,22 +5,22 @@
 Поддерживает булевы флаги, фильтры по окружению и процентное раскатывание.
 """
 
+from __future__ import annotations
+
 import functools
 import hashlib
 import inspect
 import logging
 import os
 from pathlib import Path
-from typing import Dict, Any, Optional, Callable, TypeVar
+from typing import Dict, Any, Optional, Callable, Union, cast
 
 from .config.core import _PROVIDERS, get_config
 from .config.manager import _cm
 from .config.utils import find_project_root
+from .typing import P, R
 
 logger = logging.getLogger(__name__)
-
-# Тип для декорируемой функции
-F = TypeVar("F", bound=Callable[..., Any])
 
 
 def get_features() -> Dict[str, Any]:
@@ -35,11 +35,11 @@ def get_features() -> Dict[str, Any]:
         Словарь с конфигурацией фича-флагов.
     """
 
-    def _do_load():
+    def _do_load() -> Dict[str, Any]:
         if not _cm.paths_initialized:
             _cm.initialize_paths(find_project_root)
 
-        features_data = {}
+        features_data: Dict[str, Any] = {}
 
         # 1. Попытка загрузки из выделенного файла
         if _cm.features_file_path:
@@ -56,12 +56,14 @@ def get_features() -> Dict[str, Any]:
         # 2. Фолбэк на основную конфигурацию, если файл не найден или пуст
         if not features_data:
             config = get_config()
-            # Поддержка различных стилей именования секции
-            features_data = config.get("feature_flags") or config.get("FeatureFlags")
-            if features_data and isinstance(features_data, dict):
-                logger.debug("Фича-флаги загружены из основной конфигурации (секция feature_flags)")
-            else:
-                features_data = {}
+            if isinstance(config, dict):
+                # Поддержка различных стилей именования секции
+                data = config.get("feature_flags") or config.get("FeatureFlags")
+                if data and isinstance(data, dict):
+                    logger.debug("Фича-флаги загружены из основной конфигурации (секция feature_flags)")
+                    features_data = cast(Dict[str, Any], data)
+                else:
+                    features_data = {}
 
         return features_data
 
@@ -137,7 +139,10 @@ def _evaluate_complex_feature(feature_name: str, config: Dict[str, Any], context
     return True
 
 
-def require_feature(feature_name: str, fallback: Optional[Callable] = None):
+def require_feature(
+        feature_name: str,
+        fallback: Optional[Callable[P, R]] = None
+) -> Callable[[Callable[P, R]], Callable[P, Union[R, None]]]:
     """
     Декоратор для ограничения доступа к функции на основе фича-флага.
 
@@ -156,25 +161,25 @@ def require_feature(feature_name: str, fallback: Optional[Callable] = None):
         Декоратор.
     """
 
-    def decorator(func: Callable):
+    def decorator(func: Callable[P, R]) -> Callable[P, Union[R, None]]:
         if inspect.iscoroutinefunction(func):
             @functools.wraps(func)
-            async def async_wrapper(*args, **kwargs):
-                context = kwargs.get("context")
+            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, None]:
+                context = cast(Optional[Dict[str, Any]], kwargs.get("context"))
                 if is_feature_enabled(feature_name, context):
-                    return await func(*args, **kwargs)
+                    return await func(*args, **kwargs)  # type: ignore[no-any-return]
 
                 if fallback:
                     if inspect.iscoroutinefunction(fallback):
-                        return await fallback(*args, **kwargs)
-                    return fallback(*args, **kwargs)
+                        return await fallback(*args, **kwargs)  # type: ignore[no-any-return]
+                    return fallback(*args, **kwargs)  # type: ignore[return-value]
                 return None
 
-            return async_wrapper
+            return async_wrapper  # type: ignore[return-value]
         else:
             @functools.wraps(func)
-            def sync_wrapper(*args, **kwargs):
-                context = kwargs.get("context")
+            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, None]:
+                context = cast(Optional[Dict[str, Any]], kwargs.get("context"))
                 if is_feature_enabled(feature_name, context):
                     return func(*args, **kwargs)
 

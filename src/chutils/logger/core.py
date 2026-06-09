@@ -3,9 +3,11 @@
 Содержит основной класс логгера и функцию инициализации.
 """
 
+from __future__ import annotations
+
 import atexit
 import logging
-from typing import Optional, Any, List, Union, Dict
+from typing import Optional, Any, List, Union
 
 from .formatters import JSON_LOGGER_AVAILABLE, ChutilsJsonFormatter
 from .handlers import (
@@ -69,7 +71,7 @@ class ChutilsLogger(logging.Logger, LogLevelsMixin):
         ```
     """
 
-    def add_mask(self, value: str):
+    def add_mask(self, value: str) -> None:
         """
         Добавляет строку в глобальный список маскируемых секретов.
 
@@ -88,7 +90,7 @@ logging.setLoggerClass(ChutilsLogger)
 
 # --- Глобальное состояние для "ленивой" инициализации ---
 
-_file_handler_cache: Dict[str, logging.FileHandler] = {}
+_file_handler_cache: dict[str, logging.FileHandler] = {}
 _initialization_message_shown = False
 
 

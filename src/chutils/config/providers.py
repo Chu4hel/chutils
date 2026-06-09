@@ -3,6 +3,8 @@
 Используют паттерн Стратегия для изоляции логики чтения и записи.
 """
 
+from __future__ import annotations
+
 import base64
 import json
 import logging
@@ -10,20 +12,22 @@ import os
 import re
 import tempfile
 import threading
+import urllib.error
 import urllib.request
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, Callable, TextIO
 
 import yaml
 
 from chutils.exceptions import ConfigLoadError, ConfigParseError
+from chutils.typing import JSONDict
 
 # Настраиваем локальный логгер
 logger = logging.getLogger(__name__)
 
 
-def _atomic_write(path: str, content_writer_func: Any):
+def _atomic_write(path: str, content_writer_func: Callable[[TextIO], None]) -> None:
     """
     Вспомогательная функция для атомарной записи в файл через временный файл.
     """
@@ -48,7 +52,7 @@ class ConfigProvider(ABC):
     """
 
     @abstractmethod
-    def load(self, path: str) -> Dict[str, Any]:
+    def load(self, path: str) -> JSONDict:
         """
         Загружает конфигурацию из файла.
 
@@ -82,10 +86,11 @@ class YamlConfigProvider(ConfigProvider):
     Провайдер для работы с YAML файлами (.yml, .yaml).
     """
 
-    def load(self, path: str) -> Dict[str, Any]:
+    def load(self, path: str) -> JSONDict:
         try:
             with open(path, 'r', encoding='utf-8') as f:
-                return yaml.safe_load(f) or {}
+                data = yaml.safe_load(f)
+                return data if isinstance(data, dict) else {}
         except FileNotFoundError:
             raise ConfigLoadError(
                 f"Файл конфигурации не найден: {path}",
@@ -104,13 +109,13 @@ class YamlConfigProvider(ConfigProvider):
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
         try:
             # Читаем текущие данные
-            data = self.load(path) if Path(path).exists() else {}
+            data: JSONDict = self.load(path) if Path(path).exists() else {}
 
             if section not in data:
                 data[section] = {}
             data[section][key] = value
 
-            def writer(f):
+            def writer(f: TextIO) -> None:
                 yaml.dump(data, f, allow_unicode=True, sort_keys=False)
 
             _atomic_write(path, writer)
@@ -125,10 +130,11 @@ class JsonConfigProvider(ConfigProvider):
     Провайдер для работы с JSON файлами (.json).
     """
 
-    def load(self, path: str) -> Dict[str, Any]:
+    def load(self, path: str) -> JSONDict:
         try:
             with open(path, 'r', encoding='utf-8') as f:
-                return json.load(f) or {}
+                data = json.load(f)
+                return data if isinstance(data, dict) else {}
         except FileNotFoundError:
             raise ConfigLoadError(
                 f"Файл конфигурации не найден: {path}",
@@ -147,11 +153,12 @@ class JsonConfigProvider(ConfigProvider):
 
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
         try:
-            data = {}
+            data: JSONDict = {}
             if Path(path).exists():
                 with open(path, 'r', encoding='utf-8') as f:
                     try:
-                        data = json.load(f) or {}
+                        loaded_data = json.load(f)
+                        data = loaded_data if isinstance(loaded_data, dict) else {}
                     except json.JSONDecodeError:
                         logger.warning("Файл %s содержит некорректный JSON, он будет перезаписан.", path)
 
@@ -159,7 +166,7 @@ class JsonConfigProvider(ConfigProvider):
                 data[section] = {}
             data[section][key] = value
 
-            def writer(f):
+            def writer(f: TextIO) -> None:
                 json.dump(data, f, indent=4, ensure_ascii=False)
 
             _atomic_write(path, writer)
@@ -175,15 +182,15 @@ class IniConfigProvider(ConfigProvider):
     Сохраняет комментарии и форматирование при записи.
     """
 
-    def __init__(self, nest_func):
+    def __init__(self, nest_func: Callable[[Dict[str, Dict[str, Any]]], JSONDict]) -> None:
         self._nest_func = nest_func
 
-    def load(self, path: str) -> Dict[str, Any]:
+    def load(self, path: str) -> JSONDict:
         import configparser
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 parser = configparser.ConfigParser()
-                parser.optionxform = str  # Сохраняем регистр ключей
+                parser.optionxform = str  # type: ignore # Сохраняем регистр ключей
                 parser.read_string(f.read())
                 flat_ini_config = {s: dict(parser.items(s)) for s in parser.sections()}
                 return self._nest_func(flat_ini_config)
@@ -278,7 +285,7 @@ class IniConfigProvider(ConfigProvider):
 
         if updated:
             try:
-                def writer(f):
+                def writer(f: TextIO) -> None:
                     f.writelines(new_lines)
 
                 _atomic_write(path, writer)
@@ -301,18 +308,18 @@ class HttpConfigProvider:
             username: Optional[str] = None,
             password: Optional[str] = None,
             timeout: int = 10,
-            nest_func: Optional[Any] = None
-    ):
+            nest_func: Optional[Callable[[Dict[str, Dict[str, Any]]], JSONDict]] = None
+    ) -> None:
         self.url = url
         self.username = username
         self.password = password
         self.timeout = timeout
         self._nest_func = nest_func
-        self._cache: Dict[str, Any] = {}
+        self._cache: JSONDict = {}
         self._polling_thread: Optional[threading.Thread] = None
         self._stop_event = threading.Event()
 
-    def load(self) -> Dict[str, Any]:
+    def load(self) -> JSONDict:
         """
         Загружает конфигурацию из удаленного источника и парсит ее.
         В случае ошибки возвращает закешированную версию (Fallback).
@@ -328,7 +335,7 @@ class HttpConfigProvider:
                 return self._cache
             raise e
 
-    def start_polling(self, interval: int = 60):
+    def start_polling(self, interval: int = 60) -> None:
         """
         Запускает фоновое обновление конфигурации.
 
@@ -348,7 +355,7 @@ class HttpConfigProvider:
         self._polling_thread.start()
         logger.debug("Запущен фоновый опрос для %s (интервал %ds)", self.url, interval)
 
-    def stop_polling(self):
+    def stop_polling(self) -> None:
         """
         Останавливает фоновое обновление.
         """
@@ -358,13 +365,14 @@ class HttpConfigProvider:
             self._polling_thread = None
         logger.debug("Опрос для %s остановлен", self.url)
 
-    def _polling_worker(self, interval: int):
+    def _polling_worker(self, interval: int) -> None:
         """
         Фоновый воркер для опроса.
         """
+        f_interval: float = float(interval)
         while not self._stop_event.is_set():
             # Ждем интервал, проверяя событие остановки каждые 0.5 сек для быстрой реакции
-            wait_remaining = interval
+            wait_remaining = f_interval
             while wait_remaining > 0 and not self._stop_event.is_set():
                 time_to_wait = min(0.5, wait_remaining)
                 self._stop_event.wait(time_to_wait)
@@ -387,14 +395,14 @@ class HttpConfigProvider:
                         dynamic_interval = remote_meta.get('interval')
 
                 if isinstance(dynamic_interval, (int, float)) and dynamic_interval > 0:
-                    if dynamic_interval != interval:
-                        logger.info("Интервал опроса изменен динамически: %ss -> %ss", interval, dynamic_interval)
-                        interval = float(dynamic_interval)
+                    if float(dynamic_interval) != f_interval:
+                        logger.info("Интервал опроса изменен динамически: %ss -> %ss", f_interval, dynamic_interval)
+                        f_interval = float(dynamic_interval)
 
             except Exception as e:
                 logger.error("Ошибка при фоновом обновлении конфига с %s: %s", self.url, e)
 
-    def _parse_content(self, content: str, content_type: Optional[str]) -> Dict[str, Any]:
+    def _parse_content(self, content: str, content_type: Optional[str]) -> JSONDict:
         """
         Парсит контент на основе Content-Type или расширения URL.
         """
@@ -423,9 +431,11 @@ class HttpConfigProvider:
 
         try:
             if fmt == "json":
-                return json.loads(content) or {}
+                data = json.loads(content)
+                return data if isinstance(data, dict) else {}
             elif fmt == "yaml":
-                return yaml.safe_load(content) or {}
+                data = yaml.safe_load(content)
+                return data if isinstance(data, dict) else {}
             elif fmt == "ini":
                 import configparser
                 parser = configparser.ConfigParser()
@@ -473,7 +483,9 @@ class HttpConfigProvider:
             raise ConfigLoadError(f"Непредвиденная ошибка: {e}", path=self.url)
 
 
-def get_providers(nest_func) -> Dict[str, ConfigProvider]:
+def get_providers(
+        nest_func: Callable[[Dict[str, Dict[str, Any]]], JSONDict]
+) -> Dict[str, ConfigProvider]:
     """
     Создает и возвращает реестр провайдеров.
     """

@@ -2,6 +2,8 @@
 Генератор шаблонов и схем конфигурации на основе Pydantic моделей.
 """
 
+from __future__ import annotations
+
 import typing as t
 from typing import Type
 
@@ -23,7 +25,7 @@ else:
         PYDANTIC_AVAILABLE = False
 
 
-def _check_pydantic():
+def _check_pydantic() -> None:
     if not PYDANTIC_AVAILABLE:
         from ..exceptions import OptionalDependencyError
         raise OptionalDependencyError(
@@ -93,7 +95,7 @@ def generate_env_template(model_class: Type[BaseModel], prefix: str = "CH") -> s
     _check_pydantic()
     lines = []
 
-    def _walk(model: Type[BaseModel], current_prefix: str):
+    def _walk(model: Type[BaseModel], current_prefix: str) -> None:
         for field_name, field in model.model_fields.items():
             env_name = f"{current_prefix}_{field_name.upper()}"
             description = field.description

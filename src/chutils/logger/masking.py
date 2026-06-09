@@ -2,11 +2,13 @@
 Логика маскирования секретов в логах.
 """
 
+from __future__ import annotations
+
 import logging
 import os
 import re
 import threading
-from typing import Optional, Set
+from typing import Optional, Set, Any
 
 # --- Предустановленные паттерны PII ---
 
@@ -24,13 +26,13 @@ _GLOBAL_MASKS: Set[str] = set()
 _CUSTOM_PATTERNS: Set[str] = set()
 "Глобальный список регулярных выражений для маскирования."
 
-_MASK_RE: Optional[re.Pattern] = None
+_MASK_RE: Optional[re.Pattern[str]] = None
 "Скомпилированное регулярное выражение для поиска всех секретов."
 _masks_lock = threading.Lock()
 "Блокировка для обеспечения потокобезопасности при обновлении масок."
 
 
-def _update_mask_re():
+def _update_mask_re() -> None:
     """
     Обновляет и компилирует регулярное выражение на основе текущих масок и паттернов.
     """
@@ -40,7 +42,7 @@ def _update_mask_re():
             _MASK_RE = None
             return
 
-        parts = []
+        parts: list[str] = []
 
         # 1. Добавляем литеральные маски (экранированные)
         if _GLOBAL_MASKS:
@@ -91,12 +93,24 @@ class SecretMaskingFilter(logging.Filter):
 
         # Маскируем аргументы, если они являются строками.
         if record.args:
-            new_args = []
-            for arg in record.args:
-                if isinstance(arg, str):
-                    new_args.append(_MASK_RE.sub("[MASKED]", arg))
-                else:
-                    new_args.append(arg)
-            record.args = tuple(new_args)
+            new_args: list[Any] = []
+            # Если record.args это словарь, мы не можем его просто итерировать как список
+            # Но стандартный logging.Filter предполагает что args это кортеж или словарь.
+            # В случае словаря sub() не сработает напрямую.
+            if isinstance(record.args, dict):
+                new_dict_args: dict[Any, Any] = {}
+                for k, v in record.args.items():
+                    if isinstance(v, str):
+                        new_dict_args[k] = _MASK_RE.sub("[MASKED]", v)
+                    else:
+                        new_dict_args[k] = v
+                record.args = new_dict_args
+            else:
+                for arg in record.args:
+                    if isinstance(arg, str):
+                        new_args.append(_MASK_RE.sub("[MASKED]", arg))
+                    else:
+                        new_args.append(arg)
+                record.args = tuple(new_args)
 
         return True

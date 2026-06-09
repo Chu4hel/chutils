@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import argparse
 import json
+from typing import Any
 
 from chutils import config
-
 from .base import BaseCommand
 
 
@@ -14,7 +16,7 @@ class ShowPathsCommand(BaseCommand):
     которые библиотека использует для поиска настроек.
     """
 
-    def register(self, subparsers: argparse._SubParsersAction):
+    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
         show_paths_parser = subparsers.add_parser(
             "show-paths",
             help="Показать пути поиска конфигурации",
@@ -27,7 +29,7 @@ class ShowPathsCommand(BaseCommand):
         )
         show_paths_parser.set_defaults(handler=self.handle)
 
-    def handle(self, args: argparse.Namespace):
+    def handle(self, args: argparse.Namespace) -> None:
         """Обработчик команды вывода путей поиска конфигурации."""
         from chutils.config.manager import _cm
 

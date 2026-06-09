@@ -5,11 +5,14 @@
 загруженного объекта конфигурации.
 """
 
+from __future__ import annotations
+
 import logging
 from pathlib import Path
-from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union
+from typing import Any, Optional, List, Dict, TYPE_CHECKING, TypeVar, Type, overload, Union, cast
 
 from chutils.exceptions import ConfigParseError, OptionalDependencyError
+from chutils.typing import JSONDict
 from . import utils
 from .core import get_config
 from .manager import _cm
@@ -23,7 +26,7 @@ T = TypeVar("T", bound="BaseModel")
 logger = logging.getLogger(__name__)
 
 
-def get_config_value(section: str, key: str, fallback: Any = None, config: Optional[Dict] = None) -> Any:
+def get_config_value(section: str, key: str, fallback: Any = None, config: Optional[JSONDict] = None) -> Any:
     """
     Получает произвольное значение из конфигурации.
 
@@ -41,7 +44,7 @@ def get_config_value(section: str, key: str, fallback: Any = None, config: Optio
         Значение из конфигурации или `fallback`.
     """
     if config is None:
-        config = get_config()
+        config = cast(JSONDict, get_config())
 
     section_data = config.get(section)
     if section_data is None:
@@ -51,6 +54,9 @@ def get_config_value(section: str, key: str, fallback: Any = None, config: Optio
                 break
         else:
             section_data = {}
+
+    if not isinstance(section_data, dict):
+        return fallback
 
     value = section_data.get(key)
     if value is None:
@@ -66,7 +72,7 @@ def get_config_value(section: str, key: str, fallback: Any = None, config: Optio
     return value
 
 
-def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[Dict] = None) -> int:
+def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[JSONDict] = None) -> int:
     """
     Получает целочисленное значение из конфигурации.
 
@@ -80,10 +86,10 @@ def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[D
     Returns:
         Целое число из конфигурации или `fallback`.
     """
-    return utils._get_typed_value(section, key, int, fallback, get_config_value, config)
+    return cast(int, utils._get_typed_value(section, key, int, fallback, get_config_value, config))
 
 
-def get_config_float(section: str, key: str, fallback: float = 0.0, config: Optional[Dict] = None) -> float:
+def get_config_float(section: str, key: str, fallback: float = 0.0, config: Optional[JSONDict] = None) -> float:
     """
     Получает дробное значение из конфигурации.
 
@@ -97,10 +103,10 @@ def get_config_float(section: str, key: str, fallback: float = 0.0, config: Opti
     Returns:
         Float или fallback.
     """
-    return utils._get_typed_value(section, key, float, fallback, get_config_value, config)
+    return cast(float, utils._get_typed_value(section, key, float, fallback, get_config_value, config))
 
 
-def get_config_boolean(section: str, key: str, fallback: bool = False, config: Optional[Dict] = None) -> bool:
+def get_config_boolean(section: str, key: str, fallback: bool = False, config: Optional[JSONDict] = None) -> bool:
     """
     Получает булево значение из конфигурации.
 
@@ -132,14 +138,15 @@ def get_config_boolean(section: str, key: str, fallback: bool = False, config: O
             section=section, key=key, value=v
         )
 
-    return utils._get_typed_value(section, key, bool_converter, fallback, get_config_value, config, type_name="bool")
+    return cast(bool, utils._get_typed_value(section, key, bool_converter, fallback, get_config_value, config,
+                                             type_name="bool"))
 
 
 def get_config_list(
         section: str,
         key: str,
         fallback: Optional[List[Any]] = None,
-        config: Optional[Dict] = None) -> List[Any]:
+        config: Optional[JSONDict] = None) -> List[Any]:
     """
     Получает значение как список из конфигурации.
 
@@ -155,7 +162,7 @@ def get_config_list(
     """
     actual_fallback = fallback if fallback is not None else []
 
-    def list_converter(v: Any) -> List:
+    def list_converter(v: Any) -> List[Any]:
         if isinstance(v, list):
             return v
         raise ConfigParseError(
@@ -164,34 +171,35 @@ def get_config_list(
             section=section, key=key, value=v
         )
 
-    return utils._get_typed_value(section, key, list_converter, actual_fallback, get_config_value, config,
-                                  type_name="list")
+    return cast(List[Any],
+                utils._get_typed_value(section, key, list_converter, actual_fallback, get_config_value, config,
+                                       type_name="list"))
 
 
 @overload
 def get_config_section(
         section_name: str,
-        fallback: Optional[Dict] = None,
-        config: Optional[Dict] = None,
+        fallback: Optional[JSONDict] = None,
+        config: Optional[JSONDict] = None,
         model: None = None
-) -> Dict[str, Any]: ...
+) -> JSONDict: ...
 
 
 @overload
 def get_config_section(
         section_name: str,
-        fallback: Optional[Dict] = None,
-        config: Optional[Dict] = None,
-        model: Type[T] = None
+        fallback: Optional[JSONDict] = None,
+        config: Optional[JSONDict] = None,
+        model: Type[T] = ...
 ) -> T: ...
 
 
 def get_config_section(
         section_name: str,
-        fallback: Optional[Dict] = None,
-        config: Optional[Dict] = None,
+        fallback: Optional[JSONDict] = None,
+        config: Optional[JSONDict] = None,
         model: Optional[Type[T]] = None
-) -> Union[Dict[str, Any], T]:
+) -> Union[JSONDict, T]:
     """
     Получает всю секцию конфигурации как словарь или Pydantic модель.
 
@@ -211,7 +219,7 @@ def get_config_section(
         OptionalDependencyError: Если передана `model`, но пакет `pydantic` не установлен.
     """
     if config is None:
-        config = get_config()
+        config = cast(JSONDict, get_config())
 
     section_data = config.get(section_name)
     if section_data is None:
@@ -231,16 +239,16 @@ def get_config_section(
                 dependency="pydantic",
                 hint="Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
             )
-        return model(**section_data)
+        return model(**(cast(Dict[str, Any], section_data)))
 
-    return section_data
+    return cast(JSONDict, section_data)
 
 
 def get_config_path(
         section: str,
         key: str,
         fallback: Optional[str] = None,
-        config: Optional[Dict] = None,
+        config: Optional[JSONDict] = None,
         resolve_from_root: bool = True
 ) -> Optional[str]:
     """
@@ -258,7 +266,7 @@ def get_config_path(
     Returns:
         Путь из конфигурации или `fallback`.
     """
-    path_str = get_config_value(section, key, fallback, config)
+    path_str = cast(Optional[str], get_config_value(section, key, fallback, config))
 
     if not path_str:
         return fallback

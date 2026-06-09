@@ -3,9 +3,11 @@
 Обеспечивает UTC-first подход, корректную обработку часовых поясов и парсинг.
 """
 
+from __future__ import annotations
+
 import logging
 from datetime import datetime, timezone
-from typing import Union, Optional
+from typing import Union, Optional, Any
 
 # Настраиваем логгер
 logger = logging.getLogger(__name__)
@@ -92,7 +94,7 @@ def parse_datetime(value: Union[str, int, float]) -> datetime:
 
 # --- Humanize Time ---
 
-_DEFAULT_LOCALES = {
+_DEFAULT_LOCALES: dict[str, dict[str, Any]] = {
     'en': {
         'now': 'just now',
         'yesterday': 'yesterday',
@@ -126,7 +128,7 @@ _DEFAULT_LOCALES = {
 }
 
 
-def _pluralize_ru(n: int, forms: tuple) -> str:
+def _pluralize_ru(n: int, forms: tuple[str, ...]) -> str:
     """Хелпер для русской плюрализации."""
     if n % 10 == 1 and n % 100 != 11:
         return forms[0]
@@ -136,7 +138,7 @@ def _pluralize_ru(n: int, forms: tuple) -> str:
         return forms[2]
 
 
-def humanize_timedelta(dt: datetime, locale: str = 'ru', custom_locales: Optional[dict] = None) -> str:
+def humanize_timedelta(dt: datetime, locale: str = 'ru', custom_locales: Optional[dict[str, Any]] = None) -> str:
     """
     Превращает дату в человекочитаемую строку относительно текущего времени.
     
@@ -166,7 +168,7 @@ def humanize_timedelta(dt: datetime, locale: str = 'ru', custom_locales: Optiona
     loc = all_locales[locale]
 
     if abs_seconds < 10:
-        return loc['now']
+        return str(loc['now'])
 
     # Определяем единицу измерения и количество
     # Используем небольшое смещение (округление)
@@ -186,9 +188,9 @@ def humanize_timedelta(dt: datetime, locale: str = 'ru', custom_locales: Optiona
     # Специальные случаи для дней
     if unit_key == 'day' and n == 1:
         if seconds > 0:
-            return loc['yesterday']
+            return str(loc['yesterday'])
         else:
-            return loc['tomorrow']
+            return str(loc['tomorrow'])
 
     # Форматируем единицу измерения
     forms = loc['units'][unit_key]
@@ -198,5 +200,5 @@ def humanize_timedelta(dt: datetime, locale: str = 'ru', custom_locales: Optiona
         unit_str = forms[0] if n == 1 else forms[1]
 
     # Собираем финальную строку
-    pattern = loc['past'] if seconds > 0 else loc['future']
+    pattern = str(loc['past'] if seconds > 0 else loc['future'])
     return pattern.format(n=n, unit=unit_str)

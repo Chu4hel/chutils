@@ -2,10 +2,13 @@
 Вспомогательные утилиты для работы с конфигурацией.
 """
 
+from __future__ import annotations
+
 import logging
 from pathlib import Path
-from typing import Any, Optional, List, Dict
+from typing import Any, Optional, List, Dict, Callable
 
+from chutils.typing import JSONDict
 from .providers import get_providers
 
 # Настраиваем локальный логгер
@@ -38,7 +41,7 @@ def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
     return None
 
 
-def deep_merge(dict1: Dict, dict2: Dict) -> Dict:
+def deep_merge(dict1: JSONDict, dict2: JSONDict) -> JSONDict:
     """
     Рекурсивно объединяет два словаря.
 
@@ -60,7 +63,7 @@ def deep_merge(dict1: Dict, dict2: Dict) -> Dict:
     return dict1
 
 
-def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
+def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> JSONDict:
     """
     Преобразует плоский словарь INI-секций во вложенную структуру.
 
@@ -72,7 +75,7 @@ def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
     Returns:
         Вложенный словарь.
     """
-    nested_dict = {}
+    nested_dict: JSONDict = {}
     for section_key, section_values in flat_dict.items():
         current_level = nested_dict
         parts = section_key.split('.')
@@ -80,14 +83,17 @@ def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> Dict:
             if i == len(parts) - 1:  # Последняя часть - это название секции
                 current_level[part] = section_values
             else:
-                current_level = current_level.setdefault(part, {})
+                # В INI значения всегда словари, поэтому current_level[part] тоже будет словарем
+                if part not in current_level:
+                    current_level[part] = {}
+                current_level = current_level[part]
     return nested_dict
 
 
-def _check_pydantic():
+def _check_pydantic() -> bool:
     """Проверяет наличие установленного пакета pydantic."""
     try:
-        import pydantic
+        import pydantic  # noqa: F401
         return True
     except ImportError:
         return False
@@ -100,10 +106,10 @@ _PROVIDERS = get_providers(_nest_ini_dict)
 def _get_typed_value(
         section: str,
         key: str,
-        converter: Any,
+        converter: Callable[[Any], Any],
         fallback: Any,
-        get_value_func: Any,
-        config: Optional[Dict] = None,
+        get_value_func: Callable[..., Any],
+        config: Optional[JSONDict] = None,
         type_name: str = ""
 ) -> Any:
     """

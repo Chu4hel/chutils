@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import argparse
 import importlib
 import sys
 from pathlib import Path
+from typing import Any
 
 from .base import BaseCommand
 from ..config.generator import (
@@ -17,7 +20,7 @@ class TemplateCommand(BaseCommand):
     Генерация шаблонов конфигурации на основе Pydantic моделей.
     """
 
-    def register(self, subparsers: argparse._SubParsersAction):
+    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
         template_parser = subparsers.add_parser(
             "template",
             help="Сгенерировать шаблон конфигурации",
@@ -40,7 +43,7 @@ class TemplateCommand(BaseCommand):
         )
         template_parser.set_defaults(handler=self.handle)
 
-    def handle(self, args: argparse.Namespace):
+    def handle(self, args: argparse.Namespace) -> None:
         """Обработчик команды генерации шаблона."""
         from ..exceptions import CommandError, OptionalDependencyError
         if not PYDANTIC_AVAILABLE:

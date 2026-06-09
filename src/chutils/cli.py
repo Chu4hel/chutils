@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import argparse
 import sys
 
 from chutils.commands import get_commands
 
 
-def main():
+def main() -> None:
     """Точка входа в CLI."""
     parser = argparse.ArgumentParser(
         prog="chutils",

@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import argparse
+from typing import Any
 
 from chutils import config
 from chutils.secret_manager import SecretManager
@@ -13,7 +16,7 @@ class SecretsCommand(BaseCommand):
     чувствительные данные, не сохраняя их в открытом виде в коде или конфигах.
     """
 
-    def register(self, subparsers: argparse._SubParsersAction):
+    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
         secrets_parser = subparsers.add_parser(
             "secrets",
             help="Управление секретами в системном хранилище",
@@ -59,11 +62,11 @@ class SecretsCommand(BaseCommand):
         )
         delete_parser.set_defaults(handler=self.handle_delete)
 
-    def handle(self, args: argparse.Namespace):
+    def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана."""
         print("Используйте 'chutils secrets --help' для просмотра доступных подкоманд.")
 
-    def handle_set(self, args: argparse.Namespace):
+    def handle_set(self, args: argparse.Namespace) -> None:
         """Обработчик команды сохранения секрета."""
         from ..exceptions import CommandError, SecretError
         service_name = args.service or config.get_config_value("Secrets", "service_name", "")
@@ -81,7 +84,7 @@ class SecretsCommand(BaseCommand):
         except SecretError as e:
             raise CommandError(f"Ошибка менеджера секретов: {e.message}", hint=e.hint) from e
 
-    def handle_delete(self, args: argparse.Namespace):
+    def handle_delete(self, args: argparse.Namespace) -> None:
         """Обработчик команды удаления секрета."""
         from ..exceptions import CommandError, SecretError
         service_name = args.service or config.get_config_value("Secrets", "service_name", "")

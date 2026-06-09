@@ -3,14 +3,19 @@
 Обеспечивает атомарную запись, безопасное создание директорий и работу с временными файлами.
 """
 
+from __future__ import annotations
+
 import json
 import os
 import tempfile
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Union, Any, ContextManager, Optional
+from typing import Union, Any, Optional, Generator, TYPE_CHECKING
 
 from chutils.exceptions import OptionalDependencyError, PathTraversalError
+
+if TYPE_CHECKING:
+    import yaml
 
 try:
     import yaml
@@ -37,7 +42,7 @@ def resolve_safe_path(path: Union[str, Path], base_dir: Optional[Union[str, Path
     """
     if base_dir is None:
         try:
-            from .config.core import get_base_dir
+            from chutils.config import get_base_dir
             base_dir = get_base_dir()
         except (ImportError, AttributeError):
             base_dir = Path.cwd()
@@ -147,7 +152,7 @@ def atomic_write(
 
 
 @contextmanager
-def get_temp_file(suffix: str = '') -> ContextManager[Path]:
+def get_temp_file(suffix: str = '') -> Generator[Path, None, None]:
     """
     Контекстный менеджер для работы с временным файлом.
     Файл автоматически удаляется при выходе из блока with.

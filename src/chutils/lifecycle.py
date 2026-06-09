@@ -5,14 +5,19 @@
 которые будут выполнены при завершении работы приложения.
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import signal
 import sys
 import time
-from typing import Callable, List, Union, Any, Awaitable, Optional
+from typing import Callable, List, Union, Any, Awaitable, Optional, TYPE_CHECKING
 
 from chutils.config import get_config_int
+
+if TYPE_CHECKING:
+    from types import FrameType
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +30,7 @@ class LifecycleManager:
     Менеджер жизненного цикла, управляющий реестром функций очистки.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._cleanup_callbacks: List[CleanupCallback] = []
         self._is_shutting_down = False
         self._setup_done = False
@@ -55,30 +60,32 @@ class LifecycleManager:
         """
         return list(reversed(self._cleanup_callbacks))
 
-    def setup_graceful_shutdown(self, signals=None):
+    def setup_graceful_shutdown(self, signals: Optional[List[int]] = None) -> None:
         """
         Настраивает перехват сигналов завершения работы.
         """
         if self._setup_done:
             return
 
+        target_signals: List[int] = []
         if signals is None:
             # Выбираем доступные сигналы в зависимости от платформы
-            signals = []
             for sig_name in ("SIGINT", "SIGTERM", "SIGHUP"):
                 if hasattr(signal, sig_name):
-                    signals.append(getattr(signal, sig_name))
+                    target_signals.append(cast(int, getattr(signal, sig_name)))
+        else:
+            target_signals = signals
 
-        for sig in signals:
+        for sig in target_signals:
             try:
                 signal.signal(sig, self._handle_signal)
             except (ValueError, RuntimeError) as e:
                 logger.warning("Не удалось установить обработчик для сигнала %s: %s", sig, e)
 
         self._setup_done = True
-        logger.debug("Настроен Graceful Shutdown для сигналов: %s", signals)
+        logger.debug("Настроен Graceful Shutdown для сигналов: %s", target_signals)
 
-    def _handle_signal(self, signum, frame):
+    def _handle_signal(self, signum: int, frame: Optional[FrameType]) -> None:
         """
         Обработчик сигнала ОС.
         """
@@ -86,7 +93,7 @@ class LifecycleManager:
             sig_name = signal.Signals(signum).name
         except ValueError:
             sig_name = str(signum)
-            
+
         logger.info("Получен сигнал %s (%s). Запускается процесс завершения работы...", signum, sig_name)
 
         if self._is_shutting_down:
@@ -96,7 +103,7 @@ class LifecycleManager:
         self._run_cleanup()
         sys.exit(128 + signum)
 
-    def _run_cleanup(self):
+    def _run_cleanup(self) -> None:
         """
         Запускает выполнение всех зарегистрированных функций очистки.
         """
@@ -114,7 +121,7 @@ class LifecycleManager:
 
         try:
             # Пытаемся получить текущую петлю событий
-            loop = asyncio.get_running_loop()
+            asyncio.get_running_loop()
             # В асинхронном приложении мы не можем использовать asyncio.run()
             # Но так как мы находимся в обработчике сигнала (синхронном),
             # мы запускаем корутину и ждем ее завершения (если это возможно)
@@ -123,9 +130,9 @@ class LifecycleManager:
             raise RuntimeError("Force fallback to asyncio.run for simplicity in signal handler")
         except RuntimeError:
             # Если петля не запущена или мы решили использовать asyncio.run
-            asyncio.run(self._execute_all(callbacks, timeout))
+            asyncio.run(self._execute_all(callbacks, float(timeout)))
 
-    async def _execute_all(self, callbacks: List[CleanupCallback], timeout: float):
+    async def _execute_all(self, callbacks: List[CleanupCallback], timeout: float) -> None:
         """
         Асинхронно выполняет все коллбэки с учетом общего таймаута.
         """
@@ -139,17 +146,17 @@ class LifecycleManager:
 
             try:
                 if asyncio.iscoroutinefunction(func):
-                    await func()
+                    await cast(Awaitable[Any], func())
                 else:
                     # Выполняем синхронную функцию
-                    func()
-                logger.debug("Успешно выполнена очистка: %s", 
+                    cast(Callable[[], Any], func)()
+                logger.debug("Успешно выполнена очистка: %s",
                              func.__name__ if hasattr(func, '__name__') else str(func))
             except Exception as e:
-                logger.error("Ошибка при выполнении функции очистки %s: %s", 
+                logger.error("Ошибка при выполнении функции очистки %s: %s",
                              func.__name__ if hasattr(func, '__name__') else str(func), e, exc_info=True)
 
-    def _clear_registry(self):
+    def _clear_registry(self) -> None:
         """
         Очищает реестр (в основном для тестов).
         """
@@ -190,10 +197,13 @@ def register_cleanup(func: CleanupCallback) -> CleanupCallback:
     return _manager.register_cleanup(func)
 
 
-def setup_graceful_shutdown():
+def setup_graceful_shutdown() -> None:
     """
     Публичный API для настройки Graceful Shutdown.
 
     Рекомендуется вызывать в самом начале работы приложения.
     """
-    return _manager.setup_graceful_shutdown()
+    _manager.setup_graceful_shutdown()
+
+
+from typing import cast

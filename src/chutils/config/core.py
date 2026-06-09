@@ -5,13 +5,16 @@
 специфичный для окружения, локальный, переменные окружения) и сохранение значений.
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import os
 from pathlib import Path
-from typing import Any, Optional, Dict, TYPE_CHECKING, TypeVar, Type, Union, Tuple
+from typing import Any, Optional, TYPE_CHECKING, TypeVar, Type, Union, Tuple
 
 from chutils.exceptions import OptionalDependencyError
+from chutils.typing import JSONDict
 from . import utils
 from .manager import _cm
 from .providers import get_providers, HttpConfigProvider
@@ -33,7 +36,7 @@ def get_config(
         remote_url: Optional[str] = None,
         remote_auth: Optional[Tuple[str, str]] = None,
         polling_interval: Optional[int] = None
-) -> Union[Dict[str, Any], T]:
+) -> Union[JSONDict, T]:
     """
     Загружает и объединяет конфигурацию из всех доступных источников.
 
@@ -64,7 +67,7 @@ def get_config(
         OptionalDependencyError: Если передана `model`, но пакет `pydantic` не установлен.
     """
 
-    def _do_load():
+    def _do_load() -> JSONDict:
         # Гарантируем инициализацию путей
         if not _cm.paths_initialized:
             _cm.initialize_paths(utils.find_project_root)
@@ -72,9 +75,9 @@ def get_config(
         _cm.acquire_file_lock()
         try:
             main_path, env_path, local_path = _cm.get_all_config_paths()
-            config_data: Dict = {}
+            config_data: JSONDict = {}
 
-            def load_from_path(path: str) -> Dict:
+            def load_from_path(path: str) -> JSONDict:
                 ext = Path(path).suffix.lower()
                 provider = _PROVIDERS.get(ext)
                 if provider:
@@ -135,7 +138,7 @@ def get_config(
             # 5. Переменные окружения (CH_SECTION_KEY)
             disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")
             if not disable_env_override:
-                env_overrides = {}
+                env_overrides: JSONDict = {}
                 for env_key, env_value in os.environ.items():
                     if env_key.startswith("CH_") and env_key not in ("CH_ENV", "CH_DISABLE_ENV_OVERRIDE",
                                                                      "CH_DISABLE_KEYRING_WARNING"):
@@ -222,7 +225,7 @@ def get_config(
     return config_data
 
 
-async def aget_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]:
+async def aget_config(model: Optional[Type[T]] = None) -> Union[JSONDict, T]:
     """
     Асинхронная версия get_config.
 

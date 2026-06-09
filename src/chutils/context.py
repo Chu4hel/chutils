@@ -1,17 +1,19 @@
+from __future__ import annotations
+
 import contextvars
 import logging
-import typing
+from typing import Any
 
-_context: contextvars.ContextVar[typing.Dict[str, typing.Any]] = contextvars.ContextVar("_chutils_context", default={})
+_context: contextvars.ContextVar[dict[str, Any]] = contextvars.ContextVar("_chutils_context", default={})
 "Хранилище контекста: словарь {ключ: значение}"
 
 
-def get_context() -> typing.Dict[str, typing.Any]:
+def get_context() -> dict[str, Any]:
     """Возвращает копию текущего контекста."""
     return _context.get().copy()
 
 
-def bind_context(**kwargs) -> contextvars.Token:
+def bind_context(**kwargs: Any) -> contextvars.Token[dict[str, Any]]:
     """
     Привязывает значения к текущему контексту.
     Возвращает токен для последующей очистки через unbind_context.
@@ -21,7 +23,7 @@ def bind_context(**kwargs) -> contextvars.Token:
     return _context.set(current)
 
 
-def unbind_context(token: contextvars.Token) -> None:
+def unbind_context(token: contextvars.Token[dict[str, Any]]) -> None:
     """Восстанавливает контекст до состояния, предшествующего bind_context."""
     _context.reset(token)
 

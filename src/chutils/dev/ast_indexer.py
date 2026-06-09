@@ -2,10 +2,12 @@
 Парсер AST для построения иерархического индекса проекта.
 """
 
+from __future__ import annotations
+
 import ast
 import re
 from pathlib import Path
-from typing import List, Union, Dict
+from typing import List, Union, Dict, Set, Optional
 
 from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge
 
@@ -13,7 +15,7 @@ from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge
 class Indexer:
     """Оркестратор индексации проекта."""
 
-    def __init__(self, root_path: str):
+    def __init__(self, root_path: str) -> None:
         self.root_path = Path(root_path).resolve()
         # Если это пакет (есть __init__), то база для путей - родитель (например, 'src' или корень проекта)
         if (self.root_path / "__init__.py").exists():
@@ -54,7 +56,7 @@ class Indexer:
 
         return best_match if best_match else module_path.replace('.', '/')
 
-    def _record_dependency(self, source: str, target_module: str, force_internal: bool = False):
+    def _record_dependency(self, source: str, target_module: str, force_internal: bool = False) -> None:
         """Регистрирует связь между модулями."""
         # Нам нужны только внутренние зависимости chutils или принудительно помеченные
         if not force_internal and not target_module.startswith("chutils") and not target_module.startswith("."):
@@ -76,7 +78,7 @@ class Indexer:
 
         self._graph_map[source][target_path] = self._graph_map[source].get(target_path, 0) + 1
 
-    def _discover_public_api(self) -> set:
+    def _discover_public_api(self) -> Set[str]:
         """Парсит основной __init__.py для поиска публичных экспортов."""
         init_file = self.root_path / "__init__.py"
         if not init_file.exists():
@@ -85,7 +87,7 @@ class Indexer:
         try:
             tree = ast.parse(init_file.read_text(encoding="utf-8"))
             # Ищем _LAZY_MAPPING или __all__
-            public = set()
+            public: Set[str] = set()
             for node in tree.body:
                 if isinstance(node, ast.Assign):
                     for target in node.targets:
@@ -93,13 +95,13 @@ class Indexer:
                             if isinstance(node.value, ast.Dict):
                                 # Случай с _LAZY_MAPPING
                                 for k in node.value.keys:
-                                    if isinstance(k, ast.Constant):
-                                        public.add(k.value)
+                                    if k is not None and isinstance(k, ast.Constant):
+                                        public.add(str(k.value))
                             elif isinstance(node.value, (ast.List, ast.Tuple)):
                                 # Случай с __all__
                                 for elt in node.value.elts:
                                     if isinstance(elt, ast.Constant):
-                                        public.add(elt.value)
+                                        public.add(str(elt.value))
             return public
         except Exception:
             return set()
@@ -145,7 +147,7 @@ class Indexer:
 
         # Получаем docstring и AST для модуля/пакета
         docstring = ""
-        tree = None
+        tree: Optional[ast.Module] = None
         init_file = current_path / "__init__.py" if is_pkg else current_path
         if init_file.exists():
             try:
@@ -172,8 +174,9 @@ class Indexer:
                         self._record_dependency(rel_path, alias.name)
                         self._current_imports[alias.asname or alias.name] = alias.name
                 elif isinstance(item, ast.ImportFrom):
-                    is_relative = item.level > 0
-                    prefix = "." * item.level
+                    is_relative = item.level is not None and item.level > 0
+                    level = item.level if item.level is not None else 0
+                    prefix = "." * level
                     base_mod = item.module if item.module else ""
                     full_base = prefix + base_mod
 
@@ -199,11 +202,11 @@ class Indexer:
 
         if is_pkg:
             # Обработка пакета
-            for item in sorted(current_path.iterdir()):
-                if item.is_dir() and not item.name.startswith((".",)) and item.name != "__pycache__":
-                    node.children.append(self._build_node_tree(item))
-                elif item.suffix == ".py" and item.name != "__init__.py":
-                    node.children.append(self._build_node_tree(item))
+            for fs_item in sorted(current_path.iterdir()):
+                if fs_item.is_dir() and not fs_item.name.startswith((".",)) and fs_item.name != "__pycache__":
+                    node.children.append(self._build_node_tree(fs_item))
+                elif fs_item.suffix == ".py" and fs_item.name != "__init__.py":
+                    node.children.append(self._build_node_tree(fs_item))
 
             # Извлекаем символы из __init__.py (уже распаршен выше)
             if tree:
@@ -215,9 +218,9 @@ class Indexer:
 
         return node
 
-    def _extract_symbols(self, tree: ast.AST) -> List[Symbol]:
+    def _extract_symbols(self, tree: ast.Module) -> List[Symbol]:
         """Извлекает символы из дерева AST."""
-        symbols = []
+        symbols: List[Symbol] = []
         for top_level in tree.body:
             if isinstance(top_level, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 symbols.append(self._build_symbol(top_level, "function"))
@@ -272,7 +275,8 @@ class Indexer:
             elif isinstance(dec, ast.Call):
                 if isinstance(dec.func, ast.Name):
                     dec_name = dec.func.id
-                elif isinstance(dec.func, ast.Attribute) and isinstance(dec.func.value, ast.Name):
+                elif isinstance(dec, ast.Call) and isinstance(dec.func, ast.Attribute) and isinstance(dec.func.value,
+                                                                                                      ast.Name):
                     dec_name = f"{dec.func.value.id}.{dec.func.attr}"
 
             if dec_name:
@@ -308,8 +312,8 @@ class Indexer:
                     base_path = self._resolve_base_class(base.id)
                 elif isinstance(base, ast.Attribute):
                     # Случай типа pydantic.BaseModel
-                    parts = []
-                    curr = base
+                    parts: List[str] = []
+                    curr: ast.AST = base
                     while isinstance(curr, ast.Attribute):
                         parts.append(curr.attr)
                         curr = curr.value

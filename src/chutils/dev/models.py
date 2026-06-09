@@ -1,15 +1,22 @@
 """
 Модели данных для иерархического семантического индекса.
 """
+from __future__ import annotations
 
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, cast, Type
 
 try:
     from pydantic import BaseModel, Field
 except ImportError:
     # Заглушки для обеспечения возможности импорта модуля без pydantic
-    BaseModel = object
-    Field = lambda **kwargs: None
+    BaseModel = cast(Type['BaseModel'], object)
+
+
+    def _field_fallback(**kwargs: Any) -> Any:
+        return None
+
+
+    Field = cast(Any, _field_fallback)
 
 
 class Breadcrumbs(BaseModel):
@@ -37,7 +44,7 @@ class Symbol(BaseModel):
     line_number: int = 0
     bases: List[str] = Field(default_factory=list)
     """Базовые классы (для классов)"""
-    children: List["Symbol"] = Field(default_factory=list)
+    children: List[Symbol] = Field(default_factory=list)
     """Вложенные символы (например, методы класса)"""
 
 
@@ -52,7 +59,7 @@ class Node(BaseModel):
     """public, private, internal, infrastructure"""
     summary: str = ""
     docstring: Optional[str] = None
-    children: List["Node"] = Field(default_factory=list)
+    children: List[Node] = Field(default_factory=list)
     symbols: List[Symbol] = Field(default_factory=list)
 
 

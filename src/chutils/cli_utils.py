@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import os
 import re
 import shutil
 import sys
 import typing as t
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from .env import RICH_AVAILABLE, is_rich_enabled
 
@@ -12,14 +14,18 @@ if t.TYPE_CHECKING:
     from rich.table import Table
     from rich.panel import Panel
 
-if RICH_AVAILABLE:
-    from rich.console import Console  # type: ignore[no-redef]
-    from rich.table import Table  # type: ignore[no-redef]
-    from rich.panel import Panel  # type: ignore[no-redef]
+    ConsoleLike = Union[Console, FallbackConsole]
 else:
-    Console = None  # type: ignore[assignment, misc]
-    Table = None  # type: ignore[assignment, misc]
-    Panel = None  # type: ignore[assignment, misc]
+    ConsoleLike = Any
+
+if RICH_AVAILABLE:
+    from rich.console import Console as RichConsole
+    from rich.table import Table as RichTable
+    from rich.panel import Panel as RichPanel
+else:
+    RichConsole = None  # type: ignore
+    RichTable = None  # type: ignore
+    RichPanel = None  # type: ignore
 
 
 class FallbackConsole:
@@ -36,14 +42,14 @@ class FallbackConsole:
         return _get_default_width() or 80
 
     @property
-    def file(self):
+    def file(self) -> t.TextIO:
         return sys.stderr if self._is_stderr else sys.stdout
 
     def _strip_markup(self, text: str) -> str:
         """Удаляет простейшие теги rich типа [bold]."""
         return re.sub(r"\[/?[\w\s,=#]*\]", "", text)
 
-    def print(self, *args, **kwargs):
+    def print(self, *args: Any, **kwargs: Any) -> None:
         # Игнорируем специфичные для Rich аргументы
         kwargs.pop("style", None)
         kwargs.pop("justify", None)
@@ -55,7 +61,7 @@ class FallbackConsole:
         if "file" not in kwargs:
             kwargs["file"] = sys.stderr if self._is_stderr else sys.stdout
 
-        processed_args = []
+        processed_args: list[Any] = []
         for arg in args:
             if isinstance(arg, str) and markup:
                 processed_args.append(self._strip_markup(arg))
@@ -63,24 +69,24 @@ class FallbackConsole:
                 # Если аргумент не строка (например, Table или Panel),
                 # пытаемся вывести его как-то осмысленно или просто repr.
                 if not isinstance(arg, str):
-                    if hasattr(arg, "title") and arg.title:
-                        processed_args.append(f"=== {arg.title} ===")
+                    if hasattr(arg, "title") and getattr(arg, "title"):
+                        processed_args.append(f"=== {getattr(arg, 'title')} ===")
                         continue
                 processed_args.append(arg)
 
         print(*processed_args, **kwargs)
 
-    def rule(self, title=""):
+    def rule(self, title: str = "") -> None:
         f = sys.stderr if self._is_stderr else sys.stdout
         print(f"\n--- {title} ---\n", file=f)
 
 
-_console = None
-_err_console = None
+_console: Optional[ConsoleLike] = None
+_err_console: Optional[ConsoleLike] = None
 _console_width: Optional[int] = None
 
 
-def set_console_width(width: int):
+def set_console_width(width: int) -> None:
     """
     Устанавливает ширину консоли и сбрасывает кэшированные экземпляры консолей.
     """
@@ -105,7 +111,7 @@ def _get_default_width() -> Optional[int]:
     return width
 
 
-def get_console(stderr: bool = False) -> Any:
+def get_console(stderr: bool = False) -> ConsoleLike:
     """
     Возвращает экземпляр rich.Console или FallbackConsole.
     """
@@ -115,7 +121,8 @@ def get_console(stderr: bool = False) -> Any:
         if _err_console is not None:
             return _err_console
         if is_rich_enabled():
-            _err_console = Console(stderr=True, width=_get_default_width())
+            from rich.console import Console as RealConsole
+            _err_console = RealConsole(stderr=True, width=_get_default_width())
         else:
             _err_console = FallbackConsole(stderr=True)
         return _err_console
@@ -124,7 +131,8 @@ def get_console(stderr: bool = False) -> Any:
         return _console
 
     if is_rich_enabled():
-        _console = Console(width=_get_default_width())
+        from rich.console import Console as RealConsole
+        _console = RealConsole(width=_get_default_width())
     else:
         _console = FallbackConsole()
     return _console

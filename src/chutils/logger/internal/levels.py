@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import logging
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
 # --- Пользовательские уровни логирования ---
 
@@ -10,7 +12,7 @@ MEDIUMDEBUG_LEVEL_NUM = 15
 MEDIUMDEBUG_LEVEL_NAME = "MEDIUMDEBUG"
 
 
-def init_custom_levels():
+def init_custom_levels() -> None:
     """
     Регистрирует пользовательские уровни в модуле logging.
     Безопасно для повторного вызова.
@@ -39,16 +41,18 @@ class LogLevelsMixin:
     Миксин для добавления методов пользовательских уровней в Logger.
     """
 
-    def mediumdebug(self, message: str, *args: Any, **kws: Any):
+    def mediumdebug(self, message: str, *args: Any, **kws: Any) -> None:
         """
         Логирует сообщение с уровнем MEDIUMDEBUG (15).
         """
-        if self.isEnabledFor(MEDIUMDEBUG_LEVEL_NUM):
-            self._log(MEDIUMDEBUG_LEVEL_NUM, message, args, **kws)
+        _self = cast(logging.Logger, self)
+        if _self.isEnabledFor(MEDIUMDEBUG_LEVEL_NUM):
+            _self._log(MEDIUMDEBUG_LEVEL_NUM, message, args, **kws)
 
-    def devdebug(self, message: str, *args: Any, **kws: Any):
+    def devdebug(self, message: str, *args: Any, **kws: Any) -> None:
         """
         Логирует сообщение с уровнем DEVDEBUG (9).
         """
-        if self.isEnabledFor(DEVDEBUG_LEVEL_NUM):
-            self._log(DEVDEBUG_LEVEL_NUM, message, args, **kws)
+        _self = cast(logging.Logger, self)
+        if _self.isEnabledFor(DEVDEBUG_LEVEL_NUM):
+            _self._log(DEVDEBUG_LEVEL_NUM, message, args, **kws)

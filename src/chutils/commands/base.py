@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import argparse
 from abc import ABC, abstractmethod
+from typing import Any
 
 from chutils.cli_utils import get_console
 
@@ -12,12 +15,12 @@ class BaseCommand(ABC):
     и выполнения связанной с ними бизнес-логики.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.console = get_console()
         self.err_console = get_console(stderr=True)
 
     @abstractmethod
-    def register(self, subparsers: argparse._SubParsersAction):
+    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
         """
         Регистрирует подкоманду, её описание и аргументы в основном парсере.
         
@@ -27,7 +30,7 @@ class BaseCommand(ABC):
         pass
 
     @abstractmethod
-    def handle(self, args: argparse.Namespace):
+    def handle(self, args: argparse.Namespace) -> None:
         """
         Основной метод выполнения команды.
         

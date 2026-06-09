@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import argparse
 import os
+from typing import Any
 
 from .base import BaseCommand
 
@@ -12,7 +15,7 @@ class InitCommand(BaseCommand):
     обновляет .gitignore для предотвращения утечки секретов и логов.
     """
 
-    def register(self, subparsers: argparse._SubParsersAction):
+    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
         init_parser = subparsers.add_parser(
             "init",
             help="Инициализировать новый проект",
@@ -29,7 +32,7 @@ class InitCommand(BaseCommand):
         )
         init_parser.set_defaults(handler=self.handle)
 
-    def handle(self, args: argparse.Namespace):
+    def handle(self, args: argparse.Namespace) -> None:
         """Обработчик команды инициализации проекта."""
         print("--- Инициализация проекта chutils ---")
 
@@ -42,7 +45,7 @@ class InitCommand(BaseCommand):
                 project_name = "Project"
 
         # Создаем config.yml
-        config_path = "config.yml"
+        config_path: str | None = "config.yml"
         if os.path.exists(config_path):
             if not args.yes:
                 try:

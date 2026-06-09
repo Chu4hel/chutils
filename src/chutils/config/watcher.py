@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 import logging
 import time
 from pathlib import Path
-from typing import List, Callable
+from typing import List, Callable, TYPE_CHECKING
 
 from chutils.exceptions import OptionalDependencyError
 from .manager import _cm
 from .utils import find_project_root
 from .. import env
+
+if TYPE_CHECKING:
+    from watchdog.events import FileSystemEvent
 
 # Настраиваем логгер
 logger = logging.getLogger(__name__)
@@ -35,7 +40,7 @@ class ConfigChangeHandler:
     def __init__(self, watched_files: List[str]):
         self.watched_files = [str(Path(f).absolute()) for f in watched_files]
 
-    def dispatch(self, event):
+    def dispatch(self, event: FileSystemEvent) -> None:
         """Метод вызывается при любом событии в директории."""
         if event.is_directory:
             return
@@ -46,7 +51,7 @@ class ConfigChangeHandler:
             self._on_modified()
 
     @staticmethod
-    def _on_modified():
+    def _on_modified() -> None:
         current_time = time.monotonic()
 
         # Подавляем уведомление, если это было внутреннее сохранение с notify=False
@@ -123,7 +128,7 @@ def start_config_watcher() -> bool:
     handler = ConfigChangeHandler(files_to_watch)
 
     for d in dirs_to_watch:
-        _cm.observer.schedule(handler, d, recursive=False)
+        _cm.observer.schedule(handler, d, recursive=False)  # type: ignore
 
     _cm.observer.daemon = True
     _cm.observer.start()
@@ -131,7 +136,7 @@ def start_config_watcher() -> bool:
     return True
 
 
-def stop_config_watcher():
+def stop_config_watcher() -> None:
     """
     Останавливает процесс отслеживания изменений конфигурации.
     """

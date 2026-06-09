@@ -1,10 +1,15 @@
+from __future__ import annotations
+
 import argparse
+from typing import Any, TYPE_CHECKING
 
 from chutils import config
 from chutils.config.diagnostics import format_trace
 from chutils.config.manager import _cm
-
 from .base import BaseCommand
+
+if TYPE_CHECKING:
+    from pydantic import BaseModel
 
 
 class ConfigCommand(BaseCommand):
@@ -12,7 +17,7 @@ class ConfigCommand(BaseCommand):
     Команды для работы с конфигурацией и её диагностики.
     """
 
-    def register(self, subparsers: argparse._SubParsersAction):
+    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
         config_parser = subparsers.add_parser(
             "config",
             help="Управление и диагностика конфигурации",
@@ -83,11 +88,11 @@ class ConfigCommand(BaseCommand):
         )
         schema_parser.set_defaults(handler=self.handle_generate_schema)
 
-    def handle(self, args: argparse.Namespace):
+    def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана."""
         print("Используйте 'chutils config --help' для просмотра доступных подкоманд.")
 
-    def handle_debug(self, args: argparse.Namespace):
+    def handle_debug(self, args: argparse.Namespace) -> None:
         """Обработчик команды отладки конфигурации."""
         # 1. Загружаем модель, если указана
         model_class = None
@@ -134,9 +139,9 @@ class ConfigCommand(BaseCommand):
             # Отключаем markup, так как в текстовом режиме [section] воспринимается как тег и удаляется
             self.console.print(output, markup=False)
 
-    def _extract_defaults(self, model_class) -> dict:
+    def _extract_defaults(self, model_class: type[BaseModel]) -> dict[str, Any]:
         """Рекурсивно извлекает значения по умолчанию из Pydantic модели."""
-        defaults = {}
+        defaults: dict[str, Any] = {}
         # Проверяем наличие Pydantic
         try:
             from pydantic import BaseModel
@@ -155,14 +160,14 @@ class ConfigCommand(BaseCommand):
                 pass
 
             if is_nested:
-                defaults[field_name] = self._extract_defaults(field_type)
+                defaults[field_name] = self._extract_defaults(field_type)  # type: ignore[arg-type]
             else:
                 # В Pydantic 2 ... (ellipsis) означает обязательное поле без дефолта
                 if field.default is not ...:
                     defaults[field_name] = field.default
         return defaults
 
-    def handle_generate_schema(self, args: argparse.Namespace):
+    def handle_generate_schema(self, args: argparse.Namespace) -> None:
         """Обработчик команды генерации JSON Schema."""
         from chutils.config import export_schema
 

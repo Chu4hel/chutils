@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import argparse
 import sys
+from typing import Any
 
 from chutils import config
 from .base import BaseCommand
@@ -14,7 +17,7 @@ class ValidateCommand(BaseCommand):
     соответствуют структуре и типам данных заданной Pydantic-модели.
     """
 
-    def register(self, subparsers: argparse._SubParsersAction):
+    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
         validate_parser = subparsers.add_parser(
             "validate",
             help="Проверить корректность конфигурации",
@@ -27,7 +30,7 @@ class ValidateCommand(BaseCommand):
         )
         validate_parser.set_defaults(handler=self.handle)
 
-    def handle(self, args: argparse.Namespace):
+    def handle(self, args: argparse.Namespace) -> None:
         """Обработчик команды валидации конфигурации."""
         from ..exceptions import CommandError, OptionalDependencyError
         print("--- Валидация конфигурации ---")

@@ -3,11 +3,15 @@
 Инкапсулирует глобальные переменные и логику инициализации путей.
 """
 
+from __future__ import annotations
+
 import logging
 import threading
 import time
 from pathlib import Path
-from typing import Dict, Optional, Tuple, Any, List
+from typing import Dict, Optional, Tuple, Any, List, Callable
+
+from chutils.typing import JSONDict
 
 # Настраиваем локальный логгер
 logger = logging.getLogger(__name__)
@@ -18,17 +22,37 @@ class _ConfigManager:
     Менеджер состояния конфигурации (Синглтон).
     Управляет путями к файлам и кэшированием загруженного объекта конфигурации.
     """
-    _instance = None
+    _instance: Optional[_ConfigManager] = None
+
+    # Объявление типов для статического анализатора (strict mode)
+    _lock: threading.RLock
+    _loading_lock: threading.RLock
+    _file_lock: threading.RLock
+    _base_dir: Optional[str]
+    _config_file_path: Optional[str]
+    _features_file_path: Optional[str]
+    _paths_initialized: bool
+    _config_object: Optional[JSONDict]
+    _features_object: Optional[JSONDict]
+    _config_loaded: bool
+    _features_loaded: bool
+    _observer: Optional[Any]
+    _callbacks: List[Callable[[], Any]]
+    _last_reload_time: float
+    _last_internal_save_time: float
+    _tracing_enabled: bool
+    _trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]]
+    _remote_provider: Optional[Any]
 
     # Список маркеров, по которым ищется корень проекта и конфигурационные файлы.
     # Порядок в списке определяет приоритет при поиске.
-    CONFIG_MARKERS = [
+    CONFIG_MARKERS: List[str] = [
         'config.yml', 'config.yaml', 'config.ini', 'config.json',
         'config.local.yml', 'config.local.yaml', 'config.local.ini', 'config.local.json',
         'pyproject.toml'
     ]
 
-    def __new__(cls):
+    def __new__(cls) -> _ConfigManager:
         if cls._instance is None:
             cls._instance = super(_ConfigManager, cls).__new__(cls)
             cls._instance._lock = threading.RLock()
@@ -37,24 +61,24 @@ class _ConfigManager:
             cls._instance._reset()
         return cls._instance
 
-    def _reset(self):
+    def _reset(self) -> None:
         """Сбрасывает состояние менеджера (полезно для тестов)."""
         with self._lock:
-            self._base_dir: Optional[str] = None
-            self._config_file_path: Optional[str] = None
-            self._features_file_path: Optional[str] = None
+            self._base_dir = None
+            self._config_file_path = None
+            self._features_file_path = None
             self._paths_initialized = False
-            self._config_object: Optional[Dict] = None
-            self._features_object: Optional[Dict] = None
+            self._config_object = None
+            self._features_object = None
             self._config_loaded = False
             self._features_loaded = False
-            self._observer: Optional[Any] = None
-            self._callbacks: List = []
-            self._last_reload_time: float = 0.0
-            self._last_internal_save_time: float = 0.0
-            self._tracing_enabled: bool = False
-            self._trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
-            self._remote_provider: Optional[Any] = None
+            self._observer = None
+            self._callbacks = []
+            self._last_reload_time = 0.0
+            self._last_internal_save_time = 0.0
+            self._tracing_enabled = False
+            self._trace_data = {}
+            self._remote_provider = None
 
     @property
     def remote_provider(self) -> Optional[Any]:
@@ -62,7 +86,7 @@ class _ConfigManager:
             return self._remote_provider
 
     @remote_provider.setter
-    def remote_provider(self, value: Optional[Any]):
+    def remote_provider(self, value: Optional[Any]) -> None:
         with self._lock:
             self._remote_provider = value
 
@@ -72,13 +96,13 @@ class _ConfigManager:
             return self._tracing_enabled
 
     @tracing_enabled.setter
-    def tracing_enabled(self, value: bool):
+    def tracing_enabled(self, value: bool) -> None:
         with self._lock:
             self._tracing_enabled = value
             if not value:
                 self._trace_data = {}
 
-    def record_trace(self, section: str, key: str, value: Any, source: str):
+    def record_trace(self, section: str, key: str, value: Any, source: str) -> None:
         """Записывает историю изменения значения ключа."""
         with self._lock:
             if not self._tracing_enabled:
@@ -104,7 +128,7 @@ class _ConfigManager:
             import copy
             return copy.deepcopy(self._trace_data)
 
-    def record_trace_dict(self, data: Dict[str, Any], source: str):
+    def record_trace_dict(self, data: JSONDict, source: str) -> None:
         """Записывает все значения из словаря в трассировку."""
         with self._lock:
             if not self._tracing_enabled:
@@ -120,7 +144,7 @@ class _ConfigManager:
                     # В chutils основные конфиги - это секции.
                     self.record_trace("default", section, keys, source)
 
-    def trace_env_vars(self):
+    def trace_env_vars(self) -> None:
         """Сканирует переменные окружения и записывает их в трассировку."""
         import os
         with self._lock:
@@ -156,7 +180,7 @@ class _ConfigManager:
             return self._base_dir
 
     @base_dir.setter
-    def base_dir(self, value: Optional[str]):
+    def base_dir(self, value: Optional[str]) -> None:
         with self._lock:
             self._base_dir = value
 
@@ -166,7 +190,7 @@ class _ConfigManager:
             return self._config_file_path
 
     @config_file_path.setter
-    def config_file_path(self, value: Optional[str]):
+    def config_file_path(self, value: Optional[str]) -> None:
         with self._lock:
             self._config_file_path = value
 
@@ -176,17 +200,17 @@ class _ConfigManager:
             return self._paths_initialized
 
     @paths_initialized.setter
-    def paths_initialized(self, value: bool):
+    def paths_initialized(self, value: bool) -> None:
         with self._lock:
             self._paths_initialized = value
 
     @property
-    def config_object(self) -> Optional[Dict]:
+    def config_object(self) -> Optional[JSONDict]:
         with self._lock:
             return self._config_object
 
     @config_object.setter
-    def config_object(self, value: Optional[Dict]):
+    def config_object(self, value: Optional[JSONDict]) -> None:
         with self._lock:
             self._config_object = value
 
@@ -196,7 +220,7 @@ class _ConfigManager:
             return self._config_loaded
 
     @config_loaded.setter
-    def config_loaded(self, value: bool):
+    def config_loaded(self, value: bool) -> None:
         with self._lock:
             self._config_loaded = value
 
@@ -206,7 +230,7 @@ class _ConfigManager:
             return self._observer
 
     @observer.setter
-    def observer(self, value: Optional[Any]):
+    def observer(self, value: Optional[Any]) -> None:
         with self._lock:
             self._observer = value
 
@@ -216,7 +240,7 @@ class _ConfigManager:
             return self._last_reload_time
 
     @last_reload_time.setter
-    def last_reload_time(self, value: float):
+    def last_reload_time(self, value: float) -> None:
         with self._lock:
             self._last_reload_time = value
 
@@ -226,17 +250,17 @@ class _ConfigManager:
             return self._features_file_path
 
     @features_file_path.setter
-    def features_file_path(self, value: Optional[str]):
+    def features_file_path(self, value: Optional[str]) -> None:
         with self._lock:
             self._features_file_path = value
 
     @property
-    def features_object(self) -> Optional[Dict]:
+    def features_object(self) -> Optional[JSONDict]:
         with self._lock:
             return self._features_object
 
     @features_object.setter
-    def features_object(self, value: Optional[Dict]):
+    def features_object(self, value: Optional[JSONDict]) -> None:
         with self._lock:
             self._features_object = value
 
@@ -246,17 +270,17 @@ class _ConfigManager:
             return self._features_loaded
 
     @features_loaded.setter
-    def features_loaded(self, value: bool):
+    def features_loaded(self, value: bool) -> None:
         with self._lock:
             self._features_loaded = value
 
-    def set_config(self, config_data: Dict[str, Any]):
+    def set_config(self, config_data: JSONDict) -> None:
         """Устанавливает новый объект конфигурации в кэш атомарно."""
         with self._lock:
             self._config_object = config_data
             self._config_loaded = True
 
-    def set_features(self, features_data: Dict[str, Any]):
+    def set_features(self, features_data: JSONDict) -> None:
         """Устанавливает новый объект фича-флагов в кэш атомарно."""
         with self._lock:
             self._features_object = features_data
@@ -271,17 +295,17 @@ class _ConfigManager:
                 return True
             return False
 
-    def mark_internal_save(self):
+    def mark_internal_save(self) -> None:
         """Устанавливает время последнего внутреннего сохранения."""
         with self._lock:
             self._last_internal_save_time = time.monotonic()
 
-    def get_callbacks(self) -> List:
+    def get_callbacks(self) -> List[Callable[[], Any]]:
         """Возвращает копию списка коллбэков."""
         with self._lock:
             return list(self._callbacks)
 
-    def add_callback(self, callback: Any):
+    def add_callback(self, callback: Callable[[], Any]) -> bool:
         """Добавляет коллбэк, если его еще нет."""
         with self._lock:
             if callback not in self._callbacks:
@@ -289,7 +313,7 @@ class _ConfigManager:
                 return True
             return False
 
-    def initialize_paths(self, find_root_func):
+    def initialize_paths(self, find_root_func: Callable[[Path, List[str]], Optional[Path]]) -> None:
         """
         Инициализирует пути к корню проекта и основному файлу конфигурации.
         Использует loading_lock для предотвращения конкурентной инициализации.
@@ -339,7 +363,8 @@ class _ConfigManager:
         main, _, local = self.get_all_config_paths(cfg_file)
         return main, local
 
-    def get_all_config_paths(self, cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+    def get_all_config_paths(self, cfg_file: Optional[str] = None) -> Tuple[
+        Optional[str], Optional[str], Optional[str]]:
         """
         Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
         """
@@ -376,20 +401,20 @@ class _ConfigManager:
 
             return main_config_path, env_config_path, local_config_path
 
-    def clear_cache(self):
+    def clear_cache(self) -> None:
         """Сбрасывает кэш загруженной конфигурации и фича-флагов атомарно."""
         with self._lock:
             self._config_object = None
             self._config_loaded = False
             self.clear_features_cache()
 
-    def clear_features_cache(self):
+    def clear_features_cache(self) -> None:
         """Сбрасывает кэш фича-флагов атомарно."""
         with self._lock:
             self._features_object = None
             self._features_loaded = False
 
-    def load_config_safe(self, load_func: Any) -> Dict[str, Any]:
+    def load_config_safe(self, load_func: Callable[[], JSONDict]) -> JSONDict:
         """
         Потокобезопасно загружает конфигурацию, если она еще не загружена.
         Использует loading_lock для предотвращения конкурентной загрузки из файлов.
@@ -410,7 +435,7 @@ class _ConfigManager:
             self.set_config(data)
             return data
 
-    def load_features_safe(self, load_func: Any) -> Dict[str, Any]:
+    def load_features_safe(self, load_func: Callable[[], JSONDict]) -> JSONDict:
         """
         Потокобезопасно загружает фича-флаги, если они еще не загружены.
         Использует loading_lock для предотвращения конкурентной загрузки из файлов.
@@ -431,11 +456,11 @@ class _ConfigManager:
             self.set_features(data)
             return data
 
-    def acquire_file_lock(self):
+    def acquire_file_lock(self) -> None:
         """Захватывает блокировку для работы с файлами конфигурации."""
         self._file_lock.acquire()
 
-    def release_file_lock(self):
+    def release_file_lock(self) -> None:
         """Освобождает блокировку файлов."""
         self._file_lock.release()
 

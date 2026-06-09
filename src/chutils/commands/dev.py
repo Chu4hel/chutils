@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import argparse
 import inspect
 import json
 from pathlib import Path
+from typing import Any
 
 import chutils
-
 from .base import BaseCommand
 
 
@@ -15,7 +17,7 @@ class DevCommand(BaseCommand):
     Позволяет генерировать контекстные данные о библиотеке для LLM.
     """
 
-    def register(self, subparsers: argparse._SubParsersAction):
+    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
         dev_parser = subparsers.add_parser(
             "dev",
             help="Инструменты разработчика и AI-контекст",
@@ -58,19 +60,20 @@ class DevCommand(BaseCommand):
         )
         gen_parser.set_defaults(handler=self.handle_generate_context)
 
-    def handle(self, args: argparse.Namespace):
+    def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана."""
         self.console.print("Используйте 'chutils dev --help' для просмотра доступных подкоманд.")
 
-    def handle_generate_context(self, args: argparse.Namespace):
+    def handle_generate_context(self, args: argparse.Namespace) -> None:
         """Обработчик генерации контекста."""
         # Используем stderr для статусных сообщений, чтобы не портить stdout (особенно для JSON)
         self.err_console.print("[bold yellow]Генерация контекста API...[/bold yellow]", style="yellow")
 
         if args.tree:
-            return self._handle_tree_index(args)
+            self._handle_tree_index(args)
+            return
 
-        api_data = []
+        api_data: list[dict[str, Any]] = []
 
         # Получаем список всех публичных атрибутов chutils
         public_attrs = [attr for attr in dir(chutils) if not attr.startswith('_')]
@@ -147,7 +150,7 @@ class DevCommand(BaseCommand):
             else:
                 self.console.print("\n" + output_content)
 
-    def _handle_tree_index(self, args: argparse.Namespace):
+    def _handle_tree_index(self, args: argparse.Namespace) -> None:
         """Генерация иерархического индекса (Phase 5)."""
         from chutils.exceptions import OptionalDependencyError
         from chutils.env import has_pydantic

@@ -1,9 +1,4 @@
-"""
-Интеграция с OpenTelemetry для распределенного трассирования.
-
-Позволяет автоматически создавать спаны для функций и связывать логи с контекстом трассировки.
-Функционал является опциональным и требует установки `chutils[otel]`.
-"""
+from __future__ import annotations
 
 import functools
 import inspect
@@ -15,6 +10,7 @@ from .typing import P, R
 
 if t.TYPE_CHECKING:
     from opentelemetry import trace as otel_trace_mod
+    from opentelemetry.sdk.trace.export import SpanExporter
 
 # Совместимость с внутренним кодом
 IS_OTEL_AVAILABLE = OTEL_AVAILABLE
@@ -100,16 +96,17 @@ def setup_tracing(
         otel_trace.set_tracer_provider(provider)
 
         # Настраиваем экспортер
+        exporter: SpanExporter
         if exporter_type == "console":
             from opentelemetry.sdk.trace.export import ConsoleSpanExporter
             exporter = ConsoleSpanExporter()
         elif exporter_type == "otlp":
             if otlp_protocol == "grpc":
-                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter as GrpcExporter
+                exporter = GrpcExporter(endpoint=otlp_endpoint)
             else:
-                from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-
-            exporter = OTLPSpanExporter(endpoint=otlp_endpoint)
+                from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter as HttpExporter
+                exporter = HttpExporter(endpoint=otlp_endpoint)
         else:
             return False
 
