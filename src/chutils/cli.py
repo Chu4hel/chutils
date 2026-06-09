@@ -62,9 +62,10 @@ def main():
 
             if RICH_AVAILABLE:
                 from rich.text import Text
-                console.print("\n", Text("ОШИБКА БЕЗОПАСНОСТИ: ", style="bold red"), Text(e.message))
+                console.print()
+                console.print(Text("ОШИБКА БЕЗОПАСНОСТИ: ", style="bold red") + Text(e.message))
                 if e.hint:
-                    console.print(Text("СОВЕТ: ", style="bold yellow"), Text(e.hint))
+                    console.print(Text("СОВЕТ: ", style="bold yellow") + Text(e.hint))
             else:
                 console.print(f"\nОШИБКА БЕЗОПАСНОСТИ: {e.message}", markup=False)
                 if e.hint:
@@ -76,7 +77,8 @@ def main():
                 from rich.text import Text
                 from rich.panel import Panel
                 # Выводим префикс стилизованно, а сообщение как чистый текст (защита от markup)
-                console.print("\n", Text("ОШИБКА: ", style="bold red"), Text(e.message))
+                console.print()
+                console.print(Text("ОШИБКА: ", style="bold red") + Text(e.message))
 
                 if e.hint:
                     # Внутри панели используем Text для защиты от markup
@@ -91,7 +93,8 @@ def main():
         except Exception as e:
             if RICH_AVAILABLE:
                 from rich.text import Text
-                console.print("\n", Text("НЕПРЕДВИДЕННАЯ ОШИБКА: ", style="bold red"), Text(str(e)))
+                console.print()
+                console.print(Text("НЕПРЕДВИДЕННАЯ ОШИБКА: ", style="bold red") + Text(str(e)))
             else:
                 console.print(f"\nНЕПРЕДВИДЕННАЯ ОШИБКА: {e}", markup=False)
             sys.exit(1)
