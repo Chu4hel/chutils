@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import List, Callable
 
 from chutils.exceptions import OptionalDependencyError
-
 from .manager import _cm
 from .utils import find_project_root
 from .. import env
@@ -86,9 +85,9 @@ def start_config_watcher() -> bool:
     """
     if not env.WATCHDOG_AVAILABLE:
         raise OptionalDependencyError(
-            "Пакет 'watchdog' необходим для работы hot-reload. "
-            "Установите его с помощью 'pip install chutils[watch]' или 'poetry add watchdog'.",
-            dependency="watchdog"
+            "Пакет 'watchdog' необходим для работы hot-reload.",
+            dependency="watchdog",
+            hint="Установите его с помощью 'pip install chutils[watch]' или 'poetry add watchdog'."
         )
 
     from watchdog.observers import Observer

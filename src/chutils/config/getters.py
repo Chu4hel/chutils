@@ -227,9 +227,9 @@ def get_config_section(
         from chutils.env import has_pydantic
         if not has_pydantic():
             raise OptionalDependencyError(
-                "Pydantic is required for configuration validation. "
-                "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'.",
-                dependency="pydantic"
+                "Pydantic is required for configuration validation.",
+                dependency="pydantic",
+                hint="Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
             )
         return model(**section_data)
 

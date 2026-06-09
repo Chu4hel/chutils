@@ -25,9 +25,11 @@ except ImportError:
 
 def _check_pydantic():
     if not PYDANTIC_AVAILABLE:
-        raise ImportError(
-            "Pydantic is required for configuration bootstrapping. "
-            "Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
+        from ..exceptions import OptionalDependencyError
+        raise OptionalDependencyError(
+            "Pydantic is required for YAML template generation.",
+            dependency="pydantic",
+            hint="Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
         )
 
 
