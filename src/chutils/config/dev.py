@@ -108,8 +108,20 @@ def load_ai_lint_config(cli_args: Optional[JSONDict] = None) -> JSONDict:
 
     # 1. CLI
     if cli_args:
+        cli_ignore = cli_args.get("ignore")
+        if cli_ignore is not None:
+            cli_ignore_list = cli_ignore if isinstance(cli_ignore, list) else [cli_ignore]
+            current_ignore = merged_config.get("ignore", [])
+            current_list = current_ignore if isinstance(current_ignore, list) else [current_ignore]
+
+            result = list(current_list)
+            for item in cli_ignore_list:
+                if str(item) not in result:
+                    result.append(str(item))
+            merged_config["ignore"] = result
+
         for k, v in cli_args.items():
-            if v is not None:
+            if v is not None and k != "ignore":
                 merged_config[k] = v
 
     # Интегрируем .chutilsignore в список ignore

@@ -68,3 +68,63 @@ def test_cli_dev_generate_tree_error(cli_runner, mocker):
     result = cli_runner.invoke(["dev", "generate-context", "--tree"])
     assert result.exit_code == 1
     assert "Ошибка при генерации индекса" in result.stderr or "Ошибка при генерации индекса" in result.stdout
+
+
+def test_cli_dev_ai_lint_success(cli_runner, mocker):
+    """Проверяет успешное прохождение проверки ai-lint через CLI."""
+    mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[])
+    result = cli_runner.invoke(["dev", "ai-lint"])
+    assert result.exit_code == 0
+    assert "Все проверки пройдены" in result.stdout
+
+
+def test_cli_dev_ai_lint_failure(cli_runner, mocker):
+    """Проверяет провал проверки ai-lint (наличие ошибок) через CLI."""
+    from chutils.dev.ai_lint import LintResult
+    mock_error = LintResult(
+        rule_name="TestRule",
+        message="Critical error detected",
+        severity="error",
+        file_path="app.py",
+        line_number=5
+    )
+    mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_error])
+    result = cli_runner.invoke(["dev", "ai-lint"])
+    assert result.exit_code == 1
+    assert "Critical error detected" in result.stdout
+
+
+def test_cli_dev_ai_lint_soft_mode(cli_runner, mocker):
+    """Проверяет --soft-mode флаг, который не должен возвращать ошибку при провале."""
+    from chutils.dev.ai_lint import LintResult
+    mock_error = LintResult(
+        rule_name="TestRule",
+        message="Critical error detected",
+        severity="error",
+        file_path="app.py"
+    )
+    mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_error])
+    result = cli_runner.invoke(["dev", "ai-lint", "--soft-mode"])
+    assert result.exit_code == 0
+    assert "Critical error detected" in result.stdout
+
+
+def test_cli_dev_ai_lint_strict_mode(cli_runner, mocker):
+    """Проверяет --strict флаг, который падает при наличии только варнингов."""
+    from chutils.dev.ai_lint import LintResult
+    mock_warn = LintResult(
+        rule_name="TestRule",
+        message="Warning detected",
+        severity="warn",
+        file_path="app.py"
+    )
+    mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_warn])
+
+    # Сначала без strict - должен пройти успешно
+    res_normal = cli_runner.invoke(["dev", "ai-lint"])
+    assert res_normal.exit_code == 0
+
+    # Со strict - должен упасть
+    res_strict = cli_runner.invoke(["dev", "ai-lint", "--strict"])
+    assert res_strict.exit_code == 1
+    assert "Warning detected" in res_strict.stdout

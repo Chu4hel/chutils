@@ -100,3 +100,19 @@ warn_unused_ignores = true
 warn_redundant_casts = true
 check_untyped_defs = true
 disallow_untyped_defs = true
+
+[tool.chutils.ai-lint]
+strict = false
+ignore = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+    "tests",
+    "site",
+    "examples",
+    "docs",
+    "src/chutils/testing",
+    "src/chutils/typing.py"
+]

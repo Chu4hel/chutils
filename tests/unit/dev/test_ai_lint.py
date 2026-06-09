@@ -1,7 +1,7 @@
 import pytest
 
-from chutils.dev.ai_lint import (
-    Rule, LintResult, LinterEngine, load_custom_rules,
+from chutils.dev.ai_lint import Rule, LintResult, LinterEngine, load_custom_rules
+from chutils.dev.rules import (
     ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
     ChutilsIntegrationRule, APIMapRule
 )
