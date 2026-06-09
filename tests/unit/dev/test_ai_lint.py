@@ -1,6 +1,10 @@
 import pytest
 
-from chutils.dev.ai_lint import Rule, LintResult, LinterEngine, load_custom_rules
+from chutils.dev.ai_lint import (
+    Rule, LintResult, LinterEngine, load_custom_rules,
+    ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
+    ChutilsIntegrationRule, APIMapRule
+)
 
 
 class DummyRule(Rule):
@@ -161,5 +165,177 @@ class CustomRule(Rule):
         "custom_rules_path": "my_rules.py"
     })
     engine.load_rules()
-    assert len(engine.rules) == 1
-    assert engine.rules[0].name == "CustomRule"
+    assert any(r.name == "CustomRule" for r in engine.rules)
+
+
+# --- Тесты для встроенных правил ---
+
+def test_manifest_rule(tmp_path):
+    """Тестирует ManifestRule."""
+    rule = ManifestRule()
+
+    # Сценарий 1: Отсутствуют файлы манифестов
+    (tmp_path / "src" / "pkg").mkdir(parents=True, exist_ok=True)
+    with open(tmp_path / "src" / "pkg" / "__init__.py", "w") as f:
+        f.write("")
+
+    results = rule.check(str(tmp_path), [])
+    # Ожидаем предупреждение о корневом GEMINI.md и пакете pkg/GEMINI.md
+    assert len(results) == 2
+    assert any("корневой файл" in r.message for r in results)
+    assert any("В основном пакете pkg" in r.message for r in results)
+
+    # Сценарий 2: Добавление альтернативных файлов манифестов (antigravity.md, agents.md)
+    with open(tmp_path / "antigravity.md", "w") as f:
+        f.write("# Antigravity rules")
+    with open(tmp_path / "src" / "pkg" / "agents.md", "w") as f:
+        f.write("# Codex agents context")
+
+    results2 = rule.check(str(tmp_path), [])
+    assert len(results2) == 0
+
+
+def test_docstring_quality_rule(tmp_path):
+    """Тестирует DocstringQualityRule."""
+    rule = DocstringQualityRule()
+
+    # Сценарий 1: Код с нарушениями
+    bad_code = """
+class MyClass:
+    # Нет docstring у класса
+    pass
+
+def my_func(a, b: int):
+    # Нет docstring у функции, нет типа у 'a', нет возвращаемого типа
+    pass
+
+def doc_func(x: str) -> str:
+    \"\"\"
+    Docstring без раздела Args и Returns.
+    \"\"\"
+    return x
+"""
+    file_path = tmp_path / "bad.py"
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(bad_code)
+
+    results = rule.check(str(tmp_path), [str(file_path)])
+    assert len(results) > 0
+    assert any("MyClass" in r.message and "docstring" in r.message for r in results)
+    assert any("my_func" in r.message and "docstring" in r.message for r in results)
+    assert any("параметра 'a'" in r.message and "аннотация типа" in r.message for r in results)
+    assert any("my_func" in r.message and "возвращаемого значения" in r.message for r in results)
+    assert any("doc_func" in r.message and "Args:" in r.message for r in results)
+    assert any("doc_func" in r.message and "Returns:" in r.message for r in results)
+
+    # Сценарий 2: Корректный код
+    good_code = """
+class MyGoodClass:
+    \"\"\"
+    Это класс с документацией.
+    \"\"\"
+    pass
+
+def good_func(a: int, b: str) -> bool:
+    \"\"\"
+    Функция с полной аннотацией и docstring в Google Style.
+
+    Args:
+        a: Числовой параметр.
+        b: Строковый параметр.
+
+    Returns:
+        Булевый результат.
+    \"\"\"
+    return True
+"""
+    file_path_good = tmp_path / "good.py"
+    with open(file_path_good, "w", encoding="utf-8") as f:
+        f.write(good_code)
+
+    results_good = rule.check(str(tmp_path), [str(file_path_good)])
+    assert len(results_good) == 0
+
+
+def test_security_hardcode_rule(tmp_path):
+    """Тестирует SecurityHardcodeRule."""
+    rule = SecurityHardcodeRule()
+
+    # Сценарий 1: Утечка секретов
+    bad_code = """
+aws_key = "AKIA1234567890123456" # AWS Key Regex
+slack_token = "xoxb-123456789012" # Slack Token
+my_password = "super-secret-password-hardcoded" # Suspect variable + assignment
+"""
+    file_path = tmp_path / "bad.py"
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(bad_code)
+
+    results = rule.check(str(tmp_path), [str(file_path)])
+    assert len(results) >= 3
+    assert any("AWS Access Key" in r.message or "AKIA" in r.file_path for r in results)
+    assert any("Slack Token" in r.message for r in results)
+    assert any("my_password" in r.message or "секретной переменной" in r.message for r in results)
+
+    # Сценарий 2: Безопасный код
+    good_code = """
+# Безопасно: использование заглушек или чтение из конфига
+aws_key = "placeholder_key"
+some_val = "ordinary_string"
+"""
+    file_path_good = tmp_path / "good.py"
+    with open(file_path_good, "w", encoding="utf-8") as f:
+        f.write(good_code)
+
+    results_good = rule.check(str(tmp_path), [str(file_path_good)])
+    assert len(results_good) == 0
+
+
+def test_chutils_integration_rule(tmp_path):
+    """Тестирует ChutilsIntegrationRule."""
+    rule = ChutilsIntegrationRule()
+
+    # Сценарий 1: Прямое использование стандартного логирования и os.environ
+    bad_code = """
+import logging
+import os
+import keyring
+
+logging.info("Test message")
+db_host = os.environ.get("DB_HOST")
+token = keyring.get_password("system", "user")
+"""
+    file_path = tmp_path / "bad.py"
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(bad_code)
+
+    results = rule.check(str(tmp_path), [str(file_path)])
+    assert len(results) == 3
+    assert any("logging" in r.message for r in results)
+    assert any("os.environ" in r.message or "os.getenv" in r.message for r in results)
+    assert any("keyring" in r.message for r in results)
+
+
+def test_api_map_rule(tmp_path):
+    """Тестирует APIMapRule."""
+    rule = APIMapRule()
+
+    # 1. Если нет директории src/chutils, правило ничего не делает
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # 2. Создаем структуру chutils
+    (tmp_path / "src" / "chutils").mkdir(parents=True, exist_ok=True)
+
+    # 3. Если нет api_map.md, получаем ошибку
+    results_no_file = rule.check(str(tmp_path), [])
+    assert len(results_no_file) == 1
+    assert "отсутствует файл api_map.md" in results_no_file[0].message
+
+    # 4. Создаем неактуальный api_map.md
+    with open(tmp_path / "api_map.md", "w", encoding="utf-8") as f:
+        f.write("# Outdated Map")
+
+    results_outdated = rule.check(str(tmp_path), [])
+    assert len(results_outdated) == 1
+    assert "устарел или не соответствует" in results_outdated[0].message
