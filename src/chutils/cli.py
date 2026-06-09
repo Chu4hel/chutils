@@ -44,6 +44,7 @@ def main():
     if hasattr(args, 'handler'):
         from chutils.exceptions import ChutilsException, PathTraversalError
         from chutils.cli_utils import get_console
+        from chutils.env import RICH_AVAILABLE
         import logging
 
         console = get_console(stderr=True)
@@ -59,26 +60,43 @@ def main():
                 e.context.get('base_path')
             )
 
-            console.print(f"\n[bold red]ОШИБКА БЕЗОПАСНОСТИ:[/bold red] {e.message}")
-            if e.hint:
-                console.print(f"[bold yellow]СОВЕТ:[/bold yellow] {e.hint}")
+            if RICH_AVAILABLE:
+                from rich.text import Text
+                console.print("\n", Text("ОШИБКА БЕЗОПАСНОСТИ: ", style="bold red"), Text(e.message))
+                if e.hint:
+                    console.print(Text("СОВЕТ: ", style="bold yellow"), Text(e.hint))
+            else:
+                console.print(f"\nОШИБКА БЕЗОПАСНОСТИ: {e.message}", markup=False)
+                if e.hint:
+                    console.print(f"СОВЕТ: {e.hint}", markup=False)
             sys.exit(1)
 
         except ChutilsException as e:
-            console.print(f"\n[bold red]ОШИБКА:[/bold red] {e.message}")
-            if e.hint:
-                # Если доступен Rich, выводим красиво в панели
-                from chutils.env import RICH_AVAILABLE
-                if RICH_AVAILABLE:
-                    from rich.panel import Panel
-                    console.print(Panel(e.hint, title="[bold yellow]Подсказка[/bold yellow]", border_style="yellow"))
-                else:
-                    console.print(f"[bold yellow]СОВЕТ:[/bold yellow] {e.hint}")
+            if RICH_AVAILABLE:
+                from rich.text import Text
+                from rich.panel import Panel
+                # Выводим префикс стилизованно, а сообщение как чистый текст (защита от markup)
+                console.print("\n", Text("ОШИБКА: ", style="bold red"), Text(e.message))
+
+                if e.hint:
+                    # Внутри панели используем Text для защиты от markup
+                    console.print(
+                        Panel(Text(e.hint), title="[bold yellow]Подсказка[/bold yellow]", border_style="yellow"))
+            else:
+                console.print(f"\nОШИБКА: {e.message}", markup=False)
+                if e.hint:
+                    console.print(f"СОВЕТ: {e.hint}", markup=False)
             sys.exit(1)
 
         except Exception as e:
-            console.print(f"\n[bold red]НЕПРЕДВИДЕННАЯ ОШИБКА:[/bold red] {e}")
+            if RICH_AVAILABLE:
+                from rich.text import Text
+                console.print("\n", Text("НЕПРЕДВИДЕННАЯ ОШИБКА: ", style="bold red"), Text(str(e)))
+            else:
+                console.print(f"\nНЕПРЕДВИДЕННАЯ ОШИБКА: {e}", markup=False)
             sys.exit(1)
+
+
     else:
         parser.print_help()
 

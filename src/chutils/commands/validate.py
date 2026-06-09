@@ -74,7 +74,7 @@ class ValidateCommand(BaseCommand):
             config.get_config(model=model_class)
             self.console.print("[bold green][OK] Конфигурация успешно прошла валидацию.[/bold green]")
         except ValidationError as e:
-            self.console.print("\n[bold red][FAIL] Ошибки валидации:[/bold red]")
+            self.console.print("\n[bold red]ОШИБКИ ВАЛИДАЦИИ:[/bold red]")
             for error in e.errors():
                 loc = " -> ".join(str(i) for i in error['loc'])
                 msg = error['msg']

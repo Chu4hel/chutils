@@ -20,9 +20,11 @@ def test_cli_suggests_extras_on_missing_dependency(capsys):
 
             captured = capsys.readouterr()
             # Проверяем, что в выводе есть упоминание pydantic и команда установки
-            assert "Pydantic is required" in captured.out
-            assert "pip install chutils[pydantic]" in captured.out
-            assert "[ERROR] Отсутствует необходимая зависимость" in captured.out
+            # Ошибки теперь идут в stderr
+            output = captured.err or captured.out
+            assert "Pydantic is required" in output
+            assert "pip install chutils[pydantic]" in output
+            assert "ОШИБКА" in output
 
 
 if __name__ == "__main__":

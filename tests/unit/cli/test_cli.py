@@ -225,5 +225,5 @@ def test_cli_validate_fail(mocker, capsys):
 
     assert e.value.code == 1
     captured = capsys.readouterr()
-    assert "[FAIL] Ошибки валидации" in captured.out
+    assert "ОШИБКИ ВАЛИДАЦИИ" in captured.out
     assert "Logging -> level: field required" in captured.out

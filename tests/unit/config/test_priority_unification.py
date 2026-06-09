@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from chutils.config import get_config, get_config_section, get_config_value, get_config_int, _cm
 
 
-class TestModel(BaseModel):
+class SampleModel(BaseModel):
     port: int
     host: str
 
@@ -23,7 +23,7 @@ def test_env_priority_in_pydantic_model(tmp_path, monkeypatch):
     monkeypatch.setenv("CH_SERVER_PORT", "9000")
     _cm.clear_cache()
 
-    model = get_config_section("server", model=TestModel)
+    model = get_config_section("server", model=SampleModel)
     assert model.port == 9000
     assert model.host == "localhost"
 
