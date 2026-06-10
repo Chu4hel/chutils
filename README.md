@@ -43,6 +43,10 @@ Every time you start a new project, you have to solve the same tasks:
 - **🌐 Remote Configuration:** Load settings from HTTP/HTTPS endpoints with background polling and fallback support.
 - **🔄 Hot-Reload:** Support for automatic configuration reloading on file changes without restart (requires
   `pip install chutils[watch]`).
+- **🛡️ Secure Paths:** Prevent Path Traversal attacks by safely resolving file paths against a base directory using
+  `resolve_safe_path()`.
+- **🤖 AI Linter:** Run static analysis checks on your codebase to ensure AI readiness (strict type hints, structured
+  docstrings, API map sync) via `chutils dev ai-lint`.
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.
 - **🚀 Ready to Use:** Just install and use.
 
@@ -230,6 +234,22 @@ In environments like Docker or CI/CD where `keyring` is unavailable, you can sup
 - Set `CH_DISABLE_KEYRING_WARNING=true` in environment.
 - Or add `disable_keyring: true` under `secrets` section in `config.yml`.
 
+### 4. Safe Path Resolution
+
+Safely resolve relative and absolute paths against a base directory to prevent directory traversal vulnerabilities:
+
+```python
+from chutils.fs import resolve_safe_path
+from chutils.exceptions import PathTraversalError
+
+try:
+    # Resolves path relative to the base directory and checks if it's safe
+    safe_path = resolve_safe_path("user_file.txt", base_dir="./sandbox")
+    print(f"Safe absolute path: {safe_path}")
+except PathTraversalError as e:
+    print(f"Path traversal detected! Attempted: {e.context.get('attempted_path')}")
+```
+
 ## API Overview
 
 ### Configuration (`chutils.config`)
@@ -257,6 +277,11 @@ In environments like Docker or CI/CD where `keyring` is unavailable, you can sup
 - `@timeout(seconds, fallback)`: Limits function execution time. Supports sync/async and optional fallback.
 - `@retry`: Automatically retries a function if it fails. Supports sync/async, backoff, jitter, and exception filtering.
 - `@cli_command`: Turns any function into a standalone CLI script with automatic argument parsing.
+
+### File System (`chutils.fs`)
+
+- `resolve_safe_path(path, base_dir)`: Safely resolves path and checks for Path Traversal attempts.
+- `ensure_dir(path)`: Ensures directory exists.
 
 ### Time & Dates (`chutils.time`)
 
@@ -335,6 +360,20 @@ Trace exactly where each configuration value comes from:
 ```bash
 chutils config debug
 ```
+
+### 6. AI-Readiness Linter
+
+Perform a static audit of your codebase to ensure it is optimized for AI developers and agents:
+
+```bash
+# Run linter on the current project
+chutils dev ai-lint
+
+# Run linter in strict mode with ignored paths
+chutils dev ai-lint --strict --ignore "temp/,build/"
+```
+
+See [docs/ai_lint.md](docs/ai_lint.md) for more details.
 
 ## License
 

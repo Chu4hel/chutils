@@ -43,6 +43,10 @@
   fallback-режима.
 - **🔄 Hot-Reload конфигурации:** Поддержка автоматического обновления настроек при изменении файлов `config.yml` или
   `config.local.yml` без перезапуска приложения (требуется `pip install chutils[watch]`).
+- **🛡️ Безопасные пути:** Предотвращение атак Path Traversal путем безопасного разрешения файловых путей относительно
+  базовой директории с помощью `resolve_safe_path()`.
+- **🤖 Линтер AI-готовности:** Проверка кодовой базы на готовность к работе с ИИ (строгая типизация, стандартизированные
+  docstrings, синхронизация API map) через команду `chutils dev ai-lint`.
 - **⚡ Поддержка Async:** Большинство функций имеют асинхронные версии (с префиксом `a`) для работы в неблокирующем
   режиме.
 - **🚀 Готовность к работе:** Просто установите и используйте.
@@ -246,6 +250,23 @@ key = secrets.get_secret("API_KEY")
 - Установите переменную `CH_DISABLE_KEYRING_WARNING=true`.
 - Или добавьте `disable_keyring: true` в секцию `secrets` в `config.yml`.
 
+### 4. Безопасное разрешение путей
+
+Безопасно разрешайте относительные и абсолютные пути относительно базовой директории, чтобы предотвратить уязвимости
+обхода директорий (Path Traversal):
+
+```python
+from chutils.fs import resolve_safe_path
+from chutils.exceptions import PathTraversalError
+
+try:
+    # Разрешает путь относительно базовой директории и проверяет его безопасность
+    safe_path = resolve_safe_path("user_file.txt", base_dir="./sandbox")
+    print(f"Безопасный абсолютный путь: {safe_path}")
+except PathTraversalError as e:
+    print(f"Обнаружен обход пути! Запрошен: {e.context.get('attempted_path')}")
+```
+
 ## Обзор API
 
 ### Конфигурация (`chutils.config`)
@@ -274,6 +295,11 @@ key = secrets.get_secret("API_KEY")
   fallback.
 - `@retry`: Автоматически повторяет выполнение функции при ошибках. Поддерживает синхронные и асинхронные функции,
   экспоненциальную задержку (backoff), случайный шум (jitter) и фильтрацию исключений.
+
+### Файловая система (`chutils.fs`)
+
+- `resolve_safe_path(path, base_dir)`: Безопасно разрешает путь и проверяет на попытки Path Traversal.
+- `ensure_dir(path)`: Гарантирует существование директории.
 
 #### Пример использования @retry:
 
@@ -346,6 +372,20 @@ chutils secrets delete API_KEY --service my_app
 ```bash
 chutils config debug
 ```
+
+### 6. Линтер AI-готовности
+
+Запуск статического аудита кодовой базы для проверки оптимизации под ИИ-разработчиков и агентов:
+
+```bash
+# Запуск линтера для текущего проекта
+chutils dev ai-lint
+
+# Запуск в строгом режиме с игнорированием путей
+chutils dev ai-lint --strict --ignore "temp/,build/"
+```
+
+Подробности см. в руководстве [docs/ai_lint.md](ai_lint.md).
 
 ## Лицензия
 
