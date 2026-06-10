@@ -92,3 +92,31 @@ def test_indexer_tree_construction(tmp_path):
     assert utils.type == "module"
     assert len(utils.symbols) == 1
     assert utils.symbols[0].name == "helper"
+
+
+def test_indexer_include_examples(tmp_path):
+    """Тест парсинга и включения few-shot примеров."""
+    pkg = tmp_path / "project"
+    pkg.mkdir()
+    (pkg / "__init__.py").write_text("", encoding="utf-8")
+
+    # Создаем docs/ai_examples/
+    docs_dir = pkg.parent / "docs" / "ai_examples"
+    docs_dir.mkdir(parents=True)
+
+    case_dir = docs_dir / "test_case"
+    case_dir.mkdir()
+
+    (case_dir / "good_pattern.py").write_text("# Good", encoding="utf-8")
+    (case_dir / "bad_pattern.py").write_text("# Bad", encoding="utf-8")
+    (case_dir / "README.md").write_text("Description", encoding="utf-8")
+
+    indexer = Indexer(str(pkg))
+    index = indexer.index(include_examples=True)
+
+    assert len(index.examples) == 1
+    ex = index.examples[0]
+    assert ex.name == "test_case"
+    assert ex.description == "Description"
+    assert ex.good_pattern == "# Good"
+    assert ex.bad_pattern == "# Bad"

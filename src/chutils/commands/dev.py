@@ -58,6 +58,11 @@ class DevCommand(BaseCommand):
             action="store_true",
             help="Не включать веса зависимостей в графе (только для --tree)"
         )
+        gen_parser.add_argument(
+            "--include-examples",
+            action="store_true",
+            help="Включить few-shot примеры (из docs/ai_examples/) в итоговый отчет"
+        )
         gen_parser.set_defaults(handler=self.handle_generate_context)
 
         # dev ai-lint
@@ -167,9 +172,34 @@ class DevCommand(BaseCommand):
         # Сортировка по имени
         api_data.sort(key=lambda x: x["name"])
 
+        examples = []
+        if args.include_examples:
+            try:
+                from chutils.dev.ast_indexer import Indexer
+                pkg_path = Path(chutils.__file__).parent
+                indexer = Indexer(str(pkg_path))
+                examples = indexer._collect_examples()
+            except Exception as e:
+                self.console.print(f"[dim red]Предупреждение: не удалось загрузить few-shot примеры: {e}[/dim red]")
+
         output_content = ""
         if args.format == "json":
-            output_content = json.dumps(api_data, indent=2, ensure_ascii=False)
+            if args.include_examples:
+                output_data = {
+                    "api": api_data,
+                    "examples": [
+                        {
+                            "name": ex.name,
+                            "description": ex.description,
+                            "good_pattern": ex.good_pattern,
+                            "bad_pattern": ex.bad_pattern
+                        }
+                        for ex in examples
+                    ]
+                }
+                output_content = json.dumps(output_data, indent=2, ensure_ascii=False)
+            else:
+                output_content = json.dumps(api_data, indent=2, ensure_ascii=False)
         else:
             # Markdown
             output_content = "# Public API Map: chutils\n\n"
@@ -178,6 +208,17 @@ class DevCommand(BaseCommand):
             for item in api_data:
                 sig = f"`{item['signature']}`" if item['signature'] else ""
                 output_content += f"| `{item['name']}` | {item['type']} | {sig} | {item['summary']} |\n"
+
+            if args.include_examples and examples:
+                output_content += "\n## Few-Shot Примеры (Образцы кода)\n"
+                for ex in examples:
+                    output_content += f"\n### Пример: {ex.name}\n"
+                    if ex.description:
+                        output_content += f"\n{ex.description}\n"
+                    if ex.good_pattern:
+                        output_content += f"\n#### Как надо (good_pattern.py)\n```python\n{ex.good_pattern}\n```\n"
+                    if ex.bad_pattern:
+                        output_content += f"\n#### Как не надо (bad_pattern.py)\n```python\n{ex.bad_pattern}\n```\n"
 
         if args.output:
             with open(args.output, "w", encoding="utf-8") as f:
@@ -210,7 +251,7 @@ class DevCommand(BaseCommand):
             pkg_path = Path(chutils.__file__).parent
 
             indexer = Indexer(str(pkg_path))
-            index = indexer.index()
+            index = indexer.index(include_examples=bool(args.include_examples))
 
             # Если указано --no-weights, обнуляем веса в графе
             if args.no_weights:

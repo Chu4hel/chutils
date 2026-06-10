@@ -106,13 +106,49 @@ class Indexer:
         except Exception:
             return set()
 
-    def index(self) -> ProjectIndex:
+    def _collect_examples(self) -> List[ProjectExample]:
+        """Служит для сбора few-shot примеров из папки docs/ai_examples/."""
+        examples: List[ProjectExample] = []
+        
+        examples_dir = None
+        if (self.project_root / "docs" / "ai_examples").exists():
+            examples_dir = self.project_root / "docs" / "ai_examples"
+        elif (self.project_root.parent / "docs" / "ai_examples").exists():
+            examples_dir = self.project_root.parent / "docs" / "ai_examples"
+            
+        if not examples_dir or not examples_dir.exists():
+            return examples
+
+        from .models import ProjectExample
+
+        for item in sorted(examples_dir.iterdir()):
+            if item.is_dir() and not item.name.startswith("."):
+                good_path = item / "good_pattern.py"
+                bad_path = item / "bad_pattern.py"
+                readme_path = item / "README.md"
+                
+                good_code = good_path.read_text(encoding="utf-8") if good_path.exists() else ""
+                bad_code = bad_path.read_text(encoding="utf-8") if bad_path.exists() else ""
+                readme_text = readme_path.read_text(encoding="utf-8") if readme_path.exists() else ""
+                
+                if good_code or bad_code or readme_text:
+                    examples.append(ProjectExample(
+                        name=item.name,
+                        description=readme_text,
+                        good_pattern=good_code,
+                        bad_pattern=bad_code
+                    ))
+        return examples
+
+    def index(self, include_examples: bool = False) -> ProjectIndex:
         """Запускает процесс индексации."""
         root_node = self._build_node_tree(self.root_path)
+        examples = self._collect_examples() if include_examples else []
         return ProjectIndex(
             project_name=self.root_path.name,
             root=root_node,
-            dependency_graph=self._graph
+            dependency_graph=self._graph,
+            examples=examples
         )
 
     def _get_layer(self, name: str, docstring: str) -> str:
