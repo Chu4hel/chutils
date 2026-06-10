@@ -42,6 +42,18 @@ def time_machine(monkeypatch):
                 return tm.time()
             return getattr(self._original, name)
 
+        def __getitem__(self, index):
+            if index == 8:  # stat.ST_MTIME
+                return tm.time()
+            return self._original[index]
+
+        def __len__(self):
+            return len(self._original)
+
+        def __iter__(self):
+            for i in range(len(self)):
+                yield self[i]
+
     def mock_stat(path, *args, **kwargs):
         # pyfakefs может не создать файл к моменту вызова stat, если мы только настраиваем логгер
         # но для теста это обычно не критично, если файл создается логгером.
