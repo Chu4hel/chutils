@@ -1,5 +1,6 @@
 import datetime
 import logging
+from enum import Enum
 from typing import Any, Optional, List, Dict, Type, TypeVar, Union, Tuple, Callable
 
 # Тип для Pydantic моделей
@@ -11,8 +12,12 @@ F = TypeVar("F", bound=Callable[..., Any])
 def init(base_dir: str) -> None: ...
 
 
-# --- config ---
-def get_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]: ...
+def get_config(
+        model: Optional[Type[T]] = None,
+        remote_url: Optional[str] = None,
+        remote_auth: Optional[Tuple[str, str]] = None,
+        polling_interval: Optional[int] = None,
+) -> Union[Dict[str, Any], T]: ...
 
 
 def get_config_value(section: str, key: str, fallback: Any = None, config: Optional[Dict[str, Any]] = None) -> Any: ...
@@ -108,12 +113,35 @@ class ChutilsLogger(logging.Logger):
     def add_mask(self, secret: str) -> None: ...
 
 
-def setup_logger(name: Optional[str] = None, level: Optional[Union[str, int]] = None,
-                 log_file: Optional[str] = None, config_section_name: Optional[str] = None,
-                 json_format: Optional[bool] = None, use_async: Optional[bool] = None) -> ChutilsLogger: ...
+def setup_logger(
+        name: str = 'app_logger',
+        config_section_name: Optional[str] = None,
+        log_level: Optional[LogLevel] = None,
+        log_file_name: Optional[str] = None,
+        force_reconfigure: bool = False,
+        rotation_type: Optional[str] = None,
+        max_bytes: Optional[int] = None,
+        compress: Optional[bool] = None,
+        backup_count: Optional[int] = None,
+        encoding: Optional[str] = None,
+        when: Optional[str] = None,
+        interval: Optional[int] = None,
+        utc: Optional[bool] = None,
+        at_time: Any = None,
+        json_format: Optional[bool] = None,
+        use_async: Optional[bool] = None,
+        max_queue_size: Optional[int] = None,
+) -> ChutilsLogger: ...
 
 
-class LogLevel: ...
+class LogLevel(str, Enum):
+    DEVDEBUG = "DEVDEBUG"
+    DEBUG = "DEBUG"
+    MEDIUMDEBUG = "MEDIUMDEBUG"
+    INFO = "INFO"
+    WARNING = "WARNING"
+    ERROR = "ERROR"
+    CRITICAL = "CRITICAL"
 
 
 def get_console(stderr: bool = False) -> Any: ...

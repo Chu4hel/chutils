@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 from typing import List, Union, Dict, Set, Optional
 
-from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge
+from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge, ProjectExample
 
 
 class Indexer:
@@ -109,28 +109,26 @@ class Indexer:
     def _collect_examples(self) -> List[ProjectExample]:
         """Служит для сбора few-shot примеров из папки docs/ai_examples/."""
         examples: List[ProjectExample] = []
-        
+
         examples_dir = None
         if (self.project_root / "docs" / "ai_examples").exists():
             examples_dir = self.project_root / "docs" / "ai_examples"
         elif (self.project_root.parent / "docs" / "ai_examples").exists():
             examples_dir = self.project_root.parent / "docs" / "ai_examples"
-            
+
         if not examples_dir or not examples_dir.exists():
             return examples
-
-        from .models import ProjectExample
 
         for item in sorted(examples_dir.iterdir()):
             if item.is_dir() and not item.name.startswith("."):
                 good_path = item / "good_pattern.py"
                 bad_path = item / "bad_pattern.py"
                 readme_path = item / "README.md"
-                
+
                 good_code = good_path.read_text(encoding="utf-8") if good_path.exists() else ""
                 bad_code = bad_path.read_text(encoding="utf-8") if bad_path.exists() else ""
                 readme_text = readme_path.read_text(encoding="utf-8") if readme_path.exists() else ""
-                
+
                 if good_code or bad_code or readme_text:
                     examples.append(ProjectExample(
                         name=item.name,
