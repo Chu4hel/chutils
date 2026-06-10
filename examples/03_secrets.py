@@ -26,14 +26,14 @@ def main() -> None:
     db_key = "example_db_password"
     secrets.save_secret(db_key, "ValueFromKeyring_123")
 
-    val: str = secrets.get_secret(db_key)
+    val = secrets.get_secret(db_key)
     print(f"Получен секрет из Keyring: {val}")
 
     print("\n--- 2. Использование .env файла ---")
     # SecretManager автоматически загружает .env из корня проекта.
     # Добавьте в ваш .env файл: DOTENV_SECRET="ValueFromDotEnv_456"
     # Это удобно для Docker-контейнеров или CI/CD.
-    dotenv_val: str = secrets.get_secret("DOTENV_SECRET")
+    dotenv_val = secrets.get_secret("DOTENV_SECRET")
     if dotenv_val:
         print(f"Получен секрет из .env: {dotenv_val}")
     else:
@@ -46,7 +46,7 @@ def main() -> None:
     secrets.save_secret(shared_key, "I_AM_FROM_KEYRING")
 
     # Предположим, в .env написано: SHARED_KEY="I_AM_FROM_DOTENV"
-    result: str = secrets.get_secret(shared_key)
+    result = secrets.get_secret(shared_key)
     print(f"Поиск ключа '{shared_key}': {result}")
     print("Результат: Keyring имеет высший приоритет над .env и переменными окружения.")
 

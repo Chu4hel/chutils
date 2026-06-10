@@ -18,7 +18,7 @@ logger = setup_logger("retry_example")
 # --- 1. Синхронный пример ---
 
 @retry(retries=3, delay=1.0, backoff=2.0, jitter=True)
-def unstable_sync_operation():
+def unstable_sync_operation() -> str:
     """Синхронная функция, которая иногда падает."""
     print("  [Sync] Попытка выполнения...")
     if random.random() < 0.7:
@@ -29,7 +29,7 @@ def unstable_sync_operation():
 # --- 2. Асинхронный пример ---
 
 @retry(retries=5, delay=0.5, backoff=1.5, exceptions=(ValueError,))
-async def unstable_async_operation():
+async def unstable_async_operation() -> str:
     """Асинхронная функция с фильтрацией исключений."""
     print("  [Async] Попытка выполнения...")
     if random.random() < 0.8:
@@ -37,7 +37,7 @@ async def unstable_async_operation():
     return "Асинхронный успех!"
 
 
-async def main():
+async def main() -> None:
     print("--- Тестирование синхронного декоратора ---")
     try:
         result = unstable_sync_operation()

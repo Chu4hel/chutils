@@ -46,13 +46,13 @@ def main() -> None:
 
     # 5. Пытаемся получить пароль пользователя из безопасного хранилища
     password_key = f"{db_user}_password"
-    db_password: str = secrets.get_secret(password_key)
+    db_password = secrets.get_secret(password_key) or ""
 
     if not db_password:
         logger.warning("Пароль для '%s' не найден в Keyring. Сохраняем тестовое значение...", db_user)
         # В реальной жизни здесь могла бы быть форма ввода пароля
         secrets.save_secret(password_key, "SecurePassword_999")
-        db_password = secrets.get_secret(password_key)
+        db_password = secrets.get_secret(password_key) or "SecurePassword_999"
 
     # 6. Выполняем "бизнес-логику" (функция обернута в @trace)
     # Обратите внимание: лог внутри connect_to_db будет иметь тот же trace_id, 

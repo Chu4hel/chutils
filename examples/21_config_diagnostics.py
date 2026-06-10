@@ -12,7 +12,7 @@ from chutils.config.manager import _cm
 logger = setup_logger()
 
 
-def main():
+def main() -> None:
     # 1. Включаем режим трассировки ДО загрузки конфигурации
     _cm.tracing_enabled = True
 

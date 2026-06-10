@@ -10,6 +10,7 @@ import json
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from typing import Any
 
 from chutils import get_config, setup_logger
 
@@ -21,7 +22,7 @@ class ConfigHandler(BaseHTTPRequestHandler):
     # Счетчик для имитации изменения конфига при опросе
     counter = 0
 
-    def do_GET(self):
+    def do_GET(self) -> None:
         ConfigHandler.counter += 1
 
         # Проверяем Basic Auth (admin:secret)
@@ -48,12 +49,12 @@ class ConfigHandler(BaseHTTPRequestHandler):
         }
         self.wfile.write(json.dumps(config_data).encode())
 
-    def log_message(self, format, *args):
+    def log_message(self, format: str, *args: Any) -> None:
         # Отключаем логи сервера в консоль для чистоты примера
         return
 
 
-def run_mock_server():
+def run_mock_server() -> None:
     server = HTTPServer(('127.0.0.1', 8888), ConfigHandler)
     server.serve_forever()
 
@@ -63,7 +64,7 @@ threading.Thread(target=run_mock_server, daemon=True).start()
 time.sleep(1)  # Даем серверу время запуститься
 
 
-def main():
+def main() -> None:
     logger.info("--- Шаг 1: Первая загрузка удаленного конфига ---")
 
     # Загружаем конфиг с удаленного URL

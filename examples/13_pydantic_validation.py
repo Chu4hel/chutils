@@ -6,7 +6,7 @@
 """
 
 import os
-from typing import List
+from typing import List, cast
 
 from pydantic import BaseModel, Field, ValidationError
 
@@ -28,7 +28,7 @@ class AppConfig(BaseModel):
     db: DbConfig = Field(alias="Database")
 
 
-def main():
+def main() -> None:
     # Создадим временный файл конфигурации для демонстрации
     config_content = """
 name: MySuperApp
@@ -44,12 +44,12 @@ Database:
         f.write(config_content)
 
     # Сбрасываем кэш, чтобы подхватить новый файл
-    config._cm._reset()
+    config._cm._reset()  # type: ignore[attr-defined]
 
     print("--- Валидация всего конфига ---")
     try:
         # Загружаем конфиг сразу в модель
-        app_cfg = get_config(model=AppConfig)
+        app_cfg = cast(AppConfig, get_config(model=AppConfig))
         print(f"Приложение: {app_cfg.app_name} v{app_cfg.version}")
         print(f"Разрешенные хосты: {', '.join(app_cfg.allowed_hosts)}")
         print(f"БД Хост: {app_cfg.db.host}")
@@ -58,7 +58,7 @@ Database:
 
     print("\n--- Валидация отдельной секции ---")
     try:
-        db_cfg = get_config_section("Database", model=DbConfig)
+        db_cfg = cast(DbConfig, get_config_section("Database", model=DbConfig))
         print(f"Секция БД провалидирована: {db_cfg}")
     except ValidationError as e:
         print(f"Ошибка в секции БД: {e}")
@@ -68,7 +68,7 @@ Database:
     with open("config.yml", "w", encoding="utf-8") as f:
         f.write(config_content.replace("port: 5432", "port: 'not-an-int'"))
 
-    config._cm._reset()
+    config._cm._reset()  # type: ignore[attr-defined]
 
     try:
         get_config(model=AppConfig)

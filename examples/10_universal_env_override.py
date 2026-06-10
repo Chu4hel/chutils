@@ -10,7 +10,7 @@ import os
 from chutils import get_config_value, get_config_int
 
 
-def run_example():
+def run_example() -> None:
     print("--- Демонстрация универсального переопределения через ENV ---")
 
     # 1. Значение по умолчанию (если ничего не установлено)

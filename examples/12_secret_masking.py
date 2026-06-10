@@ -7,14 +7,14 @@
 
 import os
 
-from chutils.logger import setup_logger
+from chutils.logger import setup_logger, LogLevel
 from chutils.secret_manager import SecretManager
 
 # 1. Настраиваем логгер
-logger = setup_logger("masking_example", log_level="INFO")
+logger = setup_logger("masking_example", log_level=LogLevel.INFO)  # Или log_level="INFO"
 
 
-def run_example():
+def run_example() -> None:
     print("--- Демонстрация маскирования секретов ---")
 
     # --- Сценарий 1: Ручное добавление маски ---

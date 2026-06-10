@@ -47,7 +47,7 @@ def main() -> None:
 
     try:
         # Сбрасываем кэш через менеджер, чтобы chutils заново нашел файлы в текущей папке
-        config._cm._reset()
+        config._cm._reset()  # type: ignore[attr-defined]
 
         print("--- Демонстрация слияния (Merge) конфигураций ---")
 

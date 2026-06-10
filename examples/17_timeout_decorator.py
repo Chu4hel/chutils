@@ -13,7 +13,7 @@ from chutils import timeout, retry
 
 # 1. Синхронная функция с таймаутом
 @timeout(1.0)
-def slow_sync_function():
+def slow_sync_function() -> str:
     print("Синхронная функция: начинаю долгую работу...")
     time.sleep(2.0)
     return "Работа завершена"
@@ -21,13 +21,13 @@ def slow_sync_function():
 
 # 2. Асинхронная функция с таймаутом и fallback
 @timeout(0.5, fallback="Стандартный результат")
-async def slow_async_function():
+async def slow_async_function() -> str:
     print("Асинхронная функция: начинаю долгую работу...")
     await asyncio.sleep(1.0)
     return "Работа завершена успешно"
 
 
-def main():
+def main() -> None:
     print("--- Пример 1: Синхронный таймаут (без fallback) ---")
     try:
         slow_sync_function()
@@ -43,7 +43,7 @@ def main():
 
     @retry(retries=2, delay=0.5)
     @timeout(0.5)
-    def fluky_slow_function():
+    def fluky_slow_function() -> str:
         nonlocal call_count
         call_count += 1
         print(f"Попытка {call_count}: начинаю работу...")

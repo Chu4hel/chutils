@@ -8,9 +8,10 @@
     pytest examples/25_testing_fixtures_example.py
 """
 
-from chutils import get_config_value, setup_logger, SecretManager, bind_context
-
 # Чтобы фикстуры были доступны, их нужно импортировать явно или через pytest_plugins
+from typing import Any
+
+from chutils import get_config_value, setup_logger, SecretManager, bind_context
 from chutils.testing.fixtures import (
     mock_chutils_config,
     mock_chutils_secrets,
@@ -18,7 +19,7 @@ from chutils.testing.fixtures import (
 )
 
 
-def my_business_logic():
+def my_business_logic() -> bool:
     """Пример бизнес-логики, которую мы будем тестировать."""
     logger = setup_logger("business")
 
@@ -41,7 +42,11 @@ def my_business_logic():
     return True
 
 
-def test_business_logic_success(mock_chutils_config, mock_chutils_secrets, capture_chutils_logs):
+def test_business_logic_success(
+        mock_chutils_config: Any,
+        mock_chutils_secrets: Any,
+        capture_chutils_logs: Any
+) -> None:
     """Тест успешного сценария с использованием всех фикстур."""
 
     # Настраиваем фейковый конфиг
@@ -66,7 +71,11 @@ def test_business_logic_success(mock_chutils_config, mock_chutils_secrets, captu
     assert "важной операции" in records[0].getMessage()
 
 
-def test_business_logic_missing_secret(mock_chutils_config, mock_chutils_secrets, capture_chutils_logs):
+def test_business_logic_missing_secret(
+        mock_chutils_config: Any,
+        mock_chutils_secrets: Any,
+        capture_chutils_logs: Any
+) -> None:
     """Тест сценария, когда секрет отсутствует."""
 
     # Секрет НЕ устанавливаем

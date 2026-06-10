@@ -21,14 +21,14 @@ from chutils import (
 logger = setup_logger()
 
 
-def my_callback():
+def my_callback() -> None:
     """Эта функция будет вызвана при изменении файла."""
     logger.info("--- Сигнал от watcher: Конфигурация изменилась! ---")
     new_val = get_config_value("App", "greeting", "Default Hello")
     logger.info(f"Обновленное приветствие: {new_val}")
 
 
-def main():
+def main() -> None:
     # Создаем временный файл конфигурации для теста
     config_path = Path("config.yml")
     config_content = """

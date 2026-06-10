@@ -22,12 +22,12 @@ from chutils import setup_logger, bind_context, clear_context
 logger = setup_logger("context_example")
 
 
-async def sub_task(name: str):
+async def sub_task(name: str) -> None:
     # Эта функция не принимает request_id явно, но он появится в логах автоматически!
     logger.info(f"Выполнение подзадачи для {name}")
 
 
-async def process_request(request_id: str, user: str):
+async def process_request(request_id: str, user: str) -> None:
     # 1. Привязываем метаданные к текущему асинхронному контексту.
     # Теперь каждый лог в этой корутине будет содержать эти данные.
     bind_context(req=request_id, user=user)
@@ -51,14 +51,14 @@ async def process_request(request_id: str, user: str):
     # Ожидаемый вывод: ... [] Контекст очищен
 
 
-def thread_worker(name: str):
+def thread_worker(name: str) -> None:
     # В потоках контекст тоже изолирован
     bind_context(thread=name)
     logger.info("Привет из отдельного потока")
     # Ожидаемый вывод: ... [thread=Worker-1] Привет из отдельного потока
 
 
-async def main():
+async def main() -> None:
     print("--- ДЕМОНСТРАЦИЯ АСИНХРОННОЙ ИЗОЛЯЦИИ ---")
     print("Запускаем две задачи параллельно. Метаданные не перемешаются.\n")
 
