@@ -299,6 +299,35 @@ class OptionalDependencyError(ChutilsException): ...
 class ChutilsTimeoutError(ChutilsException): ...
 
 
+class EventBusError(ChutilsException): ...
+
+
+class EventBusExceptionGroup(EventBusError):
+    exceptions: List[Exception]
+    def __init__(self, message: str, exceptions: List[Exception], **context: Any) -> None: ...
+
+
+# --- events ---
+class ErrorStrategy(str, Enum):
+    IGNORE = "ignore"
+    FAIL_FAST = "fail_fast"
+    COLLECT = "collect"
+
+
+class EventBus:
+    error_strategy: ErrorStrategy
+    def __init__(self, error_strategy: ErrorStrategy = ErrorStrategy.IGNORE) -> None: ...
+    def subscribe(self, event_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+    def unsubscribe(self, event_name: str, func: Callable[..., Any]) -> None: ...
+    def publish(self, event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None, **kwargs: Any) -> None: ...
+    async def publish_async(self, event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None, **kwargs: Any) -> None: ...
+
+
+def subscribe(event_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+def publish(event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None, **kwargs: Any) -> None: ...
+async def publish_async(event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None, **kwargs: Any) -> None: ...
+
+
 # --- Submodules ---
 from . import config as config
 from . import logger as logger
@@ -311,3 +340,4 @@ from . import features as features
 from . import time as time
 from . import tracing as tracing
 from . import dev as dev
+from . import events as events

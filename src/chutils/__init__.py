@@ -52,6 +52,7 @@ _LAZY_MAPPING = {
     'tracing': ('.tracing', None),
     'testing': ('.testing', None),
     'dev': ('.dev', None),
+    'events': ('.events', None),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -157,6 +158,15 @@ _LAZY_MAPPING = {
     'OptionalDependencyError': ('.exceptions', 'OptionalDependencyError'),
     'ChutilsTimeoutError': ('.exceptions', 'ChutilsTimeoutError'),
     'CacheError': ('.exceptions', 'CacheError'),
+    'EventBusError': ('.exceptions', 'EventBusError'),
+    'EventBusExceptionGroup': ('.exceptions', 'EventBusExceptionGroup'),
+
+    # events
+    'subscribe': ('.events', 'subscribe'),
+    'publish': ('.events', 'publish'),
+    'publish_async': ('.events', 'publish_async'),
+    'ErrorStrategy': ('.events', 'ErrorStrategy'),
+    'EventBus': ('.events', 'EventBus'),
 }
 
 
