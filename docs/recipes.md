@@ -901,3 +901,78 @@ def handle_user_update(event: UserEvent):
 # Публикация Pydantic-модели
 publish("user_updated", UserEvent(user_id=10, role="admin"))
 ```
+
+## 18. Планировщик фоновых задач (Lightweight Task Scheduler)
+
+Модуль `chutils.tasks` предоставляет планировщик для выполнения периодических фоновых задач. Он поддерживает как
+синхронные, так и асинхронные обработчики, отслеживает перекрытия (overlapping), предоставляет стратегии обработки
+ошибок и автоматически интегрируется с Graceful Shutdown (`chutils.lifecycle`).
+
+### Простой пример
+
+Используйте декоратор `@periodic_task` для регистрации задач и функцию `start_scheduler()` для их запуска в Event Loop.
+
+```python
+import asyncio
+import time
+from chutils import periodic_task, start_scheduler, setup_graceful_shutdown
+from chutils.tasks import ErrorStrategy
+
+
+# 1. Асинхронная задача запускается сразу при старте планировщика
+@periodic_task(interval_seconds=5, run_immediately=True, name="async_logger")
+async def log_status():
+    print("Статус приложения в норме... (асинхронно)")
+
+
+# 2. Синхронная задача выполняется в пуле потоков каждые 10 секунд
+@periodic_task(interval_seconds=10, run_immediately=False, name="sync_cleaner")
+def cleanup_temp_files():
+    print("Очистка временных файлов... (синхронно)")
+    time.sleep(1.0)
+
+
+async def main():
+    # Настраиваем graceful shutdown для остановки планировщика при Ctrl+C
+    setup_graceful_shutdown()
+
+    # Запускаем планировщик фоновых задач
+    start_scheduler()
+
+    # Имитируем работу приложения
+    await asyncio.sleep(30.0)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### Контроль перекрытия задач (Overlapping)
+
+* **По умолчанию (`overlap=False`)**: Если предыдущий запуск задачи еще не завершился к моменту наступления следующего
+  интервала, запуск пропускается (откладывается до следующего тика).
+* **Параллельный запуск (`overlap=True`)**: Задача запускается строго по интервалу, независимо от того, завершились ли
+  предыдущие запуски.
+
+```python
+# Эта задача будет запускаться каждые 2 секунды параллельно, не дожидаясь окончания
+@periodic_task(interval_seconds=2, overlap=True)
+async def parallel_task():
+    await asyncio.sleep(5.0)
+```
+
+### Стратегии обработки ошибок (ErrorStrategy)
+
+В случае сбоя задачи вы можете выбрать одну из трех стратегий:
+
+1. `IGNORE` (по умолчанию) — залогировать ошибку в `chutils.logger` и продолжить выполнение по расписанию.
+2. `STOP_TASK` — исключить сбойную задачу из расписания планировщика.
+3. `STOP_SCHEDULER` — остановить весь планировщик.
+
+```python
+@periodic_task(interval_seconds=5, error_strategy=ErrorStrategy.STOP_TASK)
+def fragile_task():
+    raise RuntimeError("Неустранимая ошибка в задаче")
+```
+
+```

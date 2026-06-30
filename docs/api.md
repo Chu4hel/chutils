@@ -153,11 +153,23 @@ members:
 ::: chutils.events
 options:
 members:
+
 - EventBus
 - ErrorStrategy
 - subscribe
 - publish
 - publish_async
+
+## Модуль `tasks` (Планировщик фоновых задач)
+
+::: chutils.tasks
+options:
+members:
+
+- periodic_task
+- start_scheduler
+- stop_scheduler
+- ErrorStrategy
 
 ## Исключения
 
@@ -175,6 +187,7 @@ members:
 ::: chutils.dev
 options:
 members:
+
 - Rule
 - LintResult
 - LinterEngine

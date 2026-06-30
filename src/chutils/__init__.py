@@ -53,6 +53,7 @@ _LAZY_MAPPING = {
     'testing': ('.testing', None),
     'dev': ('.dev', None),
     'events': ('.events', None),
+    'tasks': ('.tasks', None),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -168,6 +169,11 @@ _LAZY_MAPPING = {
     'publish_async': ('.events', 'publish_async'),
     'ErrorStrategy': ('.events', 'ErrorStrategy'),
     'EventBus': ('.events', 'EventBus'),
+
+    # tasks
+    'periodic_task': ('.tasks', 'periodic_task'),
+    'start_scheduler': ('.tasks', 'start_scheduler'),
+    'stop_scheduler': ('.tasks', 'stop_scheduler'),
 }
 
 

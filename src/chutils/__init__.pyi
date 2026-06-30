@@ -348,6 +348,22 @@ async def publish_async(event_name: str, *args: Any, error_strategy: Optional[Er
                         **kwargs: Any) -> None: ...
 
 
+# --- tasks ---
+def periodic_task(
+        interval_seconds: int,
+        run_immediately: bool = False,
+        overlap: bool = False,
+        error_strategy: Any = ...,
+        name: Optional[str] = None,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+
+
+def start_scheduler() -> None: ...
+
+
+async def stop_scheduler() -> None: ...
+
+
 # --- Submodules ---
 from . import config as config
 from . import logger as logger
@@ -361,3 +377,4 @@ from . import time as time
 from . import tracing as tracing
 from . import dev as dev
 from . import events as events
+from . import tasks as tasks
