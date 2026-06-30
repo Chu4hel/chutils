@@ -76,6 +76,40 @@ AuditLogger:
 audit_logger = setup_logger("audit", config_section_name="AuditLogger")
 ```
 
+### Предотвращение конфликтов конфигурации логов (pydantic-settings)
+
+> [!WARNING]
+> Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings` для чтения конфигурации (
+> например, чтение переменной окружения `LOG_LEVEL` или файла `.env`), вызов `setup_logger_from_config()` без аргументов
+> может привести к неожиданному поведению.
+>
+> `chutils` прочитает уровень логирования из `config.yml` (секция `Logging.log_level`), полностью игнорируя настройки
+> вашей внешней Pydantic-модели. В результате значение уровня логов в приложении и в логгере может рассинхронизироваться.
+
+#### Решение
+
+Для исключения рассинхронизации явно передавайте уровень логирования и другие параметры из вашего объекта конфигурации в
+функцию `setup_logger()`:
+
+```python
+from pydantic_settings import BaseSettings
+from chutils import setup_logger
+
+
+class AppSettings(BaseSettings):
+    log_level: str = "INFO"
+
+    class Config:
+        env_file = ".env"
+
+
+# Инициализируем настройки приложения (читает .env и системное окружение)
+settings = AppSettings()
+
+# Явно настраиваем логгер на основе настроек приложения, а не config.yml
+logger = setup_logger(log_level=settings.log_level)
+```
+
 ### Контекстное логирование в FastAPI / asyncio
 
 Если вы хотите автоматически добавлять ID запроса во все логи без передачи его через аргументы функций.
