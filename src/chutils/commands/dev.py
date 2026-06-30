@@ -63,6 +63,13 @@ class DevCommand(BaseCommand):
             action="store_true",
             help="Включить few-shot примеры (из docs/ai_examples/) в итоговый отчет"
         )
+        gen_parser.add_argument(
+            "--project",
+            nargs="?",
+            const=".",
+            default=None,
+            help="Путь к целевому проекту для сканирования (если не указан, сканируется сама библиотека chutils)"
+        )
         gen_parser.set_defaults(handler=self.handle_generate_context)
 
         # dev ai-lint
@@ -107,6 +114,26 @@ class DevCommand(BaseCommand):
         """Вызывается, если подкоманда не указана."""
         self.console.print("Используйте 'chutils dev --help' для просмотра доступных подкоманд.")
 
+    def _collect_symbols_recursive(self, node: Any, current_prefix: str = "") -> list[dict[str, Any]]:
+        symbols_data = []
+        module_name = current_prefix + node.name if current_prefix else node.name
+
+        for sym in node.symbols:
+            if sym.layer != "private" and not sym.name.startswith("_"):
+                symbols_data.append({
+                    "name": f"{module_name}.{sym.name}",
+                    "type": sym.type,
+                    "signature": sym.signature or "",
+                    "summary": sym.summary,
+                    "full_doc": sym.docstring or ""
+                })
+
+        for child in node.children:
+            prefix = f"{module_name}."
+            symbols_data.extend(self._collect_symbols_recursive(child, prefix))
+
+        return symbols_data
+
     def handle_generate_context(self, args: argparse.Namespace) -> None:
         """Обработчик генерации контекста."""
         # Используем stderr для статусных сообщений, чтобы не портить stdout (особенно для JSON)
@@ -117,70 +144,86 @@ class DevCommand(BaseCommand):
             return
 
         api_data: list[dict[str, Any]] = []
+        examples = []
+        project_name = "chutils"
 
-        # Получаем список всех публичных атрибутов chutils
-        public_attrs = [attr for attr in dir(chutils) if not attr.startswith('_')]
-
-        for attr_name in public_attrs:
+        if args.project:
+            # Сканируем внешний проект через статический AST-анализ
+            project_path = Path(args.project).resolve()
+            project_name = project_path.name
             try:
-                obj = getattr(chutils, attr_name)
-                obj_type = "module"
-                signature = ""
-                doc = inspect.getdoc(obj) or ""
+                from chutils.dev.ast_indexer import Indexer
+                indexer = Indexer(str(project_path))
+                index = indexer.index(include_examples=bool(args.include_examples))
 
-                # Очистка мусорной документации для констант примитивных типов
-                if not inspect.isclass(obj) and not inspect.isfunction(obj) and not inspect.ismodule(obj):
-                    if isinstance(obj, (bool, int, float, str, type(None))):
-                        # Если doc совпадает с docstring типа, значит это автогенерированный мусор
-                        if doc == inspect.getdoc(type(obj)):
-                            doc = ""
-
-                summary = doc.split('\n')[0] if doc else ""
-
-                if inspect.isfunction(obj):
-                    obj_type = "function"
-                    try:
-                        signature = str(inspect.signature(obj))
-                    except ValueError:
-                        signature = "(...)"
-                elif inspect.isclass(obj):
-                    obj_type = "class"
-                    try:
-                        signature = str(inspect.signature(obj.__init__))
-                        if signature == "(self, /)":
-                            signature = "()"
-                    except (ValueError, TypeError, AttributeError):
-                        signature = "(...)"
-                elif inspect.ismodule(obj):
-                    obj_type = "module"
-                else:
-                    obj_type = "constant"
-
-                import re
-                signature = re.sub(r' at 0x[0-9a-fA-F]+', '', signature)
-
-                api_data.append({
-                    "name": attr_name,
-                    "type": obj_type,
-                    "signature": signature,
-                    "summary": summary,
-                    "full_doc": doc
-                })
+                api_data = self._collect_symbols_recursive(index.root)
+                examples = index.examples
             except Exception as e:
-                self.console.print(f"[dim red]Ошибка при анализе {attr_name}: {e}[/dim red]")
+                self.console.print(f"[bold red]Ошибка при AST-анализе проекта {project_path}: {e}[/bold red]")
+                raise SystemExit(1)
+        else:
+            # Получаем список всех публичных атрибутов chutils
+            public_attrs = [attr for attr in dir(chutils) if not attr.startswith('_')]
+
+            for attr_name in public_attrs:
+                try:
+                    obj = getattr(chutils, attr_name)
+                    obj_type = "module"
+                    signature = ""
+                    doc = inspect.getdoc(obj) or ""
+
+                    # Очистка мусорной документации для констант примитивных типов
+                    if not inspect.isclass(obj) and not inspect.isfunction(obj) and not inspect.ismodule(obj):
+                        if isinstance(obj, (bool, int, float, str, type(None))):
+                            # Если doc совпадает с docstring типа, значит это автогенерированный мусор
+                            if doc == inspect.getdoc(type(obj)):
+                                doc = ""
+
+                    summary = doc.split('\n')[0] if doc else ""
+
+                    if inspect.isfunction(obj):
+                        obj_type = "function"
+                        try:
+                            signature = str(inspect.signature(obj))
+                        except ValueError:
+                            signature = "(...)"
+                    elif inspect.isclass(obj):
+                        obj_type = "class"
+                        try:
+                            signature = str(inspect.signature(obj.__init__))
+                            if signature == "(self, /)":
+                                signature = "()"
+                        except (ValueError, TypeError, AttributeError):
+                            signature = "(...)"
+                    elif inspect.ismodule(obj):
+                        obj_type = "module"
+                    else:
+                        obj_type = "constant"
+
+                    import re
+                    signature = re.sub(r' at 0x[0-9a-fA-F]+', '', signature)
+
+                    api_data.append({
+                        "name": attr_name,
+                        "type": obj_type,
+                        "signature": signature,
+                        "summary": summary,
+                        "full_doc": doc
+                    })
+                except Exception as e:
+                    self.console.print(f"[dim red]Ошибка при анализе {attr_name}: {e}[/dim red]")
+
+            if args.include_examples:
+                try:
+                    from chutils.dev.ast_indexer import Indexer
+                    pkg_path = Path(chutils.__file__).parent
+                    indexer = Indexer(str(pkg_path))
+                    examples = indexer._collect_examples()
+                except Exception as e:
+                    self.console.print(f"[dim red]Предупреждение: не удалось загрузить few-shot примеры: {e}[/dim red]")
 
         # Сортировка по имени
         api_data.sort(key=lambda x: x["name"])
-
-        examples = []
-        if args.include_examples:
-            try:
-                from chutils.dev.ast_indexer import Indexer
-                pkg_path = Path(chutils.__file__).parent
-                indexer = Indexer(str(pkg_path))
-                examples = indexer._collect_examples()
-            except Exception as e:
-                self.console.print(f"[dim red]Предупреждение: не удалось загрузить few-shot примеры: {e}[/dim red]")
 
         output_content = ""
         if args.format == "json":
@@ -202,7 +245,7 @@ class DevCommand(BaseCommand):
                 output_content = json.dumps(api_data, indent=2, ensure_ascii=False)
         else:
             # Markdown
-            output_content = "# Public API Map: chutils\n\n"
+            output_content = f"# Public API Map: {project_name}\n\n"
             output_content += "| Name | Type | Signature | Description |\n"
             output_content += "| :--- | :--- | :--- | :--- |\n"
             for item in api_data:
@@ -247,10 +290,12 @@ class DevCommand(BaseCommand):
         from chutils.dev.ast_indexer import Indexer
 
         try:
-            # Находим путь к пакету chutils
-            pkg_path = Path(chutils.__file__).parent
+            if args.project:
+                project_path = Path(args.project).resolve()
+            else:
+                project_path = Path(chutils.__file__).parent
 
-            indexer = Indexer(str(pkg_path))
+            indexer = Indexer(str(project_path))
             index = indexer.index(include_examples=bool(args.include_examples))
 
             # Если указано --no-weights, обнуляем веса в графе
