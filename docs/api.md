@@ -147,6 +147,7 @@ members:
 - retry
 - log_function_details
 - timeout
+- rate_limit
 
 ## Модуль `events` (Шина событий)
 

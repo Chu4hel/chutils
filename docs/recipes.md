@@ -975,4 +975,93 @@ def fragile_task():
     raise RuntimeError("Неустранимая ошибка в задаче")
 ```
 
+## 19. Ограничение частоты вызовов (Rate Limiting / Throttling)
+
+Декоратор `@rate_limit` из модуля `chutils.decorators` позволяет ограничить частоту выполнения синхронных и асинхронных
+функций, обеспечивая защиту от перегрузки и соблюдение лимитов внешних API.
+
+### Базовое использование (Fail Fast)
+
+По умолчанию декоратор работает в режиме `wait=False` (Fail Fast) с использованием алгоритма Token Bucket. При
+превышении лимита мгновенно выбрасывается исключение `RateLimitExceededError`.
+
+```python
+from chutils import rate_limit, RateLimitExceededError
+
+
+# Разрешено максимум 3 вызова за 5 секунд
+@rate_limit(max_calls=3, period=5.0)
+def call_api():
+    print("API вызван успешно")
+
+
+for _ in range(3):
+    call_api()
+
+try:
+    call_api()  # Четвертый вызов упадет
+except RateLimitExceededError:
+    print("Превышен лимит запросов!")
+```
+
+### Сглаживание и ожидание (Wait)
+
+Если передан флаг `wait=True`, выполнение функции блокируется на время, необходимое для восстановления лимита (для
+синхронных функций используется `time.sleep`, для асинхронных — `asyncio.sleep`).
+
+```python
+import asyncio
+from chutils import rate_limit
+
+
+# Разрешено максимум 2 вызова в секунду. Лишние вызовы будут ожидать очереди
+@rate_limit(max_calls=2, period=1.0, wait=True)
+async def process_item(item_id: int):
+    print(f"Обработка элемента {item_id}")
+
+
+async def main():
+    # Запустим 5 задач параллельно. Они будут выполняться пачками по 2 штуки в секунду
+    tasks = [process_item(i) for i in range(5)]
+    await asyncio.gather(*tasks)
+```
+
+### Раздельные лимиты по ключам (key_func)
+
+По умолчанию лимит действует глобально на всю функцию. Вы можете настроить индивидуальные лимиты (например, на каждого
+пользователя или IP) с помощью функции `key_func`.
+
+```python
+from chutils import rate_limit
+
+
+# Лимит: 1 вызов в секунду на каждого конкретного пользователя
+@rate_limit(
+    max_calls=1,
+    period=1.0,
+    key_func=lambda user_id, *args, **kwargs: f"user_{user_id}"
+)
+def send_notification(user_id: int, message: str):
+    print(f"Уведомление отправлено пользователю {user_id}")
+
+
+send_notification(1, "Привет!")  # OK
+send_notification(2, "Привет!")  # OK для другого пользователя
+# send_notification(1, "Еще раз привет")  # Упадет, превышен лимит для user_1
+```
+
+### Алгоритмы лимитирования (strategy)
+
+Поддерживаются две стратегии:
+
+1. `token_bucket` (по умолчанию) — алгоритм маркерной корзины. Разрешает кратковременные всплески нагрузки (до
+   `max_calls` одновременно), после чего скорость ограничивается.
+2. `leaky_bucket` — алгоритм дырявого ведра. Обеспечивает строгое сглаживание нагрузки с равномерной задержкой между
+   вызовами.
+
+```python
+# Строгий Leaky Bucket: вызовы будут распределены равномерно
+@rate_limit(max_calls=60, period=60.0, strategy="leaky_bucket", wait=True)
+def send_email():
+    pass
 ```
