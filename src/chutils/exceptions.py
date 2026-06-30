@@ -149,3 +149,10 @@ class EventBusExceptionGroup(EventBusError):
         base_str = super().__str__()
         errors_str = "\n".join(f"  - {type(e).__name__}: {e}" for e in self.exceptions)
         return f"{base_str}\nВозникшие ошибки:\n{errors_str}"
+
+
+# --- Rate Limiting Exceptions ---
+
+class RateLimitExceededError(ChutilsException):
+    """Ошибка: превышен лимит частоты вызовов (Rate Limit Exceeded)."""
+    pass
