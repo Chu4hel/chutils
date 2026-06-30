@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import asyncio
+import functools
 import logging
 import os
 from pathlib import Path
@@ -225,6 +226,16 @@ def get_config(
     return config_data
 
 
+_config_async_lock: Optional[asyncio.Lock] = None
+
+
+def _get_config_async_lock() -> asyncio.Lock:
+    global _config_async_lock
+    if _config_async_lock is None:
+        _config_async_lock = asyncio.Lock()
+    return _config_async_lock
+
+
 async def aget_config(model: Optional[Type[T]] = None) -> Union[JSONDict, T]:
     """
     Асинхронная версия get_config.
@@ -235,7 +246,9 @@ async def aget_config(model: Optional[Type[T]] = None) -> Union[JSONDict, T]:
     Returns:
         Словарь конфигурации или экземпляр Pydantic модели.
     """
-    return await asyncio.to_thread(get_config, model=model)
+    async with _get_config_async_lock():
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(None, functools.partial(get_config, model=model))
 
 
 def save_config_value(
@@ -342,4 +355,9 @@ async def asave_config_value(
         True: Если значение было успешно обновлено и сохранено.
         False: Если файл не найден, или произошла ошибка.
     """
-    return await asyncio.to_thread(save_config_value, section, key, value, cfg_file, save_to_local, notify)
+    async with _get_config_async_lock():
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(
+            None,
+            functools.partial(save_config_value, section, key, value, cfg_file, save_to_local, notify)
+        )

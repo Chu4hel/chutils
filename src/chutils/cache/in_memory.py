@@ -1,3 +1,4 @@
+import asyncio
 import threading
 import time
 from typing import Dict, Optional, Tuple, TypeVar
@@ -18,6 +19,12 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
         # Структура: {key: (value, expires_at)}
         self._cache: Dict[str, Tuple[T, Optional[float]]] = {}
         self._lock = threading.Lock()
+        self._async_lock: Optional[asyncio.Lock] = None
+
+    def _get_async_lock(self) -> asyncio.Lock:
+        if self._async_lock is None:
+            self._async_lock = asyncio.Lock()
+        return self._async_lock
 
     def get(self, key: str) -> Optional[T]:
         """Получить значение. Если просрочено - удаляет его."""
@@ -70,3 +77,35 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
             _, expires_at = self._cache[k]
             if expires_at is not None and expires_at < now:
                 del self._cache[k]
+
+    async def aget(self, key: str) -> Optional[T]:
+        """Асинхронное получение значения."""
+        async with self._get_async_lock():
+            with self._lock:
+                return self._get_without_lock(key)
+
+    async def aset(self, key: str, value: T, ttl: Optional[int] = None) -> None:
+        """Асинхронное сохранение значения."""
+        expires_at = time.time() + ttl if ttl is not None else None
+        async with self._get_async_lock():
+            with self._lock:
+                self._cache[key] = (value, expires_at)
+                self._lazy_evict()
+
+    async def adelete(self, key: str) -> None:
+        """Асинхронное удаление значения."""
+        async with self._get_async_lock():
+            with self._lock:
+                self._cache.pop(key, None)
+
+    async def aexists(self, key: str) -> bool:
+        """Асинхронная проверка наличия ключа."""
+        async with self._get_async_lock():
+            with self._lock:
+                return self._get_without_lock(key) is not None
+
+    async def aclear(self) -> None:
+        """Асинхронная очистка кэша."""
+        async with self._get_async_lock():
+            with self._lock:
+                self._cache.clear()
