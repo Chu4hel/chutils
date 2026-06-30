@@ -141,6 +141,7 @@ _LAZY_MAPPING = {
     'log_function_details': ('.decorators', 'log_function_details'),
     'retry': ('.decorators', 'retry'),
     'timeout': ('.decorators', 'timeout'),
+    'rate_limit': ('.decorators', 'rate_limit'),
 
     # tracing
     'trace': ('.tracing', 'trace'),
@@ -159,6 +160,7 @@ _LAZY_MAPPING = {
     'WatcherInitializationError': ('.exceptions', 'WatcherInitializationError'),
     'OptionalDependencyError': ('.exceptions', 'OptionalDependencyError'),
     'ChutilsTimeoutError': ('.exceptions', 'ChutilsTimeoutError'),
+    'RateLimitExceededError': ('.exceptions', 'RateLimitExceededError'),
     'CacheError': ('.exceptions', 'CacheError'),
     'EventBusError': ('.exceptions', 'EventBusError'),
     'EventBusExceptionGroup': ('.exceptions', 'EventBusExceptionGroup'),

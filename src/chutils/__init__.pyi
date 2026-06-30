@@ -269,6 +269,9 @@ def retry(retries: int = 3, delay: float = 1.0, backoff: float = 2.0, jitter: bo
 def timeout(seconds: float, fallback: Any = ...) -> Callable[[F], F]: ...
 
 
+def rate_limit(max_calls: int, period: float, strategy: str = "token_bucket", wait: bool = False, key_func: Optional[Callable[..., str]] = None) -> Callable[[F], F]: ...
+
+
 # --- exceptions ---
 class ChutilsException(Exception):
     context: Dict[str, Any]
@@ -313,6 +316,9 @@ class EventBusExceptionGroup(EventBusError):
     exceptions: List[Exception]
 
     def __init__(self, message: str, exceptions: List[Exception], **context: Any) -> None: ...
+
+
+class RateLimitExceededError(ChutilsException): ...
 
 
 # --- events ---
