@@ -88,6 +88,7 @@ _LAZY_MAPPING = {
 
     # logger
     'setup_logger': ('.logger', 'setup_logger'),
+    'setup_logger_from_config': ('.logger', 'setup_logger_from_config'),
     'ChutilsLogger': ('.logger', 'ChutilsLogger'),
     'LogLevel': ('.logger', 'LogLevel'),
     'SecretMaskingFilter': ('.logger', 'SecretMaskingFilter'),

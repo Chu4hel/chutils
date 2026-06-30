@@ -134,6 +134,13 @@ def setup_logger(
 ) -> ChutilsLogger: ...
 
 
+def setup_logger_from_config(
+        name: str = 'app_logger',
+        config_section_name: Optional[str] = None,
+        force_reconfigure: bool = False,
+) -> ChutilsLogger: ...
+
+
 class LogLevel(str, Enum):
     DEVDEBUG = "DEVDEBUG"
     DEBUG = "DEBUG"
@@ -304,6 +311,7 @@ class EventBusError(ChutilsException): ...
 
 class EventBusExceptionGroup(EventBusError):
     exceptions: List[Exception]
+
     def __init__(self, message: str, exceptions: List[Exception], **context: Any) -> None: ...
 
 
@@ -316,16 +324,28 @@ class ErrorStrategy(str, Enum):
 
 class EventBus:
     error_strategy: ErrorStrategy
+
     def __init__(self, error_strategy: ErrorStrategy = ErrorStrategy.IGNORE) -> None: ...
+
     def subscribe(self, event_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+
     def unsubscribe(self, event_name: str, func: Callable[..., Any]) -> None: ...
-    def publish(self, event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None, **kwargs: Any) -> None: ...
-    async def publish_async(self, event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None, **kwargs: Any) -> None: ...
+
+    def publish(self, event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None,
+                **kwargs: Any) -> None: ...
+
+    async def publish_async(self, event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None,
+                            **kwargs: Any) -> None: ...
 
 
 def subscribe(event_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+
+
 def publish(event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None, **kwargs: Any) -> None: ...
-async def publish_async(event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None, **kwargs: Any) -> None: ...
+
+
+async def publish_async(event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None,
+                        **kwargs: Any) -> None: ...
 
 
 # --- Submodules ---

@@ -164,10 +164,10 @@ To use this feature, install `watchdog`:
 1. Configure and use the logger:
 
    ```python
-   from chutils import setup_logger, ChutilsLogger
+   from chutils import setup_logger_from_config, ChutilsLogger
 
    # Automatically reads settings from [Logging] section in config.yml
-   logger: ChutilsLogger = setup_logger()
+   logger: ChutilsLogger = setup_logger_from_config()
 
    logger.info("Application started.")
    logger.devdebug("Deep debug message (level 9).")

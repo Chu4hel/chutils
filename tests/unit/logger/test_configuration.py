@@ -1,6 +1,7 @@
 import logging
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from chutils.logger import setup_logger, LogLevel
 
@@ -100,3 +101,20 @@ def test_setup_logger_invalid_kwargs(reset_chutils_state):
 
     with pytest.raises(TypeError, match="setup_logger\\(\\) got an unexpected keyword argument 'unknown_arg'"):
         setup_logger("test_invalid_kwargs", unknown_arg=True)
+
+
+def test_setup_logger_from_config(project_with_marker, reset_chutils_state):
+    """Проверяет корректность работы setup_logger_from_config()."""
+    from chutils.logger import setup_logger_from_config
+    fs, project_root = project_with_marker
+
+    config_content = """
+    Logging:
+      log_level: WARNING
+      log_file_name: test_from_config.log
+    """
+    fs.create_file(f"{project_root}/config.yml", contents=config_content)
+
+    logger = setup_logger_from_config("logger_from_config", force_reconfigure=True)
+    assert logger.name == "logger_from_config"
+    assert logger.level == logging.WARNING

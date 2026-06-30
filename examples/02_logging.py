@@ -5,16 +5,18 @@
 кастомными уровнями (DEVDEBUG, MEDIUMDEBUG) и автоматическую ротацию файлов.
 """
 
-from chutils import setup_logger, ChutilsLogger
+from chutils import setup_logger_from_config, ChutilsLogger
 
 
 def main() -> None:
     """
     Демонстрирует использование различных уровней логирования и ротации.
     """
-    # Инициализация логгера. Настройки берутся из секции [Logging] в config.yml.
-    # В нашем примере config.yml настроена ротация по размеру (1МБ) со сжатием.
-    logger: ChutilsLogger = setup_logger("example_logger")
+    # Инициализация логгера из конфигурации.
+    # Так как мы используем настройки из секции [Logging] в config.yml без переопределения параметров в коде,
+    # мы вызываем удобную обертку setup_logger_from_config().
+    # Настройки (уровень, ротация, сжатие и т.д.) будут взяты автоматически.
+    logger: ChutilsLogger = setup_logger_from_config("example_logger")
 
     logger.info("Это информационное сообщение.")
     logger.warning("Это предупреждение.")
