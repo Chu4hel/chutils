@@ -1,4 +1,5 @@
 import logging
+import pytest
 from unittest.mock import patch
 
 from chutils.logger import setup_logger, LogLevel
@@ -90,3 +91,12 @@ def test_kwargs_passthrough(project_with_marker, reset_chutils_state):
         assert call_kwargs.get('delay') is True
         assert call_kwargs.get('mode') == 'w'
         assert call_kwargs.get('errors') == 'ignore'
+
+
+def test_setup_logger_invalid_kwargs(reset_chutils_state):
+    """Проверяет, что setup_logger выбрасывает TypeError при передаче невалидных параметров."""
+    with pytest.raises(TypeError, match="setup_logger\\(\\) got an unexpected keyword argument 'level'"):
+        setup_logger("test_invalid_kwargs", level="DEBUG")
+
+    with pytest.raises(TypeError, match="setup_logger\\(\\) got an unexpected keyword argument 'unknown_arg'"):
+        setup_logger("test_invalid_kwargs", unknown_arg=True)

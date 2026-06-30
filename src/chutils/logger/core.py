@@ -156,6 +156,12 @@ def setup_logger(
     Returns:
         Настроенный экземпляр ChutilsLogger.
     """
+    valid_file_handler_kwargs = {'mode', 'delay', 'errors'}
+    invalid_kwargs = set(kwargs.keys()) - valid_file_handler_kwargs
+    if invalid_kwargs:
+        bad_arg = sorted(invalid_kwargs)[0]
+        raise TypeError(f"setup_logger() got an unexpected keyword argument {bad_arg!r}")
+
     from .internal.builder import LoggerBuilder
     builder = LoggerBuilder(name, config_section_name, **kwargs)
 
