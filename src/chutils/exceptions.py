@@ -126,3 +126,26 @@ class PathTraversalError(FileSystemError):
 class CacheError(ChutilsException):
     """Общая ошибка кэширования."""
     pass
+
+
+# --- Event Bus Exceptions ---
+
+class EventBusError(ChutilsException):
+    """Общая ошибка шины событий."""
+    pass
+
+
+class EventBusExceptionGroup(EventBusError):
+    """
+    Группа ошибок, возникших при параллельном или последовательном выполнении
+    обработчиков событий шины.
+    """
+
+    def __init__(self, message: str, exceptions: list[Exception], **context: t.Any) -> None:
+        super().__init__(message, **context)
+        self.exceptions = exceptions
+
+    def __str__(self) -> str:
+        base_str = super().__str__()
+        errors_str = "\n".join(f"  - {type(e).__name__}: {e}" for e in self.exceptions)
+        return f"{base_str}\nВозникшие ошибки:\n{errors_str}"
