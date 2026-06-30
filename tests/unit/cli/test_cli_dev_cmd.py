@@ -128,3 +128,39 @@ def test_cli_dev_ai_lint_strict_mode(cli_runner, mocker):
     res_strict = cli_runner.invoke(["dev", "ai-lint", "--strict"])
     assert res_strict.exit_code == 1
     assert "Warning detected" in res_strict.stdout
+
+
+def test_cli_dev_generate_context_project(cli_runner, config_fs):
+    """Проверяет генерацию Markdown API карты для внешнего проекта."""
+    fs, project_root = config_fs
+    project_dir = "/home/user/my_project"
+    fs.create_dir(f"{project_dir}/src")
+    fs.create_file(f"{project_dir}/src/app.py", contents="""
+def my_cool_function(x):
+    \"\"\"Документация функции.\"\"\"
+    return x
+""")
+
+    result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir])
+    assert result.exit_code == 0
+    assert "# Public API Map: my_project" in result.stdout
+    assert "src.app.my_cool_function" in result.stdout
+
+
+def test_cli_dev_generate_context_project_ignore(cli_runner, config_fs):
+    """Проверяет, что .gitignore и .chutilsignore корректно исключают файлы."""
+    fs, project_root = config_fs
+    project_dir = "/home/user/my_project"
+    fs.create_dir(f"{project_dir}/src")
+    fs.create_file(f"{project_dir}/src/app.py", contents="def my_func(): pass")
+    fs.create_file(f"{project_dir}/src/ignored_file.py", contents="def ignored_func(): pass")
+    fs.create_file(f"{project_dir}/src/chutils_ignored.py", contents="def chutils_ignored_func(): pass")
+
+    fs.create_file(f"{project_dir}/.gitignore", contents="ignored_file.py\n")
+    fs.create_file(f"{project_dir}/.chutilsignore", contents="chutils_ignored.py\n")
+
+    result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir])
+    assert result.exit_code == 0
+    assert "src.app.my_func" in result.stdout
+    assert "ignored_file" not in result.stdout
+    assert "chutils_ignored" not in result.stdout

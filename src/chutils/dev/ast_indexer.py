@@ -18,15 +18,15 @@ class GitIgnoreMatcher:
     def __init__(self, root_path: Path) -> None:
         self.root_path = root_path
         self.patterns: List[tuple[re.Pattern[str], bool]] = []
-        self._load_gitignore()
+        self._load_file_rules(self.root_path / ".gitignore")
+        self._load_file_rules(self.root_path / ".chutilsignore")
 
-    def _load_gitignore(self) -> None:
-        gitignore_file = self.root_path / ".gitignore"
-        if not gitignore_file.exists():
+    def _load_file_rules(self, file_path: Path) -> None:
+        if not file_path.exists():
             return
 
         try:
-            lines = gitignore_file.read_text(encoding="utf-8").splitlines()
+            lines = file_path.read_text(encoding="utf-8").splitlines()
             for line in lines:
                 line = line.strip()
                 if not line or line.startswith("#"):

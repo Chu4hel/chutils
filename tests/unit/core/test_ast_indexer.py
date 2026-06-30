@@ -120,3 +120,71 @@ def test_indexer_include_examples(tmp_path):
     assert ex.description == "Description"
     assert ex.good_pattern == "# Good"
     assert ex.bad_pattern == "# Bad"
+
+
+def test_indexer_gitignore_matching(tmp_path):
+    """Тестирует корректность фильтрации путей через GitIgnoreMatcher."""
+    from chutils.dev.ast_indexer import GitIgnoreMatcher
+
+    project_dir = tmp_path / "my_project"
+    project_dir.mkdir()
+
+    (project_dir / ".gitignore").write_text("""
+    # comment
+    *.log
+    temp/
+    /absolute_ignored.py
+    """, encoding="utf-8")
+
+    (project_dir / ".chutilsignore").write_text("""
+    chutils_ignored.py
+    """, encoding="utf-8")
+
+    matcher = GitIgnoreMatcher(project_dir)
+
+    assert matcher.matches("test.log") is True
+    assert matcher.matches("src/test.log") is True
+    assert matcher.matches("temp/file.py") is True
+    assert matcher.matches("src/temp/file.py") is True
+    assert matcher.matches("absolute_ignored.py") is True
+    assert matcher.matches("src/absolute_ignored.py") is False
+    assert matcher.matches("chutils_ignored.py") is True
+    assert matcher.matches("src/chutils_ignored.py") is True
+    assert matcher.matches("src/app.py") is False
+
+
+def test_indexer_namespace_directory_traversal(tmp_path):
+    """Тестирует обход папок без __init__.py (Namespace Packages)."""
+    pkg = tmp_path / "project"
+    pkg.mkdir()
+
+    src_dir = pkg / "src"
+    src_dir.mkdir()
+
+    core_dir = src_dir / "core"
+    core_dir.mkdir()
+
+    (core_dir / "utils.py").write_text("def helper(): pass", encoding="utf-8")
+    (core_dir / "ignored.py").write_text("def bad(): pass", encoding="utf-8")
+    (pkg / ".gitignore").write_text("ignored.py\n", encoding="utf-8")
+
+    indexer = Indexer(str(pkg))
+    index = indexer.index()
+
+    assert index.project_name == "project"
+
+    root = index.root
+    assert len(root.children) == 1
+    src_node = root.children[0]
+    assert src_node.name == "src"
+    assert src_node.type == "package"
+
+    assert len(src_node.children) == 1
+    core_node = src_node.children[0]
+    assert core_node.name == "core"
+    assert core_node.type == "package"
+
+    assert len(core_node.children) == 1
+    utils_node = core_node.children[0]
+    assert utils_node.name == "utils"
+    assert utils_node.type == "module"
