@@ -148,6 +148,17 @@ members:
 - log_function_details
 - timeout
 
+## Модуль `events` (Шина событий)
+
+::: chutils.events
+options:
+members:
+- EventBus
+- ErrorStrategy
+- subscribe
+- publish
+- publish_async
+
 ## Исключения
 
 ::: chutils.exceptions
@@ -163,7 +174,7 @@ members:
 
 ::: chutils.dev
 options:
-  members:
-    - Rule
-    - LintResult
-    - LinterEngine
+members:
+- Rule
+- LintResult
+- LinterEngine

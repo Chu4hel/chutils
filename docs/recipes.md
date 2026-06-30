@@ -753,8 +753,98 @@ chutils dev generate-context -o api_map.md
 
 ### Генерация семантического индекса для AI
 
-Генерирует JSON-дерево проекта (через AST), которое включает связи между модулями, веса зависимостей и метаданные символов. Это "золотой стандарт" контекста для современных LLM.
+Генерирует JSON-дерево проекта (через AST), которое включает связи между модулями, веса зависимостей и метаданные
+символов. Это "золотой стандарт" контекста для современных LLM.
 
 ```bash
 chutils dev generate-context --tree -o project_index.json
+```
+
+## 17. Внутренняя шина событий (In-Memory Event Bus)
+
+Шина событий (`chutils.events`) позволяет развязать компоненты вашего приложения (loose coupling) через паттерн Pub/Sub.
+
+### Подписка и публикация
+
+Используйте декоратор `@subscribe` для регистрации обработчиков и `publish` (или `publish_async`) для отправки событий.
+
+```python
+from chutils.events import subscribe, publish, publish_async
+import asyncio
+
+
+# 1. Синхронный обработчик
+@subscribe("user_created")
+def send_email(user_id: int, username: str):
+    print(f"Отправка письма для {username}...")
+
+
+# 2. Асинхронный обработчик
+@subscribe("user_created")
+async def setup_profile(user_id: int, username: str):
+    await asyncio.sleep(0.1)
+    print(f"Профиль {username} настроен.")
+
+
+# Публикация событий:
+# Синхронная (запускает асинхронных подписчиков в фоновом режиме):
+publish("user_created", user_id=1, username="Дмитрий")
+
+# Асинхронная (ждет завершения всех подписчиков):
+# await publish_async("user_created", user_id=2, username="Анна")
+```
+
+### Стратегии обработки ошибок
+
+При возникновении исключений в обработчиках вы можете выбрать одну из трех стратегий:
+
+1. `IGNORE` (по умолчанию) — логирует ошибки через `chutils.logger` и продолжает работу остальных обработчиков.
+2. `FAIL_FAST` — немедленно прерывает выполнение и пробрасывает ошибку.
+3. `COLLECT` — выполняет все задачи, собирает ошибки и выбрасывает объединенное исключение `EventBusExceptionGroup`.
+
+```python
+from chutils.events import EventBus, ErrorStrategy
+from chutils.exceptions import EventBusExceptionGroup
+
+bus = EventBus(error_strategy=ErrorStrategy.COLLECT)
+
+
+@bus.subscribe("data_sync")
+def step_1():
+    raise ValueError("Сбой шага 1")
+
+
+@bus.subscribe("data_sync")
+def step_2():
+    raise IOError("Сбой шага 2")
+
+
+try:
+    bus.publish("data_sync")
+except EventBusExceptionGroup as e:
+    print(f"Возникли ошибки: {e.exceptions}")
+```
+
+### Передача Pydantic-моделей
+
+Если установлен пакет `pydantic` (`chutils[pydantic]`), шина поддерживает прямую передачу экземпляров Pydantic-моделей в
+качестве payload:
+
+```python
+from pydantic import BaseModel
+from chutils.events import subscribe, publish
+
+
+class UserEvent(BaseModel):
+    user_id: int
+    role: str
+
+
+@subscribe("user_updated")
+def handle_user_update(event: UserEvent):
+    print(f"Роль пользователя {event.user_id} обновлена на {event.role}")
+
+
+# Публикация Pydantic-модели
+publish("user_updated", UserEvent(user_id=10, role="admin"))
 ```
