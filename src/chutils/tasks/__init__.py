@@ -7,6 +7,8 @@ from chutils.tasks.core import (
     periodic_task,
     get_registered_tasks,
     clear_tasks_registry,
+    start_scheduler,
+    stop_scheduler,
 )
 
 __all__ = [
@@ -15,4 +17,6 @@ __all__ = [
     "periodic_task",
     "get_registered_tasks",
     "clear_tasks_registry",
+    "start_scheduler",
+    "stop_scheduler",
 ]
