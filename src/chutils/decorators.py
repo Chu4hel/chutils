@@ -10,7 +10,7 @@ import inspect
 import random
 import threading
 import time
-from typing import Optional, TYPE_CHECKING, Tuple, Type, Any, Callable, Union, cast, Awaitable
+from typing import Optional, TYPE_CHECKING, Tuple, Type, Any, Callable, Union, cast, Awaitable, Dict
 
 from .exceptions import ChutilsTimeoutError
 from .typing import P, R
