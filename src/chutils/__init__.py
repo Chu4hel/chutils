@@ -56,6 +56,7 @@ _LAZY_MAPPING = {
     'tasks': ('.tasks', None),
     'text': ('.text', None),
     'crypto': ('.crypto', None),
+    'fs': ('.fs', None),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -199,6 +200,10 @@ _LAZY_MAPPING = {
     'decrypt_portable': ('.crypto', 'decrypt_portable'),
     'encrypt_file': ('.crypto', 'encrypt_file'),
     'decrypt_file': ('.crypto', 'decrypt_file'),
+
+    # fs
+    'remove_path': ('.fs', 'remove_path'),
+    'cleanup_paths': ('.fs', 'cleanup_paths'),
 
     # plugins
     'plugins': ('.plugins', None),

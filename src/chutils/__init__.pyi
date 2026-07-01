@@ -2,7 +2,7 @@ import datetime
 import logging
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional, List, Dict, Type, TypeVar, Union, Tuple, Callable
+from typing import Any, Optional, List, Dict, Type, TypeVar, Union, Tuple, Callable, Literal
 
 # Тип для Pydantic моделей
 T = TypeVar("T")
@@ -427,6 +427,26 @@ def encrypt_file(file_path: Union[str, Path], seed: str, output_path: Optional[U
 def decrypt_file(file_path: Union[str, Path], seed: str, output_path: Optional[Union[str, Path]] = None) -> bool: ...
 
 
+# --- fs ---
+def remove_path(
+        path: Union[str, Path],
+        *,
+        retries: int = 3,
+        delay: float = 0.1,
+        on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
+        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+) -> bool: ...
+
+
+def cleanup_paths(
+        *paths: Union[str, Path],
+        retries: int = 3,
+        delay: float = 0.1,
+        on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
+        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+) -> None: ...
+
+
 # --- Submodules ---
 from . import config as config
 from . import logger as logger
@@ -445,3 +465,4 @@ from . import di as di
 from . import metrics as metrics
 from . import text as text
 from . import crypto as crypto
+from . import fs as fs
