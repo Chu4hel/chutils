@@ -34,8 +34,7 @@ def cleanup_registry():
     _cm.clear_cache()
 
     # Полный сброс состояния плагинов конфигурации перед тестом
-    if hasattr(chutils.config.core._ensure_config_plugins_loaded, "_loaded"):
-        delattr(chutils.config.core._ensure_config_plugins_loaded, "_loaded")
+    chutils.config.core._config_plugins_loaded = False
     chutils.config.core._PROVIDERS = get_providers(_nest_ini_dict)
 
     yield
@@ -44,8 +43,7 @@ def cleanup_registry():
     _cm.clear_cache()
 
     # Полный сброс состояния плагинов конфигурации после теста
-    if hasattr(chutils.config.core._ensure_config_plugins_loaded, "_loaded"):
-        delattr(chutils.config.core._ensure_config_plugins_loaded, "_loaded")
+    chutils.config.core._config_plugins_loaded = False
     chutils.config.core._PROVIDERS = get_providers(_nest_ini_dict)
     set_provider(None)  # Сброс провайдера метрик
 
