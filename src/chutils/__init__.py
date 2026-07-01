@@ -204,6 +204,8 @@ _LAZY_MAPPING = {
     # fs
     'remove_path': ('.fs', 'remove_path'),
     'cleanup_paths': ('.fs', 'cleanup_paths'),
+    'safe_filename': ('.fs', 'safe_filename'),
+    'zip_folder': ('.fs', 'zip_folder'),
 
     # plugins
     'plugins': ('.plugins', None),

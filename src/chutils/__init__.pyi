@@ -447,6 +447,23 @@ def cleanup_paths(
 ) -> None: ...
 
 
+def safe_filename(
+        name: str,
+        replacement: str = "_",
+        strip_chars: str = " _.-",
+        max_length: int = 255,
+        transliterate: bool = False
+) -> str: ...
+
+
+def zip_folder(
+        folder_path: Union[str, Path],
+        output_path: Union[str, Path],
+        compression: int = ...,
+        exclude: Optional[list[str]] = None
+) -> Path: ...
+
+
 # --- Submodules ---
 from . import config as config
 from . import logger as logger
