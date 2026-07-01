@@ -54,6 +54,7 @@ _LAZY_MAPPING = {
     'dev': ('.dev', None),
     'events': ('.events', None),
     'tasks': ('.tasks', None),
+    'text': ('.text', None),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -187,6 +188,10 @@ _LAZY_MAPPING = {
 
     # metrics
     'metrics': ('.metrics', None),
+
+    # text
+    'natsort_key': ('.text', 'natsort_key'),
+    'is_significant_difference': ('.text', 'is_significant_difference'),
 
     # plugins
     'plugins': ('.plugins', None),

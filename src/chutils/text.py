@@ -11,7 +11,7 @@ try:
     import rapidfuzz
 
     _HAS_RAPIDFUZZ = True
-except ImportError:
+except ImportError:  # pragma: no cover
     _HAS_RAPIDFUZZ = False
 
 __all__ = ["natsort_key", "is_significant_difference"]

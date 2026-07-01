@@ -406,6 +406,13 @@ def inject(container: Optional[Container] = None) -> Callable[[Callable[..., Any
 def Inject() -> Any: ...
 
 
+# --- text ---
+def natsort_key(s: str) -> List[Union[int, str]]: ...
+
+
+def is_significant_difference(text1: str, text2: str, threshold: float = 0.9) -> bool: ...
+
+
 # --- Submodules ---
 from . import config as config
 from . import logger as logger
@@ -422,3 +429,4 @@ from . import events as events
 from . import tasks as tasks
 from . import di as di
 from . import metrics as metrics
+from . import text as text
