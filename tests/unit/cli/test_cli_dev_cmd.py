@@ -1,5 +1,4 @@
 import json
-from unittest.mock import MagicMock
 
 
 def test_cli_dev_no_subcommand(cli_runner):
@@ -41,7 +40,7 @@ def test_cli_dev_generate_tree_success(cli_runner, mocker, config_fs):
     fs, project_root = config_fs
     mocker.patch("chutils.env.has_pydantic", return_value=True)
 
-    mock_index = MagicMock()
+    mock_index = mocker.MagicMock()
     mock_index.model_dump_json.return_value = '{"nodes": []}'
     mock_indexer = mocker.patch("chutils.dev.ast_indexer.Indexer")
     mock_indexer.return_value.index.return_value = mock_index

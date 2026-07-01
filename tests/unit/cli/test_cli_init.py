@@ -84,11 +84,16 @@ def test_cli_init_with_model_success(cli_runner, config_fs, mocker):
             pass
 
     mocker.patch("chutils.config.generator.PYDANTIC_AVAILABLE", True)
-    mocker.patch("importlib.import_module")
-    mocker.patch("builtins.getattr", return_value=Settings)
+
+    # Создаём mock-модуль с нужным атрибутом Settings на нём —
+    # это безопасная альтернатива патчу builtins.getattr
+    mock_module = mocker.MagicMock()
+    mock_module.Settings = Settings
+    mocker.patch("importlib.import_module", return_value=mock_module)
 
     result = cli_runner.invoke(["init", "-y", "-m", "myapp:Settings"])
     assert result.exit_code == 0
     with open("config.yml", "r") as f:
         content = f.read()
         assert "api_key: default_key" in content
+
