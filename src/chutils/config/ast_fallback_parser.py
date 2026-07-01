@@ -43,7 +43,7 @@ def parse_fallbacks_from_file(file_path: str) -> dict[str, dict[str, Any]]:
         return fallbacks
 
     class FallbackVisitor(ast.NodeVisitor):
-        def visit_Call(self, node: ast.Call):
+        def visit_Call(self, node: ast.Call) -> None:
             func_name = None
             if isinstance(node.func, ast.Name):
                 func_name = node.func.id

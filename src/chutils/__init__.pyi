@@ -371,7 +371,7 @@ def periodic_task(
         run_immediately: bool = False,
         overlap: bool = False,
         error_strategy: Any = ...,
-        name: Optional[str] = None,
+        name: str = "",
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
 
 

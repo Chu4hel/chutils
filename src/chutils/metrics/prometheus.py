@@ -1,5 +1,5 @@
 import threading
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from chutils.exceptions import OptionalDependencyError
 from .base import MetricsProvider
@@ -30,8 +30,8 @@ class PrometheusMetricsProvider(MetricsProvider):
             )
 
         self._lock = threading.Lock()
-        # Кэш созданных объектов метрик: {name: prometheus_metric_object}
-        self._metrics: Dict[str, Any] = {}
+        # Кэш созданных объектов метрик: { (name, label_names): prometheus_metric_object }
+        self._metrics: Dict[Tuple[str, Tuple[str, ...]], Any] = {}
 
     def _get_or_create_metric(self, name: str, metric_type: str, labels: Optional[Dict[str, str]]) -> Any:
         label_names = sorted(labels.keys()) if labels else []
@@ -45,7 +45,7 @@ class PrometheusMetricsProvider(MetricsProvider):
             import prometheus_client
 
             if metric_type == "counter":
-                metric = prometheus_client.Counter(name, f"Counter for {name}", labelnames=label_names)
+                metric: Any = prometheus_client.Counter(name, f"Counter for {name}", labelnames=label_names)
             elif metric_type == "gauge":
                 metric = prometheus_client.Gauge(name, f"Gauge for {name}", labelnames=label_names)
             elif metric_type == "histogram":

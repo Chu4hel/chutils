@@ -43,9 +43,11 @@ def get_provider() -> MetricsProvider:
             registry.discover_plugins("chutils.plugins.metrics")
             external_metrics_providers = registry.get_plugins_by_type(MetricsPlugin)
             if external_metrics_providers:
-                _active_provider = external_metrics_providers[0]
+                plugin = external_metrics_providers[0]
+                _active_provider = plugin
+                plugin_name = getattr(plugin, "name", "unknown")
                 logger.debug(
-                    f"Инициализирован внешний MetricsPlugin '{_active_provider.name}' в качестве основного провайдера метрик.")
+                    f"Инициализирован внешний MetricsPlugin '{plugin_name}' в качестве основного провайдера метрик.")
         except Exception as e:
             logger.error(f"Ошибка при поиске плагинов метрик: {e}")
 

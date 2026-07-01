@@ -72,9 +72,9 @@ class InMemoryMetricsProvider(MetricsProvider):
                     lines.append(f"{name}{lbl_str} {value}")
 
             # 3. Форматируем Histograms
-            for name, labels_dict in self._histograms.items():
+            for name, hist_dict in self._histograms.items():
                 lines.append(f"# TYPE {name} histogram")
-                for labels_set, values in labels_dict.items():
+                for labels_set, values in hist_dict.items():
                     # Считаем сумму и количество
                     count = len(values)
                     total_sum = sum(values)
@@ -129,8 +129,8 @@ class InMemoryMetricsProvider(MetricsProvider):
                     for name, labels_dict in self._gauges.items()
                 },
                 "histograms": {
-                    name: [{"labels": dict(labels_set), "values": values} for labels_set, values in labels_dict.items()]
-                    for name, labels_dict in self._histograms.items()
+                    name: [{"labels": dict(labels_set), "values": values} for labels_set, values in hist_dict.items()]
+                    for name, hist_dict in self._histograms.items()
                 }
             }
 

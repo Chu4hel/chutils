@@ -18,6 +18,7 @@ class PluginRegistry:
     Управляет жизненным циклом, регистрацией и автообнаружением плагинов.
     """
     _instance: PluginRegistry | None = None
+    _initialized: bool = False
 
     def __new__(cls) -> PluginRegistry:
         if cls._instance is None:

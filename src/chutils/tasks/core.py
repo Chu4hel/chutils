@@ -31,10 +31,10 @@ class PeriodicTask:
     run_immediately: bool = False
     overlap: bool = False
     error_strategy: ErrorStrategy = ErrorStrategy.IGNORE
-    name: Optional[str] = None
+    name: str = ""
 
     def __post_init__(self) -> None:
-        if self.name is None:
+        if not self.name:
             self.name = self.func.__name__
         self.is_async = inspect.iscoroutinefunction(self.func)
 
@@ -48,7 +48,7 @@ def periodic_task(
         run_immediately: bool = False,
         overlap: bool = False,
         error_strategy: ErrorStrategy = ErrorStrategy.IGNORE,
-        name: Optional[str] = None,
+        name: str = "",
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
     Декоратор для привязки функции к расписанию планировщика задач.

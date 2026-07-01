@@ -31,12 +31,14 @@ logger = logging.getLogger(__name__)
 # Реестр провайдеров (использует _nest_ini_dict из utils)
 _PROVIDERS = get_providers(utils._nest_ini_dict)
 
+_config_plugins_loaded = False
+
 
 def _ensure_config_plugins_loaded() -> None:
     """Лениво загружает плагины конфигурации и добавляет их в _PROVIDERS."""
-    global _PROVIDERS
-    if not hasattr(_ensure_config_plugins_loaded, "_loaded"):
-        _ensure_config_plugins_loaded._loaded = True
+    global _PROVIDERS, _config_plugins_loaded
+    if not _config_plugins_loaded:
+        _config_plugins_loaded = True
         try:
             from ..plugins import registry, ConfigProviderPlugin
             registry.discover_plugins("chutils.plugins.config")
