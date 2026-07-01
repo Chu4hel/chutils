@@ -55,6 +55,7 @@ _LAZY_MAPPING = {
     'events': ('.events', None),
     'tasks': ('.tasks', None),
     'text': ('.text', None),
+    'crypto': ('.crypto', None),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -192,6 +193,12 @@ _LAZY_MAPPING = {
     # text
     'natsort_key': ('.text', 'natsort_key'),
     'is_significant_difference': ('.text', 'is_significant_difference'),
+
+    # crypto
+    'encrypt_portable': ('.crypto', 'encrypt_portable'),
+    'decrypt_portable': ('.crypto', 'decrypt_portable'),
+    'encrypt_file': ('.crypto', 'encrypt_file'),
+    'decrypt_file': ('.crypto', 'decrypt_file'),
 
     # plugins
     'plugins': ('.plugins', None),

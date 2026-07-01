@@ -1,6 +1,7 @@
 import datetime
 import logging
 from enum import Enum
+from pathlib import Path
 from typing import Any, Optional, List, Dict, Type, TypeVar, Union, Tuple, Callable
 
 # Тип для Pydantic моделей
@@ -413,6 +414,19 @@ def natsort_key(s: str) -> List[Union[int, str]]: ...
 def is_significant_difference(text1: str, text2: str, threshold: float = 0.9) -> bool: ...
 
 
+# --- crypto ---
+def encrypt_portable(data: str, seed: str) -> str: ...
+
+
+def decrypt_portable(encrypted_data: str, seed: str) -> Optional[str]: ...
+
+
+def encrypt_file(file_path: Union[str, Path], seed: str, output_path: Optional[Union[str, Path]] = None) -> Path: ...
+
+
+def decrypt_file(file_path: Union[str, Path], seed: str, output_path: Optional[Union[str, Path]] = None) -> bool: ...
+
+
 # --- Submodules ---
 from . import config as config
 from . import logger as logger
@@ -430,3 +444,4 @@ from . import tasks as tasks
 from . import di as di
 from . import metrics as metrics
 from . import text as text
+from . import crypto as crypto
