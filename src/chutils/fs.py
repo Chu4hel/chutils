@@ -7,16 +7,19 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import tempfile
 import uuid
+import zipfile
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Union, Any, Optional, Generator, TYPE_CHECKING, Literal
 
 from chutils.exceptions import OptionalDependencyError, PathTraversalError
 
-__all__ = ["resolve_safe_path", "ensure_dir", "atomic_write", "get_temp_file", "remove_path", "cleanup_paths"]
+__all__ = ["resolve_safe_path", "ensure_dir", "atomic_write", "get_temp_file", "remove_path", "cleanup_paths",
+           "safe_filename", "zip_folder"]
 
 if TYPE_CHECKING:
     import yaml
@@ -184,12 +187,12 @@ def get_temp_file(suffix: str = '') -> Generator[Path, None, None]:
 
 
 def remove_path(
-    path: Union[str, Path],
-    *,
-    retries: int = 3,
-    delay: float = 0.1,
-    on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
-    orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+        path: Union[str, Path],
+        *,
+        retries: int = 3,
+        delay: float = 0.1,
+        on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
+        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
 ) -> bool:
     """Безопасно удаляет файл или директорию по указанному пути.
 
@@ -270,11 +273,11 @@ def remove_path(
 
 
 def cleanup_paths(
-    *paths: Union[str, Path],
-    retries: int = 3,
-    delay: float = 0.1,
-    on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
-    orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+        *paths: Union[str, Path],
+        retries: int = 3,
+        delay: float = 0.1,
+        on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
+        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
 ) -> None:
     """Пакетное удаление нескольких путей.
 
@@ -305,3 +308,154 @@ def cleanup_paths(
             if on_locked == "raise":
                 raise
 
+
+CYRILLIC_TO_LATIN: dict[str, str] = {
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+    'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+    'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
+    'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu',
+    'я': 'ya',
+    'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo', 'Ж': 'Zh',
+    'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O',
+    'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts',
+    'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch', 'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu',
+    'Я': 'Ya'
+}
+
+
+def safe_filename(
+        name: str,
+        replacement: str = "_",
+        strip_chars: str = " _.-",
+        max_length: int = 255,
+        transliterate: bool = False
+) -> str:
+    """Очищает строку, делая её безопасной для использования в качестве имени файла.
+
+    Оставляет только буквы, цифры, дефисы, точки и подчеркивания.
+    Ограничивает длину и поддерживает транслитерацию кириллицы.
+
+    Args:
+        name: Исходное имя.
+        replacement: Символ замены недопустимых символов.
+        strip_chars: Символы, удаляемые с краев строки.
+        max_length: Максимальная длина результирующей строки.
+        transliterate: Флаг транслитерации кириллицы в латиницу.
+
+    Returns:
+        Безопасное имя файла.
+
+    Raises:
+        ValueError: Если имя пустое или после очистки получается пустая строка.
+    """
+    if not name:
+        raise ValueError("Имя файла не может быть пустым")
+
+    if transliterate:
+        # Сначала транслитерируем кириллицу
+        name = "".join(CYRILLIC_TO_LATIN.get(c, c) for c in name)
+        # Разрешаем только латиницу, цифры, точки, дефисы, подчеркивания
+        pattern = r"[^a-zA-Z0-9\._\-]"
+    else:
+        # Разрешаем любые Unicode буквы/цифры, точки, дефисы, подчеркивания
+        pattern = r"[^\w\._\-]"
+
+    # Заменяем группы недопустимых символов на один replacement
+    name = re.sub(pattern + "+", replacement, name)
+
+    # Удаляем replacement перед точками (например, "_." -> ".")
+    name = re.sub(rf'{re.escape(replacement)}+\.', '.', name)
+
+    # Удаляем ведущие/замыкающие символы
+    name = name.strip(strip_chars)
+
+    if len(name) > max_length:
+        # Ищем расширение (допускается составное расширение типа .tar.gz)
+        match = re.search(r'(\.[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)?)$', name)
+        if match and len(match.group(1)) <= 15:
+            ext = match.group(1)
+            name_part = name[:-len(ext)]
+            allowed_name_len = max_length - len(ext)
+            if allowed_name_len > 0:
+                name = name_part[:allowed_name_len] + ext
+            else:
+                name = name[:max_length]
+        else:
+            name = name[:max_length]
+
+    if not name:
+        raise ValueError("Имя файла после очистки пустое")
+
+    return name
+
+
+def zip_folder(
+        folder_path: Union[str, Path],
+        output_path: Union[str, Path],
+        compression: int = zipfile.ZIP_DEFLATED,
+        exclude: Optional[list[str]] = None
+) -> Path:
+    """Архивирует содержимое папки в ZIP-архив с сохранением структуры.
+
+    Args:
+        folder_path: Путь к архивируемой папке.
+        output_path: Путь к создаваемому ZIP-файлу.
+        compression: Метод сжатия (по умолчанию ZIP_DEFLATED).
+        exclude: Список glob-шаблонов для исключения файлов/папок.
+
+    Returns:
+        Путь к созданному ZIP-архиву.
+
+    Raises:
+        FileNotFoundError: Если папка folder_path не существует.
+        ValueError: Если folder_path не является директорией.
+    """
+    src_dir = Path(folder_path)
+    out_file = Path(output_path)
+
+    if not src_dir.exists():
+        raise FileNotFoundError(f"Исходная директория не найдена: {src_dir}")
+    if not src_dir.is_dir():
+        raise ValueError(f"Путь не является директорией: {src_dir}")
+
+    # Создаем родительские директории для архива, если их нет
+    ensure_dir(out_file.parent)
+
+    exclude_patterns = exclude or []
+
+    def _should_exclude(path: Path) -> bool:
+        import fnmatch
+        rel_path = path.relative_to(src_dir)
+        rel_path_str = rel_path.as_posix()
+        for pattern in exclude_patterns:
+            # 1. Проверяем имя файла/папки
+            if fnmatch.fnmatch(path.name, pattern):
+                return True
+            # 2. Проверяем относительный путь
+            if fnmatch.fnmatch(rel_path_str, pattern):
+                return True
+            # 3. Проверяем родительские папки
+            for parent in rel_path.parents:
+                if fnmatch.fnmatch(parent.name, pattern) or fnmatch.fnmatch(parent.as_posix(), pattern):
+                    return True
+        return False
+
+    with zipfile.ZipFile(out_file, 'w', compression) as zipf:
+        for root, dirs, files in os.walk(src_dir):
+            root_path = Path(root)
+
+            # Фильтруем dirs на месте, чтобы os.walk не заходил в исключенные директории
+            filtered_dirs = []
+            for d in dirs:
+                dir_path = root_path / d
+                if not _should_exclude(dir_path):
+                    filtered_dirs.append(d)
+            dirs[:] = filtered_dirs
+
+            for file in files:
+                file_path = root_path / file
+                if not _should_exclude(file_path):
+                    arcname = file_path.relative_to(src_dir).as_posix()
+                    zipf.write(file_path, arcname)
+
+    return out_file

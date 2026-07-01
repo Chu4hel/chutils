@@ -4,7 +4,8 @@ from pathlib import Path
 import pytest
 
 from chutils.exceptions import PathTraversalError
-from chutils.fs import ensure_dir, atomic_write, resolve_safe_path, remove_path, cleanup_paths
+from chutils.fs import ensure_dir, atomic_write, resolve_safe_path, remove_path, cleanup_paths, safe_filename, \
+    zip_folder
 
 
 def test_resolve_safe_path_valid(tmp_path):
@@ -479,3 +480,105 @@ def test_remove_path_invalid_on_locked(tmp_path, monkeypatch):
         remove_path(f, retries=1, delay=0.01, on_locked="invalid_action")  # type: ignore
 
 
+def test_safe_filename_basic():
+    """Проверка базовой очистки имени файла."""
+    assert safe_filename("hello world.txt") == "hello_world.txt"
+    assert safe_filename("  test/file\\name?.txt  ") == "test_file_name.txt"
+    assert safe_filename("cool-file_1.2.xml") == "cool-file_1.2.xml"
+
+
+def test_safe_filename_transliterate():
+    """Проверка транслитерации кириллицы."""
+    assert safe_filename("Привет, мир!.txt", transliterate=True) == "Privet_mir.txt"
+    assert safe_filename("Тестовый файл 123", transliterate=True) == "Testovyy_fayl_123"
+    assert safe_filename("Привет, мир!.txt", transliterate=False) == "Привет_мир.txt"
+
+
+def test_safe_filename_length():
+    """Проверка ограничения длины имени с сохранением расширения."""
+    very_long_name = "a" * 300 + ".tar.gz"
+    res = safe_filename(very_long_name, max_length=50)
+    assert len(res) == 50
+    assert res.endswith(".tar.gz")
+    assert res.startswith("a" * 43)
+
+    # Длина расширения больше max_length
+    res_no_ext = safe_filename("a" * 300 + ".verylongextension", max_length=10)
+    assert len(res_no_ext) == 10
+    assert res_no_ext == "a" * 10
+
+
+def test_safe_filename_empty():
+    """Проверка генерации ValueError для пустых имен."""
+    with pytest.raises(ValueError, match="Имя файла не может быть пустым"):
+        safe_filename("")
+
+    with pytest.raises(ValueError, match="Имя файла после очистки пустое"):
+        safe_filename("   /?*   ")
+
+
+def test_zip_folder_success(tmp_path):
+    """Проверка успешной архивации папки."""
+    src_dir = tmp_path / "src"
+    src_dir.mkdir()
+    (src_dir / "file1.txt").write_text("content1")
+
+    sub_dir = src_dir / "sub"
+    sub_dir.mkdir()
+    (sub_dir / "file2.txt").write_text("content2")
+
+    zip_file = tmp_path / "archive.zip"
+
+    res = zip_folder(src_dir, zip_file)
+    assert res == zip_file
+    assert zip_file.exists()
+
+    # Проверяем содержимое ZIP-архива
+    import zipfile
+    with zipfile.ZipFile(zip_file, 'r') as zf:
+        namelist = zf.namelist()
+        assert "file1.txt" in namelist
+        assert "sub/file2.txt" in namelist
+        assert zf.read("file1.txt") == b"content1"
+        assert zf.read("sub/file2.txt") == b"content2"
+
+
+def test_zip_folder_exclude(tmp_path):
+    """Проверка исключений по glob-шаблонам в zip_folder."""
+    src_dir = tmp_path / "src"
+    src_dir.mkdir()
+    (src_dir / "file1.txt").write_text("1")
+    (src_dir / "file2.pyc").write_text("pyc")
+
+    git_dir = src_dir / ".git"
+    git_dir.mkdir()
+    (git_dir / "config").write_text("git-config")
+
+    sub_dir = src_dir / "build"
+    sub_dir.mkdir()
+    (sub_dir / "temp.txt").write_text("temp")
+
+    zip_file = tmp_path / "archive.zip"
+
+    zip_folder(src_dir, zip_file, exclude=["*.pyc", ".git", "build/*"])
+
+    import zipfile
+    with zipfile.ZipFile(zip_file, 'r') as zf:
+        namelist = zf.namelist()
+        assert "file1.txt" in namelist
+        assert "file2.pyc" not in namelist
+        assert ".git/config" not in namelist
+        assert "build/temp.txt" not in namelist
+
+
+def test_zip_folder_errors(tmp_path):
+    """Проверка генерации ошибок в zip_folder."""
+    # Несуществующая папка
+    with pytest.raises(FileNotFoundError):
+        zip_folder(tmp_path / "nonexistent", tmp_path / "out.zip")
+
+    # Путь не является папкой
+    file_path = tmp_path / "file.txt"
+    file_path.write_text("1")
+    with pytest.raises(ValueError, match="Путь не является директорией"):
+        zip_folder(file_path, tmp_path / "out.zip")
