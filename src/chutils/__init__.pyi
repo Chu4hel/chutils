@@ -421,3 +421,4 @@ from . import dev as dev
 from . import events as events
 from . import tasks as tasks
 from . import di as di
+from . import metrics as metrics

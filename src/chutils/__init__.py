@@ -184,6 +184,9 @@ _LAZY_MAPPING = {
     'inject': ('.di.container', 'inject'),
     'Inject': ('.di.container', 'Inject'),
     'container': ('.di.container', 'default_container'),
+
+    # metrics
+    'metrics': ('.metrics', None),
 }
 
 

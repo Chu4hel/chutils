@@ -2238,6 +2238,22 @@ dev = ["pre-commit", "tox"]
 testing = ["coverage", "pytest", "pytest-benchmark"]
 
 [[package]]
+name = "prometheus-client"
+version = "0.20.0"
+description = "Python client for the Prometheus monitoring system."
+optional = false
+python-versions = ">=3.8"
+groups = ["main", "dev"]
+files = [
+    {file = "prometheus_client-0.20.0-py3-none-any.whl", hash = "sha256:cde524a85bce83ca359cc837f28b8c0db5cac7aa653a588fd7e84ba061c329e7"},
+    {file = "prometheus_client-0.20.0.tar.gz", hash = "sha256:287629d00b147a32dcb2be0b9df905da599b2d82f80377083ec8463309a4bb89"},
+]
+markers = {main = "extra == \"metrics\" or extra == \"full\""}
+
+[package.extras]
+twisted = ["twisted"]
+
+[[package]]
 name = "protobuf"
 version = "6.33.6"
 description = ""
@@ -3160,8 +3176,9 @@ type = ["pytest-mypy"]
 
 [extras]
 date = ["python-dateutil"]
-full = ["keyring", "opentelemetry-api", "opentelemetry-exporter-otlp", "opentelemetry-sdk", "pydantic", "pytest", "pytest", "python-dateutil", "python-json-logger", "rich", "watchdog"]
+full = ["keyring", "opentelemetry-api", "opentelemetry-exporter-otlp", "opentelemetry-sdk", "prometheus-client", "pydantic", "pytest", "pytest", "python-dateutil", "python-json-logger", "rich", "watchdog"]
 json = ["python-json-logger"]
+metrics = ["prometheus-client"]
 otel = ["opentelemetry-api", "opentelemetry-exporter-otlp", "opentelemetry-sdk"]
 pydantic = ["pydantic"]
 rich = ["rich"]
@@ -3172,4 +3189,4 @@ watch = ["watchdog"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9, !=3.9.0, !=3.9.1"
-content-hash = "f7a778e30cf0d8ab806fc35fffc2a4423c75c5e3b0c4fec821407634ae2f04f1"
+content-hash = "bcc3c249f5eca14ca3713e616826de599b9c81abd985c4052aded4858ca4e99a"

@@ -1161,3 +1161,74 @@ def test_my_service():
     profile = get_user_profile(42)
     assert "User profile 42" in profile
 ```
+
+## 21. Сбор метрик (Unified Metrics)
+
+Модуль `chutils.metrics` предоставляет унифицированный API для сбора многомерных метрик (Counters, Gauges, Histograms) с
+полной поддержкой меток (labels).
+
+### Быстрый старт (Counters & Gauges)
+
+По умолчанию метрики сохраняются во встроенное in-memory хранилище. При установке библиотеки `prometheus-client` они
+автоматически транслируются в формат Prometheus.
+
+```python
+from chutils.metrics import increment, set_gauge, observe
+
+# 1. Увеличить счетчик (Counter)
+increment("http_requests_total", 1.0, {"method": "GET", "endpoint": "/users"})
+
+# 2. Установить значение датчика (Gauge)
+set_gauge("cpu_usage_percent", 45.2, {"node": "worker-1"})
+
+# 3. Записать значение в гистограмму (Histogram)
+observe("request_size_bytes", 1024.0, {"client": "ios"})
+```
+
+### Автоматический замер времени (@timer)
+
+Используйте `@timer` в качестве декоратора (для синхронных и асинхронных функций) или в качестве контекстного менеджера.
+
+```python
+from chutils.metrics import timer
+import asyncio
+
+
+# A. Декоратор (асинхронный)
+@timer("http_request_duration_seconds", labels={"handler": "get_users"})
+async def handle_request():
+    await asyncio.sleep(0.05)
+
+
+# B. Контекстный менеджер
+def run_db_query():
+    with timer("db_query_duration_seconds", labels={"query": "select_orders"}):
+        # тяжелая операция
+        pass
+```
+
+### Экспорт метрик в FastAPI / Flask
+
+Чтобы отдавать собранные метрики в систему мониторинга Prometheus, просто добавьте эндпоинт `/metrics`, вызывающий
+`generate_latest()`:
+
+```python
+from fastapi import FastAPI, Response
+from chutils.metrics import generate_latest
+
+app = FastAPI()
+
+
+@app.get("/metrics")
+def metrics_endpoint():
+    # generate_latest возвращает валидный Prometheus-текст
+    return Response(content=generate_latest(), media_type="text/plain")
+```
+
+### Безопасность при отсутствии prometheus-client (Graceful Fallback)
+
+Модуль `chutils.metrics` спроектирован так, что отсутствие внешней библиотеки `prometheus-client` не вызывает ошибок. В
+этом случае все метрики собираются во внутренний in-memory пул и форматируются функцией `generate_latest()` в полностью
+Prometheus-совместимый текстовый формат.
+
+Таким образом, ваше приложение гарантированно продолжит работу без внешних зависимостей.

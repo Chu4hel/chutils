@@ -177,10 +177,25 @@ members:
 ::: chutils.di
 options:
 members:
+
 - Container
 - provide
 - inject
 - Inject
+
+## Модуль `metrics` (Абстракция для метрик)
+
+::: chutils.metrics
+options:
+members:
+- increment
+- set_gauge
+- observe
+- timer
+- generate_latest
+- get_provider
+- set_provider
+- clear
 
 ## Исключения
 
