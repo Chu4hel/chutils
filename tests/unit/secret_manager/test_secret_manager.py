@@ -156,7 +156,7 @@ def test_get_secret_from_dotenv(project_with_marker, mocker, monkeypatch):
     assert result == "dotenv_value"
 
 
-def test_get_secret_prioritizes_keyring(project_with_marker, mocker, monkeypatch):
+def test_get_secret_prioritizes_keyring(project_with_marker, monkeypatch):
     """
     Проверяет, что keyring имеет приоритет над .env файлом.
     """
@@ -164,7 +164,7 @@ def test_get_secret_prioritizes_keyring(project_with_marker, mocker, monkeypatch
     fs, project_root = project_with_marker
     fs.create_file(project_root / ".env", contents="SHARED_SECRET=dotenv_value")
     # Keyring возвращает свое значение
-    mocker.patch("chutils.secret_manager.providers.keyring.get_password", return_value="keyring_value")
+    monkeypatch.setattr("chutils.secret_manager.providers.keyring.get_password", lambda *args, **kwargs: "keyring_value")
 
     # Сбрасываем состояние
     from chutils import config

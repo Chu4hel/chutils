@@ -1,6 +1,12 @@
 from pathlib import Path
 
+import keyring
 import pytest
+
+try:
+    keyring.get_keyring()
+except Exception:
+    pass
 
 
 @pytest.fixture
