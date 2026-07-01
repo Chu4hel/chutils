@@ -176,6 +176,14 @@ _LAZY_MAPPING = {
     'periodic_task': ('.tasks', 'periodic_task'),
     'start_scheduler': ('.tasks', 'start_scheduler'),
     'stop_scheduler': ('.tasks', 'stop_scheduler'),
+
+    # di
+    'di': ('.di', None),
+    'Container': ('.di.container', 'Container'),
+    'provide': ('.di.container', 'provide'),
+    'inject': ('.di.container', 'inject'),
+    'Inject': ('.di.container', 'Inject'),
+    'container': ('.di.container', 'default_container'),
 }
 
 

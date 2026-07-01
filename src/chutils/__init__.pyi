@@ -269,7 +269,8 @@ def retry(retries: int = 3, delay: float = 1.0, backoff: float = 2.0, jitter: bo
 def timeout(seconds: float, fallback: Any = ...) -> Callable[[F], F]: ...
 
 
-def rate_limit(max_calls: int, period: float, strategy: str = "token_bucket", wait: bool = False, key_func: Optional[Callable[..., str]] = None) -> Callable[[F], F]: ...
+def rate_limit(max_calls: int, period: float, strategy: str = "token_bucket", wait: bool = False,
+               key_func: Optional[Callable[..., str]] = None) -> Callable[[F], F]: ...
 
 
 # --- exceptions ---
@@ -321,6 +322,15 @@ class EventBusExceptionGroup(EventBusError):
 class RateLimitExceededError(ChutilsException): ...
 
 
+class DependencyError(ChutilsException): ...
+
+
+class DependencyNotFoundError(DependencyError): ...
+
+
+class DependencyResolutionError(DependencyError): ...
+
+
 # --- events ---
 class ErrorStrategy(str, Enum):
     IGNORE = "ignore"
@@ -370,6 +380,32 @@ def start_scheduler() -> None: ...
 async def stop_scheduler() -> None: ...
 
 
+# --- di ---
+class Container:
+    def __init__(self) -> None: ...
+
+    def register(self, dependency_type: Type[Any], provider: Optional[Callable[..., Any]] = None,
+                 scope: str = "singleton") -> None: ...
+
+    def has_provider(self, dependency_type: Type[Any]) -> bool: ...
+
+    def resolve(self, dependency_type: Type[T]) -> T: ...
+
+    def clear(self) -> None: ...
+
+
+container: Container
+
+
+def provide(scope: str = "singleton", container: Optional[Container] = None) -> Callable[[Any], Any]: ...
+
+
+def inject(container: Optional[Container] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+
+
+def Inject() -> Any: ...
+
+
 # --- Submodules ---
 from . import config as config
 from . import logger as logger
@@ -384,3 +420,4 @@ from . import tracing as tracing
 from . import dev as dev
 from . import events as events
 from . import tasks as tasks
+from . import di as di

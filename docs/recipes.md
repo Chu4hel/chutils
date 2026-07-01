@@ -1065,3 +1065,99 @@ send_notification(2, "Привет!")  # OK для другого пользов
 def send_email():
     pass
 ```
+
+## 20. Внедрение зависимостей (Dependency Injection)
+
+Встроенный IoC/DI контейнер (`chutils.di`) позволяет связать независимые компоненты приложения без ручной передачи
+аргументов через всю цепочку вызовов (prop drilling) и без привязки к жестким глобальным зависимостям.
+
+### Декларативная регистрация (@provide)
+
+Используйте декоратор `@provide` для регистрации классов или функций-фабрик. По умолчанию используется время жизни
+`singleton` (объект создается один раз при первом обращении и кэшируется).
+
+```python
+from chutils import provide
+
+
+# 1. Регистрация класса (singleton)
+@provide()
+class DatabaseConnection:
+    def __init__(self) -> None:
+        self.connected = True
+        print("Подключение к БД создано")
+
+
+# 2. Регистрация функции-фабрики (transient - новый объект при каждом запросе)
+@provide(scope="transient")
+def get_current_time() -> float:
+    import time
+    return time.time()
+```
+
+### Автоматическое внедрение (@inject)
+
+Декоратор `@inject` автоматически подставляет зарегистрированные зависимости из контейнера в аргументы функции. Для
+этого аргумент должен иметь тип зарегистрированной зависимости и значение по умолчанию `Inject()`.
+
+```python
+from chutils import inject, Inject
+
+
+# Автоматически внедряем DatabaseConnection
+@inject()
+def get_user_profile(user_id: int, db: DatabaseConnection = Inject()):
+    if db.connected:
+        return f"User profile {user_id}"
+```
+
+### Рекурсивный резолв зависимостей
+
+Если одна зависимость требует другую зависимость в своем конструкторе `__init__`, контейнер автоматически разрешит весь
+граф при обращении (Auto-wiring).
+
+```python
+from chutils import provide, inject, Inject
+
+
+@provide()
+class CacheService:
+    pass
+
+
+@provide()
+class UserService:
+    # Контейнер автоматически создаст CacheService и передаст его сюда
+    def __init__(self, cache: CacheService) -> None:
+        self.cache = cache
+
+
+@inject()
+def process(user_service: UserService = Inject()):
+    # user_service уже имеет внутри инициализированный cache
+    pass
+```
+
+### Тестирование и переопределение зависимостей
+
+Для написания unit-тестов вы можете легко переопределить любую зависимость в контейнере (mocking) напрямую через метод
+`register()` глобального контейнера:
+
+```python
+from chutils import container
+
+
+class MockDatabaseConnection:
+    def __init__(self) -> None:
+        self.connected = True
+        print("Mock подключение к БД создано!")
+
+
+def test_my_service():
+    # Переопределяем реальное подключение на мок
+    container.register(DatabaseConnection, provider=MockDatabaseConnection)
+
+    # Теперь все вызовы @inject внедрят MockDatabaseConnection вместо реального
+    profile = get_user_profile(42)
+    assert "User profile 42" in profile
+```

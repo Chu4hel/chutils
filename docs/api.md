@@ -172,6 +172,16 @@ members:
 - stop_scheduler
 - ErrorStrategy
 
+## Модуль `di` (Внедрение зависимостей)
+
+::: chutils.di
+options:
+members:
+- Container
+- provide
+- inject
+- Inject
+
 ## Исключения
 
 ::: chutils.exceptions
