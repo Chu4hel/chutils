@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import asyncio
+import functools
 import logging
 import os
 from pathlib import Path
@@ -29,6 +30,36 @@ logger = logging.getLogger(__name__)
 
 # Реестр провайдеров (использует _nest_ini_dict из utils)
 _PROVIDERS = get_providers(utils._nest_ini_dict)
+
+_config_plugins_loaded = False
+
+
+def _ensure_config_plugins_loaded() -> None:
+    """Лениво загружает плагины конфигурации и добавляет их в _PROVIDERS."""
+    global _PROVIDERS, _config_plugins_loaded
+    if not _config_plugins_loaded:
+        _config_plugins_loaded = True
+        try:
+            from ..plugins import registry, ConfigProviderPlugin
+            registry.discover_plugins("chutils.plugins.config")
+            external_providers = registry.get_plugins_by_type(ConfigProviderPlugin)
+            for provider in external_providers:
+                extensions = []
+                if hasattr(provider, "supported_extensions"):
+                    extensions = provider.supported_extensions
+                else:
+                    ext = provider.name
+                    if not ext.startswith("."):
+                        ext = f".{ext}"
+                    extensions = [ext]
+
+                for ext in extensions:
+                    ext_lower = ext.lower()
+                    if ext_lower not in _PROVIDERS:
+                        _PROVIDERS[ext_lower] = provider
+                        logger.debug("Зарегистрирован внешний ConfigProvider для расширения %s", ext_lower)
+        except Exception as e:
+            logger.error("Ошибка при загрузке плагинов конфигурации: %s", str(e))
 
 
 def get_config(
@@ -79,6 +110,7 @@ def get_config(
 
             def load_from_path(path: str) -> JSONDict:
                 ext = Path(path).suffix.lower()
+                _ensure_config_plugins_loaded()
                 provider = _PROVIDERS.get(ext)
                 if provider:
                     data = provider.load(path)
@@ -225,6 +257,16 @@ def get_config(
     return config_data
 
 
+_config_async_lock: Optional[asyncio.Lock] = None
+
+
+def _get_config_async_lock() -> asyncio.Lock:
+    global _config_async_lock
+    if _config_async_lock is None:
+        _config_async_lock = asyncio.Lock()
+    return _config_async_lock
+
+
 async def aget_config(model: Optional[Type[T]] = None) -> Union[JSONDict, T]:
     """
     Асинхронная версия get_config.
@@ -235,7 +277,9 @@ async def aget_config(model: Optional[Type[T]] = None) -> Union[JSONDict, T]:
     Returns:
         Словарь конфигурации или экземпляр Pydantic модели.
     """
-    return await asyncio.to_thread(get_config, model=model)
+    async with _get_config_async_lock():
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(None, functools.partial(get_config, model=model))
 
 
 def save_config_value(
@@ -294,6 +338,7 @@ def save_config_value(
         # Фиксируем время внутреннего сохранения для подавления Hot-Reload
         _cm.mark_internal_save()
     ext = Path(path).suffix.lower()
+    _ensure_config_plugins_loaded()
     provider = _PROVIDERS.get(ext)
 
     if not provider:
@@ -342,4 +387,9 @@ async def asave_config_value(
         True: Если значение было успешно обновлено и сохранено.
         False: Если файл не найден, или произошла ошибка.
     """
-    return await asyncio.to_thread(save_config_value, section, key, value, cfg_file, save_to_local, notify)
+    async with _get_config_async_lock():
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(
+            None,
+            functools.partial(save_config_value, section, key, value, cfg_file, save_to_local, notify)
+        )

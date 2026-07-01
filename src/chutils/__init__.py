@@ -52,6 +52,11 @@ _LAZY_MAPPING = {
     'tracing': ('.tracing', None),
     'testing': ('.testing', None),
     'dev': ('.dev', None),
+    'events': ('.events', None),
+    'tasks': ('.tasks', None),
+    'text': ('.text', None),
+    'crypto': ('.crypto', None),
+    'fs': ('.fs', None),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -87,6 +92,7 @@ _LAZY_MAPPING = {
 
     # logger
     'setup_logger': ('.logger', 'setup_logger'),
+    'setup_logger_from_config': ('.logger', 'setup_logger_from_config'),
     'ChutilsLogger': ('.logger', 'ChutilsLogger'),
     'LogLevel': ('.logger', 'LogLevel'),
     'SecretMaskingFilter': ('.logger', 'SecretMaskingFilter'),
@@ -138,6 +144,7 @@ _LAZY_MAPPING = {
     'log_function_details': ('.decorators', 'log_function_details'),
     'retry': ('.decorators', 'retry'),
     'timeout': ('.decorators', 'timeout'),
+    'rate_limit': ('.decorators', 'rate_limit'),
 
     # tracing
     'trace': ('.tracing', 'trace'),
@@ -156,7 +163,53 @@ _LAZY_MAPPING = {
     'WatcherInitializationError': ('.exceptions', 'WatcherInitializationError'),
     'OptionalDependencyError': ('.exceptions', 'OptionalDependencyError'),
     'ChutilsTimeoutError': ('.exceptions', 'ChutilsTimeoutError'),
+    'RateLimitExceededError': ('.exceptions', 'RateLimitExceededError'),
     'CacheError': ('.exceptions', 'CacheError'),
+    'EventBusError': ('.exceptions', 'EventBusError'),
+    'EventBusExceptionGroup': ('.exceptions', 'EventBusExceptionGroup'),
+
+    # events
+    'subscribe': ('.events', 'subscribe'),
+    'publish': ('.events', 'publish'),
+    'publish_async': ('.events', 'publish_async'),
+    'ErrorStrategy': ('.events', 'ErrorStrategy'),
+    'EventBus': ('.events', 'EventBus'),
+
+    # tasks
+    'periodic_task': ('.tasks', 'periodic_task'),
+    'start_scheduler': ('.tasks', 'start_scheduler'),
+    'stop_scheduler': ('.tasks', 'stop_scheduler'),
+
+    # di
+    'di': ('.di', None),
+    'Container': ('.di.container', 'Container'),
+    'provide': ('.di.container', 'provide'),
+    'inject': ('.di.container', 'inject'),
+    'Inject': ('.di.container', 'Inject'),
+    'container': ('.di.container', 'default_container'),
+
+    # metrics
+    'metrics': ('.metrics', None),
+
+    # text
+    'natsort_key': ('.text', 'natsort_key'),
+    'is_significant_difference': ('.text', 'is_significant_difference'),
+
+    # crypto
+    'encrypt_portable': ('.crypto', 'encrypt_portable'),
+    'decrypt_portable': ('.crypto', 'decrypt_portable'),
+    'encrypt_file': ('.crypto', 'encrypt_file'),
+    'decrypt_file': ('.crypto', 'decrypt_file'),
+
+    # fs
+    'remove_path': ('.fs', 'remove_path'),
+    'cleanup_paths': ('.fs', 'cleanup_paths'),
+    'safe_filename': ('.fs', 'safe_filename'),
+    'zip_folder': ('.fs', 'zip_folder'),
+
+    # plugins
+    'plugins': ('.plugins', None),
+    'register_plugin': ('.plugins', 'register_plugin'),
 }
 
 

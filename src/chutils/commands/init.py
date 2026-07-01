@@ -132,9 +132,8 @@ class InitCommand(BaseCommand):
         return f"""# Конфигурация проекта {project_name}
 
 Logging:
-  level: INFO
-  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  file_path: "app.log"
+  log_level: INFO
+  log_file_name: "app.log"
   max_bytes: 10485760  # 10MB
   backup_count: 5
 

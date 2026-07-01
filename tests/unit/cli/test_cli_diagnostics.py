@@ -61,15 +61,22 @@ def _patch_template_everywhere(mocker, val=None, side_effect=None):
             pass
 
 
+def _get_template_module():
+    try:
+        import chutils.commands.template as template_mod
+    except ImportError:
+        import src.chutils.commands.template as template_mod
+    return template_mod
+
+
 def test_cli_template_yaml_stdout(cli_runner, config_fs, mocker):
     """Проверяет генерацию YAML шаблона в stdout."""
     _patch_template_everywhere(mocker, val="key: val")
-    # Также патчим getattr в TemplateCommand
-    for mod in ["chutils.commands.template", "src.chutils.commands.template"]:
-        if mod in sys.modules:
-            mocker.patch(f"{mod}.importlib.import_module")
-            mocker.patch(f"{mod}.getattr", return_value=Settings)
-            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", True)
+    template_mod = _get_template_module()
+    mock_module = mocker.MagicMock()
+    mock_module.Settings = Settings
+    mocker.patch.object(template_mod.importlib, "import_module", return_value=mock_module)
+    mocker.patch.object(template_mod, "PYDANTIC_AVAILABLE", True)
 
     result = cli_runner.invoke(["template", "-m", "models:Settings", "-f", "yaml"])
 
@@ -81,11 +88,11 @@ def test_cli_template_save_file(cli_runner, config_fs, mocker):
     """Проверяет сохранение шаблона в файл."""
     fs, project_root = config_fs
     _patch_template_everywhere(mocker, val="key: val")
-    for mod in ["chutils.commands.template", "src.chutils.commands.template"]:
-        if mod in sys.modules:
-            mocker.patch(f"{mod}.importlib.import_module")
-            mocker.patch(f"{mod}.getattr", return_value=Settings)
-            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", True)
+    template_mod = _get_template_module()
+    mock_module = mocker.MagicMock()
+    mock_module.Settings = Settings
+    mocker.patch.object(template_mod.importlib, "import_module", return_value=mock_module)
+    mocker.patch.object(template_mod, "PYDANTIC_AVAILABLE", True)
 
     result = cli_runner.invoke(["template", "-m", "models:Settings", "-o", "out.yml"])
 
@@ -97,9 +104,9 @@ def test_cli_template_save_file(cli_runner, config_fs, mocker):
 
 def test_cli_template_no_pydantic(cli_runner, mocker):
     """Проверяет команду template без Pydantic."""
-    for mod in ["chutils.commands.template", "src.chutils.commands.template"]:
-        if mod in sys.modules:
-            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", False)
+    mocker.patch("chutils.config.generator.PYDANTIC_AVAILABLE", False)
+    template_mod = _get_template_module()
+    mocker.patch.object(template_mod, "PYDANTIC_AVAILABLE", False)
 
     result = cli_runner.invoke(["template", "-m", "m:M"])
     assert result.exit_code == 1
@@ -108,10 +115,10 @@ def test_cli_template_no_pydantic(cli_runner, mocker):
 
 def test_cli_template_import_error(cli_runner, mocker):
     """Проверяет обработку ImportError при импорте модели."""
-    for mod in ["chutils.commands.template", "src.chutils.commands.template"]:
-        if mod in sys.modules:
-            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", True)
-            mocker.patch(f"{mod}.importlib.import_module", side_effect=ImportError("Fail"))
+    mocker.patch("chutils.config.generator.PYDANTIC_AVAILABLE", True)
+    template_mod = _get_template_module()
+    mocker.patch.object(template_mod, "PYDANTIC_AVAILABLE", True)
+    mocker.patch.object(template_mod.importlib, "import_module", side_effect=ImportError("Fail"))
 
     result = cli_runner.invoke(["template", "-m", "m:M"])
     assert result.exit_code == 1
@@ -121,11 +128,12 @@ def test_cli_template_import_error(cli_runner, mocker):
 def test_cli_template_generation_error(cli_runner, mocker):
     """Проверяет обработку ошибки генерации."""
     _patch_template_everywhere(mocker, side_effect=Exception("Gen fail"))
-    for mod in ["chutils.commands.template", "src.chutils.commands.template"]:
-        if mod in sys.modules:
-            mocker.patch(f"{mod}.importlib.import_module")
-            mocker.patch(f"{mod}.getattr", return_value=Settings)
-            mocker.patch(f"{mod}.PYDANTIC_AVAILABLE", True)
+    mocker.patch("chutils.config.generator.PYDANTIC_AVAILABLE", True)
+    template_mod = _get_template_module()
+    mock_module = mocker.MagicMock()
+    mock_module.M = Settings
+    mocker.patch.object(template_mod.importlib, "import_module", return_value=mock_module)
+    mocker.patch.object(template_mod, "PYDANTIC_AVAILABLE", True)
 
     result = cli_runner.invoke(["template", "-m", "m:M"])
     assert result.exit_code == 1

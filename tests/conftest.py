@@ -1,10 +1,15 @@
-from pathlib import Path
-
+import keyring
 import pytest
+
+try:
+    keyring.get_keyring()
+except Exception:
+    pass
 
 
 @pytest.fixture
 def config_fs(fs):  # fs - это фикстура из pyfakefs
+    from pathlib import Path
     from chutils import config
     from chutils.logger import core as logger_core
     """

@@ -27,6 +27,7 @@ init_custom_levels()
 
 __all__ = [
     'setup_logger',
+    'setup_logger_from_config',
     'ChutilsLogger',
     'LogLevel',
     'DEVDEBUG_LEVEL_NUM',
@@ -129,6 +130,12 @@ def setup_logger(
     - Автоматическая замена секретов и паттернов на `[MASKED]`.
     - Поддержка предустановленных паттернов PII (`email`, `phone`, `credit_card`, `ssn`).
 
+    Warning:
+        Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings`
+        для чтения конфигурации из внешних источников (например, `.env` или переменных окружения),
+        рекомендуется явно передавать уровень логирования через параметр `log_level` для исключения
+        рассинхронизации настроек с файлом `config.yml`.
+
     Args:
         name: Имя логгера. `app_logger` по умолчанию.
         config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').
@@ -156,6 +163,12 @@ def setup_logger(
     Returns:
         Настроенный экземпляр ChutilsLogger.
     """
+    valid_file_handler_kwargs = {'mode', 'delay', 'errors'}
+    invalid_kwargs = set(kwargs.keys()) - valid_file_handler_kwargs
+    if invalid_kwargs:
+        bad_arg = sorted(invalid_kwargs)[0]
+        raise TypeError(f"setup_logger() got an unexpected keyword argument {bad_arg!r}")
+
     from .internal.builder import LoggerBuilder
     builder = LoggerBuilder(name, config_section_name, **kwargs)
 
@@ -176,4 +189,36 @@ def setup_logger(
         at_time=at_time,
         custom_patterns=custom_patterns,
         use_predefined_patterns=use_predefined_patterns
+    )
+
+
+def setup_logger_from_config(
+        name: str = 'app_logger',
+        config_section_name: Optional[str] = None,
+        force_reconfigure: bool = False
+) -> ChutilsLogger:
+    """Инициализирует логгер, используя настройки исключительно из файла конфигурации.
+
+    Эта функция предоставляет простую сигнатуру и явно указывает на автонастройку
+    из конфигурации (по умолчанию секция [Logging] в config.yml).
+
+    Warning:
+        Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings`
+        для чтения конфигурации из внешних источников (например, `.env` или переменных окружения),
+        вызов этой функции без аргументов может привести к рассинхронизации настроек. В таких
+        случаях используйте `setup_logger(log_level=settings.log_level)` вместо этой функции.
+
+    Args:
+        name: Имя логгера. 'app_logger' по умолчанию.
+        config_section_name: Имя секции в конфиге (например, 'AuditLogger').
+            Если указана, настройки из этой секции переопределяют настройки из общей секции [Logging].
+        force_reconfigure: Если True, принудительно перенастраивает существующий логгер.
+
+    Returns:
+        Настроенный экземпляр ChutilsLogger.
+    """
+    return setup_logger(
+        name=name,
+        config_section_name=config_section_name,
+        force_reconfigure=force_reconfigure
     )

@@ -147,6 +147,55 @@ members:
 - retry
 - log_function_details
 - timeout
+- rate_limit
+
+## Модуль `events` (Шина событий)
+
+::: chutils.events
+options:
+members:
+
+- EventBus
+- ErrorStrategy
+- subscribe
+- publish
+- publish_async
+
+## Модуль `tasks` (Планировщик фоновых задач)
+
+::: chutils.tasks
+options:
+members:
+
+- periodic_task
+- start_scheduler
+- stop_scheduler
+- ErrorStrategy
+
+## Модуль `di` (Внедрение зависимостей)
+
+::: chutils.di
+options:
+members:
+
+- Container
+- provide
+- inject
+- Inject
+
+## Модуль `metrics` (Абстракция для метрик)
+
+::: chutils.metrics
+options:
+members:
+- increment
+- set_gauge
+- observe
+- timer
+- generate_latest
+- get_provider
+- set_provider
+- clear
 
 ## Исключения
 
@@ -163,7 +212,21 @@ members:
 
 ::: chutils.dev
 options:
-  members:
-    - Rule
-    - LintResult
-    - LinterEngine
+members:
+
+- Rule
+- LintResult
+- LinterEngine
+
+## Модуль `plugins` (Система плагинов)
+
+::: chutils.plugins
+options:
+members:
+- register_plugin
+- registry
+- BasePlugin
+- SecretProviderPlugin
+- ConfigProviderPlugin
+- LoggerHandlerPlugin
+- MetricsPlugin

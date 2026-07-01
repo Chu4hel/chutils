@@ -1,4 +1,3 @@
-from unittest.mock import MagicMock
 
 from chutils.cli_utils import FallbackConsole, get_console
 
@@ -42,7 +41,7 @@ def test_get_console_returns_rich_when_available(monkeypatch, mocker):
 
     # Мокаем Console, чтобы не зависеть от реальной установки rich
     mock_console_class = mocker.patch("chutils.cli_utils.Console", create=True)
-    mock_console_instance = MagicMock()
+    mock_console_instance = mocker.MagicMock()
     mock_console_class.return_value = mock_console_instance
 
     from chutils import env, cli_utils

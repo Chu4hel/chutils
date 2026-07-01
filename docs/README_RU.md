@@ -180,10 +180,10 @@ start_config_watcher()
 ### 3. Настройка логирования
 
 ```python
-from chutils import setup_logger, ChutilsLogger
+from chutils import setup_logger_from_config, ChutilsLogger
 
 # Автоматически читает настройки из секции [Logging] в config.yml
-logger: ChutilsLogger = setup_logger()
+logger: ChutilsLogger = setup_logger_from_config()
 
 logger.info("Приложение запущено.")
 logger.devdebug("Очень подробное сообщение (уровень 9).")

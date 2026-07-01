@@ -1,7 +1,6 @@
 import logging
 import os
 import tempfile
-from pathlib import Path
 
 from chutils.logger import setup_logger
 
@@ -59,6 +58,7 @@ def test_log_rotation_no_permission_error(project_with_marker, time_machine, fas
 
 def test_rotation_on_real_filesystem_is_working(time_machine, fast_rotation):
     """Финальный тест ротации на реальной ФС во временной папке."""
+    from pathlib import Path
     with tempfile.TemporaryDirectory() as tmpdir:
         logs_dir = Path(tmpdir)
         logging.shutdown()

@@ -1,7 +1,8 @@
 import datetime
 import logging
 from enum import Enum
-from typing import Any, Optional, List, Dict, Type, TypeVar, Union, Tuple, Callable
+from pathlib import Path
+from typing import Any, Optional, List, Dict, Type, TypeVar, Union, Tuple, Callable, Literal
 
 # Тип для Pydantic моделей
 T = TypeVar("T")
@@ -134,6 +135,13 @@ def setup_logger(
 ) -> ChutilsLogger: ...
 
 
+def setup_logger_from_config(
+        name: str = 'app_logger',
+        config_section_name: Optional[str] = None,
+        force_reconfigure: bool = False,
+) -> ChutilsLogger: ...
+
+
 class LogLevel(str, Enum):
     DEVDEBUG = "DEVDEBUG"
     DEBUG = "DEBUG"
@@ -262,6 +270,10 @@ def retry(retries: int = 3, delay: float = 1.0, backoff: float = 2.0, jitter: bo
 def timeout(seconds: float, fallback: Any = ...) -> Callable[[F], F]: ...
 
 
+def rate_limit(max_calls: int, period: float, strategy: str = "token_bucket", wait: bool = False,
+               key_func: Optional[Callable[..., str]] = None) -> Callable[[F], F]: ...
+
+
 # --- exceptions ---
 class ChutilsException(Exception):
     context: Dict[str, Any]
@@ -299,6 +311,159 @@ class OptionalDependencyError(ChutilsException): ...
 class ChutilsTimeoutError(ChutilsException): ...
 
 
+class EventBusError(ChutilsException): ...
+
+
+class EventBusExceptionGroup(EventBusError):
+    exceptions: List[Exception]
+
+    def __init__(self, message: str, exceptions: List[Exception], **context: Any) -> None: ...
+
+
+class RateLimitExceededError(ChutilsException): ...
+
+
+class DependencyError(ChutilsException): ...
+
+
+class DependencyNotFoundError(DependencyError): ...
+
+
+class DependencyResolutionError(DependencyError): ...
+
+
+# --- events ---
+class ErrorStrategy(str, Enum):
+    IGNORE = "ignore"
+    FAIL_FAST = "fail_fast"
+    COLLECT = "collect"
+
+
+class EventBus:
+    error_strategy: ErrorStrategy
+
+    def __init__(self, error_strategy: ErrorStrategy = ErrorStrategy.IGNORE) -> None: ...
+
+    def subscribe(self, event_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+
+    def unsubscribe(self, event_name: str, func: Callable[..., Any]) -> None: ...
+
+    def publish(self, event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None,
+                **kwargs: Any) -> None: ...
+
+    async def publish_async(self, event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None,
+                            **kwargs: Any) -> None: ...
+
+
+def subscribe(event_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+
+
+def publish(event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None, **kwargs: Any) -> None: ...
+
+
+async def publish_async(event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None,
+                        **kwargs: Any) -> None: ...
+
+
+# --- tasks ---
+def periodic_task(
+        interval_seconds: int,
+        run_immediately: bool = False,
+        overlap: bool = False,
+        error_strategy: Any = ...,
+        name: str = "",
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+
+
+def start_scheduler() -> None: ...
+
+
+async def stop_scheduler() -> None: ...
+
+
+# --- di ---
+class Container:
+    def __init__(self) -> None: ...
+
+    def register(self, dependency_type: Type[Any], provider: Optional[Callable[..., Any]] = None,
+                 scope: str = "singleton") -> None: ...
+
+    def has_provider(self, dependency_type: Type[Any]) -> bool: ...
+
+    def resolve(self, dependency_type: Type[T]) -> T: ...
+
+    def clear(self) -> None: ...
+
+
+container: Container
+
+
+def provide(scope: str = "singleton", container: Optional[Container] = None) -> Callable[[Any], Any]: ...
+
+
+def inject(container: Optional[Container] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+
+
+def Inject() -> Any: ...
+
+
+# --- text ---
+def natsort_key(s: str) -> List[Union[int, str]]: ...
+
+
+def is_significant_difference(text1: str, text2: str, threshold: float = 0.9) -> bool: ...
+
+
+# --- crypto ---
+def encrypt_portable(data: str, seed: str) -> str: ...
+
+
+def decrypt_portable(encrypted_data: str, seed: str) -> Optional[str]: ...
+
+
+def encrypt_file(file_path: Union[str, Path], seed: str, output_path: Optional[Union[str, Path]] = None) -> Path: ...
+
+
+def decrypt_file(file_path: Union[str, Path], seed: str, output_path: Optional[Union[str, Path]] = None) -> bool: ...
+
+
+# --- fs ---
+def remove_path(
+        path: Union[str, Path],
+        *,
+        retries: int = 3,
+        delay: float = 0.1,
+        on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
+        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+) -> bool: ...
+
+
+def cleanup_paths(
+        *paths: Union[str, Path],
+        retries: int = 3,
+        delay: float = 0.1,
+        on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
+        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+) -> None: ...
+
+
+def safe_filename(
+        name: str,
+        replacement: str = "_",
+        strip_chars: str = " _.-",
+        max_length: int = 255,
+        transliterate: bool = False
+) -> str: ...
+
+
+def zip_folder(
+        folder_path: Union[str, Path],
+        output_path: Union[str, Path],
+        compression: int = ...,
+        exclude: Optional[list[str]] = None
+) -> Path: ...
+
+
 # --- Submodules ---
 from . import config as config
 from . import logger as logger
@@ -311,3 +476,10 @@ from . import features as features
 from . import time as time
 from . import tracing as tracing
 from . import dev as dev
+from . import events as events
+from . import tasks as tasks
+from . import di as di
+from . import metrics as metrics
+from . import text as text
+from . import crypto as crypto
+from . import fs as fs

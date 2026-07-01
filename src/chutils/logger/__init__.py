@@ -14,6 +14,7 @@ from typing import Any, TYPE_CHECKING
 if TYPE_CHECKING:
     from .core import (
         setup_logger as setup_logger,
+        setup_logger_from_config as setup_logger_from_config,
         ChutilsLogger as ChutilsLogger,
         LogLevel as LogLevel,
         DEVDEBUG_LEVEL_NUM as DEVDEBUG_LEVEL_NUM,
@@ -29,6 +30,7 @@ if TYPE_CHECKING:
 
 _LAZY_MAPPING = {
     'setup_logger': ('.core', 'setup_logger'),
+    'setup_logger_from_config': ('.core', 'setup_logger_from_config'),
     'ChutilsLogger': ('.core', 'ChutilsLogger'),
     'LogLevel': ('.core', 'LogLevel'),
     'DEVDEBUG_LEVEL_NUM': ('.core', 'DEVDEBUG_LEVEL_NUM'),

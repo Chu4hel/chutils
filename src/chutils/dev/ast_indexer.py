@@ -12,6 +12,103 @@ from typing import List, Union, Dict, Set, Optional
 from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge, ProjectExample
 
 
+class GitIgnoreMatcher:
+    """Проверяет соответствие путей правилам .gitignore."""
+
+    def __init__(self, root_path: Path) -> None:
+        self.root_path = root_path
+        self.patterns: List[tuple[re.Pattern[str], bool]] = []
+        self._load_file_rules(self.root_path / ".gitignore")
+        self._load_file_rules(self.root_path / ".chutilsignore")
+
+    def _load_file_rules(self, file_path: Path) -> None:
+        if not file_path.exists():
+            return
+
+        try:
+            lines = file_path.read_text(encoding="utf-8").splitlines()
+            for line in lines:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+
+                is_negative = False
+                if line.startswith("!"):
+                    is_negative = True
+                    line = line[1:]
+
+                regex = self._rule_to_regex(line)
+                if regex:
+                    self.patterns.append((regex, is_negative))
+        except Exception:
+            pass
+
+    def _rule_to_regex(self, rule: str) -> Optional[re.Pattern[str]]:
+        rule = rule.replace("\\", "/")
+        if not rule:
+            return None
+
+        # Определяем, привязано ли правило к корню
+        stripped_rule = rule[:-1] if rule.endswith("/") else rule
+        anchored = "/" in stripped_rule or rule.startswith("/")
+
+        if rule.startswith("/"):
+            rule = rule[1:]
+
+        parts = []
+        i = 0
+        n = len(rule)
+        while i < n:
+            c = rule[i]
+            if c == '*':
+                if i + 1 < n and rule[i + 1] == '*':
+                    parts.append('__DOUBLE_STAR__')
+                    i += 2
+                else:
+                    parts.append('__STAR__')
+                    i += 1
+            elif c == '?':
+                parts.append('[^/]')
+                i += 1
+            elif c in ('.', '+', '^', '$', '(', ')', '{', '}', '|', '\\'):
+                parts.append('\\' + c)
+                i += 1
+            else:
+                parts.append(c)
+                i += 1
+
+        regex_str = "".join(parts)
+        regex_str = regex_str.replace('__DOUBLE_STAR__', '.*')
+        regex_str = regex_str.replace('__STAR__', '[^/]*')
+
+        if rule.endswith("/"):
+            regex_str += '?.*'
+        else:
+            regex_str += '(/.*)?$'
+
+        if anchored:
+            regex_str = '^' + regex_str
+        else:
+            regex_str = '(^|.*/)' + regex_str
+
+        try:
+            return re.compile(regex_str)
+        except re.error:
+            return None
+
+    def matches(self, rel_path: str) -> bool:
+        """Возвращает True, если путь должен быть проигнорирован."""
+        rel_path = rel_path.replace("\\", "/").lstrip("/")
+        if not rel_path:
+            return False
+
+        is_ignored = False
+        for pattern, is_negative in self.patterns:
+            if pattern.search(rel_path):
+                is_ignored = not is_negative
+        return is_ignored
+
+
 class Indexer:
     """Оркестратор индексации проекта."""
 
@@ -27,6 +124,7 @@ class Indexer:
         self._current_imports: Dict[str, str] = {}
         """Карта импортов текущего модуля {asname: full_path}"""
         self._public_symbols = self._discover_public_api()
+        self.gitignore = GitIgnoreMatcher(self.project_root)
 
     @property
     def _graph(self) -> List[GraphEdge]:
@@ -176,14 +274,15 @@ class Indexer:
         if rel_path == ".":
             rel_path = current_path.name
 
-        is_pkg = (current_path / "__init__.py").exists()
-        node_type = "package" if is_pkg else "module"
+        is_dir = current_path.is_dir()
+        is_pkg = is_dir and (current_path / "__init__.py").exists()
+        node_type = "package" if is_dir else "module"
 
         # Получаем docstring и AST для модуля/пакета
         docstring = ""
         tree: Optional[ast.Module] = None
-        init_file = current_path / "__init__.py" if is_pkg else current_path
-        if init_file.exists():
+        init_file = current_path / "__init__.py" if is_pkg else (None if is_dir else current_path)
+        if init_file and init_file.exists():
             try:
                 tree = ast.parse(init_file.read_text(encoding="utf-8"))
                 docstring = ast.get_docstring(tree) or ""
@@ -234,16 +333,24 @@ class Indexer:
                             else:
                                 self._record_dependency(rel_path, full_name)
 
-        if is_pkg:
-            # Обработка пакета
+        if is_dir:
+            # Обработка пакета или директории
             for fs_item in sorted(current_path.iterdir()):
-                if fs_item.is_dir() and not fs_item.name.startswith((".",)) and fs_item.name != "__pycache__":
+                # Проверяем .gitignore целевого проекта
+                rel_item_path = str(fs_item.relative_to(self.project_root)).replace("\\", "/")
+                if self.gitignore.matches(rel_item_path):
+                    continue
+
+                if fs_item.is_dir():
+                    # Пропускаем скрытые папки (начинающиеся с .) и __pycache__
+                    if fs_item.name.startswith(".") or fs_item.name == "__pycache__":
+                        continue
                     node.children.append(self._build_node_tree(fs_item))
                 elif fs_item.suffix == ".py" and fs_item.name != "__init__.py":
                     node.children.append(self._build_node_tree(fs_item))
 
             # Извлекаем символы из __init__.py (уже распаршен выше)
-            if tree:
+            if is_pkg and tree:
                 node.symbols = self._extract_symbols(tree)
         else:
             # Обработка отдельного модуля

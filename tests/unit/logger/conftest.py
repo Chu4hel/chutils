@@ -88,7 +88,7 @@ def fast_rotation(monkeypatch):
     monkeypatch.setattr(SafeTimedRotatingFileHandler, '__init__', new_init)
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def reset_chutils_state(monkeypatch):
     """
     Сбрасывает глобальное состояние модулей config и logger.

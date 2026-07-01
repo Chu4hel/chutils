@@ -76,6 +76,59 @@ AuditLogger:
 audit_logger = setup_logger("audit", config_section_name="AuditLogger")
 ```
 
+### Предотвращение конфликтов конфигурации логов (pydantic-settings)
+
+> [!WARNING]
+> Если ваше приложение одновременно использует `chutils` (для логирования и чтения `config.yml`) и `pydantic-settings` (
+> для загрузки настроек, таких как `LOG_LEVEL` из `.env` / системного окружения), у вас работают две независимые системы
+> конфигурации.
+>
+> `setup_logger_from_config()` читает уровень логирования из секции `Logging.log_level` в `config.yml`, тогда как
+`pydantic-settings` считывает `LOG_LEVEL` из `.env`. Они никак не связаны по умолчанию. Изменение уровня логов в `.env`
+> не повлияет на логгер `chutils`.
+
+Для решения этого конфликта рекомендуется выбрать один из двух подходов:
+
+#### Вариант А. Единый источник правды через chutils (Рекомендуется)
+
+Полностью доверьтесь механизму конфигурации `chutils` (`config.yml` и `config.local.yml`). Удалите `log_level` из вашей
+Pydantic-модели и `.env` файла.
+Управляйте уровнем логирования в `config.yml`, а для локальной разработки переопределяйте его в `config.local.yml` (или
+используйте переменные окружения `CH_LOGGING_LOG_LEVEL`).
+
+В этом случае вы просто вызываете логгер без аргументов:
+
+```python
+from chutils import setup_logger_from_config
+
+# Настройки уровня берутся из config.yml (секция Logging)
+logger = setup_logger_from_config()
+```
+
+#### Вариант Б. Явный мост (Экспорт из Pydantic)
+
+Если вы хотите продолжать хранить `LOG_LEVEL` в `.env` и управлять им через Pydantic-модель, явно передавайте это
+значение при настройке логгера:
+
+```python
+from pydantic_settings import BaseSettings
+from chutils import setup_logger
+
+
+class AppSettings(BaseSettings):
+    log_level: str = "INFO"
+
+    class Config:
+        env_file = ".env"
+
+
+# Инициализируем настройки приложения (читает .env и системное окружение)
+settings = AppSettings()
+
+# Явно связываем настройки Pydantic и логгер chutils
+logger = setup_logger(log_level=settings.log_level)
+```
+
 ### Контекстное логирование в FastAPI / asyncio
 
 Если вы хотите автоматически добавлять ID запроса во все логи без передачи его через аргументы функций.
@@ -753,8 +806,429 @@ chutils dev generate-context -o api_map.md
 
 ### Генерация семантического индекса для AI
 
-Генерирует JSON-дерево проекта (через AST), которое включает связи между модулями, веса зависимостей и метаданные символов. Это "золотой стандарт" контекста для современных LLM.
+Генерирует JSON-дерево проекта (через AST), которое включает связи между модулями, веса зависимостей и метаданные
+символов. Это "золотой стандарт" контекста для современных LLM.
 
 ```bash
 chutils dev generate-context --tree -o project_index.json
 ```
+
+## 17. Внутренняя шина событий (In-Memory Event Bus)
+
+Шина событий (`chutils.events`) позволяет развязать компоненты вашего приложения (loose coupling) через паттерн Pub/Sub.
+
+### Подписка и публикация
+
+Используйте декоратор `@subscribe` для регистрации обработчиков и `publish` (или `publish_async`) для отправки событий.
+
+```python
+from chutils.events import subscribe, publish, publish_async
+import asyncio
+
+
+# 1. Синхронный обработчик
+@subscribe("user_created")
+def send_email(user_id: int, username: str):
+    print(f"Отправка письма для {username}...")
+
+
+# 2. Асинхронный обработчик
+@subscribe("user_created")
+async def setup_profile(user_id: int, username: str):
+    await asyncio.sleep(0.1)
+    print(f"Профиль {username} настроен.")
+
+
+# Публикация событий:
+# Синхронная (запускает асинхронных подписчиков в фоновом режиме):
+publish("user_created", user_id=1, username="Дмитрий")
+
+# Асинхронная (ждет завершения всех подписчиков):
+# await publish_async("user_created", user_id=2, username="Анна")
+```
+
+### Стратегии обработки ошибок
+
+При возникновении исключений в обработчиках вы можете выбрать одну из трех стратегий:
+
+1. `IGNORE` (по умолчанию) — логирует ошибки через `chutils.logger` и продолжает работу остальных обработчиков.
+2. `FAIL_FAST` — немедленно прерывает выполнение и пробрасывает ошибку.
+3. `COLLECT` — выполняет все задачи, собирает ошибки и выбрасывает объединенное исключение `EventBusExceptionGroup`.
+
+```python
+from chutils.events import EventBus, ErrorStrategy
+from chutils.exceptions import EventBusExceptionGroup
+
+bus = EventBus(error_strategy=ErrorStrategy.COLLECT)
+
+
+@bus.subscribe("data_sync")
+def step_1():
+    raise ValueError("Сбой шага 1")
+
+
+@bus.subscribe("data_sync")
+def step_2():
+    raise IOError("Сбой шага 2")
+
+
+try:
+    bus.publish("data_sync")
+except EventBusExceptionGroup as e:
+    print(f"Возникли ошибки: {e.exceptions}")
+```
+
+### Передача Pydantic-моделей
+
+Если установлен пакет `pydantic` (`chutils[pydantic]`), шина поддерживает прямую передачу экземпляров Pydantic-моделей в
+качестве payload:
+
+```python
+from pydantic import BaseModel
+from chutils.events import subscribe, publish
+
+
+class UserEvent(BaseModel):
+    user_id: int
+    role: str
+
+
+@subscribe("user_updated")
+def handle_user_update(event: UserEvent):
+    print(f"Роль пользователя {event.user_id} обновлена на {event.role}")
+
+
+# Публикация Pydantic-модели
+publish("user_updated", UserEvent(user_id=10, role="admin"))
+```
+
+## 18. Планировщик фоновых задач (Lightweight Task Scheduler)
+
+Модуль `chutils.tasks` предоставляет планировщик для выполнения периодических фоновых задач. Он поддерживает как
+синхронные, так и асинхронные обработчики, отслеживает перекрытия (overlapping), предоставляет стратегии обработки
+ошибок и автоматически интегрируется с Graceful Shutdown (`chutils.lifecycle`).
+
+### Простой пример
+
+Используйте декоратор `@periodic_task` для регистрации задач и функцию `start_scheduler()` для их запуска в Event Loop.
+
+```python
+import asyncio
+import time
+from chutils import periodic_task, start_scheduler, setup_graceful_shutdown
+from chutils.tasks import ErrorStrategy
+
+
+# 1. Асинхронная задача запускается сразу при старте планировщика
+@periodic_task(interval_seconds=5, run_immediately=True, name="async_logger")
+async def log_status():
+    print("Статус приложения в норме... (асинхронно)")
+
+
+# 2. Синхронная задача выполняется в пуле потоков каждые 10 секунд
+@periodic_task(interval_seconds=10, run_immediately=False, name="sync_cleaner")
+def cleanup_temp_files():
+    print("Очистка временных файлов... (синхронно)")
+    time.sleep(1.0)
+
+
+async def main():
+    # Настраиваем graceful shutdown для остановки планировщика при Ctrl+C
+    setup_graceful_shutdown()
+
+    # Запускаем планировщик фоновых задач
+    start_scheduler()
+
+    # Имитируем работу приложения
+    await asyncio.sleep(30.0)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### Контроль перекрытия задач (Overlapping)
+
+* **По умолчанию (`overlap=False`)**: Если предыдущий запуск задачи еще не завершился к моменту наступления следующего
+  интервала, запуск пропускается (откладывается до следующего тика).
+* **Параллельный запуск (`overlap=True`)**: Задача запускается строго по интервалу, независимо от того, завершились ли
+  предыдущие запуски.
+
+```python
+# Эта задача будет запускаться каждые 2 секунды параллельно, не дожидаясь окончания
+@periodic_task(interval_seconds=2, overlap=True)
+async def parallel_task():
+    await asyncio.sleep(5.0)
+```
+
+### Стратегии обработки ошибок (ErrorStrategy)
+
+В случае сбоя задачи вы можете выбрать одну из трех стратегий:
+
+1. `IGNORE` (по умолчанию) — залогировать ошибку в `chutils.logger` и продолжить выполнение по расписанию.
+2. `STOP_TASK` — исключить сбойную задачу из расписания планировщика.
+3. `STOP_SCHEDULER` — остановить весь планировщик.
+
+```python
+@periodic_task(interval_seconds=5, error_strategy=ErrorStrategy.STOP_TASK)
+def fragile_task():
+    raise RuntimeError("Неустранимая ошибка в задаче")
+```
+
+## 19. Ограничение частоты вызовов (Rate Limiting / Throttling)
+
+Декоратор `@rate_limit` из модуля `chutils.decorators` позволяет ограничить частоту выполнения синхронных и асинхронных
+функций, обеспечивая защиту от перегрузки и соблюдение лимитов внешних API.
+
+### Базовое использование (Fail Fast)
+
+По умолчанию декоратор работает в режиме `wait=False` (Fail Fast) с использованием алгоритма Token Bucket. При
+превышении лимита мгновенно выбрасывается исключение `RateLimitExceededError`.
+
+```python
+from chutils import rate_limit, RateLimitExceededError
+
+
+# Разрешено максимум 3 вызова за 5 секунд
+@rate_limit(max_calls=3, period=5.0)
+def call_api():
+    print("API вызван успешно")
+
+
+for _ in range(3):
+    call_api()
+
+try:
+    call_api()  # Четвертый вызов упадет
+except RateLimitExceededError:
+    print("Превышен лимит запросов!")
+```
+
+### Сглаживание и ожидание (Wait)
+
+Если передан флаг `wait=True`, выполнение функции блокируется на время, необходимое для восстановления лимита (для
+синхронных функций используется `time.sleep`, для асинхронных — `asyncio.sleep`).
+
+```python
+import asyncio
+from chutils import rate_limit
+
+
+# Разрешено максимум 2 вызова в секунду. Лишние вызовы будут ожидать очереди
+@rate_limit(max_calls=2, period=1.0, wait=True)
+async def process_item(item_id: int):
+    print(f"Обработка элемента {item_id}")
+
+
+async def main():
+    # Запустим 5 задач параллельно. Они будут выполняться пачками по 2 штуки в секунду
+    tasks = [process_item(i) for i in range(5)]
+    await asyncio.gather(*tasks)
+```
+
+### Раздельные лимиты по ключам (key_func)
+
+По умолчанию лимит действует глобально на всю функцию. Вы можете настроить индивидуальные лимиты (например, на каждого
+пользователя или IP) с помощью функции `key_func`.
+
+```python
+from chutils import rate_limit
+
+
+# Лимит: 1 вызов в секунду на каждого конкретного пользователя
+@rate_limit(
+    max_calls=1,
+    period=1.0,
+    key_func=lambda user_id, *args, **kwargs: f"user_{user_id}"
+)
+def send_notification(user_id: int, message: str):
+    print(f"Уведомление отправлено пользователю {user_id}")
+
+
+send_notification(1, "Привет!")  # OK
+send_notification(2, "Привет!")  # OK для другого пользователя
+# send_notification(1, "Еще раз привет")  # Упадет, превышен лимит для user_1
+```
+
+### Алгоритмы лимитирования (strategy)
+
+Поддерживаются две стратегии:
+
+1. `token_bucket` (по умолчанию) — алгоритм маркерной корзины. Разрешает кратковременные всплески нагрузки (до
+   `max_calls` одновременно), после чего скорость ограничивается.
+2. `leaky_bucket` — алгоритм дырявого ведра. Обеспечивает строгое сглаживание нагрузки с равномерной задержкой между
+   вызовами.
+
+```python
+# Строгий Leaky Bucket: вызовы будут распределены равномерно
+@rate_limit(max_calls=60, period=60.0, strategy="leaky_bucket", wait=True)
+def send_email():
+    pass
+```
+
+## 20. Внедрение зависимостей (Dependency Injection)
+
+Встроенный IoC/DI контейнер (`chutils.di`) позволяет связать независимые компоненты приложения без ручной передачи
+аргументов через всю цепочку вызовов (prop drilling) и без привязки к жестким глобальным зависимостям.
+
+### Декларативная регистрация (@provide)
+
+Используйте декоратор `@provide` для регистрации классов или функций-фабрик. По умолчанию используется время жизни
+`singleton` (объект создается один раз при первом обращении и кэшируется).
+
+```python
+from chutils import provide
+
+
+# 1. Регистрация класса (singleton)
+@provide()
+class DatabaseConnection:
+    def __init__(self) -> None:
+        self.connected = True
+        print("Подключение к БД создано")
+
+
+# 2. Регистрация функции-фабрики (transient - новый объект при каждом запросе)
+@provide(scope="transient")
+def get_current_time() -> float:
+    import time
+    return time.time()
+```
+
+### Автоматическое внедрение (@inject)
+
+Декоратор `@inject` автоматически подставляет зарегистрированные зависимости из контейнера в аргументы функции. Для
+этого аргумент должен иметь тип зарегистрированной зависимости и значение по умолчанию `Inject()`.
+
+```python
+from chutils import inject, Inject
+
+
+# Автоматически внедряем DatabaseConnection
+@inject()
+def get_user_profile(user_id: int, db: DatabaseConnection = Inject()):
+    if db.connected:
+        return f"User profile {user_id}"
+```
+
+### Рекурсивный резолв зависимостей
+
+Если одна зависимость требует другую зависимость в своем конструкторе `__init__`, контейнер автоматически разрешит весь
+граф при обращении (Auto-wiring).
+
+```python
+from chutils import provide, inject, Inject
+
+
+@provide()
+class CacheService:
+    pass
+
+
+@provide()
+class UserService:
+    # Контейнер автоматически создаст CacheService и передаст его сюда
+    def __init__(self, cache: CacheService) -> None:
+        self.cache = cache
+
+
+@inject()
+def process(user_service: UserService = Inject()):
+    # user_service уже имеет внутри инициализированный cache
+    pass
+```
+
+### Тестирование и переопределение зависимостей
+
+Для написания unit-тестов вы можете легко переопределить любую зависимость в контейнере (mocking) напрямую через метод
+`register()` глобального контейнера:
+
+```python
+from chutils import container
+
+
+class MockDatabaseConnection:
+    def __init__(self) -> None:
+        self.connected = True
+        print("Mock подключение к БД создано!")
+
+
+def test_my_service():
+    # Переопределяем реальное подключение на мок
+    container.register(DatabaseConnection, provider=MockDatabaseConnection)
+
+    # Теперь все вызовы @inject внедрят MockDatabaseConnection вместо реального
+    profile = get_user_profile(42)
+    assert "User profile 42" in profile
+```
+
+## 21. Сбор метрик (Unified Metrics)
+
+Модуль `chutils.metrics` предоставляет унифицированный API для сбора многомерных метрик (Counters, Gauges, Histograms) с
+полной поддержкой меток (labels).
+
+### Быстрый старт (Counters & Gauges)
+
+По умолчанию метрики сохраняются во встроенное in-memory хранилище. При установке библиотеки `prometheus-client` они
+автоматически транслируются в формат Prometheus.
+
+```python
+from chutils.metrics import increment, set_gauge, observe
+
+# 1. Увеличить счетчик (Counter)
+increment("http_requests_total", 1.0, {"method": "GET", "endpoint": "/users"})
+
+# 2. Установить значение датчика (Gauge)
+set_gauge("cpu_usage_percent", 45.2, {"node": "worker-1"})
+
+# 3. Записать значение в гистограмму (Histogram)
+observe("request_size_bytes", 1024.0, {"client": "ios"})
+```
+
+### Автоматический замер времени (@timer)
+
+Используйте `@timer` в качестве декоратора (для синхронных и асинхронных функций) или в качестве контекстного менеджера.
+
+```python
+from chutils.metrics import timer
+import asyncio
+
+
+# A. Декоратор (асинхронный)
+@timer("http_request_duration_seconds", labels={"handler": "get_users"})
+async def handle_request():
+    await asyncio.sleep(0.05)
+
+
+# B. Контекстный менеджер
+def run_db_query():
+    with timer("db_query_duration_seconds", labels={"query": "select_orders"}):
+        # тяжелая операция
+        pass
+```
+
+### Экспорт метрик в FastAPI / Flask
+
+Чтобы отдавать собранные метрики в систему мониторинга Prometheus, просто добавьте эндпоинт `/metrics`, вызывающий
+`generate_latest()`:
+
+```python
+from fastapi import FastAPI, Response
+from chutils.metrics import generate_latest
+
+app = FastAPI()
+
+
+@app.get("/metrics")
+def metrics_endpoint():
+    # generate_latest возвращает валидный Prometheus-текст
+    return Response(content=generate_latest(), media_type="text/plain")
+```
+
+### Безопасность при отсутствии prometheus-client (Graceful Fallback)
+
+Модуль `chutils.metrics` спроектирован так, что отсутствие внешней библиотеки `prometheus-client` не вызывает ошибок. В
+этом случае все метрики собираются во внутренний in-memory пул и форматируются функцией `generate_latest()` в полностью
+Prometheus-совместимый текстовый формат.
+
+Таким образом, ваше приложение гарантированно продолжит работу без внешних зависимостей.

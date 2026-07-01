@@ -71,3 +71,21 @@ def test_cli_config_generate_schema_error(cli_runner, mocker):
     result = cli_runner.invoke(["config", "generate-schema", "--model", "m:M"])
     assert result.exit_code == 1
     assert "Ошибка при генерации схемы" in result.stderr or "Ошибка при генерации схемы" in result.stdout
+
+
+def test_cli_config_debug_include_fallbacks(cli_runner, project_with_marker, mocker):
+    """Проверяет config debug с флагом --include-fallbacks."""
+    fs, project_root = project_with_marker
+    mocker.patch(
+        "chutils.config.ast_fallback_parser.parse_fallbacks_from_project",
+        return_value={"SectionFromCode": {"key_from_code": "code_fallback_val"}}
+    )
+
+    result = cli_runner.invoke(["config", "debug", "--include-fallbacks"])
+    assert result.exit_code == 0
+    assert "default" in result.stdout
+    assert "sectionfromcode" in result.stdout
+    # Для секретов (или при выводе без --show-secrets) значение может маскироваться,
+    # но "masked" должно присутствовать, так как "default" вывелся.
+    # Проверим, что значение было записано и маскировано:
+    assert "[MASKED]" in result.stdout

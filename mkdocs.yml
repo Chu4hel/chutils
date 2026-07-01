@@ -24,7 +24,17 @@ nav:
   - Главная: index.md
   - Проверка AI-готовности: ai_lint.md
   - Рецепты: recipes.md
+  - Система плагинов: plugins.md
   - Справочник API: api.md
+  - CLI Reference:
+      - Обзор: cli/index.md
+      - Инициализация (init): cli/init.md
+      - Управление секретами (secrets): cli/secrets.md
+      - Валидация (validate): cli/validate.md
+      - Пути поиска (show-paths): cli/show_paths.md
+      - Генерация шаблонов (template): cli/template.md
+      - Настройки и отладка (config): cli/config.md
+      - Инструменты разработчика (dev): cli/dev.md
   - Проект:
     - Обзор (RU): README_RU.md
     - Кодекс поведения: CODE_OF_CONDUCT_RU.md
