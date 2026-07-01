@@ -37,6 +37,19 @@ def get_provider() -> MetricsProvider:
     """
     global _active_provider
     if _active_provider is None:
+        # Пытаемся подгрузить плагины метрик
+        try:
+            from ..plugins import registry, MetricsPlugin
+            registry.discover_plugins("chutils.plugins.metrics")
+            external_metrics_providers = registry.get_plugins_by_type(MetricsPlugin)
+            if external_metrics_providers:
+                _active_provider = external_metrics_providers[0]
+                logger.debug(
+                    f"Инициализирован внешний MetricsPlugin '{_active_provider.name}' в качестве основного провайдера метрик.")
+        except Exception as e:
+            logger.error(f"Ошибка при поиске плагинов метрик: {e}")
+
+    if _active_provider is None:
         # Пытаемся получить настройки из chutils config
         # Чтобы не создавать циклическую зависимость при импорте get_config_value,
         # делаем импорт локально
@@ -51,12 +64,13 @@ def get_provider() -> MetricsProvider:
                 _active_provider = PrometheusMetricsProvider()
                 logger.debug("Инициализирован PrometheusMetricsProvider в качестве основного провайдера метрик.")
             except Exception as e:
-                logger.warning(f"Не удалось инициализировать PrometheusMetricsProvider: {e}. Переключение на In-Memory.")
+                logger.warning(
+                    f"Не удалось инициализировать PrometheusMetricsProvider: {e}. Переключение на In-Memory.")
                 _active_provider = InMemoryMetricsProvider()
         else:
             _active_provider = InMemoryMetricsProvider()
             logger.debug("Инициализирован InMemoryMetricsProvider в качестве основного провайдера метрик.")
-            
+
     return _active_provider
 
 

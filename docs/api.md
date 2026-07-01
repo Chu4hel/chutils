@@ -217,3 +217,16 @@ members:
 - Rule
 - LintResult
 - LinterEngine
+
+## Модуль `plugins` (Система плагинов)
+
+::: chutils.plugins
+options:
+members:
+- register_plugin
+- registry
+- BasePlugin
+- SecretProviderPlugin
+- ConfigProviderPlugin
+- LoggerHandlerPlugin
+- MetricsPlugin

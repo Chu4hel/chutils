@@ -32,6 +32,34 @@ logger = logging.getLogger(__name__)
 _PROVIDERS = get_providers(utils._nest_ini_dict)
 
 
+def _ensure_config_plugins_loaded() -> None:
+    """Лениво загружает плагины конфигурации и добавляет их в _PROVIDERS."""
+    global _PROVIDERS
+    if not hasattr(_ensure_config_plugins_loaded, "_loaded"):
+        _ensure_config_plugins_loaded._loaded = True
+        try:
+            from ..plugins import registry, ConfigProviderPlugin
+            registry.discover_plugins("chutils.plugins.config")
+            external_providers = registry.get_plugins_by_type(ConfigProviderPlugin)
+            for provider in external_providers:
+                extensions = []
+                if hasattr(provider, "supported_extensions"):
+                    extensions = provider.supported_extensions
+                else:
+                    ext = provider.name
+                    if not ext.startswith("."):
+                        ext = f".{ext}"
+                    extensions = [ext]
+
+                for ext in extensions:
+                    ext_lower = ext.lower()
+                    if ext_lower not in _PROVIDERS:
+                        _PROVIDERS[ext_lower] = provider
+                        logger.debug("Зарегистрирован внешний ConfigProvider для расширения %s", ext_lower)
+        except Exception as e:
+            logger.error("Ошибка при загрузке плагинов конфигурации: %s", str(e))
+
+
 def get_config(
         model: Optional[Type[T]] = None,
         remote_url: Optional[str] = None,
@@ -80,6 +108,7 @@ def get_config(
 
             def load_from_path(path: str) -> JSONDict:
                 ext = Path(path).suffix.lower()
+                _ensure_config_plugins_loaded()
                 provider = _PROVIDERS.get(ext)
                 if provider:
                     data = provider.load(path)
@@ -307,6 +336,7 @@ def save_config_value(
         # Фиксируем время внутреннего сохранения для подавления Hot-Reload
         _cm.mark_internal_save()
     ext = Path(path).suffix.lower()
+    _ensure_config_plugins_loaded()
     provider = _PROVIDERS.get(ext)
 
     if not provider:

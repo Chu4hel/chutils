@@ -187,6 +187,10 @@ _LAZY_MAPPING = {
 
     # metrics
     'metrics': ('.metrics', None),
+
+    # plugins
+    'plugins': ('.plugins', None),
+    'register_plugin': ('.plugins', 'register_plugin'),
 }
 
 

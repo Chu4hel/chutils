@@ -211,6 +211,28 @@ class LoggerBuilder:
         if file_handler:
             target_handlers.append(file_handler)
 
+        # Подгружаем плагины-хэндлеры
+        try:
+            from ...plugins import registry, LoggerHandlerPlugin
+            registry.discover_plugins("chutils.plugins.logger")
+            external_plugins = registry.get_plugins_by_type(LoggerHandlerPlugin)
+            for plugin in external_plugins:
+                try:
+                    handler = plugin.get_handler(**params)
+                    if handler:
+                        if not handler.formatter:
+                            handler.setFormatter(formatter)
+                        target_handlers.append(handler)
+                        logging.getLogger("chutils.plugins").debug(
+                            "Зарегистрирован внешний лог-хэндлер из плагина '%s'", plugin.name
+                        )
+                except Exception as ex:
+                    logging.getLogger("chutils.plugins").error(
+                        "Ошибка инициализации хэндлера плагина '%s': %s", plugin.name, str(ex)
+                    )
+        except Exception as e:
+            logging.getLogger("chutils.plugins").error("Ошибка при поиске плагинов лог-хэндлеров: %s", str(e))
+
         return target_handlers
 
     def _get_formatter(self, json_format: Optional[bool]) -> logging.Formatter:

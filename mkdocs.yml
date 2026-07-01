@@ -24,6 +24,7 @@ nav:
   - Главная: index.md
   - Проверка AI-готовности: ai_lint.md
   - Рецепты: recipes.md
+  - Система плагинов: plugins.md
   - Справочник API: api.md
   - CLI Reference:
       - Обзор: cli/index.md

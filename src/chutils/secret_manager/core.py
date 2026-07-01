@@ -143,10 +143,25 @@ class SecretManager:
         else:
             self.providers.insert(index, provider)
 
+    def _ensure_plugins_loaded(self) -> None:
+        """Лениво подтягивает плагины из PluginRegistry и добавляет их в providers."""
+        if not hasattr(self, "_plugins_loaded"):
+            self._plugins_loaded = True
+            try:
+                from ..plugins import registry, SecretProviderPlugin
+                registry.discover_plugins("chutils.plugins.secret")
+                external_providers = registry.get_plugins_by_type(SecretProviderPlugin)
+                for provider in reversed(external_providers):
+                    if provider not in self.providers:
+                        self.providers.insert(0, provider)
+            except Exception as e:
+                _get_logger().error("Ошибка при загрузке плагинов секретов: %s", str(e))
+
     def get_secret(self, key: str) -> Optional[str]:
         """
         Получает секрет, опрашивая провайдеры по порядку.
         """
+        self._ensure_plugins_loaded()
         for provider in self.providers:
             value = provider.get(key, self.service_name)
             if value is not None:
@@ -161,6 +176,7 @@ class SecretManager:
         """
         Сохраняет секрет в первом провайдере, поддерживающем запись.
         """
+        self._ensure_plugins_loaded()
         for provider in self.providers:
             if provider.set(key, value, self.service_name):
                 return True
@@ -170,6 +186,7 @@ class SecretManager:
         """
         Удаляет секрет во всех провайдерах, поддерживающих удаление.
         """
+        self._ensure_plugins_loaded()
         success = False
         for provider in self.providers:
             if provider.delete(key, self.service_name):
