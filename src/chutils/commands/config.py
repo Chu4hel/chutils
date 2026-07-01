@@ -35,6 +35,7 @@ class ConfigCommand(BaseCommand):
             epilog="""Примеры использования:
   chutils config debug
   chutils config debug --model my_app.models:Settings --defaults
+  chutils config debug --include-fallbacks
   chutils config debug --format table
   chutils config debug --show-secrets --format json
 """
@@ -47,6 +48,11 @@ class ConfigCommand(BaseCommand):
             "-d", "--defaults",
             action="store_true",
             help="Показывать значения по умолчанию из модели"
+        )
+        debug_parser.add_argument(
+            "--include-fallbacks",
+            action="store_true",
+            help="Показывать значения fallback по умолчанию, заданные в коде через get_config_*"
         )
         debug_parser.add_argument(
             "-f", "--format",
@@ -114,6 +120,18 @@ class ConfigCommand(BaseCommand):
         if args.defaults and model_class:
             defaults = self._extract_defaults(model_class)
             _cm.record_trace_dict(defaults, "default")
+
+        # 4.5 Если запрошен сбор fallback значений из кода
+        if getattr(args, "include_fallbacks", False):
+            from chutils.config.ast_fallback_parser import parse_fallbacks_from_project
+            # Мы собираем все fallbacks из base_dir
+            if not _cm.paths_initialized:
+                from chutils.config import utils
+                _cm.initialize_paths(utils.find_project_root)
+
+            if _cm.base_dir:
+                code_fallbacks = parse_fallbacks_from_project(_cm.base_dir)
+                _cm.record_trace_dict(code_fallbacks, "default")
 
         # 5. Принудительно загружаем конфигурацию
         config.get_config(model=model_class)
