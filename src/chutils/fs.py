@@ -7,12 +7,16 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import tempfile
+import uuid
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Union, Any, Optional, Generator, TYPE_CHECKING
+from typing import Union, Any, Optional, Generator, TYPE_CHECKING, Literal
 
 from chutils.exceptions import OptionalDependencyError, PathTraversalError
+
+__all__ = ["resolve_safe_path", "ensure_dir", "atomic_write", "get_temp_file", "remove_path", "cleanup_paths"]
 
 if TYPE_CHECKING:
     import yaml
@@ -177,3 +181,127 @@ def get_temp_file(suffix: str = '') -> Generator[Path, None, None]:
         # Гарантированное удаление
         if temp_path.exists():
             temp_path.unlink(missing_ok=True)
+
+
+def remove_path(
+    path: Union[str, Path],
+    *,
+    retries: int = 3,
+    delay: float = 0.1,
+    on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
+    orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+) -> bool:
+    """Безопасно удаляет файл или директорию по указанному пути.
+
+    При возникновении ошибок доступа осуществляет повторные попытки с задержкой.
+    В случае окончательной блокировки обрабатывает ошибку в соответствии с
+    параметром on_locked.
+
+    Args:
+        path: Путь к удаляемому объекту.
+        retries: Количество повторных попыток.
+        delay: Задержка между попытками в секундах.
+        on_locked: Поведение при блокировке ("raise", "rename_orphan", "warn").
+        orphan_collision: Поведение при коллизиях orphan-файлов ("raise", "overwrite", "unique").
+
+    Returns:
+        True, если объект успешно удален или переименован,
+        False, если удаление не удалось и on_locked == "warn".
+
+    Raises:
+        OSError: Если удаление не удалось и on_locked == "raise".
+        FileExistsError: Если orphan-файл существует и orphan_collision == "raise".
+    """
+    p = Path(path)
+    if not p.exists() and not p.is_symlink():
+        return True
+
+    from chutils.decorators import retry
+
+    @retry(retries=retries, delay=delay, backoff=1.0, exceptions=(OSError,))
+    def _do_delete() -> None:
+        if p.is_dir():
+            shutil.rmtree(p)
+        else:
+            p.unlink()
+
+    try:
+        _do_delete()
+        return True
+    except OSError as e:
+        if on_locked == "raise":
+            raise
+        elif on_locked == "warn":
+            try:
+                from chutils.logger import get_logger
+                get_logger().warning(
+                    "Не удалось удалить путь %s после %d попыток: %s",
+                    p, retries, e
+                )
+            except (ImportError, Exception):
+                import logging
+                logging.getLogger("chutils").warning(
+                    "Не удалось удалить путь %s после %d попыток: %s",
+                    p, retries, e
+                )
+            return False
+        elif on_locked == "rename_orphan":
+            orphan_path = p.with_name(f"{p.name}.orphan")
+            if orphan_path.exists() or orphan_path.is_symlink():
+                if orphan_collision == "raise":
+                    raise FileExistsError(
+                        f"Орфан-путь уже существует: {orphan_path}"
+                    )
+                elif orphan_collision == "overwrite":
+                    try:
+                        if orphan_path.is_dir():
+                            shutil.rmtree(orphan_path)
+                        else:
+                            orphan_path.unlink()
+                    except OSError:
+                        pass
+                elif orphan_collision == "unique":
+                    orphan_path = p.with_name(f"{p.name}.orphan_{uuid.uuid4().hex[:8]}")
+
+            p.rename(orphan_path)
+            return True
+        else:
+            raise ValueError(f"Неизвестное значение on_locked: {on_locked}")
+
+
+def cleanup_paths(
+    *paths: Union[str, Path],
+    retries: int = 3,
+    delay: float = 0.1,
+    on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
+    orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+) -> None:
+    """Пакетное удаление нескольких путей.
+
+    Вызывает remove_path для каждого пути. Если on_locked == "warn" или "rename_orphan",
+    ошибки для отдельных путей не прерывают обход остальных. При "raise"
+    выполнение прерывается на первой же ошибке после исчерпания попыток.
+
+    Args:
+        paths: Пути к удаляемым объектам.
+        retries: Количество повторных попыток.
+        delay: Задержка между попытками в секундах.
+        on_locked: Поведение при блокировке.
+        orphan_collision: Поведение при коллизиях orphan-файлов.
+
+    Raises:
+        OSError: Если удаление не удалось и on_locked == "raise".
+    """
+    for path in paths:
+        try:
+            remove_path(
+                path,
+                retries=retries,
+                delay=delay,
+                on_locked=on_locked,
+                orphan_collision=orphan_collision
+            )
+        except Exception:
+            if on_locked == "raise":
+                raise
+

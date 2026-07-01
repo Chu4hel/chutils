@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from chutils.exceptions import PathTraversalError
-from chutils.fs import ensure_dir, atomic_write, resolve_safe_path
+from chutils.fs import ensure_dir, atomic_write, resolve_safe_path, remove_path, cleanup_paths
 
 
 def test_resolve_safe_path_valid(tmp_path):
@@ -180,3 +180,302 @@ def test_get_temp_file_exception(tmp_path):
         pass
 
     assert not temp_path.exists()
+
+
+def test_remove_path_success(tmp_path):
+    """Проверка успешного удаления файла и папки."""
+    # Файл
+    f = tmp_path / "test.txt"
+    f.write_text("data")
+    assert f.exists()
+    assert remove_path(f) is True
+    assert not f.exists()
+
+    # Папка
+    d = tmp_path / "test_dir"
+    d.mkdir()
+    (d / "sub.txt").write_text("sub")
+    assert d.exists()
+    assert remove_path(d) is True
+    assert not d.exists()
+
+    # Несуществующий путь
+    assert remove_path(tmp_path / "nonexistent") is True
+
+
+def test_remove_path_retries(tmp_path, monkeypatch):
+    """Проверка повторных попыток удаления при OSError."""
+    f = tmp_path / "test.txt"
+    f.write_text("data")
+
+    call_count = 0
+    original_unlink = Path.unlink
+
+    def mock_unlink(self, *args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        if call_count < 3:
+            raise OSError("Locked")
+        original_unlink(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    success = remove_path(f, retries=3, delay=0.01)
+    assert success is True
+    assert not f.exists()
+    assert call_count == 3
+
+
+def test_remove_path_dir_retries(tmp_path, monkeypatch):
+    """Проверка повторных попыток удаления директории при OSError."""
+    d = tmp_path / "test_dir"
+    d.mkdir()
+
+    call_count = 0
+    import shutil
+    original_rmtree = shutil.rmtree
+
+    def mock_rmtree(path, *args, **kwargs):
+        nonlocal call_count
+        call_count += 1
+        if call_count < 3:
+            raise OSError("Locked")
+        original_rmtree(path, *args, **kwargs)
+
+    monkeypatch.setattr(shutil, "rmtree", mock_rmtree)
+
+    success = remove_path(d, retries=3, delay=0.01)
+    assert success is True
+    assert not d.exists()
+    assert call_count == 3
+
+
+def test_remove_path_on_locked_raise(tmp_path, monkeypatch):
+    """Проверка on_locked='raise'."""
+    f = tmp_path / "test.txt"
+    f.write_text("data")
+
+    original_unlink = Path.unlink
+
+    def mock_unlink(self, *args, **kwargs):
+        if self.name == "test.txt":
+            raise OSError("Locked")
+        original_unlink(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    with pytest.raises(OSError, match="Locked"):
+        remove_path(f, retries=2, delay=0.01, on_locked="raise")
+
+
+def test_remove_path_on_locked_warn(tmp_path, monkeypatch):
+    """Проверка on_locked='warn'."""
+    f = tmp_path / "test.txt"
+    f.write_text("data")
+
+    original_unlink = Path.unlink
+
+    def mock_unlink(self, *args, **kwargs):
+        if self.name == "test.txt":
+            raise OSError("Locked")
+        original_unlink(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    success = remove_path(f, retries=2, delay=0.01, on_locked="warn")
+    assert success is False
+    assert f.exists()
+
+
+def test_remove_path_on_locked_rename_orphan(tmp_path, monkeypatch):
+    """Проверка on_locked='rename_orphan'."""
+    f = tmp_path / "test.txt"
+    f.write_text("data")
+
+    original_unlink = Path.unlink
+
+    def mock_unlink(self, *args, **kwargs):
+        if self.name == "test.txt":
+            raise OSError("Locked")
+        original_unlink(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    success = remove_path(f, retries=2, delay=0.01, on_locked="rename_orphan")
+    assert success is True
+    assert not f.exists()
+
+    orphan_path = tmp_path / "test.txt.orphan"
+    assert orphan_path.exists()
+    assert orphan_path.read_text() == "data"
+
+
+def test_orphan_collision_raise(tmp_path, monkeypatch):
+    """Проверка orphan_collision='raise'."""
+    f = tmp_path / "test.txt"
+    f.write_text("data")
+
+    orphan = tmp_path / "test.txt.orphan"
+    orphan.write_text("existing_orphan")
+
+    original_unlink = Path.unlink
+
+    def mock_unlink(self, *args, **kwargs):
+        if self.name == "test.txt":
+            raise OSError("Locked")
+        original_unlink(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    with pytest.raises(FileExistsError, match="Орфан-путь уже существует"):
+        remove_path(
+            f, retries=1, delay=0.01, on_locked="rename_orphan", orphan_collision="raise"
+        )
+
+
+def test_orphan_collision_overwrite(tmp_path, monkeypatch):
+    """Проверка orphan_collision='overwrite'."""
+    f = tmp_path / "test.txt"
+    f.write_text("data")
+
+    orphan = tmp_path / "test.txt.orphan"
+    orphan.write_text("existing_orphan")
+
+    original_unlink = Path.unlink
+
+    def mock_unlink(self, *args, **kwargs):
+        if self.name == "test.txt":
+            raise OSError("Locked")
+        original_unlink(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    success = remove_path(
+        f, retries=1, delay=0.01, on_locked="rename_orphan", orphan_collision="overwrite"
+    )
+    assert success is True
+    assert not f.exists()
+    assert orphan.read_text() == "data"
+
+
+def test_orphan_collision_unique(tmp_path, monkeypatch):
+    """Проверка orphan_collision='unique'."""
+    f = tmp_path / "test.txt"
+    f.write_text("data")
+
+    orphan = tmp_path / "test.txt.orphan"
+    orphan.write_text("existing_orphan")
+
+    original_unlink = Path.unlink
+
+    def mock_unlink(self, *args, **kwargs):
+        if self.name == "test.txt":
+            raise OSError("Locked")
+        original_unlink(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    success = remove_path(
+        f, retries=1, delay=0.01, on_locked="rename_orphan", orphan_collision="unique"
+    )
+    assert success is True
+    assert not f.exists()
+    assert orphan.read_text() == "existing_orphan"
+
+    orphans = list(tmp_path.glob("test.txt.orphan_*"))
+    assert len(orphans) == 1
+    assert orphans[0].read_text() == "data"
+
+
+def test_cleanup_paths_success(tmp_path):
+    """Проверка пакетного удаления."""
+    f1 = tmp_path / "f1.txt"
+    f2 = tmp_path / "f2.txt"
+    f1.write_text("1")
+    f2.write_text("2")
+
+    cleanup_paths(f1, f2)
+    assert not f1.exists()
+    assert not f2.exists()
+
+
+def test_cleanup_paths_fault_tolerance(tmp_path, monkeypatch):
+    """Проверка отказоустойчивости cleanup_paths."""
+    f1 = tmp_path / "f1.txt"
+    f2 = tmp_path / "f2.txt"
+    f1.write_text("1")
+    f2.write_text("2")
+
+    original_unlink = Path.unlink
+
+    def mock_unlink(self, *args, **kwargs):
+        if self.name == "f1.txt":
+            raise OSError("Locked")
+        original_unlink(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    cleanup_paths(f1, f2, retries=1, delay=0.01, on_locked="warn")
+    assert f1.exists()
+    assert not f2.exists()
+
+
+def test_cleanup_paths_fast_fail(tmp_path, monkeypatch):
+    """Проверка быстрого сбоя cleanup_paths."""
+    f1 = tmp_path / "f1.txt"
+    f2 = tmp_path / "f2.txt"
+    f1.write_text("1")
+    f2.write_text("2")
+
+    original_unlink = Path.unlink
+
+    def mock_unlink(self, *args, **kwargs):
+        if self.name == "f1.txt":
+            raise OSError("Locked")
+        original_unlink(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    with pytest.raises(OSError, match="Locked"):
+        cleanup_paths(f1, f2, retries=1, delay=0.01, on_locked="raise")
+
+    assert f1.exists()
+    assert f2.exists()
+
+
+def test_orphan_collision_overwrite_fails_gracefully(tmp_path, monkeypatch):
+    """Проверка, что если при orphan_collision='overwrite' удаление старого орфана падает, код выполняется."""
+    f = tmp_path / "test.txt"
+    f.write_text("data")
+
+    orphan = tmp_path / "test.txt.orphan"
+    orphan.write_text("existing_orphan")
+
+    def mock_unlink(self, *args, **kwargs):
+        raise OSError("Locked")
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    # Замокаем rename, чтобы на Windows не падало из-за наличия орфана
+    monkeypatch.setattr(Path, "rename", lambda self, target: None)
+
+    success = remove_path(
+        f, retries=1, delay=0.01, on_locked="rename_orphan", orphan_collision="overwrite"
+    )
+    assert success is True
+
+
+def test_remove_path_invalid_on_locked(tmp_path, monkeypatch):
+    """Проверка ValueError при невалидном значении on_locked."""
+    f = tmp_path / "test.txt"
+    f.write_text("data")
+
+    def mock_unlink(self, *args, **kwargs):
+        raise OSError("Locked")
+
+    monkeypatch.setattr(Path, "unlink", mock_unlink)
+
+    with pytest.raises(ValueError, match="Неизвестное значение on_locked"):
+        remove_path(f, retries=1, delay=0.01, on_locked="invalid_action")  # type: ignore
+
+
