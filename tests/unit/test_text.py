@@ -2,7 +2,6 @@ import pytest
 
 from chutils.text import natsort_key
 
-
 def test_natsort_key_basic():
     """Проверяет базовую естественную сортировку строк с числами."""
     items = ["item 10", "item 2", "item 1", "item 21"]
@@ -65,10 +64,11 @@ def test_is_significant_difference_major():
 def test_is_significant_difference_no_rapidfuzz(monkeypatch):
     """Проверяет поведение, когда библиотека rapidfuzz не установлена."""
     import chutils.text
+    from chutils.exceptions import OptionalDependencyError
     # Симулируем отсутствие rapidfuzz
     monkeypatch.setattr(chutils.text, "_HAS_RAPIDFUZZ", False)
 
-    with pytest.raises(RuntimeError) as exc_info:
+    with pytest.raises(OptionalDependencyError) as exc_info:
         chutils.text.is_significant_difference("a", "b")
 
     assert "chutils[text]" in str(exc_info.value)

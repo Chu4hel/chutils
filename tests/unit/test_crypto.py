@@ -9,6 +9,8 @@ from chutils.crypto import (
 )
 
 
+
+
 def test_get_fernet_key_deterministic():
     """Проверяет детерминированность генерации Fernet-ключа."""
     key1 = _get_fernet_key("my_seed_1")
@@ -51,13 +53,14 @@ def test_string_decryption_failure():
 def test_string_operations_no_cryptography(monkeypatch):
     """Проверяет генерацию ошибки при отсутствии библиотеки cryptography."""
     import chutils.crypto
+    from chutils.exceptions import OptionalDependencyError
     monkeypatch.setattr(chutils.crypto, "_HAS_CRYPTOGRAPHY", False)
 
-    with pytest.raises(RuntimeError) as exc_info:
+    with pytest.raises(OptionalDependencyError) as exc_info:
         encrypt_portable("data", "seed")
     assert "chutils[crypto]" in str(exc_info.value)
 
-    with pytest.raises(RuntimeError) as exc_info:
+    with pytest.raises(OptionalDependencyError) as exc_info:
         decrypt_portable("data", "seed")
     assert "chutils[crypto]" in str(exc_info.value)
 
@@ -113,15 +116,16 @@ def test_file_decryption_failure(tmp_path):
 def test_file_operations_no_cryptography(tmp_path, monkeypatch):
     """Проверяет генерацию ошибки для файловых операций при отсутствии cryptography."""
     import chutils.crypto
+    from chutils.exceptions import OptionalDependencyError
     monkeypatch.setattr(chutils.crypto, "_HAS_CRYPTOGRAPHY", False)
 
     file_path = tmp_path / "test.txt"
     file_path.write_text("123")
 
-    with pytest.raises(RuntimeError) as exc_info:
+    with pytest.raises(OptionalDependencyError) as exc_info:
         encrypt_file(file_path, "seed")
     assert "chutils[crypto]" in str(exc_info.value)
 
-    with pytest.raises(RuntimeError) as exc_info:
+    with pytest.raises(OptionalDependencyError) as exc_info:
         decrypt_file(file_path, "seed")
     assert "chutils[crypto]" in str(exc_info.value)
