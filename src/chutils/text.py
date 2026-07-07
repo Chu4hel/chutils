@@ -6,6 +6,8 @@
 
 import re
 
+from chutils.exceptions import OptionalDependencyError
+
 try:
     import rapidfuzz
 
@@ -46,10 +48,10 @@ def is_significant_difference(text1: str, text2: str, threshold: float = 0.9) ->
         True, если разница значительна (схожесть < threshold), иначе False.
 
     Raises:
-        RuntimeError: Если библиотека rapidfuzz не установлена.
+        OptionalDependencyError: Если библиотека rapidfuzz не установлена.
     """
     if not _HAS_RAPIDFUZZ:
-        raise RuntimeError(
+        raise OptionalDependencyError(
             "Для использования нечеткого сравнения текстов необходимо установить chutils с поддержкой [text]:\n"
             "pip install chutils[text]"
         )
