@@ -8,6 +8,8 @@ import base64
 import hashlib
 from pathlib import Path
 
+from chutils.exceptions import OptionalDependencyError
+
 try:
     from cryptography.fernet import Fernet, InvalidToken
 
@@ -45,10 +47,10 @@ def encrypt_portable(data: str, seed: str) -> str:
         Зашифрованная строка в формате Base64.
 
     Raises:
-        RuntimeError: Если библиотека cryptography не установлена.
+        OptionalDependencyError: Если библиотека cryptography не установлена.
     """
     if not _HAS_CRYPTOGRAPHY:
-        raise RuntimeError(
+        raise OptionalDependencyError(
             "Для использования модуля crypto установите библиотеку:\n"
             "pip install chutils[crypto]"
         )
@@ -70,10 +72,10 @@ def decrypt_portable(encrypted_data: str, seed: str) -> str | None:
         Расшифрованная строка или None, если дешифрование завершилось ошибкой.
 
     Raises:
-        RuntimeError: Если библиотека cryptography не установлена.
+        OptionalDependencyError: Если библиотека cryptography не установлена.
     """
     if not _HAS_CRYPTOGRAPHY:
-        raise RuntimeError(
+        raise OptionalDependencyError(
             "Для использования модуля crypto установите библиотеку:\n"
             "pip install chutils[crypto]"
         )
@@ -104,10 +106,10 @@ def encrypt_file(
         Путь к зашифрованному файлу.
 
     Raises:
-        RuntimeError: Если библиотека cryptography не установлена.
+        OptionalDependencyError: Если библиотека cryptography не установлена.
     """
     if not _HAS_CRYPTOGRAPHY:
-        raise RuntimeError(
+        raise OptionalDependencyError(
             "Для использования модуля crypto установите библиотеку:\n"
             "pip install chutils[crypto]"
         )
@@ -140,10 +142,10 @@ def decrypt_file(
         True, если дешифрование прошло успешно, иначе False.
 
     Raises:
-        RuntimeError: Если библиотека cryptography не установлена.
+        OptionalDependencyError: Если библиотека cryptography не установлена.
     """
     if not _HAS_CRYPTOGRAPHY:
-        raise RuntimeError(
+        raise OptionalDependencyError(
             "Для использования модуля crypto установите библиотеку:\n"
             "pip install chutils[crypto]"
         )
