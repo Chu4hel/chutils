@@ -13,7 +13,8 @@ import inspect
 import logging
 import os
 from pathlib import Path
-from typing import Dict, Any, Optional, Callable, cast
+from typing import Any, cast
+from collections.abc import Callable
 
 from .config.core import _PROVIDERS, get_config
 from .config.manager import _cm
@@ -22,7 +23,7 @@ from .config.utils import find_project_root
 logger = logging.getLogger(__name__)
 
 
-def get_features() -> Dict[str, Any]:
+def get_features() -> dict[str, Any]:
     """
     Загружает и кэширует фича-флаги.
     
@@ -34,11 +35,11 @@ def get_features() -> Dict[str, Any]:
         Словарь с конфигурацией фича-флагов.
     """
 
-    def _do_load() -> Dict[str, Any]:
+    def _do_load() -> dict[str, Any]:
         if not _cm.paths_initialized:
             _cm.initialize_paths(find_project_root)
 
-        features_data: Dict[str, Any] = {}
+        features_data: dict[str, Any] = {}
 
         # 1. Попытка загрузки из выделенного файла
         if _cm.features_file_path:
@@ -60,7 +61,7 @@ def get_features() -> Dict[str, Any]:
                 data = config.get("feature_flags") or config.get("FeatureFlags")
                 if data and isinstance(data, dict):
                     logger.debug("Фича-флаги загружены из основной конфигурации (секция feature_flags)")
-                    features_data = cast(Dict[str, Any], data)
+                    features_data = cast(dict[str, Any], data)
                 else:
                     features_data = {}
 
@@ -69,7 +70,7 @@ def get_features() -> Dict[str, Any]:
     return _cm.load_features_safe(_do_load)
 
 
-def is_feature_enabled(feature_name: str, context: Optional[Dict[str, Any]] = None) -> bool:
+def is_feature_enabled(feature_name: str, context: dict[str, Any] | None = None) -> bool:
     """
     Проверяет, включена ли указанная фича.
 
@@ -100,7 +101,7 @@ def is_feature_enabled(feature_name: str, context: Optional[Dict[str, Any]] = No
     return False
 
 
-def _evaluate_complex_feature(feature_name: str, config: Dict[str, Any], context: Optional[Dict[str, Any]]) -> bool:
+def _evaluate_complex_feature(feature_name: str, config: dict[str, Any], context: dict[str, Any] | None) -> bool:
     """
     Вычисляет состояние фичи на основе сложной конфигурации.
     """
@@ -140,7 +141,7 @@ def _evaluate_complex_feature(feature_name: str, config: Dict[str, Any], context
 
 def require_feature(
         feature_name: str,
-        fallback: Optional[Callable[..., Any]] = None
+        fallback: Callable[..., Any] | None = None
 ) -> Callable[..., Any]:
     """
     Декоратор для ограничения доступа к функции на основе фича-флага.
@@ -164,7 +165,7 @@ def require_feature(
         if inspect.iscoroutinefunction(func):
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
-                context = cast(Optional[Dict[str, Any]], kwargs.get("context"))
+                context = cast(dict[str, Any] | None, kwargs.get("context"))
                 if is_feature_enabled(feature_name, context):
                     return await func(*args, **kwargs)
 
@@ -178,7 +179,7 @@ def require_feature(
         else:
             @functools.wraps(func)
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
-                context = cast(Optional[Dict[str, Any]], kwargs.get("context"))
+                context = cast(dict[str, Any] | None, kwargs.get("context"))
                 if is_feature_enabled(feature_name, context):
                     return func(*args, **kwargs)
 

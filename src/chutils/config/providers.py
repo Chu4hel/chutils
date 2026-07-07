@@ -16,7 +16,8 @@ import urllib.error
 import urllib.request
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, Callable, TextIO
+from typing import Any, TextIO
+from collections.abc import Callable
 
 import yaml
 
@@ -88,7 +89,7 @@ class YamlConfigProvider(ConfigProvider):
 
     def load(self, path: str) -> JSONDict:
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, encoding='utf-8') as f:
                 data = yaml.safe_load(f)
                 return data if isinstance(data, dict) else {}
         except FileNotFoundError:
@@ -132,7 +133,7 @@ class JsonConfigProvider(ConfigProvider):
 
     def load(self, path: str) -> JSONDict:
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, encoding='utf-8') as f:
                 data = json.load(f)
                 return data if isinstance(data, dict) else {}
         except FileNotFoundError:
@@ -155,7 +156,7 @@ class JsonConfigProvider(ConfigProvider):
         try:
             data: JSONDict = {}
             if Path(path).exists():
-                with open(path, 'r', encoding='utf-8') as f:
+                with open(path, encoding='utf-8') as f:
                     try:
                         loaded_data = json.load(f)
                         data = loaded_data if isinstance(loaded_data, dict) else {}
@@ -182,13 +183,13 @@ class IniConfigProvider(ConfigProvider):
     Сохраняет комментарии и форматирование при записи.
     """
 
-    def __init__(self, nest_func: Callable[[Dict[str, Dict[str, Any]]], JSONDict]) -> None:
+    def __init__(self, nest_func: Callable[[dict[str, dict[str, Any]]], JSONDict]) -> None:
         self._nest_func = nest_func
 
     def load(self, path: str) -> JSONDict:
         import configparser
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, encoding='utf-8') as f:
                 parser = configparser.ConfigParser()
                 parser.optionxform = str  # type: ignore # Сохраняем регистр ключей
                 parser.read_string(f.read())
@@ -216,9 +217,9 @@ class IniConfigProvider(ConfigProvider):
             return False
 
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, encoding='utf-8') as f:
                 lines = f.readlines()
-        except IOError as e:
+        except OSError as e:
             logger.error("Ошибка чтения файла %s для сохранения: %s", path, e)
             return False
 
@@ -305,10 +306,10 @@ class HttpConfigProvider:
     def __init__(
             self,
             url: str,
-            username: Optional[str] = None,
-            password: Optional[str] = None,
+            username: str | None = None,
+            password: str | None = None,
             timeout: int = 10,
-            nest_func: Optional[Callable[[Dict[str, Dict[str, Any]]], JSONDict]] = None
+            nest_func: Callable[[dict[str, dict[str, Any]]], JSONDict] | None = None
     ) -> None:
         self.url = url
         self.username = username
@@ -316,7 +317,7 @@ class HttpConfigProvider:
         self.timeout = timeout
         self._nest_func = nest_func
         self._cache: JSONDict = {}
-        self._polling_thread: Optional[threading.Thread] = None
+        self._polling_thread: threading.Thread | None = None
         self._stop_event = threading.Event()
 
     def load(self) -> JSONDict:
@@ -402,7 +403,7 @@ class HttpConfigProvider:
             except Exception as e:
                 logger.error("Ошибка при фоновом обновлении конфига с %s: %s", self.url, e)
 
-    def _parse_content(self, content: str, content_type: Optional[str]) -> JSONDict:
+    def _parse_content(self, content: str, content_type: str | None) -> JSONDict:
         """
         Парсит контент на основе Content-Type или расширения URL.
         """
@@ -450,7 +451,7 @@ class HttpConfigProvider:
 
         return {}
 
-    def fetch(self) -> Tuple[str, Optional[str]]:
+    def fetch(self) -> tuple[str, str | None]:
         """
         Загружает сырые данные из удаленного эндпоинта.
 
@@ -484,8 +485,8 @@ class HttpConfigProvider:
 
 
 def get_providers(
-        nest_func: Callable[[Dict[str, Dict[str, Any]]], JSONDict]
-) -> Dict[str, ConfigProvider]:
+        nest_func: Callable[[dict[str, dict[str, Any]]], JSONDict]
+) -> dict[str, ConfigProvider]:
     """
     Создает и возвращает реестр провайдеров.
     """

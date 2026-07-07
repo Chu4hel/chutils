@@ -10,7 +10,7 @@ class ChutilsException(Exception):
     и опциональную подсказку (hint) для пользователя.
     """
 
-    def __init__(self, message: str, hint: t.Optional[str] = None, **context: t.Any) -> None:
+    def __init__(self, message: str, hint: str | None = None, **context: t.Any) -> None:
         super().__init__(message)
         self.message = message
         self.hint = hint
@@ -109,9 +109,9 @@ class PathTraversalError(FileSystemError):
     def __init__(
             self,
             message: str,
-            attempted_path: t.Union[str, Path] = "unknown",
-            base_path: t.Union[str, Path] = "unknown",
-            hint: t.Optional[str] = "Проверьте правильность пути или права доступа.",
+            attempted_path: str | Path = "unknown",
+            base_path: str | Path = "unknown",
+            hint: str | None = "Проверьте правильность пути или права доступа.",
             **context: t.Any
     ) -> None:
         context.update({

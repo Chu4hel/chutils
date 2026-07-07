@@ -1,7 +1,7 @@
 import asyncio
 import threading
 import time
-from typing import Dict, Optional, Tuple, TypeVar
+from typing import TypeVar
 
 from .base import BaseCacheBackend
 
@@ -17,21 +17,21 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
 
     def __init__(self) -> None:
         # Структура: {key: (value, expires_at)}
-        self._cache: Dict[str, Tuple[T, Optional[float]]] = {}
+        self._cache: dict[str, tuple[T, float | None]] = {}
         self._lock = threading.Lock()
-        self._async_lock: Optional[asyncio.Lock] = None
+        self._async_lock: asyncio.Lock | None = None
 
     def _get_async_lock(self) -> asyncio.Lock:
         if self._async_lock is None:
             self._async_lock = asyncio.Lock()
         return self._async_lock
 
-    def get(self, key: str) -> Optional[T]:
+    def get(self, key: str) -> T | None:
         """Получить значение. Если просрочено - удаляет его."""
         with self._lock:
             return self._get_without_lock(key)
 
-    def _get_without_lock(self, key: str) -> Optional[T]:
+    def _get_without_lock(self, key: str) -> T | None:
         """Внутренний метод получения без блокировки (для использования внутри других методов)."""
         if key not in self._cache:
             return None
@@ -43,7 +43,7 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
 
         return value
 
-    def set(self, key: str, value: T, ttl: Optional[int] = None) -> None:
+    def set(self, key: str, value: T, ttl: int | None = None) -> None:
         """Сохранить значение с TTL."""
         expires_at = time.time() + ttl if ttl is not None else None
         with self._lock:
@@ -78,13 +78,13 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
             if expires_at is not None and expires_at < now:
                 del self._cache[k]
 
-    async def aget(self, key: str) -> Optional[T]:
+    async def aget(self, key: str) -> T | None:
         """Асинхронное получение значения."""
         async with self._get_async_lock():
             with self._lock:
                 return self._get_without_lock(key)
 
-    async def aset(self, key: str, value: T, ttl: Optional[int] = None) -> None:
+    async def aset(self, key: str, value: T, ttl: int | None = None) -> None:
         """Асинхронное сохранение значения."""
         expires_at = time.time() + ttl if ttl is not None else None
         async with self._get_async_lock():

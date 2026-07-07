@@ -12,11 +12,6 @@
 from typing import Any
 
 from chutils import get_config_value, setup_logger, SecretManager, bind_context
-from chutils.testing.fixtures import (
-    mock_chutils_config,
-    mock_chutils_secrets,
-    capture_chutils_logs,
-)
 
 
 def my_business_logic() -> bool:

@@ -1,5 +1,4 @@
 import json
-import sys
 
 from pydantic import BaseModel
 
@@ -98,7 +97,7 @@ def test_cli_template_save_file(cli_runner, config_fs, mocker):
 
     assert result.exit_code == 0
     assert fs.exists("out.yml")
-    with open("out.yml", "r") as f:
+    with open("out.yml") as f:
         assert "key: val" in f.read()
 
 

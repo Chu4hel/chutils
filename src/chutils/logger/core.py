@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import atexit
 import logging
-from typing import Optional, Any, List, Union
+from typing import Any
 
 from .internal.levels import (
     LogLevel,
@@ -85,23 +85,23 @@ _initialization_message_shown = False
 
 def setup_logger(
         name: str = 'app_logger',
-        config_section_name: Optional[str] = None,
-        log_level: Optional[LogLevel] = None,
-        log_file_name: Optional[str] = None,
+        config_section_name: str | None = None,
+        log_level: LogLevel | None = None,
+        log_file_name: str | None = None,
         force_reconfigure: bool = False,
-        rotation_type: Optional[str] = None,
-        max_bytes: Optional[int] = None,
-        compress: Optional[bool] = None,
-        backup_count: Optional[int] = None,
-        encoding: Optional[str] = None,
-        when: Optional[str] = None,
-        interval: Optional[int] = None,
-        utc: Optional[bool] = None,
+        rotation_type: str | None = None,
+        max_bytes: int | None = None,
+        compress: bool | None = None,
+        backup_count: int | None = None,
+        encoding: str | None = None,
+        when: str | None = None,
+        interval: int | None = None,
+        utc: bool | None = None,
         at_time: Any = None,
-        json_format: Optional[bool] = None,
-        use_async: Optional[bool] = None,
-        custom_patterns: Optional[List[str]] = None,
-        use_predefined_patterns: Optional[List[Union[str, List[str]]]] = None,
+        json_format: bool | None = None,
+        use_async: bool | None = None,
+        custom_patterns: list[str] | None = None,
+        use_predefined_patterns: list[str | list[str]] | None = None,
         **kwargs: Any
 ) -> ChutilsLogger:
     """
@@ -194,7 +194,7 @@ def setup_logger(
 
 def setup_logger_from_config(
         name: str = 'app_logger',
-        config_section_name: Optional[str] = None,
+        config_section_name: str | None = None,
         force_reconfigure: bool = False
 ) -> ChutilsLogger:
     """Инициализирует логгер, используя настройки исключительно из файла конфигурации.

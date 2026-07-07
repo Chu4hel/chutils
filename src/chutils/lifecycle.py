@@ -12,7 +12,8 @@ import logging
 import signal
 import sys
 import time
-from typing import Callable, List, Union, Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Union, Any, TYPE_CHECKING
+from collections.abc import Callable, Awaitable
 
 from chutils.config import get_config_int
 
@@ -31,7 +32,7 @@ class LifecycleManager:
     """
 
     def __init__(self) -> None:
-        self._cleanup_callbacks: List[CleanupCallback] = []
+        self._cleanup_callbacks: list[CleanupCallback] = []
         self._is_shutting_down = False
         self._setup_done = False
 
@@ -54,20 +55,20 @@ class LifecycleManager:
                          func.__name__ if hasattr(func, '__name__') else str(func))
         return func
 
-    def get_cleanup_callbacks(self) -> List[CleanupCallback]:
+    def get_cleanup_callbacks(self) -> list[CleanupCallback]:
         """
         Возвращает список зарегистрированных функций в порядке LIFO.
         """
         return list(reversed(self._cleanup_callbacks))
 
-    def setup_graceful_shutdown(self, signals: Optional[List[int]] = None) -> None:
+    def setup_graceful_shutdown(self, signals: list[int] | None = None) -> None:
         """
         Настраивает перехват сигналов завершения работы.
         """
         if self._setup_done:
             return
 
-        target_signals: List[int] = []
+        target_signals: list[int] = []
         if signals is None:
             # Выбираем доступные сигналы в зависимости от платформы
             for sig_name in ("SIGINT", "SIGTERM", "SIGHUP"):
@@ -85,7 +86,7 @@ class LifecycleManager:
         self._setup_done = True
         logger.debug("Настроен Graceful Shutdown для сигналов: %s", target_signals)
 
-    def _handle_signal(self, signum: int, frame: Optional[FrameType]) -> None:
+    def _handle_signal(self, signum: int, frame: FrameType | None) -> None:
         """
         Обработчик сигнала ОС.
         """
@@ -132,7 +133,7 @@ class LifecycleManager:
             # Если петля не запущена или мы решили использовать asyncio.run
             asyncio.run(self._execute_all(callbacks, float(timeout)))
 
-    async def _execute_all(self, callbacks: List[CleanupCallback], timeout: float) -> None:
+    async def _execute_all(self, callbacks: list[CleanupCallback], timeout: float) -> None:
         """
         Асинхронно выполняет все коллбэки с учетом общего таймаута.
         """

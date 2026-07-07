@@ -1,5 +1,5 @@
 import threading
-from typing import Any, Dict, Optional, Tuple
+from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
 from .base import MetricsProvider
@@ -31,9 +31,9 @@ class PrometheusMetricsProvider(MetricsProvider):
 
         self._lock = threading.Lock()
         # Кэш созданных объектов метрик: { (name, label_names): prometheus_metric_object }
-        self._metrics: Dict[Tuple[str, Tuple[str, ...]], Any] = {}
+        self._metrics: dict[tuple[str, tuple[str, ...]], Any] = {}
 
-    def _get_or_create_metric(self, name: str, metric_type: str, labels: Optional[Dict[str, str]]) -> Any:
+    def _get_or_create_metric(self, name: str, metric_type: str, labels: dict[str, str] | None) -> Any:
         label_names = sorted(labels.keys()) if labels else []
         cache_key = (name, tuple(label_names))
 
@@ -57,21 +57,21 @@ class PrometheusMetricsProvider(MetricsProvider):
             self._metrics[cache_key] = metric
             return metric
 
-    def increment(self, name: str, value: float = 1.0, labels: Optional[Dict[str, str]] = None) -> None:
+    def increment(self, name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
         metric = self._get_or_create_metric(name, "counter", labels)
         if labels:
             metric.labels(**labels).inc(value)
         else:
             metric.inc(value)
 
-    def set_gauge(self, name: str, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+    def set_gauge(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
         metric = self._get_or_create_metric(name, "gauge", labels)
         if labels:
             metric.labels(**labels).set(value)
         else:
             metric.set(value)
 
-    def observe(self, name: str, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+    def observe(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
         metric = self._get_or_create_metric(name, "histogram", labels)
         if labels:
             metric.labels(**labels).observe(value)

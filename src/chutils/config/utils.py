@@ -6,7 +6,8 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Optional, List, Dict, Callable
+from typing import Any
+from collections.abc import Callable
 
 from chutils.typing import JSONDict
 from .providers import get_providers
@@ -15,7 +16,7 @@ from .providers import get_providers
 logger = logging.getLogger(__name__)
 
 
-def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
+def find_project_root(start_path: Path, markers: list[str]) -> Path | None:
     """
     Ищет корень проекта, двигаясь вверх по дереву каталогов.
 
@@ -63,7 +64,7 @@ def deep_merge(dict1: JSONDict, dict2: JSONDict) -> JSONDict:
     return dict1
 
 
-def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> JSONDict:
+def _nest_ini_dict(flat_dict: dict[str, dict[str, Any]]) -> JSONDict:
     """
     Преобразует плоский словарь INI-секций во вложенную структуру.
 
@@ -109,7 +110,7 @@ def _get_typed_value(
         converter: Callable[[Any], Any],
         fallback: Any,
         get_value_func: Callable[..., Any],
-        config: Optional[JSONDict] = None,
+        config: JSONDict | None = None,
         type_name: str = ""
 ) -> Any:
     """
@@ -193,7 +194,7 @@ def _parse_pyproject_toml_fallback(path: str) -> JSONDict:
 
     result: JSONDict = {}
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             lines = f.readlines()
     except Exception:
         return result

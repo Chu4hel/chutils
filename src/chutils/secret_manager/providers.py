@@ -1,6 +1,6 @@
 import os
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from dotenv import load_dotenv
 
@@ -54,7 +54,7 @@ class SecretProvider(ABC):
     """
 
     @abstractmethod
-    def get(self, key: str, service_name: str) -> Optional[str]:
+    def get(self, key: str, service_name: str) -> str | None:
         """
         Получить значение секрета по ключу.
 
@@ -112,7 +112,7 @@ class KeyringProvider(SecretProvider):
         """
         self.disabled = disable_keyring
 
-    def get(self, key: str, service_name: str) -> Optional[str]:
+    def get(self, key: str, service_name: str) -> str | None:
         """
         Получает пароль из системного хранилища.
         """
@@ -199,7 +199,7 @@ class DotEnvProvider(SecretProvider):
     Обеспечивает загрузку переменных окружения из файла при первом обращении.
     """
 
-    def __init__(self, dotenv_path: Optional[str] = None):
+    def __init__(self, dotenv_path: str | None = None):
         """
         Инициализирует провайдер.
 
@@ -208,7 +208,7 @@ class DotEnvProvider(SecretProvider):
         """
         self.dotenv_path = dotenv_path
         self._loaded = False
-        self._values: Dict[str, str] = {}
+        self._values: dict[str, str] = {}
 
     def _load_if_needed(self) -> None:
         """
@@ -231,7 +231,7 @@ class DotEnvProvider(SecretProvider):
         self._values = dict(os.environ)
         self._loaded = True
 
-    def get(self, key: str, service_name: str) -> Optional[str]:
+    def get(self, key: str, service_name: str) -> str | None:
         """
         Получает значение из загруженных .env данных.
         """
@@ -261,7 +261,7 @@ class EnvProvider(SecretProvider):
     Провайдер для работы с переменными окружения ОС (os.environ).
     """
 
-    def get(self, key: str, service_name: str) -> Optional[str]:
+    def get(self, key: str, service_name: str) -> str | None:
         """
         Получает значение из переменных окружения ОС.
         """

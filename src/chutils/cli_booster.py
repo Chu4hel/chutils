@@ -11,7 +11,8 @@ import inspect
 import re
 from functools import wraps
 from pathlib import Path
-from typing import Any, Callable, TypeVar, Dict, Optional
+from typing import Any, TypeVar
+from collections.abc import Callable
 
 # Тип для декорируемой функции
 F = TypeVar("F", bound=Callable[..., Any])
@@ -80,7 +81,7 @@ def _create_parser(func: Callable[..., Any], sig: inspect.Signature) -> argparse
     return parser
 
 
-def _parse_docstring(docstring: str) -> Dict[str, str]:
+def _parse_docstring(docstring: str) -> dict[str, str]:
     """
     Парсит docstring в стиле Google для извлечения описаний аргументов.
     """
@@ -101,11 +102,11 @@ def _parse_docstring(docstring: str) -> Dict[str, str]:
 
 
 def _add_argument(parser: argparse.ArgumentParser, name: str, param: inspect.Parameter,
-                  help_text: Optional[str] = None) -> None:
+                  help_text: str | None = None) -> None:
     """Добавляет аргумент в парсер на основе параметра функции."""
     name_cli = name.replace("_", "-")
 
-    kwargs: Dict[str, Any] = {
+    kwargs: dict[str, Any] = {
         "help": help_text or f"Аргумент {name}",
     }
 

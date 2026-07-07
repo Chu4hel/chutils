@@ -5,7 +5,6 @@
 """
 
 import re
-from typing import List, Union
 
 try:
     import rapidfuzz
@@ -17,7 +16,7 @@ except ImportError:  # pragma: no cover
 __all__ = ["natsort_key", "is_significant_difference"]
 
 
-def natsort_key(s: str) -> List[Union[int, str]]:
+def natsort_key(s: str) -> list[int | str]:
     """Возвращает ключ для естественной (natural) сортировки строки.
 
     Разбивает строку на сегменты из текста и чисел, преобразуя числовые сегменты в целые числа.

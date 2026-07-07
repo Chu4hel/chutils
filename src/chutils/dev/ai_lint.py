@@ -9,7 +9,6 @@ import fnmatch
 import importlib.util
 import os
 from pathlib import Path
-from typing import Optional, Union
 
 try:
     from pydantic import BaseModel
@@ -30,9 +29,9 @@ if HAS_PYDANTIC:
         rule_name: str
         message: str
         severity: str
-        file_path: Optional[str] = None
-        line_number: Optional[int] = None
-        fix_suggestion: Optional[str] = None
+        file_path: str | None = None
+        line_number: int | None = None
+        fix_suggestion: str | None = None
 else:
     class LintResult:  # type: ignore[no-redef]
         """
@@ -44,9 +43,9 @@ else:
                 rule_name: str,
                 message: str,
                 severity: str,
-                file_path: Optional[str] = None,
-                line_number: Optional[int] = None,
-                fix_suggestion: Optional[str] = None,
+                file_path: str | None = None,
+                line_number: int | None = None,
+                fix_suggestion: str | None = None,
         ) -> None:
             self.rule_name = rule_name
             self.message = message
@@ -114,7 +113,7 @@ class LinterEngine:
     Движок линтера, координирующий сбор файлов, загрузку правил и их выполнение.
     """
 
-    def __init__(self, config: dict[str, Union[str, bool, list[str], None]]) -> None:
+    def __init__(self, config: dict[str, str | bool | list[str] | None]) -> None:
         """
         Инициализирует движок с переданной конфигурацией.
 

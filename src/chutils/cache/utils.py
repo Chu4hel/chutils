@@ -6,8 +6,8 @@ import typing as t
 
 def generate_cache_key(
         func_name: str,
-        args: t.Tuple[t.Any, ...],
-        kwargs: t.Dict[str, t.Any],
+        args: tuple[t.Any, ...],
+        kwargs: dict[str, t.Any],
         prefix: str = ""
 ) -> str:
     """
@@ -25,7 +25,7 @@ class LockManager:
     """Менеджер блокировок для синхронных вызовов."""
 
     def __init__(self) -> None:
-        self._locks: t.Dict[str, threading.Lock] = {}
+        self._locks: dict[str, threading.Lock] = {}
         self._global_lock = threading.Lock()
 
     def get_lock(self, key: str) -> threading.Lock:
@@ -40,7 +40,7 @@ class AsyncLockManager:
     """Менеджер блокировок для асинхронных вызовов."""
 
     def __init__(self) -> None:
-        self._locks: t.Dict[str, asyncio.Lock] = {}
+        self._locks: dict[str, asyncio.Lock] = {}
         self._global_lock = threading.Lock()  # Используем threading.Lock для защиты словаря
 
     def get_lock(self, key: str) -> asyncio.Lock:

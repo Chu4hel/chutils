@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
-from typing import Union, Optional, Any
+from typing import Any
 
 # Настраиваем логгер
 logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ def _ensure_aware_utc(dt: datetime) -> datetime:
     return dt.astimezone(timezone.utc)
 
 
-def parse_datetime(value: Union[str, int, float]) -> datetime:
+def parse_datetime(value: str | int | float) -> datetime:
     """
     Парсит дату и время из различных форматов и приводит к UTC aware объекту.
     
@@ -138,7 +138,7 @@ def _pluralize_ru(n: int, forms: tuple[str, ...]) -> str:
         return forms[2]
 
 
-def humanize_timedelta(dt: datetime, locale: str = 'ru', custom_locales: Optional[dict[str, Any]] = None) -> str:
+def humanize_timedelta(dt: datetime, locale: str = 'ru', custom_locales: dict[str, Any] | None = None) -> str:
     """
     Превращает дату в человекочитаемую строку относительно текущего времени.
     

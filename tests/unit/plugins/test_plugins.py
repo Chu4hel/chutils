@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -85,14 +84,7 @@ def test_discover_plugins_success(mock_entry_points):
     mock_ep.load.return_value = MockPlugin
 
     # Настраиваем возвращаемое значение entry_points
-    if sys.version_info >= (3, 10):
-        mock_entry_points.return_value = [mock_ep]
-    else:
-        # Для Python 3.9 entry_points() возвращает словарь или объект с select()
-        mock_eps_dict = MagicMock()
-        mock_eps_dict.get.return_value = [mock_ep]
-        mock_eps_dict.select.return_value = [mock_ep]
-        mock_entry_points.return_value = mock_eps_dict
+    mock_entry_points.return_value = [mock_ep]
 
     registry.discover_plugins("chutils.plugins.test")
 
@@ -118,13 +110,7 @@ def test_discover_plugins_isolation(mock_entry_points):
 
     mock_valid_ep.load.return_value = ValidPlugin
 
-    if sys.version_info >= (3, 10):
-        mock_entry_points.return_value = [mock_faulty_ep, mock_valid_ep]
-    else:
-        mock_eps_dict = MagicMock()
-        mock_eps_dict.get.return_value = [mock_faulty_ep, mock_valid_ep]
-        mock_eps_dict.select.return_value = [mock_faulty_ep, mock_valid_ep]
-        mock_entry_points.return_value = mock_eps_dict
+    mock_entry_points.return_value = [mock_faulty_ep, mock_valid_ep]
 
     # Запуск автообнаружения не должен вызывать исключений наружу
     registry.discover_plugins("chutils.plugins.test_isolation")

@@ -157,7 +157,7 @@ async def test_async_cache_safety_stress_test():
 
     async def reader_task(task_id):
         for _ in range(50):
-            val = await cache.aget("test_key")
+            await cache.aget("test_key")
             await asyncio.sleep(0.001)
 
     async def writer_task(task_id):

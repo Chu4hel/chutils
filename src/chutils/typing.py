@@ -3,21 +3,10 @@
 Используется для обеспечения строгой типизации (Zero-Any Strategy).
 """
 
-import sys
-from typing import TypeVar, Protocol, runtime_checkable, Union, Any, Dict, List, Optional
+from typing import TypeVar, Protocol, runtime_checkable, Any
 
 # Поддержка ParamSpec и TypeAlias для Python < 3.10
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec, TypeAlias
-else:
-    try:
-        from typing_extensions import ParamSpec, TypeAlias
-    except ImportError:
-        # Fallback для окружений без typing_extensions
-        # Мы используем Any только как временную заглушку для старых версий Python
-        # если библиотека typing_extensions не установлена.
-        ParamSpec = Any  # type: ignore
-        TypeAlias = Any  # type: ignore
+from typing import ParamSpec, TypeAlias
 
 # Общие переменные типов
 T = TypeVar("T")
@@ -25,8 +14,8 @@ R = TypeVar("R")
 P = ParamSpec("P")
 
 # Тип для JSON-подобных структур
-JSONDict: TypeAlias = Dict[str, Any]
-JSONValue: TypeAlias = Union[str, int, float, bool, None, List[Any], Dict[str, Any]]
+JSONDict: TypeAlias = dict[str, Any]
+JSONValue: TypeAlias = str | int | float | bool | None | list[Any] | dict[str, Any]
 
 
 @runtime_checkable
@@ -44,7 +33,7 @@ class ConfigProviderProtocol(Protocol):
 class SecretProviderProtocol(Protocol):
     """Протокол для провайдеров секретов."""
 
-    def get_secret(self, name: str) -> Optional[str]:
+    def get_secret(self, name: str) -> str | None:
         ...
 
     def set_secret(self, name: str, value: str) -> bool:

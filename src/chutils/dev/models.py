@@ -3,7 +3,7 @@
 """
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Any
+from typing import Any
 
 try:
     from pydantic import BaseModel, Field
@@ -23,9 +23,9 @@ class Breadcrumbs(BaseModel):
     is_thread_safe: bool = False
     is_heavy: bool = False
     is_abstract: bool = False
-    decorators: List[str] = Field(default_factory=list)
-    tags: List[str] = Field(default_factory=list)
-    custom_metadata: Dict[str, Any] = Field(default_factory=dict)
+    decorators: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list)
+    custom_metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class Symbol(BaseModel):
@@ -35,14 +35,14 @@ class Symbol(BaseModel):
     """function, class, constant, method"""
     layer: str = "internal"
     """public, private, internal, infrastructure"""
-    signature: Optional[str] = None
+    signature: str | None = None
     summary: str = ""
-    docstring: Optional[str] = None
+    docstring: str | None = None
     breadcrumbs: Breadcrumbs = Field(default_factory=Breadcrumbs)
     line_number: int = 0
-    bases: List[str] = Field(default_factory=list)
+    bases: list[str] = Field(default_factory=list)
     """Базовые классы (для классов)"""
-    children: List[Symbol] = Field(default_factory=list)
+    children: list[Symbol] = Field(default_factory=list)
     """Вложенные символы (например, методы класса)"""
 
 
@@ -56,9 +56,9 @@ class Node(BaseModel):
     layer: str = "internal"
     """public, private, internal, infrastructure"""
     summary: str = ""
-    docstring: Optional[str] = None
-    children: List[Node] = Field(default_factory=list)
-    symbols: List[Symbol] = Field(default_factory=list)
+    docstring: str | None = None
+    children: list[Node] = Field(default_factory=list)
+    symbols: list[Symbol] = Field(default_factory=list)
 
 
 class GraphEdge(BaseModel):
@@ -84,5 +84,5 @@ class ProjectIndex(BaseModel):
     version: str = "1.0"
     project_name: str = "chutils"
     root: Node
-    dependency_graph: List[GraphEdge] = Field(default_factory=list)
-    examples: List[ProjectExample] = Field(default_factory=list)
+    dependency_graph: list[GraphEdge] = Field(default_factory=list)
+    examples: list[ProjectExample] = Field(default_factory=list)

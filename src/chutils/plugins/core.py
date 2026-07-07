@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import logging
-import sys
-from typing import Any, Dict, List, Type
+from typing import Any
 
 logger = logging.getLogger("chutils.plugins")
 
@@ -29,7 +28,7 @@ class PluginRegistry:
     def __init__(self) -> None:
         if self._initialized:
             return
-        self._plugins: Dict[str, Any] = {}
+        self._plugins: dict[str, Any] = {}
         self._loaded_groups: set[str] = set()
         self._initialized = True
 
@@ -57,11 +56,11 @@ class PluginRegistry:
         """Получить зарегистрированный плагин по имени."""
         return self._plugins.get(name)
 
-    def get_all_plugins(self) -> List[Any]:
+    def get_all_plugins(self) -> list[Any]:
         """Получить список всех зарегистрированных плагинов."""
         return list(self._plugins.values())
 
-    def get_plugins_by_type(self, plugin_type: Type[Any]) -> List[Any]:
+    def get_plugins_by_type(self, plugin_type: type[Any]) -> list[Any]:
         """Получить все плагины, которые являются экземплярами или наследниками указанного типа."""
         result = []
         for plugin in self._plugins.values():
@@ -83,16 +82,8 @@ class PluginRegistry:
 
         logger.debug("Запуск автообнаружения плагинов для группы '%s'...", group)
 
-        if sys.version_info >= (3, 10):
-            from importlib.metadata import entry_points
-            eps = entry_points(group=group)
-        else:
-            from importlib.metadata import entry_points
-            all_eps = entry_points()
-            if hasattr(all_eps, "select"):
-                eps = all_eps.select(group=group)
-            else:
-                eps = all_eps.get(group, [])
+        from importlib.metadata import entry_points
+        eps = entry_points(group=group)
 
         for ep in eps:
             try:

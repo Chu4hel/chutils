@@ -1,6 +1,5 @@
 import sys
 from dataclasses import dataclass
-from typing import List, Optional
 
 import pytest
 
@@ -25,7 +24,7 @@ class CliRunner:
         self.capsys = capsys
         self.monkeypatch = monkeypatch
 
-    def invoke(self, args: Optional[List[str]] = None) -> CliResult:
+    def invoke(self, args: list[str] | None = None) -> CliResult:
         """
         Вызывает основную функцию CLI с заданными аргументами.
         """

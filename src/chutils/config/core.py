@@ -12,7 +12,7 @@ import functools
 import logging
 import os
 from pathlib import Path
-from typing import Any, Optional, TYPE_CHECKING, TypeVar, Type, Union, Tuple
+from typing import Any, TYPE_CHECKING, TypeVar
 
 from chutils.exceptions import OptionalDependencyError
 from chutils.typing import JSONDict
@@ -63,11 +63,11 @@ def _ensure_config_plugins_loaded() -> None:
 
 
 def get_config(
-        model: Optional[Type[T]] = None,
-        remote_url: Optional[str] = None,
-        remote_auth: Optional[Tuple[str, str]] = None,
-        polling_interval: Optional[int] = None
-) -> Union[JSONDict, T]:
+        model: type[T] | None = None,
+        remote_url: str | None = None,
+        remote_auth: tuple[str, str] | None = None,
+        polling_interval: int | None = None
+) -> JSONDict | T:
     """
     Загружает и объединяет конфигурацию из всех доступных источников.
 
@@ -257,7 +257,7 @@ def get_config(
     return config_data
 
 
-_config_async_lock: Optional[asyncio.Lock] = None
+_config_async_lock: asyncio.Lock | None = None
 
 
 def _get_config_async_lock() -> asyncio.Lock:
@@ -267,7 +267,7 @@ def _get_config_async_lock() -> asyncio.Lock:
     return _config_async_lock
 
 
-async def aget_config(model: Optional[Type[T]] = None) -> Union[JSONDict, T]:
+async def aget_config(model: type[T] | None = None) -> JSONDict | T:
     """
     Асинхронная версия get_config.
 
@@ -286,7 +286,7 @@ def save_config_value(
         section: str,
         key: str,
         value: Any,
-        cfg_file: Optional[str] = None,
+        cfg_file: str | None = None,
         save_to_local: bool = False,
         notify: bool = True
 ) -> bool:
@@ -317,7 +317,7 @@ def save_config_value(
     if not _cm.paths_initialized:
         _cm.initialize_paths(utils.find_project_root)
 
-    path: Optional[str] = None
+    path: str | None = None
 
     # Явный путь в cfg_file имеет высший приоритет
     if cfg_file:
@@ -363,7 +363,7 @@ async def asave_config_value(
         section: str,
         key: str,
         value: Any,
-        cfg_file: Optional[str] = None,
+        cfg_file: str | None = None,
         save_to_local: bool = False,
         notify: bool = True
 ) -> bool:

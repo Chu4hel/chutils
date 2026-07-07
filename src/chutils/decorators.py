@@ -10,7 +10,8 @@ import inspect
 import random
 import threading
 import time
-from typing import Optional, TYPE_CHECKING, Tuple, Type, Any, Callable, Union, cast, Awaitable, Dict
+from typing import Optional, TYPE_CHECKING, Any, cast
+from collections.abc import Callable, Awaitable
 
 from .exceptions import ChutilsTimeoutError
 from .typing import P, R
@@ -48,7 +49,7 @@ def retry(
         delay: float = 1.0,
         backoff: float = 2.0,
         jitter: bool = False,
-        exceptions: Tuple[Type[Exception], ...] = (Exception,),
+        exceptions: tuple[type[Exception], ...] = (Exception,),
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Декоратор для автоматического повторного выполнения функции при возникновении исключений.
@@ -180,7 +181,7 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable[[Callable[
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
         if inspect.iscoroutinefunction(func):
             @functools.wraps(func)
-            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, Any]:
+            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R | Any:
                 try:
                     return cast(R, await asyncio.wait_for(cast(Awaitable[R], func(*args, **kwargs)), timeout=seconds))
                 except (asyncio.TimeoutError, TimeoutError):
@@ -195,7 +196,7 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable[[Callable[
             return cast(Callable[..., Any], async_wrapper)
         else:
             @functools.wraps(func)
-            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> Union[R, Any]:
+            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R | Any:
                 # Используем ThreadPoolExecutor для запуска в отдельном потоке
                 with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
                     future = executor.submit(func, *args, **kwargs)
@@ -227,7 +228,7 @@ class TokenBucket:
         self.next_allowed_time = time.monotonic()
         self.lock = threading.Lock()
 
-    def acquire(self, wait: bool = False) -> Optional[float]:
+    def acquire(self, wait: bool = False) -> float | None:
         with self.lock:
             now = time.monotonic()
 
@@ -274,7 +275,7 @@ class LeakyBucket:
         self.next_allowed_time = time.monotonic()
         self.lock = threading.Lock()
 
-    def acquire(self, wait: bool = False) -> Optional[float]:
+    def acquire(self, wait: bool = False) -> float | None:
         with self.lock:
             now = time.monotonic()
 
@@ -310,7 +311,7 @@ class LeakyBucket:
 
 
 # Глобальный реестр ограничителей частоты
-_limiters: Dict[str, TokenBucket | LeakyBucket] = {}
+_limiters: dict[str, TokenBucket | LeakyBucket] = {}
 _limiters_lock = threading.Lock()
 
 
@@ -343,7 +344,7 @@ def rate_limit(
         period: float,
         strategy: str = "token_bucket",
         wait: bool = False,
-        key_func: Optional[Callable[..., str]] = None,
+        key_func: Callable[..., str] | None = None,
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Декоратор для ограничения частоты вызовов функции (Throttling).

@@ -2,7 +2,6 @@ from chutils.config import get_config_value, get_config_int
 from chutils.context import bind_context, clear_context
 from chutils.logger import setup_logger
 from chutils.secret_manager.core import SecretManager
-from chutils.testing.fixtures import mock_chutils_config, mock_chutils_secrets, capture_chutils_logs
 
 
 def test_mock_chutils_config_basic(mock_chutils_config):

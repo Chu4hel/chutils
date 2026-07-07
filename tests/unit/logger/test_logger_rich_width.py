@@ -1,6 +1,5 @@
 from chutils.cli_utils import set_console_width, _get_default_width
 from chutils.logger import setup_logger
-from chutils.testing.fixtures import mock_chutils_config
 
 
 def test_logger_applies_cli_width(mock_chutils_config):

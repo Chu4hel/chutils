@@ -76,7 +76,7 @@ def test_save_config_value_json(fs):
     success = save_config_value("Section1", "key1", "new_val")
     assert success is True
 
-    with open(config_path, "r") as f:
+    with open(config_path) as f:
         data = json.load(f)
     assert data["Section1"]["key1"] == "new_val"
 

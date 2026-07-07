@@ -14,7 +14,8 @@ import uuid
 import zipfile
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Union, Any, Optional, Generator, TYPE_CHECKING, Literal
+from typing import Any, TYPE_CHECKING, Literal
+from collections.abc import Generator
 
 from chutils.exceptions import OptionalDependencyError, PathTraversalError
 
@@ -32,7 +33,7 @@ except ImportError:
     YAML_AVAILABLE = False
 
 
-def resolve_safe_path(path: Union[str, Path], base_dir: Optional[Union[str, Path]] = None) -> Path:
+def resolve_safe_path(path: str | Path, base_dir: str | Path | None = None) -> Path:
     """
     Безопасно разрешает путь относительно базовой директории.
     Проверяет попытки выхода за пределы базовой директории (Path Traversal).
@@ -76,7 +77,7 @@ def resolve_safe_path(path: Union[str, Path], base_dir: Optional[Union[str, Path
     return resolved
 
 
-def ensure_dir(path: Union[str, Path]) -> Path:
+def ensure_dir(path: str | Path) -> Path:
     """
     Гарантирует существование директории. Создает все родительские директории, если они не существуют.
 
@@ -92,7 +93,7 @@ def ensure_dir(path: Union[str, Path]) -> Path:
 
 
 def atomic_write(
-        file_path: Union[str, Path],
+        file_path: str | Path,
         data: Any,
         mode: str = 'w',
         encoding: str = 'utf-8',
@@ -187,7 +188,7 @@ def get_temp_file(suffix: str = '') -> Generator[Path, None, None]:
 
 
 def remove_path(
-        path: Union[str, Path],
+        path: str | Path,
         *,
         retries: int = 3,
         delay: float = 0.1,
@@ -273,7 +274,7 @@ def remove_path(
 
 
 def cleanup_paths(
-        *paths: Union[str, Path],
+        *paths: str | Path,
         retries: int = 3,
         delay: float = 0.1,
         on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
@@ -390,10 +391,10 @@ def safe_filename(
 
 
 def zip_folder(
-        folder_path: Union[str, Path],
-        output_path: Union[str, Path],
+        folder_path: str | Path,
+        output_path: str | Path,
         compression: int = zipfile.ZIP_DEFLATED,
-        exclude: Optional[list[str]] = None
+        exclude: list[str] | None = None
 ) -> Path:
     """Архивирует содержимое папки в ZIP-архив с сохранением структуры.
 

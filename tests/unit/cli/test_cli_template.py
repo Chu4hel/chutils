@@ -68,7 +68,7 @@ def test_cli_init_with_model(mocker, capsys, temp_module, tmp_path):
         with pytest.raises(SystemExit) as e:
             main()
 
-        captured = capsys.readouterr()
+        capsys.readouterr()
         assert e.value.code == 0
 
         config_path = Path("config.yml")

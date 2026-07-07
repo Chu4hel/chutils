@@ -25,7 +25,7 @@ __all__ = [
 logger = logging.getLogger(__name__)
 
 # Активный провайдер метрик
-_active_provider: Optional[MetricsProvider] = None
+_active_provider: MetricsProvider | None = None
 
 
 def get_provider() -> MetricsProvider:
@@ -84,7 +84,7 @@ def set_provider(provider: MetricsProvider) -> None:
     _active_provider = provider
 
 
-def increment(name: str, value: float = 1.0, labels: Optional[Dict[str, str]] = None) -> None:
+def increment(name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
     """
     Увеличить счетчик (Counter) на заданное значение.
     """
@@ -94,7 +94,7 @@ def increment(name: str, value: float = 1.0, labels: Optional[Dict[str, str]] = 
         logger.error(f"Ошибка при вызове increment() для метрики '{name}': {e}")
 
 
-def set_gauge(name: str, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+def set_gauge(name: str, value: float, labels: dict[str, str] | None = None) -> None:
     """
     Установить значение датчика (Gauge).
     """
@@ -104,7 +104,7 @@ def set_gauge(name: str, value: float, labels: Optional[Dict[str, str]] = None) 
         logger.error(f"Ошибка при вызове set_gauge() для метрики '{name}': {e}")
 
 
-def observe(name: str, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+def observe(name: str, value: float, labels: dict[str, str] | None = None) -> None:
     """
     Записать значение в гистограмму/таймер (Histogram/Timer).
     """

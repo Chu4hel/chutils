@@ -62,7 +62,7 @@ def test_cli_config_debug_masking(mocker, config_fs, capsys):
     test_args = ["chutils", "config", "debug", "--format", "json"]
     mocker.patch.object(sys, 'argv', test_args)
 
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(SystemExit):
         main()
 
     captured = capsys.readouterr()
@@ -73,7 +73,7 @@ def test_cli_config_debug_masking(mocker, config_fs, capsys):
     test_args_show = ["chutils", "config", "debug", "--format", "json", "--show-secrets"]
     mocker.patch.object(sys, 'argv', test_args_show)
 
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(SystemExit):
         main()
 
     captured_show = capsys.readouterr()

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Пример 23: Использование In-Memory Event Bus (Шины событий).
 
@@ -83,7 +82,7 @@ async def async_main() -> None:
 
     @error_bus.subscribe("data_sync")
     def faulty_handler_2():
-        raise IOError("Ошибка сети при синхронизации")
+        raise OSError("Ошибка сети при синхронизации")
 
     logger.info("Вызываем шину с ErrorStrategy.COLLECT (собрать все ошибки):")
     try:

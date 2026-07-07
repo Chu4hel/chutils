@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 from chutils.config import _initialize_paths

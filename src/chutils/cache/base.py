@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar, Generic
+from typing import TypeVar, Generic
 
 T = TypeVar("T")
 
@@ -12,7 +12,7 @@ class BaseCacheBackend(ABC, Generic[T]):
     """
 
     @abstractmethod
-    def get(self, key: str) -> Optional[T]:
+    def get(self, key: str) -> T | None:
         """
         Получить значение из кэша.
         
@@ -25,7 +25,7 @@ class BaseCacheBackend(ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def set(self, key: str, value: T, ttl: Optional[int] = None) -> None:
+    def set(self, key: str, value: T, ttl: int | None = None) -> None:
         """
         Сохранить значение в кэше.
 
@@ -66,11 +66,11 @@ class BaseCacheBackend(ABC, Generic[T]):
 
     # --- Асинхронные методы (по умолчанию вызывают синхронные) ---
 
-    async def aget(self, key: str) -> Optional[T]:
+    async def aget(self, key: str) -> T | None:
         """Асинхронное получение значения."""
         return self.get(key)
 
-    async def aset(self, key: str, value: T, ttl: Optional[int] = None) -> None:
+    async def aset(self, key: str, value: T, ttl: int | None = None) -> None:
         """Асинхронное сохранение значения."""
         self.set(key, value, ttl)
 
