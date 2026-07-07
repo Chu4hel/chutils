@@ -1,6 +1,8 @@
 import keyring
 import pytest
 
+pytest_plugins = ["chutils.testing.fixtures"]
+
 try:
     keyring.get_keyring()
 except Exception:
