@@ -17,9 +17,13 @@ class SecretsCommand(BaseCommand):
     """
 
     def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
+        from chutils.secret_manager.providers import KEYRING_AVAILABLE
+
+        help_text = "Управление секретами в системном хранилище" if KEYRING_AVAILABLE else argparse.SUPPRESS
+
         secrets_parser = subparsers.add_parser(
             "secrets",
-            help="Управление секретами в системном хранилище",
+            help=help_text,
             description="Команды для работы с системным хранилищем ключей (Windows Credential Manager, Keychain, и т.д.)"
         )
         secrets_parser.set_defaults(handler=self.handle)
@@ -64,11 +68,18 @@ class SecretsCommand(BaseCommand):
 
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана."""
+        from chutils.secret_manager.providers import KEYRING_AVAILABLE
+        if not KEYRING_AVAILABLE:
+            from ..exceptions import CommandError
+            raise CommandError("Missing optional dependency: please install chutils[keyring] to use this command.")
         print("Используйте 'chutils secrets --help' для просмотра доступных подкоманд.")
 
     def handle_set(self, args: argparse.Namespace) -> None:
         """Обработчик команды сохранения секрета."""
         from ..exceptions import CommandError, SecretError
+        from chutils.secret_manager.providers import KEYRING_AVAILABLE
+        if not KEYRING_AVAILABLE:
+            raise CommandError("Missing optional dependency: please install chutils[keyring] to use this command.")
         service_name = args.service or config.get_config_value("Secrets", "service_name", "")
 
         try:
@@ -87,6 +98,9 @@ class SecretsCommand(BaseCommand):
     def handle_delete(self, args: argparse.Namespace) -> None:
         """Обработчик команды удаления секрета."""
         from ..exceptions import CommandError, SecretError
+        from chutils.secret_manager.providers import KEYRING_AVAILABLE
+        if not KEYRING_AVAILABLE:
+            raise CommandError("Missing optional dependency: please install chutils[keyring] to use this command.")
         service_name = args.service or config.get_config_value("Secrets", "service_name", "")
 
         try:
