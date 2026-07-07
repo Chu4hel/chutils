@@ -1,5 +1,5 @@
 import asyncio
-from typing import Optional, List, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from chutils.exceptions import SecretError
 from .providers import SecretProvider, KeyringProvider, DotEnvProvider, EnvProvider
@@ -15,11 +15,7 @@ _module_logger: Optional['ChutilsLogger'] = None
 _keyring_missing_warned = False
 
 
-def _warn_about_keyring_migration() -> None:
-    """
-    Устаревшая функция. В v3.0.0 предупреждение отключено.
-    """
-    pass
+
 
 
 def _warn_about_missing_keyring() -> None:
@@ -83,10 +79,10 @@ class SecretManager:
 
     def __init__(
             self,
-            service_name: Optional[str] = None,
-            prefix: Optional[str] = None,
+            service_name: str | None = None,
+            prefix: str | None = None,
             auto_mask_logs: bool = True,
-            providers: Optional[List[SecretProvider]] = None
+            providers: list[SecretProvider] | None = None
     ) -> None:
         """
         Инициализирует менеджер секретов.
@@ -147,7 +143,7 @@ class SecretManager:
             self.service_name, len(self.providers)
         )
 
-    def add_provider(self, provider: SecretProvider, index: Optional[int] = None) -> None:
+    def add_provider(self, provider: SecretProvider, index: int | None = None) -> None:
         """
         Добавляет новый провайдер в цепочку.
 
@@ -174,7 +170,7 @@ class SecretManager:
             except Exception as e:
                 _get_logger().error("Ошибка при загрузке плагинов секретов: %s", str(e))
 
-    def get_secret(self, key: str) -> Optional[str]:
+    def get_secret(self, key: str) -> str | None:
         """
         Получает секрет, опрашивая провайдеры по порядку.
         """
@@ -217,7 +213,7 @@ class SecretManager:
         return self.save_secret(key, value)
 
     # Асинхронные обертки
-    async def aget_secret(self, key: str) -> Optional[str]:
+    async def aget_secret(self, key: str) -> str | None:
         return await asyncio.to_thread(self.get_secret, key)
 
     async def asave_secret(self, key: str, value: str) -> bool:

@@ -3,7 +3,8 @@ Pytest-фикстуры для тестирования приложений, и
 """
 
 import logging
-from typing import Any, Dict, List, Optional, Generator
+from typing import Any
+from collections.abc import Generator
 
 import pytest
 
@@ -18,7 +19,7 @@ class ConfigMock:
     """
 
     def __init__(self) -> None:
-        self._data: Dict[str, Dict[str, Any]] = {}
+        self._data: dict[str, dict[str, Any]] = {}
         _cm.set_config(self._data)
 
     def set(self, section: str, key: str, value: Any) -> None:
@@ -31,7 +32,7 @@ class ConfigMock:
         # Обновляем кэш в синглтоне
         _cm.set_config(self._data)
 
-    def load(self, data: Dict[str, Dict[str, Any]]) -> None:
+    def load(self, data: dict[str, dict[str, Any]]) -> None:
         """
         Загружает весь словарь конфигурации целиком.
         """
@@ -45,9 +46,9 @@ class MockSecretProvider(SecretProvider):
     """
 
     def __init__(self) -> None:
-        self.secrets: Dict[str, str] = {}
+        self.secrets: dict[str, str] = {}
 
-    def get(self, key: str, service_name: str) -> Optional[str]:
+    def get(self, key: str, service_name: str) -> str | None:
         return self.secrets.get(key)
 
     def set(self, key: str, value: str, service_name: str) -> bool:
@@ -74,7 +75,7 @@ class LogCaptureHandler(logging.Handler):
 
     def __init__(self) -> None:
         super().__init__()
-        self.records: List[logging.LogRecord] = []
+        self.records: list[logging.LogRecord] = []
 
     def emit(self, record: logging.LogRecord) -> None:
         self.records.append(record)
@@ -89,11 +90,11 @@ class LogCapture:
         self._handler = handler
 
     @property
-    def records(self) -> List[logging.LogRecord]:
+    def records(self) -> list[logging.LogRecord]:
         """Возвращает список всех перехваченных LogRecord."""
         return self._handler.records
 
-    def messages(self) -> List[str]:
+    def messages(self) -> list[str]:
         """Возвращает список текстовых сообщений всех логов."""
         return [r.getMessage() for r in self.records]
 
@@ -112,7 +113,7 @@ class LogCapture:
                 return True
         return False
 
-    def get_by_field(self, field_name: str, value: Any) -> List[logging.LogRecord]:
+    def get_by_field(self, field_name: str, value: Any) -> list[logging.LogRecord]:
         """
         Возвращает список записей, у которых указанное поле равно значению.
         Полезно для поиска по trace_id, user_id и другим полям контекста.
@@ -152,7 +153,7 @@ def mock_chutils_secrets(monkeypatch: pytest.MonkeyPatch) -> Generator[MockSecre
     """
     provider = MockSecretProvider()
 
-    monkeypatch.setattr("chutils.secret_manager.core._warn_about_keyring_migration", lambda: None)
+
     monkeypatch.setattr("chutils.secret_manager.core._warn_about_missing_keyring", lambda: None)
 
     original_init = SecretManager.__init__
