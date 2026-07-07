@@ -26,6 +26,7 @@ nav:
   - Рецепты: recipes.md
   - Система плагинов: plugins.md
   - Справочник API: api.md
+  - "Миграция: v2 -> v3": migration.md
   - CLI Reference:
       - Обзор: cli/index.md
       - Инициализация (init): cli/init.md
