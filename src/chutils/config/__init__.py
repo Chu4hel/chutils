@@ -18,10 +18,9 @@
 """
 
 import logging
-import warnings
-from typing import Any, Optional, TYPE_CHECKING, TypeVar, Tuple
+from typing import Any, TYPE_CHECKING, TypeVar
 
-from .core import get_config, aget_config, save_config_value, asave_config_value, _PROVIDERS
+from .core import get_config, aget_config, save_config_value, asave_config_value
 from .getters import (
     get_config_value,
     get_config_int,
@@ -31,8 +30,8 @@ from .getters import (
     get_config_section,
     get_config_path
 )
-from .manager import _cm as _config_manager
-from .utils import find_project_root, _check_pydantic
+from .manager import _cm
+from .utils import find_project_root
 from .watcher import (
     on_config_change,
     start_config_watcher,
@@ -104,18 +103,8 @@ def _get_logger() -> 'ChutilsLogger':
 
 def __getattr__(name: str) -> Any:
     """
-    Обеспечивает обратную совместимость для старых глобальных переменных
-    и ленивую загрузку экспортируемых функций генератора и схемы.
+    Обеспечивает ленивую загрузку экспортируемых функций генератора и схемы.
     """
-    if name == "_cm":
-        warnings.warn(
-            "Прямой доступ к внутреннему менеджеру '_cm' через 'chutils.config._cm' устарел и будет ограничен в будущих версиях. "
-            "Используйте публичный API модуля.",
-            DeprecationWarning,
-            stacklevel=2
-        )
-        return _config_manager
-
     lazy_imports = {
         'generate_yaml_template': ('.generator', 'generate_yaml_template'),
         'generate_env_template': ('.generator', 'generate_env_template'),
@@ -132,63 +121,7 @@ def __getattr__(name: str) -> Any:
         module = importlib.import_module(mod_path, __package__ or __name__)
         return getattr(module, attr_name)
 
-    remap = {
-        '_BASE_DIR': ('base_dir', 'get_base_dir()'),
-        '_CONFIG_FILE_PATH': ('config_file_path', 'get_config_file_path()'),
-        '_paths_initialized': ('paths_initialized', 'are_paths_initialized()'),
-        '_config_object': ('config_object', 'get_config()'),
-        '_config_loaded': ('config_loaded', 'is_config_loaded()'),
-        '_get_config_paths': ('get_config_paths', 'get_config_paths()')
-    }
-    "Словарь соответствия: имя -> (атрибут в _config_manager, рекомендуемая публичная замена)"
-
-    if name in remap:
-        cm_attr, suggestion = remap[name]
-        msg = f"Прямое обращение к 'chutils.config.{name}' устарело и будет удалено в будущих версиях."
-        if suggestion:
-            msg += f" Используйте {suggestion}."
-        else:
-            msg += " Используйте публичный API модуля."
-
-        warnings.warn(msg, DeprecationWarning, stacklevel=2)
-
-        # Если пути еще не инициализированы, инициализируем их при первом обращении
-        if name in ['_BASE_DIR', '_CONFIG_FILE_PATH', '_get_config_paths'] and not _config_manager.paths_initialized:
-            _config_manager.initialize_paths(find_project_root)
-
-        return getattr(_config_manager, cm_attr)
-
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
-
-
-def _initialize_paths() -> None:
-    """
-    Внутренняя функция для инициализации путей (сохранена для обратной совместимости тестов).
-    """
-    _sync_legacy_state()
-    _config_manager.initialize_paths(find_project_root)
-
-
-def _sync_legacy_state() -> None:
-    """
-    Синхронизирует состояние и ОЧИЩАЕТ модуль от физических переменных,
-    чтобы __getattr__ продолжал работать.
-    """
-    g = globals()
-    mapping = {
-        '_config_loaded': 'config_loaded',
-        '_config_object': 'config_object',
-        '_paths_initialized': 'paths_initialized',
-        '_BASE_DIR': 'base_dir',
-        '_CONFIG_FILE_PATH': 'config_file_path'
-    }
-
-    for mod_var, cm_attr in mapping.items():
-        if mod_var in g:
-            # Переносим значение в менеджер
-            setattr(_config_manager, cm_attr, g[mod_var])
-            # УДАЛЯЕМ из globals, чтобы __getattr__ снова мог перехватывать обращения
-            del g[mod_var]
 
 
 def get_base_dir() -> str | None:
@@ -200,9 +133,9 @@ def get_base_dir() -> str | None:
     Returns:
         Путь к корню проекта или None, если корень не найден.
     """
-    if not _config_manager.paths_initialized:
-        _config_manager.initialize_paths(find_project_root)
-    return _config_manager.base_dir
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+    return _cm.base_dir
 
 
 def get_config_file_path() -> str | None:
@@ -212,9 +145,9 @@ def get_config_file_path() -> str | None:
     Returns:
         Путь к файлу или None, если файл не найден.
     """
-    if not _config_manager.paths_initialized:
-        _config_manager.initialize_paths(find_project_root)
-    return _config_manager.config_file_path
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+    return _cm.config_file_path
 
 
 def is_config_loaded() -> bool:
@@ -224,7 +157,7 @@ def is_config_loaded() -> bool:
     Returns:
         True, если кэш конфигурации заполнен.
     """
-    return _config_manager.config_loaded
+    return _cm.config_loaded
 
 
 def are_paths_initialized() -> bool:
@@ -234,7 +167,7 @@ def are_paths_initialized() -> bool:
     Returns:
         True, если пути определены.
     """
-    return _config_manager.paths_initialized
+    return _cm.paths_initialized
 
 
 def get_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None]:
@@ -250,9 +183,9 @@ def get_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | Non
     Returns:
         Кортеж (путь_к_основному, путь_к_локальному).
     """
-    if not _config_manager.paths_initialized:
-        _config_manager.initialize_paths(find_project_root)
-    return _config_manager.get_config_paths(cfg_file)
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+    return _cm.get_config_paths(cfg_file)
 
 
 def get_all_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None, str | None]:
@@ -265,6 +198,6 @@ def get_all_config_paths(cfg_file: str | None = None) -> tuple[str | None, str |
     Returns:
         Кортеж (путь_к_основному, путь_к_окружению, путь_к_локальному).
     """
-    if not _config_manager.paths_initialized:
-        _config_manager.initialize_paths(find_project_root)
-    return _config_manager.get_all_config_paths(cfg_file)
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+    return _cm.get_all_config_paths(cfg_file)

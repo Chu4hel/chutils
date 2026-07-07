@@ -6,9 +6,10 @@ import pytest
 
 from chutils.config import (
     get_config,
-    _initialize_paths,
     save_config_value,
-    get_config_file_path
+    get_config_file_path,
+    _cm,
+    find_project_root
 )
 from chutils.exceptions import ConfigParseError
 
@@ -31,7 +32,7 @@ def test_json_config_auto_discovery(fs):
 
     fs.cwd = root_path
 
-    _initialize_paths()
+    _cm.initialize_paths(find_project_root)
     config_file_path = get_config_file_path()
     assert config_file_path is not None
     assert Path(config_file_path).name == "config.json"
@@ -71,7 +72,7 @@ def test_save_config_value_json(fs):
     fs.cwd = root_path
 
     # Инициализируем пути
-    _initialize_paths()
+    _cm.initialize_paths(find_project_root)
 
     success = save_config_value("Section1", "key1", "new_val")
     assert success is True
@@ -88,7 +89,7 @@ def test_invalid_json_handling(fs):
     fs.create_file(os.path.join(root_path, "config.json"), contents='{"invalid": json')
     fs.cwd = root_path
 
-    _initialize_paths()
+    _cm.initialize_paths(find_project_root)
 
     with pytest.raises(ConfigParseError):
         get_config()
