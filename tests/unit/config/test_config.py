@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 from pathlib import Path
 
@@ -496,3 +495,15 @@ user = local_user
     assert cfg["Database"]["host"] == "localhost"
     assert cfg["Database"]["port"] == "6000"  # INI парсит все как строки
     assert cfg["Database"]["user"] == "local_user"
+
+
+def test_cm_deprecation_warning():
+    """Проверяет, что обращение к config._cm вызывает DeprecationWarning."""
+    import warnings
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        # Обращаемся к config._cm
+        _ = config._cm
+        assert len(w) >= 1
+        assert issubclass(w[-1].category, DeprecationWarning)
+        assert "Прямой доступ к внутреннему менеджеру '_cm'" in str(w[-1].message)

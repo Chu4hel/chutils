@@ -31,7 +31,7 @@ from .getters import (
     get_config_section,
     get_config_path
 )
-from .manager import _cm
+from .manager import _cm as _config_manager
 from .utils import find_project_root, _check_pydantic
 from .watcher import (
     on_config_change,
@@ -107,6 +107,15 @@ def __getattr__(name: str) -> Any:
     Обеспечивает обратную совместимость для старых глобальных переменных
     и ленивую загрузку экспортируемых функций генератора и схемы.
     """
+    if name == "_cm":
+        warnings.warn(
+            "Прямой доступ к внутреннему менеджеру '_cm' через 'chutils.config._cm' устарел и будет ограничен в будущих версиях. "
+            "Используйте публичный API модуля.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return _config_manager
+
     lazy_imports = {
         'generate_yaml_template': ('.generator', 'generate_yaml_template'),
         'generate_env_template': ('.generator', 'generate_env_template'),
@@ -131,7 +140,7 @@ def __getattr__(name: str) -> Any:
         '_config_loaded': ('config_loaded', 'is_config_loaded()'),
         '_get_config_paths': ('get_config_paths', 'get_config_paths()')
     }
-    "Словарь соответствия: имя -> (атрибут в _cm, рекомендуемая публичная замена)"
+    "Словарь соответствия: имя -> (атрибут в _config_manager, рекомендуемая публичная замена)"
 
     if name in remap:
         cm_attr, suggestion = remap[name]
@@ -144,10 +153,10 @@ def __getattr__(name: str) -> Any:
         warnings.warn(msg, DeprecationWarning, stacklevel=2)
 
         # Если пути еще не инициализированы, инициализируем их при первом обращении
-        if name in ['_BASE_DIR', '_CONFIG_FILE_PATH', '_get_config_paths'] and not _cm.paths_initialized:
-            _cm.initialize_paths(find_project_root)
+        if name in ['_BASE_DIR', '_CONFIG_FILE_PATH', '_get_config_paths'] and not _config_manager.paths_initialized:
+            _config_manager.initialize_paths(find_project_root)
 
-        return getattr(_cm, cm_attr)
+        return getattr(_config_manager, cm_attr)
 
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
@@ -157,7 +166,7 @@ def _initialize_paths() -> None:
     Внутренняя функция для инициализации путей (сохранена для обратной совместимости тестов).
     """
     _sync_legacy_state()
-    _cm.initialize_paths(find_project_root)
+    _config_manager.initialize_paths(find_project_root)
 
 
 def _sync_legacy_state() -> None:
@@ -177,12 +186,12 @@ def _sync_legacy_state() -> None:
     for mod_var, cm_attr in mapping.items():
         if mod_var in g:
             # Переносим значение в менеджер
-            setattr(_cm, cm_attr, g[mod_var])
+            setattr(_config_manager, cm_attr, g[mod_var])
             # УДАЛЯЕМ из globals, чтобы __getattr__ снова мог перехватывать обращения
             del g[mod_var]
 
 
-def get_base_dir() -> Optional[str]:
+def get_base_dir() -> str | None:
     """
     Возвращает абсолютный путь к корневой директории проекта.
 
@@ -191,21 +200,21 @@ def get_base_dir() -> Optional[str]:
     Returns:
         Путь к корню проекта или None, если корень не найден.
     """
-    if not _cm.paths_initialized:
-        _cm.initialize_paths(find_project_root)
-    return _cm.base_dir
+    if not _config_manager.paths_initialized:
+        _config_manager.initialize_paths(find_project_root)
+    return _config_manager.base_dir
 
 
-def get_config_file_path() -> Optional[str]:
+def get_config_file_path() -> str | None:
     """
     Возвращает путь к основному файлу конфигурации, который используется в данный момент.
 
     Returns:
         Путь к файлу или None, если файл не найден.
     """
-    if not _cm.paths_initialized:
-        _cm.initialize_paths(find_project_root)
-    return _cm.config_file_path
+    if not _config_manager.paths_initialized:
+        _config_manager.initialize_paths(find_project_root)
+    return _config_manager.config_file_path
 
 
 def is_config_loaded() -> bool:
@@ -215,7 +224,7 @@ def is_config_loaded() -> bool:
     Returns:
         True, если кэш конфигурации заполнен.
     """
-    return _cm.config_loaded
+    return _config_manager.config_loaded
 
 
 def are_paths_initialized() -> bool:
@@ -225,10 +234,10 @@ def are_paths_initialized() -> bool:
     Returns:
         True, если пути определены.
     """
-    return _cm.paths_initialized
+    return _config_manager.paths_initialized
 
 
-def get_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+def get_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None]:
     """
     Возвращает пути к основному и локальному файлам конфигурации.
 
@@ -241,12 +250,12 @@ def get_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Opt
     Returns:
         Кортеж (путь_к_основному, путь_к_локальному).
     """
-    if not _cm.paths_initialized:
-        _cm.initialize_paths(find_project_root)
-    return _cm.get_config_paths(cfg_file)
+    if not _config_manager.paths_initialized:
+        _config_manager.initialize_paths(find_project_root)
+    return _config_manager.get_config_paths(cfg_file)
 
 
-def get_all_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+def get_all_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None, str | None]:
     """
     Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
 
@@ -256,6 +265,6 @@ def get_all_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str],
     Returns:
         Кортеж (путь_к_основному, путь_к_окружению, путь_к_локальному).
     """
-    if not _cm.paths_initialized:
-        _cm.initialize_paths(find_project_root)
-    return _cm.get_all_config_paths(cfg_file)
+    if not _config_manager.paths_initialized:
+        _config_manager.initialize_paths(find_project_root)
+    return _config_manager.get_all_config_paths(cfg_file)
