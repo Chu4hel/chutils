@@ -65,3 +65,23 @@ def test_cli_secrets_error_handling(cli_runner, mocker):
     assert "Secret storage error" in result.stderr or "Secret storage error" in result.stdout
     # Проверка подсказки (в stderr она может быть без тегов)
     assert "Unlock your keyring" in result.stderr or "Unlock your keyring" in result.stdout
+
+
+def test_cli_secrets_keyring_not_available(cli_runner, monkeypatch):
+    """Проверяет поведение CLI secrets при отсутствии keyring."""
+    monkeypatch.setattr("chutils.secret_manager.providers.KEYRING_AVAILABLE", False)
+
+    # 1. Попытка вызова set
+    result = cli_runner.invoke(["secrets", "set", "K", "V"])
+    assert result.exit_code == 1
+    assert "Missing optional dependency: please install chutils[keyring]" in (result.stderr + result.stdout)
+
+    # 2. Попытка вызова delete
+    result = cli_runner.invoke(["secrets", "delete", "K"])
+    assert result.exit_code == 1
+    assert "Missing optional dependency: please install chutils[keyring]" in (result.stderr + result.stdout)
+
+    # 3. Попытка вызова просто secrets
+    result = cli_runner.invoke(["secrets"])
+    assert result.exit_code == 1
+    assert "Missing optional dependency: please install chutils[keyring]" in (result.stderr + result.stdout)
