@@ -153,6 +153,7 @@ def mock_chutils_secrets(monkeypatch: pytest.MonkeyPatch) -> Generator[MockSecre
     provider = MockSecretProvider()
 
     monkeypatch.setattr("chutils.secret_manager.core._warn_about_keyring_migration", lambda: None)
+    monkeypatch.setattr("chutils.secret_manager.core._warn_about_missing_keyring", lambda: None)
 
     original_init = SecretManager.__init__
 

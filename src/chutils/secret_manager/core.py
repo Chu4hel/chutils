@@ -1,5 +1,4 @@
 import asyncio
-import warnings
 from typing import Optional, List, TYPE_CHECKING
 
 from chutils.exceptions import SecretError
@@ -12,37 +11,52 @@ if TYPE_CHECKING:
 # Ленивая инициализация логгера модуля
 _module_logger: Optional['ChutilsLogger'] = None
 
-# Флаг для однократного вывода предупреждения о миграции
-_migration_warned = False
+# Флаг для однократного вывода предупреждения о отсутствующей зависимости keyring
+_keyring_missing_warned = False
 
 
 def _warn_about_keyring_migration() -> None:
     """
-    Выводит предупреждение о миграции keyring в опциональные зависимости (один раз за сессию).
+    Устаревшая функция. В v3.0.0 предупреждение отключено.
     """
-    global _migration_warned
-    if _migration_warned:
+    pass
+
+
+def _warn_about_missing_keyring() -> None:
+    """
+    Выводит предупреждение о том, что keyring не установлен (один раз за сессию).
+    """
+    global _keyring_missing_warned
+    if _keyring_missing_warned:
         return
 
-    # Если пользователь СОВСЕМ выключил keyring, предупреждение о его миграции не нужно
+    from .providers import KEYRING_AVAILABLE
+    if KEYRING_AVAILABLE:
+        _keyring_missing_warned = True
+        return
+
+    # Если пользователь СОВСЕМ выключил keyring, предупреждение не нужно
     if config.get_config_boolean('secrets', 'disable_keyring', fallback=False):
-        _migration_warned = True
+        _keyring_missing_warned = True
         return
 
-    # Отдельный флаг ТОЛЬКО для скрытия текста предупреждения
+    # Отдельный флаг для скрытия предупреждения
     if config.get_config_boolean('secrets', 'disable_keyring_warning', fallback=False):
-        _migration_warned = True
+        _keyring_missing_warned = True
         return
 
-    warnings.warn(
-        "В версии 3.0.0 библиотека 'keyring' станет опциональной и будет удалена из основных зависимостей. "
-        "Чтобы избежать поломок в будущем, пожалуйста, обновите ваши зависимости на 'chutils[secrets]'. "
-        "После обновления зависимостей вы можете скрыть это сообщение, установив "
-        "CH_DISABLE_KEYRING_WARNING=true или secrets.disable_keyring_warning: true в конфиге.",
-        FutureWarning,
-        stacklevel=3
+    import os
+    if os.environ.get('CH_DISABLE_KEYRING_WARNING', '').lower() in ('true', '1', 'yes'):
+        _keyring_missing_warned = True
+        return
+
+    _get_logger().warning(
+        "Опциональная зависимость 'keyring' не установлена. Хранилище секретов Keyring не будет доступно. "
+        "Для использования системного хранилища установите пакет: pip install 'chutils[secrets]'. "
+        "Вы можете скрыть это предупреждение, установив переменную окружения CH_DISABLE_KEYRING_WARNING=true "
+        "или параметр secrets.disable_keyring_warning: true в конфигурации."
     )
-    _migration_warned = True
+    _keyring_missing_warned = True
 
 
 def _get_logger() -> 'ChutilsLogger':
@@ -86,7 +100,7 @@ class SecretManager:
         Raises:
             SecretError: Если не удалось автоматически определить `service_name`.
         """
-        _warn_about_keyring_migration()
+        _warn_about_missing_keyring()
         self.auto_mask_logs = auto_mask_logs
 
         # Определение service_name (логика сохранена для обратной совместимости)
@@ -119,11 +133,14 @@ class SecretManager:
             self.providers = providers
         else:
             disable_keyring = config.get_config_boolean('secrets', 'disable_keyring', fallback=False)
-            self.providers = [
-                KeyringProvider(disable_keyring=disable_keyring),
+            from .providers import KEYRING_AVAILABLE
+            self.providers = []
+            if KEYRING_AVAILABLE:
+                self.providers.append(KeyringProvider(disable_keyring=disable_keyring))
+            self.providers.extend([
                 DotEnvProvider(),
                 EnvProvider()
-            ]
+            ])
 
         _get_logger().devdebug(
             "SecretManager инициализирован. Сервис: '%s', Провайдеров: %d",
