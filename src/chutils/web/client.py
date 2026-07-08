@@ -14,7 +14,7 @@ from .user_agent import UserAgentRotator
 if TYPE_CHECKING:
     from chutils.logger import ChutilsLogger
 
-_module_logger: "ChutilsLogger" | None = None
+_module_logger: "ChutilsLogger | None" = None
 
 
 def _get_logger() -> "ChutilsLogger":
