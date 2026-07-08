@@ -579,6 +579,13 @@ def zip_folder(
 ) -> Path: ...
 
 
+# --- web ---
+class WebClient: ...
+
+
+class AsyncWebClient: ...
+
+
 # --- Submodules ---
 from . import config as config
 from . import logger as logger
@@ -598,3 +605,4 @@ from . import metrics as metrics
 from . import text as text
 from . import crypto as crypto
 from . import fs as fs
+from . import web as web

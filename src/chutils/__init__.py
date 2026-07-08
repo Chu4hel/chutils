@@ -212,6 +212,11 @@ _LAZY_MAPPING = {
     'safe_filename': ('.fs', 'safe_filename'),
     'zip_folder': ('.fs', 'zip_folder'),
 
+    # web
+    'web': ('.web', None),
+    'WebClient': ('.web', 'WebClient'),
+    'AsyncWebClient': ('.web', 'AsyncWebClient'),
+
     # plugins
     'plugins': ('.plugins', None),
     'register_plugin': ('.plugins', 'register_plugin'),
