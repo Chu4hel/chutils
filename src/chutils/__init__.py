@@ -217,6 +217,23 @@ _LAZY_MAPPING = {
     'WebClient': ('.web', 'WebClient'),
     'AsyncWebClient': ('.web', 'AsyncWebClient'),
 
+    # scraping
+    'scraping': ('.scraping', None),
+    'BezierCurveGenerator': ('.scraping.humanize', 'BezierCurveGenerator'),
+    'JitterDelayGenerator': ('.scraping.humanize', 'JitterDelayGenerator'),
+    'KeyboardTypoGenerator': ('.scraping.humanize', 'KeyboardTypoGenerator'),
+    'human_sleep': ('.scraping.humanize', 'human_sleep'),
+    'async_human_sleep': ('.scraping.humanize', 'async_human_sleep'),
+    'async_move_mouse': ('.scraping.humanize', 'async_move_mouse'),
+    'async_scroll_to': ('.scraping.humanize', 'async_scroll_to'),
+    'async_type_text': ('.scraping.humanize', 'async_type_text'),
+    'move_mouse': ('.scraping.humanize', 'move_mouse'),
+    'scroll_to': ('.scraping.humanize', 'scroll_to'),
+    'type_text': ('.scraping.humanize', 'type_text'),
+    'apply_antidetect_playwright': ('.scraping.humanize', 'apply_antidetect_playwright'),
+    'apply_antidetect_selenium': ('.scraping.humanize', 'apply_antidetect_selenium'),
+    'get_browser_launch_args': ('.scraping.humanize', 'get_browser_launch_args'),
+
     # plugins
     'plugins': ('.plugins', None),
     'register_plugin': ('.plugins', 'register_plugin'),

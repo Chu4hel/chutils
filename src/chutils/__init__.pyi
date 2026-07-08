@@ -586,6 +586,92 @@ class WebClient: ...
 class AsyncWebClient: ...
 
 
+# --- scraping ---
+class BezierCurveGenerator:
+    def generate(
+            self,
+            start: tuple[int, int],
+            end: tuple[int, int],
+            steps: int = 30,
+            deviation: float = 0.2,
+    ) -> list[tuple[int, int]]: ...
+
+
+class JitterDelayGenerator:
+    def __init__(self, strategy: str = "lognormal", jitter: float = 0.15) -> None: ...
+
+    def generate(self, base_delay: float) -> float: ...
+
+
+class KeyboardTypoGenerator:
+    def generate_sequence(self, text: str, error_rate: float = 0.05) -> list[Any]: ...
+
+
+def human_sleep(min_seconds: float, max_seconds: float) -> None: ...
+
+
+async def async_human_sleep(min_seconds: float, max_seconds: float) -> None: ...
+
+
+async def async_move_mouse(
+        page: Any,
+        x: int,
+        y: int,
+        start: tuple[int, int] | None = None,
+        steps: int = 30,
+        delay_between_steps: float = 0.01,
+) -> None: ...
+
+
+async def async_scroll_to(
+        page: Any,
+        x: int,
+        y: int,
+        selector: str | None = None,
+        steps: int = 10,
+        delay_between_steps: float = 0.01,
+) -> None: ...
+
+
+async def async_type_text(
+        page: Any, selector: str, text: str, error_rate: float = 0.05, speed_wpm: float = 40.0
+) -> None: ...
+
+
+def move_mouse(
+        driver: Any,
+        x: int,
+        y: int,
+        start: tuple[int, int] | None = None,
+        steps: int = 30,
+        delay_between_steps: float = 0.01,
+) -> None: ...
+
+
+def scroll_to(
+        driver: Any,
+        x: int,
+        y: int,
+        selector: str | None = None,
+        steps: int = 10,
+        delay_between_steps: float = 0.01,
+) -> None: ...
+
+
+def type_text(
+        driver: Any, selector: str, text: str, error_rate: float = 0.05, speed_wpm: float = 40.0
+) -> None: ...
+
+
+async def apply_antidetect_playwright(context: Any) -> None: ...
+
+
+def apply_antidetect_selenium(driver: Any) -> None: ...
+
+
+def get_browser_launch_args() -> list[str]: ...
+
+
 # --- Submodules ---
 from . import config as config
 from . import logger as logger
@@ -606,3 +692,4 @@ from . import text as text
 from . import crypto as crypto
 from . import fs as fs
 from . import web as web
+from . import scraping as scraping

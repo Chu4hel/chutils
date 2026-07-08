@@ -14,10 +14,7 @@ def test_web_import_without_httpx() -> None:
 
     # Имитируем отсутствие httpx
     with patch.dict(sys.modules, {"httpx": None}):
-        # Импортируем класс исключения динамически, так как другие тесты могли перезагрузить chutils
-        import chutils.exceptions
-        importlib.reload(chutils.exceptions)
-        OptionalDependencyError = chutils.exceptions.OptionalDependencyError
+        from chutils.exceptions import OptionalDependencyError
 
         with pytest.raises(OptionalDependencyError) as exc_info:
             importlib.import_module("chutils.web")

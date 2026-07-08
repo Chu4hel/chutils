@@ -26,6 +26,7 @@ nav:
   - Рецепты: recipes.md
   - Система плагинов: plugins.md
   - Умный HTTP-клиент (web): web.md
+  - Имитация поведения (scraping): scraping.md
   - Справочник API: api.md
   - "Миграция: v2 -> v3": migration.md
   - Опциональные зависимости: dependencies.md
@@ -39,16 +40,16 @@ nav:
       - Настройки и отладка (config): cli/config.md
       - Инструменты разработчика (dev): cli/dev.md
   - Проект:
-    - Обзор (RU): README_RU.md
-    - Кодекс поведения: CODE_OF_CONDUCT_RU.md
-    - Правила участия: CONTRIBUTING_RU.md
+      - Обзор (RU): README_RU.md
+      - Кодекс поведения: CODE_OF_CONDUCT_RU.md
+      - Правила участия: CONTRIBUTING_RU.md
 
 plugins:
   - search
   - mkdocstrings:
       handlers:
         python:
-          paths: [src]
+          paths: [ src ]
           options:
             show_root_heading: yes
             show_source: no
