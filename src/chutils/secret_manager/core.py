@@ -9,13 +9,10 @@ if TYPE_CHECKING:
     from ..logger import ChutilsLogger
 
 # Ленивая инициализация логгера модуля
-_module_logger: Optional['ChutilsLogger'] = None
+_module_logger: Optional["ChutilsLogger"] = None
 
 # Флаг для однократного вывода предупреждения о отсутствующей зависимости keyring
 _keyring_missing_warned = False
-
-
-
 
 
 def _warn_about_missing_keyring() -> None:
@@ -27,22 +24,24 @@ def _warn_about_missing_keyring() -> None:
         return
 
     from .providers import KEYRING_AVAILABLE
+
     if KEYRING_AVAILABLE:
         _keyring_missing_warned = True
         return
 
     # Если пользователь СОВСЕМ выключил keyring, предупреждение не нужно
-    if config.get_config_boolean('secrets', 'disable_keyring', fallback=False):
+    if config.get_config_boolean("secrets", "disable_keyring", fallback=False):
         _keyring_missing_warned = True
         return
 
     # Отдельный флаг для скрытия предупреждения
-    if config.get_config_boolean('secrets', 'disable_keyring_warning', fallback=False):
+    if config.get_config_boolean("secrets", "disable_keyring_warning", fallback=False):
         _keyring_missing_warned = True
         return
 
     import os
-    if os.environ.get('CH_DISABLE_KEYRING_WARNING', '').lower() in ('true', '1', 'yes'):
+
+    if os.environ.get("CH_DISABLE_KEYRING_WARNING", "").lower() in ("true", "1", "yes"):
         _keyring_missing_warned = True
         return
 
@@ -55,13 +54,14 @@ def _warn_about_missing_keyring() -> None:
     _keyring_missing_warned = True
 
 
-def _get_logger() -> 'ChutilsLogger':
+def _get_logger() -> "ChutilsLogger":
     """
     Получает лениво инициализированный логгер модуля.
     """
     global _module_logger
     if _module_logger is None:
         from .. import logger as chutils_logger
+
         _module_logger = chutils_logger.setup_logger(__name__)
 
     return _module_logger
@@ -82,7 +82,7 @@ class SecretManager:
             service_name: str | None = None,
             prefix: str | None = None,
             auto_mask_logs: bool = True,
-            providers: list[SecretProvider] | None = None
+            providers: list[SecretProvider] | None = None,
     ) -> None:
         """
         Инициализирует менеджер секретов.
@@ -102,24 +102,26 @@ class SecretManager:
         # Определение service_name (логика сохранена для обратной совместимости)
         final_service_name = service_name
         if not final_service_name:
-            final_service_name = config.get_config_value('Secrets', 'service_name')
+            final_service_name = config.get_config_value("Secrets", "service_name")
 
         if not final_service_name:
             final_service_name = config.get_base_dir()
             _get_logger().debug(
                 "service_name для SecretManager не указан. "
                 "Используется путь к проекту: '%s'",
-                final_service_name
+                final_service_name,
             )
 
         final_prefix = prefix
         if final_prefix is None:
-            final_prefix = config.get_config_value('Secrets', 'prefix', fallback=self.prefix)
+            final_prefix = config.get_config_value(
+                "Secrets", "prefix", fallback=self.prefix
+            )
 
         if not final_service_name:
             raise SecretError(
                 "Не удалось автоматически определить 'service_name' для менеджера секретов.",
-                hint="Укажите 'service_name' явно при создании SecretManager или в секции [Secrets] файла конфигурации."
+                hint="Укажите 'service_name' явно при создании SecretManager или в секции [Secrets] файла конфигурации.",
             )
 
         self.service_name: str = final_prefix + final_service_name
@@ -128,19 +130,20 @@ class SecretManager:
         if providers is not None:
             self.providers = providers
         else:
-            disable_keyring = config.get_config_boolean('secrets', 'disable_keyring', fallback=False)
+            disable_keyring = config.get_config_boolean(
+                "secrets", "disable_keyring", fallback=False
+            )
             from .providers import KEYRING_AVAILABLE
+
             self.providers = []
             if KEYRING_AVAILABLE:
                 self.providers.append(KeyringProvider(disable_keyring=disable_keyring))
-            self.providers.extend([
-                DotEnvProvider(),
-                EnvProvider()
-            ])
+            self.providers.extend([DotEnvProvider(), EnvProvider()])
 
         _get_logger().devdebug(
             "SecretManager инициализирован. Сервис: '%s', Провайдеров: %d",
-            self.service_name, len(self.providers)
+            self.service_name,
+            len(self.providers),
         )
 
     def add_provider(self, provider: SecretProvider, index: int | None = None) -> None:
@@ -162,6 +165,7 @@ class SecretManager:
             self._plugins_loaded = True
             try:
                 from ..plugins import registry, SecretProviderPlugin
+
                 registry.discover_plugins("chutils.plugins.secret")
                 external_providers = registry.get_plugins_by_type(SecretProviderPlugin)
                 for provider in reversed(external_providers):
@@ -170,7 +174,9 @@ class SecretManager:
             except Exception as e:
                 _get_logger().error("Ошибка при загрузке плагинов секретов: %s", str(e))
 
-    def get_secret(self, key: str) -> str | None:
+    def get_secret(
+            self, key: str, fallback: Optional[str] = None, required: bool = False
+    ) -> Optional[str]:
         """
         Получает секрет, опрашивая провайдеры по порядку.
         """
@@ -183,7 +189,13 @@ class SecretManager:
                 return value
 
         _get_logger().devdebug("Секрет '%s' не найден ни в одном из провайдеров.", key)
-        return None
+        if required:
+            from chutils.exceptions import SecretNotFoundError
+
+            raise SecretNotFoundError(
+                f"Secret '{key}' not found in the service '{self.service_name}'"
+            )
+        return fallback
 
     def save_secret(self, key: str, value: str) -> bool:
         """
@@ -213,8 +225,10 @@ class SecretManager:
         return self.save_secret(key, value)
 
     # Асинхронные обертки
-    async def aget_secret(self, key: str) -> str | None:
-        return await asyncio.to_thread(self.get_secret, key)
+    async def aget_secret(
+            self, key: str, fallback: Optional[str] = None, required: bool = False
+    ) -> Optional[str]:
+        return await asyncio.to_thread(self.get_secret, key, fallback, required)
 
     async def asave_secret(self, key: str, value: str) -> bool:
         return await asyncio.to_thread(self.save_secret, key, value)

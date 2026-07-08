@@ -1,9 +1,9 @@
 import datetime
 import logging
+from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
 from typing import Any, TypeVar, Literal
-from collections.abc import Callable
 
 # Тип для Pydantic моделей
 T = TypeVar("T")
@@ -225,7 +225,7 @@ class SecretManager:
     def __init__(self, service_name: str | None = None, prefix: str | None = None, auto_mask_logs: bool = True,
                  providers: list[Any] | None = None) -> None: ...
 
-    def get_secret(self, key: str) -> str | None: ...
+    def get_secret(self, key: str, fallback: str | None = None, required: bool = False) -> str | None: ...
 
     def save_secret(self, key: str, value: str) -> bool: ...
 
@@ -233,7 +233,7 @@ class SecretManager:
 
     def update_secret(self, key: str, value: str) -> bool: ...
 
-    async def aget_secret(self, key: str) -> str | None: ...
+    async def aget_secret(self, key: str, fallback: str | None = None, required: bool = False) -> str | None: ...
 
     async def asave_secret(self, key: str, value: str) -> bool: ...
 
