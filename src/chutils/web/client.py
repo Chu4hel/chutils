@@ -1,7 +1,6 @@
 import asyncio
-import logging
 import time
-from typing import Any, cast
+from typing import Any, cast, Optional, TYPE_CHECKING
 
 import httpx
 from httpx._utils import URLPattern
@@ -12,7 +11,18 @@ from chutils.exceptions import RateLimitExceededError
 from .proxy_pool import ProxyPool
 from .user_agent import UserAgentRotator
 
-logger = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from chutils.logger import ChutilsLogger
+
+_module_logger: Optional["ChutilsLogger"] = None
+
+
+def _get_logger() -> "ChutilsLogger":
+    global _module_logger
+    if _module_logger is None:
+        from chutils.logger import setup_logger
+        _module_logger = setup_logger(__name__)
+    return _module_logger
 
 
 class WebClient(httpx.Client):
@@ -186,7 +196,7 @@ class WebClient(httpx.Client):
                 if attempt == retries:
                     raise
 
-                logger.warning(
+                _get_logger().warning(
                     "Сбой запроса (попытка %d/%d): %s. Ротация прокси и повтор...",
                     attempt + 1,
                     retries + 1,
@@ -352,7 +362,7 @@ class AsyncWebClient(httpx.AsyncClient):
                 if attempt == retries:
                     raise
 
-                logger.warning(
+                _get_logger().warning(
                     "Сбой асинхронного запроса (попытка %d/%d): %s. Ротация прокси и повтор...",
                     attempt + 1,
                     retries + 1,

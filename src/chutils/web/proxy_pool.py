@@ -1,11 +1,21 @@
-import logging
 import random
 import threading
 import time
 import urllib.request
-from typing import Sequence
+from typing import Optional, Sequence, TYPE_CHECKING
 
-logger = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    from chutils.logger import ChutilsLogger
+
+_module_logger: Optional["ChutilsLogger"] = None
+
+
+def _get_logger() -> "ChutilsLogger":
+    global _module_logger
+    if _module_logger is None:
+        from chutils.logger import setup_logger
+        _module_logger = setup_logger(__name__)
+    return _module_logger
 
 
 class ProxyPool:
@@ -67,7 +77,7 @@ class ProxyPool:
                     if p not in self._proxies:
                         self._proxies.append(p)
         except Exception as e:
-            logger.warning("Не удалось загрузить прокси из окружения: %s", e)
+            _get_logger().warning("Не удалось загрузить прокси из окружения: %s", e)
 
     def update_from_url(self) -> None:
         """Загружает список прокси с указанного URL."""
@@ -94,9 +104,9 @@ class ProxyPool:
             with self._lock:
                 self._proxies = new_proxies
                 self._index = 0
-            logger.info("Пул прокси успешно обновлен с URL. Загружено: %d", len(new_proxies))
+            _get_logger().info("Пул прокси успешно обновлен с URL. Загружено: %d", len(new_proxies))
         except Exception as e:
-            logger.warning("Сбой при обновлении прокси с URL %s: %s", self.url, e)
+            _get_logger().warning("Сбой при обновлении прокси с URL %s: %s", self.url, e)
 
     def start_background_update(self) -> None:
         """Запускает фоновый поток для периодического обновления прокси."""
