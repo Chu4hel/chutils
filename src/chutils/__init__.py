@@ -156,6 +156,7 @@ _LAZY_MAPPING = {
     'ConfigError': ('.exceptions', 'ConfigError'),
     'ConfigLoadError': ('.exceptions', 'ConfigLoadError'),
     'ConfigParseError': ('.exceptions', 'ConfigParseError'),
+    'ConfigKeyNotFoundError': ('.exceptions', 'ConfigKeyNotFoundError'),
     'SecretError': ('.exceptions', 'SecretError'),
     'SecretNotFoundError': ('.exceptions', 'SecretNotFoundError'),
     'SecretProviderError': ('.exceptions', 'SecretProviderError'),

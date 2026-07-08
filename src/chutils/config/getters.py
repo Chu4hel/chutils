@@ -1,7 +1,7 @@
 """
 Функции доступа к значениям конфигурации.
 
-Содержит типизированные обертки для удобного извлечения данных из 
+Содержит типизированные обертки для удобного извлечения данных из
 загруженного объекта конфигурации.
 """
 
@@ -26,7 +26,13 @@ T = TypeVar("T", bound="BaseModel")
 logger = logging.getLogger(__name__)
 
 
-def get_config_value(section: str, key: str, fallback: Any = None, config: JSONDict | None = None) -> Any:
+def get_config_value(
+    section: str,
+    key: str,
+    fallback: Any = None,
+    config: JSONDict | None = None,
+    required: bool = False,
+) -> Any:
     """
     Получает произвольное значение из конфигурации.
 
@@ -39,6 +45,7 @@ def get_config_value(section: str, key: str, fallback: Any = None, config: JSOND
         key: Имя ключа.
         fallback: Значение по умолчанию, если ключ не найден или его значение пустое.
         config: Опциональный, предварительно загруженный словарь конфигурации.
+        required: Если True, выбросит ConfigKeyNotFoundError при отсутствии ключа или пустом значении.
 
     Returns:
         Значение из конфигурации или `fallback`.
@@ -56,6 +63,12 @@ def get_config_value(section: str, key: str, fallback: Any = None, config: JSOND
             section_data = {}
 
     if not isinstance(section_data, dict):
+        if required:
+            from chutils.exceptions import ConfigKeyNotFoundError
+
+            raise ConfigKeyNotFoundError(
+                f"Section '{section}' not found in configuration"
+            )
         return fallback
 
     value = section_data.get(key)
@@ -66,13 +79,25 @@ def get_config_value(section: str, key: str, fallback: Any = None, config: JSOND
                 break
 
     # Если значение не найдено или является пустой строкой, возвращаем fallback
-    if value is None or value == '':
+    if value is None or value == "":
+        if required:
+            from chutils.exceptions import ConfigKeyNotFoundError
+
+            raise ConfigKeyNotFoundError(
+                f"Key '{key}' not found in section '{section}' of configuration"
+            )
         return fallback
 
     return value
 
 
-def get_config_int(section: str, key: str, fallback: int = 0, config: JSONDict | None = None) -> int:
+def get_config_int(
+    section: str,
+    key: str,
+    fallback: int = 0,
+    config: JSONDict | None = None,
+    required: bool = False,
+) -> int:
     """
     Получает целочисленное значение из конфигурации.
 
@@ -82,14 +107,26 @@ def get_config_int(section: str, key: str, fallback: int = 0, config: JSONDict |
         fallback: Значение по умолчанию, если ключ не найден или не может
             быть преобразован в int.
         config: Опциональный, предварительно загруженный словарь конфигурации.
+        required: Если True, выбросит ConfigKeyNotFoundError при отсутствии ключа.
 
     Returns:
         Целое число из конфигурации или `fallback`.
     """
-    return cast(int, utils._get_typed_value(section, key, int, fallback, get_config_value, config))
+    return cast(
+        int,
+        utils._get_typed_value(
+            section, key, int, fallback, get_config_value, config, required=required
+        ),
+    )
 
 
-def get_config_float(section: str, key: str, fallback: float = 0.0, config: JSONDict | None = None) -> float:
+def get_config_float(
+    section: str,
+    key: str,
+    fallback: float = 0.0,
+    config: JSONDict | None = None,
+    required: bool = False,
+) -> float:
     """
     Получает дробное значение из конфигурации.
 
@@ -99,14 +136,26 @@ def get_config_float(section: str, key: str, fallback: float = 0.0, config: JSON
         fallback: Значение по умолчанию, если ключ не найден или не может
             быть преобразован в float.
         config: Опциональный, предварительно загруженный словарь конфигурации.
+        required: Если True, выбросит ConfigKeyNotFoundError при отсутствии ключа.
 
     Returns:
         Float или fallback.
     """
-    return cast(float, utils._get_typed_value(section, key, float, fallback, get_config_value, config))
+    return cast(
+        float,
+        utils._get_typed_value(
+            section, key, float, fallback, get_config_value, config, required=required
+        ),
+    )
 
 
-def get_config_boolean(section: str, key: str, fallback: bool = False, config: JSONDict | None = None) -> bool:
+def get_config_boolean(
+    section: str,
+    key: str,
+    fallback: bool = False,
+    config: JSONDict | None = None,
+    required: bool = False,
+) -> bool:
     """
     Получает булево значение из конфигурации.
 
@@ -119,6 +168,7 @@ def get_config_boolean(section: str, key: str, fallback: bool = False, config: J
         fallback: Значение по умолчанию, если ключ не найден или не может
             быть распознан как булево.
         config: Опциональный, предварительно загруженный словарь конфигурации.
+        required: Если True, выбросит ConfigKeyNotFoundError при отсутствии ключа.
 
     Returns:
         True или False.
@@ -128,25 +178,40 @@ def get_config_boolean(section: str, key: str, fallback: bool = False, config: J
         if isinstance(v, bool):
             return v
         s = str(v).lower()
-        if s in ['true', '1', 't', 'y', 'yes']:
+        if s in ["true", "1", "t", "y", "yes"]:
             return True
-        if s in ['false', '0', 'f', 'n', 'no']:
+        if s in ["false", "0", "f", "n", "no"]:
             return False
         raise ConfigParseError(
             f"Неверное булево значение для ключа '{key}': {v}",
             hint="Допустимые значения: true/false, yes/no, 1/0, t/f.",
-            section=section, key=key, value=v
+            section=section,
+            key=key,
+            value=v,
         )
 
-    return cast(bool, utils._get_typed_value(section, key, bool_converter, fallback, get_config_value, config,
-                                             type_name="bool"))
+    return cast(
+        bool,
+        utils._get_typed_value(
+            section,
+            key,
+            bool_converter,
+            fallback,
+            get_config_value,
+            config,
+            type_name="bool",
+            required=required,
+        ),
+    )
 
 
 def get_config_list(
-        section: str,
-        key: str,
-        fallback: list[Any] | None = None,
-        config: JSONDict | None = None) -> list[Any]:
+    section: str,
+    key: str,
+    fallback: list[Any] | None = None,
+    config: JSONDict | None = None,
+    required: bool = False,
+) -> list[Any]:
     """
     Получает значение как список из конфигурации.
 
@@ -155,6 +220,7 @@ def get_config_list(
         key: Имя ключа.
         fallback: Значение по умолчанию, если ключ не найден.
         config: Опциональный, предварительно загруженный словарь конфигурации.
+        required: Если True, выбросит ConfigKeyNotFoundError при отсутствии ключа.
 
     Returns:
         Список из конфигурации или `fallback`. Если `fallback` не указан,
@@ -168,37 +234,52 @@ def get_config_list(
         raise ConfigParseError(
             f"Значение для '{key}' не является списком: {v}",
             hint="Убедитесь, что в конфигурации это поле представлено в виде списка (YAML: - item).",
-            section=section, key=key, value=v
+            section=section,
+            key=key,
+            value=v,
         )
 
-    return cast(list[Any],
-                utils._get_typed_value(section, key, list_converter, actual_fallback, get_config_value, config,
-                                       type_name="list"))
+    return cast(
+        list[Any],
+        utils._get_typed_value(
+            section,
+            key,
+            list_converter,
+            actual_fallback,
+            get_config_value,
+            config,
+            type_name="list",
+            required=required,
+        ),
+    )
 
 
 @overload
 def get_config_section(
-        section_name: str,
-        fallback: JSONDict | None = None,
-        config: JSONDict | None = None,
-        model: None = None
+    section_name: str,
+    fallback: JSONDict | None = None,
+    config: JSONDict | None = None,
+    model: None = None,
+    required: bool = False,
 ) -> JSONDict: ...
 
 
 @overload
 def get_config_section(
-        section_name: str,
-        fallback: JSONDict | None = None,
-        config: JSONDict | None = None,
-        model: type[T] = ...
+    section_name: str,
+    fallback: JSONDict | None = None,
+    config: JSONDict | None = None,
+    model: type[T] = ...,
+    required: bool = False,
 ) -> T: ...
 
 
 def get_config_section(
-        section_name: str,
-        fallback: JSONDict | None = None,
-        config: JSONDict | None = None,
-        model: type[T] | None = None
+    section_name: str,
+    fallback: JSONDict | None = None,
+    config: JSONDict | None = None,
+    model: type[T] | None = None,
+    required: bool = False,
 ) -> JSONDict | T:
     """
     Получает всю секцию конфигурации как словарь или Pydantic модель.
@@ -208,6 +289,7 @@ def get_config_section(
         fallback: Значение по умолчанию, если секция не найдена.
         config: Опциональный, предварительно загруженный словарь конфигурации.
         model: Опциональный класс Pydantic модели для валидации секции.
+        required: Если True, выбросит ConfigKeyNotFoundError при отсутствии секции.
 
     Returns:
         Словарь с содержимым секции или экземпляр Pydantic модели.
@@ -217,6 +299,7 @@ def get_config_section(
         ConfigLoadError: Если произошла ошибка при чтении файлов конфигурации.
         ConfigParseError: Если файлы конфигурации содержат синтаксические ошибки.
         OptionalDependencyError: Если передана `model`, но пакет `pydantic` не установлен.
+        ConfigKeyNotFoundError: Если секция не найдена и required=True.
     """
     if config is None:
         config = cast(JSONDict, get_config())
@@ -229,15 +312,22 @@ def get_config_section(
                 section_data = v
                 break
         else:
+            if required:
+                from chutils.exceptions import ConfigKeyNotFoundError
+
+                raise ConfigKeyNotFoundError(
+                    f"Section '{section_name}' not found in configuration"
+                )
             section_data = fallback if fallback is not None else {}
 
     if model is not None:
         from chutils.env import has_pydantic
+
         if not has_pydantic():
             raise OptionalDependencyError(
                 "Pydantic is required for configuration validation.",
                 dependency="pydantic",
-                hint="Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
+                hint="Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'.",
             )
         return model(**(cast(dict[str, Any], section_data)))
 
@@ -245,11 +335,12 @@ def get_config_section(
 
 
 def get_config_path(
-        section: str,
-        key: str,
-        fallback: str | None = None,
-        config: JSONDict | None = None,
-        resolve_from_root: bool = True
+    section: str,
+    key: str,
+    fallback: str | None = None,
+    config: JSONDict | None = None,
+    resolve_from_root: bool = True,
+    required: bool = False,
 ) -> str | None:
     """
     Получает путь из конфигурации.
@@ -263,10 +354,14 @@ def get_config_path(
         resolve_from_root: Если True, относительные пути будут разрешаться
             относительно _BASE_DIR. Если False, пути возвращаются как есть,
             без добавления _BASE_DIR.
+        required: Если True, выбросит ConfigKeyNotFoundError при отсутствии ключа.
     Returns:
         Путь из конфигурации или `fallback`.
     """
-    path_str = cast(str | None, get_config_value(section, key, fallback, config))
+    path_str = cast(
+        str | None,
+        get_config_value(section, key, fallback, config, required=required),
+    )
 
     if not path_str:
         return fallback
@@ -282,6 +377,7 @@ def get_config_path(
         try:
             from chutils.fs import resolve_safe_path
             from chutils.exceptions import PathTraversalError
+
             return str(resolve_safe_path(path_str, base_dir))
         except PathTraversalError as e:
             # Пробрасываем исключение безопасности выше для перехвата в CLI
