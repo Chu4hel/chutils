@@ -5,7 +5,7 @@
 
 > [!TIP]
 > При написании кода и решении задач всегда сверяйтесь
-> с [Банком few-shot примеров](file:///D:/PROJECTS/chutils/docs/ai_examples/README.md) (`docs/ai_examples/`), где
+> с [Банком few-shot примеров](./ai_examples/README.md) (`docs/ai_examples/`), где
 > содержатся примеры правильной реализации ("Как надо") и антипаттернов ("Как не надо") для ключевых задач.
 
 ## 1. Quick Start (Copy-Paste)

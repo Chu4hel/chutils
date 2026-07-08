@@ -4,7 +4,7 @@
 
 > [!IMPORTANT]
 > При написании кода и решении задач всегда обращайтесь
-> к [Банку few-shot примеров](file:///D:/PROJECTS/chutils/docs/ai_examples/README.md) (`docs/ai_examples/`). В нем
+> к [Банку few-shot примеров](./ai_examples/README.md) (`docs/ai_examples/`). В нем
 > представлены готовые пары правильных и ошибочных паттернов для обработки ошибок, конфигурации и логирования в
 > контексте стандартов `chutils`.
 
