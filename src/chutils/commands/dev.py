@@ -144,6 +144,34 @@ class DevCommand(BaseCommand):
         )
         chat_parser.set_defaults(handler=self.handle_chat_context)
 
+        # dev scaffold
+        scaffold_parser = dev_subparsers.add_parser(
+            "scaffold",
+            help="Инициализировать новый модуль Чистой Архитектуры",
+            description="Создает структуру каталогов и базовые классы/интерфейсы Чистой Архитектуры.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev scaffold my_module
+  chutils dev scaffold my_module -o ./src/my_module -f
+""",
+        )
+        scaffold_parser.add_argument(
+            "module_name",
+            help="Имя создаваемого модуля (валидный Python-идентификатор)",
+        )
+        scaffold_parser.add_argument(
+            "-o",
+            "--output-dir",
+            help="Базовый путь для создания каталога модуля (по умолчанию: ./[module_name])",
+        )
+        scaffold_parser.add_argument(
+            "-f",
+            "--force",
+            action="store_true",
+            help="Принудительно перезаписать файлы, если целевая директория уже существует",
+        )
+        scaffold_parser.set_defaults(handler=self.handle_scaffold)
+
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана."""
         self.console.print(
@@ -461,5 +489,28 @@ class DevCommand(BaseCommand):
         except Exception as e:
             self.console.print(
                 f"[bold red]Ошибка при генерации контекста:[/bold red] {e}"
+            )
+            raise SystemExit(1)
+
+    def handle_scaffold(self, args: argparse.Namespace) -> None:
+        """Обработчик генерации структуры модуля."""
+        self.err_console.print(
+            f"[bold yellow]Инициализация модуля Чистой Архитектуры '{args.module_name}'...[/bold yellow]"
+        )
+        from chutils.dev.scaffold import Scaffolder
+
+        try:
+            scaffolder = Scaffolder(
+                module_name=args.module_name,
+                output_dir=args.output_dir,
+                force=args.force,
+            )
+            scaffolder.scaffold()
+            self.console.print(
+                f"[bold green] [OK] [/bold green] Модуль '{args.module_name}' успешно инициализирован."
+            )
+        except Exception as e:
+            self.console.print(
+                f"[bold red]Ошибка инициализации:[/bold red] {e}"
             )
             raise SystemExit(1)

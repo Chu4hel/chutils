@@ -52,6 +52,7 @@ _LAZY_MAPPING = {
     'tracing': ('.tracing', None),
     'testing': ('.testing', None),
     'dev': ('.dev', None),
+    'Scaffolder': ('.dev.scaffold', 'Scaffolder'),
     'events': ('.events', None),
     'tasks': ('.tasks', None),
     'text': ('.text', None),
