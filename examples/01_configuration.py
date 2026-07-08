@@ -2,7 +2,7 @@
 Пример 1: Базовая работа с конфигурацией.
 
 Этот пример демонстрирует, как получать значения различных типов из файлов
-конфигурации (поддерживаются форматы YAML и INI). 
+конфигурации (поддерживаются форматы YAML и INI).
 Библиотека автоматически ищет файлы config.yml, config.yaml или config.ini.
 """
 
@@ -34,6 +34,16 @@ def main() -> None:
     # 4. Демонстрация fallback для отсутствующих данных
     api_key: str = get_config_value("API", "secret_key", fallback="DEMO_KEY_MISSING")
     print(f"Ключ API (fallback): {api_key}")
+
+    # 5. Демонстрация строгого режима (required=True)
+    from chutils.exceptions import ConfigKeyNotFoundError
+
+    try:
+        # Это вызовет исключение, так как ключа нет в конфигурации
+        get_config_value("Database", "missing_required_key", required=True)
+    except ConfigKeyNotFoundError as e:
+        print(f"\nСтрогий режим (required=True) сработал успешно:")
+        print(f"  Ошибка: {e}")
 
 
 if __name__ == "__main__":
