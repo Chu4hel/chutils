@@ -56,7 +56,10 @@ def test_cli_dev_generate_tree_no_pydantic(cli_runner, mocker):
 
     result = cli_runner.invoke(["dev", "generate-context", "--tree"])
     assert result.exit_code == 1
-    assert "Pydantic is required" in result.stderr or "Pydantic is required" in result.stdout
+    assert (
+            "Pydantic is required" in result.stderr
+            or "Pydantic is required" in result.stdout
+    )
 
 
 def test_cli_dev_generate_tree_error(cli_runner, mocker):
@@ -66,7 +69,10 @@ def test_cli_dev_generate_tree_error(cli_runner, mocker):
 
     result = cli_runner.invoke(["dev", "generate-context", "--tree"])
     assert result.exit_code == 1
-    assert "Ошибка при генерации индекса" in result.stderr or "Ошибка при генерации индекса" in result.stdout
+    assert (
+            "Ошибка при генерации индекса" in result.stderr
+            or "Ошибка при генерации индекса" in result.stdout
+    )
 
 
 def test_cli_dev_ai_lint_success(cli_runner, mocker):
@@ -80,12 +86,13 @@ def test_cli_dev_ai_lint_success(cli_runner, mocker):
 def test_cli_dev_ai_lint_failure(cli_runner, mocker):
     """Проверяет провал проверки ai-lint (наличие ошибок) через CLI."""
     from chutils.dev.ai_lint import LintResult
+
     mock_error = LintResult(
         rule_name="TestRule",
         message="Critical error detected",
         severity="error",
         file_path="app.py",
-        line_number=5
+        line_number=5,
     )
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_error])
     result = cli_runner.invoke(["dev", "ai-lint"])
@@ -96,11 +103,12 @@ def test_cli_dev_ai_lint_failure(cli_runner, mocker):
 def test_cli_dev_ai_lint_soft_mode(cli_runner, mocker):
     """Проверяет --soft-mode флаг, который не должен возвращать ошибку при провале."""
     from chutils.dev.ai_lint import LintResult
+
     mock_error = LintResult(
         rule_name="TestRule",
         message="Critical error detected",
         severity="error",
-        file_path="app.py"
+        file_path="app.py",
     )
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_error])
     result = cli_runner.invoke(["dev", "ai-lint", "--soft-mode"])
@@ -111,11 +119,12 @@ def test_cli_dev_ai_lint_soft_mode(cli_runner, mocker):
 def test_cli_dev_ai_lint_strict_mode(cli_runner, mocker):
     """Проверяет --strict флаг, который падает при наличии только варнингов."""
     from chutils.dev.ai_lint import LintResult
+
     mock_warn = LintResult(
         rule_name="TestRule",
         message="Warning detected",
         severity="warn",
-        file_path="app.py"
+        file_path="app.py",
     )
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_warn])
 
@@ -134,11 +143,14 @@ def test_cli_dev_generate_context_project(cli_runner, config_fs):
     fs, project_root = config_fs
     project_dir = "/home/user/my_project"
     fs.create_dir(f"{project_dir}/src")
-    fs.create_file(f"{project_dir}/src/app.py", contents="""
+    fs.create_file(
+        f"{project_dir}/src/app.py",
+        contents="""
 def my_cool_function(x):
     \"\"\"Документация функции.\"\"\"
     return x
-""")
+""",
+    )
 
     result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir])
     assert result.exit_code == 0
@@ -152,8 +164,13 @@ def test_cli_dev_generate_context_project_ignore(cli_runner, config_fs):
     project_dir = "/home/user/my_project"
     fs.create_dir(f"{project_dir}/src")
     fs.create_file(f"{project_dir}/src/app.py", contents="def my_func(): pass")
-    fs.create_file(f"{project_dir}/src/ignored_file.py", contents="def ignored_func(): pass")
-    fs.create_file(f"{project_dir}/src/chutils_ignored.py", contents="def chutils_ignored_func(): pass")
+    fs.create_file(
+        f"{project_dir}/src/ignored_file.py", contents="def ignored_func(): pass"
+    )
+    fs.create_file(
+        f"{project_dir}/src/chutils_ignored.py",
+        contents="def chutils_ignored_func(): pass",
+    )
 
     fs.create_file(f"{project_dir}/.gitignore", contents="ignored_file.py\n")
     fs.create_file(f"{project_dir}/.chutilsignore", contents="chutils_ignored.py\n")
@@ -163,3 +180,60 @@ def test_cli_dev_generate_context_project_ignore(cli_runner, config_fs):
     assert "src.app.my_func" in result.stdout
     assert "ignored_file" not in result.stdout
     assert "chutils_ignored" not in result.stdout
+
+
+def test_cli_dev_chat_context_stdout(cli_runner, mocker):
+    """Проверяет запуск dev chat-context с выводом в stdout."""
+    mocker.patch(
+        "chutils.dev.chat_context.collect_context_slice",
+        return_value="# Mocked Context Slice Output",
+    )
+
+    result = cli_runner.invoke(
+        [
+            "dev",
+            "chat-context",
+            "-m",
+            "logger,config",
+            "-t",
+            "test task",
+            "-l",
+            "internal",
+        ]
+    )
+    assert result.exit_code == 0
+    assert "# Mocked Context Slice Output" in result.stdout
+
+
+def test_cli_dev_chat_context_file(cli_runner, mocker, config_fs):
+    """Проверяет запуск dev chat-context с записью в файл."""
+    fs, project_root = config_fs
+    mocker.patch(
+        "chutils.dev.chat_context.collect_context_slice",
+        return_value="# Mocked Context Slice Output",
+    )
+
+    result = cli_runner.invoke(
+        ["dev", "chat-context", "-m", "logger", "-o", "my_context.md"]
+    )
+    assert result.exit_code == 0
+    assert "Контекстный срез успешно сохранен в: my_context.md" in result.stdout
+    assert fs.exists("my_context.md")
+    from pathlib import Path
+    assert Path("my_context.md").read_text(encoding="utf-8") == "# Mocked Context Slice Output"
+
+
+def test_cli_dev_chat_context_interactive(cli_runner, mocker):
+    """Проверяет интерактивный режим dev chat-context."""
+    mocker.patch(
+        "chutils.dev.chat_context.run_interactive_menu",
+        return_value=["logger"],
+    )
+    mocker.patch(
+        "chutils.dev.chat_context.collect_context_slice",
+        return_value="# Interactive Context Output",
+    )
+
+    result = cli_runner.invoke(["dev", "chat-context"])
+    assert result.exit_code == 0
+    assert "# Interactive Context Output" in result.stdout
