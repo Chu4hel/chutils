@@ -2,12 +2,12 @@ import random
 import threading
 import time
 import urllib.request
-from typing import Optional, Sequence, TYPE_CHECKING
+from typing import Sequence, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from chutils.logger import ChutilsLogger
 
-_module_logger: Optional["ChutilsLogger"] = None
+_module_logger: "ChutilsLogger" | None = None
 
 
 def _get_logger() -> "ChutilsLogger":

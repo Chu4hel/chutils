@@ -1,6 +1,6 @@
 import asyncio
 import time
-from typing import Any, cast, Optional, TYPE_CHECKING
+from typing import Any, cast, TYPE_CHECKING
 
 import httpx
 from httpx._utils import URLPattern
@@ -14,7 +14,7 @@ from .user_agent import UserAgentRotator
 if TYPE_CHECKING:
     from chutils.logger import ChutilsLogger
 
-_module_logger: Optional["ChutilsLogger"] = None
+_module_logger: "ChutilsLogger" | None = None
 
 
 def _get_logger() -> "ChutilsLogger":
