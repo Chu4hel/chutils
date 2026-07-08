@@ -41,6 +41,7 @@ with bind_context(request_id="unique-uuid"):
 
 - `chutils init -y`: Быстрая инициализация проекта (создает конфиг и .gitignore).
 - `chutils secrets set KEY VALUE`: Сохранение секрета в Keyring.
+- `chutils secrets get KEY`: Получение секрета из Keyring (с поддержкой `--fallback` и `--required`).
 - `chutils validate -m my_app.models:Settings`: Валидация текущего конфига через Pydantic модель.
 - `chutils config generate-schema --model my_app.models:Settings -o config.schema.json`: Генерация JSON Schema для
   автодополнения и Schema-First DX.
@@ -65,20 +66,25 @@ Logging:
 Secrets:
   service_name: "my_custom_app"
 
+```
 
 ## 6. Генерация AI-индекса проекта
 
-Для ознакомления AI-агентов с API и структурой вашего проекта используйте команду генерации контекста. Вы можете сканировать как саму библиотеку `chutils`, так и ваш целевой проект:
+Для ознакомления AI-агентов с API и структурой вашего проекта используйте команду генерации контекста. Вы можете
+сканировать как саму библиотеку `chutils`, так и ваш целевой проект:
 
-  * **Сгенерировать карту API текущего проекта в Markdown (по умолчанию):**
-  ```bash
-  chutils dev generate-context --project . -o api_map.md
+    * **Сгенерировать карту API текущего проекта в Markdown (по умолчанию):**
+      ```bash
+      chutils dev generate-context --project . -o api_map.md
+
   ```
-  *(Команда просканирует код, отфильтрует файлы по правилам `.gitignore` / `.chutilsignore` и создаст читаемую Markdown-таблицу со всеми публичными классами, функциями и методами).*
+
+*(Команда просканирует код, отфильтрует файлы по правилам `.gitignore` / `.chutilsignore` и создаст читаемую
+Markdown-таблицу со всеми публичными классами, функциями и методами).*
 
 * **Сгенерировать иерархический семантический JSON-индекс (дерево проекта):**
   ```bash
   chutils dev generate-context --project . --tree -o project_index.json
   ```
-  *(Этот файл идеален для передачи на вход LLM в качестве структурированной карты проекта).*
-```
+
+*(Этот файл идеален для передачи на вход LLM в качестве структурированной карты проекта).*
