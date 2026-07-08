@@ -271,8 +271,9 @@ except PathTraversalError as e:
 
 ### Конфигурация (`chutils.config`)
 
-- `get_config_value(section, key, fallback)` / `aget_config()`
-- `get_config_int`, `get_config_boolean`, `get_config_list`, `get_config_path`
+- `get_config_value(section, key, fallback=None, required=False)` / `aget_config()`
+- `get_config_int`, `get_config_boolean`, `get_config_list`, `get_config_path` (все поддерживают параметры `fallback` и
+  `required`)
 - `save_config_value(section, key, value, notify=True)` / `asave_config_value()`
 - Параметр `notify=False` позволяет обновить файл без срабатывания Hot-Reload коллбэков.
 
@@ -285,7 +286,7 @@ except PathTraversalError as e:
 
 - `SecretManager(service_name, prefix)`
 - `save_secret` / `asave_secret`
-- `get_secret` / `aget_secret`
+- `get_secret(key, fallback=None, required=False)` / `aget_secret(...)`
 - `delete_secret` / `adelete_secret`
 
 ### Декораторы (`chutils.decorators`)
