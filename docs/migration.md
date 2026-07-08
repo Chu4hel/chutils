@@ -131,3 +131,42 @@ except OptionalDependencyError as e:
   `chutils secrets ...`) автоматически скрываются из справки `--help`. При попытке вызвать скрытую команду напрямую, CLI
   выбросит `CommandError` с сообщением о необходимости установки `chutils[keyring]`.
 
+---
+
+## 6. Унификация API SecretManager с Config API
+
+Интерфейс получения секретов в `SecretManager` был унифицирован с поведением Config API для поддержки значений по
+умолчанию (fallback) и принудительного выброса ошибок (fail-fast).
+
+### Что изменилось:
+
+- **Новые параметры `fallback` и `required`**: методы `get_secret` и `aget_secret` теперь принимают два новых
+  необязательных параметра:
+    - `fallback: Optional[str] = None` — значение, возвращаемое если секрет не найден.
+    - `required: bool = False` — если установлено в `True`, отсутствие секрета приведет к генерации исключения
+      `SecretNotFoundError` (наследуется от `SecretError`).
+- **Новая CLI-подкоманда `secrets get`**:
+  `chutils secrets get <key> [--service <name>] [--fallback <val>] [--required]`
+  Позволяет получать значения секретов из командной строки. В случае отсутствия обязательного секрета (--required)
+  команда завершается ошибкой (ненулевой код возврата).
+
+### Пример использования API:
+
+```python
+from chutils.secret_manager import SecretManager
+from chutils.exceptions import SecretNotFoundError
+
+sm = SecretManager("my_app")
+
+# 1. Поведение по умолчанию (совместимо с v2): возвращает None, если секрет не найден
+val = sm.get_secret("MISSING_KEY")  # val is None
+
+# 2. Использование fallback:
+val = sm.get_secret("MISSING_KEY", fallback="default_value")  # val == "default_value"
+
+# 3. Fail-fast режим (required=True):
+try:
+    val = sm.get_secret("MISSING_KEY", required=True)
+except SecretNotFoundError:
+    print("Критический секрет не найден в хранилище!")
+```
