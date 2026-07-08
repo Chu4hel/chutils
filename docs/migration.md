@@ -133,24 +133,50 @@ except OptionalDependencyError as e:
 
 ---
 
-## 6. Унификация API SecretManager с Config API
+## 6. Строгий режим и унификация в Config API и SecretManager
 
-Интерфейс получения секретов в `SecretManager` был унифицирован с поведением Config API для поддержки значений по
-умолчанию (fallback) и принудительного выброса ошибок (fail-fast).
+В версии `3.0.0` оба API доступа к настройкам и секретам были унифицированы для поддержки строгого режима работы (
+паттерн Fail-Fast).
 
 ### Что изменилось:
 
-- **Новые параметры `fallback` и `required`**: методы `get_secret` и `aget_secret` теперь принимают два новых
-  необязательных параметра:
-    - `fallback: Optional[str] = None` — значение, возвращаемое если секрет не найден.
-    - `required: bool = False` — если установлено в `True`, отсутствие секрета приведет к генерации исключения
-      `SecretNotFoundError` (наследуется от `SecretError`).
-- **Новая CLI-подкоманда `secrets get`**:
-  `chutils secrets get <key> [--service <name>] [--fallback <val>] [--required]`
-  Позволяет получать значения секретов из командной строки. В случае отсутствия обязательного секрета (--required)
-  команда завершается ошибкой (ненулевой код возврата).
+1. **Строгий режим в Config API**:
+    - Во все геттеры конфигурации (`get_config_value`, `get_config_int`, `get_config_float`, `get_config_boolean`,
+      `get_config_list`, `get_config_path`, `get_config_section`) добавлен необязательный параметр
+      `required: bool = False`.
+    - Если задан `required=True` и запрашиваемый ключ или секция отсутствуют в конфигурации (или равны `None`/пустой
+      строке `""`), выбрасывается исключение `ConfigKeyNotFoundError` (наследуется от `ConfigError`).
 
-### Пример использования API:
+2. **Строгий режим и унификация в SecretManager**:
+    - В методы `get_secret` и `aget_secret` класса `SecretManager` добавлены параметры `fallback: Optional[str] = None`
+      и `required: bool = False`.
+    - Если задан `required=True` и секрет отсутствует в провайдерах, выбрасывается исключение `SecretNotFoundError` (
+      наследуется от `SecretError`).
+    - Добавлена новая CLI-подкоманда `chutils secrets get <key> [--service <name>] [--fallback <val>] [--required]`.
+
+> [!NOTE]
+> Все изменения полностью обратно совместимы. По умолчанию `required=False`, и при отсутствии данных геттеры тихо
+> возвращают значение `fallback`.
+
+### Примеры использования:
+
+**Работа с Config API:**
+
+```python
+from chutils import get_config_value, get_config_int
+from chutils.exceptions import ConfigKeyNotFoundError
+
+# 1. Обычный режим (v2-совместимый)
+port = get_config_int("Database", "missing_port", fallback=5432)  # 5432
+
+# 2. Строгий режим (fail-fast)
+try:
+    host = get_config_value("Database", "host", required=True)
+except ConfigKeyNotFoundError:
+    print("Ошибка: хост базы данных не задан в конфигурации!")
+```
+
+**Работа с SecretManager:**
 
 ```python
 from chutils.secret_manager import SecretManager
@@ -158,15 +184,13 @@ from chutils.exceptions import SecretNotFoundError
 
 sm = SecretManager("my_app")
 
-# 1. Поведение по умолчанию (совместимо с v2): возвращает None, если секрет не найден
-val = sm.get_secret("MISSING_KEY")  # val is None
+# 1. Использование fallback (как в Config API)
+key = sm.get_secret("STRIPE_KEY", fallback="default_val")  # "default_val"
 
-# 2. Использование fallback:
-val = sm.get_secret("MISSING_KEY", fallback="default_value")  # val == "default_value"
-
-# 3. Fail-fast режим (required=True):
+# 2. Строгий режим
 try:
-    val = sm.get_secret("MISSING_KEY", required=True)
+    key = sm.get_secret("STRIPE_KEY", required=True)
 except SecretNotFoundError:
-    print("Критический секрет не найден в хранилище!")
+    print("Ошибка: обязательный ключ STRIPE_KEY не найден в хранилище!")
 ```
+
