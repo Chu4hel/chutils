@@ -197,7 +197,7 @@ class DatabaseAdapter:
     \"\"\"Адаптер для работы с базой данных (заглушка in-memory).\"\"\"
 
     def __init__(self) -> None:
-        self._storage: dict[str, dict[str, str | bool]] = {}
+        self._storage: dict[str, dict[str, str | bool]] = {{}}
 
     def fetch(self, key: str) -> dict[str, str | bool] | None:
         return self._storage.get(key)
@@ -236,11 +236,11 @@ class Memory{entity_name}Repository({entity_name}Repository):
     def save(self, entity: {entity_name}) -> None:
         self.db_adapter.store(
             entity.id,
-            {
+            {{
                 "id": entity.id,
                 "name": entity.name,
                 "is_active": entity.is_active,
-            },
+            }},
         )
 
     def list_all(self) -> Sequence[{entity_name}]:
@@ -283,13 +283,13 @@ class CLIController:
 
     def create(self, entity_id: str, name: str) -> str:
         entity = self.create_use_case.execute(entity_id, name)
-        return f"Сущность {entity.name} (ID: {entity.id}) успешно создана."
+        return f"Сущность {{entity.name}} (ID: {{entity.id}}) успешно создана."
 
     def get(self, entity_id: str) -> str:
         entity = self.get_use_case.execute(entity_id)
         if not entity:
-            return f"Сущность с ID {entity_id} не найдена."
-        return f"Найдена сущность: {entity.name} (Активна: {entity.is_active})"
+            return f"Сущность с ID {{entity_id}} не найдена."
+        return f"Найдена сущность: {{entity.name}} (Активна: {{entity.is_active}})"
 """,
     "presentation/api.py": """from __future__ import annotations
 
@@ -312,20 +312,20 @@ class APIController:
     def handle_get_entity(self, entity_id: str) -> dict[str, Union[str, bool]]:
         entity = self.get_use_case.execute(entity_id)
         if not entity:
-            return {"error": "Not Found"}
-        return {
+            return {{"error": "Not Found"}}
+        return {{
             "id": entity.id,
             "name": entity.name,
             "is_active": entity.is_active,
-        }
+        }}
 
     def handle_create_entity(self, entity_id: str, name: str) -> dict[str, Union[str, bool]]:
         entity = self.create_use_case.execute(entity_id, name)
-        return {
+        return {{
             "id": entity.id,
             "name": entity.name,
             "is_active": entity.is_active,
-        }
+        }}
 """,
 }
 

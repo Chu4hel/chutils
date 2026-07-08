@@ -237,3 +237,51 @@ def test_cli_dev_chat_context_interactive(cli_runner, mocker):
     result = cli_runner.invoke(["dev", "chat-context"])
     assert result.exit_code == 0
     assert "# Interactive Context Output" in result.stdout
+
+
+def test_cli_dev_scaffold_success(cli_runner, config_fs):
+    """Проверяет успешное создание структуры слоев Чистой Архитектуры."""
+    fs, project_root = config_fs
+    result = cli_runner.invoke(["dev", "scaffold", "new_test_module", "-o", f"{project_root}/new_test_module"])
+    assert result.exit_code == 0
+    assert "успешно инициализирован" in result.stdout or "успешно инициализирован" in result.stderr
+
+    # Проверяем файлы в мокнутой ФС
+    assert fs.exists(f"{project_root}/new_test_module/__init__.py")
+    assert fs.exists(f"{project_root}/new_test_module/container.py")
+    assert fs.exists(f"{project_root}/new_test_module/domain/entities.py")
+    assert fs.exists(f"{project_root}/new_test_module/application/use_cases.py")
+    assert fs.exists(f"{project_root}/new_test_module/infrastructure/repositories.py")
+    assert fs.exists(f"{project_root}/new_test_module/presentation/cli.py")
+
+
+def test_cli_dev_scaffold_invalid_name(cli_runner):
+    """Проверяет ошибку при попытке использовать невалидное имя модуля."""
+    result = cli_runner.invoke(["dev", "scaffold", "invalid-name"])
+    assert result.exit_code == 1
+    assert "Некорректное имя модуля" in result.stdout or "Некорректное имя модуля" in result.stderr
+
+
+def test_cli_dev_scaffold_already_exists_error(cli_runner, config_fs):
+    """Проверяет возникновение ошибки, если каталог уже существует и не пуст."""
+    fs, project_root = config_fs
+    module_path = f"{project_root}/existing_module"
+    fs.create_dir(module_path)
+    fs.create_file(f"{module_path}/dummy.txt", contents="content")
+
+    result = cli_runner.invoke(["dev", "scaffold", "existing_module", "-o", module_path])
+    assert result.exit_code == 1
+    assert "уже существует и не пуста" in result.stdout or "уже существует и не пуста" in result.stderr
+
+
+def test_cli_dev_scaffold_force_overwrite(cli_runner, config_fs):
+    """Проверяет успешность генерации при существующем каталоге, если передан флаг --force."""
+    fs, project_root = config_fs
+    module_path = f"{project_root}/existing_module"
+    fs.create_dir(module_path)
+    fs.create_file(f"{module_path}/dummy.txt", contents="content")
+
+    result = cli_runner.invoke(["dev", "scaffold", "existing_module", "-o", module_path, "-f"])
+    assert result.exit_code == 0
+    assert "успешно инициализирован" in result.stdout or "успешно инициализирован" in result.stderr
+    assert fs.exists(f"{module_path}/__init__.py")
