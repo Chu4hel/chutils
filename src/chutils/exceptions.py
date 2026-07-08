@@ -1,5 +1,11 @@
+import sys
 import typing as t
 from pathlib import Path
+
+if sys.version_info >= (3, 11):
+    _BaseExceptionGroup = ExceptionGroup  # noqa: F821
+else:
+    from exceptiongroup import ExceptionGroup as _BaseExceptionGroup
 
 
 class ChutilsException(Exception):
@@ -12,7 +18,10 @@ class ChutilsException(Exception):
 
     def __init__(self, message: str, hint: str | None = None, **context: t.Any) -> None:
         super().__init__(message)
-        self.message = message
+        try:
+            self.message = message
+        except AttributeError:
+            pass
         self.hint = hint
         self.context = context
 
@@ -162,7 +171,7 @@ class EventBusError(ChutilsException):
     pass
 
 
-class EventBusExceptionGroup(EventBusError):
+class EventBusExceptionGroup(_BaseExceptionGroup, EventBusError):  # type: ignore[misc]
     """
     Группа ошибок, возникших при параллельном или последовательном выполнении
     обработчиков событий шины.
@@ -171,11 +180,11 @@ class EventBusExceptionGroup(EventBusError):
     def __init__(
             self, message: str, exceptions: list[Exception], **context: t.Any
     ) -> None:
-        super().__init__(message, **context)
-        self.exceptions = exceptions
+        _BaseExceptionGroup.__init__(self, message, exceptions)
+        EventBusError.__init__(self, message, **context)
 
     def __str__(self) -> str:
-        base_str = super().__str__()
+        base_str = EventBusError.__str__(self)
         errors_str = "\n".join(f"  - {type(e).__name__}: {e}" for e in self.exceptions)
         return f"{base_str}\nВозникшие ошибки:\n{errors_str}"
 
