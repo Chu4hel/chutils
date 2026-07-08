@@ -198,6 +198,15 @@ class RateLimitExceededError(ChutilsException):
     pass
 
 
+# --- Circuit Breaker Exceptions ---
+
+
+class CircuitBreakerOpenError(ChutilsException):
+    """Ошибка: цепь предохранителя открыта (запросы заблокированы)."""
+
+    pass
+
+
 # --- Dependency Injection Exceptions ---
 
 

@@ -148,6 +148,7 @@ members:
 - log_function_details
 - timeout
 - rate_limit
+- circuit_breaker
 
 ## Модуль `events` (Шина событий)
 

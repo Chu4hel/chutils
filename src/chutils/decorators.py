@@ -3,6 +3,7 @@
 
 Включает инструменты для логирования производительности и деталей вызовов функций.
 """
+
 import asyncio
 import concurrent.futures
 import functools
@@ -10,8 +11,8 @@ import inspect
 import random
 import threading
 import time
-from typing import Optional, TYPE_CHECKING, Any, cast
 from collections.abc import Callable, Awaitable
+from typing import Optional, TYPE_CHECKING, Any, cast
 
 from .exceptions import ChutilsTimeoutError
 from .typing import P, R
@@ -23,10 +24,10 @@ if TYPE_CHECKING:
 _NO_FALLBACK = object()
 
 # Ленивая инициализация логгера
-_module_logger: Optional['ChutilsLogger'] = None
+_module_logger: Optional["ChutilsLogger"] = None
 
 
-def _get_logger() -> 'ChutilsLogger':
+def _get_logger() -> "ChutilsLogger":
     """
     Получает лениво инициализированный логгер модуля.
 
@@ -36,6 +37,7 @@ def _get_logger() -> 'ChutilsLogger':
     global _module_logger
     if _module_logger is None:
         from . import logger as chutils_logger
+
         _module_logger = chutils_logger.setup_logger(__name__)
 
     # Используем cast или проверку, чтобы избежать Any
@@ -67,6 +69,7 @@ def retry(
 
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
         if inspect.iscoroutinefunction(func):
+
             @functools.wraps(func)
             async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
                 current_delay = delay
@@ -79,7 +82,10 @@ def retry(
 
                         _get_logger().warning(
                             "Попытка %d/%d завершилась ошибкой: %s. Повтор через %.2f с...",
-                            i + 1, retries, e, current_delay
+                            i + 1,
+                            retries,
+                            e,
+                            current_delay,
                         )
 
                         sleep_time = current_delay
@@ -94,6 +100,7 @@ def retry(
 
             return cast(Callable[..., Any], async_wrapper)
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
                 current_delay = delay
@@ -106,7 +113,10 @@ def retry(
 
                         _get_logger().warning(
                             "Попытка %d/%d завершилась ошибкой: %s. Повтор через %.2f с...",
-                            i + 1, retries, e, current_delay
+                            i + 1,
+                            retries,
+                            e,
+                            current_delay,
                         )
 
                         sleep_time = current_delay
@@ -146,19 +156,27 @@ def log_function_details(func: Callable[P, R]) -> Callable[P, R]:
 
     @functools.wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        _get_logger().devdebug("Вызов функции: %s() с аргументами %s и %s", func.__name__, args, kwargs)
+        _get_logger().devdebug(
+            "Вызов функции: %s() с аргументами %s и %s", func.__name__, args, kwargs
+        )
         start_time = time.perf_counter()
         result = func(*args, **kwargs)
         end_time = time.perf_counter()
         run_time = end_time - start_time
-        _get_logger().devdebug("Функция %s() завершилась за %.4f с. Результат: %s",
-                               func.__name__, run_time, result)
+        _get_logger().devdebug(
+            "Функция %s() завершилась за %.4f с. Результат: %s",
+            func.__name__,
+            run_time,
+            result,
+        )
         return result
 
     return wrapper
 
 
-def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable[[Callable[P, R]], Callable[P, R]]:
+def timeout(
+        seconds: float, fallback: Any = _NO_FALLBACK
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Декоратор для ограничения времени выполнения функции.
 
@@ -180,21 +198,28 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable[[Callable[
 
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
         if inspect.iscoroutinefunction(func):
+
             @functools.wraps(func)
             async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R | Any:
                 try:
-                    return cast(R, await asyncio.wait_for(cast(Awaitable[R], func(*args, **kwargs)), timeout=seconds))
+                    return cast(
+                        R,
+                        await asyncio.wait_for(
+                            cast(Awaitable[R], func(*args, **kwargs)), timeout=seconds
+                        ),
+                    )
                 except (asyncio.TimeoutError, TimeoutError):
                     if fallback is _NO_FALLBACK:
                         raise ChutilsTimeoutError(
                             f"Function {func.__name__} timed out after {seconds} seconds",
                             function=func.__name__,
-                            timeout=seconds
+                            timeout=seconds,
                         )
                     return fallback
 
             return cast(Callable[..., Any], async_wrapper)
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R | Any:
                 # Используем ThreadPoolExecutor для запуска в отдельном потоке
@@ -207,7 +232,7 @@ def timeout(seconds: float, fallback: Any = _NO_FALLBACK) -> Callable[[Callable[
                             raise ChutilsTimeoutError(
                                 f"Function {func.__name__} timed out after {seconds} seconds",
                                 function=func.__name__,
-                                timeout=seconds
+                                timeout=seconds,
                             )
                         return fallback
 
@@ -236,7 +261,9 @@ class TokenBucket:
                 # Пополняем токены
                 elapsed = now - self.last_refill
                 self.last_refill = now
-                self.tokens = min(self.capacity, self.tokens + elapsed * self.refill_rate)
+                self.tokens = min(
+                    self.capacity, self.tokens + elapsed * self.refill_rate
+                )
 
                 if self.tokens >= 1.0:
                     self.tokens -= 1.0
@@ -258,7 +285,7 @@ class TokenBucket:
 
                 # Встаем в очередь за предыдущим запросом
                 wait_time = self.next_allowed_time - now
-                self.next_allowed_time += (1.0 / self.refill_rate)
+                self.next_allowed_time += 1.0 / self.refill_rate
                 self.last_refill = self.next_allowed_time
                 return wait_time
 
@@ -305,7 +332,7 @@ class LeakyBucket:
 
                 # Встаем в очередь
                 wait_time = self.next_allowed_time - now
-                self.next_allowed_time += (1.0 / self.leak_rate)
+                self.next_allowed_time += 1.0 / self.leak_rate
                 self.last_leak = self.next_allowed_time
                 return wait_time
 
@@ -316,10 +343,7 @@ _limiters_lock = threading.Lock()
 
 
 def get_limiter(
-        key: str,
-        max_calls: int,
-        period: float,
-        strategy: str = "token_bucket"
+        key: str, max_calls: int, period: float, strategy: str = "token_bucket"
 ) -> TokenBucket | LeakyBucket:
     """Возвращает или создает ограничитель частоты по ключу."""
     global _limiters
@@ -364,6 +388,7 @@ def rate_limit(
 
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
         if inspect.iscoroutinefunction(func):
+
             @functools.wraps(func)
             async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
                 if key_func is not None:
@@ -380,7 +405,7 @@ def rate_limit(
                         function=func.__name__,
                         limit_key=limit_key,
                         max_calls=max_calls,
-                        period=period
+                        period=period,
                     )
 
                 if wait_time > 0.0:
@@ -390,6 +415,7 @@ def rate_limit(
 
             return cast(Callable[..., Any], async_wrapper)
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
                 if key_func is not None:
@@ -406,13 +432,154 @@ def rate_limit(
                         function=func.__name__,
                         limit_key=limit_key,
                         max_calls=max_calls,
-                        period=period
+                        period=period,
                     )
 
                 if wait_time > 0.0:
                     time.sleep(wait_time)
 
                 return func(*args, **kwargs)
+
+            return sync_wrapper
+
+    return decorator
+
+
+class CircuitBreakerState:
+    """Машина состояний для паттерна Circuit Breaker (Предохранитель)."""
+
+    def __init__(
+            self,
+            failure_threshold: int,
+            recovery_timeout: float,
+            exceptions: tuple[type[Exception], ...],
+            name: str,
+    ) -> None:
+        self.failure_threshold = failure_threshold
+        self.recovery_timeout = recovery_timeout
+        self.exceptions = exceptions
+        self.name = name
+
+        # Состояния: CLOSED, OPEN, HALF_OPEN
+        self.state = "CLOSED"
+        self.failure_count = 0
+        self.last_failure_time = 0.0
+        self._half_open_in_progress = False
+
+        # Блокировка для обеспечения потокобезопасности
+        self._lock = threading.Lock()
+
+    def record_success(self) -> None:
+        with self._lock:
+            if self.state != "CLOSED":
+                logger = _get_logger()
+                logger.info(
+                    "CircuitBreaker [%s]: цепь замкнута (CLOSED). Восстановление прошло успешно.",
+                    self.name,
+                )
+            self.state = "CLOSED"
+            self._half_open_in_progress = False
+            self.failure_count = 0
+            self.last_failure_time = 0.0
+
+    def record_failure(self, exc: Exception) -> None:
+        if not isinstance(exc, self.exceptions):
+            if self.state == "HALF_OPEN":
+                with self._lock:
+                    self._half_open_in_progress = False
+            return
+
+        with self._lock:
+            self.failure_count += 1
+            self.last_failure_time = time.time()
+            if self.state in ("CLOSED", "HALF_OPEN"):
+                if (
+                        self.state == "HALF_OPEN"
+                        or self.failure_count >= self.failure_threshold
+                ):
+                    logger = _get_logger()
+                    logger.warning(
+                        "CircuitBreaker [%s]: цепь разомкнута (OPEN). Ошибка: %s: %s. Блокировка на %s сек.",
+                        self.name,
+                        type(exc).__name__,
+                        exc,
+                        self.recovery_timeout,
+                    )
+                    self.state = "OPEN"
+            self._half_open_in_progress = False
+
+    def can_execute(self) -> bool:
+        with self._lock:
+            if self.state == "CLOSED":
+                return True
+            now = time.time()
+            if self.state == "OPEN":
+                if now - self.last_failure_time >= self.recovery_timeout:
+                    self.state = "HALF_OPEN"
+                    self._half_open_in_progress = True
+                    return True
+                return False
+            if self.state == "HALF_OPEN":
+                if self._half_open_in_progress:
+                    return False
+                self._half_open_in_progress = True
+                return True
+            return False
+
+
+def circuit_breaker(
+        failure_threshold: int = 5,
+        recovery_timeout: float = 60.0,
+        exceptions: tuple[type[Exception], ...] = (Exception,),
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
+    """
+    Декоратор Circuit Breaker (Предохранитель) для защиты от каскадных сбоев.
+
+    Args:
+        failure_threshold: Количество последовательных ошибок для открытия цепи.
+        recovery_timeout: Время в секундах, в течение которого цепь остается открытой.
+        exceptions: Кортеж исключений, которые считаются ошибками.
+    """
+    from .exceptions import CircuitBreakerOpenError
+
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+        name = func.__name__
+        state = CircuitBreakerState(
+            failure_threshold, recovery_timeout, exceptions, name
+        )
+
+        if inspect.iscoroutinefunction(func):
+
+            @functools.wraps(func)
+            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
+                if not state.can_execute():
+                    raise CircuitBreakerOpenError(
+                        f"CircuitBreaker [{name}] is OPEN. Requests blocked."
+                    )
+                try:
+                    res = await func(*args, **kwargs)
+                    state.record_success()
+                    return res
+                except Exception as e:
+                    state.record_failure(e)
+                    raise e
+
+            return cast(Callable[P, R], async_wrapper)
+        else:
+
+            @functools.wraps(func)
+            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+                if not state.can_execute():
+                    raise CircuitBreakerOpenError(
+                        f"CircuitBreaker [{name}] is OPEN. Requests blocked."
+                    )
+                try:
+                    res = func(*args, **kwargs)
+                    state.record_success()
+                    return res
+                except Exception as e:
+                    state.record_failure(e)
+                    raise e
 
             return sync_wrapper
 

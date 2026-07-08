@@ -22,41 +22,72 @@ def get_config(
 ) -> dict[str, Any] | T: ...
 
 
-def get_config_value(section: str, key: str, fallback: Any = None, config: dict[str, Any] | None = None) -> Any: ...
+def get_config_value(
+        section: str, key: str, fallback: Any = None, config: dict[str, Any] | None = None
+) -> Any: ...
 
 
-def get_config_int(section: str, key: str, fallback: int = 0, config: dict[str, Any] | None = None) -> int: ...
+def get_config_int(
+        section: str, key: str, fallback: int = 0, config: dict[str, Any] | None = None
+) -> int: ...
 
 
-def get_config_float(section: str, key: str, fallback: float = 0.0,
-                     config: dict[str, Any] | None = None) -> float: ...
+def get_config_float(
+        section: str, key: str, fallback: float = 0.0, config: dict[str, Any] | None = None
+) -> float: ...
 
 
-def get_config_boolean(section: str, key: str, fallback: bool = False,
-                       config: dict[str, Any] | None = None) -> bool: ...
+def get_config_boolean(
+        section: str, key: str, fallback: bool = False, config: dict[str, Any] | None = None
+) -> bool: ...
 
 
-def get_config_list(section: str, key: str, fallback: list[Any] | None = None,
-                    config: dict[str, Any] | None = None) -> list[Any]: ...
+def get_config_list(
+        section: str,
+        key: str,
+        fallback: list[Any] | None = None,
+        config: dict[str, Any] | None = None,
+) -> list[Any]: ...
 
 
-def get_config_section(section_name: str, fallback: dict[str, Any] | None = None,
-                       config: dict[str, Any] | None = None, model: type[T] | None = None) -> dict[str, Any] | T: ...
+def get_config_section(
+        section_name: str,
+        fallback: dict[str, Any] | None = None,
+        config: dict[str, Any] | None = None,
+        model: type[T] | None = None,
+) -> dict[str, Any] | T: ...
 
 
-def get_config_path(section: str, key: str, fallback: str | None = None, config: dict[str, Any] | None = None,
-                    resolve_from_root: bool = True) -> str | None: ...
+def get_config_path(
+        section: str,
+        key: str,
+        fallback: str | None = None,
+        config: dict[str, Any] | None = None,
+        resolve_from_root: bool = True,
+) -> str | None: ...
 
 
 async def aget_config(model: type[T] | None = None) -> dict[str, Any] | T: ...
 
 
-def save_config_value(section: str, key: str, value: Any, cfg_file: str | None = None, save_to_local: bool = False,
-                      notify: bool = True) -> bool: ...
+def save_config_value(
+        section: str,
+        key: str,
+        value: Any,
+        cfg_file: str | None = None,
+        save_to_local: bool = False,
+        notify: bool = True,
+) -> bool: ...
 
 
-async def asave_config_value(section: str, key: str, value: Any, cfg_file: str | None = None,
-                             save_to_local: bool = False, notify: bool = True) -> bool: ...
+async def asave_config_value(
+        section: str,
+        key: str,
+        value: Any,
+        cfg_file: str | None = None,
+        save_to_local: bool = False,
+        notify: bool = True,
+) -> bool: ...
 
 
 def start_config_watcher() -> bool: ...
@@ -92,17 +123,25 @@ def are_paths_initialized() -> bool: ...
 def get_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None]: ...
 
 
-def get_all_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None, str | None]: ...
+def get_all_config_paths(
+        cfg_file: str | None = None,
+) -> tuple[str | None, str | None, str | None]: ...
 
 
-def export_schema(model: type[T] | str, output_path: str | Any | None = None) -> str: ...
+def export_schema(
+        model: type[T] | str, output_path: str | Any | None = None
+) -> str: ...
 
 
 # --- features ---
-def is_feature_enabled(feature_name: str, context: dict[str, Any] | None = None) -> bool: ...
+def is_feature_enabled(
+        feature_name: str, context: dict[str, Any] | None = None
+) -> bool: ...
 
 
-def require_feature(feature_name: str, fallback: Callable[..., Any] | None = None) -> Callable[[F], F]: ...
+def require_feature(
+        feature_name: str, fallback: Callable[..., Any] | None = None
+) -> Callable[[F], F]: ...
 
 
 # --- logger ---
@@ -115,7 +154,7 @@ class ChutilsLogger(logging.Logger):
 
 
 def setup_logger(
-        name: str = 'app_logger',
+        name: str = "app_logger",
         config_section_name: str | None = None,
         log_level: LogLevel | None = None,
         log_file_name: str | None = None,
@@ -136,7 +175,7 @@ def setup_logger(
 
 
 def setup_logger_from_config(
-        name: str = 'app_logger',
+        name: str = "app_logger",
         config_section_name: str | None = None,
         force_reconfigure: bool = False,
 ) -> ChutilsLogger: ...
@@ -202,8 +241,11 @@ def utc_now() -> datetime.datetime: ...
 def parse_datetime(value: str | int | float) -> datetime.datetime: ...
 
 
-def humanize_timedelta(dt: datetime.datetime, locale: str = 'ru',
-                       custom_locales: dict[str, Any] | None = None) -> str: ...
+def humanize_timedelta(
+        dt: datetime.datetime,
+        locale: str = "ru",
+        custom_locales: dict[str, Any] | None = None,
+) -> str: ...
 
 
 # --- env (Discovery) ---
@@ -222,10 +264,17 @@ OTEL_AVAILABLE: bool
 
 # --- secret_manager ---
 class SecretManager:
-    def __init__(self, service_name: str | None = None, prefix: str | None = None, auto_mask_logs: bool = True,
-                 providers: list[Any] | None = None) -> None: ...
+    def __init__(
+            self,
+            service_name: str | None = None,
+            prefix: str | None = None,
+            auto_mask_logs: bool = True,
+            providers: list[Any] | None = None,
+    ) -> None: ...
 
-    def get_secret(self, key: str, fallback: str | None = None, required: bool = False) -> str | None: ...
+    def get_secret(
+            self, key: str, fallback: str | None = None, required: bool = False
+    ) -> str | None: ...
 
     def save_secret(self, key: str, value: str) -> bool: ...
 
@@ -233,7 +282,9 @@ class SecretManager:
 
     def update_secret(self, key: str, value: str) -> bool: ...
 
-    async def aget_secret(self, key: str, fallback: str | None = None, required: bool = False) -> str | None: ...
+    async def aget_secret(
+            self, key: str, fallback: str | None = None, required: bool = False
+    ) -> str | None: ...
 
     async def asave_secret(self, key: str, value: str) -> bool: ...
 
@@ -263,15 +314,32 @@ def setup_tracing(
 def log_function_details(func: F) -> F: ...
 
 
-def retry(retries: int = 3, delay: float = 1.0, backoff: float = 2.0, jitter: bool = False,
-          exceptions: tuple[type[Exception], ...] = (Exception,)) -> Callable[[F], F]: ...
+def retry(
+        retries: int = 3,
+        delay: float = 1.0,
+        backoff: float = 2.0,
+        jitter: bool = False,
+        exceptions: tuple[type[Exception], ...] = (Exception,),
+) -> Callable[[F], F]: ...
 
 
 def timeout(seconds: float, fallback: Any = ...) -> Callable[[F], F]: ...
 
 
-def rate_limit(max_calls: int, period: float, strategy: str = "token_bucket", wait: bool = False,
-               key_func: Callable[..., str] | None = None) -> Callable[[F], F]: ...
+def rate_limit(
+        max_calls: int,
+        period: float,
+        strategy: str = "token_bucket",
+        wait: bool = False,
+        key_func: Callable[..., str] | None = None,
+) -> Callable[[F], F]: ...
+
+
+def circuit_breaker(
+        failure_threshold: int = 5,
+        recovery_timeout: float = 60.0,
+        exceptions: tuple[type[Exception], ...] = (Exception,),
+) -> Callable[[F], F]: ...
 
 
 # --- exceptions ---
@@ -320,10 +388,15 @@ class EventBusError(ChutilsException): ...
 class EventBusExceptionGroup(EventBusError):
     exceptions: list[Exception]
 
-    def __init__(self, message: str, exceptions: list[Exception], **context: Any) -> None: ...
+    def __init__(
+            self, message: str, exceptions: list[Exception], **context: Any
+    ) -> None: ...
 
 
 class RateLimitExceededError(ChutilsException): ...
+
+
+class CircuitBreakerOpenError(ChutilsException): ...
 
 
 class DependencyError(ChutilsException): ...
@@ -345,27 +418,52 @@ class ErrorStrategy(str, Enum):
 class EventBus:
     error_strategy: ErrorStrategy
 
-    def __init__(self, error_strategy: ErrorStrategy = ErrorStrategy.IGNORE) -> None: ...
+    def __init__(
+            self, error_strategy: ErrorStrategy = ErrorStrategy.IGNORE
+    ) -> None: ...
 
-    def subscribe(self, event_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+    def subscribe(
+            self, event_name: str
+    ) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
 
     def unsubscribe(self, event_name: str, func: Callable[..., Any]) -> None: ...
 
-    def publish(self, event_name: str, *args: Any, error_strategy: ErrorStrategy | None = None,
-                **kwargs: Any) -> None: ...
+    def publish(
+            self,
+            event_name: str,
+            *args: Any,
+            error_strategy: ErrorStrategy | None = None,
+            **kwargs: Any,
+    ) -> None: ...
 
-    async def publish_async(self, event_name: str, *args: Any, error_strategy: ErrorStrategy | None = None,
-                            **kwargs: Any) -> None: ...
+    async def publish_async(
+            self,
+            event_name: str,
+            *args: Any,
+            error_strategy: ErrorStrategy | None = None,
+            **kwargs: Any,
+    ) -> None: ...
 
 
-def subscribe(event_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+def subscribe(
+        event_name: str,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
 
 
-def publish(event_name: str, *args: Any, error_strategy: ErrorStrategy | None = None, **kwargs: Any) -> None: ...
+def publish(
+        event_name: str,
+        *args: Any,
+        error_strategy: ErrorStrategy | None = None,
+        **kwargs: Any,
+) -> None: ...
 
 
-async def publish_async(event_name: str, *args: Any, error_strategy: ErrorStrategy | None = None,
-                        **kwargs: Any) -> None: ...
+async def publish_async(
+        event_name: str,
+        *args: Any,
+        error_strategy: ErrorStrategy | None = None,
+        **kwargs: Any,
+) -> None: ...
 
 
 # --- tasks ---
@@ -388,8 +486,12 @@ async def stop_scheduler() -> None: ...
 class Container:
     def __init__(self) -> None: ...
 
-    def register(self, dependency_type: type[Any], provider: Callable[..., Any] | None = None,
-                 scope: str = "singleton") -> None: ...
+    def register(
+            self,
+            dependency_type: type[Any],
+            provider: Callable[..., Any] | None = None,
+            scope: str = "singleton",
+    ) -> None: ...
 
     def has_provider(self, dependency_type: type[Any]) -> bool: ...
 
@@ -401,10 +503,14 @@ class Container:
 container: Container
 
 
-def provide(scope: str = "singleton", container: Container | None = None) -> Callable[[Any], Any]: ...
+def provide(
+        scope: str = "singleton", container: Container | None = None
+) -> Callable[[Any], Any]: ...
 
 
-def inject(container: Container | None = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+def inject(
+        container: Container | None = None,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
 
 
 def Inject() -> Any: ...
@@ -414,7 +520,9 @@ def Inject() -> Any: ...
 def natsort_key(s: str) -> list[int | str]: ...
 
 
-def is_significant_difference(text1: str, text2: str, threshold: float = 0.9) -> bool: ...
+def is_significant_difference(
+        text1: str, text2: str, threshold: float = 0.9
+) -> bool: ...
 
 
 # --- crypto ---
@@ -424,10 +532,14 @@ def encrypt_portable(data: str, seed: str) -> str: ...
 def decrypt_portable(encrypted_data: str, seed: str) -> str | None: ...
 
 
-def encrypt_file(file_path: str | Path, seed: str, output_path: str | Path | None = None) -> Path: ...
+def encrypt_file(
+        file_path: str | Path, seed: str, output_path: str | Path | None = None
+) -> Path: ...
 
 
-def decrypt_file(file_path: str | Path, seed: str, output_path: str | Path | None = None) -> bool: ...
+def decrypt_file(
+        file_path: str | Path, seed: str, output_path: str | Path | None = None
+) -> bool: ...
 
 
 # --- fs ---
@@ -437,7 +549,7 @@ def remove_path(
         retries: int = 3,
         delay: float = 0.1,
         on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
-        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise",
 ) -> bool: ...
 
 
@@ -446,7 +558,7 @@ def cleanup_paths(
         retries: int = 3,
         delay: float = 0.1,
         on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
-        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise",
 ) -> None: ...
 
 
@@ -455,7 +567,7 @@ def safe_filename(
         replacement: str = "_",
         strip_chars: str = " _.-",
         max_length: int = 255,
-        transliterate: bool = False
+        transliterate: bool = False,
 ) -> str: ...
 
 
@@ -463,7 +575,7 @@ def zip_folder(
         folder_path: str | Path,
         output_path: str | Path,
         compression: int = ...,
-        exclude: list[str] | None = None
+        exclude: list[str] | None = None,
 ) -> Path: ...
 
 

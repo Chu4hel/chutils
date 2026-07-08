@@ -145,6 +145,7 @@ _LAZY_MAPPING = {
     'retry': ('.decorators', 'retry'),
     'timeout': ('.decorators', 'timeout'),
     'rate_limit': ('.decorators', 'rate_limit'),
+    'circuit_breaker': ('.decorators', 'circuit_breaker'),
 
     # tracing
     'trace': ('.tracing', 'trace'),
@@ -165,6 +166,7 @@ _LAZY_MAPPING = {
     'OptionalDependencyError': ('.exceptions', 'OptionalDependencyError'),
     'ChutilsTimeoutError': ('.exceptions', 'ChutilsTimeoutError'),
     'RateLimitExceededError': ('.exceptions', 'RateLimitExceededError'),
+    'CircuitBreakerOpenError': ('.exceptions', 'CircuitBreakerOpenError'),
     'CacheError': ('.exceptions', 'CacheError'),
     'EventBusError': ('.exceptions', 'EventBusError'),
     'EventBusExceptionGroup': ('.exceptions', 'EventBusExceptionGroup'),
