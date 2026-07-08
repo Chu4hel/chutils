@@ -285,3 +285,23 @@ def test_cli_dev_scaffold_force_overwrite(cli_runner, config_fs):
     assert result.exit_code == 0
     assert "успешно инициализирован" in result.stdout or "успешно инициализирован" in result.stderr
     assert fs.exists(f"{module_path}/__init__.py")
+
+
+def test_cli_dev_mock_init_success(cli_runner, config_fs):
+    """Проверяет успешное создание шаблона роутов через CLI."""
+    fs, project_root = config_fs
+    mocks_path = f"{project_root}/mocks.yml"
+
+    result = cli_runner.invoke(["dev", "mock", "init", "-o", mocks_path])
+    assert result.exit_code == 0
+    assert "Шаблон конфигурации успешно сохранен" in result.stdout or "Шаблон конфигурации успешно сохранен" in result.stderr
+    assert fs.exists(mocks_path)
+
+
+def test_cli_dev_mock_run_mocked(cli_runner, mocker):
+    """Проверяет вызов запуска сервера через CLI с моком метода run."""
+    mock_run = mocker.patch("chutils.dev.mock_server.MockServerRunner.run")
+
+    result = cli_runner.invoke(["dev", "mock", "-p", "9999", "-r", "custom_mocks.yml"])
+    assert result.exit_code == 0
+    mock_run.assert_called_once()

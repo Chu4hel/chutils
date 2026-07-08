@@ -8,7 +8,7 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
-from typing import TypedDict, Union
+from typing import TypedDict, Union, cast
 
 from chutils.exceptions import CommandError
 
@@ -112,7 +112,10 @@ def interpolate_groups(
 class MockHTTPRequestHandler(BaseHTTPRequestHandler):
     """Обработчик HTTP-запросов для мок-сервера."""
 
-    server: MockServerRunner  # Явно указываем тип для корректной автокомпиляции
+    @property
+    def runner(self) -> MockServerRunner:
+        """Получает инстанс MockServerRunner, привязанный к серверу."""
+        return cast(MockServerRunner, getattr(self.server, "runner"))
 
     # Переопределяем логирование по умолчанию, чтобы не мусорить в stdout
     def log_message(self, format: str, *args: object) -> None:
@@ -120,93 +123,120 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def handle_request(self) -> None:
         """Общая логика обработки входящего запроса."""
-        # Hot-Reload: проверяем изменения в файле конфигурации
-        self.server.check_reload()
+        try:
+            method = self.command.upper()
+            path_without_query = self.path.split("?")[0]
+            self.runner.debug_log.append(f"Request: {method} {path_without_query}")
 
-        method = self.command.upper()
-        # Вычленяем только путь без query-параметров
-        path_without_query = self.path.split("?")[0]
+            # Hot-Reload: проверяем изменения в файле конфигурации
+            self.runner.check_reload()
 
-        # Ищем подходящий роут
-        matched_route: RouteConfig | None = None
-        matched_groups: tuple[str, ...] = ()
+            # Ищем подходящий роут
+            matched_route: RouteConfig | None = None
+            matched_groups: tuple[str, ...] = ()
 
-        for route in self.server.routes:
-            route_method = route.get("method", "GET").upper()
-            if route_method != method:
-                continue
-
-            route_path = route.get("path", "")
-            is_regex = route.get("is_regex", False)
-
-            if is_regex:
-                try:
-                    pattern = re.compile(f"^{route_path}$")
-                    match = pattern.match(path_without_query)
-                    if match:
-                        matched_route = route
-                        matched_groups = match.groups()
-                        break
-                except re.error:
-                    # Если регулярное выражение не компилируется, пропускаем
+            for route in self.runner.routes:
+                route_method = route.get("method", "GET").upper()
+                if route_method != method:
                     continue
-            else:
-                if route_path == path_without_query:
-                    matched_route = route
-                    break
 
-        if matched_route:
-            # 1. Симуляция задержки
-            delay = float(matched_route.get("delay", 0.0))
-            if delay > 0:
-                time.sleep(delay)
+                route_path = route.get("path", "")
+                is_regex = route.get("is_regex", False)
 
-            # 2. Подготовка статус-кода
-            status = int(matched_route.get("status", 200))
+                if is_regex:
+                    try:
+                        pattern = re.compile(f"^{route_path}$")
+                        match = pattern.match(path_without_query)
+                        if match:
+                            matched_route = route
+                            matched_groups = match.groups()
+                            break
+                    except re.error:
+                        continue
+                else:
+                    if route_path == path_without_query:
+                        matched_route = route
+                        break
 
-            # 3. Подготовка и интерполяция ответа
-            raw_response = matched_route.get("response", "")
-            interpolated = interpolate_groups(raw_response, matched_groups)
+            self.runner.debug_log.append(f"Matched route: {matched_route}")
 
-            # 4. Отправка ответа
-            self.send_response(status)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.end_headers()
+            if matched_route:
+                # 1. Симуляция задержки
+                delay = float(matched_route.get("delay", 0.0))
+                if delay > 0:
+                    time.sleep(delay)
 
-            if isinstance(interpolated, (dict, list)):
-                response_bytes = json.dumps(
-                    interpolated, ensure_ascii=False
-                ).encode("utf-8")
-            else:
-                response_bytes = str(interpolated).encode("utf-8")
+                # 2. Подготовка статус-кода
+                status = int(matched_route.get("status", 200))
 
-            self.wfile.write(response_bytes)
+                # 3. Подготовка и интерполяция ответа
+                raw_response = matched_route.get("response", "")
+                interpolated = interpolate_groups(raw_response, matched_groups)
 
-            # Логирование
-            self.server.log_event(
-                f"[bold green]Mock[/bold green] | {method} {self.path} -> Status {status} | Delay: {delay}s"
-            )
-        else:
-            # Если роут не найден, пробуем проксировать
-            if self.server.proxy_fallback:
-                self.proxy_request(method)
-            else:
-                # Возвращаем 404
-                self.send_response(404)
+                if isinstance(interpolated, (dict, list)):
+                    response_bytes = json.dumps(
+                        interpolated, ensure_ascii=False
+                    ).encode("utf-8")
+                else:
+                    response_bytes = str(interpolated).encode("utf-8")
+
+                # 4. Отправка ответа с Content-Length
+                self.send_response(status)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(response_bytes)))
                 self.end_headers()
-                err_resp = {
-                    "error": "Not Found",
-                    "message": f"Роут {method} {self.path} не найден в конфигурации моков.",
-                }
-                self.wfile.write(json.dumps(err_resp).encode("utf-8"))
-                self.server.log_event(
-                    f"[bold red]404[/bold red]  | {method} {self.path} -> Не найдено"
+
+                self.runner.debug_log.append(f"Writing response_bytes len={len(response_bytes)}")
+                self.wfile.write(response_bytes)
+                self.wfile.flush()
+
+                # Логирование
+                self.runner.log_event(
+                    f"[bold green]Mock[/bold green] | {method} {self.path} -> Status {status} | Delay: {delay}s"
                 )
+            else:
+                if self.runner.proxy_fallback:
+                    self.runner.debug_log.append("Proxying request")
+                    self.proxy_request(method)
+                else:
+                    self.runner.debug_log.append("Returning 404")
+                    err_resp = {
+                        "error": "Not Found",
+                        "message": f"Роут {method} {self.path} не найден в конфигурации моков.",
+                    }
+                    response_bytes = json.dumps(err_resp).encode("utf-8")
+
+                    self.send_response(404)
+                    self.send_header("Content-Type", "application/json; charset=utf-8")
+                    self.send_header("Content-Length", str(len(response_bytes)))
+                    self.end_headers()
+
+                    self.wfile.write(response_bytes)
+                    self.wfile.flush()
+                    self.runner.log_event(
+                        f"[bold red]404[/bold red]  | {method} {self.path} -> Не найдено"
+                    )
+        except Exception as e:
+            self.runner.debug_log.append(f"Exception caught: {e}")
+            err_resp = {"error": "Internal Error", "details": str(e)}
+            response_bytes = json.dumps(err_resp).encode("utf-8")
+
+            try:
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(response_bytes)))
+                self.end_headers()
+                self.wfile.write(response_bytes)
+                self.wfile.flush()
+            except Exception:
+                pass
 
     def proxy_request(self, method: str) -> None:
         """Перенаправляет запрос на реальный бэкенд."""
-        proxy_url = f"{self.server.proxy_fallback.rstrip('/')}{self.path}"
+        fallback = self.runner.proxy_fallback
+        if not fallback:
+            return
+        proxy_url = f"{fallback.rstrip('/')}{self.path}"
 
         # Чтение тела запроса
         content_length = int(self.headers.get("Content-Length", 0))
@@ -239,7 +269,7 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
                 response_data = resp.read()
                 self.wfile.write(response_data)
 
-                self.server.log_event(
+                self.runner.log_event(
                     f"[bold cyan]Proxy[/bold cyan] | {method} {self.path} -> {proxy_url} | Status {status}"
                 )
         except urllib.error.HTTPError as e:
@@ -251,7 +281,7 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(e.read())
 
-            self.server.log_event(
+            self.runner.log_event(
                 f"[bold yellow]Proxy Error[/bold yellow] | {method} {self.path} -> {proxy_url} | Status {e.code}"
             )
         except Exception as e:
@@ -264,7 +294,7 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
                 "message": f"Не удалось проксировать запрос к {proxy_url}: {e}",
             }
             self.wfile.write(json.dumps(err_resp).encode("utf-8"))
-            self.server.log_event(
+            self.runner.log_event(
                 f"[bold red]Proxy Fail[/bold red] | {method} {self.path} -> {proxy_url} | Connection Failed: {e}"
             )
 
@@ -304,10 +334,14 @@ class MockServerRunner:
         self.proxy_fallback = proxy_fallback
         self.routes: list[RouteConfig] = []
         self._last_loaded: float = 0.0
+        self.debug_log: list[str] = []
+        self._server: ThreadingHTTPServer | None = None
 
         # Ленивая инициализация консоли и логгера
         from chutils.cli_utils import get_console
         self.console = get_console()
+        # Инициализируем отрисовщик в основном потоке, чтобы избежать KeyError: 'rich._windows_renderer' в фоновых потоках на Windows
+        self.console.print("", end="")
 
     def init_template(self, output_path: str) -> None:
         """Создает шаблонный файл конфигурации роутов."""
@@ -387,12 +421,19 @@ class MockServerRunner:
                 try:
                     self.load_config()
                     self.log_event(
-                        f"[bold magenta]Reload[/bold magenta] | Конфигурация успешно перезагружена с диска."
+                        "[bold magenta]Reload[/bold magenta] | Конфигурация успешно перезагружена с диска."
                     )
                 except Exception as e:
                     self.log_event(
                         f"[bold red]Reload Fail[/bold red] | Не удалось перезагрузить файл: {e}"
                     )
+
+    def stop(self) -> None:
+        """Останавливает запущенный HTTP-сервер."""
+        if hasattr(self, "_server") and self._server is not None:
+            self._server.shutdown()
+            self._server.server_close()
+            self._server = None
 
     def run(self) -> None:
         """Запускает многопоточный HTTP-сервер."""
@@ -403,17 +444,9 @@ class MockServerRunner:
 
         # Создаем многопоточный сервер
         server = ThreadingHTTPServer(server_address, MockHTTPRequestHandler)
-        # Связываем ссылку на runner с сервером, чтобы handler имел к ней доступ
+        # Связываем ссылку на runner с сервером
         server.runner = self  # type: ignore[attr-defined]
-
-        # Переопределяем метод получения runner в handler
-        # http.server.BaseHTTPRequestHandler имеет свойство server
-        # Мы переопределяем __getattr__ у handler, чтобы возвращать runner с сервера
-        def get_runner(handler_inst: BaseHTTPRequestHandler) -> MockServerRunner:
-            return getattr(handler_inst.server, "runner")
-
-        # Патчим MockHTTPRequestHandler
-        MockHTTPRequestHandler.server = property(get_runner)  # type: ignore[assignment]
+        self._server = server
 
         self.console.print(
             f"[bold green] [OK] [/bold green] Декларативный мок-сервер успешно запущен!\n"
@@ -426,6 +459,6 @@ class MockServerRunner:
 
         try:
             server.serve_forever()
-        except KeyboardInterrupt:
+        except (KeyboardInterrupt, OSError):
             self.console.print("\n[bold yellow]Остановка мок-сервера...[/bold yellow]")
             server.server_close()
