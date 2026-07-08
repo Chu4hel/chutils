@@ -875,7 +875,16 @@ def step_2():
 try:
     bus.publish("data_sync")
 except EventBusExceptionGroup as e:
+    # Классический перехват (совместим со всеми версиями Python >= 3.10)
     print(f"Возникли ошибки: {e.exceptions}")
+
+# На Python >= 3.11 вы также можете использовать стандартный синтаксис except*:
+# try:
+#     bus.publish("data_sync")
+# except* ValueError as eg:
+#     print(f"Обработка ValueError из группы: {eg.exceptions}")
+# except* IOError as eg:
+#     print(f"Обработка IOError из группы: {eg.exceptions}")
 ```
 
 ### Передача Pydantic-моделей

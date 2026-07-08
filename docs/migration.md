@@ -194,3 +194,44 @@ except SecretNotFoundError:
     print("Ошибка: обязательный ключ STRIPE_KEY не найден в хранилище!")
 ```
 
+---
+
+## 7. Переход на стандартные Exception Groups
+
+В версии `3.0.0` класс группы исключений шины событий `EventBusExceptionGroup` был переведен на наследование от
+стандартного класса `ExceptionGroup` (появившегося в Python 3.11).
+
+### Что изменилось:
+
+- **Базовый класс**: `EventBusExceptionGroup` теперь наследуется от `ExceptionGroup` (встроенного в Python 3.11+ или
+  бэкпорта из пакета `exceptiongroup` для Python 3.10) и `EventBusError`.
+- **Перехват через `except*`**: На Python >= 3.11 появилась возможность перехватывать отдельные типы ошибок из группы с
+  помощью встроенного синтаксиса `except*`.
+- **Полная обратная совместимость**: Традиционный перехват `except EventBusExceptionGroup as e:` и доступ к списку
+  ошибок через `.exceptions` (в виде кортежа/списка) полностью сохранены для всех версий Python (>= 3.10).
+
+### Примеры использования:
+
+```python
+from chutils.events import EventBus, ErrorStrategy
+from chutils.exceptions import EventBusExceptionGroup
+
+bus = EventBus(error_strategy=ErrorStrategy.COLLECT)
+
+# При наличии ошибок публикации выбрасывается EventBusExceptionGroup
+
+# Вариант 1. Традиционный перехват (совместим с Python 3.10)
+try:
+    bus.publish("my_event")
+except EventBusExceptionGroup as e:
+    for err in e.exceptions:
+        print(f"Ошибка: {err}")
+
+# Вариант 2. Использование except* (только на Python >= 3.11)
+# try:
+#     bus.publish("my_event")
+# except* ValueError as eg:
+#     print(f"Обработаны ошибки ValueError: {eg.exceptions}")
+```
+
+
