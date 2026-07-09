@@ -8,7 +8,10 @@ from __future__ import annotations
 import fnmatch
 import importlib.util
 import os
+import re
 from pathlib import Path
+
+IGNORE_PATTERN = re.compile(r'#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]', re.IGNORECASE)
 
 try:
     from pydantic import BaseModel
@@ -133,6 +136,32 @@ class LinterEngine:
         self.strict = bool(config.get("strict", False))
         self.soft_mode = bool(config.get("soft_mode", False))
         self.rules: list[Rule] = []
+        self._file_lines_cache: dict[str, list[str]] = {}
+
+    def _get_file_line(self, file_path: str, line_number: int) -> str | None:
+        """
+        Возвращает строку из файла по 1-индексному номеру строки с использованием кэша.
+        Безопасно обрабатывает ошибки чтения файлов и некорректные номера строк.
+        """
+        if not file_path or line_number < 1:
+            return None
+
+        try:
+            resolved_path = str(Path(file_path).resolve())
+        except Exception:
+            return None
+
+        if resolved_path not in self._file_lines_cache:
+            try:
+                with open(resolved_path, "r", encoding="utf-8", errors="ignore") as f:
+                    self._file_lines_cache[resolved_path] = f.readlines()
+            except Exception:
+                self._file_lines_cache[resolved_path] = []
+
+        lines = self._file_lines_cache[resolved_path]
+        if 1 <= line_number <= len(lines):
+            return lines[line_number - 1]
+        return None
 
     def load_rules(self) -> None:
         """
@@ -243,7 +272,32 @@ class LinterEngine:
                         severity="error"
                     )
                 )
-        return results
+
+        # Фильтруем результаты на основе комментариев инлайн-игнорирования
+        filtered_results: list[LintResult] = []
+        for r in results:
+            if not r.file_path or r.line_number is None:
+                filtered_results.append(r)
+                continue
+
+            ignored = False
+            for ln in (r.line_number, r.line_number - 1):
+                line_text = self._get_file_line(r.file_path, ln)
+                if not line_text:
+                    continue
+
+                match = IGNORE_PATTERN.search(line_text)
+                if match:
+                    rules_str = match.group(1)
+                    rules_list = [rule.strip().lower() for rule in rules_str.split(",")]
+                    if "all" in rules_list or r.rule_name.lower() in rules_list:
+                        ignored = True
+                        break
+
+            if not ignored:
+                filtered_results.append(r)
+
+        return filtered_results
 
     def print_results(self, results: list[LintResult]) -> bool:
         """
