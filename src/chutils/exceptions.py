@@ -41,6 +41,12 @@ class ChutilsException(Exception):
 # --- Config Exceptions ---
 
 
+class ChutilsConfigurationError(ChutilsException):
+    """Ошибка конфигурации компонентов chutils."""
+
+    pass
+
+
 class ConfigError(ChutilsException):
     """Общая ошибка конфигурации."""
 

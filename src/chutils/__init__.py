@@ -156,6 +156,7 @@ _LAZY_MAPPING = {
 
     # exceptions
     'ChutilsException': ('.exceptions', 'ChutilsException'),
+    'ChutilsConfigurationError': ('.exceptions', 'ChutilsConfigurationError'),
     'ConfigError': ('.exceptions', 'ConfigError'),
     'ConfigLoadError': ('.exceptions', 'ConfigLoadError'),
     'ConfigParseError': ('.exceptions', 'ConfigParseError'),
@@ -233,6 +234,18 @@ _LAZY_MAPPING = {
     'apply_antidetect_playwright': ('.scraping.humanize', 'apply_antidetect_playwright'),
     'apply_antidetect_selenium': ('.scraping.humanize', 'apply_antidetect_selenium'),
     'get_browser_launch_args': ('.scraping.humanize', 'get_browser_launch_args'),
+
+    # scraping captcha
+    'RuCaptchaSolver': ('.scraping.captcha', 'RuCaptchaSolver'),
+    'AsyncRuCaptchaSolver': ('.scraping.captcha', 'AsyncRuCaptchaSolver'),
+    'AntiCaptchaSolver': ('.scraping.captcha', 'AntiCaptchaSolver'),
+    'AsyncAntiCaptchaSolver': ('.scraping.captcha', 'AsyncAntiCaptchaSolver'),
+    'CapMonsterSolver': ('.scraping.captcha', 'CapMonsterSolver'),
+    'AsyncCapMonsterSolver': ('.scraping.captcha', 'AsyncCapMonsterSolver'),
+    'CaptchaError': ('.scraping.captcha', 'CaptchaError'),
+    'CaptchaTimeoutError': ('.scraping.captcha', 'CaptchaTimeoutError'),
+    'CaptchaBalanceError': ('.scraping.captcha', 'CaptchaBalanceError'),
+    'CaptchaServiceError': ('.scraping.captcha', 'CaptchaServiceError'),
 
     # plugins
     'plugins': ('.plugins', None),

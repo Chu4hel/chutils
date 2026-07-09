@@ -8,6 +8,15 @@ resolution-markers = [
 ]
 
 [[package]]
+name = "annotated-doc"
+version = "0.0.4"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/57/ba/046ceea27344560984e26a590f90bc7f4a75b06701f653222458922b558c/annotated_doc-0.0.4.tar.gz", hash = "sha256:fbcda96e87e9c92ad167c2e53839e57503ecfda18804ea28102353485033faa4" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/1e/d3/26bf1008eb3d2daa8ef4cacc7f3bfdc11818d111f7e2d0201bc6e3b49d45/annotated_doc-0.0.4-py3-none-any.whl", hash = "sha256:571ac1dc6991c450b25a9c2d84a3705e2ae7a53467b5d111c24fa8baabbed320" },
+]
+
+[[package]]
 name = "annotated-types"
 version = "0.7.0"
 source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
@@ -313,6 +322,9 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+captcha = [
+    { name = "httpx" },
+]
 crypto = [
     { name = "cryptography" },
 ]
@@ -376,6 +388,7 @@ web = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "fastapi" },
     { name = "mkdocs" },
     { name = "mkdocs-material" },
     { name = "mkdocstrings", marker = "python_full_version < '3.14'" },
@@ -394,6 +407,7 @@ requires-dist = [
     { name = "cryptography", marker = "extra == 'crypto'", specifier = ">=42.0.0" },
     { name = "cryptography", marker = "extra == 'full'", specifier = ">=42.0.0" },
     { name = "exceptiongroup", marker = "python_full_version < '3.11'", specifier = ">=1.2.2" },
+    { name = "httpx", marker = "extra == 'captcha'", specifier = ">=0.27.0" },
     { name = "httpx", marker = "extra == 'full'", specifier = ">=0.27.0" },
     { name = "httpx", marker = "extra == 'web'", specifier = ">=0.27.0" },
     { name = "keyring", marker = "extra == 'full'", specifier = ">=25.7.0" },
@@ -427,10 +441,11 @@ requires-dist = [
     { name = "watchdog", marker = "extra == 'full'", specifier = ">=6.0.0" },
     { name = "watchdog", marker = "extra == 'watch'", specifier = ">=6.0.0" },
 ]
-provides-extras = ["secrets", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "scraping", "testing", "otel", "full"]
+provides-extras = ["secrets", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "captcha", "scraping", "testing", "otel", "full"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "fastapi", specifier = ">=0.110.0" },
     { name = "mkdocs", specifier = ">=1.6.1" },
     { name = "mkdocs-material", specifier = ">=9.7.5" },
     { name = "mkdocstrings", marker = "python_full_version < '3.14'", specifier = ">=1.0.4" },
@@ -635,6 +650,22 @@ dependencies = [
 sdist = { url = "https://mirrors.aliyun.com/pypi/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219" }
 wheels = [
     { url = "https://mirrors.aliyun.com/pypi/packages/8a/0e/97c33bf5009bdbac74fd2beace167cab3f978feb69cc36f1ef79360d6c4e/exceptiongroup-1.3.1-py3-none-any.whl", hash = "sha256:a7a39a3bd276781e98394987d3a5701d0c4edffb633bb7a5144577f82c773598" },
+]
+
+[[package]]
+name = "fastapi"
+version = "0.139.0"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+dependencies = [
+    { name = "annotated-doc" },
+    { name = "pydantic" },
+    { name = "starlette" },
+    { name = "typing-extensions" },
+    { name = "typing-inspection" },
+]
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/d3/af/a5f50ccfa659ec1802cb4ca842c23f06d906a8cc9aef6016a2caeea3d4ed/fastapi-0.139.0.tar.gz", hash = "sha256:99ab7b2d92223c76d6cf10757ab3f89d45b38267fc20b2a136cf02f6beac3145" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/9e/7c/8e3c6ad324ea5cb36604fc3f968554887891c316d9dfde57761611d907ad/fastapi-0.139.0-py3-none-any.whl", hash = "sha256:cf15e1e9e667ddb0ad63811e60bd11390d1aac838ca4a7a23f421807b2308189" },
 ]
 
 [[package]]
@@ -2118,6 +2149,19 @@ source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
 sdist = { url = "https://mirrors.aliyun.com/pypi/packages/e8/c4/ba2f8066cceb6f23394729afe52f3bf7adec04bf9ed2c820b39e19299111/sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88" }
 wheels = [
     { url = "https://mirrors.aliyun.com/pypi/packages/32/46/9cb0e58b2deb7f82b84065f37f3bffeb12413f947f9388e4cac22c4621ce/sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0" },
+]
+
+[[package]]
+name = "starlette"
+version = "1.3.1"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+dependencies = [
+    { name = "anyio" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+]
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/eb/e3/7c1dc7381d9f8ab7d854328ebfa884e62cb3f3d8549ddfd37c7814f42afa/starlette-1.3.1.tar.gz", hash = "sha256:05d0213193f2fbaae60e2ecb593b4add4262ad4e46536b54abe36f11a71724e0" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/ec/bb/2799cc2ede3ed41131f8975621e7213dfc7ef4acbbaadfa440f32500c370/starlette-1.3.1-py3-none-any.whl", hash = "sha256:c7372aae11c3c3f26a42df7bd626cec2f47d03483d261d369516a615a53714c6" },
 ]
 
 [[package]]

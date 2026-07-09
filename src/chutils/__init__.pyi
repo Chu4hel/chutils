@@ -349,6 +349,9 @@ class ChutilsException(Exception):
     def __init__(self, message: str, **context: Any) -> None: ...
 
 
+class ChutilsConfigurationError(ChutilsException): ...
+
+
 class ConfigError(ChutilsException): ...
 
 
@@ -670,6 +673,79 @@ def apply_antidetect_selenium(driver: Any) -> None: ...
 
 
 def get_browser_launch_args() -> list[str]: ...
+
+
+# --- scraping captcha ---
+class RuCaptchaSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://rucaptcha.com") -> None: ...
+
+    def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                    **kwargs: Any) -> str: ...
+
+    def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                        **kwargs: Any) -> str: ...
+
+
+class AsyncRuCaptchaSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://rucaptcha.com") -> None: ...
+
+    async def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                          **kwargs: Any) -> str: ...
+
+    async def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                              **kwargs: Any) -> str: ...
+
+
+class AntiCaptchaSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://api.anti-captcha.com") -> None: ...
+
+    def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                    **kwargs: Any) -> str: ...
+
+    def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                        **kwargs: Any) -> str: ...
+
+
+class AsyncAntiCaptchaSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://api.anti-captcha.com") -> None: ...
+
+    async def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                          **kwargs: Any) -> str: ...
+
+    async def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                              **kwargs: Any) -> str: ...
+
+
+class CapMonsterSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://api.capmonster.cloud") -> None: ...
+
+    def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                    **kwargs: Any) -> str: ...
+
+    def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                        **kwargs: Any) -> str: ...
+
+
+class AsyncCapMonsterSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://api.capmonster.cloud") -> None: ...
+
+    async def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                          **kwargs: Any) -> str: ...
+
+    async def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                              **kwargs: Any) -> str: ...
+
+
+class CaptchaError(ChutilsException): ...
+
+
+class CaptchaTimeoutError(CaptchaError): ...
+
+
+class CaptchaBalanceError(CaptchaError): ...
+
+
+class CaptchaServiceError(CaptchaError): ...
 
 
 # --- Submodules ---
