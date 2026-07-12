@@ -1,10 +1,15 @@
 """
-Паттерн: Правильная обработка исключений и сохранение контекста ошибок.
+Паттерн: Правильная обработка исключений, OptionalDependencyError и сохранение контекста ошибок.
+
+Демонстрирует (v3.0.0+):
+- Наследование кастомных исключений от ChutilsException с полями context/hint
+- Правильный перехват OptionalDependencyError вместо RuntimeError
+- Сохранение оригинального traceback через `raise ... from e`
 """
 
 from __future__ import annotations
 
-from chutils.exceptions import ChutilsException
+from chutils.exceptions import ChutilsException, OptionalDependencyError
 
 
 class ConfigLoadError(ChutilsException):
@@ -34,16 +39,22 @@ def read_system_config(file_path: str) -> str:
             return f.read()
     except FileNotFoundError as e:
         # Хорошо: Пробрасываем специализированную ошибку с сохранением оригинального контекста (from e)
-        raise ConfigLoadError(f"Файл конфигурации не найден по пути: {file_path}") from e
+        raise ConfigLoadError(
+            f"Файл конфигурации не найден по пути: {file_path}",
+            context={"path": file_path},
+            hint="Убедитесь, что config.yml существует в корне проекта.",
+        ) from e
     except PermissionError as e:
-        raise ConfigLoadError(f"Нет прав для чтения файла конфигурации: {file_path}") from e
+        raise ConfigLoadError(
+            f"Нет прав для чтения файла конфигурации: {file_path}"
+        ) from e
 
 
 def parse_port(port_str: str) -> int:
     """Парсит строковое представление порта в число.
 
     Args:
-        port_str: Строка с портом (например, "8080").
+        port_str: Строка с портом (например, \"8080\").
 
     Returns:
         Целочисленный номер порта.
@@ -57,5 +68,24 @@ def parse_port(port_str: str) -> int:
             raise InvalidPortError(f"Номер порта вне допустимого диапазона (1-65535): {port}")
         return port
     except ValueError as e:
-        # Хорошо: Локализованный перехват и информативное исключение
-        raise InvalidPortError(f"Некорректное строковое представление порта: '{port_str}'") from e
+        raise InvalidPortError(
+            f"Некорректное строковое представление порта: '{port_str}'",
+            hint="Порт должен быть числом от 1 до 65535.",
+        ) from e
+
+
+def use_crypto_feature() -> str:
+    """Пример правильного перехвата OptionalDependencyError (v3.0.0+).
+
+    Returns:
+        Результат шифрования или заглушка при отсутствии зависимости.
+    """
+    try:
+        from chutils.crypto import encrypt_portable
+        return encrypt_portable("secret_data", seed="my_seed")
+    except OptionalDependencyError as e:
+        # Хорошо: Перехватываем специфичную ошибку отсутствия зависимости.
+        # e.hint содержит команду установки: "pip install chutils[crypto]"
+        print(f"Функция шифрования недоступна: {e.message}")
+        print(f"Совет: {e.hint}")
+        return ""
