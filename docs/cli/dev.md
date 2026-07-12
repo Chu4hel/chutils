@@ -9,7 +9,7 @@ Gemini, Cursor).
 ## Синтаксис
 
 ```bash
-chutils dev [-h] {generate-context,ai-lint,chat-context,scaffold} ...
+chutils dev [-h] {generate-context,ai-lint,chat-context,scaffold,mock,install-hooks,generate-few-shot} ...
 ```
 
 ### Подкоманды:
@@ -18,6 +18,9 @@ chutils dev [-h] {generate-context,ai-lint,chat-context,scaffold} ...
 2. [**`ai-lint`**](#dev-ai-lint) — Статический анализ AI-готовности кодовой базы.
 3. [**`chat-context`**](#dev-chat-context) — Интерактивная генерация компактного контекста для ИИ.
 4. [**`scaffold`**](#dev-scaffold) — Инициализация нового модуля Чистой Архитектуры.
+5. [**`mock`**](#dev-mock) — Локальный декларативный HTTP мок-сервер.
+6. [**`install-hooks`**](#dev-install-hooks) — Установка Git-хуков для автоматических проверок.
+7. [**`generate-few-shot`**](#dev-generate-few-shot) — Автогенерация few-shot банка примеров для ИИ-ассистентов.
 
 ---
 
@@ -295,4 +298,105 @@ chutils dev mock --proxy-fallback http://localhost:8000
 *(При обращении к роуту, которого нет в `mocks.yml`, сервер прозрачно проксирует запрос на `http://localhost:8000`,
 сохраняя тело, заголовки и HTTP-метод).*
 
+---
 
+## dev install-hooks
+
+Устанавливает Git-хуки (pre-commit, commit-msg) в репозиторий текущего проекта для автоматических проверок перед
+фиксацией коммитов (запуск `ruff`, `mypy`, форматирование).
+
+### Синтаксис подкоманды:
+
+```bash
+chutils dev install-hooks [-h]
+```
+
+### Примеры использования:
+
+**Установка хуков в текущий Git-репозиторий:**
+
+```bash
+chutils dev install-hooks
+```
+
+*Вывод в консоли:*
+
+```text
+✅ Хуки успешно установлены в .git/hooks/
+   pre-commit:  .git/hooks/pre-commit
+   commit-msg:  .git/hooks/commit-msg
+```
+
+> **Примечание:** Хуки устанавливаются с правами на выполнение (`chmod +x`). Убедитесь, что команда запускается из
+> корня Git-репозитория.
+
+---
+
+## dev generate-few-shot
+
+Анализирует архитектуру целевого проекта с помощью AST-анализа и автоматически создаёт структурированный **банк
+few-shot примеров** в каталоге `docs/ai_examples/`. Примеры служат контекстом (few-shot prompting) для ИИ-ассистентов
+(Antigravity, Gemini CLI и др.), обучая их применять правильные архитектурные паттерны конкретного проекта.
+
+### Синтаксис подкоманды:
+
+```bash
+chutils dev generate-few-shot [-h] -p PROJECT [-f]
+```
+
+### Параметры и флаги:
+
+| Флаг / Аргумент     | Описание                                                                                              | Обязательный |
+|:--------------------|:------------------------------------------------------------------------------------------------------|:-------------|
+| **`-p, --project`** | Путь к корневой директории целевого проекта.                                                          | Да           |
+| **`-f, --force`**   | Принудительно перезаписать существующие файлы при совпадении имён категорий (иначе они пропускаются). | Нет          |
+
+### Что генерируется:
+
+Команда детектирует 5 архитектурных категорий и создаёт для каждой найденной папку в `docs/ai_examples/<category>/`
+с тремя файлами:
+
+| Категория      | Что детектируется                                          | Файлы                                            |
+|:---------------|:-----------------------------------------------------------|:-------------------------------------------------|
+| `use_cases`    | Классы с суффиксом `UseCase` или `Interactor`              | `good_pattern.py`, `bad_pattern.py`, `README.md` |
+| `repositories` | Классы с суффиксом `Repository` (абстрактные и конкретные) | `good_pattern.py`, `bad_pattern.py`, `README.md` |
+| `logging`      | Переменные-логгеры (`logging.getLogger`)                   | `good_pattern.py`, `bad_pattern.py`, `README.md` |
+| `errors`       | Пользовательские исключения (наследники `Exception`)       | `good_pattern.py`, `bad_pattern.py`, `README.md` |
+| `di`           | DI-контейнеры (по имени файла или импорту DI-библиотеки)   | `good_pattern.py`, `bad_pattern.py`, `README.md` |
+
+После генерации файлов команда создаёт или обновляет `GEMINI.md` в корне целевого проекта, добавляя блок со ссылками
+на банк примеров для ИИ-агентов.
+
+### Примеры использования:
+
+**1. Анализ и генерация банка примеров для текущего проекта:**
+
+```bash
+chutils dev generate-few-shot -p ./my_project
+```
+
+*Вывод в консоли:*
+
+```text
+🔍 Анализ проекта: ./my_project
+✅ Категория 'use_cases': good_pattern.py, bad_pattern.py, README.md
+✅ Категория 'repositories': good_pattern.py, bad_pattern.py, README.md
+✅ Категория 'errors': good_pattern.py, bad_pattern.py, README.md
+📝 GEMINI.md обновлён: ./my_project/GEMINI.md
+Генерация завершена. Создано: 3 категории.
+```
+
+**2. Повторная генерация с принудительной перезаписью (после изменений в коде проекта):**
+
+```bash
+chutils dev generate-few-shot -p ./my_project --force
+```
+
+**3. Генерация банка примеров для внешнего репозитория:**
+
+```bash
+chutils dev generate-few-shot -p /path/to/another/repo
+```
+
+> **Примечание о слиянии:** Без флага `--force` команда работает в режиме слияния — существующие папки категорий
+> пропускаются, что позволяет добавлять новые категории без перезаписи пользовательских правок.
