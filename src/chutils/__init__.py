@@ -54,6 +54,7 @@ _LAZY_MAPPING = {
     'dev': ('.dev', None),
     'Scaffolder': ('.dev.scaffold', 'Scaffolder'),
     'MockServerRunner': ('.dev.mock_server', 'MockServerRunner'),
+    'generate_few_shot': ('.dev.generate_few_shot', None),
     'events': ('.events', None),
     'tasks': ('.tasks', None),
     'text': ('.text', None),

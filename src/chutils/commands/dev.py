@@ -233,6 +233,26 @@ class DevCommand(BaseCommand):
         )
         hooks_parser.set_defaults(handler=self.handle_install_hooks)
 
+        # dev generate-few-shot
+        few_shot_parser = dev_subparsers.add_parser(
+            "generate-few-shot",
+            help="Автогенерация few-shot примеров для целевого проекта",
+            description="Анализирует проект, детектирует архитектурные абстракции и создает банк few-shot примеров в docs/ai_examples/.",
+        )
+        few_shot_parser.add_argument(
+            "-p",
+            "--project",
+            required=True,
+            help="Путь к корневой директории целевого проекта.",
+        )
+        few_shot_parser.add_argument(
+            "-f",
+            "--force",
+            action="store_true",
+            help="Принудительно перезаписать файлы при совпадении имен существующих категорий.",
+        )
+        few_shot_parser.set_defaults(handler=self.handle_generate_few_shot)
+
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана."""
         self.console.print(
@@ -668,3 +688,17 @@ class DevCommand(BaseCommand):
                 hook_path.chmod(current_mode | 0o111 | 0o444)
             except Exception as e:
                 self.console.print(f"[yellow]⚠ Не удалось установить права chmod +x для хука: {e}[/yellow]")
+
+    def handle_generate_few_shot(self, args: argparse.Namespace) -> None:
+        """Обработчик автогенерации few-shot примеров."""
+        from chutils.dev.generate_few_shot import generate_few_shot_bank
+
+        try:
+            generate_few_shot_bank(
+                project_path=args.project,
+                force=args.force,
+                console=self.console,
+            )
+        except Exception as e:
+            self.console.print(f"[bold red]Ошибка генерации few-shot банка:[/bold red] {e}")
+            raise SystemExit(1)
