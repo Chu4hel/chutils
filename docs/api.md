@@ -189,6 +189,7 @@ members:
 ::: chutils.metrics
 options:
 members:
+
 - increment
 - set_gauge
 - observe
@@ -218,12 +219,65 @@ members:
 - Rule
 - LintResult
 - LinterEngine
+- collect_context_slice
+- run_interactive_menu
+- generate_few_shot_bank
+- MockServerRunner
+- Scaffolder
+
+## Модуль `web` (Умный HTTP-клиент)
+
+::: chutils.web
+options:
+members:
+
+- WebClient
+- AsyncWebClient
+
+## Модуль `scraping.humanize` (Имитация поведения человека)
+
+::: chutils.scraping.humanize
+options:
+members:
+
+- BezierCurveGenerator
+- JitterDelayGenerator
+- KeyboardTypoGenerator
+- human_sleep
+- async_human_sleep
+- move_mouse
+- async_move_mouse
+- scroll_to
+- async_scroll_to
+- type_text
+- async_type_text
+- apply_antidetect_playwright
+- apply_antidetect_selenium
+- get_browser_launch_args
+
+## Модуль `scraping.captcha` (Решатели капчи)
+
+::: chutils.scraping.captcha
+options:
+members:
+
+- RuCaptchaSolver
+- AsyncRuCaptchaSolver
+- AntiCaptchaSolver
+- AsyncAntiCaptchaSolver
+- CapMonsterSolver
+- AsyncCapMonsterSolver
+- CaptchaError
+- CaptchaTimeoutError
+- CaptchaBalanceError
+- CaptchaServiceError
 
 ## Модуль `plugins` (Система плагинов)
 
 ::: chutils.plugins
 options:
 members:
+
 - register_plugin
 - registry
 - BasePlugin
