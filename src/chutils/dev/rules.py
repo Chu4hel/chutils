@@ -360,7 +360,8 @@ class SecurityHardcodeRule(Rule):
                                             val = node.value.value
                                             if val and len(val) > 8 and not any(
                                                     p in val.lower() for p in
-                                                    ("placeholder", "test", "your_", "default", "env", "config")
+                                                    ("placeholder", "test", "your_", "default", "env", "config", "_key",
+                                                     "_token", "_password", "_pwd")
                                             ):
                                                 results.append(
                                                     LintResult(
