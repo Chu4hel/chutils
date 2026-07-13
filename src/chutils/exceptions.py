@@ -2,10 +2,14 @@ import sys
 import typing as t
 from pathlib import Path
 
-if sys.version_info >= (3, 11):
-    _BaseExceptionGroup = ExceptionGroup  # noqa: F821
+if t.TYPE_CHECKING:
+    class _BaseExceptionGroup(BaseException):
+        exceptions: list[Exception]
 else:
-    from exceptiongroup import ExceptionGroup as _BaseExceptionGroup
+    if sys.version_info >= (3, 11):
+        _BaseExceptionGroup = ExceptionGroup  # noqa: F821
+    else:
+        from exceptiongroup import ExceptionGroup as _BaseExceptionGroup
 
 
 class ChutilsException(Exception):
@@ -18,12 +22,14 @@ class ChutilsException(Exception):
 
     def __init__(self, message: str, hint: str | None = None, **context: t.Any) -> None:
         super().__init__(message)
-        try:
-            self.message = message
-        except AttributeError:
-            pass
+        self._message = message
         self.hint = hint
         self.context = context
+
+    @property
+    def message(self) -> str:
+        """Сообщение об ошибке."""
+        return self._message
 
     def __str__(self) -> str:
         parts = [self.message]
@@ -177,7 +183,7 @@ class EventBusError(ChutilsException):
     pass
 
 
-class EventBusExceptionGroup(_BaseExceptionGroup, EventBusError):  # type: ignore[misc]
+class EventBusExceptionGroup(_BaseExceptionGroup, EventBusError):
     """
     Группа ошибок, возникших при параллельном или последовательном выполнении
     обработчиков событий шины.
