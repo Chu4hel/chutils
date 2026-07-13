@@ -42,7 +42,14 @@ def _start_background_loop() -> asyncio.AbstractEventLoop:
         return _background_loop
 
 def is_async_callable(obj: t.Any) -> bool:
-    """Проверяет, является ли вызываемый объект асинхронным."""
+    """Проверяет, является ли вызываемый объект асинхронным.
+
+    Args:
+        obj: Объект для проверки.
+
+    Returns:
+        True, если объект является асинхронной функцией или вызываемым асинхронным объектом.
+    """
     if inspect.iscoroutinefunction(obj):
         return True
     if hasattr(obj, "__call__"):

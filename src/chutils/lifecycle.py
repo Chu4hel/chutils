@@ -32,6 +32,7 @@ class LifecycleManager:
     """
 
     def __init__(self) -> None:
+        """Инициализирует LifecycleManager."""
         self._cleanup_callbacks: list[CleanupCallback] = []
         self._is_shutting_down = False
         self._setup_done = False
@@ -56,14 +57,18 @@ class LifecycleManager:
         return func
 
     def get_cleanup_callbacks(self) -> list[CleanupCallback]:
-        """
-        Возвращает список зарегистрированных функций в порядке LIFO.
+        """Возвращает список зарегистрированных функций в порядке LIFO.
+
+        Returns:
+            Список функций очистки в порядке LIFO.
         """
         return list(reversed(self._cleanup_callbacks))
 
     def setup_graceful_shutdown(self, signals: list[int] | None = None) -> None:
-        """
-        Настраивает перехват сигналов завершения работы.
+        """Настраивает перехват сигналов завершения работы.
+
+        Args:
+            signals: Опциональный список сигналов для отслеживания.
         """
         if self._setup_done:
             return

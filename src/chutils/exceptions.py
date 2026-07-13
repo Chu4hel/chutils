@@ -35,7 +35,11 @@ class ChutilsException(Exception):
 
     @property
     def message(self) -> str:
-        """Сообщение об ошибке."""
+        """Сообщение об ошибке.
+
+        Returns:
+            Текст сообщения об ошибке.
+        """
         return self._message
 
     def __str__(self) -> str:

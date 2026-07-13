@@ -15,7 +15,14 @@ if TYPE_CHECKING:
 
 
 def extract_keywords(text: str) -> list[str]:
-    """Извлекает ключевые слова из описания задачи."""
+    """Извлекает ключевые слова из описания задачи.
+
+    Args:
+        text: Входной текст задачи.
+
+    Returns:
+        Список выделенных ключевых слов.
+    """
     words = re.findall(r"\b[a-zA-Zа-яА-ЯёЁ]{3,}\b", text.lower())
     stop_words = {
         "для",

@@ -130,9 +130,13 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
         """
         return cast(MockServerRunner, getattr(self.server, "runner"))
 
-    # Переопределяем логирование по умолчанию, чтобы не мусорить в stdout
     def log_message(self, format: str, *args: object) -> None:
-        """Переопределяет логирование по умолчанию, чтобы не мусорить в stdout."""
+        """Переопределяет логирование по умолчанию, чтобы не мусорить в stdout.
+
+        Args:
+            format: Форматная строка лога.
+            *args: Аргументы форматирования.
+        """
         pass
 
     def handle_request(self) -> None:

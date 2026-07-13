@@ -12,9 +12,11 @@ _async_listeners: list[logging.handlers.QueueListener] = []
 
 
 def get_log_dir() -> str | None:
-    """
-    "Лениво" получает и кэширует путь к директории логов.
+    """"Лениво" получает и кэширует путь к директории логов.
     Создает директорию 'logs' в корне проекта при первом обращении.
+
+    Returns:
+        Путь к директории логов или None при ошибке.
     """
     global _LOG_DIR
     if _LOG_DIR is not None:
@@ -52,8 +54,10 @@ def stop_all_async_loggers() -> None:
 
 
 def register_async_listener(listener: logging.handlers.QueueListener) -> None:
-    """
-    Регистрирует новый асинхронный слушатель.
+    """Регистрирует новый асинхронный слушатель.
+
+    Args:
+        listener: Объект QueueListener для регистрации.
     """
     global _async_listeners
     _async_listeners.append(listener)

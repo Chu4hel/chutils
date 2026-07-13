@@ -42,16 +42,24 @@ class LogLevelsMixin:
     """
 
     def mediumdebug(self, message: str, *args: Any, **kws: Any) -> None:
-        """
-        Логирует сообщение с уровнем MEDIUMDEBUG (15).
+        """Логирует сообщение с уровнем MEDIUMDEBUG (15).
+
+        Args:
+            message: Логируемое сообщение.
+            *args: Аргументы форматирования сообщения.
+            **kws: Дополнительные параметры логирования.
         """
         _self = cast(logging.Logger, self)
         if _self.isEnabledFor(MEDIUMDEBUG_LEVEL_NUM):
             _self._log(MEDIUMDEBUG_LEVEL_NUM, message, args, **kws)
 
     def devdebug(self, message: str, *args: Any, **kws: Any) -> None:
-        """
-        Логирует сообщение с уровнем DEVDEBUG (9).
+        """Логирует сообщение с уровнем DEVDEBUG (9).
+
+        Args:
+            message: Логируемое сообщение.
+            *args: Аргументы форматирования сообщения.
+            **kws: Дополнительные параметры логирования.
         """
         _self = cast(logging.Logger, self)
         if _self.isEnabledFor(DEVDEBUG_LEVEL_NUM):
