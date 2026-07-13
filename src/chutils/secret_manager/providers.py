@@ -1,6 +1,6 @@
 import os
 from abc import ABC, abstractmethod
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from dotenv import load_dotenv
 
@@ -14,10 +14,12 @@ except ImportError:
 
 
     class NoKeyringError(Exception):  # type: ignore
+        """Исключение при отсутствии доступного хранилища keyring."""
         pass
 
 
     class PasswordDeleteError(Exception):  # type: ignore
+        """Исключение при ошибке удаления пароля из keyring."""
         pass
 
 
@@ -29,7 +31,7 @@ if TYPE_CHECKING:
     from ..logger import ChutilsLogger
 
 # Ленивая инициализация логгера модуля
-_module_logger: Optional['ChutilsLogger'] = None
+_module_logger: ChutilsLogger | None = None
 
 
 def _get_logger() -> 'ChutilsLogger':
@@ -113,8 +115,14 @@ class KeyringProvider(SecretProvider):
         self.disabled = disable_keyring
 
     def get(self, key: str, service_name: str) -> str | None:
-        """
-        Получает пароль из системного хранилища.
+        """Получает пароль из системного хранилища.
+
+        Args:
+            key: Имя запрашиваемого секрета.
+            service_name: Имя сервиса/приложения.
+
+        Returns:
+            Значение секрета или None, если он не найден.
         """
         if not KEYRING_AVAILABLE:
             from ..exceptions import OptionalDependencyError
@@ -139,8 +147,15 @@ class KeyringProvider(SecretProvider):
             return None
 
     def set(self, key: str, value: str, service_name: str) -> bool:
-        """
-        Сохраняет пароль в системное хранилище.
+        """Сохраняет пароль в системное хранилище.
+
+        Args:
+            key: Имя секрета.
+            value: Сохраняемое значение секрета.
+            service_name: Имя сервиса/приложения.
+
+        Returns:
+            True, если сохранение успешно, иначе False.
         """
         if not KEYRING_AVAILABLE:
             from ..exceptions import OptionalDependencyError
@@ -164,8 +179,14 @@ class KeyringProvider(SecretProvider):
             return False
 
     def delete(self, key: str, service_name: str) -> bool:
-        """
-        Удаляет пароль из системного хранилища.
+        """Удаляет пароль из системного хранилища.
+
+        Args:
+            key: Имя удаляемого секрета.
+            service_name: Имя сервиса/приложения.
+
+        Returns:
+            True, если удаление успешно, иначе False.
         """
         if not KEYRING_AVAILABLE:
             from ..exceptions import OptionalDependencyError
@@ -232,8 +253,14 @@ class DotEnvProvider(SecretProvider):
         self._loaded = True
 
     def get(self, key: str, service_name: str) -> str | None:
-        """
-        Получает значение из загруженных .env данных.
+        """Получает значение из загруженных .env данных.
+
+        Args:
+            key: Имя запрашиваемого секрета.
+            service_name: Имя сервиса/приложения.
+
+        Returns:
+            Значение секрета или None, если он не найден.
         """
         self._load_if_needed()
         value = self._values.get(key)
@@ -242,15 +269,28 @@ class DotEnvProvider(SecretProvider):
         return value
 
     def set(self, key: str, value: str, service_name: str) -> bool:
-        """
-        DotEnvProvider не поддерживает сохранение (доступен только для чтения).
+        """DotEnvProvider не поддерживает сохранение (доступен только для чтения).
+
+        Args:
+            key: Имя секрета.
+            value: Значение секрета.
+            service_name: Имя сервиса.
+
+        Returns:
+            Всегда False, так как запись не поддерживается.
         """
         _get_logger().warning("DotEnvProvider не поддерживает сохранение секретов.")
         return False
 
     def delete(self, key: str, service_name: str) -> bool:
-        """
-        DotEnvProvider не поддерживает удаление.
+        """DotEnvProvider не поддерживает удаление.
+
+        Args:
+            key: Имя секрета.
+            service_name: Имя сервиса.
+
+        Returns:
+            Всегда False, так как удаление не поддерживается.
         """
         _get_logger().warning("DotEnvProvider не поддерживает удаление секретов.")
         return False
@@ -262,8 +302,14 @@ class EnvProvider(SecretProvider):
     """
 
     def get(self, key: str, service_name: str) -> str | None:
-        """
-        Получает значение из переменных окружения ОС.
+        """Получает значение из переменных окружения ОС.
+
+        Args:
+            key: Имя запрашиваемого секрета.
+            service_name: Имя сервиса/приложения.
+
+        Returns:
+            Значение секрета или None, если он не найден.
         """
         value = os.environ.get(key)
         if value is not None:
@@ -271,15 +317,28 @@ class EnvProvider(SecretProvider):
         return value
 
     def set(self, key: str, value: str, service_name: str) -> bool:
-        """
-        EnvProvider не поддерживает сохранение.
+        """EnvProvider не поддерживает сохранение.
+
+        Args:
+            key: Имя секрета.
+            value: Значение секрета.
+            service_name: Имя сервиса.
+
+        Returns:
+            Всегда False, так как запись не поддерживается.
         """
         _get_logger().warning("EnvProvider не поддерживает сохранение секретов.")
         return False
 
     def delete(self, key: str, service_name: str) -> bool:
-        """
-        EnvProvider не поддерживает удаление.
+        """EnvProvider не поддерживает удаление.
+
+        Args:
+            key: Имя секрета.
+            service_name: Имя сервиса.
+
+        Returns:
+            Всегда False, так как удаление не поддерживается.
         """
         _get_logger().warning("EnvProvider не поддерживает удаление секретов.")
         return False
