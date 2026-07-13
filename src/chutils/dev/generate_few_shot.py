@@ -567,9 +567,9 @@ class TemplateRenderer:
             \"\"\"Good pattern: структурированное логирование через chutils.logger.\"\"\"
             from __future__ import annotations
 
-            import logging
+            from chutils import setup_logger
 
-            logger = logging.getLogger(__name__)
+            logger = setup_logger(__name__)
 
 
             def process_order(order_id: int) -> bool:
@@ -614,7 +614,7 @@ class TemplateRenderer:
 
             ## Правила для ИИ-агентов
 
-            1. **Всегда используй `logging.getLogger(__name__)`.** Имя логгера должно соответствовать модулю.
+            1. **Всегда используй `chutils.setup_logger(__name__)`.** Это обеспечивает преднастроенный вывод и маскирование секретов.
             2. **Никогда не используй `print()` для отладки.** Только `logger.debug()` / `logger.info()`.
             3. **Структурированный контекст через `extra={{}}`.** Передавай `order_id`, `user_id` и другие ключевые идентификаторы.
             4. **`logger.exception()` в `except`-блоках.** Это автоматически добавляет трассировку стека.
