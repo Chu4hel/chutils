@@ -10,7 +10,7 @@ from .utils import load_pyproject_toml, find_project_root
 
 DEFAULT_AI_LINT_CONFIG: JSONDict = {
     "strict": False,
-    "ignore": [".git", ".venv", "__pycache__", "build", "dist"],
+    "ignore": [".git", ".venv", "__pycache__", "build", "dist", "docs", "tests", "examples"],
     "rules": [],
     "custom_rules_path": None,
     "soft_mode": False
