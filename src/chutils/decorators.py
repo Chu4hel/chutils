@@ -530,6 +530,7 @@ class CircuitBreakerState:
             self._half_open_in_progress = False
             self.failure_count = 0
             self.last_failure_time = 0.0
+            self._report_metrics_state()
 
     def record_failure(self, exc: Exception) -> None:
         """Записывает неудачную попытку выполнения.
@@ -560,7 +561,24 @@ class CircuitBreakerState:
                         self.recovery_timeout,
                     )
                     self.state = "OPEN"
+                    self._report_metrics_state()
             self._half_open_in_progress = False
+
+    def _report_metrics_state(self) -> None:
+        """Экспортирует текущее состояние предохранителя в модуль метрик.
+        CLOSED = 0, OPEN = 1, HALF_OPEN = 2.
+        """
+        try:
+            from chutils.metrics import set_gauge
+            state_val = 0.0
+            if self.state == "OPEN":
+                state_val = 1.0
+            elif self.state == "HALF_OPEN":
+                state_val = 2.0
+            set_gauge("circuit_breaker_state", state_val, labels={"name": self.name})
+        except Exception:
+            # Игнорируем ошибки при отправке метрик, чтобы не ломать логику предохранителя
+            pass
 
     def can_execute(self) -> bool:
         """Проверяет возможность выполнения операции в текущем состоянии цепи.
@@ -576,6 +594,7 @@ class CircuitBreakerState:
                 if now - self.last_failure_time >= self.recovery_timeout:
                     self.state = "HALF_OPEN"
                     self._half_open_in_progress = True
+                    self._report_metrics_state()
                     return True
                 return False
             if self.state == "HALF_OPEN":

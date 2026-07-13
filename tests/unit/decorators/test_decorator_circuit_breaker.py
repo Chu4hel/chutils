@@ -191,3 +191,48 @@ def test_circuit_breaker_exceptions_filter():
 
     # Цепь все еще закрыта, так как TypeError был только 1, а ValueError проигнорирован
     assert target() == "ok"
+
+
+def test_circuit_breaker_metrics_integration(mocker):
+    """Проверяет интеграцию Circuit Breaker с экспортом метрик состояния."""
+    from chutils.metrics import InMemoryMetricsProvider, set_provider
+
+    # Устанавливаем InMemory провайдер метрик
+    provider = InMemoryMetricsProvider()
+    set_provider(provider)
+
+    should_fail = True
+
+    @circuit_breaker(failure_threshold=1, recovery_timeout=5)
+    def target_func():
+        if should_fail:
+            raise ValueError("error")
+        return "success"
+
+    # Изначально метрики пусты
+    metrics = provider.get_metrics()
+    assert "circuit_breaker_state" not in metrics["gauges"]
+
+    # 1. CLOSED -> OPEN
+    with pytest.raises(ValueError):
+        target_func()
+
+    metrics = provider.get_metrics()
+    # Состояние OPEN = 1.0
+    gauge_list = metrics["gauges"]["circuit_breaker_state"]
+    assert len(gauge_list) == 1
+    assert gauge_list[0]["labels"] == {"name": "target_func"}
+    assert gauge_list[0]["value"] == 1.0
+
+    # 2. OPEN -> HALF_OPEN (через can_execute)
+    now = time.time()
+    mocker.patch("time.time", return_value=now + 6)
+
+    # Вызов can_execute() при проверке
+    should_fail = False
+    assert target_func() == "success"
+
+    metrics = provider.get_metrics()
+    # Состояние после успеха должно вернуться в CLOSED = 0.0
+    gauge_list = metrics["gauges"]["circuit_breaker_state"]
+    assert gauge_list[0]["value"] == 0.0
