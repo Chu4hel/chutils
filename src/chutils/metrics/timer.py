@@ -28,6 +28,12 @@ class TimerContext:
     """
 
     def __init__(self, name: str, labels: dict[str, str] | None = None) -> None:
+        """Инициализирует TimerContext.
+
+        Args:
+            name: Имя метрики гистограммы для записи замера.
+            labels: Опциональные метки для метрики.
+        """
         self.name = name
         self.labels = labels
         self.start_time: float | None = None
@@ -42,6 +48,14 @@ class TimerContext:
             _observe_lazy(self.name, duration, self.labels)
 
     def __call__(self, func: F) -> F:
+        """Позволяет использовать TimerContext в качестве декоратора функции.
+
+        Args:
+            func: Декорируемая функция.
+
+        Returns:
+            Обернутая функция, замеряющая время своего выполнения.
+        """
         is_async = asyncio.iscoroutinefunction(func)
 
         if is_async:
@@ -67,7 +81,13 @@ class TimerContext:
 
 
 def timer(name: str, labels: dict[str, str] | None = None) -> TimerContext:
-    """
-    Фабричная функция для создания объекта TimerContext.
+    """Фабричная функция для создания объекта TimerContext.
+
+    Args:
+        name: Имя метрики гистограммы для записи замера.
+        labels: Опциональные метки для метрики.
+
+    Returns:
+        Экземпляр контекстного менеджера TimerContext.
     """
     return TimerContext(name, labels)

@@ -22,6 +22,7 @@ class PrometheusMetricsProvider(MetricsProvider):
     """
 
     def __init__(self) -> None:
+        """Инициализирует PrometheusMetricsProvider."""
         if not PROMETHEUS_AVAILABLE:
             raise OptionalDependencyError(
                 "Библиотека 'prometheus_client' не установлена.",
@@ -58,6 +59,13 @@ class PrometheusMetricsProvider(MetricsProvider):
             return metric
 
     def increment(self, name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
+        """Увеличить счетчик (Counter) на заданное значение.
+
+        Args:
+            name: Имя метрики.
+            value: Добавляемое значение.
+            labels: Словарь меток.
+        """
         metric = self._get_or_create_metric(name, "counter", labels)
         if labels:
             metric.labels(**labels).inc(value)
@@ -65,6 +73,13 @@ class PrometheusMetricsProvider(MetricsProvider):
             metric.inc(value)
 
     def set_gauge(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+        """Установить значение датчика (Gauge).
+
+        Args:
+            name: Имя датчика.
+            value: Устанавливаемое значение.
+            labels: Словарь меток.
+        """
         metric = self._get_or_create_metric(name, "gauge", labels)
         if labels:
             metric.labels(**labels).set(value)
@@ -72,6 +87,13 @@ class PrometheusMetricsProvider(MetricsProvider):
             metric.set(value)
 
     def observe(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+        """Записать значение в гистограмму/таймер (Histogram/Timer).
+
+        Args:
+            name: Имя метрики.
+            value: Записываемое значение.
+            labels: Словарь меток.
+        """
         metric = self._get_or_create_metric(name, "histogram", labels)
         if labels:
             metric.labels(**labels).observe(value)
@@ -79,6 +101,11 @@ class PrometheusMetricsProvider(MetricsProvider):
             metric.observe(value)
 
     def generate_latest(self) -> str:
+        """Экспортировать накопленные метрики в текстовом формате.
+
+        Returns:
+            Строка с отформатированными метриками.
+        """
         import prometheus_client
         return prometheus_client.generate_latest().decode("utf-8")
 
