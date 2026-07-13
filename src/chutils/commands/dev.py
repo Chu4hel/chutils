@@ -645,7 +645,11 @@ class DevCommand(BaseCommand):
             "#!/bin/sh\n"
             "# chutils pre-commit hook\n"
             "# === CHUTILS HOOK START ===\n"
-            "chutils dev ai-lint\n"
+            "if command -v uv >/dev/null 2>&1; then\n"
+            "    uv run chutils dev ai-lint\n"
+            "else\n"
+            "    chutils dev ai-lint\n"
+            "fi\n"
             "# === CHUTILS HOOK END ===\n"
         )
 
@@ -672,7 +676,11 @@ class DevCommand(BaseCommand):
                         f"{separator}"
                         "# === CHUTILS HOOK START ===\n"
                         "# chutils pre-commit hook\n"
-                        "chutils dev ai-lint\n"
+                        "if command -v uv >/dev/null 2>&1; then\n"
+                        "    uv run chutils dev ai-lint\n"
+                        "else\n"
+                        "    chutils dev ai-lint\n"
+                        "fi\n"
                         "# === CHUTILS HOOK END ===\n"
                     )
                     with open(hook_path, "a", encoding="utf-8", newline="\n") as f:
