@@ -38,11 +38,20 @@ class ConfigChangeHandler:
     Обработчик событий изменения файлов конфигурации для watchdog.
     """
 
-    def __init__(self, watched_files: list[str]):
+    def __init__(self, watched_files: list[str]) -> None:
+        """Инициализирует обработчик изменений конфигурации.
+
+        Args:
+            watched_files: Список абсолютных путей к отслеживаемым файлам.
+        """
         self.watched_files = [str(Path(f).absolute()) for f in watched_files]
 
     def dispatch(self, event: FileSystemEvent) -> None:
-        """Метод вызывается при любом событии в директории."""
+        """Метод вызывается при любом событии в директории.
+
+        Args:
+            event: Событие файловой системы.
+        """
         if event.is_directory:
             return
 

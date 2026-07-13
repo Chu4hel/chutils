@@ -164,6 +164,12 @@ def load_pyproject_toml(path: str) -> JSONDict:
     Использует tomllib (Python >= 3.11) или tomli, если доступны.
     В качестве fallback использует простой строковый парсер для избежания
     зависимостей на старых версиях Python.
+
+    Args:
+        path: Путь к файлу pyproject.toml.
+
+    Returns:
+        Словарь с настройками линтера.
     """
     try:
         # Пробуем стандартный tomllib (Python 3.11+)

@@ -88,6 +88,14 @@ class YamlConfigProvider(ConfigProvider):
     """
 
     def load(self, path: str) -> JSONDict:
+        """Загружает конфигурацию из YAML файла.
+
+        Args:
+            path: Путь к YAML файлу.
+
+        Returns:
+            Словарь с данными конфигурации.
+        """
         try:
             with open(path, encoding='utf-8') as f:
                 data = yaml.safe_load(f)
@@ -108,6 +116,17 @@ class YamlConfigProvider(ConfigProvider):
             raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
+        """Сохраняет значение в YAML файл.
+
+        Args:
+            path: Путь к YAML файлу.
+            section: Имя секции.
+            key: Имя ключа.
+            value: Записываемое значение.
+
+        Returns:
+            True в случае успеха, иначе False.
+        """
         try:
             # Читаем текущие данные
             data: JSONDict = self.load(path) if Path(path).exists() else {}
@@ -132,6 +151,14 @@ class JsonConfigProvider(ConfigProvider):
     """
 
     def load(self, path: str) -> JSONDict:
+        """Загружает конфигурацию из JSON файла.
+
+        Args:
+            path: Путь к JSON файлу.
+
+        Returns:
+            Словарь с данными конфигурации.
+        """
         try:
             with open(path, encoding='utf-8') as f:
                 data = json.load(f)
@@ -153,6 +180,17 @@ class JsonConfigProvider(ConfigProvider):
             raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
+        """Сохраняет значение в JSON файл.
+
+        Args:
+            path: Путь к JSON файлу.
+            section: Имя секции.
+            key: Имя ключа.
+            value: Записываемое значение.
+
+        Returns:
+            True в случае успеха, иначе False.
+        """
         try:
             data: JSONDict = {}
             if Path(path).exists():
@@ -184,9 +222,22 @@ class IniConfigProvider(ConfigProvider):
     """
 
     def __init__(self, nest_func: Callable[[dict[str, dict[str, Any]]], JSONDict]) -> None:
-        self._nest_func = nest_func
+            """Инициализирует IniConfigProvider.
+
+            Args:
+                nest_func: Функция для преобразования плоской структуры INI во вложенный словарь.
+            """
+            self._nest_func = nest_func
 
     def load(self, path: str) -> JSONDict:
+        """Загружает конфигурацию из INI файла.
+
+        Args:
+            path: Путь к INI файлу.
+
+        Returns:
+            Словарь с данными конфигурации.
+        """
         import configparser
         try:
             with open(path, encoding='utf-8') as f:
@@ -212,6 +263,17 @@ class IniConfigProvider(ConfigProvider):
             raise ConfigLoadError(f"Ошибка чтения файла {path}: {e}", path=path)
 
     def save(self, path: str, section: str, key: str, value: Any) -> bool:
+        """Сохраняет значение в INI файл.
+
+        Args:
+            path: Путь к INI файлу.
+            section: Имя секции.
+            key: Имя ключа.
+            value: Записываемое значение.
+
+        Returns:
+            True в случае успеха, иначе False.
+        """
         if not Path(path).exists():
             logger.error("Невозможно сохранить значение: файл конфигурации %s не найден.", path)
             return False
@@ -311,6 +373,15 @@ class HttpConfigProvider:
             timeout: int = 10,
             nest_func: Callable[[dict[str, dict[str, Any]]], JSONDict] | None = None
     ) -> None:
+        """Инициализирует HttpConfigProvider.
+
+        Args:
+            url: URL-адрес для загрузки конфигурации.
+            username: Имя пользователя для Basic Auth.
+            password: Пароль для Basic Auth.
+            timeout: Таймаут запроса в секундах.
+            nest_func: Функция для обработки плоской структуры данных.
+        """
         self.url = url
         self.username = username
         self.password = password
@@ -324,6 +395,9 @@ class HttpConfigProvider:
         """
         Загружает конфигурацию из удаленного источника и парсит ее.
         В случае ошибки возвращает закешированную версию (Fallback).
+
+        Returns:
+            Словарь с данными конфигурации.
         """
         try:
             content, content_type = self.fetch()
@@ -487,8 +561,13 @@ class HttpConfigProvider:
 def get_providers(
         nest_func: Callable[[dict[str, dict[str, Any]]], JSONDict]
 ) -> dict[str, ConfigProvider]:
-    """
-    Создает и возвращает реестр провайдеров.
+    """Создает и возвращает реестр провайдеров.
+
+    Args:
+        nest_func: Функция для обработки структуры INI-провайдера.
+
+    Returns:
+        Словарь, сопоставляющий расширение файла с объектом ConfigProvider.
     """
     yaml_provider = YamlConfigProvider()
     return {

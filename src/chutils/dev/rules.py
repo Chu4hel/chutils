@@ -106,6 +106,13 @@ class DocstringVisitor(ast.NodeVisitor):
         self._check_func(node)
 
     def _check_func(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
+        # Игнорируем перегрузки @overload
+        for dec in node.decorator_list:
+            if isinstance(dec, ast.Name) and dec.id == "overload":
+                return
+            if isinstance(dec, ast.Attribute) and dec.attr == "overload":
+                return
+
         is_public = not node.name.startswith("_") or node.name in ("__init__", "__call__")
         if not is_public:
             return
