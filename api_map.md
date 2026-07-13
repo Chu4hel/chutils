@@ -52,7 +52,7 @@
 | `SafeTimedRotatingFileHandler` | class | `(self, filename, when='h', interval=1, backupCount=0, encoding=None, delay=False, utc=False, atTime=None, errors=None)` | Надежный обработчик ротации логов, адаптированный для Windows. |
 | `Scaffolder` | class | `(self, module_name: 'str', output_dir: 'str | None' = None, force: 'bool' = False) -> 'None'` | Генератор слоев Чистой Архитектуры для нового модуля. |
 | `SecretError` | class | `(self, message: str, hint: str | None = None, **context: Any) -> None` | Общая ошибка менеджера секретов. |
-| `SecretManager` | class | `(self, service_name: str | None = None, prefix: str | None = None, auto_mask_logs: bool = True, providers: list[chutils.secret_manager.providers.SecretProvider] | None = None) -> None` | Универсальный менеджер для управления секретами через цепочку провайдеров. |
+| `SecretManager` | class | `(self, service_name: 'str | None' = None, prefix: 'str | None' = None, auto_mask_logs: 'bool' = True, providers: 'list[SecretProvider] | None' = None) -> 'None'` | Универсальный менеджер для управления секретами через цепочку провайдеров. |
 | `SecretMaskingFilter` | class | `(self, name='')` | Фильтр для автоматического маскирования секретов в сообщениях логов. |
 | `SecretNotFoundError` | class | `(self, message: str, hint: str | None = None, **context: Any) -> None` | Ошибка: секрет не найден. |
 | `SecretProviderError` | class | `(self, message: str, hint: str | None = None, **context: Any) -> None` | Ошибка конкретного провайдера секретов (например, сбой keyring). |
