@@ -384,6 +384,26 @@ from chutils import get_config_section
 db_cfg = get_config_section("Database", model=DbConfig)
 ```
 
+### Групповая валидация обязательных ключей
+
+Если вам нужно проверить наличие нескольких обязательных переменных конфигурации (например, при запуске сервиса) без
+использования тяжелых Pydantic моделей, используйте `validate_required_keys`. В случае отсутствия одного или нескольких
+ключей функция сгенерирует агрегированную ошибку `ConfigValidationGroupError`.
+
+```python
+from chutils.config import validate_required_keys
+from chutils.exceptions import ConfigValidationGroupError
+
+try:
+    validate_required_keys(
+        section="Secrets",
+        keys=["telegram_bot_token", "database_url", "api_key"]
+    )
+except ConfigValidationGroupError as e:
+    # Выведет структурированный список всех недостающих настроек за один проход
+    print(f"Ошибка инициализации сервиса: {e}")
+```
+
 ### Интеграция с IDE (VSCode, PyCharm) через JSON Schema
 
 Чтобы получить автодополнение и проверку типов прямо в YAML файле, вы можете сгенерировать JSON Schema для вашей
@@ -1193,6 +1213,20 @@ set_gauge("cpu_usage_percent", 45.2, {"node": "worker-1"})
 # 3. Записать значение в гистограмму (Histogram)
 observe("request_size_bytes", 1024.0, {"client": "ios"})
 ```
+
+### Автоматические метрики Circuit Breaker (Предохранителя)
+
+Декоратор `@circuit_breaker` автоматически экспортирует метрику состояния цепи типа Gauge под именем
+`circuit_breaker_state` с меткой `name` (имя декорируемой функции).
+
+Метрика состояния кодируется числовыми значениями:
+
+* `0.0` — `CLOSED` (цепь замкнута, всё работает нормально).
+* `1.0` — `OPEN` (цепь разомкнута из-за сбоев, вызовы заблокированы).
+* `2.0` — `HALF_OPEN` (период восстановления, пробные вызовы).
+
+Это позволяет визуализировать аварийные режимы и работоспособность интеграций в реальном времени (например, на дашборде
+Grafana).
 
 ### Автоматический замер времени (@timer)
 
