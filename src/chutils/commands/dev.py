@@ -236,6 +236,16 @@ class DevCommand(BaseCommand):
             action="store_true",
             help="Принудительно перезаписать существующий pre-commit хук.",
         )
+        hooks_parser.add_argument(
+            "--ruff",
+            action="store_true",
+            help="Добавить автоматическую проверку ruff check/format в pre-commit хук.",
+        )
+        hooks_parser.add_argument(
+            "--flake8",
+            action="store_true",
+            help="Добавить проверку стиля flake8 в pre-commit хук.",
+        )
         hooks_parser.set_defaults(handler=self.handle_install_hooks)
 
         # dev generate-few-shot
@@ -702,10 +712,36 @@ class DevCommand(BaseCommand):
         hooks_dir.mkdir(parents=True, exist_ok=True)
         hook_path = hooks_dir / "pre-commit"
 
+        # Подготовка вспомогательных вызовов ruff/flake8
+        extra_checks = ""
+        if getattr(args, "ruff", False):
+            extra_checks += (
+                "# Запуск ruff check & format\n"
+                "if [ -f uv.lock ] && command -v uv >/dev/null 2>&1; then\n"
+                "    uv run ruff check --fix && uv run ruff format\n"
+                "elif [ -f poetry.lock ] && command -v poetry >/dev/null 2>&1; then\n"
+                "    poetry run ruff check --fix && poetry run ruff format\n"
+                "elif command -v ruff >/dev/null 2>&1; then\n"
+                "    ruff check --fix && ruff format\n"
+                "fi\n\n"
+            )
+        if getattr(args, "flake8", False):
+            extra_checks += (
+                "# Запуск flake8\n"
+                "if [ -f uv.lock ] && command -v uv >/dev/null 2>&1; then\n"
+                "    uv run flake8 .\n"
+                "elif [ -f poetry.lock ] && command -v poetry >/dev/null 2>&1; then\n"
+                "    poetry run flake8 .\n"
+                "elif command -v flake8 >/dev/null 2>&1; then\n"
+                "    flake8 .\n"
+                "fi\n\n"
+            )
+
         hook_template = (
             "#!/bin/sh\n"
             "# chutils pre-commit hook\n"
             "# === CHUTILS HOOK START ===\n"
+            f"{extra_checks}"
             "# Автоматическое определение окружения и запуск ai-lint\n"
             "if [ -f uv.lock ] && command -v uv >/dev/null 2>&1; then\n"
             "    uv run chutils dev ai-lint\n"
@@ -752,6 +788,7 @@ class DevCommand(BaseCommand):
                         f"{separator}"
                         "# === CHUTILS HOOK START ===\n"
                         "# chutils pre-commit hook\n"
+                        f"{extra_checks}"
                         "# Автоматическое определение окружения и запуск ai-lint\n"
                         "if [ -f uv.lock ] && command -v uv >/dev/null 2>&1; then\n"
                         "    uv run chutils dev ai-lint\n"
