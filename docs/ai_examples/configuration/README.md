@@ -35,9 +35,9 @@
    ```
    Создана строгая декларативная схема конфигурации. Pydantic гарантирует, что если порт передан в неверном формате или
    выходит за пределы `[1-65535]`, приложение упадет с понятной ошибкой на этапе инициализации, а не в процессе работы.
-2. **Централизованное чтение через `get_config_value`:**
+2. **Централизованное чтение через `get_config_section`:**
    ```python
-   db_config = get_config_value("Database", model=DatabaseConfig)
+   db_config = get_config_section("Database", model=DatabaseConfig)
    ```
    Конфигурация читается один раз. При этом автоматически поддерживается многоуровневое слияние:
     * Файл `config.yml`
@@ -46,7 +46,7 @@
 3. **Безопасное извлечение секретов:**
    ```python
    secret_mgr = SecretManager(service_name="my_app")
-   db_password = secret_mgr.get("db_password")
+   db_password = secret_mgr.get_secret("db_password")
    ```
    Секреты извлекаются через специализированный `SecretManager`. На локальной машине разработчика он использует
    безопасный системный менеджер паролей (`keyring`), а в контейнерах Docker или CI/CD плавно переключается на
@@ -61,5 +61,5 @@
 
 > [!IMPORTANT]
 > Никогда не используйте `os.getenv` или `os.environ` напрямую посреди бизнес-логики. Всегда объявляйте конфигурационные
-Pydantic-модели и загружайте их через `get_config_value(model=...)`. Секреты (пароли, API ключи) извлекайте
-исключительно с помощью `SecretManager`.
+> Pydantic-модели и загружайте их через `get_config_section(model=...)`. Секреты (пароли, API ключи) извлекайте
+> исключительно с помощью `SecretManager`.

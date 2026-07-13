@@ -1,6 +1,7 @@
 import asyncio
 import functools
-from typing import Callable, Optional, Any
+from typing import Any
+from collections.abc import Callable
 
 from .in_memory import InMemoryCacheBackend
 from .utils import generate_cache_key, LockManager, AsyncLockManager
@@ -15,7 +16,7 @@ def cache_with_ttl(
         ttl: int = 60,
         key_prefix: str = "",
         sliding: bool = True,
-        backend: Optional[InMemoryCacheBackend[Any]] = None
+        backend: InMemoryCacheBackend[Any] | None = None
 ) -> Callable[..., Any]:
     """
     Декоратор для кэширования результатов выполнения функций с поддержкой TTL.

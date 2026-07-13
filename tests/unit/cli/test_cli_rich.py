@@ -44,7 +44,7 @@ def test_get_console_returns_rich_when_available(monkeypatch, mocker):
     mock_console_instance = mocker.MagicMock()
     mock_console_class.return_value = mock_console_instance
 
-    from chutils import env, cli_utils
+    from chutils import env
     monkeypatch.setattr(env, "RICH_AVAILABLE", True)
     monkeypatch.delenv("NO_COLOR", raising=False)
     monkeypatch.delenv("CH_NO_COLOR", raising=False)

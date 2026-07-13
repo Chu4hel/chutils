@@ -6,7 +6,7 @@
 """
 
 import os
-from typing import List, cast
+from typing import cast
 
 from pydantic import BaseModel, Field, ValidationError
 
@@ -24,7 +24,7 @@ class AppConfig(BaseModel):
     """Основная модель конфигурации."""
     app_name: str = Field(alias="name")
     version: str
-    allowed_hosts: List[str]
+    allowed_hosts: list[str]
     db: DbConfig = Field(alias="Database")
 
 

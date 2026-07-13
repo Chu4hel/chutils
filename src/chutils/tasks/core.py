@@ -9,7 +9,8 @@ import inspect
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Callable, Any, Optional, List, Dict
+from typing import Any
+from collections.abc import Callable
 
 from chutils.lifecycle import register_cleanup
 
@@ -40,7 +41,7 @@ class PeriodicTask:
 
 
 # Глобальный реестр зарегистрированных задач
-_tasks_registry: List[PeriodicTask] = []
+_tasks_registry: list[PeriodicTask] = []
 
 
 def periodic_task(
@@ -83,7 +84,7 @@ def periodic_task(
     return decorator
 
 
-def get_registered_tasks() -> List[PeriodicTask]:
+def get_registered_tasks() -> list[PeriodicTask]:
     """Возвращает список зарегистрированных задач."""
     return _tasks_registry
 
@@ -107,10 +108,10 @@ class TaskScheduler:
     """Асинхронный планировщик фоновых задач."""
 
     def __init__(self) -> None:
-        self._running_tasks: Dict[str, asyncio.Task[Any]] = {}
-        self._locks: Dict[str, asyncio.Lock] = {}
+        self._running_tasks: dict[str, asyncio.Task[Any]] = {}
+        self._locks: dict[str, asyncio.Lock] = {}
         self._shutdown_event = asyncio.Event()
-        self._tasks: List[PeriodicTask] = []
+        self._tasks: list[PeriodicTask] = []
 
     async def _run_task(self, task: PeriodicTask) -> None:
         """Внутренний цикл выполнения отдельной периодической задачи."""
@@ -212,7 +213,7 @@ class TaskScheduler:
 
 
 # Глобальный синглтон планировщика
-_scheduler: Optional[TaskScheduler] = None
+_scheduler: TaskScheduler | None = None
 
 
 def start_scheduler() -> None:

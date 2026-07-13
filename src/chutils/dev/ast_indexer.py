@@ -7,7 +7,6 @@ from __future__ import annotations
 import ast
 import re
 from pathlib import Path
-from typing import List, Union, Dict, Set, Optional
 
 from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge, ProjectExample
 
@@ -17,7 +16,7 @@ class GitIgnoreMatcher:
 
     def __init__(self, root_path: Path) -> None:
         self.root_path = root_path
-        self.patterns: List[tuple[re.Pattern[str], bool]] = []
+        self.patterns: list[tuple[re.Pattern[str], bool]] = []
         self._load_file_rules(self.root_path / ".gitignore")
         self._load_file_rules(self.root_path / ".chutilsignore")
 
@@ -43,7 +42,7 @@ class GitIgnoreMatcher:
         except Exception:
             pass
 
-    def _rule_to_regex(self, rule: str) -> Optional[re.Pattern[str]]:
+    def _rule_to_regex(self, rule: str) -> re.Pattern[str] | None:
         rule = rule.replace("\\", "/")
         if not rule:
             return None
@@ -120,14 +119,14 @@ class Indexer:
         else:
             self.project_root = self.root_path
 
-        self._graph_map: Dict[str, Dict[str, int]] = {}  # {source: {target: weight}}
-        self._current_imports: Dict[str, str] = {}
+        self._graph_map: dict[str, dict[str, int]] = {}  # {source: {target: weight}}
+        self._current_imports: dict[str, str] = {}
         """Карта импортов текущего модуля {asname: full_path}"""
         self._public_symbols = self._discover_public_api()
         self.gitignore = GitIgnoreMatcher(self.project_root)
 
     @property
-    def _graph(self) -> List[GraphEdge]:
+    def _graph(self) -> list[GraphEdge]:
         """Преобразует внутреннюю карту в список GraphEdge."""
         edges = []
         for source, targets in self._graph_map.items():
@@ -176,7 +175,7 @@ class Indexer:
 
         self._graph_map[source][target_path] = self._graph_map[source].get(target_path, 0) + 1
 
-    def _discover_public_api(self) -> Set[str]:
+    def _discover_public_api(self) -> set[str]:
         """Парсит основной __init__.py для поиска публичных экспортов."""
         init_file = self.root_path / "__init__.py"
         if not init_file.exists():
@@ -185,7 +184,7 @@ class Indexer:
         try:
             tree = ast.parse(init_file.read_text(encoding="utf-8"))
             # Ищем _LAZY_MAPPING или __all__
-            public: Set[str] = set()
+            public: set[str] = set()
             for node in tree.body:
                 if isinstance(node, ast.Assign):
                     for target in node.targets:
@@ -204,9 +203,9 @@ class Indexer:
         except Exception:
             return set()
 
-    def _collect_examples(self) -> List[ProjectExample]:
+    def _collect_examples(self) -> list[ProjectExample]:
         """Служит для сбора few-shot примеров из папки docs/ai_examples/."""
-        examples: List[ProjectExample] = []
+        examples: list[ProjectExample] = []
 
         examples_dir = None
         if (self.project_root / "docs" / "ai_examples").exists():
@@ -280,7 +279,7 @@ class Indexer:
 
         # Получаем docstring и AST для модуля/пакета
         docstring = ""
-        tree: Optional[ast.Module] = None
+        tree: ast.Module | None = None
         init_file = current_path / "__init__.py" if is_pkg else (None if is_dir else current_path)
         if init_file and init_file.exists():
             try:
@@ -359,9 +358,9 @@ class Indexer:
 
         return node
 
-    def _extract_symbols(self, tree: ast.Module) -> List[Symbol]:
+    def _extract_symbols(self, tree: ast.Module) -> list[Symbol]:
         """Извлекает символы из дерева AST."""
-        symbols: List[Symbol] = []
+        symbols: list[Symbol] = []
         for top_level in tree.body:
             if isinstance(top_level, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 symbols.append(self._build_symbol(top_level, "function"))
@@ -384,7 +383,7 @@ class Indexer:
         """Разрешает имя базового класса в полный путь импорта."""
         return self._current_imports.get(base_name, base_name)
 
-    def _build_symbol(self, node: Union[ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef], sym_type: str) -> Symbol:
+    def _build_symbol(self, node: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef, sym_type: str) -> Symbol:
         """Создает объект Symbol из узла AST."""
         docstring = ast.get_docstring(node) or ""
         summary = docstring.split('\n')[0] if docstring else ""
@@ -453,7 +452,7 @@ class Indexer:
                     base_path = self._resolve_base_class(base.id)
                 elif isinstance(base, ast.Attribute):
                     # Случай типа pydantic.BaseModel
-                    parts: List[str] = []
+                    parts: list[str] = []
                     curr: ast.AST = base
                     while isinstance(curr, ast.Attribute):
                         parts.append(curr.attr)

@@ -1,12 +1,13 @@
 import asyncio
 import functools
 import time
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, TypeVar
+from collections.abc import Callable
 
 F = TypeVar("F", bound=Callable[..., Any])
 
 
-def _observe_lazy(name: str, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+def _observe_lazy(name: str, value: float, labels: dict[str, str] | None = None) -> None:
     # Ленивый импорт во избежание циклической зависимости при инициализации пакета
     from . import observe
     observe(name, value, labels)
@@ -26,10 +27,10 @@ class TimerContext:
             ...
     """
 
-    def __init__(self, name: str, labels: Optional[Dict[str, str]] = None) -> None:
+    def __init__(self, name: str, labels: dict[str, str] | None = None) -> None:
         self.name = name
         self.labels = labels
-        self.start_time: Optional[float] = None
+        self.start_time: float | None = None
 
     def __enter__(self) -> "TimerContext":
         self.start_time = time.perf_counter()
@@ -65,7 +66,7 @@ class TimerContext:
             return sync_wrapper  # type: ignore[return-value]
 
 
-def timer(name: str, labels: Optional[Dict[str, str]] = None) -> TimerContext:
+def timer(name: str, labels: dict[str, str] | None = None) -> TimerContext:
     """
     Фабричная функция для создания объекта TimerContext.
     """

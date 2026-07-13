@@ -3,7 +3,7 @@
 """
 
 import json
-from typing import Dict, List, Any
+from typing import Any
 
 from chutils.cli_utils import get_console
 from chutils.env import is_rich_enabled
@@ -28,7 +28,7 @@ def mask_value(key: str, value: Any, show_secrets: bool = False) -> str:
     return str(value)
 
 
-def format_trace(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], format_type: str = 'tree',
+def format_trace(trace_data: dict[str, dict[str, list[dict[str, Any]]]], format_type: str = 'tree',
                  show_secrets: bool = False) -> str:
     """
     Форматирует данные трассировки в выбранный формат.
@@ -41,11 +41,11 @@ def format_trace(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], format_
         return _format_tree(trace_data, show_secrets)
 
 
-def _format_json(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_secrets: bool) -> str:
+def _format_json(trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_secrets: bool) -> str:
     """Форматирует трассировку в JSON."""
     if not show_secrets:
         # Глубокое копирование и маскирование
-        masked_data: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
+        masked_data: dict[str, dict[str, list[dict[str, Any]]]] = {}
         for section, keys in trace_data.items():
             masked_data[section] = {}
             for key, history in keys.items():
@@ -58,7 +58,7 @@ def _format_json(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_se
     return json.dumps(trace_data, indent=4, ensure_ascii=False)
 
 
-def _format_table(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_secrets: bool) -> str:
+def _format_table(trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_secrets: bool) -> str:
     """Форматирует трассировку в таблицу (Rich или текст)."""
     use_rich = is_rich_enabled()
     console = get_console()
@@ -103,7 +103,7 @@ def _format_table(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_s
         return "\n".join(lines)
 
 
-def _format_tree(trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]], show_secrets: bool) -> str:
+def _format_tree(trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_secrets: bool) -> str:
     """Форматирует трассировку в дерево (Rich или текст)."""
     use_rich = is_rich_enabled()
     console = get_console()

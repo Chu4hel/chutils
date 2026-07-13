@@ -6,7 +6,6 @@ import importlib
 import json
 import typing as t
 from pathlib import Path
-from typing import Optional, Type, Union
 
 from ..env import PYDANTIC_AVAILABLE
 from ..exceptions import OptionalDependencyError, ConfigParseError
@@ -32,7 +31,7 @@ def _check_pydantic() -> None:
         )
 
 
-def import_model_class(model_path: str) -> Type[BaseModel]:
+def import_model_class(model_path: str) -> type[BaseModel]:
     """
     Импортирует класс Pydantic модели по строковому пути.
 
@@ -81,8 +80,8 @@ def import_model_class(model_path: str) -> Type[BaseModel]:
 
 
 def export_schema(
-        model: Union[Type[BaseModel], str],
-        output_path: Optional[Union[str, Path]] = None,
+        model: type[BaseModel] | str,
+        output_path: str | Path | None = None,
         indent: int = 4
 ) -> str:
     """

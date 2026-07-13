@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Optional
 
 from chutils.typing import JSONDict
 from .core import get_config
@@ -28,7 +27,7 @@ def parse_chutils_ignore(base_dir: str) -> list[str]:
 
     patterns: list[str] = []
     try:
-        with open(ignore_path, "r", encoding="utf-8") as f:
+        with open(ignore_path, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if line and not line.startswith("#"):
@@ -63,7 +62,7 @@ def _get_env_config() -> JSONDict:
     return env_config
 
 
-def load_ai_lint_config(cli_args: Optional[JSONDict] = None) -> JSONDict:
+def load_ai_lint_config(cli_args: JSONDict | None = None) -> JSONDict:
     """
     Загружает и объединяет конфигурацию для ai-lint из всех источников.
 

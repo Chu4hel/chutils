@@ -6,7 +6,7 @@ from typing import List, Type
 from .base import BaseCommand
 
 
-def get_commands() -> List[Type[BaseCommand]]:
+def get_commands() -> list[type[BaseCommand]]:
     """
     Возвращает список всех классов команд.
     """

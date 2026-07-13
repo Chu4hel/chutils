@@ -8,7 +8,7 @@ import logging
 import os
 import re
 import threading
-from typing import Optional, Set, Any
+from typing import Any
 
 # --- Предустановленные паттерны PII ---
 
@@ -21,12 +21,12 @@ PREDEFINED_PATTERNS = {
 
 # --- Глобальное состояние для маскирования секретов ---
 
-_GLOBAL_MASKS: Set[str] = set()
+_GLOBAL_MASKS: set[str] = set()
 "Глобальный список строк (секретов), которые должны быть заменены на [MASKED] в логах."
-_CUSTOM_PATTERNS: Set[str] = set()
+_CUSTOM_PATTERNS: set[str] = set()
 "Глобальный список регулярных выражений для маскирования."
 
-_MASK_RE: Optional[re.Pattern[str]] = None
+_MASK_RE: re.Pattern[str] | None = None
 "Скомпилированное регулярное выражение для поиска всех секретов."
 _masks_lock = threading.Lock()
 "Блокировка для обеспечения потокобезопасности при обновлении масок."

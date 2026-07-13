@@ -56,7 +56,10 @@ def test_cli_dev_generate_tree_no_pydantic(cli_runner, mocker):
 
     result = cli_runner.invoke(["dev", "generate-context", "--tree"])
     assert result.exit_code == 1
-    assert "Pydantic is required" in result.stderr or "Pydantic is required" in result.stdout
+    assert (
+            "Pydantic is required" in result.stderr
+            or "Pydantic is required" in result.stdout
+    )
 
 
 def test_cli_dev_generate_tree_error(cli_runner, mocker):
@@ -66,7 +69,10 @@ def test_cli_dev_generate_tree_error(cli_runner, mocker):
 
     result = cli_runner.invoke(["dev", "generate-context", "--tree"])
     assert result.exit_code == 1
-    assert "Ошибка при генерации индекса" in result.stderr or "Ошибка при генерации индекса" in result.stdout
+    assert (
+            "Ошибка при генерации индекса" in result.stderr
+            or "Ошибка при генерации индекса" in result.stdout
+    )
 
 
 def test_cli_dev_ai_lint_success(cli_runner, mocker):
@@ -80,12 +86,13 @@ def test_cli_dev_ai_lint_success(cli_runner, mocker):
 def test_cli_dev_ai_lint_failure(cli_runner, mocker):
     """Проверяет провал проверки ai-lint (наличие ошибок) через CLI."""
     from chutils.dev.ai_lint import LintResult
+
     mock_error = LintResult(
         rule_name="TestRule",
         message="Critical error detected",
         severity="error",
         file_path="app.py",
-        line_number=5
+        line_number=5,
     )
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_error])
     result = cli_runner.invoke(["dev", "ai-lint"])
@@ -96,11 +103,12 @@ def test_cli_dev_ai_lint_failure(cli_runner, mocker):
 def test_cli_dev_ai_lint_soft_mode(cli_runner, mocker):
     """Проверяет --soft-mode флаг, который не должен возвращать ошибку при провале."""
     from chutils.dev.ai_lint import LintResult
+
     mock_error = LintResult(
         rule_name="TestRule",
         message="Critical error detected",
         severity="error",
-        file_path="app.py"
+        file_path="app.py",
     )
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_error])
     result = cli_runner.invoke(["dev", "ai-lint", "--soft-mode"])
@@ -111,11 +119,12 @@ def test_cli_dev_ai_lint_soft_mode(cli_runner, mocker):
 def test_cli_dev_ai_lint_strict_mode(cli_runner, mocker):
     """Проверяет --strict флаг, который падает при наличии только варнингов."""
     from chutils.dev.ai_lint import LintResult
+
     mock_warn = LintResult(
         rule_name="TestRule",
         message="Warning detected",
         severity="warn",
-        file_path="app.py"
+        file_path="app.py",
     )
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_warn])
 
@@ -134,11 +143,14 @@ def test_cli_dev_generate_context_project(cli_runner, config_fs):
     fs, project_root = config_fs
     project_dir = "/home/user/my_project"
     fs.create_dir(f"{project_dir}/src")
-    fs.create_file(f"{project_dir}/src/app.py", contents="""
+    fs.create_file(
+        f"{project_dir}/src/app.py",
+        contents="""
 def my_cool_function(x):
     \"\"\"Документация функции.\"\"\"
     return x
-""")
+""",
+    )
 
     result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir])
     assert result.exit_code == 0
@@ -152,8 +164,13 @@ def test_cli_dev_generate_context_project_ignore(cli_runner, config_fs):
     project_dir = "/home/user/my_project"
     fs.create_dir(f"{project_dir}/src")
     fs.create_file(f"{project_dir}/src/app.py", contents="def my_func(): pass")
-    fs.create_file(f"{project_dir}/src/ignored_file.py", contents="def ignored_func(): pass")
-    fs.create_file(f"{project_dir}/src/chutils_ignored.py", contents="def chutils_ignored_func(): pass")
+    fs.create_file(
+        f"{project_dir}/src/ignored_file.py", contents="def ignored_func(): pass"
+    )
+    fs.create_file(
+        f"{project_dir}/src/chutils_ignored.py",
+        contents="def chutils_ignored_func(): pass",
+    )
 
     fs.create_file(f"{project_dir}/.gitignore", contents="ignored_file.py\n")
     fs.create_file(f"{project_dir}/.chutilsignore", contents="chutils_ignored.py\n")
@@ -163,3 +180,128 @@ def test_cli_dev_generate_context_project_ignore(cli_runner, config_fs):
     assert "src.app.my_func" in result.stdout
     assert "ignored_file" not in result.stdout
     assert "chutils_ignored" not in result.stdout
+
+
+def test_cli_dev_chat_context_stdout(cli_runner, mocker):
+    """Проверяет запуск dev chat-context с выводом в stdout."""
+    mocker.patch(
+        "chutils.dev.chat_context.collect_context_slice",
+        return_value="# Mocked Context Slice Output",
+    )
+
+    result = cli_runner.invoke(
+        [
+            "dev",
+            "chat-context",
+            "-m",
+            "logger,config",
+            "-t",
+            "test task",
+            "-l",
+            "internal",
+        ]
+    )
+    assert result.exit_code == 0
+    assert "# Mocked Context Slice Output" in result.stdout
+
+
+def test_cli_dev_chat_context_file(cli_runner, mocker, config_fs):
+    """Проверяет запуск dev chat-context с записью в файл."""
+    fs, project_root = config_fs
+    mocker.patch(
+        "chutils.dev.chat_context.collect_context_slice",
+        return_value="# Mocked Context Slice Output",
+    )
+
+    result = cli_runner.invoke(
+        ["dev", "chat-context", "-m", "logger", "-o", "my_context.md"]
+    )
+    assert result.exit_code == 0
+    assert "Контекстный срез успешно сохранен в: my_context.md" in result.stdout
+    assert fs.exists("my_context.md")
+    from pathlib import Path
+    assert Path("my_context.md").read_text(encoding="utf-8") == "# Mocked Context Slice Output"
+
+
+def test_cli_dev_chat_context_interactive(cli_runner, mocker):
+    """Проверяет интерактивный режим dev chat-context."""
+    mocker.patch(
+        "chutils.dev.chat_context.run_interactive_menu",
+        return_value=["logger"],
+    )
+    mocker.patch(
+        "chutils.dev.chat_context.collect_context_slice",
+        return_value="# Interactive Context Output",
+    )
+
+    result = cli_runner.invoke(["dev", "chat-context"])
+    assert result.exit_code == 0
+    assert "# Interactive Context Output" in result.stdout
+
+
+def test_cli_dev_scaffold_success(cli_runner, config_fs):
+    """Проверяет успешное создание структуры слоев Чистой Архитектуры."""
+    fs, project_root = config_fs
+    result = cli_runner.invoke(["dev", "scaffold", "new_test_module", "-o", f"{project_root}/new_test_module"])
+    assert result.exit_code == 0
+    assert "успешно инициализирован" in result.stdout or "успешно инициализирован" in result.stderr
+
+    # Проверяем файлы в мокнутой ФС
+    assert fs.exists(f"{project_root}/new_test_module/__init__.py")
+    assert fs.exists(f"{project_root}/new_test_module/container.py")
+    assert fs.exists(f"{project_root}/new_test_module/domain/entities.py")
+    assert fs.exists(f"{project_root}/new_test_module/application/use_cases.py")
+    assert fs.exists(f"{project_root}/new_test_module/infrastructure/repositories.py")
+    assert fs.exists(f"{project_root}/new_test_module/presentation/cli.py")
+
+
+def test_cli_dev_scaffold_invalid_name(cli_runner):
+    """Проверяет ошибку при попытке использовать невалидное имя модуля."""
+    result = cli_runner.invoke(["dev", "scaffold", "invalid-name"])
+    assert result.exit_code == 1
+    assert "Некорректное имя модуля" in result.stdout or "Некорректное имя модуля" in result.stderr
+
+
+def test_cli_dev_scaffold_already_exists_error(cli_runner, config_fs):
+    """Проверяет возникновение ошибки, если каталог уже существует и не пуст."""
+    fs, project_root = config_fs
+    module_path = f"{project_root}/existing_module"
+    fs.create_dir(module_path)
+    fs.create_file(f"{module_path}/dummy.txt", contents="content")
+
+    result = cli_runner.invoke(["dev", "scaffold", "existing_module", "-o", module_path])
+    assert result.exit_code == 1
+    assert "уже существует и не пуста" in result.stdout or "уже существует и не пуста" in result.stderr
+
+
+def test_cli_dev_scaffold_force_overwrite(cli_runner, config_fs):
+    """Проверяет успешность генерации при существующем каталоге, если передан флаг --force."""
+    fs, project_root = config_fs
+    module_path = f"{project_root}/existing_module"
+    fs.create_dir(module_path)
+    fs.create_file(f"{module_path}/dummy.txt", contents="content")
+
+    result = cli_runner.invoke(["dev", "scaffold", "existing_module", "-o", module_path, "-f"])
+    assert result.exit_code == 0
+    assert "успешно инициализирован" in result.stdout or "успешно инициализирован" in result.stderr
+    assert fs.exists(f"{module_path}/__init__.py")
+
+
+def test_cli_dev_mock_init_success(cli_runner, config_fs):
+    """Проверяет успешное создание шаблона роутов через CLI."""
+    fs, project_root = config_fs
+    mocks_path = f"{project_root}/mocks.yml"
+
+    result = cli_runner.invoke(["dev", "mock", "init", "-o", mocks_path])
+    assert result.exit_code == 0
+    assert "Шаблон конфигурации успешно сохранен" in result.stdout or "Шаблон конфигурации успешно сохранен" in result.stderr
+    assert fs.exists(mocks_path)
+
+
+def test_cli_dev_mock_run_mocked(cli_runner, mocker):
+    """Проверяет вызов запуска сервера через CLI с моком метода run."""
+    mock_run = mocker.patch("chutils.dev.mock_server.MockServerRunner.run")
+
+    result = cli_runner.invoke(["dev", "mock", "-p", "9999", "-r", "custom_mocks.yml"])
+    assert result.exit_code == 0
+    mock_run.assert_called_once()

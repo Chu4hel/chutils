@@ -6,7 +6,7 @@ import logging.handlers
 import os
 import queue
 from pathlib import Path
-from typing import Optional, Any, List, Union, TYPE_CHECKING, cast
+from typing import Any, TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from ..core import ChutilsLogger
@@ -42,7 +42,7 @@ class LoggerBuilder:
     def __init__(
             self,
             name: str,
-            config_section_name: Optional[str] = None,
+            config_section_name: str | None = None,
             **kwargs: Any
     ):
         """
@@ -70,23 +70,23 @@ class LoggerBuilder:
 
     def build(
             self,
-            log_level: Optional[LogLevel] = None,
+            log_level: LogLevel | None = None,
             force_reconfigure: bool = False,
-            use_async: Optional[bool] = None,
-            json_format: Optional[bool] = None,
-            log_file_name: Optional[str] = None,
-            rotation_type: Optional[str] = None,
-            max_bytes: Optional[int] = None,
-            compress: Optional[bool] = None,
-            backup_count: Optional[int] = None,
-            encoding: Optional[str] = None,
-            when: Optional[str] = None,
-            interval: Optional[int] = None,
-            utc: Optional[bool] = None,
+            use_async: bool | None = None,
+            json_format: bool | None = None,
+            log_file_name: str | None = None,
+            rotation_type: str | None = None,
+            max_bytes: int | None = None,
+            compress: bool | None = None,
+            backup_count: int | None = None,
+            encoding: str | None = None,
+            when: str | None = None,
+            interval: int | None = None,
+            utc: bool | None = None,
             at_time: Any = None,
-            custom_patterns: Optional[List[str]] = None,
-            use_predefined_patterns: Optional[List[Union[str, List[str]]]] = None,
-    ) -> 'ChutilsLogger':
+            custom_patterns: list[str] | None = None,
+            use_predefined_patterns: list[str | list[str]] | None = None,
+    ) -> ChutilsLogger:
         """
         Основной метод сборки и настройки логгера.
 
@@ -148,7 +148,7 @@ class LoggerBuilder:
 
         return cast('ChutilsLogger', self.logger)
 
-    def _get_level_int(self, log_level: Optional[LogLevel]) -> int:
+    def _get_level_int(self, log_level: LogLevel | None) -> int:
         """Определяет числовое значение уровня логирования."""
         if log_level is not None:
             level_str = log_level.value if isinstance(log_level, LogLevel) else str(log_level).upper()
@@ -188,7 +188,7 @@ class LoggerBuilder:
             handler.close()
             self.logger.removeHandler(handler)
 
-    def _is_async(self, explicit_use_async: Optional[bool]) -> bool:
+    def _is_async(self, explicit_use_async: bool | None) -> bool:
         """Определяет, должен ли логгер работать в асинхронном режиме."""
         if explicit_use_async is not None:
             return explicit_use_async
@@ -197,14 +197,14 @@ class LoggerBuilder:
             return val.lower() in ["true", "1", "yes", "y"]
         return bool(val)
 
-    def _create_handlers(self, level_int: int, json_format_arg: Optional[bool], **params: Any) -> List[logging.Handler]:
+    def _create_handlers(self, level_int: int, json_format_arg: bool | None, **params: Any) -> list[logging.Handler]:
         """Создает список обработчиков для логгера."""
         # Определение основного формата
         formatter = self._get_formatter(json_format_arg)
 
         # Консольный обработчик
         console_handler = self._create_console_handler(level_int, formatter, json_format_arg)
-        target_handlers: List[logging.Handler] = [console_handler]
+        target_handlers: list[logging.Handler] = [console_handler]
 
         # Файловый обработчик (если включен)
         file_handler = self._create_file_handler(formatter, **params)
@@ -235,7 +235,7 @@ class LoggerBuilder:
 
         return target_handlers
 
-    def _get_formatter(self, json_format: Optional[bool]) -> logging.Formatter:
+    def _get_formatter(self, json_format: bool | None) -> logging.Formatter:
         """Создает и возвращает подходящий форматер (текстовый или JSON)."""
         env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]
         log_format = '%(name)s - %(levelname)s %(context)s- %(message)s' if env_no_time else \
@@ -250,7 +250,7 @@ class LoggerBuilder:
 
         return logging.Formatter(log_format)
 
-    def _should_use_json(self, explicit_json: Optional[bool]) -> bool:
+    def _should_use_json(self, explicit_json: bool | None) -> bool:
         """Определяет, нужно ли использовать JSON формат."""
         env_json = os.getenv("CH_LOG_JSON", "").lower()
         if env_json:
@@ -261,7 +261,7 @@ class LoggerBuilder:
         return val.lower() in ["true", "1", "yes", "y"] if isinstance(val, str) else bool(val)
 
     def _create_console_handler(self, level_int: int, formatter: logging.Formatter,
-                                json_format: Optional[bool]) -> logging.Handler:
+                                json_format: bool | None) -> logging.Handler:
         """Создает обработчик для вывода в консоль (Rich или стандартный)."""
         env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]
 
@@ -286,7 +286,7 @@ class LoggerBuilder:
         handler.setLevel(level_int)
         return handler
 
-    def _create_file_handler(self, formatter: logging.Formatter, **params: Any) -> Optional[logging.Handler]:
+    def _create_file_handler(self, formatter: logging.Formatter, **params: Any) -> logging.Handler | None:
         """Создает и настраивает файловый обработчик."""
         from ..core import _file_handler_cache
         # Используем импорт внутри функции, чтобы избежать циклической зависимости и иметь доступ к переменным
@@ -372,7 +372,7 @@ class LoggerBuilder:
 
         return h_class(path, **h_args, **self.kwargs)
 
-    def _apply_async_logging(self, handlers: List[logging.Handler], **params: Any) -> None:
+    def _apply_async_logging(self, handlers: list[logging.Handler], **params: Any) -> None:
         """Настраивает асинхронную обработку логов через очередь."""
         max_size = int(params.get('async_max_queue_size') or self.settings.get('async_max_queue_size', 10000))
         log_queue: queue.Queue[logging.LogRecord] = queue.Queue(max_size)
@@ -383,8 +383,8 @@ class LoggerBuilder:
         listener.start()
         register_async_listener(listener)
 
-    def _apply_masking(self, custom_patterns_arg: Optional[List[str]],
-                       use_predefined_arg: Optional[List[Union[str, List[str]]]]) -> None:
+    def _apply_masking(self, custom_patterns_arg: list[str] | None,
+                       use_predefined_arg: list[str | list[str]] | None) -> None:
         """Настраивает правила маскирования данных (секреты, регулярки, PII)."""
         # 1. Литеральные строки из конфига (старое поведение)
         mask_patterns = self.settings.get('mask_patterns', [])

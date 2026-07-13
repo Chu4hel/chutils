@@ -9,7 +9,7 @@ from chutils.logger import setup_logger
 @pytest.mark.asyncio
 async def test_context_isolation():
     """Проверяет изоляцию контекста между асинхронными корутинами."""
-    logger = setup_logger(name="isolation_test", force_reconfigure=True)
+    setup_logger(name="isolation_test", force_reconfigure=True)
 
     async def task(name, value, delay):
         token = bind_context(**{name: value})
@@ -38,7 +38,7 @@ def test_bind_unbind_clear():
 
     assert get_context() == {}
 
-    t1 = bind_context(user="alice")
+    bind_context(user="alice")
     assert get_context() == {"user": "alice"}
 
     t2 = bind_context(request_id="123")

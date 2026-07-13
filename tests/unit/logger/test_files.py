@@ -82,8 +82,8 @@ def test_multiple_loggers_different_files(project_with_marker, mocker, caplog, r
 
     # Настраиваем два логгера с разными файлами
     with caplog.at_level(logging.DEBUG):
-        logger1 = setup_logger("logger1", log_file_name="logger1.log")
-        logger2 = setup_logger("logger2", log_file_name="logger2.log")
+        setup_logger("logger1", log_file_name="logger1.log")
+        setup_logger("logger2", log_file_name="logger2.log")
 
     # Проверяем, что хендлер был вызван дважды
     assert mock_file_handler.call_count == 2

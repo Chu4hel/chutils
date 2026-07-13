@@ -1,10 +1,27 @@
 import os
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
-import keyring
 from dotenv import load_dotenv
-from keyring.errors import NoKeyringError, PasswordDeleteError
+
+try:
+    import keyring
+    from keyring.errors import NoKeyringError, PasswordDeleteError
+
+    KEYRING_AVAILABLE = True
+except ImportError:
+    keyring = None  # type: ignore
+
+
+    class NoKeyringError(Exception):  # type: ignore
+        pass
+
+
+    class PasswordDeleteError(Exception):  # type: ignore
+        pass
+
+
+    KEYRING_AVAILABLE = False
 
 from .. import config
 
@@ -37,7 +54,7 @@ class SecretProvider(ABC):
     """
 
     @abstractmethod
-    def get(self, key: str, service_name: str) -> Optional[str]:
+    def get(self, key: str, service_name: str) -> str | None:
         """
         Получить значение секрета по ключу.
 
@@ -95,10 +112,16 @@ class KeyringProvider(SecretProvider):
         """
         self.disabled = disable_keyring
 
-    def get(self, key: str, service_name: str) -> Optional[str]:
+    def get(self, key: str, service_name: str) -> str | None:
         """
         Получает пароль из системного хранилища.
         """
+        if not KEYRING_AVAILABLE:
+            from ..exceptions import OptionalDependencyError
+            raise OptionalDependencyError(
+                "Missing optional dependency: please install chutils[keyring] to use KeyringProvider."
+            )
+
         if self.disabled:
             _get_logger().devdebug("Keyring отключен. Поиск секрета '%s' пропущен.", key)
             return None
@@ -119,6 +142,12 @@ class KeyringProvider(SecretProvider):
         """
         Сохраняет пароль в системное хранилище.
         """
+        if not KEYRING_AVAILABLE:
+            from ..exceptions import OptionalDependencyError
+            raise OptionalDependencyError(
+                "Missing optional dependency: please install chutils[keyring] to use KeyringProvider."
+            )
+
         if self.disabled:
             _get_logger().devdebug("Keyring отключен. Секрет '%s' не будет сохранен.", key)
             return False
@@ -138,6 +167,12 @@ class KeyringProvider(SecretProvider):
         """
         Удаляет пароль из системного хранилища.
         """
+        if not KEYRING_AVAILABLE:
+            from ..exceptions import OptionalDependencyError
+            raise OptionalDependencyError(
+                "Missing optional dependency: please install chutils[keyring] to use KeyringProvider."
+            )
+
         if self.disabled:
             return True
 
@@ -164,7 +199,7 @@ class DotEnvProvider(SecretProvider):
     Обеспечивает загрузку переменных окружения из файла при первом обращении.
     """
 
-    def __init__(self, dotenv_path: Optional[str] = None):
+    def __init__(self, dotenv_path: str | None = None):
         """
         Инициализирует провайдер.
 
@@ -173,7 +208,7 @@ class DotEnvProvider(SecretProvider):
         """
         self.dotenv_path = dotenv_path
         self._loaded = False
-        self._values: Dict[str, str] = {}
+        self._values: dict[str, str] = {}
 
     def _load_if_needed(self) -> None:
         """
@@ -196,7 +231,7 @@ class DotEnvProvider(SecretProvider):
         self._values = dict(os.environ)
         self._loaded = True
 
-    def get(self, key: str, service_name: str) -> Optional[str]:
+    def get(self, key: str, service_name: str) -> str | None:
         """
         Получает значение из загруженных .env данных.
         """
@@ -226,7 +261,7 @@ class EnvProvider(SecretProvider):
     Провайдер для работы с переменными окружения ОС (os.environ).
     """
 
-    def get(self, key: str, service_name: str) -> Optional[str]:
+    def get(self, key: str, service_name: str) -> str | None:
         """
         Получает значение из переменных окружения ОС.
         """

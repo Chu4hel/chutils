@@ -1,22 +1,22 @@
-# -*- coding: utf-8 -*-
 import logging
 from pathlib import Path
 
 import pytest
 
 from chutils import config
+from chutils.config import _cm, find_project_root
 
 
-def test_deprecation_warning_for_old_globals():
-    """Проверяет, что доступ к старым глобальным переменным вызывает DeprecationWarning."""
-    # Мы пока не реализовали __getattr__, поэтому этот тест провалится или будет работать
-    # напрямую с переменными. Но задача - создать тест.
-    with pytest.warns(DeprecationWarning, match="устарело"):
+
+def test_removed_globals_raise_attribute_error():
+    """Проверяет, что доступ к удаленным глобальным переменным вызывает AttributeError."""
+    with pytest.raises(AttributeError):
         _ = config._BASE_DIR
-    with pytest.warns(DeprecationWarning, match="устарело"):
+    with pytest.raises(AttributeError):
         _ = config._CONFIG_FILE_PATH
-    with pytest.warns(DeprecationWarning, match="устарело"):
+    with pytest.raises(AttributeError):
         _ = config._config_object
+
 
 
 # Контент для фейкового config.yml
@@ -51,7 +51,7 @@ def test_finds_yaml_first(config_fs):
     fs.create_file(project_root / "config.ini", contents=FAKE_INI_CONTENT)
 
     # ACT
-    config._initialize_paths()
+    _cm.initialize_paths(find_project_root)
 
     # ASSERT
     assert Path(config.get_config_file_path()).as_posix().endswith('/home/user/project/config.yml')
@@ -68,7 +68,7 @@ def test_falls_back_to_ini(config_fs):
     fs.create_file(project_root / "config.ini", contents=FAKE_INI_CONTENT)
 
     # ACT
-    config._initialize_paths()
+    _cm.initialize_paths(find_project_root)
 
     # ASSERT
     assert Path(config.get_config_file_path()).as_posix().endswith('/home/user/project/config.ini')
@@ -496,3 +496,7 @@ user = local_user
     assert cfg["Database"]["host"] == "localhost"
     assert cfg["Database"]["port"] == "6000"  # INI парсит все как строки
     assert cfg["Database"]["user"] == "local_user"
+
+
+
+

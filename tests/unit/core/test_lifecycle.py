@@ -1,7 +1,6 @@
 import pytest
 import asyncio
 import signal
-import time
 from unittest.mock import MagicMock
 from chutils.lifecycle import register_cleanup, setup_graceful_shutdown, _manager
 

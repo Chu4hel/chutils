@@ -5,7 +5,8 @@
 """
 
 import re
-from typing import List, Union
+
+from chutils.exceptions import OptionalDependencyError
 
 try:
     import rapidfuzz
@@ -17,7 +18,7 @@ except ImportError:  # pragma: no cover
 __all__ = ["natsort_key", "is_significant_difference"]
 
 
-def natsort_key(s: str) -> List[Union[int, str]]:
+def natsort_key(s: str) -> list[int | str]:
     """Возвращает ключ для естественной (natural) сортировки строки.
 
     Разбивает строку на сегменты из текста и чисел, преобразуя числовые сегменты в целые числа.
@@ -47,10 +48,10 @@ def is_significant_difference(text1: str, text2: str, threshold: float = 0.9) ->
         True, если разница значительна (схожесть < threshold), иначе False.
 
     Raises:
-        RuntimeError: Если библиотека rapidfuzz не установлена.
+        OptionalDependencyError: Если библиотека rapidfuzz не установлена.
     """
     if not _HAS_RAPIDFUZZ:
-        raise RuntimeError(
+        raise OptionalDependencyError(
             "Для использования нечеткого сравнения текстов необходимо установить chutils с поддержкой [text]:\n"
             "pip install chutils[text]"
         )

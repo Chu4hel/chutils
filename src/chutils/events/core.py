@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Ядро шины событий (In-Memory Event Bus)."""
 
 import asyncio
@@ -9,9 +8,8 @@ import typing as t
 from collections import defaultdict
 from collections.abc import Callable
 from enum import Enum
-from functools import wraps
 
-from chutils.exceptions import EventBusError, EventBusExceptionGroup
+from chutils.exceptions import EventBusExceptionGroup
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +21,8 @@ except ImportError:
     BaseModel = None  # type: ignore[assignment,misc]
 
 # Фоновый event loop для асинхронных задач, запускаемых из синхронного контекста
-_background_loop: t.Optional[asyncio.AbstractEventLoop] = None
-_background_thread: t.Optional[threading.Thread] = None
+_background_loop: asyncio.AbstractEventLoop | None = None
+_background_thread: threading.Thread | None = None
 _loop_lock = threading.Lock()
 
 def _start_background_loop() -> asyncio.AbstractEventLoop:
@@ -129,7 +127,7 @@ class EventBus:
             return args, kwargs
         return args, kwargs
 
-    def publish(self, event_name: str, *args: t.Any, error_strategy: t.Optional[ErrorStrategy] = None, **kwargs: t.Any) -> None:
+    def publish(self, event_name: str, *args: t.Any, error_strategy: ErrorStrategy | None = None, **kwargs: t.Any) -> None:
         """Синхронно публикует событие.
 
         Синхронные обработчики выполняются немедленно в текущем потоке.
@@ -174,7 +172,7 @@ class EventBus:
                 sync_errors
             )
 
-    async def publish_async(self, event_name: str, *args: t.Any, error_strategy: t.Optional[ErrorStrategy] = None, **kwargs: t.Any) -> None:
+    async def publish_async(self, event_name: str, *args: t.Any, error_strategy: ErrorStrategy | None = None, **kwargs: t.Any) -> None:
         """Асинхронно публикует событие.
 
         Дожидается выполнения всех подписчиков (как синхронных, так и асинхронных).
@@ -234,7 +232,7 @@ def subscribe(event_name: str) -> Callable[[Callable[..., t.Any]], Callable[...,
     """
     return _global_bus.subscribe(event_name)
 
-def publish(event_name: str, *args: t.Any, error_strategy: t.Optional[ErrorStrategy] = None, **kwargs: t.Any) -> None:
+def publish(event_name: str, *args: t.Any, error_strategy: ErrorStrategy | None = None, **kwargs: t.Any) -> None:
     """Синхронно публикует событие в глобальной шине.
 
     Args:
@@ -245,7 +243,7 @@ def publish(event_name: str, *args: t.Any, error_strategy: t.Optional[ErrorStrat
     """
     _global_bus.publish(event_name, *args, error_strategy=error_strategy, **kwargs)
 
-async def publish_async(event_name: str, *args: t.Any, error_strategy: t.Optional[ErrorStrategy] = None, **kwargs: t.Any) -> None:
+async def publish_async(event_name: str, *args: t.Any, error_strategy: ErrorStrategy | None = None, **kwargs: t.Any) -> None:
     """Асинхронно публикует событие в глобальной шине.
 
     Args:

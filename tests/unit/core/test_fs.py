@@ -138,7 +138,7 @@ def test_atomic_write_failure(tmp_path, monkeypatch):
 
     # Мокаем json.dump так, чтобы он кидал ошибку
     def mock_dump(*args, **kwargs):
-        raise IOError("Simulated write failure")
+        raise OSError("Simulated write failure")
 
     with pytest.raises(IOError, match="Simulated write failure"):
         monkeypatch.setattr("json.dump", mock_dump)

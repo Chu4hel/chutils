@@ -5,8 +5,9 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Optional, List, Dict, Callable
+from typing import Any
 
 from chutils.typing import JSONDict
 from .providers import get_providers
@@ -15,7 +16,7 @@ from .providers import get_providers
 logger = logging.getLogger(__name__)
 
 
-def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
+def find_project_root(start_path: Path, markers: list[str]) -> Path | None:
     """
     Ищет корень проекта, двигаясь вверх по дереву каталогов.
 
@@ -34,7 +35,9 @@ def find_project_root(start_path: Path, markers: List[str]) -> Optional[Path]:
     while current_path != current_path.parent:
         for marker in markers:
             if (current_path / marker).exists():
-                logger.debug("Найден маркер '%s' в директории: %s", marker, current_path)
+                logger.debug(
+                    "Найден маркер '%s' в директории: %s", marker, current_path
+                )
                 return current_path
         current_path = current_path.parent
     logger.debug("Корень проекта не найден.")
@@ -63,7 +66,7 @@ def deep_merge(dict1: JSONDict, dict2: JSONDict) -> JSONDict:
     return dict1
 
 
-def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> JSONDict:
+def _nest_ini_dict(flat_dict: dict[str, dict[str, Any]]) -> JSONDict:
     """
     Преобразует плоский словарь INI-секций во вложенную структуру.
 
@@ -78,7 +81,7 @@ def _nest_ini_dict(flat_dict: Dict[str, Dict[str, Any]]) -> JSONDict:
     nested_dict: JSONDict = {}
     for section_key, section_values in flat_dict.items():
         current_level = nested_dict
-        parts = section_key.split('.')
+        parts = section_key.split(".")
         for i, part in enumerate(parts):
             if i == len(parts) - 1:  # Последняя часть - это название секции
                 current_level[part] = section_values
@@ -94,6 +97,7 @@ def _check_pydantic() -> bool:
     """Проверяет наличие установленного пакета pydantic."""
     try:
         import pydantic  # noqa: F401
+
         return True
     except ImportError:
         return False
@@ -104,13 +108,14 @@ _PROVIDERS = get_providers(_nest_ini_dict)
 
 
 def _get_typed_value(
-        section: str,
-        key: str,
-        converter: Callable[[Any], Any],
-        fallback: Any,
-        get_value_func: Callable[..., Any],
-        config: Optional[JSONDict] = None,
-        type_name: str = ""
+    section: str,
+    key: str,
+    converter: Callable[[Any], Any],
+    fallback: Any,
+    get_value_func: Callable[..., Any],
+    config: JSONDict | None = None,
+    type_name: str = "",
+    required: bool = False,
 ) -> Any:
     """
     Внутренняя универсальная функция для получения типизированного значения.
@@ -125,22 +130,29 @@ def _get_typed_value(
         get_value_func: Функция для получения сырого значения (get_config_value).
         config: Опциональный предварительно загруженный словарь конфигурации.
         type_name: Имя типа для информативного логирования.
+        required: Если True, при отсутствии ключа будет вызвано исключение.
 
     Returns:
         Типизированное значение или fallback.
     """
-    value = get_value_func(section, key, fallback, config)
+    value = get_value_func(section, key, fallback, config, required=required)
     if value == fallback:
         return fallback
 
     try:
         return converter(value)
     except (ValueError, TypeError):
-        t_name = type_name or (converter.__name__ if hasattr(converter, '__name__') else str(converter))
+        t_name = type_name or (
+            converter.__name__ if hasattr(converter, "__name__") else str(converter)
+        )
         logger.warning(
             "Не удалось преобразовать значение '%s' для ключа '%s' в секции '[%s]' к типу %s. "
             "Возвращено значение по умолчанию: %s.",
-            value, key, section, t_name, fallback
+            value,
+            key,
+            section,
+            t_name,
+            fallback,
         )
         return fallback
 
@@ -156,6 +168,7 @@ def load_pyproject_toml(path: str) -> JSONDict:
     try:
         # Пробуем стандартный tomllib (Python 3.11+)
         import tomllib
+
         with open(path, "rb") as f:
             data = tomllib.load(f)
             tool_dict = data.get("tool", {})
@@ -170,6 +183,7 @@ def load_pyproject_toml(path: str) -> JSONDict:
         try:
             # Пробуем tomli
             import tomli
+
             with open(path, "rb") as f:
                 data = tomli.load(f)
                 tool_dict = data.get("tool", {})
@@ -193,7 +207,7 @@ def _parse_pyproject_toml_fallback(path: str) -> JSONDict:
 
     result: JSONDict = {}
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             lines = f.readlines()
     except Exception:
         return result
@@ -229,10 +243,15 @@ def _parse_pyproject_toml_fallback(path: str) -> JSONDict:
                     elif val_str.lower() == "false":
                         result[key] = False
                     elif val_str.startswith("[") and val_str.endswith("]"):
-                        items = [item.strip(" '\"") for item in val_str[1:-1].split(",") if item.strip()]
+                        items = [
+                            item.strip(" '\"")
+                            for item in val_str[1:-1].split(",")
+                            if item.strip()
+                        ]
                         result[key] = items
                     elif (val_str.startswith('"') and val_str.endswith('"')) or (
-                            val_str.startswith("'") and val_str.endswith("'")):
+                        val_str.startswith("'") and val_str.endswith("'")
+                    ):
                         result[key] = val_str[1:-1]
                     else:
                         result[key] = val_str

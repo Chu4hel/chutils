@@ -3,13 +3,13 @@ from __future__ import annotations
 import functools
 import inspect
 import typing as t
-from typing import Any, Callable, Optional, Union
+from typing import Any
+from collections.abc import Callable
 
 from .env import OTEL_AVAILABLE
 from .typing import P, R
 
 if t.TYPE_CHECKING:
-    from opentelemetry import trace as otel_trace_mod
     from opentelemetry.sdk.trace.export import SpanExporter
 
 # Совместимость с внутренним кодом
@@ -40,7 +40,7 @@ def get_tracer(name: str = "chutils") -> Any:
     return None
 
 
-def get_current_trace_context() -> Optional[dict[str, str]]:
+def get_current_trace_context() -> dict[str, str] | None:
     """
     Возвращает текущие trace_id и span_id, если трассировка активна.
 
@@ -65,7 +65,7 @@ def get_current_trace_context() -> Optional[dict[str, str]]:
 def setup_tracing(
         service_name: str,
         exporter_type: str = "console",
-        otlp_endpoint: Optional[str] = None,
+        otlp_endpoint: str | None = None,
         otlp_protocol: str = "grpc",
 ) -> bool:
     """
@@ -120,8 +120,8 @@ def setup_tracing(
 
 
 def trace(
-        name: Optional[Union[str, Callable[P, R]]] = None,
-        attributes: Optional[dict[str, Any]] = None,
+        name: str | Callable[P, R] | None = None,
+        attributes: dict[str, Any] | None = None,
         capture_kwargs: bool = False,
 ) -> Any:
     """

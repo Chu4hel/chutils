@@ -3,7 +3,8 @@ from __future__ import annotations
 import logging
 import time
 from pathlib import Path
-from typing import List, Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING
+from collections.abc import Callable
 
 from chutils.exceptions import OptionalDependencyError
 from .manager import _cm
@@ -37,7 +38,7 @@ class ConfigChangeHandler:
     Обработчик событий изменения файлов конфигурации для watchdog.
     """
 
-    def __init__(self, watched_files: List[str]):
+    def __init__(self, watched_files: list[str]):
         self.watched_files = [str(Path(f).absolute()) for f in watched_files]
 
     def dispatch(self, event: FileSystemEvent) -> None:

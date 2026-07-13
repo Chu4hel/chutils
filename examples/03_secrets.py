@@ -4,6 +4,7 @@
 Демонстрирует работу SecretManager: сохранение и получение секретов из
 системного хранилища (keyring) и файлов .env с учетом приоритетов.
 """
+
 import os
 
 from chutils import SecretManager
@@ -49,6 +50,20 @@ def main() -> None:
     result = secrets.get_secret(shared_key)
     print(f"Поиск ключа '{shared_key}': {result}")
     print("Результат: Keyring имеет высший приоритет над .env и переменными окружения.")
+
+    print("\n--- 4. Демонстрация Fallback и Required ---")
+    # Получение несуществующего секрета с fallback значением
+    missing_val = secrets.get_secret("MISSING_API_KEY", fallback="FALLBACK_KEY_VALUE")
+    print(f"Секрет с fallback (если нет в Keyring/env): {missing_val}")
+
+    # Использование строгого режима (required=True)
+    from chutils.exceptions import SecretNotFoundError
+
+    try:
+        secrets.get_secret("REQUIRED_KEY_THAT_DOES_NOT_EXIST", required=True)
+    except SecretNotFoundError as e:
+        print(f"Строгий режим (required=True) для секретов сработал успешно:")
+        print(f"  Ошибка: {e}")
 
     # Очистка для чистоты следующих запусков
     secrets.delete_secret(db_key)

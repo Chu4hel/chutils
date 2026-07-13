@@ -3,7 +3,7 @@
 # chutils: Stop the Routine!
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![PyPI version](https://badge.fury.io/py/chutils.svg)](https://badge.fury.io/py/chutils)
 [![Documentation](https://img.shields.io/badge/documentation-read-brightgreen)](https://Chu4hel.github.io/chutils/)
 
@@ -254,8 +254,9 @@ except PathTraversalError as e:
 
 ### Configuration (`chutils.config`)
 
-- `get_config_value(section, key, fallback)` / `aget_config()`
-- `get_config_int`, `get_config_boolean`, `get_config_list`, `get_config_path`
+- `get_config_value(section, key, fallback=None, required=False)` / `aget_config()`
+- `get_config_int`, `get_config_boolean`, `get_config_list`, `get_config_path` (all support `fallback` and `required`
+  parameters)
 - `save_config_value(section, key, value, notify=True)` / `asave_config_value()`
 - Use `notify=False` to update the file without triggering Hot-Reload callbacks.
 
@@ -268,7 +269,7 @@ except PathTraversalError as e:
 
 - `SecretManager(service_name, prefix)`
 - `save_secret` / `asave_secret`
-- `get_secret` / `aget_secret`
+- `get_secret(key, fallback=None, required=False)` / `aget_secret(...)`
 - `delete_secret` / `adelete_secret`
 
 ### Decorators (`chutils.decorators`)

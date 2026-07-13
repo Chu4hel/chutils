@@ -1,5 +1,5 @@
 import threading
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from .base import MetricsProvider
 
@@ -13,38 +13,38 @@ class InMemoryMetricsProvider(MetricsProvider):
     """
 
     # Стандартные бакеты для Histogram (в секундах/величинах)
-    DEFAULT_BUCKETS: List[float] = [
+    DEFAULT_BUCKETS: list[float] = [
         0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 7.5, 10.0
     ]
 
     def __init__(self) -> None:
         self._lock = threading.Lock()
         # Структура: {metric_name: {frozenset_labels: value}}
-        self._counters: Dict[str, Dict[frozenset[Tuple[str, str]], float]] = {}
-        self._gauges: Dict[str, Dict[frozenset[Tuple[str, str]], float]] = {}
+        self._counters: dict[str, dict[frozenset[tuple[str, str]], float]] = {}
+        self._gauges: dict[str, dict[frozenset[tuple[str, str]], float]] = {}
         # Структура: {metric_name: {frozenset_labels: [values]}}
-        self._histograms: Dict[str, Dict[frozenset[Tuple[str, str]], List[float]]] = {}
+        self._histograms: dict[str, dict[frozenset[tuple[str, str]], list[float]]] = {}
 
-    def _get_labels_key(self, labels: Optional[Dict[str, str]]) -> frozenset[Tuple[str, str]]:
+    def _get_labels_key(self, labels: dict[str, str] | None) -> frozenset[tuple[str, str]]:
         if not labels:
             return frozenset()
         return frozenset(labels.items())
 
-    def increment(self, name: str, value: float = 1.0, labels: Optional[Dict[str, str]] = None) -> None:
+    def increment(self, name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
         key = self._get_labels_key(labels)
         with self._lock:
             if name not in self._counters:
                 self._counters[name] = {}
             self._counters[name][key] = self._counters[name].get(key, 0.0) + value
 
-    def set_gauge(self, name: str, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+    def set_gauge(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
         key = self._get_labels_key(labels)
         with self._lock:
             if name not in self._gauges:
                 self._gauges[name] = {}
             self._gauges[name][key] = value
 
-    def observe(self, name: str, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+    def observe(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
         key = self._get_labels_key(labels)
         with self._lock:
             if name not in self._histograms:
@@ -54,7 +54,7 @@ class InMemoryMetricsProvider(MetricsProvider):
             self._histograms[name][key].append(value)
 
     def generate_latest(self) -> str:
-        lines: List[str] = []
+        lines: list[str] = []
 
         with self._lock:
             # 1. Форматируем Counters
@@ -108,13 +108,13 @@ class InMemoryMetricsProvider(MetricsProvider):
 
         return "\n".join(lines) + "\n" if lines else ""
 
-    def _format_labels(self, labels_set: frozenset[Tuple[str, str]]) -> str:
+    def _format_labels(self, labels_set: frozenset[tuple[str, str]]) -> str:
         if not labels_set:
             return ""
         items = [f'{k}="{v}"' for k, v in sorted(labels_set)]
         return "{" + ",".join(items) + "}"
 
-    def get_metrics(self) -> Dict[str, Any]:
+    def get_metrics(self) -> dict[str, Any]:
         """
         Возвращает сырые накопленные метрики в виде словаря (для отладки и тестов).
         """

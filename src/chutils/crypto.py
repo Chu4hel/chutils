@@ -7,7 +7,8 @@
 import base64
 import hashlib
 from pathlib import Path
-from typing import Optional, Union
+
+from chutils.exceptions import OptionalDependencyError
 
 try:
     from cryptography.fernet import Fernet, InvalidToken
@@ -46,10 +47,10 @@ def encrypt_portable(data: str, seed: str) -> str:
         Зашифрованная строка в формате Base64.
 
     Raises:
-        RuntimeError: Если библиотека cryptography не установлена.
+        OptionalDependencyError: Если библиотека cryptography не установлена.
     """
     if not _HAS_CRYPTOGRAPHY:
-        raise RuntimeError(
+        raise OptionalDependencyError(
             "Для использования модуля crypto установите библиотеку:\n"
             "pip install chutils[crypto]"
         )
@@ -60,7 +61,7 @@ def encrypt_portable(data: str, seed: str) -> str:
     return encrypted_bytes.decode("utf-8")
 
 
-def decrypt_portable(encrypted_data: str, seed: str) -> Optional[str]:
+def decrypt_portable(encrypted_data: str, seed: str) -> str | None:
     """Дешифрует строку с использованием детерминированного ключа, полученного из seed.
 
     Args:
@@ -71,10 +72,10 @@ def decrypt_portable(encrypted_data: str, seed: str) -> Optional[str]:
         Расшифрованная строка или None, если дешифрование завершилось ошибкой.
 
     Raises:
-        RuntimeError: Если библиотека cryptography не установлена.
+        OptionalDependencyError: Если библиотека cryptography не установлена.
     """
     if not _HAS_CRYPTOGRAPHY:
-        raise RuntimeError(
+        raise OptionalDependencyError(
             "Для использования модуля crypto установите библиотеку:\n"
             "pip install chutils[crypto]"
         )
@@ -89,9 +90,9 @@ def decrypt_portable(encrypted_data: str, seed: str) -> Optional[str]:
 
 
 def encrypt_file(
-        file_path: Union[str, Path],
+        file_path: str | Path,
         seed: str,
-        output_path: Optional[Union[str, Path]] = None
+        output_path: str | Path | None = None
 ) -> Path:
     """Шифрует содержимое файла и сохраняет результат.
 
@@ -105,10 +106,10 @@ def encrypt_file(
         Путь к зашифрованному файлу.
 
     Raises:
-        RuntimeError: Если библиотека cryptography не установлена.
+        OptionalDependencyError: Если библиотека cryptography не установлена.
     """
     if not _HAS_CRYPTOGRAPHY:
-        raise RuntimeError(
+        raise OptionalDependencyError(
             "Для использования модуля crypto установите библиотеку:\n"
             "pip install chutils[crypto]"
         )
@@ -125,9 +126,9 @@ def encrypt_file(
 
 
 def decrypt_file(
-        file_path: Union[str, Path],
+        file_path: str | Path,
         seed: str,
-        output_path: Optional[Union[str, Path]] = None
+        output_path: str | Path | None = None
 ) -> bool:
     """Дешифрует содержимое файла и сохраняет результат.
 
@@ -141,10 +142,10 @@ def decrypt_file(
         True, если дешифрование прошло успешно, иначе False.
 
     Raises:
-        RuntimeError: Если библиотека cryptography не установлена.
+        OptionalDependencyError: Если библиотека cryptography не установлена.
     """
     if not _HAS_CRYPTOGRAPHY:
-        raise RuntimeError(
+        raise OptionalDependencyError(
             "Для использования модуля crypto установите библиотеку:\n"
             "pip install chutils[crypto]"
         )

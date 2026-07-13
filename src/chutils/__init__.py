@@ -52,6 +52,9 @@ _LAZY_MAPPING = {
     'tracing': ('.tracing', None),
     'testing': ('.testing', None),
     'dev': ('.dev', None),
+    'Scaffolder': ('.dev.scaffold', 'Scaffolder'),
+    'MockServerRunner': ('.dev.mock_server', 'MockServerRunner'),
+    'generate_few_shot': ('.dev.generate_few_shot', None),
     'events': ('.events', None),
     'tasks': ('.tasks', None),
     'text': ('.text', None),
@@ -145,6 +148,7 @@ _LAZY_MAPPING = {
     'retry': ('.decorators', 'retry'),
     'timeout': ('.decorators', 'timeout'),
     'rate_limit': ('.decorators', 'rate_limit'),
+    'circuit_breaker': ('.decorators', 'circuit_breaker'),
 
     # tracing
     'trace': ('.tracing', 'trace'),
@@ -153,9 +157,11 @@ _LAZY_MAPPING = {
 
     # exceptions
     'ChutilsException': ('.exceptions', 'ChutilsException'),
+    'ChutilsConfigurationError': ('.exceptions', 'ChutilsConfigurationError'),
     'ConfigError': ('.exceptions', 'ConfigError'),
     'ConfigLoadError': ('.exceptions', 'ConfigLoadError'),
     'ConfigParseError': ('.exceptions', 'ConfigParseError'),
+    'ConfigKeyNotFoundError': ('.exceptions', 'ConfigKeyNotFoundError'),
     'SecretError': ('.exceptions', 'SecretError'),
     'SecretNotFoundError': ('.exceptions', 'SecretNotFoundError'),
     'SecretProviderError': ('.exceptions', 'SecretProviderError'),
@@ -164,6 +170,7 @@ _LAZY_MAPPING = {
     'OptionalDependencyError': ('.exceptions', 'OptionalDependencyError'),
     'ChutilsTimeoutError': ('.exceptions', 'ChutilsTimeoutError'),
     'RateLimitExceededError': ('.exceptions', 'RateLimitExceededError'),
+    'CircuitBreakerOpenError': ('.exceptions', 'CircuitBreakerOpenError'),
     'CacheError': ('.exceptions', 'CacheError'),
     'EventBusError': ('.exceptions', 'EventBusError'),
     'EventBusExceptionGroup': ('.exceptions', 'EventBusExceptionGroup'),
@@ -206,6 +213,40 @@ _LAZY_MAPPING = {
     'cleanup_paths': ('.fs', 'cleanup_paths'),
     'safe_filename': ('.fs', 'safe_filename'),
     'zip_folder': ('.fs', 'zip_folder'),
+
+    # web
+    'web': ('.web', None),
+    'WebClient': ('.web', 'WebClient'),
+    'AsyncWebClient': ('.web', 'AsyncWebClient'),
+
+    # scraping
+    'scraping': ('.scraping', None),
+    'BezierCurveGenerator': ('.scraping.humanize', 'BezierCurveGenerator'),
+    'JitterDelayGenerator': ('.scraping.humanize', 'JitterDelayGenerator'),
+    'KeyboardTypoGenerator': ('.scraping.humanize', 'KeyboardTypoGenerator'),
+    'human_sleep': ('.scraping.humanize', 'human_sleep'),
+    'async_human_sleep': ('.scraping.humanize', 'async_human_sleep'),
+    'async_move_mouse': ('.scraping.humanize', 'async_move_mouse'),
+    'async_scroll_to': ('.scraping.humanize', 'async_scroll_to'),
+    'async_type_text': ('.scraping.humanize', 'async_type_text'),
+    'move_mouse': ('.scraping.humanize', 'move_mouse'),
+    'scroll_to': ('.scraping.humanize', 'scroll_to'),
+    'type_text': ('.scraping.humanize', 'type_text'),
+    'apply_antidetect_playwright': ('.scraping.humanize', 'apply_antidetect_playwright'),
+    'apply_antidetect_selenium': ('.scraping.humanize', 'apply_antidetect_selenium'),
+    'get_browser_launch_args': ('.scraping.humanize', 'get_browser_launch_args'),
+
+    # scraping captcha
+    'RuCaptchaSolver': ('.scraping.captcha', 'RuCaptchaSolver'),
+    'AsyncRuCaptchaSolver': ('.scraping.captcha', 'AsyncRuCaptchaSolver'),
+    'AntiCaptchaSolver': ('.scraping.captcha', 'AntiCaptchaSolver'),
+    'AsyncAntiCaptchaSolver': ('.scraping.captcha', 'AsyncAntiCaptchaSolver'),
+    'CapMonsterSolver': ('.scraping.captcha', 'CapMonsterSolver'),
+    'AsyncCapMonsterSolver': ('.scraping.captcha', 'AsyncCapMonsterSolver'),
+    'CaptchaError': ('.scraping.captcha', 'CaptchaError'),
+    'CaptchaTimeoutError': ('.scraping.captcha', 'CaptchaTimeoutError'),
+    'CaptchaBalanceError': ('.scraping.captcha', 'CaptchaBalanceError'),
+    'CaptchaServiceError': ('.scraping.captcha', 'CaptchaServiceError'),
 
     # plugins
     'plugins': ('.plugins', None),

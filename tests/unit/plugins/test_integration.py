@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
 import logging
-import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -56,19 +56,9 @@ def make_mock_entry_points(target_group: str, mock_ep: MagicMock):
         if not group and args:
             group = args[0]
 
-        if sys.version_info >= (3, 10):
-            if group == target_group:
-                return [mock_ep]
-            return []
-        else:
-            mock_eps_dict = MagicMock()
-            if group == target_group:
-                mock_eps_dict.get.return_value = [mock_ep]
-                mock_eps_dict.select.return_value = [mock_ep]
-            else:
-                mock_eps_dict.get.return_value = []
-                mock_eps_dict.select.return_value = []
-            return mock_eps_dict
+        if group == target_group:
+            return [mock_ep]
+        return []
 
     return side_effect
 

@@ -81,6 +81,6 @@ def test_async_no_loss_on_shutdown(reset_chutils_state, tmp_path):
     stop_all_async_loggers()
 
     # Файл должен содержать сообщение (QueueListener.stop() делает flush)
-    with open(log_file, "r") as f:
+    with open(log_file) as f:
         content = f.read()
         assert "Message before shutdown" in content

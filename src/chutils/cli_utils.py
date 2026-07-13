@@ -5,14 +5,12 @@ import re
 import shutil
 import sys
 import typing as t
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from .env import RICH_AVAILABLE, is_rich_enabled
 
 if t.TYPE_CHECKING:
     from rich.console import Console as _RichConsole
-    from rich.table import Table as _RichTable
-    from rich.panel import Panel as _RichPanel
 
     ConsoleLike = Union[_RichConsole, "FallbackConsole"]
 else:
@@ -94,9 +92,9 @@ class FallbackConsole:
         print(f"\n--- {title} ---\n", file=f)
 
 
-_console: Optional[ConsoleLike] = None
-_err_console: Optional[ConsoleLike] = None
-_console_width: Optional[int] = None
+_console: ConsoleLike | None = None
+_err_console: ConsoleLike | None = None
+_console_width: int | None = None
 
 
 def set_console_width(width: int) -> None:
@@ -109,7 +107,7 @@ def set_console_width(width: int) -> None:
     _err_console = None
 
 
-def _get_default_width() -> Optional[int]:
+def _get_default_width() -> int | None:
     """Определяет ширину консоли по умолчанию с учетом IDE."""
     if _console_width is not None:
         return _console_width

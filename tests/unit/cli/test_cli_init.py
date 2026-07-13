@@ -17,7 +17,7 @@ def test_cli_init_custom_name(cli_runner, config_fs, mocker):
     mocker.patch("builtins.input", return_value="MyCoolProject")
     result = cli_runner.invoke(["init"])
     assert result.exit_code == 0
-    with open("config.yml", "r") as f:
+    with open("config.yml") as f:
         assert "MyCoolProject" in f.read()
 
 
@@ -28,7 +28,7 @@ def test_cli_init_already_exists_skip(cli_runner, config_fs, mocker):
     mocker.patch("builtins.input", side_effect=["Project", "n"])
     result = cli_runner.invoke(["init"])
     assert "отменено" in result.stdout
-    with open("config.yml", "r") as f:
+    with open("config.yml") as f:
         assert f.read() == "existing content"
 
 
@@ -93,7 +93,7 @@ def test_cli_init_with_model_success(cli_runner, config_fs, mocker):
 
     result = cli_runner.invoke(["init", "-y", "-m", "myapp:Settings"])
     assert result.exit_code == 0
-    with open("config.yml", "r") as f:
+    with open("config.yml") as f:
         content = f.read()
         assert "api_key: default_key" in content
 

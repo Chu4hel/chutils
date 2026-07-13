@@ -1,18 +1,17 @@
 import logging
 import logging.handlers
 from pathlib import Path
-from typing import Optional, List
 
 from ... import config
 
 # --- Глобальное состояние для "ленивой" инициализации ---
-_LOG_DIR: Optional[str] = None
+_LOG_DIR: str | None = None
 
 # --- Глобальное состояние для асинхронного логирования ---
-_async_listeners: List[logging.handlers.QueueListener] = []
+_async_listeners: list[logging.handlers.QueueListener] = []
 
 
-def get_log_dir() -> Optional[str]:
+def get_log_dir() -> str | None:
     """
     "Лениво" получает и кэширует путь к директории логов.
     Создает директорию 'logs' в корне проекта при первом обращении.

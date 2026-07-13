@@ -9,7 +9,8 @@ import logging
 import threading
 import time
 from pathlib import Path
-from typing import Dict, Optional, Tuple, Any, List, Callable
+from typing import Any
+from collections.abc import Callable
 
 from chutils.typing import JSONDict
 
@@ -22,31 +23,31 @@ class _ConfigManager:
     Менеджер состояния конфигурации (Синглтон).
     Управляет путями к файлам и кэшированием загруженного объекта конфигурации.
     """
-    _instance: Optional[_ConfigManager] = None
+    _instance: _ConfigManager | None = None
 
     # Объявление типов для статического анализатора (strict mode)
     _lock: threading.RLock
     _loading_lock: threading.RLock
     _file_lock: threading.RLock
-    _base_dir: Optional[str]
-    _config_file_path: Optional[str]
-    _features_file_path: Optional[str]
+    _base_dir: str | None
+    _config_file_path: str | None
+    _features_file_path: str | None
     _paths_initialized: bool
-    _config_object: Optional[JSONDict]
-    _features_object: Optional[JSONDict]
+    _config_object: JSONDict | None
+    _features_object: JSONDict | None
     _config_loaded: bool
     _features_loaded: bool
-    _observer: Optional[Any]
-    _callbacks: List[Callable[[], Any]]
+    _observer: Any | None
+    _callbacks: list[Callable[[], Any]]
     _last_reload_time: float
     _last_internal_save_time: float
     _tracing_enabled: bool
-    _trace_data: Dict[str, Dict[str, List[Dict[str, Any]]]]
-    _remote_provider: Optional[Any]
+    _trace_data: dict[str, dict[str, list[dict[str, Any]]]]
+    _remote_provider: Any | None
 
     # Список маркеров, по которым ищется корень проекта и конфигурационные файлы.
     # Порядок в списке определяет приоритет при поиске.
-    CONFIG_MARKERS: List[str] = [
+    CONFIG_MARKERS: list[str] = [
         'config.yml', 'config.yaml', 'config.ini', 'config.json',
         'config.local.yml', 'config.local.yaml', 'config.local.ini', 'config.local.json',
         'pyproject.toml'
@@ -54,7 +55,7 @@ class _ConfigManager:
 
     def __new__(cls) -> _ConfigManager:
         if cls._instance is None:
-            cls._instance = super(_ConfigManager, cls).__new__(cls)
+            cls._instance = super().__new__(cls)
             cls._instance._lock = threading.RLock()
             cls._instance._loading_lock = threading.RLock()
             cls._instance._file_lock = threading.RLock()
@@ -81,12 +82,12 @@ class _ConfigManager:
             self._remote_provider = None
 
     @property
-    def remote_provider(self) -> Optional[Any]:
+    def remote_provider(self) -> Any | None:
         with self._lock:
             return self._remote_provider
 
     @remote_provider.setter
-    def remote_provider(self, value: Optional[Any]) -> None:
+    def remote_provider(self, value: Any | None) -> None:
         with self._lock:
             self._remote_provider = value
 
@@ -122,7 +123,7 @@ class _ConfigManager:
                 "value": value
             })
 
-    def get_trace(self) -> Dict[str, Dict[str, List[Dict[str, Any]]]]:
+    def get_trace(self) -> dict[str, dict[str, list[dict[str, Any]]]]:
         """Возвращает собранные данные трассировки."""
         with self._lock:
             import copy
@@ -175,22 +176,22 @@ class _ConfigManager:
                 self.record_trace("secrets", "disable_keyring", secrets_env, "env")
 
     @property
-    def base_dir(self) -> Optional[str]:
+    def base_dir(self) -> str | None:
         with self._lock:
             return self._base_dir
 
     @base_dir.setter
-    def base_dir(self, value: Optional[str]) -> None:
+    def base_dir(self, value: str | None) -> None:
         with self._lock:
             self._base_dir = value
 
     @property
-    def config_file_path(self) -> Optional[str]:
+    def config_file_path(self) -> str | None:
         with self._lock:
             return self._config_file_path
 
     @config_file_path.setter
-    def config_file_path(self, value: Optional[str]) -> None:
+    def config_file_path(self, value: str | None) -> None:
         with self._lock:
             self._config_file_path = value
 
@@ -205,12 +206,12 @@ class _ConfigManager:
             self._paths_initialized = value
 
     @property
-    def config_object(self) -> Optional[JSONDict]:
+    def config_object(self) -> JSONDict | None:
         with self._lock:
             return self._config_object
 
     @config_object.setter
-    def config_object(self, value: Optional[JSONDict]) -> None:
+    def config_object(self, value: JSONDict | None) -> None:
         with self._lock:
             self._config_object = value
 
@@ -225,12 +226,12 @@ class _ConfigManager:
             self._config_loaded = value
 
     @property
-    def observer(self) -> Optional[Any]:
+    def observer(self) -> Any | None:
         with self._lock:
             return self._observer
 
     @observer.setter
-    def observer(self, value: Optional[Any]) -> None:
+    def observer(self, value: Any | None) -> None:
         with self._lock:
             self._observer = value
 
@@ -245,22 +246,22 @@ class _ConfigManager:
             self._last_reload_time = value
 
     @property
-    def features_file_path(self) -> Optional[str]:
+    def features_file_path(self) -> str | None:
         with self._lock:
             return self._features_file_path
 
     @features_file_path.setter
-    def features_file_path(self, value: Optional[str]) -> None:
+    def features_file_path(self, value: str | None) -> None:
         with self._lock:
             self._features_file_path = value
 
     @property
-    def features_object(self) -> Optional[JSONDict]:
+    def features_object(self) -> JSONDict | None:
         with self._lock:
             return self._features_object
 
     @features_object.setter
-    def features_object(self, value: Optional[JSONDict]) -> None:
+    def features_object(self, value: JSONDict | None) -> None:
         with self._lock:
             self._features_object = value
 
@@ -300,7 +301,7 @@ class _ConfigManager:
         with self._lock:
             self._last_internal_save_time = time.monotonic()
 
-    def get_callbacks(self) -> List[Callable[[], Any]]:
+    def get_callbacks(self) -> list[Callable[[], Any]]:
         """Возвращает копию списка коллбэков."""
         with self._lock:
             return list(self._callbacks)
@@ -313,7 +314,7 @@ class _ConfigManager:
                 return True
             return False
 
-    def initialize_paths(self, find_root_func: Callable[[Path, List[str]], Optional[Path]]) -> None:
+    def initialize_paths(self, find_root_func: Callable[[Path, list[str]], Path | None]) -> None:
         """
         Инициализирует пути к корню проекта и основному файлу конфигурации.
         Использует loading_lock для предотвращения конкурентной инициализации.
@@ -354,7 +355,7 @@ class _ConfigManager:
 
             self.paths_initialized = True
 
-    def get_config_paths(self, cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+    def get_config_paths(self, cfg_file: str | None = None) -> tuple[str | None, str | None]:
         """
         Возвращает пути к основному и локальному файлам конфигурации (Legacy API).
         
@@ -363,15 +364,15 @@ class _ConfigManager:
         main, _, local = self.get_all_config_paths(cfg_file)
         return main, local
 
-    def get_all_config_paths(self, cfg_file: Optional[str] = None) -> Tuple[
-        Optional[str], Optional[str], Optional[str]]:
+    def get_all_config_paths(self, cfg_file: str | None = None) -> tuple[
+        str | None, str | None, str | None]:
         """
         Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
         """
         with self._lock:
-            main_config_path: Optional[str] = None
-            env_config_path: Optional[str] = None
-            local_config_path: Optional[str] = None
+            main_config_path: str | None = None
+            env_config_path: str | None = None
+            local_config_path: str | None = None
 
             if cfg_file:
                 main_config_path = cfg_file

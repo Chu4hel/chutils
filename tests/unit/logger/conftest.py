@@ -76,7 +76,6 @@ def fast_rotation(monkeypatch):
     Патчит SafeTimedRotatingFileHandler, чтобы ротация 'D' (дни)
     работала как 'S' (секунды). Это ускоряет тесты.
     """
-    original_init = SafeTimedRotatingFileHandler.__init__
 
     def new_init(self, filename, when='D', interval=1, backupCount=0, encoding=None, delay=False, utc=False):
         # Подменяем 'D' на 'S'

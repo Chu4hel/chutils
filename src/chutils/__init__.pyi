@@ -1,8 +1,9 @@
 import datetime
 import logging
+from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional, List, Dict, Type, TypeVar, Union, Tuple, Callable, Literal
+from typing import Any, TypeVar, Literal
 
 # Тип для Pydantic моделей
 T = TypeVar("T")
@@ -14,49 +15,79 @@ def init(base_dir: str) -> None: ...
 
 
 def get_config(
-        model: Optional[Type[T]] = None,
-        remote_url: Optional[str] = None,
-        remote_auth: Optional[Tuple[str, str]] = None,
-        polling_interval: Optional[int] = None,
-) -> Union[Dict[str, Any], T]: ...
+        model: type[T] | None = None,
+        remote_url: str | None = None,
+        remote_auth: tuple[str, str] | None = None,
+        polling_interval: int | None = None,
+) -> dict[str, Any] | T: ...
 
 
-def get_config_value(section: str, key: str, fallback: Any = None, config: Optional[Dict[str, Any]] = None) -> Any: ...
+def get_config_value(
+        section: str, key: str, fallback: Any = None, config: dict[str, Any] | None = None
+) -> Any: ...
 
 
-def get_config_int(section: str, key: str, fallback: int = 0, config: Optional[Dict[str, Any]] = None) -> int: ...
+def get_config_int(
+        section: str, key: str, fallback: int = 0, config: dict[str, Any] | None = None
+) -> int: ...
 
 
-def get_config_float(section: str, key: str, fallback: float = 0.0,
-                     config: Optional[Dict[str, Any]] = None) -> float: ...
+def get_config_float(
+        section: str, key: str, fallback: float = 0.0, config: dict[str, Any] | None = None
+) -> float: ...
 
 
-def get_config_boolean(section: str, key: str, fallback: bool = False,
-                       config: Optional[Dict[str, Any]] = None) -> bool: ...
+def get_config_boolean(
+        section: str, key: str, fallback: bool = False, config: dict[str, Any] | None = None
+) -> bool: ...
 
 
-def get_config_list(section: str, key: str, fallback: Optional[List[Any]] = None,
-                    config: Optional[Dict[str, Any]] = None) -> List[Any]: ...
+def get_config_list(
+        section: str,
+        key: str,
+        fallback: list[Any] | None = None,
+        config: dict[str, Any] | None = None,
+) -> list[Any]: ...
 
 
-def get_config_section(section_name: str, fallback: Optional[Dict[str, Any]] = None,
-                       config: Optional[Dict[str, Any]] = None, model: Optional[Type[T]] = None) -> Union[
-    Dict[str, Any], T]: ...
+def get_config_section(
+        section_name: str,
+        fallback: dict[str, Any] | None = None,
+        config: dict[str, Any] | None = None,
+        model: type[T] | None = None,
+) -> dict[str, Any] | T: ...
 
 
-def get_config_path(section: str, key: str, fallback: Optional[str] = None, config: Optional[Dict[str, Any]] = None,
-                    resolve_from_root: bool = True) -> Optional[str]: ...
+def get_config_path(
+        section: str,
+        key: str,
+        fallback: str | None = None,
+        config: dict[str, Any] | None = None,
+        resolve_from_root: bool = True,
+) -> str | None: ...
 
 
-async def aget_config(model: Optional[Type[T]] = None) -> Union[Dict[str, Any], T]: ...
+async def aget_config(model: type[T] | None = None) -> dict[str, Any] | T: ...
 
 
-def save_config_value(section: str, key: str, value: Any, cfg_file: Optional[str] = None, save_to_local: bool = False,
-                      notify: bool = True) -> bool: ...
+def save_config_value(
+        section: str,
+        key: str,
+        value: Any,
+        cfg_file: str | None = None,
+        save_to_local: bool = False,
+        notify: bool = True,
+) -> bool: ...
 
 
-async def asave_config_value(section: str, key: str, value: Any, cfg_file: Optional[str] = None,
-                             save_to_local: bool = False, notify: bool = True) -> bool: ...
+async def asave_config_value(
+        section: str,
+        key: str,
+        value: Any,
+        cfg_file: str | None = None,
+        save_to_local: bool = False,
+        notify: bool = True,
+) -> bool: ...
 
 
 def start_config_watcher() -> bool: ...
@@ -68,19 +99,19 @@ def stop_config_watcher() -> None: ...
 def on_config_change(callback: Callable[[], None]) -> None: ...
 
 
-def generate_yaml_template(model_class: Type[T]) -> str: ...
+def generate_yaml_template(model_class: type[T]) -> str: ...
 
 
-def generate_env_template(model_class: Type[T], prefix: str = "CH") -> str: ...
+def generate_env_template(model_class: type[T], prefix: str = "CH") -> str: ...
 
 
-def generate_json_schema(model_class: Type[T]) -> str: ...
+def generate_json_schema(model_class: type[T]) -> str: ...
 
 
-def get_base_dir() -> Optional[str]: ...
+def get_base_dir() -> str | None: ...
 
 
-def get_config_file_path() -> Optional[str]: ...
+def get_config_file_path() -> str | None: ...
 
 
 def is_config_loaded() -> bool: ...
@@ -89,20 +120,28 @@ def is_config_loaded() -> bool: ...
 def are_paths_initialized() -> bool: ...
 
 
-def get_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]: ...
+def get_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None]: ...
 
 
-def get_all_config_paths(cfg_file: Optional[str] = None) -> Tuple[Optional[str], Optional[str], Optional[str]]: ...
+def get_all_config_paths(
+        cfg_file: str | None = None,
+) -> tuple[str | None, str | None, str | None]: ...
 
 
-def export_schema(model: Union[Type[T], str], output_path: Optional[Union[str, Any]] = None) -> str: ...
+def export_schema(
+        model: type[T] | str, output_path: str | Any | None = None
+) -> str: ...
 
 
 # --- features ---
-def is_feature_enabled(feature_name: str, context: Optional[Dict[str, Any]] = None) -> bool: ...
+def is_feature_enabled(
+        feature_name: str, context: dict[str, Any] | None = None
+) -> bool: ...
 
 
-def require_feature(feature_name: str, fallback: Optional[Callable[..., Any]] = None) -> Callable[[F], F]: ...
+def require_feature(
+        feature_name: str, fallback: Callable[..., Any] | None = None
+) -> Callable[[F], F]: ...
 
 
 # --- logger ---
@@ -115,29 +154,29 @@ class ChutilsLogger(logging.Logger):
 
 
 def setup_logger(
-        name: str = 'app_logger',
-        config_section_name: Optional[str] = None,
-        log_level: Optional[LogLevel] = None,
-        log_file_name: Optional[str] = None,
+        name: str = "app_logger",
+        config_section_name: str | None = None,
+        log_level: LogLevel | None = None,
+        log_file_name: str | None = None,
         force_reconfigure: bool = False,
-        rotation_type: Optional[str] = None,
-        max_bytes: Optional[int] = None,
-        compress: Optional[bool] = None,
-        backup_count: Optional[int] = None,
-        encoding: Optional[str] = None,
-        when: Optional[str] = None,
-        interval: Optional[int] = None,
-        utc: Optional[bool] = None,
+        rotation_type: str | None = None,
+        max_bytes: int | None = None,
+        compress: bool | None = None,
+        backup_count: int | None = None,
+        encoding: str | None = None,
+        when: str | None = None,
+        interval: int | None = None,
+        utc: bool | None = None,
         at_time: Any = None,
-        json_format: Optional[bool] = None,
-        use_async: Optional[bool] = None,
-        max_queue_size: Optional[int] = None,
+        json_format: bool | None = None,
+        use_async: bool | None = None,
+        max_queue_size: int | None = None,
 ) -> ChutilsLogger: ...
 
 
 def setup_logger_from_config(
-        name: str = 'app_logger',
-        config_section_name: Optional[str] = None,
+        name: str = "app_logger",
+        config_section_name: str | None = None,
         force_reconfigure: bool = False,
 ) -> ChutilsLogger: ...
 
@@ -199,11 +238,14 @@ def cli_command(func: F) -> F: ...
 def utc_now() -> datetime.datetime: ...
 
 
-def parse_datetime(value: Union[str, int, float]) -> datetime.datetime: ...
+def parse_datetime(value: str | int | float) -> datetime.datetime: ...
 
 
-def humanize_timedelta(dt: datetime.datetime, locale: str = 'ru',
-                       custom_locales: Optional[Dict[str, Any]] = None) -> str: ...
+def humanize_timedelta(
+        dt: datetime.datetime,
+        locale: str = "ru",
+        custom_locales: dict[str, Any] | None = None,
+) -> str: ...
 
 
 # --- env (Discovery) ---
@@ -222,10 +264,17 @@ OTEL_AVAILABLE: bool
 
 # --- secret_manager ---
 class SecretManager:
-    def __init__(self, service_name: Optional[str] = None, prefix: Optional[str] = None, auto_mask_logs: bool = True,
-                 providers: Optional[List[Any]] = None) -> None: ...
+    def __init__(
+            self,
+            service_name: str | None = None,
+            prefix: str | None = None,
+            auto_mask_logs: bool = True,
+            providers: list[Any] | None = None,
+    ) -> None: ...
 
-    def get_secret(self, key: str) -> Optional[str]: ...
+    def get_secret(
+            self, key: str, fallback: str | None = None, required: bool = False
+    ) -> str | None: ...
 
     def save_secret(self, key: str, value: str) -> bool: ...
 
@@ -233,7 +282,9 @@ class SecretManager:
 
     def update_secret(self, key: str, value: str) -> bool: ...
 
-    async def aget_secret(self, key: str) -> Optional[str]: ...
+    async def aget_secret(
+            self, key: str, fallback: str | None = None, required: bool = False
+    ) -> str | None: ...
 
     async def asave_secret(self, key: str, value: str) -> bool: ...
 
@@ -245,8 +296,8 @@ IS_OTEL_AVAILABLE: bool
 
 
 def trace(
-        name: Optional[Any] = None,
-        attributes: Optional[Dict[str, Any]] = None,
+        name: Any | None = None,
+        attributes: dict[str, Any] | None = None,
         capture_kwargs: bool = False,
 ) -> Callable[[F], F]: ...
 
@@ -254,7 +305,7 @@ def trace(
 def setup_tracing(
         service_name: str,
         exporter_type: str = "console",
-        otlp_endpoint: Optional[str] = None,
+        otlp_endpoint: str | None = None,
         otlp_protocol: str = "grpc",
 ) -> bool: ...
 
@@ -263,22 +314,42 @@ def setup_tracing(
 def log_function_details(func: F) -> F: ...
 
 
-def retry(retries: int = 3, delay: float = 1.0, backoff: float = 2.0, jitter: bool = False,
-          exceptions: Tuple[Type[Exception], ...] = (Exception,)) -> Callable[[F], F]: ...
+def retry(
+        retries: int = 3,
+        delay: float = 1.0,
+        backoff: float = 2.0,
+        jitter: bool = False,
+        exceptions: tuple[type[Exception], ...] = (Exception,),
+) -> Callable[[F], F]: ...
 
 
 def timeout(seconds: float, fallback: Any = ...) -> Callable[[F], F]: ...
 
 
-def rate_limit(max_calls: int, period: float, strategy: str = "token_bucket", wait: bool = False,
-               key_func: Optional[Callable[..., str]] = None) -> Callable[[F], F]: ...
+def rate_limit(
+        max_calls: int,
+        period: float,
+        strategy: str = "token_bucket",
+        wait: bool = False,
+        key_func: Callable[..., str] | None = None,
+) -> Callable[[F], F]: ...
+
+
+def circuit_breaker(
+        failure_threshold: int = 5,
+        recovery_timeout: float = 60.0,
+        exceptions: tuple[type[Exception], ...] = (Exception,),
+) -> Callable[[F], F]: ...
 
 
 # --- exceptions ---
 class ChutilsException(Exception):
-    context: Dict[str, Any]
+    context: dict[str, Any]
 
     def __init__(self, message: str, **context: Any) -> None: ...
+
+
+class ChutilsConfigurationError(ChutilsException): ...
 
 
 class ConfigError(ChutilsException): ...
@@ -288,6 +359,9 @@ class ConfigLoadError(ConfigError): ...
 
 
 class ConfigParseError(ConfigError): ...
+
+
+class ConfigKeyNotFoundError(ConfigError): ...
 
 
 class SecretError(ChutilsException): ...
@@ -315,12 +389,17 @@ class EventBusError(ChutilsException): ...
 
 
 class EventBusExceptionGroup(EventBusError):
-    exceptions: List[Exception]
+    exceptions: list[Exception]
 
-    def __init__(self, message: str, exceptions: List[Exception], **context: Any) -> None: ...
+    def __init__(
+            self, message: str, exceptions: list[Exception], **context: Any
+    ) -> None: ...
 
 
 class RateLimitExceededError(ChutilsException): ...
+
+
+class CircuitBreakerOpenError(ChutilsException): ...
 
 
 class DependencyError(ChutilsException): ...
@@ -342,27 +421,52 @@ class ErrorStrategy(str, Enum):
 class EventBus:
     error_strategy: ErrorStrategy
 
-    def __init__(self, error_strategy: ErrorStrategy = ErrorStrategy.IGNORE) -> None: ...
+    def __init__(
+            self, error_strategy: ErrorStrategy = ErrorStrategy.IGNORE
+    ) -> None: ...
 
-    def subscribe(self, event_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+    def subscribe(
+            self, event_name: str
+    ) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
 
     def unsubscribe(self, event_name: str, func: Callable[..., Any]) -> None: ...
 
-    def publish(self, event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None,
-                **kwargs: Any) -> None: ...
+    def publish(
+            self,
+            event_name: str,
+            *args: Any,
+            error_strategy: ErrorStrategy | None = None,
+            **kwargs: Any,
+    ) -> None: ...
 
-    async def publish_async(self, event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None,
-                            **kwargs: Any) -> None: ...
+    async def publish_async(
+            self,
+            event_name: str,
+            *args: Any,
+            error_strategy: ErrorStrategy | None = None,
+            **kwargs: Any,
+    ) -> None: ...
 
 
-def subscribe(event_name: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+def subscribe(
+        event_name: str,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
 
 
-def publish(event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None, **kwargs: Any) -> None: ...
+def publish(
+        event_name: str,
+        *args: Any,
+        error_strategy: ErrorStrategy | None = None,
+        **kwargs: Any,
+) -> None: ...
 
 
-async def publish_async(event_name: str, *args: Any, error_strategy: Optional[ErrorStrategy] = None,
-                        **kwargs: Any) -> None: ...
+async def publish_async(
+        event_name: str,
+        *args: Any,
+        error_strategy: ErrorStrategy | None = None,
+        **kwargs: Any,
+) -> None: ...
 
 
 # --- tasks ---
@@ -385,12 +489,16 @@ async def stop_scheduler() -> None: ...
 class Container:
     def __init__(self) -> None: ...
 
-    def register(self, dependency_type: Type[Any], provider: Optional[Callable[..., Any]] = None,
-                 scope: str = "singleton") -> None: ...
+    def register(
+            self,
+            dependency_type: type[Any],
+            provider: Callable[..., Any] | None = None,
+            scope: str = "singleton",
+    ) -> None: ...
 
-    def has_provider(self, dependency_type: Type[Any]) -> bool: ...
+    def has_provider(self, dependency_type: type[Any]) -> bool: ...
 
-    def resolve(self, dependency_type: Type[T]) -> T: ...
+    def resolve(self, dependency_type: type[T]) -> T: ...
 
     def clear(self) -> None: ...
 
@@ -398,52 +506,62 @@ class Container:
 container: Container
 
 
-def provide(scope: str = "singleton", container: Optional[Container] = None) -> Callable[[Any], Any]: ...
+def provide(
+        scope: str = "singleton", container: Container | None = None
+) -> Callable[[Any], Any]: ...
 
 
-def inject(container: Optional[Container] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+def inject(
+        container: Container | None = None,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
 
 
 def Inject() -> Any: ...
 
 
 # --- text ---
-def natsort_key(s: str) -> List[Union[int, str]]: ...
+def natsort_key(s: str) -> list[int | str]: ...
 
 
-def is_significant_difference(text1: str, text2: str, threshold: float = 0.9) -> bool: ...
+def is_significant_difference(
+        text1: str, text2: str, threshold: float = 0.9
+) -> bool: ...
 
 
 # --- crypto ---
 def encrypt_portable(data: str, seed: str) -> str: ...
 
 
-def decrypt_portable(encrypted_data: str, seed: str) -> Optional[str]: ...
+def decrypt_portable(encrypted_data: str, seed: str) -> str | None: ...
 
 
-def encrypt_file(file_path: Union[str, Path], seed: str, output_path: Optional[Union[str, Path]] = None) -> Path: ...
+def encrypt_file(
+        file_path: str | Path, seed: str, output_path: str | Path | None = None
+) -> Path: ...
 
 
-def decrypt_file(file_path: Union[str, Path], seed: str, output_path: Optional[Union[str, Path]] = None) -> bool: ...
+def decrypt_file(
+        file_path: str | Path, seed: str, output_path: str | Path | None = None
+) -> bool: ...
 
 
 # --- fs ---
 def remove_path(
-        path: Union[str, Path],
+        path: str | Path,
         *,
         retries: int = 3,
         delay: float = 0.1,
         on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
-        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise",
 ) -> bool: ...
 
 
 def cleanup_paths(
-        *paths: Union[str, Path],
+        *paths: str | Path,
         retries: int = 3,
         delay: float = 0.1,
         on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
-        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise",
 ) -> None: ...
 
 
@@ -452,16 +570,182 @@ def safe_filename(
         replacement: str = "_",
         strip_chars: str = " _.-",
         max_length: int = 255,
-        transliterate: bool = False
+        transliterate: bool = False,
 ) -> str: ...
 
 
 def zip_folder(
-        folder_path: Union[str, Path],
-        output_path: Union[str, Path],
+        folder_path: str | Path,
+        output_path: str | Path,
         compression: int = ...,
-        exclude: Optional[list[str]] = None
+        exclude: list[str] | None = None,
 ) -> Path: ...
+
+
+# --- web ---
+class WebClient: ...
+
+
+class AsyncWebClient: ...
+
+
+# --- scraping ---
+class BezierCurveGenerator:
+    def generate(
+            self,
+            start: tuple[int, int],
+            end: tuple[int, int],
+            steps: int = 30,
+            deviation: float = 0.2,
+    ) -> list[tuple[int, int]]: ...
+
+
+class JitterDelayGenerator:
+    def __init__(self, strategy: str = "lognormal", jitter: float = 0.15) -> None: ...
+
+    def generate(self, base_delay: float) -> float: ...
+
+
+class KeyboardTypoGenerator:
+    def generate_sequence(self, text: str, error_rate: float = 0.05) -> list[Any]: ...
+
+
+def human_sleep(min_seconds: float, max_seconds: float) -> None: ...
+
+
+async def async_human_sleep(min_seconds: float, max_seconds: float) -> None: ...
+
+
+async def async_move_mouse(
+        page: Any,
+        x: int,
+        y: int,
+        start: tuple[int, int] | None = None,
+        steps: int = 30,
+        delay_between_steps: float = 0.01,
+) -> None: ...
+
+
+async def async_scroll_to(
+        page: Any,
+        x: int,
+        y: int,
+        selector: str | None = None,
+        steps: int = 10,
+        delay_between_steps: float = 0.01,
+) -> None: ...
+
+
+async def async_type_text(
+        page: Any, selector: str, text: str, error_rate: float = 0.05, speed_wpm: float = 40.0
+) -> None: ...
+
+
+def move_mouse(
+        driver: Any,
+        x: int,
+        y: int,
+        start: tuple[int, int] | None = None,
+        steps: int = 30,
+        delay_between_steps: float = 0.01,
+) -> None: ...
+
+
+def scroll_to(
+        driver: Any,
+        x: int,
+        y: int,
+        selector: str | None = None,
+        steps: int = 10,
+        delay_between_steps: float = 0.01,
+) -> None: ...
+
+
+def type_text(
+        driver: Any, selector: str, text: str, error_rate: float = 0.05, speed_wpm: float = 40.0
+) -> None: ...
+
+
+async def apply_antidetect_playwright(context: Any) -> None: ...
+
+
+def apply_antidetect_selenium(driver: Any) -> None: ...
+
+
+def get_browser_launch_args() -> list[str]: ...
+
+
+# --- scraping captcha ---
+class RuCaptchaSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://rucaptcha.com") -> None: ...
+
+    def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                    **kwargs: Any) -> str: ...
+
+    def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                        **kwargs: Any) -> str: ...
+
+
+class AsyncRuCaptchaSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://rucaptcha.com") -> None: ...
+
+    async def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                          **kwargs: Any) -> str: ...
+
+    async def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                              **kwargs: Any) -> str: ...
+
+
+class AntiCaptchaSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://api.anti-captcha.com") -> None: ...
+
+    def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                    **kwargs: Any) -> str: ...
+
+    def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                        **kwargs: Any) -> str: ...
+
+
+class AsyncAntiCaptchaSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://api.anti-captcha.com") -> None: ...
+
+    async def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                          **kwargs: Any) -> str: ...
+
+    async def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                              **kwargs: Any) -> str: ...
+
+
+class CapMonsterSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://api.capmonster.cloud") -> None: ...
+
+    def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                    **kwargs: Any) -> str: ...
+
+    def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                        **kwargs: Any) -> str: ...
+
+
+class AsyncCapMonsterSolver:
+    def __init__(self, api_key: str | None = None, host: str = "https://api.capmonster.cloud") -> None: ...
+
+    async def solve_image(self, image_data: bytes | str, timeout: float = 60.0, poll_interval: float = 5.0,
+                          **kwargs: Any) -> str: ...
+
+    async def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0,
+                              **kwargs: Any) -> str: ...
+
+
+class CaptchaError(ChutilsException): ...
+
+
+class CaptchaTimeoutError(CaptchaError): ...
+
+
+class CaptchaBalanceError(CaptchaError): ...
+
+
+class CaptchaServiceError(CaptchaError): ...
 
 
 # --- Submodules ---
@@ -483,3 +767,5 @@ from . import metrics as metrics
 from . import text as text
 from . import crypto as crypto
 from . import fs as fs
+from . import web as web
+from . import scraping as scraping

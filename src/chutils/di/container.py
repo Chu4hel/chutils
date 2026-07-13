@@ -2,7 +2,8 @@ import asyncio
 import functools
 import inspect
 import threading
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar
+from typing import Any, TypeVar
+from collections.abc import Callable
 
 from chutils.exceptions import DependencyNotFoundError, DependencyResolutionError
 
@@ -39,24 +40,24 @@ class Container:
 
     def __init__(self) -> None:
         # Реестр провайдеров: {type: (provider_callable, scope)}
-        self._providers: Dict[Type[Any], Tuple[Callable[..., Any], str]] = {}
+        self._providers: dict[type[Any], tuple[Callable[..., Any], str]] = {}
         # Кэш инстансов для scope="singleton": {type: instance}
-        self._instances: Dict[Type[Any], Any] = {}
+        self._instances: dict[type[Any], Any] = {}
         # Блокировка для обеспечения потокобезопасности
         self._lock = threading.Lock()
         # Потокобезопасный контекст для стека разрешения зависимостей
         self._local = threading.local()
 
     @property
-    def _resolving_stack(self) -> List[Type[Any]]:
+    def _resolving_stack(self) -> list[type[Any]]:
         if not hasattr(self._local, "stack"):
             self._local.stack = []
         return self._local.stack  # type: ignore[no-any-return]
 
     def register(
             self,
-            dependency_type: Type[Any],
-            provider: Optional[Callable[..., Any]] = None,
+            dependency_type: type[Any],
+            provider: Callable[..., Any] | None = None,
             scope: str = "singleton"
     ) -> None:
         """
@@ -86,12 +87,12 @@ class Container:
             # Если объект уже был закэширован, удаляем его для корректного переопределения
             self._instances.pop(dependency_type, None)
 
-    def has_provider(self, dependency_type: Type[Any]) -> bool:
+    def has_provider(self, dependency_type: type[Any]) -> bool:
         """Проверить, зарегистрирован ли провайдер для данного типа."""
         with self._lock:
             return dependency_type in self._providers
 
-    def resolve(self, dependency_type: Type[T]) -> T:
+    def resolve(self, dependency_type: type[T]) -> T:
         """
         Разрешить зависимость (найти провайдер, разрешить его аргументы и вернуть инстанс).
         """
@@ -132,7 +133,7 @@ class Container:
                         return self._instances[dependency_type]  # type: ignore[no-any-return]
 
             # 3. Разрешаем аргументы провайдера
-            resolved_args: Dict[str, Any] = {}
+            resolved_args: dict[str, Any] = {}
 
             # Получаем типы параметров с разрешением строковых аннотаций
             import typing
@@ -207,7 +208,7 @@ class Container:
 default_container = Container()
 
 
-def provide(scope: str = "singleton", container: Optional[Container] = None) -> Callable[[Any], Any]:
+def provide(scope: str = "singleton", container: Container | None = None) -> Callable[[Any], Any]:
     """
     Декоратор для декларативной регистрации класса или функции-фабрики в контейнере.
     
@@ -238,7 +239,7 @@ def provide(scope: str = "singleton", container: Optional[Container] = None) -> 
     return decorator
 
 
-def inject(container: Optional[Container] = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+def inject(container: Container | None = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
     Декоратор для автоматического внедрения зависимостей в аргументы функции.
     
@@ -254,7 +255,7 @@ def inject(container: Optional[Container] = None) -> Callable[[Callable[..., Any
         is_async = asyncio.iscoroutinefunction(func)
 
         # Вычисляем параметры, которые требуют инъекции
-        injectable_params: List[Tuple[str, inspect.Parameter]] = []
+        injectable_params: list[tuple[str, inspect.Parameter]] = []
         for name, param in sig.parameters.items():
             is_explicit_inject = isinstance(param.default, InjectMarker)
             has_annotation = param.annotation is not inspect.Parameter.empty

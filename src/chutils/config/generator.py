@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import typing as t
-from typing import Type
 
 if t.TYPE_CHECKING:
     from pydantic import BaseModel
@@ -35,7 +34,7 @@ def _check_pydantic() -> None:
         )
 
 
-def generate_yaml_template(model_class: Type[BaseModel], indent: int = 0) -> str:
+def generate_yaml_template(model_class: type[BaseModel], indent: int = 0) -> str:
     """
     Генерирует YAML шаблон на основе Pydantic модели с комментариями.
     """
@@ -88,14 +87,14 @@ def generate_yaml_template(model_class: Type[BaseModel], indent: int = 0) -> str
     return "\n".join(lines)
 
 
-def generate_env_template(model_class: Type[BaseModel], prefix: str = "CH") -> str:
+def generate_env_template(model_class: type[BaseModel], prefix: str = "CH") -> str:
     """
     Генерирует .env шаблон (плоский формат).
     """
     _check_pydantic()
     lines = []
 
-    def _walk(model: Type[BaseModel], current_prefix: str) -> None:
+    def _walk(model: type[BaseModel], current_prefix: str) -> None:
         for field_name, field in model.model_fields.items():
             env_name = f"{current_prefix}_{field_name.upper()}"
             description = field.description
@@ -130,7 +129,7 @@ def generate_env_template(model_class: Type[BaseModel], prefix: str = "CH") -> s
     return "\n".join(lines).strip()
 
 
-def generate_json_schema(model_class: Type[BaseModel]) -> str:
+def generate_json_schema(model_class: type[BaseModel]) -> str:
     """
     Генерирует JSON схему на основе Pydantic модели.
     """

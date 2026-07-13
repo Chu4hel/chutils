@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Пример 23: Использование In-Memory Event Bus (Шины событий).
 
@@ -35,7 +34,11 @@ except ImportError:
 # 1. Регистрация синхронного обработчика
 @subscribe("user_registered")
 def send_welcome_email(user_id: int, username: str, **kwargs) -> None:
-    logger.info("[Sync Handler] Отправка приветственного письма для %s (ID: %d)", username, user_id)
+    logger.info(
+        "[Sync Handler] Отправка приветственного письма для %s (ID: %d)",
+        username,
+        user_id,
+    )
 
 
 # 2. Регистрация асинхронного обработчика
@@ -43,14 +46,20 @@ def send_welcome_email(user_id: int, username: str, **kwargs) -> None:
 async def initialize_user_workspace(user_id: int, username: str, **kwargs) -> None:
     logger.info("[Async Handler] Начало инициализации воркспейса для %s...", username)
     await asyncio.sleep(0.1)  # Имитация асинхронного ввода-вывода
-    logger.info("[Async Handler] Воркспейс для %s (ID: %d) успешно настроен!", username, user_id)
+    logger.info(
+        "[Async Handler] Воркспейс для %s (ID: %d) успешно настроен!", username, user_id
+    )
 
 
 # 3. Обработчик, использующий Pydantic
 if HAS_PYDANTIC:
     @subscribe("user_created_model")
     def log_user_model(event: UserCreatedEvent) -> None:
-        logger.info("[Pydantic Handler] Создан пользователь: %s (Email: %s)", event.username, event.email)
+        logger.info(
+            "[Pydantic Handler] Создан пользователь: %s (Email: %s)",
+            event.username,
+            event.email,
+        )
 
 
 async def async_main() -> None:
@@ -70,7 +79,9 @@ async def async_main() -> None:
 
     if HAS_PYDANTIC:
         logger.info("\n=== 3. Публикация с Pydantic Model Payload ===")
-        event_obj = UserCreatedEvent(user_id=999, username="Светлана", email="svetlana@example.com")
+        event_obj = UserCreatedEvent(
+            user_id=999, username="Светлана", email="svetlana@example.com"
+        )
         publish("user_created_model", event_obj)
 
     logger.info("\n=== 4. Демонстрация стратегий обработки ошибок ===")
@@ -83,15 +94,23 @@ async def async_main() -> None:
 
     @error_bus.subscribe("data_sync")
     def faulty_handler_2():
-        raise IOError("Ошибка сети при синхронизации")
+        raise OSError("Ошибка сети при синхронизации")
 
     logger.info("Вызываем шину с ErrorStrategy.COLLECT (собрать все ошибки):")
     try:
         error_bus.publish("data_sync")
     except EventBusExceptionGroup as e:
-        logger.error("Перехвачена группа ошибок:")
+        logger.error("Перехвачена группа ошибок (совместимый перехват):")
         for exc in e.exceptions:
             logger.error(" - %s: %s", type(exc).__name__, exc)
+
+    # На Python >= 3.11 вы также можете использовать стандартный синтаксис except*:
+    # try:
+    #     error_bus.publish("data_sync")
+    # except* ValueError as eg:
+    #     logger.error("Обработан ValueError из группы: %s", eg.exceptions)
+    # except* OSError as eg:
+    #     logger.error("Обработан OSError из группы: %s", eg.exceptions)
 
 
 def main() -> None:

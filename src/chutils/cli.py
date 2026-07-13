@@ -8,12 +8,18 @@ from chutils.commands import get_commands
 
 def main() -> None:
     """Точка входа в CLI."""
-    parser = argparse.ArgumentParser(
-        prog="chutils",
-        description="""
+    from chutils.secret_manager.providers import KEYRING_AVAILABLE
+
+    description = """
 Набор утилит chutils для командной строки.
 Помогает инициализировать проекты, управлять секретами и проверять конфигурацию.
-""",
+"""
+    if not KEYRING_AVAILABLE:
+        description += "\nДля команд управления секретами установите опциональную зависимость: pip install chutils[keyring]"
+
+    parser = argparse.ArgumentParser(
+        prog="chutils",
+        description=description,
         epilog="""
 Примеры использования:
   chutils init -y

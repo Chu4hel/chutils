@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Optional
 
 
 class MetricsProvider(ABC):
@@ -8,21 +7,21 @@ class MetricsProvider(ABC):
     """
 
     @abstractmethod
-    def increment(self, name: str, value: float = 1.0, labels: Optional[Dict[str, str]] = None) -> None:
+    def increment(self, name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
         """
         Увеличить счетчик (Counter) на заданное значение.
         """
         pass
 
     @abstractmethod
-    def set_gauge(self, name: str, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+    def set_gauge(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
         """
         Установить значение датчика (Gauge).
         """
         pass
 
     @abstractmethod
-    def observe(self, name: str, value: float, labels: Optional[Dict[str, str]] = None) -> None:
+    def observe(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
         """
         Записать значение в гистограмму/таймер (Histogram/Timer).
         """

@@ -40,7 +40,7 @@ class InitCommand(BaseCommand):
             project_name = "Project"
         else:
             try:
-                project_name = input(f"Введите имя проекта [Project]: ").strip() or "Project"
+                project_name = input("Введите имя проекта [Project]: ").strip() or "Project"
             except EOFError:
                 project_name = "Project"
 
@@ -111,7 +111,7 @@ class InitCommand(BaseCommand):
 
         existing_content = ""
         if os.path.exists(gitignore_path):
-            with open(gitignore_path, "r", encoding="utf-8") as f:
+            with open(gitignore_path, encoding="utf-8") as f:
                 existing_content = f.read()
 
         existing_lines = existing_content.splitlines()

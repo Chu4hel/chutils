@@ -1,6 +1,5 @@
 import asyncio
-import warnings
-from typing import Optional, List, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from chutils.exceptions import SecretError
 from .providers import SecretProvider, KeyringProvider, DotEnvProvider, EnvProvider
@@ -10,48 +9,59 @@ if TYPE_CHECKING:
     from ..logger import ChutilsLogger
 
 # Ленивая инициализация логгера модуля
-_module_logger: Optional['ChutilsLogger'] = None
+_module_logger: Optional["ChutilsLogger"] = None
 
-# Флаг для однократного вывода предупреждения о миграции
-_migration_warned = False
+# Флаг для однократного вывода предупреждения о отсутствующей зависимости keyring
+_keyring_missing_warned = False
 
 
-def _warn_about_keyring_migration() -> None:
+def _warn_about_missing_keyring() -> None:
     """
-    Выводит предупреждение о миграции keyring в опциональные зависимости (один раз за сессию).
+    Выводит предупреждение о том, что keyring не установлен (один раз за сессию).
     """
-    global _migration_warned
-    if _migration_warned:
+    global _keyring_missing_warned
+    if _keyring_missing_warned:
         return
 
-    # Если пользователь СОВСЕМ выключил keyring, предупреждение о его миграции не нужно
-    if config.get_config_boolean('secrets', 'disable_keyring', fallback=False):
-        _migration_warned = True
+    from .providers import KEYRING_AVAILABLE
+
+    if KEYRING_AVAILABLE:
+        _keyring_missing_warned = True
         return
 
-    # Отдельный флаг ТОЛЬКО для скрытия текста предупреждения
-    if config.get_config_boolean('secrets', 'disable_keyring_warning', fallback=False):
-        _migration_warned = True
+    # Если пользователь СОВСЕМ выключил keyring, предупреждение не нужно
+    if config.get_config_boolean("secrets", "disable_keyring", fallback=False):
+        _keyring_missing_warned = True
         return
 
-    warnings.warn(
-        "В версии 3.0.0 библиотека 'keyring' станет опциональной и будет удалена из основных зависимостей. "
-        "Чтобы избежать поломок в будущем, пожалуйста, обновите ваши зависимости на 'chutils[secrets]'. "
-        "После обновления зависимостей вы можете скрыть это сообщение, установив "
-        "CH_DISABLE_KEYRING_WARNING=true или secrets.disable_keyring_warning: true в конфиге.",
-        FutureWarning,
-        stacklevel=3
+    # Отдельный флаг для скрытия предупреждения
+    if config.get_config_boolean("secrets", "disable_keyring_warning", fallback=False):
+        _keyring_missing_warned = True
+        return
+
+    import os
+
+    if os.environ.get("CH_DISABLE_KEYRING_WARNING", "").lower() in ("true", "1", "yes"):
+        _keyring_missing_warned = True
+        return
+
+    _get_logger().warning(
+        "Опциональная зависимость 'keyring' не установлена. Хранилище секретов Keyring не будет доступно. "
+        "Для использования системного хранилища установите пакет: pip install 'chutils[secrets]'. "
+        "Вы можете скрыть это предупреждение, установив переменную окружения CH_DISABLE_KEYRING_WARNING=true "
+        "или параметр secrets.disable_keyring_warning: true в конфигурации."
     )
-    _migration_warned = True
+    _keyring_missing_warned = True
 
 
-def _get_logger() -> 'ChutilsLogger':
+def _get_logger() -> "ChutilsLogger":
     """
     Получает лениво инициализированный логгер модуля.
     """
     global _module_logger
     if _module_logger is None:
         from .. import logger as chutils_logger
+
         _module_logger = chutils_logger.setup_logger(__name__)
 
     return _module_logger
@@ -69,10 +79,10 @@ class SecretManager:
 
     def __init__(
             self,
-            service_name: Optional[str] = None,
-            prefix: Optional[str] = None,
+            service_name: str | None = None,
+            prefix: str | None = None,
             auto_mask_logs: bool = True,
-            providers: Optional[List[SecretProvider]] = None
+            providers: list[SecretProvider] | None = None,
     ) -> None:
         """
         Инициализирует менеджер секретов.
@@ -86,30 +96,32 @@ class SecretManager:
         Raises:
             SecretError: Если не удалось автоматически определить `service_name`.
         """
-        _warn_about_keyring_migration()
+        _warn_about_missing_keyring()
         self.auto_mask_logs = auto_mask_logs
 
         # Определение service_name (логика сохранена для обратной совместимости)
         final_service_name = service_name
         if not final_service_name:
-            final_service_name = config.get_config_value('Secrets', 'service_name')
+            final_service_name = config.get_config_value("Secrets", "service_name")
 
         if not final_service_name:
             final_service_name = config.get_base_dir()
             _get_logger().debug(
                 "service_name для SecretManager не указан. "
                 "Используется путь к проекту: '%s'",
-                final_service_name
+                final_service_name,
             )
 
         final_prefix = prefix
         if final_prefix is None:
-            final_prefix = config.get_config_value('Secrets', 'prefix', fallback=self.prefix)
+            final_prefix = config.get_config_value(
+                "Secrets", "prefix", fallback=self.prefix
+            )
 
         if not final_service_name:
             raise SecretError(
                 "Не удалось автоматически определить 'service_name' для менеджера секретов.",
-                hint="Укажите 'service_name' явно при создании SecretManager или в секции [Secrets] файла конфигурации."
+                hint="Укажите 'service_name' явно при создании SecretManager или в секции [Secrets] файла конфигурации.",
             )
 
         self.service_name: str = final_prefix + final_service_name
@@ -118,19 +130,23 @@ class SecretManager:
         if providers is not None:
             self.providers = providers
         else:
-            disable_keyring = config.get_config_boolean('secrets', 'disable_keyring', fallback=False)
-            self.providers = [
-                KeyringProvider(disable_keyring=disable_keyring),
-                DotEnvProvider(),
-                EnvProvider()
-            ]
+            disable_keyring = config.get_config_boolean(
+                "secrets", "disable_keyring", fallback=False
+            )
+            from .providers import KEYRING_AVAILABLE
+
+            self.providers = []
+            if KEYRING_AVAILABLE:
+                self.providers.append(KeyringProvider(disable_keyring=disable_keyring))
+            self.providers.extend([DotEnvProvider(), EnvProvider()])
 
         _get_logger().devdebug(
             "SecretManager инициализирован. Сервис: '%s', Провайдеров: %d",
-            self.service_name, len(self.providers)
+            self.service_name,
+            len(self.providers),
         )
 
-    def add_provider(self, provider: SecretProvider, index: Optional[int] = None) -> None:
+    def add_provider(self, provider: SecretProvider, index: int | None = None) -> None:
         """
         Добавляет новый провайдер в цепочку.
 
@@ -149,6 +165,7 @@ class SecretManager:
             self._plugins_loaded = True
             try:
                 from ..plugins import registry, SecretProviderPlugin
+
                 registry.discover_plugins("chutils.plugins.secret")
                 external_providers = registry.get_plugins_by_type(SecretProviderPlugin)
                 for provider in reversed(external_providers):
@@ -157,7 +174,9 @@ class SecretManager:
             except Exception as e:
                 _get_logger().error("Ошибка при загрузке плагинов секретов: %s", str(e))
 
-    def get_secret(self, key: str) -> Optional[str]:
+    def get_secret(
+            self, key: str, fallback: Optional[str] = None, required: bool = False
+    ) -> Optional[str]:
         """
         Получает секрет, опрашивая провайдеры по порядку.
         """
@@ -170,7 +189,13 @@ class SecretManager:
                 return value
 
         _get_logger().devdebug("Секрет '%s' не найден ни в одном из провайдеров.", key)
-        return None
+        if required:
+            from chutils.exceptions import SecretNotFoundError
+
+            raise SecretNotFoundError(
+                f"Secret '{key}' not found in the service '{self.service_name}'"
+            )
+        return fallback
 
     def save_secret(self, key: str, value: str) -> bool:
         """
@@ -200,8 +225,10 @@ class SecretManager:
         return self.save_secret(key, value)
 
     # Асинхронные обертки
-    async def aget_secret(self, key: str) -> Optional[str]:
-        return await asyncio.to_thread(self.get_secret, key)
+    async def aget_secret(
+            self, key: str, fallback: Optional[str] = None, required: bool = False
+    ) -> Optional[str]:
+        return await asyncio.to_thread(self.get_secret, key, fallback, required)
 
     async def asave_secret(self, key: str, value: str) -> bool:
         return await asyncio.to_thread(self.save_secret, key, value)

@@ -164,7 +164,8 @@ def test_get_secret_prioritizes_keyring(project_with_marker, monkeypatch):
     fs, project_root = project_with_marker
     fs.create_file(project_root / ".env", contents="SHARED_SECRET=dotenv_value")
     # Keyring возвращает свое значение
-    monkeypatch.setattr("chutils.secret_manager.providers.keyring.get_password", lambda *args, **kwargs: "keyring_value")
+    monkeypatch.setattr("chutils.secret_manager.providers.keyring.get_password",
+                        lambda *args, **kwargs: "keyring_value")
 
     # Сбрасываем состояние
     from chutils import config
@@ -177,3 +178,48 @@ def test_get_secret_prioritizes_keyring(project_with_marker, monkeypatch):
 
     # --- Проверка ---
     assert result == "keyring_value"
+
+
+def test_keyring_not_available_providers_list(monkeypatch):
+    """Проверяет, что при отсутствии keyring KeyringProvider исключается из провайдеров по умолчанию."""
+    monkeypatch.setattr("chutils.secret_manager.providers.KEYRING_AVAILABLE", False)
+
+    sm = SecretManager("my_app_no_keyring")
+    # Должны остаться только DotEnvProvider и EnvProvider
+    provider_classes = [type(p) for p in sm.providers]
+    from chutils.secret_manager.providers import KeyringProvider
+    assert KeyringProvider not in provider_classes
+
+
+def test_keyring_not_available_raises_exception(monkeypatch):
+    """Проверяет, что при отсутствии keyring вызов методов KeyringProvider бросает OptionalDependencyError."""
+    monkeypatch.setattr("chutils.secret_manager.providers.KEYRING_AVAILABLE", False)
+
+    from chutils.secret_manager.providers import KeyringProvider
+    from chutils.exceptions import OptionalDependencyError
+
+    provider = KeyringProvider()
+    with pytest.raises(OptionalDependencyError):
+        provider.get("key", "service")
+
+    with pytest.raises(OptionalDependencyError):
+        provider.set("key", "val", "service")
+
+    with pytest.raises(OptionalDependencyError):
+        provider.delete("key", "service")
+
+
+def test_warn_about_missing_keyring_logs_warning(monkeypatch, mocker):
+    """Проверяет, что выводится предупреждение о пропущенном keyring."""
+    monkeypatch.setattr("chutils.secret_manager.providers.KEYRING_AVAILABLE", False)
+
+    # Сбрасываем флаг вызова предупреждения для чистоты теста
+    mocker.patch("chutils.secret_manager.core._keyring_missing_warned", False)
+    mock_log = mocker.patch("chutils.secret_manager.core._get_logger")
+    mock_warning = mocker.MagicMock()
+    mock_log.return_value.warning = mock_warning
+
+    # Инициализация вызывает предупреждение
+    SecretManager("my_app_warn")
+    mock_warning.assert_called_once()
+    assert "не установлена" in mock_warning.call_args[0][0]

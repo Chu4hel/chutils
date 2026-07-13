@@ -9,7 +9,7 @@ from __future__ import annotations
 import ast
 import re
 from pathlib import Path
-from typing import Union, Any
+from typing import Any
 
 from .ai_lint import Rule, LintResult
 
@@ -105,7 +105,7 @@ class DocstringVisitor(ast.NodeVisitor):
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
         self._check_func(node)
 
-    def _check_func(self, node: Union[ast.FunctionDef, ast.AsyncFunctionDef]) -> None:
+    def _check_func(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
         is_public = not node.name.startswith("_") or node.name in ("__init__", "__call__")
         if not is_public:
             return
@@ -229,7 +229,7 @@ class DocstringQualityRule(Rule):
                 continue
 
             try:
-                with open(file_path, "r", encoding="utf-8") as f:
+                with open(file_path, encoding="utf-8") as f:
                     content = f.read()
                 tree = ast.parse(content)
                 visitor = DocstringVisitor(file_path, self.name)
@@ -268,7 +268,7 @@ class SecurityHardcodeRule(Rule):
                 continue
 
             try:
-                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                with open(file_path, encoding="utf-8", errors="ignore") as f:
                     content = f.read()
             except Exception:
                 continue
@@ -339,7 +339,7 @@ class ChutilsIntegrationRule(Rule):
                 continue
 
             try:
-                with open(file_path, "r", encoding="utf-8") as f:
+                with open(file_path, encoding="utf-8") as f:
                     content = f.read()
                 tree = ast.parse(content)
             except Exception:
@@ -499,7 +499,7 @@ class APIMapRule(Rule):
                 sig = f"`{item['signature']}`" if item['signature'] else ""
                 expected_content += f"| `{item['name']}` | {item['type']} | {sig} | {item['summary']} |\n"
 
-            with open(api_map_path, "r", encoding="utf-8") as f:
+            with open(api_map_path, encoding="utf-8") as f:
                 actual_content = f.read()
 
             if actual_content.strip() != expected_content.strip():
