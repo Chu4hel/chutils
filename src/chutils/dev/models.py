@@ -10,10 +10,19 @@ try:
 except ImportError:
     # Заглушки для обеспечения возможности импорта модуля без pydantic
     class BaseModel:  # type: ignore[no-redef]
+        """Заглушка Pydantic BaseModel при его отсутствии."""
         pass
 
 
     def Field(**kwargs: Any) -> Any:  # type: ignore[no-redef]
+        """Заглушка Pydantic Field при его отсутствии.
+
+        Args:
+            **kwargs: Произвольные параметры поля.
+
+        Returns:
+            None.
+        """
         return None
 
 

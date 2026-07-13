@@ -22,6 +22,7 @@ except ImportError:
 
 
 class RouteConfig(TypedDict, total=False):
+    """Конфигурация отдельного маршрута мок-сервера."""
     path: str
     method: str
     response: Union[str, dict[str, object], list[object]]
@@ -84,7 +85,15 @@ def interpolate_groups(
         val: Union[str, dict[str, object], list[object]],
         groups: tuple[str, ...],
 ) -> Union[str, dict[str, object], list[object]]:
-    """Рекурсивно подставляет значения групп регулярного выражения вместо $1, $2 и т.д."""
+    """Рекурсивно подставляет значения групп регулярного выражения вместо $1, $2 и т.д.
+
+    Args:
+        val: Значение для интерполяции (строка, словарь или список).
+        groups: Кортеж найденных групп из регулярного выражения.
+
+    Returns:
+        Интерполированное значение того же типа.
+    """
     if isinstance(val, str):
         result = val
         for i, group_val in enumerate(groups, 1):
@@ -114,11 +123,16 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
 
     @property
     def runner(self) -> MockServerRunner:
-        """Получает инстанс MockServerRunner, привязанный к серверу."""
+        """Получает инстанс MockServerRunner, привязанный к серверу.
+
+        Returns:
+            Экземпляр MockServerRunner.
+        """
         return cast(MockServerRunner, getattr(self.server, "runner"))
 
     # Переопределяем логирование по умолчанию, чтобы не мусорить в stdout
     def log_message(self, format: str, *args: object) -> None:
+        """Переопределяет логирование по умолчанию, чтобы не мусорить в stdout."""
         pass
 
     def handle_request(self) -> None:
@@ -232,7 +246,11 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
                 pass
 
     def proxy_request(self, method: str) -> None:
-        """Перенаправляет запрос на реальный бэкенд."""
+        """Перенаправляет запрос на реальный бэкенд.
+
+        Args:
+            method: HTTP-метод запроса (например, GET, POST).
+        """
         fallback = self.runner.proxy_fallback
         if not fallback:
             return
@@ -300,18 +318,23 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
 
     # Заглушки для HTTP-методов
     def do_GET(self) -> None:
+        """Обрабатывает входящий GET-запрос."""
         self.handle_request()
 
     def do_POST(self) -> None:
+        """Обрабатывает входящий POST-запрос."""
         self.handle_request()
 
     def do_PUT(self) -> None:
+        """Обрабатывает входящий PUT-запрос."""
         self.handle_request()
 
     def do_DELETE(self) -> None:
+        """Обрабатывает входящий DELETE-запрос."""
         self.handle_request()
 
     def do_PATCH(self) -> None:
+        """Обрабатывает входящий PATCH-запрос."""
         self.handle_request()
 
 
@@ -329,6 +352,13 @@ class MockServerRunner:
             routes_path: str = "mocks.yml",
             proxy_fallback: str | None = None,
     ) -> None:
+        """Инициализирует MockServerRunner.
+
+        Args:
+            port: Порт, на котором будет запущен мок-сервер.
+            routes_path: Путь к YAML-файлу с описанием роутов.
+            proxy_fallback: URL реального бэкенда для проксирования неизвестных роутов.
+        """
         self.port = port
         self.routes_path = routes_path
         self.proxy_fallback = proxy_fallback
@@ -344,7 +374,11 @@ class MockServerRunner:
         self.console.print("", end="")
 
     def init_template(self, output_path: str) -> None:
-        """Создает шаблонный файл конфигурации роутов."""
+        """Создает шаблонный файл конфигурации роутов.
+
+        Args:
+            output_path: Путь к файлу для сохранения шаблона.
+        """
         path = Path(output_path).resolve()
         if path.exists():
             raise CommandError(
@@ -357,7 +391,11 @@ class MockServerRunner:
         )
 
     def log_event(self, message: str) -> None:
-        """Выводит отформатированное лог-сообщение в консоль."""
+        """Выводит отформатированное лог-сообщение в консоль.
+
+        Args:
+            message: Текст лог-сообщения.
+        """
         from datetime import datetime
         time_str = datetime.now().strftime("%H:%M:%S")
         self.console.print(f"[dim][{time_str}][/dim] {message}")

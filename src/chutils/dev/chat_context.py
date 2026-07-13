@@ -37,7 +37,15 @@ def extract_keywords(text: str) -> list[str]:
 
 
 def score_node(node: Node, keywords: list[str]) -> float:
-    """Оценивает релевантность узла (модуля/пакета) по ключевым словам."""
+    """Оценивает релевантность узла (модуля/пакета) по ключевым словам.
+
+    Args:
+        node: Узел AST дерева, который нужно оценить.
+        keywords: Список ключевых слов для поиска.
+
+    Returns:
+        Численная оценка релевантности (чем выше, тем релевантнее).
+    """
     score = 0.0
     for kw in keywords:
         if kw in node.name.lower():
@@ -59,7 +67,14 @@ def score_node(node: Node, keywords: list[str]) -> float:
 
 
 def get_all_leaf_modules(node: Node) -> list[tuple[str, Node]]:
-    """Собирает все конечные модули (файлы) в дереве AST."""
+    """Собирает все конечные модули (файлы) в дереве AST.
+
+    Args:
+        node: Корневой узел для обхода.
+
+    Returns:
+        Список кортежей вида (имя_модуля, узел_модуля).
+    """
     modules = []
     if node.type == "module":
         modules.append((node.name, node))
@@ -69,7 +84,15 @@ def get_all_leaf_modules(node: Node) -> list[tuple[str, Node]]:
 
 
 def filter_node_by_modules(node: Node, modules: list[str]) -> Node | None:
-    """Фильтрует AST-дерево, оставляя только указанные модули."""
+    """Фильтрует AST-дерево, оставляя только указанные модули.
+
+    Args:
+        node: Узел AST дерева для фильтрации.
+        modules: Список имен разрешенных модулей.
+
+    Returns:
+        Отфильтрованный узел или None, если модуль не подходит.
+    """
     node_name_lower = node.name.lower()
     node_path_lower = node.path.replace("\\", "/").lower()
 
@@ -96,7 +119,15 @@ def filter_node_by_modules(node: Node, modules: list[str]) -> Node | None:
 
 
 def filter_symbols_by_layer(node: Node, allowed_layers: set[str]) -> Node:
-    """Фильтрует символы по слою абстракции."""
+    """Фильтрует символы по слою абстракции.
+
+    Args:
+        node: Узел AST дерева для фильтрации символов.
+        allowed_layers: Множество допустимых слоев.
+
+    Returns:
+        Новый узел AST дерева с отфильтрованными символами.
+    """
     new_node = node.model_copy()
     new_node.symbols = [sym for sym in node.symbols if sym.layer in allowed_layers]
     new_node.children = [
@@ -110,7 +141,16 @@ def filter_examples(
         selected_modules: list[str] | None,
         keywords: list[str] | None,
 ) -> list[ProjectExample]:
-    """Фильтрует few-shot примеры по выбранным модулям или ключевым словам."""
+    """Фильтрует few-shot примеры по выбранным модулям или ключевым словам.
+
+    Args:
+        examples: Полный список примеров.
+        selected_modules: Список выбранных модулей.
+        keywords: Список ключевых слов.
+
+    Returns:
+        Список релевантных примеров.
+    """
     relevant_examples = []
     for ex in examples:
         is_relevant = False
@@ -138,7 +178,15 @@ def filter_examples(
 
 
 def generate_tree_markdown(node: Node, indent: str = "") -> str:
-    """Форматирует AST-дерево в Markdown."""
+    """Форматирует AST-дерево в Markdown.
+
+    Args:
+        node: Узел AST дерева для форматирования.
+        indent: Начальный отступ строки.
+
+    Returns:
+        Markdown-строка с представлением дерева.
+    """
     lines = []
     icon = "📁 " if node.type == "package" else "📄 "
     summary_part = f" - {node.summary}" if node.summary else ""
@@ -155,7 +203,14 @@ def generate_tree_markdown(node: Node, indent: str = "") -> str:
 
 
 def generate_symbols_details(node: Node) -> str:
-    """Форматирует сигнатуры и docstrings в Markdown."""
+    """Форматирует сигнатуры и docstrings в Markdown.
+
+    Args:
+        node: Узел AST дерева.
+
+    Returns:
+        Markdown-строка с деталями о символах (сигнатуры, docstrings).
+    """
     sections = []
     if node.symbols:
         sections.append(f"### Модуль `{node.path}`\n")
@@ -186,7 +241,14 @@ def generate_symbols_details(node: Node) -> str:
 
 
 def generate_examples_markdown(examples: list[ProjectExample]) -> str:
-    """Форматирует few-shot примеры в Markdown."""
+    """Форматирует few-shot примеры в Markdown.
+
+    Args:
+        examples: Список примеров для форматирования.
+
+    Returns:
+        Markdown-строка с оформленными примерами.
+    """
     lines = []
     if examples:
         lines.append("## Few-Shot Примеры (Кейсы использования)\n")
@@ -207,7 +269,17 @@ def collect_context_slice(
         task: str | None = None,
         layer: str = "public",
 ) -> str:
-    """Собирает контекстный срез по заданным параметрам."""
+    """Собирает контекстный срез по заданным параметрам.
+
+    Args:
+        project_path: Путь к корню проекта.
+        modules: Список выбранных модулей.
+        task: Описание задачи.
+        layer: Слой абстракции для фильтрации символов.
+
+    Returns:
+        Сгенерированный Markdown с контекстом.
+    """
     # 1. Индексируем проект
     indexer = Indexer(str(project_path))
     index = indexer.index(include_examples=True)
@@ -288,7 +360,14 @@ def collect_context_slice(
 
 
 def run_interactive_menu(project_path: Path) -> list[str]:
-    """Запускает красивое интерактивное CLI-меню для выбора модулей."""
+    """Запускает красивое интерактивное CLI-меню для выбора модулей.
+
+    Args:
+        project_path: Путь к корню проекта.
+
+    Returns:
+        Список выбранных пользователем модулей.
+    """
     console = get_console()
     console.print(
         "[bold cyan]=== Интерактивный помощник сборки контекста ===[/bold cyan]\n"
