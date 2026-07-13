@@ -269,7 +269,7 @@ def __getattr__(name: str) -> Any:
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
-def __dir__():
+def __dir__() -> list[str]:
     """
     Возвращает список всех доступных атрибутов для поддержки автодополнения и интроспекции.
     """
@@ -279,7 +279,7 @@ def __dir__():
     ])
 
 
-def init(base_dir: str):
+def init(base_dir: str) -> None:
     """
     Ручная инициализация пакета с указанием базовой директории проекта.
 
