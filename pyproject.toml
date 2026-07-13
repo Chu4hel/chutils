@@ -90,6 +90,10 @@ build-backend = "hatchling.build"
 pythonpath = [
     "src"
 ]
+filterwarnings = [
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated"
+]
+
 
 [tool.ruff]
 target-version = "py310"
