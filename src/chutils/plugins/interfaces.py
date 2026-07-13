@@ -19,17 +19,29 @@ class BasePlugin(ABC):
     @property
     @abstractmethod
     def name(self) -> str:
-        """Уникальное имя плагина."""
+        """Уникальное имя плагина.
+
+        Returns:
+            Имя плагина.
+        """
         pass
 
     @property
     def version(self) -> str:
-        """Версия плагина."""
+        """Версия плагина.
+
+        Returns:
+            Строка с версией плагина.
+        """
         return "0.1.0"
 
     @property
     def description(self) -> str:
-        """Описание плагина."""
+        """Описание плагина.
+
+        Returns:
+            Описание плагина.
+        """
         return ""
 
 
@@ -57,11 +69,13 @@ class LoggerHandlerPlugin(BasePlugin):
 
     @abstractmethod
     def get_handler(self, **kwargs: Any) -> logging.Handler:
-        """
-        Создает и возвращает настроенный экземпляр logging.Handler.
+        """Создает и возвращает настроенный экземпляр logging.Handler.
         
         Args:
             **kwargs: Параметры конфигурации для инициализации хэндлера.
+
+        Returns:
+            Настроенный объект logging.Handler.
         """
         pass
 
