@@ -29,6 +29,7 @@ nav:
   - Имитация поведения (scraping): scraping.md
   - Решение капчи (captcha): captcha.md
   - Справочник API: api.md
+  - Тестирование: testing.md
   - "Миграция: v2 -> v3": migration.md
   - Опциональные зависимости: dependencies.md
   - CLI Reference:
