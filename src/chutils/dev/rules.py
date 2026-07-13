@@ -346,7 +346,7 @@ class ChutilsIntegrationRule(Rule):
                 continue
 
             for node in ast.walk(tree):
-                # Проверка импорта logging/keyring
+                # Проверка импорта logging/keyring/requests/httpx
                 if isinstance(node, ast.Import):
                     for name in node.names:
                         if name.name == "logging":
@@ -371,6 +371,28 @@ class ChutilsIntegrationRule(Rule):
                                     fix_suggestion="Используйте: from chutils import SecretManager"
                                 )
                             )
+                        elif name.name == "requests":
+                            results.append(
+                                LintResult(
+                                    rule_name=self.name,
+                                    message="Импортирована внешняя библиотека 'requests'. Рекомендуется использовать 'chutils.web.WebClient' для умной ротации, лимитов и анти-детект возможностей.",
+                                    severity=self.severity,
+                                    file_path=file_path,
+                                    line_number=node.lineno,
+                                    fix_suggestion="Используйте: from chutils.web import WebClient"
+                                )
+                            )
+                        elif name.name == "httpx":
+                            results.append(
+                                LintResult(
+                                    rule_name=self.name,
+                                    message="Импортирована библиотека 'httpx'. Рекомендуется использовать 'chutils.web.WebClient' или 'chutils.web.AsyncWebClient' для ротации User-Agent, прокси и контроля лимитов.",
+                                    severity=self.severity,
+                                    file_path=file_path,
+                                    line_number=node.lineno,
+                                    fix_suggestion="Используйте: from chutils.web import WebClient, AsyncWebClient"
+                                )
+                            )
                 elif isinstance(node, ast.ImportFrom):
                     if node.module == "logging":
                         results.append(
@@ -392,6 +414,28 @@ class ChutilsIntegrationRule(Rule):
                                 file_path=file_path,
                                 line_number=node.lineno,
                                 fix_suggestion="Используйте 'SecretManager' из chutils."
+                            )
+                        )
+                    elif node.module == "requests":
+                        results.append(
+                            LintResult(
+                                rule_name=self.name,
+                                message="Импортированы элементы из 'requests'. Рекомендуется использовать 'chutils.web.WebClient'.",
+                                severity=self.severity,
+                                file_path=file_path,
+                                line_number=node.lineno,
+                                fix_suggestion="Используйте 'WebClient' из chutils.web."
+                            )
+                        )
+                    elif node.module == "httpx":
+                        results.append(
+                            LintResult(
+                                rule_name=self.name,
+                                message="Импортированы элементы из 'httpx'. Рекомендуется использовать 'chutils.web.WebClient' или 'chutils.web.AsyncWebClient'.",
+                                severity=self.severity,
+                                file_path=file_path,
+                                line_number=node.lineno,
+                                fix_suggestion="Используйте 'WebClient' или 'AsyncWebClient' из chutils.web."
                             )
                         )
                 # Проверка os.getenv/os.environ

@@ -300,6 +300,8 @@ def test_chutils_integration_rule(tmp_path):
 import logging
 import os
 import keyring
+import requests
+import httpx
 
 logging.info("Test message")
 db_host = os.environ.get("DB_HOST")
@@ -310,10 +312,13 @@ token = keyring.get_password("system", "user")
         f.write(bad_code)
 
     results = rule.check(str(tmp_path), [str(file_path)])
-    assert len(results) == 3
+    assert len(results) == 5
     assert any("logging" in r.message for r in results)
     assert any("os.environ" in r.message or "os.getenv" in r.message for r in results)
     assert any("keyring" in r.message for r in results)
+    assert any("requests" in r.message for r in results)
+    assert any("httpx" in r.message for r in results)
+
 
 
 def test_api_map_rule(tmp_path):
