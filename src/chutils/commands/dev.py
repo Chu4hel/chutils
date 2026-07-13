@@ -425,11 +425,39 @@ class DevCommand(BaseCommand):
         else:
             # Markdown
             output_content = f"# Public API Map: {project_name}\n\n"
-            output_content += "| Name | Type | Signature | Description |\n"
-            output_content += "| :--- | :--- | :--- | :--- |\n"
+
+            headers = ["Name", "Type", "Signature", "Description"]
+            rows = []
             for item in api_data:
+                name = f"`{item['name']}`"
+                obj_type = item["type"]
                 sig = f"`{item['signature']}`" if item["signature"] else ""
-                output_content += f"| `{item['name']}` | {item['type']} | {sig} | {item['summary']} |\n"
+
+                # Экранируем '|' в сигнатуре и описании (summary), чтобы не ломать столбцы таблицы
+                sig_escaped = sig.replace("|", "\\|")
+                summary_escaped = item["summary"].replace("|", "\\|")
+                # Убираем переводы строк из описания для сохранения табличного вида
+                summary_escaped = summary_escaped.replace("\n", " ").replace("\r", "")
+
+                rows.append([name, obj_type, sig_escaped, summary_escaped])
+
+            # Вычисляем максимальную ширину столбцов
+            col_widths = []
+            for i in range(len(headers)):
+                max_len = len(headers[i])
+                for row in rows:
+                    max_len = max(max_len, len(row[i]))
+                col_widths.append(max_len)
+
+            # Заголовок
+            header_line = "|" + "".join(f" {headers[i].ljust(col_widths[i])} |" for i in range(len(headers)))
+            # Разделитель с выравниванием по левому краю (:---) без лишних пробелов на стыках
+            align_line = "|" + "|".join(f":{'-' * (col_widths[i] + 1)}" for i in range(len(headers))) + "|"
+
+            output_content += header_line + "\n" + align_line + "\n"
+            for row in rows:
+                row_line = "|" + "".join(f" {row[i].ljust(col_widths[i])} |" for i in range(len(headers)))
+                output_content += row_line + "\n"
 
             if args.include_examples and examples:
                 output_content += "\n## Few-Shot Примеры (Образцы кода)\n"

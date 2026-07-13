@@ -13,7 +13,10 @@ def test_cli_dev_generate_context_markdown(cli_runner):
     result = cli_runner.invoke(["dev", "generate-context"])
     assert result.exit_code == 0
     assert "# Public API Map" in result.stdout
-    assert "| Name | Type | Signature | Description |" in result.stdout
+    assert "Name" in result.stdout
+    assert "Type" in result.stdout
+    assert "Signature" in result.stdout
+    assert "Description" in result.stdout
 
 
 def test_cli_dev_generate_context_json(cli_runner):

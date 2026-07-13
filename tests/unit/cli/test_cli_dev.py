@@ -30,7 +30,10 @@ def test_cli_dev_generate_context_markdown(mocker, capsys):
     assert e.value.code == 0
     captured = capsys.readouterr()
     assert "# Public API Map: chutils" in captured.out
-    assert "| Name | Type | Signature | Description |" in captured.out
+    assert "Name" in captured.out
+    assert "Type" in captured.out
+    assert "Signature" in captured.out
+    assert "Description" in captured.out
     # Проверяем наличие ключевых функций
     assert "`setup_logger`" in captured.out
     assert "`get_config_value`" in captured.out
