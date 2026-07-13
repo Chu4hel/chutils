@@ -11,7 +11,14 @@ MODULE_NAME_REGEX = re.compile(r"^[a-z_][a-z0-9_]*$")
 
 
 def to_camel_case(s: str) -> str:
-    """Преобразует snake_case строку в CamelCase."""
+    """Преобразует snake_case строку в CamelCase.
+
+    Args:
+        s: Входная строка в стиле snake_case.
+
+    Returns:
+        Строка, преобразованная в CamelCase.
+    """
     return "".join(word.capitalize() for word in s.split("_"))
 
 
@@ -339,6 +346,13 @@ class Scaffolder:
             output_dir: str | None = None,
             force: bool = False,
     ) -> None:
+        """Инициализирует Scaffolder.
+
+        Args:
+            module_name: Имя генерируемого модуля.
+            output_dir: Путь, куда будет сгенерирован модуль.
+            force: Флаг принудительной генерации (перезаписи).
+        """
         self.module_name = module_name.strip()
         self.force = force
 

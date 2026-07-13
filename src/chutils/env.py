@@ -20,28 +20,42 @@ OTEL_AVAILABLE = _is_installed("opentelemetry.trace")
 
 
 def has_pydantic() -> bool:
-    """Возвращает True, если Pydantic установлен."""
+    """Возвращает True, если Pydantic установлен.
+
+    Returns:
+        True, если пакет pydantic доступен для импорта.
+    """
     return PYDANTIC_AVAILABLE
 
 
 def has_rich() -> bool:
-    """Возвращает True, если Rich установлен."""
+    """Возвращает True, если Rich установлен.
+
+    Returns:
+        True, если пакет rich доступен для импорта.
+    """
     return RICH_AVAILABLE
 
 
 def has_watchdog() -> bool:
-    """Возвращает True, если Watchdog установлен."""
+    """Возвращает True, если Watchdog установлен.
+
+    Returns:
+        True, если пакет watchdog доступен для импорта.
+    """
     return WATCHDOG_AVAILABLE
 
 
 def is_rich_enabled() -> bool:
-    """
-    Централизованная проверка: доступен ли Rich и разрешен ли он настройками.
+    """Централизованная проверка: доступен ли Rich и разрешен ли он настройками.
     
     Учитывает:
     - Наличие установленного пакета rich.
     - Переменные окружения NO_COLOR, CH_NO_COLOR.
     - Специальную переменную CH_NO_RICH (для тестов и headless).
+
+    Returns:
+        True, если вывод Rich разрешен и пакет установлен, иначе False.
     """
     if not RICH_AVAILABLE:
         return False
@@ -59,6 +73,9 @@ def is_otel_enabled() -> bool:
     Учитывает:
     - Наличие установленного пакета opentelemetry.
     - Переменную окружения CH_DISABLE_TRACING
+
+    Returns:
+        True, если OpenTelemetry трассировка включена и доступна.
     """
     if not OTEL_AVAILABLE:
         return False

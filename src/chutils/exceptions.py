@@ -21,6 +21,13 @@ class ChutilsException(Exception):
     """
 
     def __init__(self, message: str, hint: str | None = None, **context: t.Any) -> None:
+        """Инициализирует базовое исключение ChutilsException.
+
+        Args:
+            message: Сообщение об ошибке.
+            hint: Опциональная подсказка по устранению ошибки.
+            **context: Дополнительный контекст ошибки.
+        """
         super().__init__(message)
         self._message = message
         self.hint = hint
@@ -159,6 +166,15 @@ class PathTraversalError(FileSystemError):
             hint: str | None = "Проверьте правильность пути или права доступа.",
             **context: t.Any,
     ) -> None:
+        """Инициализирует исключение попытки выхода за пределы базовой директории.
+
+        Args:
+            message: Сообщение об ошибке.
+            attempted_path: Недопустимый путь, к которому пытались получить доступ.
+            base_path: Базовый разрешенный путь.
+            hint: Опциональная подсказка для пользователя.
+            **context: Дополнительный контекст ошибки.
+        """
         context.update(
             {"attempted_path": str(attempted_path), "base_path": str(base_path)}
         )
@@ -192,6 +208,13 @@ class EventBusExceptionGroup(_BaseExceptionGroup, EventBusError):
     def __init__(
             self, message: str, exceptions: list[Exception], **context: t.Any
     ) -> None:
+        """Инициализирует группу исключений шины событий.
+
+        Args:
+            message: Сообщение об ошибке.
+            exceptions: Список перехваченных исключений от обработчиков.
+            **context: Дополнительный контекст ошибки.
+        """
         _BaseExceptionGroup.__init__(self, message, exceptions)
         EventBusError.__init__(self, message, **context)
 
