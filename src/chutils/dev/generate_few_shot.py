@@ -851,21 +851,24 @@ class FewShotBankWriter:
 
 
 # ---------------------------------------------------------------------------
-# Интеграция с манифестом GEMINI.md
+# Интеграция с манифестами ИИ (GEMINI.md, AGENTS.md, antigravity.md, .cursorrules и др.)
 # ---------------------------------------------------------------------------
+
+import json
+from .constants import AI_MANIFEST_FILENAMES
 
 GEMINI_BLOCK_START = "<!-- chutils:few-shot-start -->"
 GEMINI_BLOCK_END = "<!-- chutils:few-shot-end -->"
 
 
-def _build_gemini_block(categories: list[str]) -> str:
+def _build_manifest_block(categories: list[str]) -> str:
     """Строит Markdown-блок ссылок на few-shot банк.
 
     Args:
-        categories: Список сгенерированных категорий.
+        categories: Список категорий.
 
     Returns:
-        Строка с Markdown-блоком для вставки в GEMINI.md.
+        Строка с Markdown-блоком для вставки.
     """
     lines = [
         GEMINI_BLOCK_START,
@@ -876,60 +879,175 @@ def _build_gemini_block(categories: list[str]) -> str:
         "Сгенерирован командой `chutils dev generate-few-shot`.",
         "",
     ]
-    for cat in categories:
+    for cat in sorted(categories):
         lines.append(f"- [{cat}](./docs/ai_examples/{cat}/README.md)")
     lines += ["", GEMINI_BLOCK_END, ""]
     return "\n".join(lines)
 
 
-def update_gemini_manifest(project_root: Path, categories: list[str]) -> bool:
-    """Обновляет или создаёт GEMINI.md с ссылками на few-shot банк.
+def _scan_existing_categories(project_root: Path) -> list[str]:
+    """Сканирует папку docs/ai_examples на наличие папок с README.md.
 
     Args:
         project_root: Путь к корню целевого проекта.
-        categories: Список созданных категорий.
 
     Returns:
-        True если файл был создан или обновлён.
+        Список имен найденных категорий.
     """
-    gemini_path = project_root / "GEMINI.md"
-    block = _build_gemini_block(categories)
+    examples_dir = project_root / "docs" / "ai_examples"
+    if not examples_dir.exists() or not examples_dir.is_dir():
+        return []
 
-    if gemini_path.exists():
-        content = gemini_path.read_text(encoding="utf-8")
+    categories = []
+    for item in examples_dir.iterdir():
+        if item.is_dir() and (item / "README.md").exists():
+            categories.append(item.name)
+    return sorted(categories)
+
+
+def _update_text_manifest(manifest_path: Path, categories: list[str]) -> bool:
+    """Обновляет текстовый/Markdown манифест.
+
+    Args:
+        manifest_path: Путь к файлу.
+        categories: Список категорий.
+
+    Returns:
+        True если успешно обновлен.
+    """
+    block = _build_manifest_block(categories)
+    try:
+        content = manifest_path.read_text(encoding="utf-8")
         if GEMINI_BLOCK_START in content and GEMINI_BLOCK_END in content:
-            # Заменяем существующий блок
             start_idx = content.index(GEMINI_BLOCK_START)
             end_idx = content.index(GEMINI_BLOCK_END) + len(GEMINI_BLOCK_END)
-            # Захватываем завершающий перевод строки
             if end_idx < len(content) and content[end_idx] == "\n":
                 end_idx += 1
             new_content = content[:start_idx] + block + content[end_idx:]
         else:
-            # Добавляем блок в конец файла
             separator = "\n" if not content.endswith("\n") else ""
             new_content = content + separator + "\n" + block
-        gemini_path.write_text(new_content, encoding="utf-8")
-    else:
-        # Создаём базовый GEMINI.md
-        project_name = project_root.name
+        manifest_path.write_text(new_content, encoding="utf-8")
+        return True
+    except Exception:
+        return False
+
+
+def _update_json_cursorrules(manifest_path: Path, categories: list[str]) -> bool:
+    """Обновляет .cursorrules, если он является валидным JSON файлом.
+
+    Если это невалидный JSON, обновляет его как текстовый файл.
+
+    Args:
+        manifest_path: Путь к файлу.
+        categories: Список категорий.
+
+    Returns:
+        True если успешно обновлен.
+    """
+    try:
+        content = manifest_path.read_text(encoding="utf-8")
+    except Exception:
+        return False
+
+    # Попытка парсинга JSON
+    try:
+        data = json.loads(content)
+        if not isinstance(data, dict):
+            # Если это массив или примитив, обработаем как текст
+            raise ValueError("Root is not a JSON object")
+    except Exception:
+        # Невалидный JSON — обрабатываем как текст
+        return _update_text_manifest(manifest_path, categories)
+
+    # Обновляем ключ
+    paths = [f"./docs/ai_examples/{cat}/README.md" for cat in sorted(categories)]
+    data["few_shot_examples"] = paths
+
+    # Записываем обратно с сохранением форматирования (стараемся определить отступы)
+    indent = 2
+    if "  " in content:
+        indent = 2
+    if "    " in content:
+        indent = 4
+
+    try:
+        manifest_path.write_text(json.dumps(data, ensure_ascii=False, indent=indent), encoding="utf-8")
+        return True
+    except Exception:
+        return False
+
+
+def update_ai_manifests(project_root: Path, console: _ConsoleProtocol | None = None) -> bool:
+    """Обновляет или создаёт AI-манифесты в корне целевого проекта.
+
+    Ищет существующие манифесты из списка AI_MANIFEST_FILENAMES. Если
+    ни одного файла не найдено, создаёт AGENTS.md. Обновляет все найденные.
+
+    Args:
+        project_root: Путь к корню целевого проекта.
+        console: Консоль для вывода предупреждений.
+
+    Returns:
+        True если хотя бы один манифест был успешно обновлен/создан.
+    """
+    categories = _scan_existing_categories(project_root)
+    if not categories:
+        return False
+
+    def _warn(msg: str) -> None:
+        if console is not None and hasattr(console, "print"):
+            console.print(f"[yellow]⚠ {msg}[/yellow]")
+
+    # Поиск существующих файлов в корне проекта
+    found_manifests: list[Path] = []
+    # Так как поиск должен быть регистронезависимым, обходим файлы корня
+    try:
+        for p in project_root.iterdir():
+            if p.is_file():
+                if p.name.lower() in [m.lower() for m in AI_MANIFEST_FILENAMES]:
+                    found_manifests.append(p)
+    except Exception as e:
+        _warn(f"Ошибка сканирования корня проекта: {e}")
+        return False
+
+    updated_any = False
+
+    # Если ни один манифест не найден — создаём AGENTS.md по умолчанию
+    if not found_manifests:
+        agents_path = project_root / "AGENTS.md"
         base_content = textwrap.dedent(f"""\
-            # {project_name}: Project Context for AI Agents
+            # Project Agents and AI Instructions
 
-            Этот файл содержит контекст проекта для AI-агентов (Gemini, Cursor, Copilot и др.).
+            Этот файл содержит инструкции для ИИ-ассистентов, работающих с проектом.
 
-            ## Описание проекта
+            ## Общие правила
 
-            > Заполните описание вашего проекта здесь.
-
-            ## Архитектура
-
-            > Опишите основные архитектурные решения здесь.
+            - Соблюдайте архитектурные стандарты проекта.
+            - Используйте few-shot примеры для написания корректного кода.
 
             """)
-        gemini_path.write_text(base_content + "\n" + block, encoding="utf-8")
+        block = _build_manifest_block(categories)
+        try:
+            agents_path.write_text(base_content + "\n" + block, encoding="utf-8")
+            found_manifests.append(agents_path)
+        except Exception as e:
+            _warn(f"Не удалось создать AGENTS.md: {e}")
 
-    return True
+    # Обновляем все найденные манифесты
+    for manifest_path in found_manifests:
+        success = False
+        if manifest_path.name.lower() == ".cursorrules":
+            success = _update_json_cursorrules(manifest_path, categories)
+        else:
+            success = _update_text_manifest(manifest_path, categories)
+
+        if success:
+            updated_any = True
+        else:
+            _warn(f"Не удалось обновить манифест: {manifest_path.name}")
+
+    return updated_any
 
 
 # ---------------------------------------------------------------------------
@@ -1014,9 +1132,12 @@ def generate_few_shot_bank(
                 f"  [yellow]↷[/yellow] Пропущена (используйте --force для перезаписи): [bold]{category}[/bold]"
             )
 
-    # 4. Обновление манифеста
-    result.manifest_updated = update_gemini_manifest(project_root, result.created_categories)
-    _print("[bold green]✓ GEMINI.md обновлён.[/bold green]")
+    # 4. Обновление манифестов ИИ
+    result.manifest_updated = update_ai_manifests(project_root, console=console)
+    if result.manifest_updated:
+        _print("[bold green]✓ Манифесты ИИ обновлены.[/bold green]")
+    else:
+        _print("[yellow]⚠ Манифесты ИИ не были обновлены.[/yellow]")
 
     _print(
         f"\n[bold green]✅ Банк few-shot примеров создан:[/bold green] {output_dir}"

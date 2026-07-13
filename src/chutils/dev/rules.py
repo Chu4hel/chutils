@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from .ai_lint import Rule, LintResult
+from .constants import AI_MANIFEST_FILENAMES
 
 
 class ManifestRule(Rule):
@@ -35,15 +36,9 @@ class ManifestRule(Rule):
         results: list[LintResult] = []
         base_path = Path(base_dir)
 
-        default_manifests = [
-            "GEMINI.md", "gemini.md",
-            "antigravity.md", "ANTIGRAVITY.md",
-            "agents.md", "AGENTS.md"
-        ]
-
         # 1. Проверяем корень проекта
         root_found = False
-        for name in default_manifests:
+        for name in AI_MANIFEST_FILENAMES:
             if (base_path / name).exists():
                 root_found = True
                 break
@@ -65,7 +60,7 @@ class ManifestRule(Rule):
             for p in src_dir.iterdir():
                 if p.is_dir() and (p / "__init__.py").exists():
                     pkg_found = False
-                    for name in default_manifests:
+                    for name in AI_MANIFEST_FILENAMES:
                         if (p / name).exists():
                             pkg_found = True
                             break

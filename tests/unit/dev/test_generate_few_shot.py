@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import ast
+import json
 import textwrap
 from pathlib import Path
 
@@ -14,7 +15,7 @@ from chutils.dev.generate_few_shot import (
     GenerationResult,
     TemplateRenderer,
     generate_few_shot_bank,
-    update_gemini_manifest,
+    update_ai_manifests,
     GEMINI_BLOCK_START,
     GEMINI_BLOCK_END,
 )
@@ -333,42 +334,78 @@ class TestFewShotBankWriter:
 
 
 # ---------------------------------------------------------------------------
-# Тесты update_gemini_manifest
+# Тесты update_ai_manifests
 # ---------------------------------------------------------------------------
 
 
-class TestUpdateGeminiManifest:
-    def test_creates_gemini_md_if_missing(self, tmp_path: Path) -> None:
-        update_gemini_manifest(tmp_path, ["use_cases", "repositories"])
-        gemini = tmp_path / "GEMINI.md"
-        assert gemini.exists()
-        content = gemini.read_text(encoding="utf-8")
+class TestUpdateAIManifests:
+    def test_creates_agents_md_if_all_missing(self, tmp_path: Path) -> None:
+        # Для успешного обновления нужны сгенерированные категории
+        examples_dir = tmp_path / "docs" / "ai_examples" / "use_cases"
+        examples_dir.mkdir(parents=True)
+        (examples_dir / "README.md").write_text("# README", encoding="utf-8")
+
+        result = update_ai_manifests(tmp_path)
+        assert result is True
+
+        agents = tmp_path / "AGENTS.md"
+        assert agents.exists()
+        content = agents.read_text(encoding="utf-8")
         assert GEMINI_BLOCK_START in content
         assert GEMINI_BLOCK_END in content
         assert "use_cases" in content
 
-    def test_appends_block_to_existing_file(self, tmp_path: Path) -> None:
-        gemini = tmp_path / "GEMINI.md"
-        gemini.write_text("# My Project\n\nSome existing content.\n", encoding="utf-8")
-        update_gemini_manifest(tmp_path, ["logging"])
-        content = gemini.read_text(encoding="utf-8")
-        assert "# My Project" in content
-        assert GEMINI_BLOCK_START in content
-        assert "logging" in content
+    def test_updates_existing_manifests(self, tmp_path: Path) -> None:
+        examples_dir = tmp_path / "docs" / "ai_examples" / "logging"
+        examples_dir.mkdir(parents=True)
+        (examples_dir / "README.md").write_text("# README", encoding="utf-8")
 
-    def test_replaces_existing_block(self, tmp_path: Path) -> None:
+        # Создаем существующий GEMINI.md и antigravity.md
         gemini = tmp_path / "GEMINI.md"
-        old_block = f"{GEMINI_BLOCK_START}\n## Old\n- old_cat\n{GEMINI_BLOCK_END}\n"
-        gemini.write_text(f"# Proj\n\n{old_block}", encoding="utf-8")
-        update_gemini_manifest(tmp_path, ["new_cat"])
-        content = gemini.read_text(encoding="utf-8")
-        assert "old_cat" not in content
-        assert "new_cat" in content
-        assert content.count(GEMINI_BLOCK_START) == 1
+        gemini.write_text("# Old Gemini\n", encoding="utf-8")
 
-    def test_returns_true(self, tmp_path: Path) -> None:
-        result = update_gemini_manifest(tmp_path, ["errors"])
+        anti = tmp_path / "antigravity.md"
+        anti.write_text("# Old Anti\n", encoding="utf-8")
+
+        result = update_ai_manifests(tmp_path)
         assert result is True
+
+        # Убеждаемся, что AGENTS.md НЕ был создан, так как были другие
+        assert not (tmp_path / "AGENTS.md").exists()
+
+        assert GEMINI_BLOCK_START in gemini.read_text(encoding="utf-8")
+        assert GEMINI_BLOCK_START in anti.read_text(encoding="utf-8")
+
+    def test_updates_cursorrules_json(self, tmp_path: Path) -> None:
+        examples_dir = tmp_path / "docs" / "ai_examples" / "use_cases"
+        examples_dir.mkdir(parents=True)
+        (examples_dir / "README.md").write_text("# README", encoding="utf-8")
+
+        cursorrules = tmp_path / ".cursorrules"
+        cursorrules.write_text(json.dumps({"existing_key": "val"}), encoding="utf-8")
+
+        result = update_ai_manifests(tmp_path)
+        assert result is True
+
+        data = json.loads(cursorrules.read_text(encoding="utf-8"))
+        assert "existing_key" in data
+        assert "few_shot_examples" in data
+        assert data["few_shot_examples"] == ["./docs/ai_examples/use_cases/README.md"]
+
+    def test_updates_cursorrules_text_if_invalid_json(self, tmp_path: Path) -> None:
+        examples_dir = tmp_path / "docs" / "ai_examples" / "use_cases"
+        examples_dir.mkdir(parents=True)
+        (examples_dir / "README.md").write_text("# README", encoding="utf-8")
+
+        cursorrules = tmp_path / ".cursorrules"
+        cursorrules.write_text("// Это невалидный JSON с комментарием\n{}", encoding="utf-8")
+
+        result = update_ai_manifests(tmp_path)
+        assert result is True
+
+        content = cursorrules.read_text(encoding="utf-8")
+        assert GEMINI_BLOCK_START in content
+        assert "use_cases" in content
 
 
 # ---------------------------------------------------------------------------
@@ -391,9 +428,10 @@ class TestGenerateFewShotBank:
             source = py_file.read_text(encoding="utf-8")
             ast.parse(source)  # Не должно быть SyntaxError
 
-    def test_creates_gemini_md(self, fake_project: Path) -> None:
+    def test_creates_default_agents_md(self, fake_project: Path) -> None:
         generate_few_shot_bank(str(fake_project))
-        assert (fake_project / "GEMINI.md").exists()
+        # Так как манифестов не было, должен создаться AGENTS.md
+        assert (fake_project / "AGENTS.md").exists()
 
     def test_merge_without_force(self, fake_project: Path) -> None:
         """Повторный запуск без --force не должен затирать существующие файлы."""
