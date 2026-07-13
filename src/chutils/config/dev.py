@@ -18,8 +18,13 @@ DEFAULT_AI_LINT_CONFIG: JSONDict = {
 
 
 def parse_chutils_ignore(base_dir: str) -> list[str]:
-    """
-    Парсит файл .chutilsignore и возвращает список шаблонов для игнорирования.
+    """Парсит файл .chutilsignore и возвращает список шаблонов для игнорирования.
+
+    Args:
+        base_dir: Корневая директория, содержащая .chutilsignore.
+
+    Returns:
+        Список шаблонов для игнорирования.
     """
     ignore_path = Path(base_dir) / ".chutilsignore"
     if not ignore_path.exists():
@@ -63,8 +68,7 @@ def _get_env_config() -> JSONDict:
 
 
 def load_ai_lint_config(cli_args: JSONDict | None = None) -> JSONDict:
-    """
-    Загружает и объединяет конфигурацию для ai-lint из всех источников.
+    """Загружает и объединяет конфигурацию для ai-lint из всех источников.
 
     Приоритет источников (от наивысшего к низшему):
     1. CLI флаги (cli_args)
@@ -72,6 +76,12 @@ def load_ai_lint_config(cli_args: JSONDict | None = None) -> JSONDict:
     3. Локальные yml файлы (секция Dev.AI-Lint)
     4. pyproject.toml (секция [tool.chutils.ai-lint])
     5. Значения по умолчанию
+
+    Args:
+        cli_args: Аргументы командной строки.
+
+    Returns:
+        Объединенный словарь конфигурации ai-lint.
     """
     if not _cm.paths_initialized:
         _cm.initialize_paths(find_project_root)

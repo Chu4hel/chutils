@@ -67,19 +67,43 @@ class BaseCacheBackend(ABC, Generic[T]):
     # --- Асинхронные методы (по умолчанию вызывают синхронные) ---
 
     async def aget(self, key: str) -> T | None:
-        """Асинхронное получение значения."""
+        """Асинхронное получение значения из кэша.
+
+        Args:
+            key: Ключ кэша.
+
+        Returns:
+            Значение или None, если ключ не найден или просрочен.
+        """
         return self.get(key)
 
     async def aset(self, key: str, value: T, ttl: int | None = None) -> None:
-        """Асинхронное сохранение значения."""
+        """Асинхронное сохранение значения в кэше.
+
+        Args:
+            key: Ключ кэша.
+            value: Значение для сохранения.
+            ttl: Время жизни в секундах.
+        """
         self.set(key, value, ttl)
 
     async def adelete(self, key: str) -> None:
-        """Асинхронное удаление значения."""
+        """Асинхронное удаление значения из кэша.
+
+        Args:
+            key: Ключ кэша.
+        """
         self.delete(key)
 
     async def aexists(self, key: str) -> bool:
-        """Асинхронная проверка наличия ключа."""
+        """Асинхронная проверка наличия ключа в кэше.
+
+        Args:
+            key: Ключ кэша.
+
+        Returns:
+            True, если ключ существует и не просрочен, иначе False.
+        """
         return self.exists(key)
 
     async def aclear(self) -> None:

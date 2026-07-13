@@ -10,8 +10,16 @@ def generate_cache_key(
         kwargs: dict[str, t.Any],
         prefix: str = ""
 ) -> str:
-    """
-    Генерирует детерминированный ключ кэша на основе имени функции и аргументов.
+    """Генерирует детерминированный ключ кэша на основе имени функции и аргументов.
+
+    Args:
+        func_name: Имя функции.
+        args: Позиционные аргументы.
+        kwargs: Именованные аргументы.
+        prefix: Опциональный префикс для ключа.
+
+    Returns:
+        Строка хэша ключа кэша.
     """
     sorted_kwargs = sorted(kwargs.items())
     args_repr = f"args:{repr(args)}|kwargs:{repr(sorted_kwargs)}"
@@ -25,11 +33,19 @@ class LockManager:
     """Менеджер блокировок для синхронных вызовов."""
 
     def __init__(self) -> None:
+        """Инициализирует LockManager."""
         self._locks: dict[str, threading.Lock] = {}
         self._global_lock = threading.Lock()
 
     def get_lock(self, key: str) -> threading.Lock:
-        """Получить (или создать) блокировку для конкретного ключа."""
+        """Получить (или создать) блокировку для конкретного ключа.
+
+        Args:
+            key: Ключ для блокировки.
+
+        Returns:
+            Экземпляр threading.Lock для данного ключа.
+        """
         with self._global_lock:
             if key not in self._locks:
                 self._locks[key] = threading.Lock()
@@ -40,11 +56,19 @@ class AsyncLockManager:
     """Менеджер блокировок для асинхронных вызовов."""
 
     def __init__(self) -> None:
+        """Инициализирует AsyncLockManager."""
         self._locks: dict[str, asyncio.Lock] = {}
         self._global_lock = threading.Lock()  # Используем threading.Lock для защиты словаря
 
     def get_lock(self, key: str) -> asyncio.Lock:
-        """Получить (или создать) асинхронную блокировку для ключа."""
+        """Получить (или создать) асинхронную блокировку для ключа.
+
+        Args:
+            key: Ключ для блокировки.
+
+        Returns:
+            Экземпляр asyncio.Lock для данного ключа.
+        """
         with self._global_lock:
             if key not in self._locks:
                 self._locks[key] = asyncio.Lock()

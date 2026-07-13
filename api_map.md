@@ -110,7 +110,7 @@
 | `get_console` | function | `(stderr: 'bool' = False) -> 'ConsoleLike'` | Возвращает экземпляр rich.Console или FallbackConsole. |
 | `human_sleep` | function | `(min_seconds: float, max_seconds: float) -> None` | Синхронно задерживает выполнение на случайное время, имитируя поведение человека. |
 | `humanize_timedelta` | function | `(dt: 'datetime', locale: 'str' = 'ru', custom_locales: 'dict[str, Any] | None' = None) -> 'str'` | Превращает дату в человекочитаемую строку относительно текущего времени. |
-| `init` | function | `(base_dir: str)` | Ручная инициализация пакета с указанием базовой директории проекта. |
+| `init` | function | `(base_dir: str) -> None` | Ручная инициализация пакета с указанием базовой директории проекта. |
 | `inject` | function | `(container: chutils.di.container.Container | None = None) -> collections.abc.Callable[[collections.abc.Callable[..., typing.Any]], collections.abc.Callable[..., typing.Any]]` | Декоратор для автоматического внедрения зависимостей в аргументы функции. |
 | `is_config_loaded` | function | `() -> bool` | Проверяет, была ли конфигурация уже загружена в память. |
 | `is_feature_enabled` | function | `(feature_name: 'str', context: 'dict[str, Any] | None' = None) -> 'bool'` | Проверяет, включена ли указанная фича. |

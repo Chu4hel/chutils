@@ -9,10 +9,10 @@ import argparse
 import asyncio
 import inspect
 import re
+from collections.abc import Callable
 from functools import wraps
 from pathlib import Path
 from typing import Any, TypeVar
-from collections.abc import Callable
 
 # Тип для декорируемой функции
 F = TypeVar("F", bound=Callable[..., Any])
@@ -26,16 +26,22 @@ def cli_command(func: F) -> F:
     Поддерживает аннотации типов, значения по умолчанию, асинхронные функции
     и автоматический парсинг докстрингов (Google-style) для генерации справки.
 
+    Args:
+        func: Декорируемая функция.
+
+    Returns:
+        Обертка функции, поддерживающая CLI-интерфейс.
+
     Example:
         @cli_command
         def my_script(name: str, count: int = 1):
-            \"""\n
+            \"""
             Пример скрипта.
             
             Args:
                 name (str): Имя пользователя.
                 count (int): Количество повторений.
-            \"""\n
+            \"""
             for _ in range(count):
                 print(f"Hello, {name}!")
     """

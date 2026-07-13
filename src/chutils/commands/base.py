@@ -16,6 +16,7 @@ class BaseCommand(ABC):
     """
 
     def __init__(self) -> None:
+        """Инициализирует базовую команду CLI, настраивая консоли вывода."""
         self.console = get_console()
         self.err_console = get_console(stderr=True)
 
