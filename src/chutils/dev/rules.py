@@ -23,6 +23,15 @@ class ManifestRule(Rule):
     severity = "warn"
 
     def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
+        """Выполняет проверку наличия файлов манифеста ИИ.
+
+        Args:
+            base_dir: Путь к корню проверяемого проекта.
+            files: Список путей к файлам проекта.
+
+        Returns:
+            Список найденных предупреждений по манифестам.
+        """
         results: list[LintResult] = []
         base_path = Path(base_dir)
 
@@ -79,11 +88,22 @@ class DocstringVisitor(ast.NodeVisitor):
     """
 
     def __init__(self, file_path: str, rule_name: str) -> None:
+        """Инициализирует AST-посетитель docstring'ов.
+
+        Args:
+            file_path: Путь к анализируемому файлу.
+            rule_name: Название запускаемого правила.
+        """
         self.file_path = file_path
         self.rule_name = rule_name
         self.issues: list[LintResult] = []
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        """Анализирует класс на наличие docstring.
+
+        Args:
+            node: AST-узел определения класса.
+        """
         if not node.name.startswith("_"):
             doc = ast.get_docstring(node)
             if not doc:
@@ -100,9 +120,19 @@ class DocstringVisitor(ast.NodeVisitor):
             self.generic_visit(node)
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        """Анализирует синхронную функцию на наличие docstring.
+
+        Args:
+            node: AST-узел определения функции.
+        """
         self._check_func(node)
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        """Анализирует асинхронную функцию на наличие docstring.
+
+        Args:
+            node: AST-узел определения асинхронной функции.
+        """
         self._check_func(node)
 
     def _check_func(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
@@ -227,6 +257,15 @@ class DocstringQualityRule(Rule):
     severity = "error"
 
     def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
+        """Выполняет аудит docstrings и аннотаций типов в исходных кодах.
+
+        Args:
+            base_dir: Путь к корню проверяемого проекта.
+            files: Список путей к файлам проекта.
+
+        Returns:
+            Список найденных ошибок форматирования docstrings.
+        """
         results: list[LintResult] = []
         for file_path in files:
             if not file_path.endswith(".py"):
@@ -266,6 +305,15 @@ class SecurityHardcodeRule(Rule):
     }
 
     def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
+        """Выполняет поиск жестко заданных паролей и ключей.
+
+        Args:
+            base_dir: Путь к корню проверяемого проекта.
+            files: Список путей к файлам проекта.
+
+        Returns:
+            Список найденных захардкоженных секретов.
+        """
         results: list[LintResult] = []
         for file_path in files:
             if file_path.endswith((".pyc", ".png", ".jpg", ".ico", ".zip", ".tar.gz")):
@@ -338,6 +386,15 @@ class ChutilsIntegrationRule(Rule):
     severity = "warn"
 
     def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
+        """Выполняет аудит использования стандартных библиотек вместо chutils.
+
+        Args:
+            base_dir: Путь к корню проверяемого проекта.
+            files: Список путей к файлам проекта.
+
+        Returns:
+            Список рекомендаций по интеграции с chutils.
+        """
         results: list[LintResult] = []
         for file_path in files:
             if not file_path.endswith(".py"):
@@ -471,6 +528,15 @@ class APIMapRule(Rule):
     severity = "error"
 
     def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
+        """Выполняет проверку актуальности карты API.
+
+        Args:
+            base_dir: Путь к корню проверяемого проекта.
+            files: Список путей к файлам проекта.
+
+        Returns:
+            Список несовпадений карты API с экспортом chutils.
+        """
         results: list[LintResult] = []
         base_path = Path(base_dir)
         api_map_path = base_path / "api_map.md"

@@ -39,7 +39,11 @@ class DetectedEntities:
 
     @property
     def categories(self) -> set[str]:
-        """Возвращает набор активных категорий."""
+        """Возвращает набор активных категорий.
+
+        Returns:
+            Множество строк с названиями активных категорий.
+        """
         cats: set[str] = set()
         if self.use_cases:
             cats.add("use_cases")
@@ -107,6 +111,11 @@ class ArchitectureDetector:
     )
 
     def __init__(self, project_root: Path) -> None:
+        """Инициализирует ArchitectureDetector.
+
+        Args:
+            project_root: Корневая директория исследуемого проекта.
+        """
         self._root = project_root
 
     def detect(self) -> DetectedEntities:
@@ -301,6 +310,11 @@ class TemplateRenderer:
     """
 
     def __init__(self, entities: DetectedEntities) -> None:
+        """Инициализирует TemplateRenderer.
+
+        Args:
+            entities: Обнаруженные в проекте сущности.
+        """
         self._entities = entities
 
     def render_good_pattern(self, category: str) -> str:
@@ -751,6 +765,12 @@ class FewShotBankWriter:
     """
 
     def __init__(self, output_dir: Path, *, force: bool = False) -> None:
+        """Инициализирует FewShotBankWriter.
+
+        Args:
+            output_dir: Целевая папка для записи файлов (обычно docs/ai_examples/).
+            force: Флаг принудительной перезаписи существующих файлов.
+        """
         self._output_dir = output_dir
         self._force = force
 

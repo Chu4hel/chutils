@@ -22,6 +22,7 @@ except ImportError:
 
 
     class BaseModel:  # type: ignore[no-redef]
+        """Временный базовый класс-заглушка при отсутствии Pydantic."""
         pass
 
 if HAS_PYDANTIC:
@@ -50,6 +51,16 @@ else:
                 line_number: int | None = None,
                 fix_suggestion: str | None = None,
         ) -> None:
+            """Инициализирует fallback-результат проверки правила.
+
+            Args:
+                rule_name: Название правила.
+                message: Сообщение об ошибке/предупреждении.
+                severity: Критичность проблемы.
+                file_path: Опциональный путь к файлу.
+                line_number: Номер строки.
+                fix_suggestion: Рекомендация по исправлению.
+            """
             self.rule_name = rule_name
             self.message = message
             self.severity = severity

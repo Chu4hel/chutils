@@ -15,6 +15,11 @@ class GitIgnoreMatcher:
     """Проверяет соответствие путей правилам .gitignore."""
 
     def __init__(self, root_path: Path) -> None:
+        """Инициализирует GitIgnoreMatcher.
+
+        Args:
+            root_path: Корневой путь проекта.
+        """
         self.root_path = root_path
         self.patterns: list[tuple[re.Pattern[str], bool]] = []
         self._load_file_rules(self.root_path / ".gitignore")
@@ -96,7 +101,14 @@ class GitIgnoreMatcher:
             return None
 
     def matches(self, rel_path: str) -> bool:
-        """Возвращает True, если путь должен быть проигнорирован."""
+        """Возвращает True, если путь должен быть проигнорирован.
+
+        Args:
+            rel_path: Относительный путь для проверки.
+
+        Returns:
+            True, если путь игнорируется, иначе False.
+        """
         rel_path = rel_path.replace("\\", "/").lstrip("/")
         if not rel_path:
             return False
@@ -112,6 +124,11 @@ class Indexer:
     """Оркестратор индексации проекта."""
 
     def __init__(self, root_path: str) -> None:
+        """Инициализирует Indexer.
+
+        Args:
+            root_path: Корневой путь к исходному коду проекта.
+        """
         self.root_path = Path(root_path).resolve()
         # Если это пакет (есть __init__), то база для путей - родитель (например, 'src' или корень проекта)
         if (self.root_path / "__init__.py").exists():
@@ -236,7 +253,14 @@ class Indexer:
         return examples
 
     def index(self, include_examples: bool = False) -> ProjectIndex:
-        """Запускает процесс индексации."""
+        """Запускает процесс индексации.
+
+        Args:
+            include_examples: Флаг включения примеров кода в индекс.
+
+        Returns:
+            Объект ProjectIndex с результатами индексации.
+        """
         root_node = self._build_node_tree(self.root_path)
         examples = self._collect_examples() if include_examples else []
         return ProjectIndex(
