@@ -50,6 +50,9 @@ class BezierCurveGenerator:
             end: Конечная координата (x, y).
             steps: Количество шагов (точек) в траектории.
             deviation: Максимальное отклонение контрольных точек от прямой линии.
+
+        Returns:
+            Список координат точек траектории движения.
         """
         if steps < 2:
             return [start, end]
@@ -131,7 +134,14 @@ class JitterDelayGenerator:
         self.jitter = max(0.01, jitter)
 
     def generate(self, base_delay: float) -> float:
-        """Возвращает сгенерированную задержку на основе базовой."""
+        """Возвращает сгенерированную задержку на основе базовой.
+
+        Args:
+            base_delay: Базовая величина задержки (в секундах).
+
+        Returns:
+            Полученное случайное значение задержки с учетом джиттера.
+        """
         if base_delay <= 0.0:
             return 0.0
 
@@ -149,6 +159,7 @@ class JitterDelayGenerator:
 
 
 class TypoAction(NamedTuple):
+    """Представляет действие ввода символа или нажатия backspace при имитации печати."""
     action: str  # 'type' или 'backspace'
     char: str  # символ для ввода (пусто для backspace)
 
@@ -164,6 +175,9 @@ class KeyboardTypoGenerator:
         Args:
             text: Исходный текст.
             error_rate: Вероятность совершения ошибки на каждом символе.
+
+        Returns:
+            Список действий TypoAction, имитирующий последовательный ввод текста человеком.
         """
         sequence: list[TypoAction] = []
         i = 0

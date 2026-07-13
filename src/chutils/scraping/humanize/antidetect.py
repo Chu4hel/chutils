@@ -81,13 +81,21 @@ def _ensure_selenium() -> None:
 
 
 async def apply_antidetect_playwright(context: Any) -> None:
-    """Применяет JS-инъекции анти-детекта к контексту Playwright."""
+    """Применяет JS-инъекции анти-детекта к контексту Playwright.
+
+    Args:
+        context: Объект контекста Playwright BrowserContext.
+    """
     _ensure_playwright()
     await context.add_init_script(ANTIDETECT_JS_SCRIPT)
 
 
 def apply_antidetect_selenium(driver: Any) -> None:
-    """Применяет JS-инъекции анти-детекта к сессии Selenium."""
+    """Применяет JS-инъекции анти-детекта к сессии Selenium.
+
+    Args:
+        driver: Экземпляр Selenium WebDriver.
+    """
     _ensure_selenium()
     if hasattr(driver, "execute_cdp_cmd"):
         driver.execute_cdp_cmd(
@@ -99,7 +107,11 @@ def apply_antidetect_selenium(driver: Any) -> None:
 
 
 def get_browser_launch_args() -> list[str]:
-    """Возвращает набор аргументов запуска браузера для скрытия автоматизации."""
+    """Возвращает набор аргументов запуска браузера для скрытия автоматизации.
+
+    Returns:
+        Список аргументов командной строки запуска браузера.
+    """
     return [
         "--disable-blink-features=AutomationControlled",
         "--disable-infobars",

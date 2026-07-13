@@ -30,7 +30,12 @@ except Exception:
         """Заглушка для RuCaptchaSolver при отсутствии httpx."""
 
         def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку."""
+            """Инициализирует заглушку.
+
+            Args:
+                *args: Произвольные позиционные аргументы.
+                **kwargs: Произвольные именованные аргументы.
+            """
             _ensure_httpx()
 
 
@@ -38,7 +43,12 @@ except Exception:
         """Заглушка для AsyncRuCaptchaSolver при отсутствии httpx."""
 
         def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку."""
+            """Инициализирует заглушку.
+
+            Args:
+                *args: Произвольные позиционные аргументы.
+                **kwargs: Произвольные именованные аргументы.
+            """
             _ensure_httpx()
 
 
@@ -46,7 +56,12 @@ except Exception:
         """Заглушка для AntiCaptchaSolver при отсутствии httpx."""
 
         def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку."""
+            """Инициализирует заглушку.
+
+            Args:
+                *args: Произвольные позиционные аргументы.
+                **kwargs: Произвольные именованные аргументы.
+            """
             _ensure_httpx()
 
 
@@ -54,7 +69,12 @@ except Exception:
         """Заглушка для AsyncAntiCaptchaSolver при отсутствии httpx."""
 
         def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку."""
+            """Инициализирует заглушку.
+
+            Args:
+                *args: Произвольные позиционные аргументы.
+                **kwargs: Произвольные именованные аргументы.
+            """
             _ensure_httpx()
 
 
@@ -62,7 +82,12 @@ except Exception:
         """Заглушка для CapMonsterSolver при отсутствии httpx."""
 
         def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку."""
+            """Инициализирует заглушку.
+
+            Args:
+                *args: Произвольные позиционные аргументы.
+                **kwargs: Произвольные именованные аргументы.
+            """
             _ensure_httpx()
 
 
@@ -70,7 +95,12 @@ except Exception:
         """Заглушка для AsyncCapMonsterSolver при отсутствии httpx."""
 
         def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку."""
+            """Инициализирует заглушку.
+
+            Args:
+                *args: Произвольные позиционные аргументы.
+                **kwargs: Произвольные именованные аргументы.
+            """
             _ensure_httpx()
 
 __all__ = [
