@@ -17,6 +17,11 @@ class SecretsCommand(BaseCommand):
     """
 
     def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
+        """Регистрирует команду secrets и её подкоманды в argparse.
+
+        Args:
+            subparsers: Объект subparsers для добавления подкоманд.
+        """
         from chutils.secret_manager.providers import KEYRING_AVAILABLE
 
         help_text = (
@@ -103,7 +108,11 @@ class SecretsCommand(BaseCommand):
         get_parser.set_defaults(handler=self.handle_get)
 
     def handle(self, args: argparse.Namespace) -> None:
-        """Вызывается, если подкоманда не указана."""
+        """Вызывается, если подкоманда не указана.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from chutils.secret_manager.providers import KEYRING_AVAILABLE
 
         if not KEYRING_AVAILABLE:
@@ -115,7 +124,11 @@ class SecretsCommand(BaseCommand):
         print("Используйте 'chutils secrets --help' для просмотра доступных подкоманд.")
 
     def handle_set(self, args: argparse.Namespace) -> None:
-        """Обработчик команды сохранения секрета."""
+        """Обработчик команды сохранения секрета.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from ..exceptions import CommandError, SecretError
         from chutils.secret_manager.providers import KEYRING_AVAILABLE
 
@@ -144,7 +157,11 @@ class SecretsCommand(BaseCommand):
             ) from e
 
     def handle_delete(self, args: argparse.Namespace) -> None:
-        """Обработчик команды удаления секрета."""
+        """Обработчик команды удаления секрета.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from ..exceptions import CommandError, SecretError
         from chutils.secret_manager.providers import KEYRING_AVAILABLE
 
@@ -173,7 +190,11 @@ class SecretsCommand(BaseCommand):
             ) from e
 
     def handle_get(self, args: argparse.Namespace) -> None:
-        """Обработчик команды получения секрета."""
+        """Обработчик команды получения секрета.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from ..exceptions import CommandError, SecretError
         from chutils.secret_manager.providers import KEYRING_AVAILABLE
 

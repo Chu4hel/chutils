@@ -21,6 +21,11 @@ class TemplateCommand(BaseCommand):
     """
 
     def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
+        """Регистрирует команду template в argparse.
+
+        Args:
+            subparsers: Объект subparsers для добавления подкоманд.
+        """
         template_parser = subparsers.add_parser(
             "template",
             help="Сгенерировать шаблон конфигурации",
@@ -44,7 +49,11 @@ class TemplateCommand(BaseCommand):
         template_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace) -> None:
-        """Обработчик команды генерации шаблона."""
+        """Обработчик команды генерации шаблона.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from ..exceptions import CommandError, OptionalDependencyError
         if not PYDANTIC_AVAILABLE:
             raise OptionalDependencyError(

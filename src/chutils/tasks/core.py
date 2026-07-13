@@ -60,6 +60,9 @@ def periodic_task(
         overlap: Если True, задача запускается независимо от предыдущих запусков.
         error_strategy: Стратегия обработки ошибок.
         name: Пользовательское имя задачи.
+
+    Returns:
+        Декоратор, который регистрирует задачу в планировщике и оборачивает функцию.
     """
     if interval_seconds <= 0:
         raise ValueError("Interval must be a positive integer")
@@ -85,7 +88,11 @@ def periodic_task(
 
 
 def get_registered_tasks() -> list[PeriodicTask]:
-    """Возвращает список зарегистрированных задач."""
+    """Возвращает список зарегистрированных задач.
+
+    Returns:
+        Список объектов PeriodicTask, зарегистрированных в планировщике.
+    """
     return _tasks_registry
 
 
@@ -108,6 +115,7 @@ class TaskScheduler:
     """Асинхронный планировщик фоновых задач."""
 
     def __init__(self) -> None:
+        """Инициализирует планировщик фоновых задач."""
         self._running_tasks: dict[str, asyncio.Task[Any]] = {}
         self._locks: dict[str, asyncio.Lock] = {}
         self._shutdown_event = asyncio.Event()

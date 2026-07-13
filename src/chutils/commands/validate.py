@@ -19,6 +19,11 @@ class ValidateCommand(BaseCommand):
     """
 
     def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
+        """Регистрирует команду validate в argparse.
+
+        Args:
+            subparsers: Объект subparsers для добавления подкоманд.
+        """
         validate_parser = subparsers.add_parser(
             "validate",
             help="Проверить корректность конфигурации",
@@ -32,7 +37,11 @@ class ValidateCommand(BaseCommand):
         validate_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace) -> None:
-        """Обработчик команды валидации конфигурации."""
+        """Обработчик команды валидации конфигурации.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from ..exceptions import CommandError, OptionalDependencyError
         print("--- Валидация конфигурации ---")
 

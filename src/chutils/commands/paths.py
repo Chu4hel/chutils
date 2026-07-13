@@ -17,6 +17,11 @@ class ShowPathsCommand(BaseCommand):
     """
 
     def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
+        """Регистрирует команду show-paths в argparse.
+
+        Args:
+            subparsers: Объект subparsers для добавления подкоманд.
+        """
         show_paths_parser = subparsers.add_parser(
             "show-paths",
             help="Показать пути поиска конфигурации",
@@ -30,7 +35,11 @@ class ShowPathsCommand(BaseCommand):
         show_paths_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace) -> None:
-        """Обработчик команды вывода путей поиска конфигурации."""
+        """Обработчик команды вывода путей поиска конфигурации.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from chutils.config.manager import _cm
 
         # Инициализируем пути, если еще нет

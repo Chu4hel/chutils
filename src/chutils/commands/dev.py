@@ -18,6 +18,11 @@ class DevCommand(BaseCommand):
     """
 
     def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
+        """Регистрирует команду dev и её подкоманды в argparse.
+
+        Args:
+            subparsers: Объект subparsers для добавления подкоманд.
+        """
         dev_parser = subparsers.add_parser(
             "dev",
             help="Инструменты разработчика и AI-контекст",
@@ -254,7 +259,11 @@ class DevCommand(BaseCommand):
         few_shot_parser.set_defaults(handler=self.handle_generate_few_shot)
 
     def handle(self, args: argparse.Namespace) -> None:
-        """Вызывается, если подкоманда не указана."""
+        """Вызывается, если подкоманда не указана.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         self.console.print(
             "Используйте 'chutils dev --help' для просмотра доступных подкоманд."
         )
@@ -284,7 +293,11 @@ class DevCommand(BaseCommand):
         return symbols_data
 
     def handle_generate_context(self, args: argparse.Namespace) -> None:
-        """Обработчик генерации контекста."""
+        """Обработчик генерации контекста.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         # Используем stderr для статусных сообщений, чтобы не портить stdout (особенно для JSON)
         self.err_console.print(
             "[bold yellow]Генерация контекста API...[/bold yellow]", style="yellow"
@@ -490,7 +503,11 @@ class DevCommand(BaseCommand):
             raise SystemExit(1)
 
     def handle_ai_lint(self, args: argparse.Namespace) -> None:
-        """Обработчик проверки AI-готовности кодовой базы."""
+        """Обработчик проверки AI-готовности кодовой базы.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         cli_args: dict[str, Any] = {}
         if args.strict is not None:
             cli_args["strict"] = args.strict
@@ -528,7 +545,11 @@ class DevCommand(BaseCommand):
             raise SystemExit(1)
 
     def handle_chat_context(self, args: argparse.Namespace) -> None:
-        """Обработчик интерактивной сборки контекста."""
+        """Обработчик интерактивной сборки контекста.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from pathlib import Path
         from chutils.dev.chat_context import collect_context_slice, run_interactive_menu
 
@@ -574,7 +595,11 @@ class DevCommand(BaseCommand):
             raise SystemExit(1)
 
     def handle_scaffold(self, args: argparse.Namespace) -> None:
-        """Обработчик генерации структуры модуля."""
+        """Обработчик генерации структуры модуля.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         self.err_console.print(
             f"[bold yellow]Инициализация модуля Чистой Архитектуры '{args.module_name}'...[/bold yellow]"
         )
@@ -597,7 +622,11 @@ class DevCommand(BaseCommand):
             raise SystemExit(1)
 
     def handle_mock(self, args: argparse.Namespace) -> None:
-        """Обработчик мок-сервера."""
+        """Обработчик мок-сервера.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from chutils.dev.mock_server import MockServerRunner
 
         try:
@@ -617,7 +646,11 @@ class DevCommand(BaseCommand):
             raise SystemExit(1)
 
     def handle_install_hooks(self, args: argparse.Namespace) -> None:
-        """Установка pre-commit хука."""
+        """Установка pre-commit хука.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         import os
         import sys
         from chutils.exceptions import ChutilsException
@@ -702,7 +735,11 @@ class DevCommand(BaseCommand):
                 self.console.print(f"[yellow]⚠ Не удалось установить права chmod +x для хука: {e}[/yellow]")
 
     def handle_generate_few_shot(self, args: argparse.Namespace) -> None:
-        """Обработчик автогенерации few-shot примеров."""
+        """Обработчик автогенерации few-shot примеров.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from chutils.dev.generate_few_shot import generate_few_shot_bank
 
         try:
