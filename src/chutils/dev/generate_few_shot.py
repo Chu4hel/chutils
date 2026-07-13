@@ -216,7 +216,15 @@ class ArchitectureDetector:
             Список путей к ``.py``-файлам.
         """
         result: list[Path] = []
-        skip_dirs = {"__pycache__", ".git", ".venv", "venv", "node_modules", ".mypy_cache"}
+        skip_dirs = {
+            "__pycache__",
+            ".git",
+            ".venv",
+            "venv",
+            "node_modules",
+            ".mypy_cache",
+            "docs",
+        }
         for py_file in self._root.rglob("*.py"):
             if any(part in skip_dirs or part.startswith(".") for part in py_file.parts):
                 continue
