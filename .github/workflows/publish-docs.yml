@@ -21,11 +21,14 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Poetry
-        run: pip install poetry
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          version: "latest"
 
       - name: Install dependencies
-        run: poetry install
+        run: uv sync --all-extras
 
       - name: Deploy to GitHub Pages
-        run: poetry run mkdocs gh-deploy --force --clean
+        run: uv run mkdocs gh-deploy --force --clean
