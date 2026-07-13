@@ -28,7 +28,8 @@ from .getters import (
     get_config_boolean,
     get_config_list,
     get_config_section,
-    get_config_path
+    get_config_path,
+    validate_required_keys
 )
 from .manager import _cm
 from .utils import find_project_root
@@ -71,6 +72,7 @@ __all__ = [
     'get_config_list',
     'get_config_section',
     'get_config_path',
+    'validate_required_keys',
     'get_base_dir',
     'get_config_file_path',
     'is_config_loaded',

@@ -88,6 +88,7 @@ _LAZY_MAPPING = {
     'export_schema': ('.config', 'export_schema'),
     'load_ai_lint_config': ('.config', 'load_ai_lint_config'),
     'parse_chutils_ignore': ('.config', 'parse_chutils_ignore'),
+    'validate_required_keys': ('.config', 'validate_required_keys'),
 
     # features
     'is_feature_enabled': ('.features', 'is_feature_enabled'),
@@ -162,6 +163,7 @@ _LAZY_MAPPING = {
     'ConfigLoadError': ('.exceptions', 'ConfigLoadError'),
     'ConfigParseError': ('.exceptions', 'ConfigParseError'),
     'ConfigKeyNotFoundError': ('.exceptions', 'ConfigKeyNotFoundError'),
+    'ConfigValidationGroupError': ('.exceptions', 'ConfigValidationGroupError'),
     'SecretError': ('.exceptions', 'SecretError'),
     'SecretNotFoundError': ('.exceptions', 'SecretNotFoundError'),
     'SecretProviderError': ('.exceptions', 'SecretProviderError'),

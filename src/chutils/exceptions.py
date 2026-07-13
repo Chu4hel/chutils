@@ -88,6 +88,31 @@ class ConfigKeyNotFoundError(ConfigError):
     pass
 
 
+class ConfigValidationGroupError(_BaseExceptionGroup, ConfigError):
+    """Группа ошибок валидации ключей конфигурации (отсутствие обязательных ключей)."""
+
+    def __new__(cls, message: str, exceptions: list[Exception], **context: t.Any):
+        # BaseExceptionGroup неизменяем, поэтому конструируем его через __new__
+        self = _BaseExceptionGroup.__new__(cls, message, exceptions)
+        return self
+
+    def __init__(self, message: str, exceptions: list[Exception], **context: t.Any) -> None:
+        """Инициализирует группу ошибок валидации конфигурации.
+
+        Args:
+            message: Сообщение об ошибке.
+            exceptions: Список исключений ConfigKeyNotFoundError.
+            **context: Дополнительный контекст ошибки.
+        """
+        # _BaseExceptionGroup уже инициализирован через __new__
+        ConfigError.__init__(self, message, **context)
+
+    def __str__(self) -> str:
+        base_str = ConfigError.__str__(self)
+        errors_str = "\n".join(f"  - {e}" for e in self.exceptions)
+        return f"{base_str}\nНедостающие ключи:\n{errors_str}"
+
+
 # --- Secret Manager Exceptions ---
 
 
