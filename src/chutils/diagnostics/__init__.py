@@ -8,8 +8,8 @@ __all__ = [
     "get_flask_health_handler",
 ]
 
-
 from typing import Any
+
 
 def __getattr__(name: str) -> Any:
     if name == "DiagnosticsManager":

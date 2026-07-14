@@ -18,14 +18,16 @@ class DiagnosticsManager:
 
     def __init__(self) -> None:
         """Инициализирует менеджер диагностики."""
-        self._checks: list[dict[str, str | bool | float | Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]]] = []
+        self._checks: list[dict[str, str | bool | float | Callable[
+            ..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]]] = []
 
     def register(
-        self,
-        name: str,
-        critical: bool = True,
-        timeout: float = 2.0,
-    ) -> Callable[[Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]], Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]]:
+            self,
+            name: str,
+            critical: bool = True,
+            timeout: float = 2.0,
+    ) -> Callable[[Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]], Callable[
+        ..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]]:
         """Декоратор для регистрации функции проверки.
 
         Args:
@@ -36,19 +38,21 @@ class DiagnosticsManager:
         Returns:
             Декоратор, который регистрирует функцию и возвращает её без изменений.
         """
+
         def decorator(
-            func: Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]
+                func: Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]
         ) -> Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]:
             self.add_check(func, name, critical, timeout)
             return func
+
         return decorator
 
     def add_check(
-        self,
-        func: Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]],
-        name: str,
-        critical: bool = True,
-        timeout: float = 2.0,
+            self,
+            func: Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]],
+            name: str,
+            critical: bool = True,
+            timeout: float = 2.0,
     ) -> None:
         """Добавляет функцию проверки в реестр.
 
@@ -66,8 +70,9 @@ class DiagnosticsManager:
         })
 
     async def _run_single_check(
-        self,
-        check: dict[str, str | bool | float | Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]]
+            self,
+            check: dict[str, str | bool | float | Callable[
+                ..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]]
     ) -> CheckResult:
         """Выполняет одну диагностическую проверку с контролем таймаута.
 

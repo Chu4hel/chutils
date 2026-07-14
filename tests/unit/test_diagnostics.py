@@ -1,17 +1,14 @@
 from __future__ import annotations
 
 import asyncio
-import time
 from typing import TYPE_CHECKING
+
 import pytest
-from unittest.mock import MagicMock
 
 from chutils.diagnostics.manager import DiagnosticsManager
-from chutils.diagnostics.models import CheckResult, HealthReport
 from chutils.diagnostics.web import get_fastapi_health_handler, get_flask_health_handler
 
 if TYPE_CHECKING:
-    from fastapi.responses import JSONResponse
     from flask import Response
 
 
@@ -127,6 +124,7 @@ async def test_fastapi_helper() -> None:
 
     # Теперь сделаем проверку падающей, чтобы вернуть 503
     manager_unhealthy = DiagnosticsManager()
+
     @manager_unhealthy.register("fail_check", critical=True)
     def fail_check() -> bool:
         return False
@@ -151,6 +149,7 @@ def test_flask_helper() -> None:
 
     try:
         manager = DiagnosticsManager()
+
         @manager.register("check", critical=True)
         def check() -> bool:
             return True
@@ -205,7 +204,6 @@ def test_cli_diagnostics_command_json(mocker, capsys) -> None:
 def test_models_without_pydantic(mocker) -> None:
     """Проверяет работоспособность dataclass-fallback моделей при отсутствии Pydantic."""
     import importlib
-    import chutils.diagnostics.models
     import chutils.diagnostics.manager
 
     mocker.patch("chutils.env.has_pydantic", return_value=False)
@@ -240,6 +238,7 @@ def test_models_without_pydantic(mocker) -> None:
 
         # Проверим, что DiagnosticsManager работает корректно с dataclass-моделями
         manager = DiagnosticsManager()
+
         @manager.register("check", critical=True)
         def sync_check() -> bool:
             return True
@@ -258,7 +257,7 @@ def test_models_without_pydantic(mocker) -> None:
 def test_diagnostics_init_lazy_getattr() -> None:
     """Проверяет ленивый импорт __getattr__ в пакете diagnostics."""
     import chutils.diagnostics as diag
-    
+
     # Должен корректно импортировать через getattr
     assert diag.DiagnosticsManager is not None
     assert diag.get_fastapi_health_handler is not None
@@ -272,7 +271,7 @@ def test_diagnostics_init_lazy_getattr() -> None:
 async def test_diagnostics_edge_cases(mocker) -> None:
     """Проверяет краевые случаи выполнения проверок."""
     manager = DiagnosticsManager()
-    
+
     # 1. Запуск без проверок
     report_empty = await manager.run_checks()
     assert report_empty.status == "HEALTHY"
@@ -282,7 +281,7 @@ async def test_diagnostics_edge_cases(mocker) -> None:
     @manager.register("bad_tuple")
     def bad_tuple_check() -> tuple[bool, ...]:
         return (True, "msg", "extra")
-    
+
     # 3. Проверка, возвращающая строку
     @manager.register("string_res")
     def string_check() -> str:
@@ -305,7 +304,7 @@ async def test_diagnostics_edge_cases(mocker) -> None:
 def test_built_in_check_config_failure(mocker) -> None:
     """Проверяет встроенную проверку конфигурации при ошибках."""
     from chutils.diagnostics.manager import check_config
-    
+
     # Кейс 1: путь к файлу указан, но файла нет на диске
     mocker.patch("chutils.get_config_file_path", return_value="non_existent_file.yml")
     mocker.patch("os.path.exists", return_value=False)
@@ -326,10 +325,10 @@ def test_built_in_check_keyring_failures(mocker) -> None:
     """Проверяет встроенную проверку keyring при ошибках доступа."""
     from chutils.diagnostics.manager import check_keyring
     from keyring.errors import NoKeyringError
-    
+
     mocker.patch("chutils.secret_manager.providers.KEYRING_AVAILABLE", True)
     import keyring
-    
+
     # Кейс 1: NoKeyringError
     mocker.patch.object(keyring, "set_password", side_effect=NoKeyringError("No keyring"))
     success, msg = check_keyring()
@@ -357,8 +356,3 @@ def test_web_helpers_import_errors(mocker) -> None:
     with pytest.raises(RuntimeError) as exc:
         get_flask_health_handler(manager)
     assert "Flask не установлен" in str(exc.value)
-
-
-
-
-
