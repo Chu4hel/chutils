@@ -7,10 +7,10 @@ import asyncio
 import functools
 import inspect
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any
-from collections.abc import Callable
 
 from chutils.lifecycle import register_cleanup
 
@@ -28,7 +28,7 @@ class ErrorStrategy(str, Enum):
 class PeriodicTask:
     """Метаданные периодической задачи."""
     func: Callable[..., Any]
-    interval_seconds: int
+    interval_seconds: int | Callable[[], int] | str
     run_immediately: bool = False
     overlap: bool = False
     error_strategy: ErrorStrategy = ErrorStrategy.IGNORE
@@ -39,13 +39,60 @@ class PeriodicTask:
             self.name = self.func.__name__
         self.is_async = inspect.iscoroutinefunction(self.func)
 
+    def get_interval(self) -> int:
+        """Вычисляет текущий интервал запуска в секундах.
+
+        Returns:
+            Текущий вычисленный интервал выполнения задачи в секундах.
+        """
+        if isinstance(self.interval_seconds, int):
+            return self.interval_seconds
+        elif callable(self.interval_seconds):
+            try:
+                res = self.interval_seconds()
+                if not isinstance(res, int) or res <= 0:
+                    logger.warning(
+                        "Динамический интервал для задачи '%s' вернул некорректное значение: %s. Используется 1 сек.",
+                        self.name, res
+                    )
+                    return 1
+                return res
+            except Exception as e:
+                logger.error("Ошибка при вычислении интервала для задачи '%s': %s. Используется 1 сек.", self.name, e)
+                return 1
+        elif isinstance(self.interval_seconds, str):
+            try:
+                from chutils.config import get_config_int
+                # Пытаемся распарсить строку вида 'section.key' или 'key'
+                if "." in self.interval_seconds:
+                    section, key = self.interval_seconds.split(".", 1)
+                    val = get_config_int(section, key, default=None)
+                else:
+                    val = get_config_int("default", self.interval_seconds, default=None)
+
+                if val is None or val <= 0:
+                    logger.warning(
+                        "Интервал из конфигурации по ключу '%s' для задачи '%s' не найден или <= 0. Используется 1 сек.",
+                        self.interval_seconds, self.name
+                    )
+                    return 1
+                return val
+            except Exception as e:
+                logger.error(
+                    "Ошибка при чтении интервала из конфигурации по ключу '%s' для задачи '%s': %s. Используется 1 сек.",
+                    self.interval_seconds, self.name, e
+                )
+                return 1
+        else:
+            return 1
+
 
 # Глобальный реестр зарегистрированных задач
 _tasks_registry: list[PeriodicTask] = []
 
 
 def periodic_task(
-        interval_seconds: int,
+        interval_seconds: int | Callable[[], int] | str,
         run_immediately: bool = False,
         overlap: bool = False,
         error_strategy: ErrorStrategy = ErrorStrategy.IGNORE,
@@ -55,7 +102,9 @@ def periodic_task(
     Декоратор для привязки функции к расписанию планировщика задач.
 
     Args:
-        interval_seconds: Интервал запуска в секундах.
+        interval_seconds: Интервал запуска в секундах. Может быть int, callable-функцией
+                          возвращающей int, или строкой вида 'section.key' для динамического
+                          получения из chutils.config.
         run_immediately: Если True, задача запустится сразу при старте планировщика.
         overlap: Если True, задача запускается независимо от предыдущих запусков.
         error_strategy: Стратегия обработки ошибок.
@@ -64,7 +113,7 @@ def periodic_task(
     Returns:
         Декоратор, который регистрирует задачу в планировщике и оборачивает функцию.
     """
-    if interval_seconds <= 0:
+    if isinstance(interval_seconds, int) and interval_seconds <= 0:
         raise ValueError("Interval must be a positive integer")
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -125,7 +174,7 @@ class TaskScheduler:
         """Внутренний цикл выполнения отдельной периодической задачи."""
         if not task.run_immediately:
             try:
-                await asyncio.sleep(task.interval_seconds)
+                await asyncio.sleep(task.get_interval())
             except asyncio.CancelledError:
                 return
 
@@ -138,7 +187,7 @@ class TaskScheduler:
                         task.name
                     )
                     try:
-                        await asyncio.sleep(task.interval_seconds)
+                        await asyncio.sleep(task.get_interval())
                     except asyncio.CancelledError:
                         break
                     continue
@@ -180,7 +229,7 @@ class TaskScheduler:
                 pass
 
             try:
-                await asyncio.sleep(task.interval_seconds)
+                await asyncio.sleep(task.get_interval())
             except asyncio.CancelledError:
                 break
 

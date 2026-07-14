@@ -202,3 +202,62 @@ async def test_graceful_shutdown_integration(mocker):
     await lm._execute_all(lm.get_cleanup_callbacks(), 10.0)
 
     assert chutils.tasks.core._scheduler is None
+
+
+async def test_dynamic_interval_callable():
+    """Проверяет динамическое вычисление интервала через callable."""
+    called = 0
+    # Начинаем с интервала в 1 сек, затем меняем
+    current_interval = 1
+
+    def get_dynamic_interval():
+        return current_interval
+
+    @periodic_task(interval_seconds=get_dynamic_interval, run_immediately=True)
+    def my_dynamic_task():
+        nonlocal called
+        called += 1
+
+    start_scheduler()
+    await asyncio.sleep(0.1)
+    assert called == 1  # Первый вызов при run_immediately=True
+
+    # Меняем интервал на 2 сек
+    current_interval = 2
+
+    # Ждем 1.2 секунды. Поскольку следующий sleep был запланирован с интервалом 1 (предыдущий current_interval),
+    # задача сработает через 1 сек.
+    await asyncio.sleep(1.2)
+    assert called == 2
+
+    # Теперь новый интервал 2 сек, ждем еще 1.2 секунды — сработать не должна, так как ждем 2 сек.
+    await asyncio.sleep(1.2)
+    assert called == 2
+
+    # Ждем еще 1 секунду (суммарно 2.2с с момента прошлого запуска) — сработает.
+    await asyncio.sleep(1.0)
+    assert called == 3
+
+    await stop_scheduler()
+
+
+async def test_dynamic_interval_config(mocker):
+    """Проверяет динамическое вычисление интервала через строку конфигурации."""
+    called = 0
+    # Имитируем get_config_int
+    mocker.patch("chutils.config.get_config_int", return_value=1)
+
+    @periodic_task(interval_seconds="scheduler.my_interval", run_immediately=True)
+    def my_config_task():
+        nonlocal called
+        called += 1
+
+    start_scheduler()
+    await asyncio.sleep(0.1)
+    assert called == 1
+
+    # Ждем один тик в 1 сек
+    await asyncio.sleep(1.2)
+    assert called == 2
+
+    await stop_scheduler()
