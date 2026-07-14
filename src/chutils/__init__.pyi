@@ -769,3 +769,6 @@ from . import crypto as crypto
 from . import fs as fs
 from . import web as web
 from . import scraping as scraping
+from . import diagnostics as diagnostics
+
+from .diagnostics import DiagnosticsManager as DiagnosticsManager

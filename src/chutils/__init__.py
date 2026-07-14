@@ -60,6 +60,8 @@ _LAZY_MAPPING = {
     'text': ('.text', None),
     'crypto': ('.crypto', None),
     'fs': ('.fs', None),
+    'diagnostics': ('.diagnostics', None),
+    'DiagnosticsManager': ('.diagnostics', 'DiagnosticsManager'),
 
     # config
     'get_config': ('.config', 'get_config'),

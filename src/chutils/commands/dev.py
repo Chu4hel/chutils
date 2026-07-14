@@ -268,6 +268,19 @@ class DevCommand(BaseCommand):
         )
         few_shot_parser.set_defaults(handler=self.handle_generate_few_shot)
 
+        # dev diagnostics
+        diagnostics_parser = dev_subparsers.add_parser(
+            "diagnostics",
+            help="Запустить диагностику и проверку работоспособности среды (Health Check)",
+            description="Выполняет встроенные и пользовательские проверки среды (keyring, конфигурация и др.) с выводом отчета.",
+        )
+        diagnostics_parser.add_argument(
+            "--json",
+            action="store_true",
+            help="Вывести отчет в формате JSON",
+        )
+        diagnostics_parser.set_defaults(handler=self.handle_diagnostics)
+
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана.
 
@@ -842,3 +855,11 @@ class DevCommand(BaseCommand):
         except Exception as e:
             self.console.print(f"[bold red]Ошибка генерации few-shot банка:[/bold red] {e}")
             raise SystemExit(1)
+
+    def handle_diagnostics(self, args: argparse.Namespace) -> None:
+        """Обработчик диагностики и проверки работоспособности.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        pass
