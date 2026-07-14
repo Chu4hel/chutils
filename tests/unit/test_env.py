@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import Any
 import os
+from typing import Any
+
 import pytest
+
 from chutils.exceptions import ChutilsException, EnvValidationError
 
 
@@ -107,11 +109,12 @@ def test_base_env_manifest_without_pydantic(mocker: Any) -> None:
     try:
         # Патчим find_spec, чтобы pydantic считался неустановленным
         orig_find_spec = importlib.util.find_spec
+
         def mock_find_spec(name: str, package: str | None = None) -> Any:
             if name == "pydantic":
                 return None
             return orig_find_spec(name, package)
-        
+
         mocker.patch("importlib.util.find_spec", side_effect=mock_find_spec)
 
         from chutils.env import BaseEnvManifest
@@ -132,3 +135,92 @@ def test_base_env_manifest_without_pydantic(mocker: Any) -> None:
             sys.modules[k] = v
 
 
+def test_cli_env_validate_success(mocker: Any) -> None:
+    """Проверяет успешное выполнение chutils env validate."""
+    import argparse
+    from chutils.commands.env import EnvCommand
+    from chutils.env import BaseEnvManifest
+
+    class DummyManifest(BaseEnvManifest):
+        pass
+
+    mocker.patch.dict(os.environ, {"TEST_VAR": "val"})
+    mock_load = mocker.patch.object(DummyManifest, "load")
+    mocker.patch("chutils.commands.env._import_string", return_value=DummyManifest)
+
+    cmd = EnvCommand()
+    args = argparse.Namespace(subcommand="validate", manifest="myapp.env:AppEnv")
+    cmd.handle(args)
+
+    mock_load.assert_called_once()
+
+
+def test_cli_env_validate_failure(mocker: Any) -> None:
+    """Проверяет завершение с кодом 1 при ошибке валидации."""
+    import argparse
+    from chutils.commands.env import EnvCommand
+    from chutils.exceptions import EnvValidationError
+    from chutils.env import BaseEnvManifest
+
+    class DummyManifest(BaseEnvManifest):
+        pass
+
+    mock_load = mocker.patch.object(DummyManifest, "load", side_effect=EnvValidationError("Validation failed"))
+    mocker.patch("chutils.commands.env._import_string", return_value=DummyManifest)
+
+    cmd = EnvCommand()
+    args = argparse.Namespace(subcommand="validate", manifest="myapp.env:AppEnv")
+
+    with pytest.raises(SystemExit) as exc:
+        cmd.handle(args)
+
+    assert exc.value.code == 1
+
+
+def test_cli_env_validate_find_manifest_pyproject(mocker: Any, tmp_path: Any) -> None:
+    """Проверяет автоопределение пути к манифесту из pyproject.toml."""
+    from chutils.commands.env import EnvCommand
+
+    # Создаем временный pyproject.toml
+    pyproject_content = b"""
+[tool.chutils.env]
+manifest = "configured.env:EnvClass"
+"""
+    mocker.patch("chutils.config.utils.find_project_root", return_value=tmp_path)
+    pyproject_file = tmp_path / "pyproject.toml"
+    pyproject_file.write_bytes(pyproject_content)
+
+    cmd = EnvCommand()
+    path = cmd._find_manifest_path()
+    assert path == "configured.env:EnvClass"
+
+
+def test_cli_env_validate_find_manifest_config(mocker: Any) -> None:
+    """Проверяет автоопределение пути к манифесту из конфига chutils."""
+    from chutils.commands.env import EnvCommand
+
+    mocker.patch("chutils.get_config_value", return_value="config.env:ConfigEnv")
+
+    cmd = EnvCommand()
+    path = cmd._find_manifest_path()
+    assert path == "config.env:ConfigEnv"
+
+
+def test_cli_env_validate_invalid_subclass(mocker: Any) -> None:
+    """Проверяет выброс CommandError, если класс не является подклассом BaseEnvManifest."""
+    import argparse
+    from chutils.commands.env import EnvCommand
+    from chutils.exceptions import CommandError
+
+    class InvalidClass:
+        pass
+
+    mocker.patch("chutils.commands.env._import_string", return_value=InvalidClass)
+
+    cmd = EnvCommand()
+    args = argparse.Namespace(subcommand="validate", manifest="myapp.env:InvalidClass")
+
+    with pytest.raises(CommandError) as exc:
+        cmd.handle(args)
+
+    assert "не является подклассом BaseEnvManifest" in str(exc.value)

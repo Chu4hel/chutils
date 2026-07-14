@@ -17,6 +17,7 @@ def get_commands() -> list[type[BaseCommand]]:
     from .template import TemplateCommand
     from .config import ConfigCommand
     from .dev import DevCommand
+    from .env import EnvCommand
 
     return [
         SecretsCommand,
@@ -25,5 +26,6 @@ def get_commands() -> list[type[BaseCommand]]:
         ShowPathsCommand,
         TemplateCommand,
         ConfigCommand,
-        DevCommand
+        DevCommand,
+        EnvCommand
     ]
