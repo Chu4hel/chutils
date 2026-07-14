@@ -407,6 +407,22 @@ chutils dev ai-lint --strict --ignore "temp/,build/"
 
 Подробности см. в руководстве [docs/ai_lint.md](ai_lint.md).
 
+### 7. Синхронизация переменных окружения
+
+Поддерживайте файлы `.env` и `.env.example` в синхронизированном состоянии с сохранением комментариев, форматирования и
+маскированием значений:
+
+```bash
+# Сравнить ключи .env и .env.example без внесения изменений
+chutils dev sync-env --dry-run
+
+# Выполнить автоматическую синхронизацию
+chutils dev sync-env --yes
+
+# Указать кастомные пути к файлам
+chutils dev sync-env --env-path .env.dev --example-path .env.dev.example
+```
+
 ## Лицензия
 
 Проект распространяется под лицензией MIT.

@@ -308,3 +308,71 @@ def test_cli_dev_mock_run_mocked(cli_runner, mocker):
     result = cli_runner.invoke(["dev", "mock", "-p", "9999", "-r", "custom_mocks.yml"])
     assert result.exit_code == 0
     mock_run.assert_called_once()
+
+
+def test_cli_dev_sync_env_success_synchronized(cli_runner, config_fs):
+    """Проверяет вызов sync-env, когда файлы полностью синхронизированы."""
+    fs, project_root = config_fs
+    fs.create_file(f"{project_root}/.env", contents="A=1\n")
+    fs.create_file(f"{project_root}/.env.example", contents="A=\n")
+
+    result = cli_runner.invoke(
+        ["dev", "sync-env", "--env-path", f"{project_root}/.env", "--example-path", f"{project_root}/.env.example"])
+    assert result.exit_code == 0
+    assert "Файлы полностью синхронизированы" in result.stdout
+
+
+def test_cli_dev_sync_env_dry_run(cli_runner, config_fs):
+    """Проверяет dry-run режим sync-env."""
+    from chutils.cli_utils import set_console_width
+    from pathlib import Path
+
+    set_console_width(80)
+    try:
+        fs, project_root = config_fs
+        fs.create_file(f"{project_root}/.env", contents="A=1\nB=2\n")
+        fs.create_file(f"{project_root}/.env.example", contents="A=\n")
+
+        result = cli_runner.invoke([
+            "dev", "sync-env",
+            "--env-path", f"{project_root}/.env",
+            "--example-path", f"{project_root}/.env.example",
+            "--dry-run"
+        ])
+        assert result.exit_code == 0
+        assert "Dry-run режим. Изменения не внесены" in result.stdout
+        assert "Обнаруженные расхождения в переменных окружения" in result.stdout
+        # Файлы не должны измениться
+        assert Path(f"{project_root}/.env.example").read_text(encoding="utf-8") == "A=\n"
+    finally:
+        set_console_width(None)
+
+
+def test_cli_dev_sync_env_force(cli_runner, config_fs):
+    """Проверяет принудительную синхронизацию с флагом --yes."""
+    from chutils.cli_utils import set_console_width
+    from pathlib import Path
+
+    set_console_width(80)
+    try:
+        fs, project_root = config_fs
+        fs.create_file(f"{project_root}/.env", contents="A=1\nB=2\n")
+        fs.create_file(f"{project_root}/.env.example", contents="A=\nC=3\n")
+
+        result = cli_runner.invoke([
+            "dev", "sync-env",
+            "--env-path", f"{project_root}/.env",
+            "--example-path", f"{project_root}/.env.example",
+            "--yes"
+        ])
+        assert result.exit_code == 0
+        assert "успешно обновлен" in result.stdout
+
+        # Проверяем, что B перенеслось в .env.example
+        example_content = Path(f"{project_root}/.env.example").read_text(encoding="utf-8")
+        assert "B=" in example_content
+        # Проверяем, что C перенеслось в .env с дефолтным значением 3
+        env_content = Path(f"{project_root}/.env").read_text(encoding="utf-8")
+        assert "C=3" in env_content
+    finally:
+        set_console_width(None)

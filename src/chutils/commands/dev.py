@@ -897,9 +897,12 @@ class DevCommand(BaseCommand):
         Args:
             args: Объект Namespace с аргументами командной строки.
         """
-        # В Phase 3 мы поддержим конфигурационные пути, а пока берем переданные или дефолтные:
-        env_path = args.env_path or ".env"
-        example_path = args.example_path or ".env.example"
+        # Загружаем конфигурацию для получения путей к файлам
+        from chutils.config.dev import load_ai_lint_config
+        config = load_ai_lint_config()
+
+        env_path = args.env_path or str(config.get("env_path", ".env"))
+        example_path = args.example_path or str(config.get("example_path", ".env.example"))
 
         from pathlib import Path
         from rich.prompt import Confirm
