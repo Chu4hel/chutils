@@ -9,7 +9,9 @@ __all__ = [
 ]
 
 
-def __getattr__(name: str) -> type:
+from typing import Any
+
+def __getattr__(name: str) -> Any:
     if name == "DiagnosticsManager":
         from .manager import DiagnosticsManager
         return DiagnosticsManager

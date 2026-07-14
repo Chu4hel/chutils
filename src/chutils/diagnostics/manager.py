@@ -6,7 +6,6 @@ import time
 from collections.abc import Callable, Awaitable
 
 from chutils.decorators import timeout as timeout_decorator
-from chutils.env import has_pydantic
 from .models import CheckResult, HealthReport
 
 
@@ -78,10 +77,12 @@ class DiagnosticsManager:
         Returns:
             Результат выполнения проверки CheckResult.
         """
+        from typing import cast, Any
+
         name = str(check["name"])
         critical = bool(check["critical"])
-        timeout_val = float(check["timeout"])
-        func = check["func"]
+        timeout_val = float(cast(Any, check["timeout"]))
+        func = cast(Callable[..., Any], check["func"])
 
         # Оборачиваем функцию декоратором таймаута из chutils
         func_with_timeout = timeout_decorator(timeout_val)(func)
@@ -181,7 +182,6 @@ class DiagnosticsManager:
         if loop and loop.is_running():
             # Если мы уже находимся внутри асинхронного цикла, запускаем через run_until_complete
             # в отдельном потоке с новым циклом событий, чтобы не блокировать текущий.
-            import threading
             from concurrent.futures import ThreadPoolExecutor
 
             with ThreadPoolExecutor(max_workers=1) as executor:
