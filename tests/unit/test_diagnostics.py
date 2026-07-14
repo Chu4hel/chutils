@@ -170,6 +170,10 @@ def test_cli_diagnostics_command(mocker, capsys) -> None:
     """Проверяет запуск CLI-команды dev diagnostics."""
     import sys
     from chutils.cli import main
+    
+    # Мокаем пути к конфигам, чтобы встроенная проверка config не падала в тестовом окружении
+    mocker.patch("chutils.get_config_file_path", return_value=None)
+    
     test_args = ["chutils", "dev", "diagnostics"]
     mocker.patch.object(sys, 'argv', test_args)
 
@@ -188,6 +192,10 @@ def test_cli_diagnostics_command_json(mocker, capsys) -> None:
     import sys
     import json
     from chutils.cli import main
+    
+    # Мокаем пути к конфигам, чтобы встроенная проверка config не падала в тестовом окружении
+    mocker.patch("chutils.get_config_file_path", return_value=None)
+    
     test_args = ["chutils", "dev", "diagnostics", "--json"]
     mocker.patch.object(sys, 'argv', test_args)
 
@@ -199,6 +207,7 @@ def test_cli_diagnostics_command_json(mocker, capsys) -> None:
     data = json.loads(captured.out.strip())
     assert "status" in data
     assert "results" in data
+
 
 
 def test_models_without_pydantic(mocker) -> None:
