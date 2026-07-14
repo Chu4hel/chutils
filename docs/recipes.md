@@ -1426,3 +1426,73 @@ chutils dev diagnostics
 # Вывод в формате структурированного JSON для систем мониторинга
 chutils dev diagnostics --json
 ```
+
+## 24. Декларативный манифест переменных окружения (chutils.env)
+
+Модуль `chutils.env` предоставляет механизм для декларативного описания, загрузки и валидации переменных окружения с использованием Pydantic моделей, поддержкой автоматического маскирования секретов и интеграцией с `SecretManager`.
+
+### Создание манифеста
+
+Опишите ожидаемые переменные окружения как поля класса, наследующегося от `BaseEnvManifest`:
+
+```python
+from pydantic import Field
+
+from chutils.env import BaseEnvManifest
+
+
+class AppEnv(BaseEnvManifest):
+    DATABASE_URL: str = Field(description="URL подключения к базе данных")
+    API_KEY: str = Field(json_schema_extra={"secret": True}, description="Секретный API-ключ")
+    PORT: int = Field(default=8080, description="Порт веб-сервера")
+```
+
+### Загрузка и валидация в коде
+
+Метод `load()` автоматически считывает значения из `os.environ` и выполняет приведение типов:
+
+```python
+import os
+from chutils.exceptions import EnvValidationError
+
+# Устанавливаем переменные для теста
+os.environ["DATABASE_URL"] = "postgresql://localhost:5432/db"
+os.environ["API_KEY"] = "super-secret-token"
+
+try:
+    env = AppEnv.load()
+    print(f"Server will run on port {env.PORT}")
+except EnvValidationError as e:
+    # Все секретные поля (API_KEY) будут автоматически замаскированы (показано как ***)
+    print(f"Ошибка валидации окружения: {e}")
+```
+
+Если переменная отсутствует в `os.environ`, но помечена как `secret=True`, метод `load()` автоматически попытается получить её значение через `SecretManager` (если он доступен).
+
+### Валидация окружения через CLI
+
+Вы можете автоматически валидировать переменные окружения при развертывании приложения (например, в Docker/K8s init-контейнерах) с помощью CLI-команды `chutils env validate`.
+
+1. **Явный запуск с указанием манифеста:**
+
+```bash
+chutils env validate --manifest myapp.env:AppEnv
+```
+
+2. **Запуск через конфигурацию проекта (`pyproject.toml`):**
+
+Добавьте секцию в ваш `pyproject.toml`:
+
+```toml
+[tool.chutils.env]
+manifest = "myapp.env:AppEnv"
+```
+
+После этого вы можете запускать проверку без параметров:
+
+```bash
+chutils env validate
+```
+
+При успешной валидации команда вернет код `0`, при сбое — выведет подробную таблицу ошибок и вернет код `1`.
+

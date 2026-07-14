@@ -237,6 +237,16 @@ members:
 - get_fastapi_health_handler
 - get_flask_health_handler
 
+## Модуль `env` (Манифест окружения)
+
+::: chutils.env
+options:
+members:
+
+- BaseEnvManifest
+- is_rich_enabled
+- is_otel_enabled
+
 ## Модуль `validation` (Валидация данных)
 
 ::: chutils.validation

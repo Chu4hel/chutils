@@ -121,6 +121,7 @@ _LAZY_MAPPING = {
     'WATCHDOG_AVAILABLE': ('.env', 'WATCHDOG_AVAILABLE'),
     'JSON_LOGGER_AVAILABLE': ('.env', 'JSON_LOGGER_AVAILABLE'),
     'OTEL_AVAILABLE': ('.env', 'OTEL_AVAILABLE'),
+    'BaseEnvManifest': ('.env', 'BaseEnvManifest'),
 
     # cache
     'cache_with_ttl': ('.cache', 'cache_with_ttl'),
@@ -180,6 +181,7 @@ _LAZY_MAPPING = {
     'EventBusError': ('.exceptions', 'EventBusError'),
     'EventBusExceptionGroup': ('.exceptions', 'EventBusExceptionGroup'),
     'ChutilsValidationError': ('.exceptions', 'ChutilsValidationError'),
+    'EnvValidationError': ('.exceptions', 'EnvValidationError'),
 
     # events
     'subscribe': ('.events', 'subscribe'),

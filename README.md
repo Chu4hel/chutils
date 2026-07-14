@@ -276,6 +276,11 @@ except PathTraversalError as e:
 - `get_secret(key, fallback=None, required=False)` / `aget_secret(...)`
 - `delete_secret` / `adelete_secret`
 
+### Environment Manifest (`chutils.env`)
+
+- `BaseEnvManifest`: Declarative specification of environment variables using Pydantic typing, automatic secret masking,
+  and `load()` classmethod.
+
 ### Data Validation (`chutils.validation`)
 
 - `validate_data(model, data)`: Validates dictionaries or JSON strings against Pydantic models, raising

@@ -774,4 +774,5 @@ from . import validation as validation
 
 from .diagnostics import DiagnosticsManager as DiagnosticsManager
 from .validation import validate_data as validate_data, validate_call as validate_call
-from .exceptions import ChutilsValidationError as ChutilsValidationError
+from .exceptions import ChutilsValidationError as ChutilsValidationError, EnvValidationError as EnvValidationError
+from .env import BaseEnvManifest as BaseEnvManifest

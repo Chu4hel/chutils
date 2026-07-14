@@ -135,6 +135,41 @@ def test_base_env_manifest_without_pydantic(mocker: Any) -> None:
             sys.modules[k] = v
 
 
+def test_chutils_root_exports_without_pydantic(mocker: Any) -> None:
+    """Проверяет возможность импортировать BaseEnvManifest из корня даже при отсутствии Pydantic."""
+    import sys
+    import importlib.util
+
+    chutils_backup = {k: v for k, v in sys.modules.items() if k.startswith('chutils')}
+    for m in chutils_backup:
+        del sys.modules[m]
+
+    try:
+        orig_find_spec = importlib.util.find_spec
+
+        def mock_find_spec(name: str, package: str | None = None) -> Any:
+            if name == "pydantic":
+                return None
+            return orig_find_spec(name, package)
+
+        mocker.patch("importlib.util.find_spec", side_effect=mock_find_spec)
+
+        import chutils
+        assert chutils.BaseEnvManifest is not None
+        assert chutils.EnvValidationError is not None
+
+        with pytest.raises(Exception) as exc:
+            chutils.BaseEnvManifest.load()
+        assert "Pydantic не установлен" in str(exc.value)
+
+    finally:
+        to_delete_post = [m for m in sys.modules if m.startswith('chutils')]
+        for m in to_delete_post:
+            del sys.modules[m]
+        for k, v in chutils_backup.items():
+            sys.modules[k] = v
+
+
 def test_cli_env_validate_success(mocker: Any) -> None:
     """Проверяет успешное выполнение chutils env validate."""
     import argparse
