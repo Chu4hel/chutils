@@ -225,6 +225,27 @@ members:
 - MockServerRunner
 - Scaffolder
 
+## Модуль `diagnostics` (Мониторинг работоспособности)
+
+::: chutils.diagnostics
+options:
+members:
+
+- DiagnosticsManager
+- CheckResult
+- HealthReport
+- get_fastapi_health_handler
+- get_flask_health_handler
+
+## Модуль `validation` (Валидация данных)
+
+::: chutils.validation
+options:
+members:
+
+- validate_data
+- validate_call
+
 ## Модуль `web` (Умный HTTP-клиент)
 
 ::: chutils.web

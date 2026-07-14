@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-from chutils.exceptions import ChutilsException, ChutilsValidationError
 
 
 def test_validation_error_inheritance() -> None:
     """Проверяет наследование ChutilsValidationError от ChutilsException."""
+    from chutils.exceptions import ChutilsException, ChutilsValidationError
     err = ChutilsValidationError("Test validation error")
     assert isinstance(err, ChutilsException)
     assert isinstance(err, Exception)
@@ -15,6 +15,7 @@ def test_validation_error_inheritance() -> None:
 
 def test_validation_error_context_and_properties() -> None:
     """Проверяет сохранение контекста, ошибок и исходной ошибки."""
+    from chutils.exceptions import ChutilsValidationError
     raw = ValueError("Raw error")
     errors = [{"loc": ("field",), "msg": "Missing field", "type": "value_error"}]
 
@@ -35,6 +36,7 @@ def test_validation_error_context_and_properties() -> None:
 
 def test_validation_error_str_formatting() -> None:
     """Проверяет plain-text форматирование списка ошибок в __str__."""
+    from chutils.exceptions import ChutilsValidationError
     errors: list[dict[str, Any]] = [
         {"loc": ("user", "name"), "msg": "Field required", "type": "missing", "input": None},
         {"loc": ("user", "age"), "msg": "Input should be a valid integer", "type": "int_parsing", "input": "twenty"}
@@ -54,6 +56,7 @@ def test_validation_error_str_formatting() -> None:
 def test_validation_error_rich_formatting() -> None:
     """Проверяет форматирование в rich-таблицу при наличии rich."""
     from rich.table import Table
+    from chutils.exceptions import ChutilsValidationError
 
     errors: list[dict[str, Any]] = [
         {"loc": ("user", "name"), "msg": "Field required", "type": "missing", "input": None},
@@ -96,6 +99,7 @@ def test_validate_data_failure() -> None:
     """Проверяет выброс ChutilsValidationError при неверных данных."""
     from pydantic import BaseModel
     from chutils.validation import validate_data
+    from chutils.exceptions import ChutilsValidationError
 
     class User(BaseModel):
         name: str
@@ -124,6 +128,7 @@ def test_validate_call_success() -> None:
 def test_validate_call_failure() -> None:
     """Проверяет выброс ChutilsValidationError декоратором @validate_call при неверных типах аргументов."""
     from chutils.validation import validate_call
+    from chutils.exceptions import ChutilsValidationError
 
     @validate_call
     def greet(name: str, repeat: int = 1) -> str:
@@ -139,13 +144,13 @@ def test_validate_call_failure() -> None:
 def test_validate_call_without_pydantic(mocker: Any) -> None:
     """Проверяет выброс OptionalDependencyError при отсутствии Pydantic."""
     from chutils.exceptions import OptionalDependencyError
-    
+
     # Мокаем доступность pydantic
     mocker.patch("chutils.validation.PYDANTIC_AVAILABLE", False)
 
     from chutils.validation import validate_call, validate_data
     from pydantic import BaseModel
-    
+
     class Dummy(BaseModel):
         pass
 
@@ -168,6 +173,7 @@ def test_validate_data_invalid_json() -> None:
     """Проверяет выброс ChutilsValidationError при невалидном JSON."""
     from pydantic import BaseModel
     from chutils.validation import validate_data
+    from chutils.exceptions import ChutilsValidationError
 
     class User(BaseModel):
         name: str
@@ -197,6 +203,7 @@ async def test_validate_call_async_failure() -> None:
     """Проверяет асинхронную валидацию при неверных аргументах."""
     import asyncio
     from chutils.validation import validate_call
+    from chutils.exceptions import ChutilsValidationError
 
     @validate_call
     async def async_greet(name: str) -> str:
@@ -208,3 +215,28 @@ async def test_validate_call_async_failure() -> None:
     assert "Ошибка валидации аргументов при вызове функции" in str(exc.value)
 
 
+def test_validation_root_imports() -> None:
+    """Проверяет возможность импорта функций и исключений напрямую из chutils."""
+    import chutils
+
+    assert hasattr(chutils, "validate_data")
+    assert hasattr(chutils, "validate_call")
+    assert hasattr(chutils, "ChutilsValidationError")
+
+
+def test_validation_lazy_loading_no_pydantic() -> None:
+    """Проверяет, что при отсутствии Pydantic импорт из корня не вызывает каскадных ошибок."""
+    import sys
+
+    # Временно прячем pydantic из sys.modules
+    orig_pydantic = sys.modules.get("pydantic")
+    sys.modules["pydantic"] = None  # type: ignore[assignment]
+
+    try:
+        import chutils.validation
+        assert chutils.validation is not None
+    finally:
+        if orig_pydantic is not None:
+            sys.modules["pydantic"] = orig_pydantic
+        else:
+            sys.modules.pop("pydantic", None)

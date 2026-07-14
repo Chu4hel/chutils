@@ -770,5 +770,8 @@ from . import fs as fs
 from . import web as web
 from . import scraping as scraping
 from . import diagnostics as diagnostics
+from . import validation as validation
 
 from .diagnostics import DiagnosticsManager as DiagnosticsManager
+from .validation import validate_data as validate_data, validate_call as validate_call
+from .exceptions import ChutilsValidationError as ChutilsValidationError

@@ -62,6 +62,7 @@ _LAZY_MAPPING = {
     'fs': ('.fs', None),
     'diagnostics': ('.diagnostics', None),
     'DiagnosticsManager': ('.diagnostics', 'DiagnosticsManager'),
+    'validation': ('.validation', None),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -178,6 +179,7 @@ _LAZY_MAPPING = {
     'CacheError': ('.exceptions', 'CacheError'),
     'EventBusError': ('.exceptions', 'EventBusError'),
     'EventBusExceptionGroup': ('.exceptions', 'EventBusExceptionGroup'),
+    'ChutilsValidationError': ('.exceptions', 'ChutilsValidationError'),
 
     # events
     'subscribe': ('.events', 'subscribe'),
@@ -217,6 +219,10 @@ _LAZY_MAPPING = {
     'cleanup_paths': ('.fs', 'cleanup_paths'),
     'safe_filename': ('.fs', 'safe_filename'),
     'zip_folder': ('.fs', 'zip_folder'),
+
+    # validation
+    'validate_data': ('.validation', 'validate_data'),
+    'validate_call': ('.validation', 'validate_call'),
 
     # web
     'web': ('.web', None),

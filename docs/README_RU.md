@@ -47,6 +47,8 @@
   базовой директории с помощью `resolve_safe_path()`.
 - **🤖 Линтер AI-готовности:** Проверка кодовой базы на готовность к работе с ИИ (строгая типизация, стандартизированные
   docstrings, синхронизация API map) через команду `chutils dev ai-lint`.
+- **✅ Валидация данных (chutils.validation):** Универсальный модуль валидации структурированных данных и JSON на базе Pydantic с возможностью декорации функций `@validate_call` и выводом детальных красивых таблиц ошибок.
+- **🩺 Diagnostics API (chutils.diagnostics):** Асинхронный и потокобезопасный мониторинг жизнедеятельности системы с контролем таймаутов, встроенными проверками (keyring, config) и хелперами для веб-фреймворков (FastAPI, Flask).
 - **⚡ Поддержка Async:** Большинство функций имеют асинхронные версии (с префиксом `a`) для работы в неблокирующем
   режиме.
 - **🚀 Готовность к работе:** Просто установите и используйте.
@@ -288,6 +290,16 @@ except PathTraversalError as e:
 - `save_secret` / `asave_secret`
 - `get_secret(key, fallback=None, required=False)` / `aget_secret(...)`
 - `delete_secret` / `adelete_secret`
+
+### Валидация данных (`chutils.validation`)
+
+- `validate_data(model, data)`: Валидация словарей и JSON-строк по Pydantic-модели с выбросом `ChutilsValidationError`.
+- `@validate_call`: Автоматическая валидация аргументов функций с помощью Pydantic.
+
+### Мониторинг и диагностика (`chutils.diagnostics`)
+
+- `DiagnosticsManager`: Управление и параллельный запуск диагностических проверок с таймаутами.
+- Хелперы для веб-фреймворков: `get_fastapi_health_handler` и `get_flask_health_handler`.
 
 ### Декораторы (`chutils.decorators`)
 

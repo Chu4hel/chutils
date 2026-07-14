@@ -1275,3 +1275,154 @@ def metrics_endpoint():
 Prometheus-совместимый текстовый формат.
 
 Таким образом, ваше приложение гарантированно продолжит работу без внешних зависимостей.
+
+## 22. Универсальная валидация данных (chutils.validation)
+
+Модуль `chutils.validation` предоставляет удобный инструмент для валидации структурированных данных (JSON, dict) с
+использованием Pydantic, а также автоматическую валидацию аргументов функций с генерацией детальных, структурированных
+ошибок `ChutilsValidationError`.
+
+### Валидация словарей и JSON-строк (`validate_data`)
+
+Функция `validate_data` принимает Pydantic модель и данные (словарь или JSON-строку), возвращая валидный объект модели.
+В случае ошибки выбрасывается `ChutilsValidationError`.
+
+```python
+from pydantic import BaseModel, Field
+from chutils import validate_data
+from chutils.exceptions import ChutilsValidationError
+
+
+class User(BaseModel):
+    name: str
+    age: int = Field(gt=0)
+
+
+try:
+    # 1. Валидация словаря
+    user1 = validate_data(User, {"name": "Alice", "age": 30})
+
+    # 2. Валидация JSON-строки
+    user2 = validate_data(User, '{"name": "Bob", "age": 25}')
+except ChutilsValidationError as e:
+    print(f"Ошибка: {e}")
+```
+
+### Автоматическая валидация аргументов функций (`@validate_call`)
+
+Декоратор `@validate_call` автоматически проверяет типы и значения аргументов при вызове функции. Поддерживает как
+синхронные, так и асинхронные функции.
+
+```python
+from chutils import validate_call
+from chutils.exceptions import ChutilsValidationError
+
+
+@validate_call
+def send_message(user_id: int, message: str) -> None:
+    print(f"Отправка пользователю {user_id}: {message}")
+
+
+try:
+    # Вызовет ошибку валидации, так как передан неверный тип
+    send_message("not_an_int", "Привет")
+except ChutilsValidationError as e:
+    print(f"Неверные аргументы вызова:\n{e}")
+```
+
+### Красивый вывод ошибок через Rich
+
+Исключение `ChutilsValidationError` бесшовно интегрировано с библиотекой `rich`. Если `rich` установлен, при печати
+исключения в консоль автоматически выводится красивая структурированная таблица ошибок с указанием пути к полю, причины
+ошибки и полученного невалидного значения.
+
+```python
+from chutils import get_console
+from chutils.exceptions import ChutilsValidationError
+
+console = get_console()
+
+try:
+    validate_data(User, {"name": "Alice", "age": -5})
+except ChutilsValidationError as e:
+    # Автоматически отрендерит красивую таблицу ошибок в консоль
+    console.print(e)
+```
+
+## 23. Мониторинг работоспособности и Diagnostics API (chutils.diagnostics)
+
+Модуль `chutils.diagnostics` предназначен для проверки жизнедеятельности (health check) компонентов системы с контролем
+таймаутов, встроенными проверками и готовыми хелперами для веб-фреймворков.
+
+### Использование DiagnosticsManager
+
+Вы можете зарегистрировать кастомные функции проверок (как синхронные, так и асинхронные) с указанием таймаутов
+выполнения.
+
+```python
+import asyncio
+from chutils.diagnostics import DiagnosticsManager
+
+manager = DiagnosticsManager()
+
+
+# Регистрация асинхронной проверки с таймаутом 2 секунды
+@manager.register(name="database", critical=True, timeout=2.0)
+async def check_db() -> str:
+    await asyncio.sleep(0.1)  # Симуляция пинга БД
+    return "Соединение с БД успешно установлено."
+
+
+# Запуск проверок асинхронно
+async def main():
+    report = await manager.run_checks()
+    print(f"Статус системы: {report.status}")  # HEALTHY, DEGRADED, UNHEALTHY
+    for name, result in report.results.items():
+        print(f"[{name}] {result.status} - {result.message}")
+
+
+asyncio.run(main())
+```
+
+### Встроенные проверки
+
+Модуль предоставляет встроенные проверки из коробки:
+
+* `check_keyring` — проверяет доступность системного хранилища секретов (`keyring`) путём пробной записи и удаления
+  тестового секрета.
+* `check_config` — проверяет валидность и физическое наличие конфигурационного файла на диске.
+
+Встроенные проверки зарегистрированы в `DiagnosticsManager` по умолчанию.
+
+### Интеграция с FastAPI и Flask
+
+Модуль содержит готовые хелперы для быстрой отдачи статуса здоровья системы по HTTP-эндпоинтам.
+
+**FastAPI:**
+
+```python
+from fastapi import FastAPI
+from chutils.diagnostics import DiagnosticsManager
+from chutils.diagnostics.web import get_fastapi_health_handler
+
+app = FastAPI()
+manager = DiagnosticsManager()
+
+# Регистрируем роут /health
+app.add_api_route("/health", get_fastapi_health_handler(manager), methods=["GET"])
+```
+
+При возникновении критических сбоев (`UNHEALTHY`) обработчик автоматически возвращает HTTP-код
+`503 Service Unavailable`, а при успешной или частично деградировавшей работе (`HEALTHY`, `DEGRADED`) — `200 OK`.
+
+### Проверка через CLI
+
+Вы можете запустить диагностику системы напрямую из терминала:
+
+```bash
+# Красивая таблица результатов в rich
+chutils dev diagnostics
+
+# Вывод в формате структурированного JSON для систем мониторинга
+chutils dev diagnostics --json
+```
