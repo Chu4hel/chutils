@@ -3,7 +3,7 @@ import pytest
 from chutils.dev.ai_lint import Rule, LintResult, LinterEngine, load_custom_rules
 from chutils.dev.rules import (
     ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
-    ChutilsIntegrationRule, APIMapRule
+    ChutilsIntegrationRule, APIMapRule, EnvSyncRule
 )
 
 
@@ -344,3 +344,45 @@ def test_api_map_rule(tmp_path):
     results_outdated = rule.check(str(tmp_path), [])
     assert len(results_outdated) == 1
     assert "устарел или не соответствует" in results_outdated[0].message
+
+
+def test_env_sync_rule(tmp_path, mocker):
+    """Тестирует EnvSyncRule."""
+    mock_config = {
+        "env_path": "custom.env",
+        "example_path": "custom.env.example"
+    }
+    mocker.patch("chutils.config.dev.load_ai_lint_config", return_value=mock_config)
+
+    rule = EnvSyncRule()
+
+    # 1. Если файлов нет вообще - нет ошибок
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # 2. Если есть .env, но нет .env.example
+    env_file = tmp_path / "custom.env"
+    env_file.write_text("A=1\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "отсутствует шаблон" in results[0].message
+
+    # 3. Если есть .env.example, но нет .env
+    env_file.unlink()
+    example_file = tmp_path / "custom.env.example"
+    example_file.write_text("A=10\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "отсутствует локальный" in results[0].message
+
+    # 4. Оба файла есть, но не синхронизированы
+    env_file.write_text("A=1\nB=2\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "Расхождение в ключах окружения" in results[0].message
+    assert "отсутствуют в custom.env.example: B" in results[0].message
+
+    # 5. Оба файла синхронизированы
+    example_file.write_text("A=10\nB=\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0

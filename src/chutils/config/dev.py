@@ -13,7 +13,9 @@ DEFAULT_AI_LINT_CONFIG: JSONDict = {
     "ignore": [".git", ".venv", "__pycache__", "build", "dist", "docs", "tests", "examples"],
     "rules": [],
     "custom_rules_path": None,
-    "soft_mode": False
+    "soft_mode": False,
+    "env_path": ".env",
+    "example_path": ".env.example"
 }
 
 

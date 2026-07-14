@@ -180,7 +180,7 @@ class LinterEngine:
         """
         from .rules import (
             ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
-            ChutilsIntegrationRule, APIMapRule
+            ChutilsIntegrationRule, APIMapRule, EnvSyncRule
         )
 
         # Регистрируем встроенные правила
@@ -189,7 +189,8 @@ class LinterEngine:
             DocstringQualityRule(),
             SecurityHardcodeRule(),
             ChutilsIntegrationRule(),
-            APIMapRule()
+            APIMapRule(),
+            EnvSyncRule()
         ]
 
         # Загружаем кастомные правила
