@@ -41,6 +41,7 @@ nav:
       - Генерация шаблонов (template): cli/template.md
       - Настройки и отладка (config): cli/config.md
       - Инструменты разработчика (dev): cli/dev.md
+      - Проверка зеркал (pypi): cli/pypi.md
   - Проект:
       - Обзор (RU): README_RU.md
       - Кодекс поведения: CODE_OF_CONDUCT_RU.md

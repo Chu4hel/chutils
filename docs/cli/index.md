@@ -46,6 +46,7 @@ chutils [GLOBAL_OPTIONS] COMMAND [COMMAND_OPTIONS] [ARGS...]
 | **`template`**   | Генерация шаблонов (`config.yml`, `.env`, JSON Schema) на базе Pydantic-моделей | [Генерация шаблонов (template.md)](./template.md) |
 | **`config`**     | Интерактивная отладка и генерация JSON-схемы конфигурации                       | [Настройки и отладка (config.md)](./config.md)    |
 | **`dev`**        | Построение карты публичного API и аудит AI-готовности кодовой базы              | [Инструменты разработчика (dev.md)](./dev.md)     |
+| **`pypi`**       | Проверка доступности и измерение скорости скачивания зеркал PyPI                | [Проверка зеркал (pypi.md)](./pypi.md)            |
 
 ---
 
