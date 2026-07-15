@@ -28,7 +28,11 @@ DEFAULT_MIRRORS = [
 
 
 def get_current_index_url() -> str:
-    """Возвращает текущий настроенный index-url из pip."""
+    """Возвращает текущий настроенный index-url из pip.
+
+    Returns:
+        Текущий настроенный URL индекса пакетов (index-url).
+    """
     # 1. Проверяем переменную окружения
     if "PIP_INDEX_URL" in os.environ:
         return os.environ["PIP_INDEX_URL"]
@@ -79,7 +83,14 @@ def get_current_index_url() -> str:
 
 
 def normalize_mirror_url(url: str) -> str:
-    """Приводит URL зеркала к единому стандарту с закрывающим слэшем."""
+    """Приводит URL зеркала к единому стандарту с закрывающим слэшем.
+
+    Args:
+        url: Исходный URL зеркала.
+
+    Returns:
+        Нормализованный URL с закрывающим слэшем.
+    """
     url = url.strip()
     if not url.endswith("/"):
         url += "/"
@@ -87,13 +98,30 @@ def normalize_mirror_url(url: str) -> str:
 
 
 def normalize_url(base_url: str, package: str) -> str:
-    """Формирует URL для проверки конкретного пакета."""
+    """Формирует URL для проверки конкретного пакета.
+
+    Args:
+        base_url: Базовый URL зеркала.
+        package: Имя пакета.
+
+    Returns:
+        Полный URL для запроса индекса пакета на данном зеркале.
+    """
     base_url = normalize_mirror_url(base_url)
     return urljoin(base_url, f"{package}/")
 
 
 def measure_mirror(mirror_url: str, package: str, timeout: float = 3.0) -> dict[str, Any]:
-    """Измеряет время отклика и скорость скачивания для конкретного зеркала."""
+    """Измеряет время отклика и скорость скачивания для конкретного зеркала.
+
+    Args:
+        mirror_url: Базовый URL зеркала.
+        package: Имя пакета для тестирования.
+        timeout: Таймаут для сетевых запросов в секундах.
+
+    Returns:
+        Словарь с результатами замеров (доступность, latency, скорость и т.д.).
+    """
     result: dict[str, Any] = {
         "url": mirror_url,
         "available": False,
@@ -174,8 +202,13 @@ def measure_mirror(mirror_url: str, package: str, timeout: float = 3.0) -> dict[
 
 def find_best_mirror(results: list[dict[str, Any]], current_url: str) -> str | None:
     """Определяет наилучшее зеркало и сравнивает его с текущим.
-    
-    Возвращает URL наилучшего зеркала, если оно значительно быстрее текущего.
+
+    Args:
+        results: Список результатов замера характеристик зеркал.
+        current_url: URL текущего зеркала pip.
+
+    Returns:
+        URL наилучшего зеркала, если оно значительно быстрее текущего, иначе None.
     """
     norm_current = normalize_mirror_url(current_url)
     current_result = None
