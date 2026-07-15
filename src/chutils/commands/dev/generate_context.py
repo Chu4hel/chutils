@@ -106,7 +106,7 @@ class GenerateContextSubCommand(SubCommand):
                 )
                 raise SystemExit(1)
         else:
-            project_path = Path(chutils.__file__).parent.parent.parent
+            project_path = Path(".").resolve()
             # Получаем список всех публичных атрибутов chutils
             public_attrs = [attr for attr in dir(chutils) if not attr.startswith("_")]
 
@@ -263,6 +263,8 @@ class GenerateContextSubCommand(SubCommand):
             self.console.print(
                 f"[bold green] [OK] [/bold green] Контекст успешно сохранен в: [cyan]{args.output}[/cyan]"
             )
+            from chutils.dev.ast_indexer import save_context_metadata_cache
+            save_context_metadata_cache(project_path, args.output, args.format, metadata["project_hash"])
         else:
             if args.format == "json":
                 print(output_content)
@@ -341,6 +343,8 @@ class GenerateContextSubCommand(SubCommand):
                 self.console.print(
                     f"[bold green] [OK] [/bold green] Иерархический индекс успешно сохранен в: [cyan]{args.output}[/cyan]"
                 )
+                from chutils.dev.ast_indexer import save_context_metadata_cache
+                save_context_metadata_cache(Path(".").resolve(), args.output, "tree", index.metadata.get("project_hash", ""))
             else:
                 print(output_content)
 

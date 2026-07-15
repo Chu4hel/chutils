@@ -904,65 +904,109 @@ class APIMapHashRule(Rule):
             if not any(f.endswith(".py") for f in files):
                 return results
 
-        if not api_map_path.exists():
-            return results
+        # Проверяем кэш метаданных
+        cache_path = base_path / ".chutils" / "context_metadata.json"
+        target_file_path = api_map_path
+        target_format = "markdown"
+        expected_hash = None
 
-        try:
-            with open(api_map_path, encoding="utf-8") as f:
-                content = f.read()
-        except Exception:
-            return results
+        if cache_path.exists():
+            try:
+                import json
+                with open(cache_path, encoding="utf-8") as f:
+                    cache_data = json.load(f)
+                file_rel = cache_data.get("file_path")
+                if file_rel:
+                    target_file_path = base_path / file_rel
+                    target_format = cache_data.get("format", "markdown")
+                    expected_hash = cache_data.get("project_hash")
+            except Exception:
+                pass
 
-        # Парсим Frontmatter
-        lines = content.splitlines()
-        if not lines or lines[0].strip() != "---":
-            results.append(
-                LintResult(
-                    rule_name=self.name,
-                    message="В api_map.md отсутствует блок метаданных (YAML Frontmatter).",
-                    severity=self.severity,
-                    file_path=str(api_map_path),
-                    fix_suggestion="Перегенерируйте карту API: chutils dev generate-context -o api_map.md"
+        if not target_file_path.exists():
+            # Если кэш есть, но файл удален, предупреждаем
+            if cache_path.exists():
+                results.append(
+                    LintResult(
+                        rule_name=self.name,
+                        message=f"Файл контекста не найден: {target_file_path.name}",
+                        severity=self.severity,
+                        file_path=str(target_file_path),
+                        fix_suggestion=f"Сгенерируйте контекст: chutils dev generate-context -o {target_file_path.name}"
+                    )
                 )
-            )
-            return results
-
-        frontmatter_lines = []
-        found_end = False
-        for line in lines[1:]:
-            if line.strip() == "---":
-                found_end = True
-                break
-            frontmatter_lines.append(line)
-
-        if not found_end:
-            results.append(
-                LintResult(
-                    rule_name=self.name,
-                    message="Блок метаданных (YAML Frontmatter) в api_map.md не закрыт.",
-                    severity=self.severity,
-                    file_path=str(api_map_path),
-                    fix_suggestion="Перегенерируйте карту API: chutils dev generate-context -o api_map.md"
-                )
-            )
             return results
 
         project_hash = None
-        for line in frontmatter_lines:
-            if ":" in line:
-                key, val = line.split(":", 1)
-                if key.strip() == "project_hash":
-                    project_hash = val.strip()
+        if target_format == "markdown":
+            try:
+                with open(target_file_path, encoding="utf-8") as f:
+                    content = f.read()
+            except Exception:
+                return results
+
+            # Парсим Frontmatter
+            lines = content.splitlines()
+            if not lines or lines[0].strip() != "---":
+                results.append(
+                    LintResult(
+                        rule_name=self.name,
+                        message=f"В {target_file_path.name} отсутствует блок метаданных (YAML Frontmatter).",
+                        severity=self.severity,
+                        file_path=str(target_file_path),
+                        fix_suggestion=f"Перегенерируйте карту API: chutils dev generate-context -o {target_file_path.name}"
+                    )
+                )
+                return results
+
+            frontmatter_lines = []
+            found_end = False
+            for line in lines[1:]:
+                if line.strip() == "---":
+                    found_end = True
                     break
+                frontmatter_lines.append(line)
+
+            if not found_end:
+                results.append(
+                    LintResult(
+                        rule_name=self.name,
+                        message=f"Блок метаданных (YAML Frontmatter) в {target_file_path.name} не закрыт.",
+                        severity=self.severity,
+                        file_path=str(target_file_path),
+                        fix_suggestion=f"Перегенерируйте карту API: chutils dev generate-context -o {target_file_path.name}"
+                    )
+                )
+                return results
+
+            for line in frontmatter_lines:
+                if ":" in line:
+                    key, val = line.split(":", 1)
+                    if key.strip() == "project_hash":
+                        project_hash = val.strip()
+                        break
+        else:
+            # json или tree
+            try:
+                import json
+                with open(target_file_path, encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, dict):
+                    project_hash = data.get("metadata", {}).get("project_hash")
+            except Exception:
+                pass
+
+        if not project_hash:
+            project_hash = expected_hash
 
         if not project_hash:
             results.append(
                 LintResult(
                     rule_name=self.name,
-                    message="В метаданных api_map.md отсутствует хэш проекта (project_hash).",
+                    message=f"В файле {target_file_path.name} или кэше отсутствует хэш проекта.",
                     severity=self.severity,
-                    file_path=str(api_map_path),
-                    fix_suggestion="Перегенерируйте карту API: chutils dev generate-context -o api_map.md"
+                    file_path=str(target_file_path),
+                    fix_suggestion=f"Перегенерируйте контекст: chutils dev generate-context -o {target_file_path.name}"
                 )
             )
             return results
@@ -971,13 +1015,19 @@ class APIMapHashRule(Rule):
         actual_hash = calculate_project_hash(base_path)
 
         if actual_hash != project_hash:
+            cmd_suggestion = f"chutils dev generate-context -o {target_file_path.name}"
+            if target_format == "tree":
+                cmd_suggestion = f"chutils dev generate-context --tree -o {target_file_path.name}"
+            elif target_format == "json":
+                cmd_suggestion = f"chutils dev generate-context -f json -o {target_file_path.name}"
+
             results.append(
                 LintResult(
                     rule_name=self.name,
-                    message="Карта API (api_map.md) устарела: хэш проекта изменился.",
+                    message=f"Файл контекста ({target_file_path.name}) устарел: хэш проекта изменился.",
                     severity=self.severity,
-                    file_path=str(api_map_path),
-                    fix_suggestion="Обновите карту API: chutils dev generate-context -o api_map.md"
+                    file_path=str(target_file_path),
+                    fix_suggestion=f"Обновите контекст: {cmd_suggestion}"
                 )
             )
 

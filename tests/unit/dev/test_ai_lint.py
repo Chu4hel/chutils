@@ -514,7 +514,7 @@ def test_api_map_hash_rule(tmp_path):
     (tmp_path / "src" / "chutils" / "helper.py").write_text("def run(): pass\n# Изменение\n", encoding="utf-8")
     results = rule.check(str(tmp_path), [])
     assert len(results) == 1
-    assert "Карта API (api_map.md) устарела" in results[0].message
+    assert "Файл контекста (api_map.md) устарел" in results[0].message
     assert results[0].severity == "warn"
 
     # 8. Режим staged: если файлы не менялись - проверка пропускается
@@ -525,5 +525,58 @@ def test_api_map_hash_rule(tmp_path):
     # Режим staged: если файлы менялись - проверка работает
     results = rule.check(str(tmp_path), ["src/chutils/helper.py"])
     assert len(results) == 1
-    assert "Карта API (api_map.md) устарела" in results[0].message
+    assert "Файл контекста (api_map.md) устарел" in results[0].message
 
+
+def test_api_map_hash_rule_cache(tmp_path):
+    """Тестирует APIMapHashRule с использованием кэша .chutils/context_metadata.json."""
+    rule = APIMapHashRule()
+    (tmp_path / "src" / "chutils").mkdir(parents=True, exist_ok=True)
+
+    # 1. Создаем кэш, указывающий на кастомный JSON-файл
+    chutils_dir = tmp_path / ".chutils"
+    chutils_dir.mkdir(exist_ok=True)
+
+    import json
+    cache_path = chutils_dir / "context_metadata.json"
+    cache_data = {
+        "file_path": "my_custom_index.json",
+        "format": "json",
+        "project_hash": "some_old_hash"
+    }
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(cache_data, f)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "Файл контекста не найден: my_custom_index.json" in results[0].message
+
+    # 2. Создаем файл my_custom_index.json с несовпадающим хэшем
+    custom_file_path = tmp_path / "my_custom_index.json"
+    (tmp_path / "src" / "chutils" / "helper.py").write_text("def run(): pass\n", encoding="utf-8")
+
+    custom_data = {
+        "metadata": {
+            "project_hash": "mismatched_hash"
+        },
+        "api": []
+    }
+    with open(custom_file_path, "w", encoding="utf-8") as f:
+        json.dump(custom_data, f)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "Файл контекста (my_custom_index.json) устарел" in results[0].message
+
+    # 3. Совпадающий хэш
+    from chutils.dev.ast_indexer import calculate_project_hash, save_context_metadata_cache
+    correct_hash = calculate_project_hash(tmp_path)
+
+    custom_data["metadata"]["project_hash"] = correct_hash
+    with open(custom_file_path, "w", encoding="utf-8") as f:
+        json.dump(custom_data, f)
+
+    save_context_metadata_cache(tmp_path, str(custom_file_path), "json", correct_hash)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0

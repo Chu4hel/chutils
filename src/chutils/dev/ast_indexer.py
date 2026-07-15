@@ -7,6 +7,7 @@ from __future__ import annotations
 import ast
 import re
 from pathlib import Path
+from typing import Any
 
 from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge, ProjectExample
 
@@ -653,3 +654,36 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
         "generated_at": generated_at,
         "project_hash": project_hash,
     }
+
+
+def save_context_metadata_cache(project_path: Path, output_file: str, format_str: str, project_hash: str) -> None:
+    """Сохраняет кэш метаданных сгенерированного контекста в .chutils/context_metadata.json.
+
+    Args:
+        project_path: Корневой путь проекта.
+        output_file: Выходной путь файла контекста.
+        format_str: Формат вывода ('markdown', 'json' или 'tree').
+        project_hash: Сгенерированный хэш проекта.
+    """
+    chutils_dir = project_path / ".chutils"
+    try:
+        chutils_dir.mkdir(exist_ok=True)
+        cache_path = chutils_dir / "context_metadata.json"
+
+        try:
+            rel_path = Path(output_file).resolve().relative_to(project_path.resolve())
+            file_path_str = rel_path.as_posix()
+        except ValueError:
+            file_path_str = output_file
+
+        cache_data = {
+            "file_path": file_path_str,
+            "format": format_str,
+            "project_hash": project_hash,
+        }
+
+        import json
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(cache_data, f, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
