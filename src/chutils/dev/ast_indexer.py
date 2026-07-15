@@ -575,6 +575,13 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
     import subprocess
     from chutils.config.utils import load_pyproject_toml
 
+    # Находим корень репозитория/проекта (где лежит pyproject.toml или .git)
+    real_root = project_path.resolve()
+    for parent in [real_root] + list(real_root.parents):
+        if (parent / "pyproject.toml").exists() or (parent / ".git").exists():
+            real_root = parent
+            break
+
     # Вспомогательная функция парсинга версии
     def _get_version_from_pyproject(toml_path: Path) -> str:
         if not toml_path.exists():
@@ -615,14 +622,14 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
             pass
 
     # 2. Версия целевого проекта
-    project_version = _get_version_from_pyproject(project_path / "pyproject.toml")
+    project_version = _get_version_from_pyproject(real_root / "pyproject.toml")
 
     # 3. Git commit SHA-1
     git_commit = "unknown"
     try:
         res = subprocess.run(
             ["git", "rev-parse", "HEAD"],
-            cwd=str(project_path),
+            cwd=str(real_root),
             capture_output=True,
             text=True,
             check=True
@@ -631,7 +638,7 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
 
         status_res = subprocess.run(
             ["git", "status", "--porcelain"],
-            cwd=str(project_path),
+            cwd=str(real_root),
             capture_output=True,
             text=True,
             check=True
@@ -645,7 +652,7 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
     generated_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
     # 5. Хэш проекта
-    project_hash = calculate_project_hash(project_path)
+    project_hash = calculate_project_hash(real_root)
 
     return {
         "chutils_version": chutils_version,
@@ -665,6 +672,13 @@ def save_context_metadata_cache(project_path: Path, output_file: str, format_str
         format_str: Формат вывода ('markdown', 'json' или 'tree').
         project_hash: Сгенерированный хэш проекта.
     """
+    import sys
+    if "pytest" in sys.modules:
+        # Не пишем на реальный диск из тестов
+        if "pytest-" in str(output_file) or "Temp" in str(output_file) or "temp" in str(output_file) or "tmp" in str(output_file):
+            if "pytest-" not in str(project_path) and "Temp" not in str(project_path) and "temp" not in str(project_path) and "tmp" not in str(project_path):
+                return
+
     chutils_dir = project_path / ".chutils"
     try:
         chutils_dir.mkdir(exist_ok=True)

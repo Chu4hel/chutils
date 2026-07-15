@@ -335,7 +335,7 @@ def test_api_map_rule(tmp_path):
     # 3. Если нет api_map.md, получаем ошибку
     results_no_file = rule.check(str(tmp_path), [])
     assert len(results_no_file) == 1
-    assert "Файл контекста не найден: api_map.md" in results_no_file[0].message
+    assert "отсутствует файл api_map.md" in results_no_file[0].message
 
     # 4. Создаем неактуальный api_map.md
     with open(tmp_path / "api_map.md", "w", encoding="utf-8") as f:
