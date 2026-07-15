@@ -871,3 +871,114 @@ class CodeDecompositionRule(Rule):
                 )
 
         return results
+
+
+class APIMapHashRule(Rule):
+    """
+    Правило валидации хэша проекта по карте API.
+    """
+    name = "APIMapHashRule"
+    description = "Сверяет текущий SHA-256 хэш проекта с хэшем, записанным в api_map.md."
+    severity = "warn"
+
+    def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
+        """Выполняет сверку хэша проекта.
+
+        Args:
+            base_dir: Путь к корню проверяемого проекта.
+            files: Список путей к файлам проекта.
+
+        Returns:
+            Список найденных расхождений хэша.
+        """
+        results: list[LintResult] = []
+        base_path = Path(base_dir)
+        api_map_path = base_path / "api_map.md"
+
+        if not (base_path / "src" / "chutils").exists():
+            return results
+
+        # Если включен режим staged, проверяем, изменились ли Python-файлы.
+        # Если изменений нет, пропускаем проверку.
+        if getattr(self, "staged", False):
+            if not any(f.endswith(".py") for f in files):
+                return results
+
+        if not api_map_path.exists():
+            return results
+
+        try:
+            with open(api_map_path, encoding="utf-8") as f:
+                content = f.read()
+        except Exception:
+            return results
+
+        # Парсим Frontmatter
+        lines = content.splitlines()
+        if not lines or lines[0].strip() != "---":
+            results.append(
+                LintResult(
+                    rule_name=self.name,
+                    message="В api_map.md отсутствует блок метаданных (YAML Frontmatter).",
+                    severity=self.severity,
+                    file_path=str(api_map_path),
+                    fix_suggestion="Перегенерируйте карту API: chutils dev generate-context -o api_map.md"
+                )
+            )
+            return results
+
+        frontmatter_lines = []
+        found_end = False
+        for line in lines[1:]:
+            if line.strip() == "---":
+                found_end = True
+                break
+            frontmatter_lines.append(line)
+
+        if not found_end:
+            results.append(
+                LintResult(
+                    rule_name=self.name,
+                    message="Блок метаданных (YAML Frontmatter) в api_map.md не закрыт.",
+                    severity=self.severity,
+                    file_path=str(api_map_path),
+                    fix_suggestion="Перегенерируйте карту API: chutils dev generate-context -o api_map.md"
+                )
+            )
+            return results
+
+        project_hash = None
+        for line in frontmatter_lines:
+            if ":" in line:
+                key, val = line.split(":", 1)
+                if key.strip() == "project_hash":
+                    project_hash = val.strip()
+                    break
+
+        if not project_hash:
+            results.append(
+                LintResult(
+                    rule_name=self.name,
+                    message="В метаданных api_map.md отсутствует хэш проекта (project_hash).",
+                    severity=self.severity,
+                    file_path=str(api_map_path),
+                    fix_suggestion="Перегенерируйте карту API: chutils dev generate-context -o api_map.md"
+                )
+            )
+            return results
+
+        from chutils.dev.ast_indexer import calculate_project_hash
+        actual_hash = calculate_project_hash(base_path)
+
+        if actual_hash != project_hash:
+            results.append(
+                LintResult(
+                    rule_name=self.name,
+                    message="Карта API (api_map.md) устарела: хэш проекта изменился.",
+                    severity=self.severity,
+                    file_path=str(api_map_path),
+                    fix_suggestion="Обновите карту API: chutils dev generate-context -o api_map.md"
+                )
+            )
+
+        return results

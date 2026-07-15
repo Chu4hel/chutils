@@ -181,7 +181,8 @@ class LinterEngine:
         """
         from .rules import (
             ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
-            ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule
+            ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule,
+            APIMapHashRule
         )
 
         # Регистрируем встроенные правила
@@ -192,7 +193,8 @@ class LinterEngine:
             ChutilsIntegrationRule(),
             APIMapRule(),
             EnvSyncRule(),
-            CodeDecompositionRule()
+            CodeDecompositionRule(),
+            APIMapHashRule()
         ]
 
         # Загружаем кастомные правила
@@ -409,7 +411,7 @@ class LinterEngine:
 
             if r.severity == "error":
                 errors_count += 1
-            else:
+            elif r.rule_name != "APIMapHashRule":
                 warnings_count += 1
 
         console.rule("Итоги аудита")

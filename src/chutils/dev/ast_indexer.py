@@ -263,11 +263,13 @@ class Indexer:
         """
         root_node = self._build_node_tree(self.root_path)
         examples = self._collect_examples() if include_examples else []
+        metadata = collect_project_metadata(self.project_root)
         return ProjectIndex(
             project_name=self.root_path.name,
             root=root_node,
             dependency_graph=self._graph,
-            examples=examples
+            examples=examples,
+            metadata=metadata
         )
 
     def _get_layer(self, name: str, docstring: str) -> str:
@@ -512,3 +514,142 @@ class Indexer:
                 symbol.breadcrumbs.is_abstract = True
 
         return symbol
+
+
+def calculate_project_hash(project_path: Path) -> str:
+    """Вычисляет детерминированный SHA-256 хэш проекта по содержимому всех python-файлов.
+
+    Args:
+        project_path: Путь к корню проекта.
+
+    Returns:
+        Строка с SHA-256 хэшем в hex-формате.
+    """
+    import hashlib
+    from chutils.dev.ast_indexer import GitIgnoreMatcher
+    matcher = GitIgnoreMatcher(project_path)
+
+    py_files: list[Path] = []
+
+    def _collect_files(dir_path: Path) -> None:
+        try:
+            for item in dir_path.iterdir():
+                rel_path = item.relative_to(project_path)
+                if matcher.matches(str(rel_path)):
+                    continue
+                if item.is_dir():
+                    _collect_files(item)
+                elif item.is_file() and item.suffix == ".py":
+                    py_files.append(item)
+        except Exception:
+            pass
+
+    _collect_files(project_path)
+    py_files.sort(key=lambda p: p.relative_to(project_path).as_posix())
+
+    hasher = hashlib.sha256()
+    for f in py_files:
+        rel_posix = f.relative_to(project_path).as_posix()
+        hasher.update(rel_posix.encode("utf-8"))
+        try:
+            with open(f, "rb") as fh:
+                hasher.update(fh.read())
+        except Exception:
+            pass
+
+    return hasher.hexdigest()
+
+
+def collect_project_metadata(project_path: Path) -> dict[str, Any]:
+    """Собирает метаданные о проекте (версия chutils, версия проекта, git commit, дата, хэш).
+
+    Args:
+        project_path: Путь к корню проекта.
+
+    Returns:
+        Словарь с собранными метаданными.
+    """
+    import chutils
+    import datetime
+    import subprocess
+    from chutils.config.utils import load_pyproject_toml
+
+    # Вспомогательная функция парсинга версии
+    def _get_version_from_pyproject(toml_path: Path) -> str:
+        if not toml_path.exists():
+            return "unknown"
+        try:
+            import tomllib
+            with open(toml_path, "rb") as f:
+                data = tomllib.load(f)
+                if isinstance(data, dict):
+                    version = data.get("project", {}).get("version")
+                    if version:
+                        return str(version)
+                    version = data.get("tool", {}).get("poetry", {}).get("version")
+                    if version:
+                        return str(version)
+        except Exception:
+            try:
+                with open(toml_path, encoding="utf-8") as f:
+                    content = f.read()
+                for line in content.splitlines():
+                    line = line.strip()
+                    if line.startswith("version") and "=" in line:
+                        parts = line.split("=", 1)
+                        val = parts[1].strip().strip("'\"")
+                        if val:
+                            return val
+            except Exception:
+                pass
+        return "unknown"
+
+    # 1. Версия chutils
+    chutils_version = getattr(chutils, "__version__", "unknown")
+    if chutils_version == "unknown":
+        try:
+            chutils_root = Path(chutils.__file__).parent.parent.parent
+            chutils_version = _get_version_from_pyproject(chutils_root / "pyproject.toml")
+        except Exception:
+            pass
+
+    # 2. Версия целевого проекта
+    project_version = _get_version_from_pyproject(project_path / "pyproject.toml")
+
+    # 3. Git commit SHA-1
+    git_commit = "unknown"
+    try:
+        res = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(project_path),
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        git_commit = res.stdout.strip()
+
+        status_res = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=str(project_path),
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        if status_res.stdout.strip():
+            git_commit += " (dirty)"
+    except Exception:
+        pass
+
+    # 4. ISO 8601 timestamp
+    generated_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    # 5. Хэш проекта
+    project_hash = calculate_project_hash(project_path)
+
+    return {
+        "chutils_version": chutils_version,
+        "project_version": project_version,
+        "git_commit": git_commit,
+        "generated_at": generated_at,
+        "project_hash": project_hash,
+    }

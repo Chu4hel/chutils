@@ -95,3 +95,4 @@ class ProjectIndex(BaseModel):
     root: Node
     dependency_graph: list[GraphEdge] = Field(default_factory=list)
     examples: list[ProjectExample] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)

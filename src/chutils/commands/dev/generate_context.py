@@ -106,6 +106,7 @@ class GenerateContextSubCommand(SubCommand):
                 )
                 raise SystemExit(1)
         else:
+            project_path = Path(chutils.__file__).parent.parent.parent
             # Получаем список всех публичных атрибутов chutils
             public_attrs = [attr for attr in dir(chutils) if not attr.startswith("_")]
 
@@ -178,10 +179,14 @@ class GenerateContextSubCommand(SubCommand):
         # Сортировка по имени
         api_data.sort(key=lambda x: x["name"])
 
+        from chutils.dev.ast_indexer import collect_project_metadata
+        metadata = collect_project_metadata(project_path)
+
         output_content = ""
         if args.format == "json":
             if args.include_examples:
                 output_data = {
+                    "metadata": metadata,
                     "api": api_data,
                     "examples": [
                         {
@@ -195,10 +200,23 @@ class GenerateContextSubCommand(SubCommand):
                 }
                 output_content = json.dumps(output_data, indent=2, ensure_ascii=False)
             else:
-                output_content = json.dumps(api_data, indent=2, ensure_ascii=False)
+                output_data = {
+                    "metadata": metadata,
+                    "api": api_data,
+                }
+                output_content = json.dumps(output_data, indent=2, ensure_ascii=False)
         else:
             # Markdown
-            output_content = f"# Public API Map: {project_name}\n\n"
+            frontmatter = (
+                "---\n"
+                f"chutils_version: {metadata['chutils_version']}\n"
+                f"project_version: {metadata['project_version']}\n"
+                f"git_commit: {metadata['git_commit']}\n"
+                f"generated_at: {metadata['generated_at']}\n"
+                f"project_hash: {metadata['project_hash']}\n"
+                "---\n\n"
+            )
+            output_content = frontmatter + f"# Public API Map: {project_name}\n\n"
 
             headers = ["Name", "Type", "Signature", "Description"]
             rows = []

@@ -3,7 +3,8 @@ import pytest
 from chutils.dev.ai_lint import Rule, LintResult, LinterEngine, load_custom_rules
 from chutils.dev.rules import (
     ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
-    ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule
+    ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule,
+    APIMapHashRule
 )
 
 
@@ -463,3 +464,66 @@ class C: pass
     file_ignored_2.write_text(ignored_code_2, encoding="utf-8")
     results = rule.check(str(tmp_path), [str(file_ignored_2)])
     assert len(results) == 0
+
+
+def test_api_map_hash_rule(tmp_path):
+    """Тестирует APIMapHashRule."""
+    rule = APIMapHashRule()
+
+    # 1. Если директория src/chutils отсутствует - выход без проверки
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # Создаем структуру проекта chutils
+    (tmp_path / "src" / "chutils").mkdir(parents=True, exist_ok=True)
+    api_map_path = tmp_path / "api_map.md"
+
+    # 2. Если api_map.md не существует - выход без ошибок
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # 3. api_map.md пустой
+    api_map_path.write_text("", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "отсутствует блок метаданных" in results[0].message
+
+    # 4. Frontmatter не закрыт
+    api_map_path.write_text("---\nproject_version: 1.0\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "не закрыт" in results[0].message
+
+    # 5. Отсутствует project_hash
+    api_map_path.write_text("---\nproject_version: 1.0\n---\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "отсутствует хэш проекта" in results[0].message
+
+    # 6. Хэш совпадает
+    from chutils.dev.ast_indexer import calculate_project_hash
+    # Создаем python файл для хэширования
+    (tmp_path / "src" / "chutils" / "helper.py").write_text("def run(): pass\n", encoding="utf-8")
+    correct_hash = calculate_project_hash(tmp_path)
+    api_map_path.write_text(f"---\nproject_hash: {correct_hash}\n---\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # 7. Хэш не совпадает
+    # Изменяем файл, хэш меняется
+    (tmp_path / "src" / "chutils" / "helper.py").write_text("def run(): pass\n# Изменение\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "Карта API (api_map.md) устарела" in results[0].message
+    assert results[0].severity == "warn"
+
+    # 8. Режим staged: если файлы не менялись - проверка пропускается
+    rule.staged = True
+    results = rule.check(str(tmp_path), ["docs/README.md"])
+    assert len(results) == 0
+
+    # Режим staged: если файлы менялись - проверка работает
+    results = rule.check(str(tmp_path), ["src/chutils/helper.py"])
+    assert len(results) == 1
+    assert "Карта API (api_map.md) устарела" in results[0].message
+
