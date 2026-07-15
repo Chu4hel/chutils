@@ -181,7 +181,7 @@ class LinterEngine:
         """
         from .rules import (
             ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
-            ChutilsIntegrationRule, APIMapRule, EnvSyncRule
+            ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule
         )
 
         # Регистрируем встроенные правила
@@ -191,7 +191,8 @@ class LinterEngine:
             SecurityHardcodeRule(),
             ChutilsIntegrationRule(),
             APIMapRule(),
-            EnvSyncRule()
+            EnvSyncRule(),
+            CodeDecompositionRule()
         ]
 
         # Загружаем кастомные правила
@@ -321,6 +322,7 @@ class LinterEngine:
 
             try:
                 rule.staged = self.staged
+                rule.config = self.config
                 rule_results = rule.check(str(self.base_dir), files)
                 results.extend(rule_results)
             except Exception as e:

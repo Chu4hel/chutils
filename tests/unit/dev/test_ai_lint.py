@@ -3,7 +3,7 @@ import pytest
 from chutils.dev.ai_lint import Rule, LintResult, LinterEngine, load_custom_rules
 from chutils.dev.rules import (
     ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
-    ChutilsIntegrationRule, APIMapRule, EnvSyncRule
+    ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule
 )
 
 
@@ -320,7 +320,6 @@ token = keyring.get_password("system", "user")
     assert any("httpx" in r.message for r in results)
 
 
-
 def test_api_map_rule(tmp_path):
     """Тестирует APIMapRule."""
     rule = APIMapRule()
@@ -385,4 +384,82 @@ def test_env_sync_rule(tmp_path, mocker):
     # 5. Оба файла синхронизированы
     example_file.write_text("A=10\nB=\n", encoding="utf-8")
     results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+
+def test_code_decomposition_rule(tmp_path):
+    """Тестирует CodeDecompositionRule."""
+    rule = CodeDecompositionRule()
+    rule.config = {
+        "max_file_lines": 10,
+        "max_file_classes": 2
+    }
+
+    # 1. Файл в пределах нормы
+    ok_code = """
+class A:
+    pass
+
+class B:
+    pass
+"""
+    file_ok = tmp_path / "ok.py"
+    file_ok.write_text(ok_code, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_ok)])
+    assert len(results) == 0
+
+    # 2. Превышение количества строк
+    long_code = "\n" * 12
+    file_long = tmp_path / "long.py"
+    file_long.write_text(long_code, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_long)])
+    assert len(results) == 1
+    assert "превышает ограничение по размеру" in results[0].message
+    assert results[0].severity == "warn"
+
+    # 3. Превышение количества классов
+    many_classes_code = """
+class A: pass
+class B: pass
+class C: pass
+"""
+    file_many = tmp_path / "many.py"
+    file_many.write_text(many_classes_code, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_many)])
+    assert len(results) == 1
+    assert "содержит слишком много классов" in results[0].message
+
+    # 4. Превышение строк и классов одновременно
+    both_exceeded_code = """
+class A: pass
+class B: pass
+class C: pass
+""" + ("\n" * 10)
+    file_both = tmp_path / "both.py"
+    file_both.write_text(both_exceeded_code, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_both)])
+    assert len(results) == 2
+    assert any("превышает ограничение по размеру" in r.message for r in results)
+    assert any("содержит слишком много классов" in r.message for r in results)
+
+    # 5. Игнорирование правила через комментарий # chutils: ignore [CodeDecompositionRule]
+    ignored_code_1 = """# chutils: ignore [CodeDecompositionRule]
+class A: pass
+class B: pass
+class C: pass
+""" + ("\n" * 10)
+    file_ignored_1 = tmp_path / "ignored_1.py"
+    file_ignored_1.write_text(ignored_code_1, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_ignored_1)])
+    assert len(results) == 0
+
+    # 6. Игнорирование правила через комментарий # chutils: ignore [all]
+    ignored_code_2 = """# chutils: ignore [all]
+class A: pass
+class B: pass
+class C: pass
+""" + ("\n" * 10)
+    file_ignored_2 = tmp_path / "ignored_2.py"
+    file_ignored_2.write_text(ignored_code_2, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_ignored_2)])
     assert len(results) == 0

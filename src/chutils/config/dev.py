@@ -15,7 +15,9 @@ DEFAULT_AI_LINT_CONFIG: JSONDict = {
     "custom_rules_path": None,
     "soft_mode": False,
     "env_path": ".env",
-    "example_path": ".env.example"
+    "example_path": ".env.example",
+    "max_file_lines": 700,
+    "max_file_classes": 5
 }
 
 
