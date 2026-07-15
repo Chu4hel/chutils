@@ -146,6 +146,7 @@ class LinterEngine:
 
         self.strict = bool(config.get("strict", False))
         self.soft_mode = bool(config.get("soft_mode", False))
+        self.staged = bool(config.get("staged", False))
         self.rules: list[Rule] = []
         self._file_lines_cache: dict[str, list[str]] = {}
 
@@ -230,14 +231,59 @@ class LinterEngine:
 
     def collect_files(self) -> list[str]:
         """
-        Собирает все неигнорируемые файлы в проекте.
+        Собирает все неигнорируемые файлы в проекте (учитывая флаг staged).
+
+        Returns:
+            Список абсолютных путей к файлам.
+        """
+        if self.staged:
+            return self.collect_staged_files()
+        return self.collect_all_files()
+
+    def collect_staged_files(self) -> list[str]:
+        """
+        Собирает список измененных и добавленных файлов, подготовленных к коммиту (staged) в Git.
+
+        Returns:
+            Список абсолютных путей к файлам.
+        """
+        import subprocess
+        from chutils.cli_utils import get_console
+        console = get_console()
+
+        try:
+            cmd = ["git", "diff", "--cached", "--name-only", "--diff-filter=d"]
+            result = subprocess.run(
+                cmd,
+                cwd=str(self.base_dir),
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            relative_paths = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+            absolute_paths: list[str] = []
+            for rel_path in relative_paths:
+                file_path = Path(self.base_dir) / rel_path
+                if not self.should_ignore(file_path):
+                    absolute_paths.append(str(file_path.resolve()))
+            return absolute_paths
+        except (subprocess.SubprocessError, FileNotFoundError) as e:
+            console.print(
+                f"[yellow]⚠ Предупреждение: не удалось получить список staged файлов через Git ({e}). "
+                f"Выполняется полное сканирование.[/yellow]"
+            )
+            return self.collect_all_files()
+
+    def collect_all_files(self) -> list[str]:
+        """
+        Собирает абсолютно все неигнорируемые файлы в проекте.
 
         Returns:
             Список абсолютных путей к файлам.
         """
         all_files: list[str] = []
         for root, dirs, filenames in os.walk(self.base_dir):
-            # Отсекаем игнорируемые директории на месте для оптимизации обхода
             pruned_dirs: list[str] = []
             for d in dirs:
                 dir_path = Path(root) / d
@@ -274,6 +320,7 @@ class LinterEngine:
                 continue
 
             try:
+                rule.staged = self.staged
                 rule_results = rule.check(str(self.base_dir), files)
                 results.extend(rule_results)
             except Exception as e:

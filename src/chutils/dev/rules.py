@@ -59,6 +59,12 @@ class ManifestRule(Rule):
         if src_dir.exists():
             for p in src_dir.iterdir():
                 if p.is_dir() and (p / "__init__.py").exists():
+                    # В режиме staged проверяем только те пакеты под src/, файлы внутри которых изменились.
+                    if getattr(self, "staged", False):
+                        p_resolved = str(p.resolve())
+                        if not any(f.startswith(p_resolved) for f in files):
+                            continue
+
                     pkg_found = False
                     for name in AI_MANIFEST_FILENAMES:
                         if (p / name).exists():
@@ -540,6 +546,12 @@ class APIMapRule(Rule):
         if not (base_path / "src" / "chutils").exists():
             return results
 
+        # Если включен режим staged, проверяем, изменились ли Python-файлы.
+        # Если изменений нет, пропускаем проверку.
+        if getattr(self, "staged", False):
+            if not any(f.endswith(".py") for f in files):
+                return results
+
         if not api_map_path.exists():
             results.append(
                 LintResult(
@@ -696,6 +708,14 @@ class EnvSyncRule(Rule):
         env_abs_path = base_path / env_path
         example_abs_path = base_path / example_path
 
+        # Если включен режим staged, проверяем, изменились ли .env или .env.example.
+        # Если изменений нет (их нет в списке files), полностью пропускаем проверку.
+        if getattr(self, "staged", False):
+            env_abs_str = str(env_abs_path.resolve())
+            example_abs_str = str(example_abs_path.resolve())
+            if env_abs_str not in files and example_abs_str not in files:
+                return results
+
         # Если ни один из файлов не существует, проверять нечего
         if not env_abs_path.exists() and not example_abs_path.exists():
             return results
@@ -761,4 +781,3 @@ class EnvSyncRule(Rule):
             )
 
         return results
-

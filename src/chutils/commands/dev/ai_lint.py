@@ -50,6 +50,11 @@ class AiLintSubCommand(SubCommand):
         lint_parser.add_argument(
             "--custom-rules-path", help="Путь к файлу с пользовательскими правилами."
         )
+        lint_parser.add_argument(
+            "--staged",
+            action="store_true",
+            help="Проверять только файлы, подготовленные к коммиту (staged) в Git.",
+        )
         lint_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace) -> None:
@@ -71,6 +76,8 @@ class AiLintSubCommand(SubCommand):
             cli_args["rules"] = [r.strip() for r in args.rules.split(",") if r.strip()]
         if args.custom_rules_path:
             cli_args["custom_rules_path"] = args.custom_rules_path
+        if getattr(args, "staged", None) is not None:
+            cli_args["staged"] = args.staged
 
         from chutils.config.dev import load_ai_lint_config
         from chutils.dev.ai_lint import LinterEngine

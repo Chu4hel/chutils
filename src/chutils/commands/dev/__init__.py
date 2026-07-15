@@ -141,6 +141,11 @@ class DevCommand(BaseCommand):
         lint_parser.add_argument(
             "--custom-rules-path", help="Путь к файлу с пользовательскими правилами."
         )
+        lint_parser.add_argument(
+            "--staged",
+            action="store_true",
+            help="Проверять только файлы, подготовленные к коммиту (staged) в Git.",
+        )
         lint_parser.set_defaults(handler=self.handle_ai_lint)
 
         # dev chat-context

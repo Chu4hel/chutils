@@ -70,7 +70,7 @@ docstrings, наличие файлов манифестов (`antigravity.md`, 
 ### Синтаксис подкоманды:
 
 ```bash
-chutils dev ai-lint [-h] [--strict] [--soft-mode] [--ignore IGNORE] [--rules RULES] [--custom-rules-path CUSTOM_RULES_PATH]
+chutils dev ai-lint [-h] [--strict] [--soft-mode] [--ignore IGNORE] [--rules RULES] [--custom-rules-path CUSTOM_RULES_PATH] [--staged]
 ```
 
 ### Параметры и флаги:
@@ -82,6 +82,7 @@ chutils dev ai-lint [-h] [--strict] [--soft-mode] [--ignore IGNORE] [--rules RUL
 | **`--ignore`**            | Исключаемые пути через запятую (например, `tests/,venv/,build/`). Также учитывает настройки из файлов `.gitignore` и `.chutilsignore`. | Нет          |
 | **`--rules`**             | Список запускаемых правил через запятую (по умолчанию запускаются все правила).                                                        | Нет          |
 | **`--custom-rules-path`** | Путь к YAML/JSON файлу с пользовательскими правилами проверки.                                                                         | Нет          |
+| **`--staged`**            | Проверять только файлы, подготовленные к коммиту (staged) в Git. Позволяет значительно ускорить проверку в Git-хуках.                  | Нет          |
 
 ### Примеры использования:
 
