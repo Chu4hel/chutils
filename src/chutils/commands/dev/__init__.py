@@ -1,0 +1,432 @@
+from __future__ import annotations
+
+import argparse
+from typing import Any
+
+from .base import SubCommand
+from ..base import BaseCommand
+
+
+def get_subcommands() -> list[type[SubCommand]]:
+    """Возвращает список всех классов подкоманд dev с ленивой загрузкой.
+
+    Returns:
+        Список классов, унаследованных от SubCommand.
+    """
+    from .generate_context import GenerateContextSubCommand
+    from .ai_lint import AiLintSubCommand
+    from .chat_context import ChatContextSubCommand
+    from .scaffold import ScaffoldSubCommand
+    from .mock import MockSubCommand
+    from .hooks import HooksSubCommand
+    from .few_shot import FewShotSubCommand
+    from .diagnostics import DiagnosticsSubCommand
+    from .sync_env import SyncEnvSubCommand
+
+    return [
+        GenerateContextSubCommand,
+        AiLintSubCommand,
+        ChatContextSubCommand,
+        ScaffoldSubCommand,
+        MockSubCommand,
+        HooksSubCommand,
+        FewShotSubCommand,
+        DiagnosticsSubCommand,
+        SyncEnvSubCommand,
+    ]
+
+
+class DevCommand(BaseCommand):
+    """
+    Команды для разработки и интеграции с AI.
+
+    Позволяет генерировать контекстные данные о библиотеке для LLM.
+    """
+
+    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
+        """Регистрирует команду dev и её подкоманды в argparse.
+
+        Args:
+            subparsers: Объект subparsers для добавления подкоманд.
+        """
+        dev_parser = subparsers.add_parser(
+            "dev",
+            help="Инструменты разработчика и AI-контекст",
+            description="Команды для генерации документации и контекста для LLM/AI агентов.",
+        )
+        dev_parser.set_defaults(handler=self.handle)
+        dev_subparsers = dev_parser.add_subparsers(
+            dest="subcommand", help="Доступные действия"
+        )
+
+        # dev generate-context
+        gen_parser = dev_subparsers.add_parser(
+            "generate-context",
+            help="Сгенерировать карту публичного API (экспорты)",
+            description="Сканирует chutils и создает отчет о доступных функциях, классах и декораторах.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev generate-context -o api_map.md
+  chutils dev generate-context --tree -o project_index.json
+  chutils dev generate-context -f json --no-weights
+""",
+        )
+        gen_parser.add_argument(
+            "-f",
+            "--format",
+            choices=["markdown", "json"],
+            default="markdown",
+            help="Формат выходных данных (по умолчанию: markdown)",
+        )
+        gen_parser.add_argument(
+            "-o",
+            "--output",
+            help="Путь к файлу для сохранения (если не указан, выводит в консоль)",
+        )
+        gen_parser.add_argument(
+            "--tree",
+            action="store_true",
+            help="Генерировать иерархический семантический индекс (JSON дерево)",
+        )
+        gen_parser.add_argument(
+            "--no-weights",
+            action="store_true",
+            help="Не включать веса зависимостей в графе (только для --tree)",
+        )
+        gen_parser.add_argument(
+            "--include-examples",
+            action="store_true",
+            help="Включить few-shot примеры (из docs/ai_examples/) в итоговый отчет",
+        )
+        gen_parser.add_argument(
+            "--project",
+            nargs="?",
+            const=".",
+            default=None,
+            help="Путь к целевому проекту для сканирования (если не указан, сканируется сама библиотека chutils)",
+        )
+        gen_parser.set_defaults(handler=self.handle_generate_context)
+
+        # dev ai-lint
+        lint_parser = dev_subparsers.add_parser(
+            "ai-lint",
+            help="Проверить AI-готовность кодовой базы",
+            description="Проверяет наличие манифестов ИИ (antigravity.md, agents.md, gemini.md), качество docstrings/type hints и отсутствие секретов.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev ai-lint
+  chutils dev ai-lint --strict
+  chutils dev ai-lint --ignore "temp/,build/"
+""",
+        )
+        lint_parser.add_argument(
+            "--strict",
+            action="store_true",
+            default=None,
+            help="Строгий режим: считать предупреждения ошибками и завершаться с ошибкой.",
+        )
+        lint_parser.add_argument(
+            "--soft-mode",
+            action="store_true",
+            default=None,
+            help="Мягкий режим: выводить проблемы, но возвращать успешный статус (0).",
+        )
+        lint_parser.add_argument(
+            "--ignore", help="Список исключаемых путей (через запятую)."
+        )
+        lint_parser.add_argument(
+            "--rules",
+            help="Список запускаемых правил через запятую (по умолчанию все).",
+        )
+        lint_parser.add_argument(
+            "--custom-rules-path", help="Путь к файлу с пользовательскими правилами."
+        )
+        lint_parser.set_defaults(handler=self.handle_ai_lint)
+
+        # dev chat-context
+        chat_parser = dev_subparsers.add_parser(
+            "chat-context",
+            help="Сгенерировать контекстный срез для ИИ-ассистента",
+            description="Создает компактный Markdown-срез API, docstrings и examples для ИИ.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev chat-context -m logger,secret_manager
+  chutils dev chat-context -t "logging and secrets" -l internal -o context.md
+  chutils dev chat-context (интерактивный режим)
+""",
+        )
+        chat_parser.add_argument(
+            "-m",
+            "--modules",
+            help="Список модулей через запятую (например: logger,config).",
+        )
+        chat_parser.add_argument(
+            "-t", "--task", help="Описание задачи или темы для автоподбора контекста."
+        )
+        chat_parser.add_argument(
+            "-l",
+            "--layer",
+            choices=["public", "internal", "infrastructure", "private", "all"],
+            default="public",
+            help="Фильтр по слоям абстракции (по умолчанию: public)",
+        )
+        chat_parser.add_argument(
+            "-o", "--output", help="Путь к файлу для сохранения результата."
+        )
+        chat_parser.set_defaults(handler=self.handle_chat_context)
+
+        # dev scaffold
+        scaffold_parser = dev_subparsers.add_parser(
+            "scaffold",
+            help="Инициализировать новый модуль Чистой Архитектуры",
+            description="Создает структуру каталогов и базовые классы/интерфейсы Чистой Архитектуры.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev scaffold my_module
+  chutils dev scaffold my_module -o ./src/my_module -f
+""",
+        )
+        scaffold_parser.add_argument(
+            "module_name",
+            help="Имя создаваемого модуля (валидный Python-идентификатор)",
+        )
+        scaffold_parser.add_argument(
+            "-o",
+            "--output-dir",
+            help="Базовый путь для создания каталога модуля (по умолчанию: ./[module_name])",
+        )
+        scaffold_parser.add_argument(
+            "-f",
+            "--force",
+            action="store_true",
+            help="Принудительно перезаписать файлы, если целевая директория уже существует",
+        )
+        scaffold_parser.set_defaults(handler=self.handle_scaffold)
+
+        # dev mock
+        mock_parser = dev_subparsers.add_parser(
+            "mock",
+            help="Запустить декларативный мок-сервер",
+            description="Запускает легковесный многопоточный мок-сервер на основе mocks.yml.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev mock
+  chutils dev mock init
+  chutils dev mock -p 9000 -r my_mocks.yml --proxy-fallback https://api.example.com
+""",
+        )
+        mock_parser.add_argument(
+            "-p",
+            "--port",
+            type=int,
+            default=8888,
+            help="Порт мок-сервера (по умолчанию: 8888)",
+        )
+        mock_parser.add_argument(
+            "-r",
+            "--routes",
+            default="mocks.yml",
+            help="Путь к конфигурационному файлу роутов (по умолчанию: mocks.yml)",
+        )
+        mock_parser.add_argument(
+            "--proxy-fallback",
+            help="Базовый URL для проксирования ненайденных запросов (Reverse Proxy)",
+        )
+
+        mock_subparsers = mock_parser.add_subparsers(
+            dest="mock_subcommand", help="Действия мок-сервера"
+        )
+        init_parser = mock_subparsers.add_parser(
+            "init",
+            help="Инициализировать шаблонный файл конфигурации роутов (mocks.yml)",
+        )
+        init_parser.add_argument(
+            "-o",
+            "--output",
+            default="mocks.yml",
+            help="Путь для сохранения файла (по умолчанию: mocks.yml)",
+        )
+        mock_parser.set_defaults(handler=self.handle_mock)
+
+        # dev install-hooks
+        hooks_parser = dev_subparsers.add_parser(
+            "install-hooks",
+            help="Установить pre-commit Git-хук для проверки ai-lint",
+            description="Создает или обновляет pre-commit хук в .git/hooks для автоматического запуска ai-lint перед коммитами.",
+        )
+        hooks_parser.add_argument(
+            "-f",
+            "--force",
+            action="store_true",
+            help="Принудительно перезаписать существующий pre-commit хук.",
+        )
+        hooks_parser.add_argument(
+            "--ruff",
+            action="store_true",
+            help="Добавить автоматическую проверку ruff check/format в pre-commit хук.",
+        )
+        hooks_parser.add_argument(
+            "--flake8",
+            action="store_true",
+            help="Добавить проверку стиля flake8 в pre-commit хук.",
+        )
+        hooks_parser.set_defaults(handler=self.handle_install_hooks)
+
+        # dev generate-few-shot
+        few_shot_parser = dev_subparsers.add_parser(
+            "generate-few-shot",
+            help="Автогенерация few-shot примеров для целевого проекта",
+            description="Анализирует проект, детектирует архитектурные абстракции и создает банк few-shot примеров в docs/ai_examples/.",
+        )
+        few_shot_parser.add_argument(
+            "-p",
+            "--project",
+            required=True,
+            help="Путь к корневой директории целевого проекта.",
+        )
+        few_shot_parser.add_argument(
+            "-f",
+            "--force",
+            action="store_true",
+            help="Принудительно перезаписать файлы при совпадении имен существующих категорий.",
+        )
+        few_shot_parser.set_defaults(handler=self.handle_generate_few_shot)
+
+        # dev diagnostics
+        diagnostics_parser = dev_subparsers.add_parser(
+            "diagnostics",
+            help="Запустить диагностику и проверку работоспособности среды (Health Check)",
+            description="Выполняет встроенные и пользовательские проверки среды (keyring, конфигурация и др.) с выводом отчета.",
+        )
+        diagnostics_parser.add_argument(
+            "--json",
+            action="store_true",
+            help="Вывести отчет в формате JSON",
+        )
+        diagnostics_parser.set_defaults(handler=self.handle_diagnostics)
+
+        # dev sync-env
+        sync_parser = dev_subparsers.add_parser(
+            "sync-env",
+            help="Синхронизировать .env и .env.example",
+            description="Синхронизирует переменные окружения между локальным .env и шаблоном .env.example.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev sync-env --dry-run
+  chutils dev sync-env --yes
+  chutils dev sync-env --env-path .env.dev --example-path .env.dev.example
+""",
+        )
+        sync_parser.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Показать расхождения без физического изменения файлов",
+        )
+        sync_parser.add_argument(
+            "-y",
+            "--yes",
+            "--force",
+            dest="force",
+            action="store_true",
+            help="Применить изменения автоматически без интерактивного подтверждения",
+        )
+        sync_parser.add_argument(
+            "--env-path",
+            help="Путь к файлу .env (по умолчанию: .env)",
+        )
+        sync_parser.add_argument(
+            "--example-path",
+            help="Путь к файлу .env.example (по умолчанию: .env.example)",
+        )
+        sync_parser.set_defaults(handler=self.handle_sync_env)
+
+    def handle(self, args: argparse.Namespace) -> None:
+        """Вызывается, если подкоманда не указана.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        self.console.print(
+            "Используйте 'chutils dev --help' для просмотра доступных подкоманд."
+        )
+
+    def handle_generate_context(self, args: argparse.Namespace) -> None:
+        """Обработчик генерации контекста API.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .generate_context import GenerateContextSubCommand
+        GenerateContextSubCommand().handle(args)
+
+    def handle_ai_lint(self, args: argparse.Namespace) -> None:
+        """Обработчик проверки AI-готовности кодовой базы.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .ai_lint import AiLintSubCommand
+        AiLintSubCommand().handle(args)
+
+    def handle_chat_context(self, args: argparse.Namespace) -> None:
+        """Обработчик интерактивной сборки контекста.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .chat_context import ChatContextSubCommand
+        ChatContextSubCommand().handle(args)
+
+    def handle_scaffold(self, args: argparse.Namespace) -> None:
+        """Обработчик генерации структуры модуля.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .scaffold import ScaffoldSubCommand
+        ScaffoldSubCommand().handle(args)
+
+    def handle_mock(self, args: argparse.Namespace) -> None:
+        """Обработчик мок-сервера.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .mock import MockSubCommand
+        MockSubCommand().handle(args)
+
+    def handle_install_hooks(self, args: argparse.Namespace) -> None:
+        """Обработчик установки Git-хуков.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .hooks import HooksSubCommand
+        HooksSubCommand().handle(args)
+
+    def handle_generate_few_shot(self, args: argparse.Namespace) -> None:
+        """Обработчик генерации few-shot примеров.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .few_shot import FewShotSubCommand
+        FewShotSubCommand().handle(args)
+
+    def handle_diagnostics(self, args: argparse.Namespace) -> None:
+        """Обработчик запуска диагностики.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .diagnostics import DiagnosticsSubCommand
+        DiagnosticsSubCommand().handle(args)
+
+    def handle_sync_env(self, args: argparse.Namespace) -> None:
+        """Обработчик синхронизации env-файлов.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .sync_env import SyncEnvSubCommand
+        SyncEnvSubCommand().handle(args)
