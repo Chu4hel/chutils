@@ -65,7 +65,8 @@ chutils dev generate-context --project . --tree -o project_tree.json
 ## dev ai-lint
 
 Проводит аудит проекта на соответствие лучшим практикам интеграции с ИИ. Проверяет качество типизации, полноту
-docstrings, наличие файлов манифестов (`antigravity.md`, `agents.md`, `gemini.md`) и отсутствие захардкоженных секретов.
+docstrings, размер файлов (LOC) и количество классов (`CodeDecompositionRule`), наличие файлов манифестов (
+`antigravity.md`, `agents.md`, `gemini.md`) и отсутствие захардкоженных секретов.
 
 ### Синтаксис подкоманды:
 
