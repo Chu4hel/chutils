@@ -335,7 +335,7 @@ def test_api_map_rule(tmp_path):
     # 3. Если нет api_map.md, получаем ошибку
     results_no_file = rule.check(str(tmp_path), [])
     assert len(results_no_file) == 1
-    assert "отсутствует файл api_map.md" in results_no_file[0].message
+    assert "Файл контекста не найден: api_map.md" in results_no_file[0].message
 
     # 4. Создаем неактуальный api_map.md
     with open(tmp_path / "api_map.md", "w", encoding="utf-8") as f:
@@ -344,6 +344,38 @@ def test_api_map_rule(tmp_path):
     results_outdated = rule.check(str(tmp_path), [])
     assert len(results_outdated) == 1
     assert "устарел или не соответствует" in results_outdated[0].message
+
+
+def test_api_map_rule_formats(tmp_path):
+    """Тестирует APIMapRule для форматов JSON и Tree."""
+    rule = APIMapRule()
+    (tmp_path / "src" / "chutils").mkdir(parents=True, exist_ok=True)
+    chutils_dir = tmp_path / ".chutils"
+    chutils_dir.mkdir(exist_ok=True)
+
+    # 1. Формат JSON: файл отсутствует
+    import json
+    cache_path = chutils_dir / "context_metadata.json"
+    cache_data = {
+        "file_path": "my_api.json",
+        "format": "json",
+        "project_hash": "hash"
+    }
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(cache_data, f)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "Файл контекста не найден: my_api.json" in results[0].message
+
+    # 2. Формат JSON: файл устарел
+    api_json_path = tmp_path / "my_api.json"
+    with open(api_json_path, "w", encoding="utf-8") as f:
+        json.dump({"api": []}, f)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "устарел или не соответствует" in results[0].message
 
 
 def test_env_sync_rule(tmp_path, mocker):

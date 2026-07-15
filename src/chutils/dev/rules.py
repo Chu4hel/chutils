@@ -552,14 +552,31 @@ class APIMapRule(Rule):
             if not any(f.endswith(".py") for f in files):
                 return results
 
-        if not api_map_path.exists():
+        # Проверяем кэш метаданных
+        cache_path = base_path / ".chutils" / "context_metadata.json"
+        target_file_path = api_map_path
+        target_format = "markdown"
+
+        if cache_path.exists():
+            try:
+                import json
+                with open(cache_path, encoding="utf-8") as f:
+                    cache_data = json.load(f)
+                file_rel = cache_data.get("file_path")
+                if file_rel:
+                    target_file_path = base_path / file_rel
+                    target_format = cache_data.get("format", "markdown")
+            except Exception:
+                pass
+
+        if not target_file_path.exists():
             results.append(
                 LintResult(
                     rule_name=self.name,
-                    message="В корне проекта chutils отсутствует файл api_map.md.",
+                    message=f"Файл контекста не найден: {target_file_path.name}",
                     severity=self.severity,
-                    file_path=str(api_map_path),
-                    fix_suggestion="Сгенерируйте карту API: chutils dev generate-context -o api_map.md"
+                    file_path=str(target_file_path),
+                    fix_suggestion=f"Сгенерируйте контекст: chutils dev generate-context -o {target_file_path.name}"
                 )
             )
             return results
@@ -617,61 +634,128 @@ class APIMapRule(Rule):
 
             api_data.sort(key=lambda x: x["name"])
 
-            expected_content = "# Public API Map: chutils\n\n"
+            if target_format == "markdown":
+                expected_content = "# Public API Map: chutils\n\n"
 
-            headers = ["Name", "Type", "Signature", "Description"]
-            rows = []
-            for item in api_data:
-                name = f"`{item['name']}`"
-                obj_type = item["type"]
-                sig = f"`{item['signature']}`" if item["signature"] else ""
+                headers = ["Name", "Type", "Signature", "Description"]
+                rows = []
+                for item in api_data:
+                    name = f"`{item['name']}`"
+                    obj_type = item["type"]
+                    sig = f"`{item['signature']}`" if item["signature"] else ""
 
-                # Экранируем '|' в сигнатуре и описании (summary), чтобы не ломать столбцы таблицы
-                sig_escaped = sig.replace("|", "\\|")
-                summary_escaped = item["summary"].replace("|", "\\|")
-                # Убираем переводы строк из описания для сохранения табличного вида
-                summary_escaped = summary_escaped.replace("\n", " ").replace("\r", "")
+                    sig_escaped = sig.replace("|", "\\|")
+                    summary_escaped = item["summary"].replace("|", "\\|")
+                    summary_escaped = summary_escaped.replace("\n", " ").replace("\r", "")
 
-                rows.append([name, obj_type, sig_escaped, summary_escaped])
+                    rows.append([name, obj_type, sig_escaped, summary_escaped])
 
-            # Вычисляем максимальную ширину столбцов
-            col_widths = []
-            for i in range(len(headers)):
-                max_len = len(headers[i])
+                col_widths = []
+                for i in range(len(headers)):
+                    max_len = len(headers[i])
+                    for row in rows:
+                        max_len = max(max_len, len(row[i]))
+                    col_widths.append(max_len)
+
+                header_line = "|" + "".join(f" {headers[i].ljust(col_widths[i])} |" for i in range(len(headers)))
+                align_line = "|" + "|".join(f":{'-' * (col_widths[i] + 1)}" for i in range(len(headers))) + "|"
+
+                expected_content += header_line + "\n" + align_line + "\n"
                 for row in rows:
-                    max_len = max(max_len, len(row[i]))
-                col_widths.append(max_len)
+                    row_line = "|" + "".join(f" {row[i].ljust(col_widths[i])} |" for i in range(len(headers)))
+                    expected_content += row_line + "\n"
 
-            # Заголовок
-            header_line = "|" + "".join(f" {headers[i].ljust(col_widths[i])} |" for i in range(len(headers)))
-            # Разделитель с выравниванием по левому краю (:---) без лишних пробелов на стыках
-            align_line = "|" + "|".join(f":{'-' * (col_widths[i] + 1)}" for i in range(len(headers))) + "|"
+                with open(target_file_path, encoding="utf-8") as f:
+                    actual_content = f.read()
 
-            expected_content += header_line + "\n" + align_line + "\n"
-            for row in rows:
-                row_line = "|" + "".join(f" {row[i].ljust(col_widths[i])} |" for i in range(len(headers)))
-                expected_content += row_line + "\n"
+                actual_compare = actual_content.strip()
+                if actual_compare.startswith("---"):
+                    parts = actual_compare.split("---", 2)
+                    if len(parts) >= 3:
+                        actual_compare = parts[2].strip()
 
-            with open(api_map_path, encoding="utf-8") as f:
-                actual_content = f.read()
-
-            if actual_content.strip() != expected_content.strip():
-                results.append(
-                    LintResult(
-                        rule_name=self.name,
-                        message="Файл api_map.md устарел или не соответствует экспортируемому API chutils.",
-                        severity=self.severity,
-                        file_path=str(api_map_path),
-                        fix_suggestion="Обновите карту API: chutils dev generate-context -o api_map.md"
+                if actual_compare != expected_content.strip():
+                    results.append(
+                        LintResult(
+                            rule_name=self.name,
+                            message=f"Файл {target_file_path.name} устарел или не соответствует экспортируемому API chutils.",
+                            severity=self.severity,
+                            file_path=str(target_file_path),
+                            fix_suggestion=f"Обновите карту API: chutils dev generate-context -o {target_file_path.name}"
+                        )
                     )
-                )
+            elif target_format == "json":
+                import json
+                with open(target_file_path, encoding="utf-8") as f:
+                    actual_data = json.load(f)
+
+                actual_api = actual_data.get("api", []) if isinstance(actual_data, dict) else actual_data
+                expected_api = []
+                for item in api_data:
+                    expected_api.append({
+                        "name": item["name"],
+                        "type": item["type"],
+                        "signature": item["signature"],
+                        "summary": item["summary"]
+                    })
+
+                mismatch = False
+                if len(actual_api) != len(expected_api):
+                    mismatch = True
+                else:
+                    for a, e in zip(actual_api, expected_api):
+                        if (a.get("name") != e["name"] or 
+                            a.get("type") != e["type"] or 
+                            a.get("signature") != e["signature"]):
+                            mismatch = True
+                            break
+
+                if mismatch:
+                    results.append(
+                        LintResult(
+                            rule_name=self.name,
+                            message=f"Файл контекста ({target_file_path.name}) устарел или не соответствует текущему экспорту API.",
+                            severity=self.severity,
+                            file_path=str(target_file_path),
+                            fix_suggestion=f"Обновите контекст: chutils dev generate-context -f json -o {target_file_path.name}"
+                        )
+                    )
+            elif target_format == "tree":
+                import json
+                from chutils.dev.ast_indexer import Indexer
+                scan_path = base_path / "src" / "chutils"
+                indexer = Indexer(str(scan_path))
+                expected_index = indexer.index()
+
+                with open(target_file_path, encoding="utf-8") as f:
+                    actual_data = json.load(f)
+
+                expected_dump = expected_index.model_dump()
+                mismatch = False
+                if "root" not in actual_data or "dependency_graph" not in actual_data:
+                    mismatch = True
+                else:
+                    if actual_data.get("root") != expected_dump.get("root") or actual_data.get("dependency_graph") != expected_dump.get("dependency_graph"):
+                        mismatch = True
+
+                if mismatch:
+                    results.append(
+                        LintResult(
+                            rule_name=self.name,
+                            message=f"Иерархический индекс ({target_file_path.name}) устарел или не соответствует структуре проекта.",
+                            severity=self.severity,
+                            file_path=str(target_file_path),
+                            fix_suggestion=f"Обновите индекс: chutils dev generate-context --tree -o {target_file_path.name}"
+                        )
+                    )
+
         except Exception as e:
             results.append(
                 LintResult(
                     rule_name=self.name,
-                    message=f"Ошибка проверки api_map.md: {e}",
+                    message=f"Ошибка проверки {target_file_path.name}: {e}",
                     severity=self.severity,
-                    file_path=str(api_map_path)
+                    file_path=str(target_file_path)
                 )
             )
         return results
