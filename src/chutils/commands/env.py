@@ -132,13 +132,39 @@ class EnvCommand(BaseCommand):
         # 2. Из pyproject.toml
         try:
             from chutils.config.utils import find_project_root
-            import tomllib
 
             root = find_project_root()
             pyproject_path = root / "pyproject.toml"
             if pyproject_path.exists():
-                with open(pyproject_path, "rb") as f:
-                    data = tomllib.load(f)
+                data = {}
+                try:
+                    import tomllib
+                    with open(pyproject_path, "rb") as f:
+                        data = tomllib.load(f)
+                except ImportError:
+                    try:
+                        import tomli
+                        with open(pyproject_path, "rb") as f:
+                            data = tomli.load(f)
+                    except ImportError:
+                        # Текстовый фолбек, если библиотек нет в рантайме
+                        with open(pyproject_path, encoding="utf-8") as f:
+                            content = f.read()
+                        in_section = False
+                        for line in content.splitlines():
+                            line = line.strip()
+                            if not line or line.startswith("#"):
+                                continue
+                            if line.startswith("[") and line.endswith("]"):
+                                in_section = (line == "[tool.chutils.env]")
+                                continue
+                            if in_section and "=" in line:
+                                k, v = line.split("=", 1)
+                                if k.strip() == "manifest":
+                                    val = v.strip().strip('"').strip("'")
+                                    return val
+
+                if isinstance(data, dict):
                     tool_dict = data.get("tool", {})
                     if isinstance(tool_dict, dict):
                         chutils_dict = tool_dict.get("chutils", {})
