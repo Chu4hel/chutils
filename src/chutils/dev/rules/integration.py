@@ -28,7 +28,7 @@ class ChutilsIntegrationRule(Rule):
         for file_path in files:
             if not file_path.endswith(".py"):
                 continue
-            if "tests" in Path(file_path).parts or "src/chutils/" in file_path.replace("\\", "/"):
+            if "tests" in Path(file_path).parts:
                 continue
 
             try:
