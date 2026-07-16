@@ -26,82 +26,22 @@ try:
     from .anticaptcha import AntiCaptchaSolver, AsyncAntiCaptchaSolver
     from .capmonster import CapMonsterSolver, AsyncCapMonsterSolver
 except Exception:
-    class RuCaptchaSolver:  # type: ignore
-        """Заглушка для RuCaptchaSolver при отсутствии httpx."""
+    def _create_fallback(name: str) -> Any:
+        class FallbackSolver:
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                _ensure_httpx()
 
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку.
-
-            Args:
-                *args: Произвольные позиционные аргументы.
-                **kwargs: Произвольные именованные аргументы.
-            """
-            _ensure_httpx()
+        FallbackSolver.__name__ = name
+        FallbackSolver.__doc__ = f"Заглушка для {name} при отсутствии httpx."
+        return FallbackSolver
 
 
-    class AsyncRuCaptchaSolver:  # type: ignore
-        """Заглушка для AsyncRuCaptchaSolver при отсутствии httpx."""
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку.
-
-            Args:
-                *args: Произвольные позиционные аргументы.
-                **kwargs: Произвольные именованные аргументы.
-            """
-            _ensure_httpx()
-
-
-    class AntiCaptchaSolver:  # type: ignore
-        """Заглушка для AntiCaptchaSolver при отсутствии httpx."""
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку.
-
-            Args:
-                *args: Произвольные позиционные аргументы.
-                **kwargs: Произвольные именованные аргументы.
-            """
-            _ensure_httpx()
-
-
-    class AsyncAntiCaptchaSolver:  # type: ignore
-        """Заглушка для AsyncAntiCaptchaSolver при отсутствии httpx."""
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку.
-
-            Args:
-                *args: Произвольные позиционные аргументы.
-                **kwargs: Произвольные именованные аргументы.
-            """
-            _ensure_httpx()
-
-
-    class CapMonsterSolver:  # type: ignore
-        """Заглушка для CapMonsterSolver при отсутствии httpx."""
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку.
-
-            Args:
-                *args: Произвольные позиционные аргументы.
-                **kwargs: Произвольные именованные аргументы.
-            """
-            _ensure_httpx()
-
-
-    class AsyncCapMonsterSolver:  # type: ignore
-        """Заглушка для AsyncCapMonsterSolver при отсутствии httpx."""
-
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            """Инициализирует заглушку.
-
-            Args:
-                *args: Произвольные позиционные аргументы.
-                **kwargs: Произвольные именованные аргументы.
-            """
-            _ensure_httpx()
+    RuCaptchaSolver = _create_fallback("RuCaptchaSolver")
+    AsyncRuCaptchaSolver = _create_fallback("AsyncRuCaptchaSolver")
+    AntiCaptchaSolver = _create_fallback("AntiCaptchaSolver")
+    AsyncAntiCaptchaSolver = _create_fallback("AsyncAntiCaptchaSolver")
+    CapMonsterSolver = _create_fallback("CapMonsterSolver")
+    AsyncCapMonsterSolver = _create_fallback("AsyncCapMonsterSolver")
 
 __all__ = [
     "RuCaptchaSolver",
