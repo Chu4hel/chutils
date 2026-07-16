@@ -1,8 +1,9 @@
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import logging.handlers
 from pathlib import Path
 
 from ... import config
+from ...fs import ensure_dir
 
 # --- Глобальное состояние для "ленивой" инициализации ---
 _LOG_DIR: str | None = None
@@ -30,7 +31,7 @@ def get_log_dir() -> str | None:
     log_path = Path(base_dir) / 'logs'
     if not log_path.exists():
         try:
-            log_path.mkdir(parents=True, exist_ok=True)
+            ensure_dir(log_path)
             logging.info("Создана директория для логов: %s", log_path)
         except OSError as e:
             logging.error("Не удалось создать директорию для логов %s: %s", log_path, e)

@@ -82,9 +82,10 @@ class ChatContextSubCommand(SubCommand):
             )
 
             if args.output:
+                from chutils.fs import ensure_dir, atomic_write
                 output_path = Path(args.output).resolve()
-                output_path.parent.mkdir(parents=True, exist_ok=True)
-                output_path.write_text(markdown_content, encoding="utf-8")
+                ensure_dir(output_path.parent)
+                atomic_write(output_path, markdown_content)
                 self.console.print(
                     f"[bold green] [OK] [/bold green] Контекстный срез успешно сохранен в: [cyan]{args.output}[/cyan]"
                 )

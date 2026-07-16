@@ -113,37 +113,40 @@ def write_env_file(path: str | Path, entries: list[EnvEntry]) -> None:
         path: Путь для сохранения файла.
         entries: Список сохраняемых записей EnvEntry.
     """
+    from chutils.fs import ensure_dir, atomic_write
     p = Path(path)
-    p.parent.mkdir(parents=True, exist_ok=True)
+    ensure_dir(p.parent)
 
-    with open(p, "w", encoding="utf-8") as f:
-        for entry in entries:
-            if entry.key is not None:
-                # Если запись соответствует переменной окружения
-                val_str = entry.value if entry.value is not None else ""
-                # Если значение содержит пробелы или кавычки, проверим
-                # Для пустых значений кавычки опускаем.
-                # Для непустых значений, если исходная строка raw_line распарсивается
-                # в те же самые значения, выводим её без изменений для сохранения кавычек.
-                parsed_raw = parse_env_line(entry.raw_line)
-                if (
-                        parsed_raw.key == entry.key
-                        and parsed_raw.value == entry.value
-                        and parsed_raw.comment == entry.comment
-                ):
-                    f.write(entry.raw_line)
-                else:
-                    # Рендерим новую строку
-                    line_to_write = f"{entry.key}={val_str}"
-                    if entry.comment is not None:
-                        line_to_write += f" # {entry.comment}"
-                    line_to_write += "\n"
-                    f.write(line_to_write)
+    lines: list[str] = []
+    for entry in entries:
+        if entry.key is not None:
+            # Если запись соответствует переменной окружения
+            val_str = entry.value if entry.value is not None else ""
+            # Если значение содержит пробелы или кавычки, проверим
+            # Для пустых значений кавычки опускаем.
+            # Для непустых значений, если исходная строка raw_line распарсивается
+            # в те же самые значения, выводим её без изменений для сохранения кавычек.
+            parsed_raw = parse_env_line(entry.raw_line)
+            if (
+                    parsed_raw.key == entry.key
+                    and parsed_raw.value == entry.value
+                    and parsed_raw.comment == entry.comment
+            ):
+                lines.append(entry.raw_line)
             else:
-                line_to_write = entry.raw_line
-                if not line_to_write.endswith("\n"):
-                    line_to_write += "\n"
-                f.write(line_to_write)
+                # Рендерим новую строку
+                line_to_write = f"{entry.key}={val_str}"
+                if entry.comment is not None:
+                    line_to_write += f" # {entry.comment}"
+                line_to_write += "\n"
+                lines.append(line_to_write)
+        else:
+            line_to_write = entry.raw_line
+            if not line_to_write.endswith("\n"):
+                line_to_write += "\n"
+            lines.append(line_to_write)
+
+    atomic_write(p, "".join(lines))
 
 
 def merge_env_structures(

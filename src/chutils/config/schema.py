@@ -116,9 +116,10 @@ def export_schema(
     schema_str = json.dumps(schema, indent=indent, ensure_ascii=False)
 
     if output_path:
+        from chutils.fs import ensure_dir, atomic_write
         path = Path(output_path)
         # Создаем директории, если их нет
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(schema_str, encoding="utf-8")
+        ensure_dir(path.parent)
+        atomic_write(path, schema_str)
 
     return schema_str

@@ -67,7 +67,8 @@ class HooksSubCommand(SubCommand):
             )
 
         hooks_dir = git_dir / "hooks"
-        hooks_dir.mkdir(parents=True, exist_ok=True)
+        from chutils.fs import ensure_dir
+        ensure_dir(hooks_dir)
         hook_path = hooks_dir / "pre-commit"
 
         # Подготовка вспомогательных вызовов ruff/flake8
