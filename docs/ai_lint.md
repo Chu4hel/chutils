@@ -113,6 +113,7 @@ chutils dev ai-lint --strict --ignore "build/,legacy_code.py" --rules "ManifestR
     * Использование библиотеки `keyring` напрямую (рекомендует `chutils.SecretManager`).
     * Прямые обращения к `os.getenv` или `os.environ` (рекомендует использовать встроенные инструменты управления
       конфигурацией `chutils`).
+    * Ручные вызовы метода `.mkdir(parents=True, exist_ok=True)` (рекомендует использовать `chutils.fs.ensure_dir`).
 * **Зачем**: Обеспечивает единообразие архитектуры проекта и направляет ИИ на переиспользование уже готовых библиотечных
   решений.
 

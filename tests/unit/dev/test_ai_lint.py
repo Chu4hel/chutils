@@ -303,22 +303,26 @@ import os
 import keyring
 import requests
 import httpx
+from pathlib import Path
 
 logging.info("Test message")
 db_host = os.environ.get("DB_HOST")
 token = keyring.get_password("system", "user")
+Path("test").mkdir(parents=True, exist_ok=True)
 """
     file_path = tmp_path / "bad.py"
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(bad_code)
 
     results = rule.check(str(tmp_path), [str(file_path)])
-    assert len(results) == 5
+    assert len(results) == 6
     assert any("logging" in r.message for r in results)
     assert any("os.environ" in r.message or "os.getenv" in r.message for r in results)
     assert any("keyring" in r.message for r in results)
     assert any("requests" in r.message for r in results)
     assert any("httpx" in r.message for r in results)
+    assert any("mkdir" in r.message for r in results)
+
 
 
 def test_api_map_rule(tmp_path):

@@ -145,4 +145,24 @@ class ChutilsIntegrationRule(Rule):
                                 fix_suggestion="Получайте конфигурацию через 'chutils.get_config_value'."
                             )
                         )
+                # Проверка mkdir(parents=True, exist_ok=True)
+                elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "mkdir":
+                    has_parents_true = False
+                    has_exist_ok_true = False
+                    for kw in node.keywords:
+                        if kw.arg == "parents" and isinstance(kw.value, ast.Constant) and kw.value.value is True:
+                            has_parents_true = True
+                        elif kw.arg == "exist_ok" and isinstance(kw.value, ast.Constant) and kw.value.value is True:
+                            has_exist_ok_true = True
+                    if has_parents_true and has_exist_ok_true:
+                        results.append(
+                            LintResult(
+                                rule_name=self.name,
+                                message="Используется ручной вызов '.mkdir(parents=True, exist_ok=True)'. Рекомендуется использовать 'chutils.fs.ensure_dir'.",
+                                severity=self.severity,
+                                file_path=file_path,
+                                line_number=node.lineno,
+                                fix_suggestion="Используйте: from chutils.fs import ensure_dir; ensure_dir(path)"
+                            )
+                        )
         return results

@@ -21194,13 +21194,13 @@
     },
     {
       "source": "chutils/dev/few_shot",
-      "target": "/models",
-      "weight": 2
+      "target": "/detector",
+      "weight": 1
     },
     {
       "source": "chutils/dev/few_shot",
-      "target": "/detector",
-      "weight": 1
+      "target": "/models",
+      "weight": 2
     },
     {
       "source": "chutils/dev/few_shot",
@@ -21902,8 +21902,8 @@
   "metadata": {
     "chutils_version": "3.0.0",
     "project_version": "3.0.0",
-    "git_commit": "219942d073020313d7e7ef1f9a2a99373b779196 (dirty)",
-    "generated_at": "2026-07-16T02:12:44.102353+00:00",
-    "project_hash": "ac81cd8dd6a0aab1ba6e983d72ddd76518ff84772d6ac5546c5b29d35975a621"
+    "git_commit": "b7e6f415219528a6098c97a826c4dd5b8a328021 (dirty)",
+    "generated_at": "2026-07-16T02:30:52.383526+00:00",
+    "project_hash": "47cdba3a954db177c7bb6b15747ecce8aff06dc547ebc5a72955fbaa6ec13c3b"
   }
 }
