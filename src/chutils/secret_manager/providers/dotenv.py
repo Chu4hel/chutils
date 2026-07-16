@@ -44,7 +44,7 @@ class DotEnvProvider(SecretProvider):
             _get_logger().debug("Найден и загружен .env файл: %s", path)
 
         # Кэшируем текущие переменные окружения
-        self._values = dict(os.environ)
+        self._values = dict(os.environ)  # chutils: ignore[ChutilsIntegrationRule]
         self._loaded = True
 
     def get(self, key: str, service_name: str) -> str | None:

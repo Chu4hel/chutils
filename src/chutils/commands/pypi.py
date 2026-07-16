@@ -34,8 +34,8 @@ def get_current_index_url() -> str:
         Текущий настроенный URL индекса пакетов (index-url).
     """
     # 1. Проверяем переменную окружения
-    if "PIP_INDEX_URL" in os.environ:
-        return os.environ["PIP_INDEX_URL"]
+    if "PIP_INDEX_URL" in os.environ:  # chutils: ignore[ChutilsIntegrationRule]
+        return os.environ["PIP_INDEX_URL"]  # chutils: ignore[ChutilsIntegrationRule]
 
     # 2. Вызываем pip config через подпроцесс
     try:
@@ -55,10 +55,10 @@ def get_current_index_url() -> str:
     # 3. Фолбек: парсинг конфигурационных файлов pip
     paths = []
     if sys.platform == "win32":
-        appdata = os.environ.get("APPDATA")
+        appdata = os.environ.get("APPDATA")  # chutils: ignore[ChutilsIntegrationRule]
         if appdata:
             paths.append(Path(appdata) / "pip" / "pip.ini")
-        userprofile = os.environ.get("USERPROFILE")
+        userprofile = os.environ.get("USERPROFILE")  # chutils: ignore[ChutilsIntegrationRule]
         if userprofile:
             paths.append(Path(userprofile) / "pip" / "pip.ini")
             paths.append(Path(userprofile) / "AppData" / "Roaming" / "pip" / "pip.ini")

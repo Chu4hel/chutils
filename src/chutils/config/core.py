@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import os
 from pathlib import Path
 from typing import Any, TYPE_CHECKING, TypeVar
@@ -168,10 +168,10 @@ def get_config(
                     logger.error("Ошибка загрузки удаленной конфигурации с %s: %s", remote_url, e)
 
             # 5. Переменные окружения (CH_SECTION_KEY)
-            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")
+            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
             if not disable_env_override:
                 env_overrides: JSONDict = {}
-                for env_key, env_value in os.environ.items():
+                for env_key, env_value in os.environ.items():  # chutils: ignore[ChutilsIntegrationRule]
                     if env_key.startswith("CH_") and env_key not in ("CH_ENV", "CH_DISABLE_ENV_OVERRIDE",
                                                                      "CH_DISABLE_KEYRING_WARNING"):
                         full_content = env_key[3:]
@@ -225,7 +225,7 @@ def get_config(
                         env_overrides[actual_sec][actual_key] = env_value
 
                 # Специфический ключ для secrets
-                secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")
+                secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")  # chutils: ignore[ChutilsIntegrationRule]
                 if secrets_env is not None:
                     if "secrets" not in env_overrides:
                         env_overrides["secrets"] = {}

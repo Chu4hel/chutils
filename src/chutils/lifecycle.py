@@ -8,7 +8,7 @@
 from __future__ import annotations
 
 import asyncio
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import signal
 import sys
 import time

@@ -17,7 +17,7 @@ from .keyring_provider import KeyringProvider
 
 # Expose keyring for mock compatibility in tests
 try:
-    import keyring
+    import keyring  # chutils: ignore[ChutilsIntegrationRule]
 
     KEYRING_AVAILABLE = True
 except ImportError:

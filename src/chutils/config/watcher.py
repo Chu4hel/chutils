@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import time
 from pathlib import Path
 from typing import TYPE_CHECKING

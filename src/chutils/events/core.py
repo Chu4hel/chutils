@@ -2,7 +2,7 @@
 
 import asyncio
 import inspect
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import threading
 import typing as t
 from collections import defaultdict

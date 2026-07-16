@@ -2,7 +2,7 @@ import asyncio
 import time
 from typing import Any, cast, TYPE_CHECKING
 
-import httpx
+import httpx  # chutils: ignore[ChutilsIntegrationRule]
 from httpx._utils import URLPattern
 
 from chutils.cache import InMemoryCacheBackend

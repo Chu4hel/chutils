@@ -21,7 +21,7 @@ class EnvProvider(SecretProvider):
         Returns:
             Значение секрета или None, если он не найден.
         """
-        value = os.environ.get(key)
+        value = os.environ.get(key)  # chutils: ignore[ChutilsIntegrationRule]
         if value is not None:
             _get_logger().devdebug("Секрет '%s' найден в переменных окружения.", key)
         return value

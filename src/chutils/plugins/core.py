@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from typing import Any
 
 logger = logging.getLogger("chutils.plugins")

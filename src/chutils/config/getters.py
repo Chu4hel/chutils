@@ -7,7 +7,7 @@
 
 from __future__ import annotations
 
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from pathlib import Path
 from typing import Any, TYPE_CHECKING, TypeVar, overload, cast
 

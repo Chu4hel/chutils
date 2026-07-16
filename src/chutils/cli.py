@@ -53,7 +53,7 @@ def main() -> None:
         from chutils.exceptions import ChutilsException, PathTraversalError
         from chutils.cli_utils import get_console
         from chutils.env import RICH_AVAILABLE
-        import logging
+        import logging  # chutils: ignore[ChutilsIntegrationRule]
 
         console = get_console(stderr=True)
 

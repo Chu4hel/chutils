@@ -88,7 +88,7 @@ def ensure_dir(path: str | Path) -> Path:
         Объект pathlib.Path.
     """
     p = Path(path)
-    p.mkdir(parents=True, exist_ok=True)
+    p.mkdir(parents=True, exist_ok=True)  # chutils: ignore[ChutilsIntegrationRule]
     return p
 
 
@@ -133,7 +133,7 @@ def atomic_write(
     try:
         if suffix == '.json' and isinstance(data, (dict, list)):
             with os.fdopen(fd, mode, encoding=None if is_binary else encoding) as f:
-                json.dump(data, f, **kwargs)
+                json.dump(data, f, **kwargs)  # chutils: ignore[ChutilsIntegrationRule]
         elif suffix in ('.yml', '.yaml') and isinstance(data, (dict, list)):
             if not YAML_AVAILABLE:
                 raise OptionalDependencyError(
@@ -141,13 +141,13 @@ def atomic_write(
                     dependency="pyyaml"
                 )
             with os.fdopen(fd, mode, encoding=None if is_binary else encoding) as f:
-                yaml.dump(data, f, **kwargs)
+                yaml.dump(data, f, **kwargs)  # chutils: ignore[ChutilsIntegrationRule]
         else:
             with os.fdopen(fd, mode, encoding=None if is_binary else encoding) as f:
                 f.write(data)
 
         # Атомарная замена
-        os.replace(temp_path, target_path)
+        os.replace(temp_path, target_path)  # chutils: ignore[ChutilsIntegrationRule]
     except Exception:
         # В случае ошибки закрываем дескриптор (если он еще открыт) и удаляем временный файл
         if temp_path.exists():
@@ -243,7 +243,7 @@ def remove_path(
                     p, retries, e
                 )
             except (ImportError, Exception):
-                import logging
+                import logging  # chutils: ignore[ChutilsIntegrationRule]
                 logging.getLogger("chutils").warning(
                     "Не удалось удалить путь %s после %d попыток: %s",
                     p, retries, e

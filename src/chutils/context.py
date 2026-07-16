@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import contextvars
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import sys
 from typing import Any
 

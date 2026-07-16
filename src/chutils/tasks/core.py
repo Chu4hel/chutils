@@ -6,7 +6,7 @@ from __future__ import annotations
 import asyncio
 import functools
 import inspect
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum

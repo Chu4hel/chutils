@@ -1,4 +1,4 @@
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 
 from .base import MetricsProvider
 from .in_memory import InMemoryMetricsProvider

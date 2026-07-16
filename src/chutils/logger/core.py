@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 import atexit
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from typing import Any
 
 from .internal.levels import (

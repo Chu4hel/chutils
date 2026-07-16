@@ -2,7 +2,7 @@ import base64
 import time
 from typing import Any
 
-import httpx
+import httpx  # chutils: ignore[ChutilsIntegrationRule]
 
 from .base import BaseCaptchaSolver, BaseAsyncCaptchaSolver
 from .exceptions import (

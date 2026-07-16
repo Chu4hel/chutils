@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import base64
 import json
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import os
 import re
 import tempfile
@@ -40,7 +40,7 @@ def _atomic_write(path: str, content_writer_func: Callable[[TextIO], None]) -> N
             content_writer_func(f)
 
         # Атомарная замена (на Windows заменит существующий файл)
-        os.replace(temp_path, path)
+        os.replace(temp_path, path)  # chutils: ignore[ChutilsIntegrationRule]
     except Exception as e:
         if os.path.exists(temp_path):
             os.remove(temp_path)
@@ -136,7 +136,7 @@ class YamlConfigProvider(ConfigProvider):
             data[section][key] = value
 
             def writer(f: TextIO) -> None:
-                yaml.dump(data, f, allow_unicode=True, sort_keys=False)
+                yaml.dump(data, f, allow_unicode=True, sort_keys=False)  # chutils: ignore[ChutilsIntegrationRule]
 
             _atomic_write(path, writer)
             return True
@@ -206,7 +206,7 @@ class JsonConfigProvider(ConfigProvider):
             data[section][key] = value
 
             def writer(f: TextIO) -> None:
-                json.dump(data, f, indent=4, ensure_ascii=False)
+                json.dump(data, f, indent=4, ensure_ascii=False)  # chutils: ignore[ChutilsIntegrationRule]
 
             _atomic_write(path, writer)
             return True

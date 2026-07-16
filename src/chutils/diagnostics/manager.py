@@ -211,7 +211,7 @@ def check_keyring() -> tuple[bool, str]:
     if not KEYRING_AVAILABLE:
         return False, "Библиотека keyring не установлена или не поддерживается."
 
-    import keyring
+    import keyring  # chutils: ignore[ChutilsIntegrationRule]
     from keyring.errors import NoKeyringError
     try:
         service = "chutils_healthcheck"

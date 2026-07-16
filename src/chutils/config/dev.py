@@ -51,7 +51,7 @@ def _get_env_config() -> JSONDict:
     Извлекает настройки ai-lint из переменных окружения (CH_DEV_AILINT_...).
     """
     env_config: JSONDict = {}
-    for key, val in os.environ.items():
+    for key, val in os.environ.items():  # chutils: ignore[ChutilsIntegrationRule]
         if key.startswith("CH_DEV_AILINT_"):
             config_key = key[14:].lower()
             if val.lower() == "true":

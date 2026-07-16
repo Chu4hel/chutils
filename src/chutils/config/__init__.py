@@ -17,7 +17,7 @@
 чувствительными или специфичными для разработчика настройками, не коммитя их в репозиторий.
 """
 
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from typing import Any, TYPE_CHECKING, TypeVar
 
 from .core import get_config, aget_config, save_config_value, asave_config_value

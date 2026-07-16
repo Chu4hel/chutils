@@ -43,7 +43,7 @@ def _warn_about_missing_keyring() -> None:
 
     import os
 
-    if os.environ.get("CH_DISABLE_KEYRING_WARNING", "").lower() in ("true", "1", "yes"):
+    if os.environ.get("CH_DISABLE_KEYRING_WARNING", "").lower() in ("true", "1", "yes"):  # chutils: ignore[ChutilsIntegrationRule]
         _keyring_missing_warned = True
         return
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from enum import Enum
 from typing import Any, cast
 

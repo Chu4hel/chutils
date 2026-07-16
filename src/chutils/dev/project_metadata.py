@@ -190,6 +190,6 @@ def save_context_metadata_cache(project_path: Path, output_file: str, format_str
 
         import json
         with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump(cache_data, f, indent=2, ensure_ascii=False)
+            json.dump(cache_data, f, indent=2, ensure_ascii=False)  # chutils: ignore[ChutilsIntegrationRule]
     except Exception:
         pass

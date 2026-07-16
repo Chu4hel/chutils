@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any

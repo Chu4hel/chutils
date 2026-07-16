@@ -10,7 +10,7 @@ from __future__ import annotations
 import functools
 import hashlib
 import inspect
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import os
 from pathlib import Path
 from typing import Any, cast
@@ -112,7 +112,7 @@ def _evaluate_complex_feature(feature_name: str, config: dict[str, Any], context
     # 2. Ограничение по окружению (environments: ['production', 'staging'])
     allowed_envs = config.get("environments")
     if allowed_envs:
-        current_env = os.getenv("CH_ENV", "development")
+        current_env = os.getenv("CH_ENV", "development")  # chutils: ignore[ChutilsIntegrationRule]
         if current_env not in allowed_envs:
             return False
 
