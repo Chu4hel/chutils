@@ -5,8 +5,16 @@
 # При создании новых правил линтера необходимо дополнить документацию по линтеру и командам разработчика
 "new:src/chutils/dev/rules/*.py" = ["docs/ai_lint.md", "docs/cli/dev.md"]
 
-# При изменении CLI команд необходимо обновить документацию по интерфейсу командной строки
-"src/chutils/commands/**/*.py" = ["docs/cli/dev.md"]
+# При изменении CLI команд необходимо обновить соответствующее руководство
+"src/chutils/commands/dev/**/*.py" = ["docs/cli/dev.md"]
+"src/chutils/commands/env.py" = ["docs/cli/env.md"]
+"src/chutils/commands/secrets.py" = ["docs/cli/secrets.md"]
+"src/chutils/commands/config.py" = ["docs/cli/config.md"]
+"src/chutils/commands/init.py" = ["docs/cli/init.md"]
+"src/chutils/commands/paths.py" = ["docs/cli/show_paths.md"]
+"src/chutils/commands/pypi.py" = ["docs/cli/pypi.md"]
+"src/chutils/commands/template.py" = ["docs/cli/template.md"]
+"src/chutils/commands/validate.py" = ["docs/cli/validate.md"]
 
 # При изменении модулей веб-скрейпинга и капчи
 "src/chutils/scraping/**/*.py" = ["docs/scraping.md"]
