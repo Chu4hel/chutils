@@ -3682,6 +3682,46 @@
             "children": [],
             "symbols": [
               {
+                "name": "_parse_flat_toml",
+                "type": "function",
+                "layer": "private",
+                "signature": "(path)",
+                "summary": "Легковесный TOML-парсер для извлечения параметров без сторонних зависимостей.",
+                "docstring": "Легковесный TOML-парсер для извлечения параметров без сторонних зависимостей.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 25,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "load_external_config",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(path)",
+                "summary": "Загружает настройки из внешнего файла (JSON или TOML).",
+                "docstring": "Загружает настройки из внешнего файла (JSON или TOML).\n\nArgs:\n    path: Путь к внешнему файлу конфигурации.\n\nReturns:\n    Словарь с загруженными настройками.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 89,
+                "bases": [],
+                "children": []
+              },
+              {
                 "name": "parse_chutils_ignore",
                 "type": "function",
                 "layer": "public",
@@ -3697,7 +3737,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 24,
+                "line_number": 146,
                 "bases": [],
                 "children": []
               },
@@ -3717,7 +3757,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 49,
+                "line_number": 171,
                 "bases": [],
                 "children": []
               },
@@ -3737,7 +3777,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 74,
+                "line_number": 196,
                 "bases": [],
                 "children": []
               }
@@ -7300,7 +7340,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 207,
+                    "line_number": 208,
                     "bases": [],
                     "children": []
                   },
@@ -7320,7 +7360,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 235,
+                    "line_number": 236,
                     "bases": [],
                     "children": []
                   },
@@ -7340,7 +7380,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 246,
+                    "line_number": 247,
                     "bases": [],
                     "children": []
                   },
@@ -7360,7 +7400,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 281,
+                    "line_number": 282,
                     "bases": [],
                     "children": []
                   },
@@ -7380,7 +7420,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 303,
+                    "line_number": 304,
                     "bases": [],
                     "children": []
                   },
@@ -7400,7 +7440,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 365,
+                    "line_number": 366,
                     "bases": [],
                     "children": []
                   }
@@ -10080,6 +10120,120 @@
                           "custom_metadata": {}
                         },
                         "line_number": 17,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "dependency_sync",
+                "path": "chutils/dev/rules/dependency_sync",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "get_git_changed_files",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(base_dir)",
+                    "summary": "Возвращает список всех измененных, добавленных и неотслеживаемых файлов в Git.",
+                    "docstring": "Возвращает список всех измененных, добавленных и неотслеживаемых файлов в Git.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Список абсолютных путей к измененным файлам.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 10,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "match_glob",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(file_path, glob_pattern, base_dir)",
+                    "summary": "Проверяет, подходит ли файл под глоб-шаблон (поддерживает **).",
+                    "docstring": "Проверяет, подходит ли файл под глоб-шаблон (поддерживает **).\n\nArgs:\n    file_path: Абсолютный путь к файлу.\n    glob_pattern: Глоб-шаблон (например, \"src/chutils/**/*.py\").\n    base_dir: Базовая директория проекта.\n\nReturns:\n    True, если файл соответствует шаблону, иначе False.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 68,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_file_ignored",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(file_path)",
+                    "summary": "Проверяет, содержит ли файл директиву игнорирования правила.",
+                    "docstring": "Проверяет, содержит ли файл директиву игнорирования правила.\n\nArgs:\n    file_path: Путь к проверяемому файлу.\n\nReturns:\n    True, если в файле есть комментарий игнорирования, иначе False.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 108,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "FileDependencySyncRule",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Правило контроля синхронизации связанных файлов и документации (FileDependencySyncRule).",
+                    "docstring": "Правило контроля синхронизации связанных файлов и документации (FileDependencySyncRule).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 125,
+                    "bases": [
+                      "..ai_lint.Rule"
+                    ],
+                    "children": [
+                      {
+                        "name": "check",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, base_dir, files)",
+                        "summary": "Выполняет проверку связанных зависимостей.",
+                        "docstring": "Выполняет проверку связанных зависимостей.\n\nArgs:\n    base_dir: Путь к корню проверяемого проекта.\n    files: Список путей к файлам (не используется напрямую, так как мы смотрим Git-изменения).\n\nReturns:\n    Список предупреждений о рассинхронизации.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 133,
                         "bases": [],
                         "children": []
                       }
@@ -20741,6 +20895,11 @@
     },
     {
       "source": "chutils/dev/rules",
+      "target": "/dependency_sync",
+      "weight": 1
+    },
+    {
+      "source": "chutils/dev/rules",
       "target": "/docstring",
       "weight": 1
     },
@@ -20776,6 +20935,11 @@
     },
     {
       "source": "chutils/dev/rules/decomposition",
+      "target": "//ai_lint",
+      "weight": 2
+    },
+    {
+      "source": "chutils/dev/rules/dependency_sync",
       "target": "//ai_lint",
       "weight": 2
     },
@@ -21359,8 +21523,8 @@
   "metadata": {
     "chutils_version": "3.0.0",
     "project_version": "3.0.0",
-    "git_commit": "273d6a11ff840a89171e2297ec8b6315265692db (dirty)",
-    "generated_at": "2026-07-16T02:54:38.929431+00:00",
-    "project_hash": "838fc0f30f07755ed60536c6ad9e99544de1cb858ab66a248333869a57dc9d39"
+    "git_commit": "71addb02c2261d424274a38ed652bc29cf37e1fb (dirty)",
+    "generated_at": "2026-07-16T03:04:16.757351+00:00",
+    "project_hash": "0ba633fee0872f93f2176b3944fdca98b341b35734647f679a51f702ce60a527"
   }
 }
