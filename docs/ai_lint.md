@@ -69,7 +69,7 @@ chutils dev ai-lint --strict --ignore "build/,legacy_code.py" --rules "ManifestR
 
 ## Встроенные правила
 
-В `ai-lint` встроено 5 основных правил:
+В `ai-lint` встроен ряд правил:
 
 ### 1. ManifestRule (severity: `warn`)
 
@@ -144,6 +144,17 @@ chutils dev ai-lint --strict --ignore "build/,legacy_code.py" --rules "ManifestR
 * **Зачем**: Предотвращает ошибки запуска приложения из-за отсутствующих локальных переменных или забытых обновлений в
   файле-шаблоне.
 
+### 7. FileDependencySyncRule (severity: `warn`)
+
+Проверяет синхронность обновления связанных файлов и документации в соответствии с картой зависимостей.
+
+* **Что проверяет**:
+    * Наличие измененных файлов по глоб-шаблонам источников (например, `"src/chutils/**/*.py"`).
+    * Если файлы-источники изменены, проверяет, что хотя бы один из связанных зависимых файлов (например,
+      `"docs/api_map.md"`) также был обновлен в том же коммите/наборе изменений.
+    * При отсутствии изменений в зависимых файлах генерирует предупреждение.
+* **Зачем**: Помогает не забывать обновлять документацию, схемы, или метаданные при изменении исходного кода.
+
 ---
 
 ## Настройка конфигурации
@@ -180,6 +191,18 @@ rules = ["ManifestRule", "DocstringQualityRule", "SecurityHardcodeRule"]
 custom_rules_path = ".chutils/custom_rules.py"
 env_path = ".env"
 example_path = ".env.example"
+```
+
+### Настройка зависимостей файлов (File Dependency Sync)
+
+Для правила `FileDependencySyncRule` вы можете задать сопоставление вложенной секцией
+`[tool.chutils.ai-lint.dependencies]` в `pyproject.toml` или в корневой секции `[dependencies]` во внешних файлах
+`ai-lint.toml`/`ai-lint.json`:
+
+```toml
+[tool.chutils.ai-lint.dependencies]
+"src/chutils/**/*.py" = ["README.md", "docs/api_map.md"]
+"schema.json" = ["docs/schema_guide.md"]
 ```
 
 ### Файл .chutilsignore
