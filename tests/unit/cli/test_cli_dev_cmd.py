@@ -384,7 +384,7 @@ def test_cli_dev_sync_env_force(cli_runner, config_fs):
 def test_cli_dev_sync_env_no_rich(cli_runner, config_fs, mocker):
     """Проверяет работу sync-env без установленного rich (is_rich_enabled = False)."""
     mocker.patch("chutils.env.is_rich_enabled", return_value=False)
-    
+
     fs, project_root = config_fs
     fs.create_file(f"{project_root}/.env", contents="A=1\nB=2\n")
     fs.create_file(f"{project_root}/.env.example", contents="A=\n")
@@ -428,7 +428,7 @@ def test_generate_context_metadata_json(cli_runner, config_fs):
 
     result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir, "-f", "json"])
     assert result.exit_code == 0
-    
+
     # Парсим JSON и проверяем метаданные
     import json
     data = json.loads(result.stdout)
@@ -448,10 +448,60 @@ def test_generate_context_metadata_tree(cli_runner, config_fs):
 
     result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir, "--tree"])
     assert result.exit_code == 0
-    
+
     import json
     data = json.loads(result.stdout)
     assert "metadata" in data
     assert data["metadata"]["project_version"] == "7.8.9"
     assert "project_hash" in data["metadata"]
 
+
+def test_cli_dev_diagnostics_with_rich(cli_runner, mocker):
+    """Проверяет запуск diagnostics с включенным rich."""
+    from chutils.cli_utils import set_console_width
+    set_console_width(80)
+    try:
+        mocker.patch("chutils.env.is_rich_enabled", return_value=True)
+        mocker.patch("chutils.cli_utils.is_rich_enabled", return_value=True)
+
+        from chutils.diagnostics.models import HealthReport, CheckResult
+        mock_report = HealthReport(
+            status="HEALTHY",
+            total_time=0.123,
+            results=[
+                CheckResult(name="test_check", success=True, critical=True, execution_time=0.05, message="Check OK")
+            ]
+        )
+        mocker.patch("chutils.diagnostics.manager.DiagnosticsManager.run_checks_sync", return_value=mock_report)
+
+        result = cli_runner.invoke(["dev", "diagnostics"])
+        assert result.exit_code == 0
+        assert "Общий статус здоровья системы" in result.stdout
+        assert "test_check" in result.stdout
+    finally:
+        set_console_width(None)
+
+
+def test_cli_dev_diagnostics_no_rich(cli_runner, mocker):
+    """Проверяет запуск diagnostics без rich (текстовый фоллбек)."""
+    from chutils.cli_utils import set_console_width
+    set_console_width(80)
+    try:
+        mocker.patch("chutils.env.is_rich_enabled", return_value=False)
+
+        from chutils.diagnostics.models import HealthReport, CheckResult
+        mock_report = HealthReport(
+            status="HEALTHY",
+            total_time=0.123,
+            results=[
+                CheckResult(name="test_check", success=True, critical=True, execution_time=0.05, message="Check OK")
+            ]
+        )
+        mocker.patch("chutils.diagnostics.manager.DiagnosticsManager.run_checks_sync", return_value=mock_report)
+
+        result = cli_runner.invoke(["dev", "diagnostics"])
+        assert result.exit_code == 0
+        assert "Название        | Статус | Критичность  | Время (с)  | Детали" in result.stdout
+        assert "test_check" in result.stdout
+    finally:
+        set_console_width(None)
