@@ -522,3 +522,11 @@ from .project_metadata import (
     calculate_project_hash,
     save_context_metadata_cache,
 )
+
+__all__ = [
+    "Indexer",
+    "GitIgnoreMatcher",
+    "collect_project_metadata",
+    "calculate_project_hash",
+    "save_context_metadata_cache",
+]
