@@ -7,3 +7,19 @@
 
 # При изменении CLI команд необходимо обновить документацию по интерфейсу командной строки
 "src/chutils/commands/**/*.py" = ["docs/cli/dev.md"]
+
+# При изменении модулей веб-скрейпинга и капчи
+"src/chutils/scraping/**/*.py" = ["docs/scraping.md"]
+"src/chutils/scraping/captcha/**/*.py" = ["docs/captcha.md"]
+
+# При изменении HTTP-клиента
+"src/chutils/web/**/*.py" = ["docs/web.md"]
+
+# При изменении системы плагинов
+"src/chutils/plugins/**/*.py" = ["docs/plugins.md"]
+
+# При изменении фикстур тестирования
+"src/chutils/testing/**/*.py" = ["docs/testing.md"]
+
+# При обновлении пакетов и зависимостей в pyproject.toml
+"pyproject.toml" = ["docs/dependencies.md"]
