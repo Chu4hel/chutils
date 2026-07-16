@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from datetime import datetime, timezone
 from typing import Any
 
@@ -20,7 +20,7 @@ def utc_now() -> datetime:
     Returns:
         Объект datetime, представляющий текущее время в UTC.
     """
-    return datetime.now(timezone.utc)
+    return datetime.now(timezone.utc)  # chutils: ignore[ChutilsIntegrationRule]
 
 
 def _ensure_aware_utc(dt: datetime) -> datetime:
