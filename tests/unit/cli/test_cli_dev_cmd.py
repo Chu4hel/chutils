@@ -381,6 +381,25 @@ def test_cli_dev_sync_env_force(cli_runner, config_fs):
         set_console_width(None)
 
 
+def test_cli_dev_sync_env_no_rich(cli_runner, config_fs, mocker):
+    """Проверяет работу sync-env без установленного rich (is_rich_enabled = False)."""
+    mocker.patch("chutils.env.is_rich_enabled", return_value=False)
+    
+    fs, project_root = config_fs
+    fs.create_file(f"{project_root}/.env", contents="A=1\nB=2\n")
+    fs.create_file(f"{project_root}/.env.example", contents="A=\n")
+
+    result = cli_runner.invoke([
+        "dev", "sync-env",
+        "--env-path", f"{project_root}/.env",
+        "--example-path", f"{project_root}/.env.example",
+        "--dry-run"
+    ])
+    assert result.exit_code == 0
+    assert "Dry-run режим. Изменения не внесены" in result.stdout
+    assert "=== Обнаруженные расхождения в переменных окружения ===" in result.stdout
+
+
 def test_generate_context_metadata_markdown(cli_runner, config_fs):
     """Проверяет генерацию YAML Frontmatter с метаданными в Markdown формате."""
     fs, project_root = config_fs

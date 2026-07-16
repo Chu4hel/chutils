@@ -65,8 +65,7 @@ class SyncEnvSubCommand(SubCommand):
         env_path = args.env_path or str(config.get("env_path", ".env"))
         example_path = args.example_path or str(config.get("example_path", ".env.example"))
 
-        from rich.prompt import Confirm
-        from rich.table import Table
+        from chutils.env import is_rich_enabled
         from chutils.dev.env_sync import check_env_sync, sync_env_files
 
         env_path_obj = Path(env_path)
@@ -89,25 +88,37 @@ class SyncEnvSubCommand(SubCommand):
             )
             return
 
-        table = Table(title="Обнаруженные расхождения в переменных окружения")
-        table.add_column("Файл", style="cyan")
-        table.add_column("Переменная", style="magenta")
-        table.add_column("Действие (при синхронизации)", style="green")
+        use_rich = is_rich_enabled()
+        if use_rich:
+            from rich.table import Table
+            table = Table(title="Обнаруженные расхождения в переменных окружения")
+            table.add_column("Файл", style="cyan")
+            table.add_column("Переменная", style="magenta")
+            table.add_column("Действие (при синхронизации)", style="green")
 
-        for k in diff.missing_in_example:
-            table.add_row(
-                example_path_obj.name,
-                k,
-                f"Добавить в {example_path_obj.name} (пустое значение)",
-            )
-        for k in diff.missing_in_env:
-            table.add_row(
-                env_path_obj.name,
-                k,
-                f"Добавить в {env_path_obj.name} (дефолтное значение из {example_path_obj.name})",
-            )
+            for k in diff.missing_in_example:
+                table.add_row(
+                    example_path_obj.name,
+                    k,
+                    f"Добавить в {example_path_obj.name} (пустое значение)",
+                )
+            for k in diff.missing_in_env:
+                table.add_row(
+                    env_path_obj.name,
+                    k,
+                    f"Добавить в {env_path_obj.name} (дефолтное значение из {example_path_obj.name})",
+                )
 
-        self.console.print(table)
+            self.console.print(table)
+        else:
+            self.console.print("\n=== Обнаруженные расхождения в переменных окружения ===")
+            self.console.print(f"{'Файл':<20} | {'Переменная':<30} | Действие (при синхронизации)")
+            self.console.print("-" * 80)
+            for k in diff.missing_in_example:
+                self.console.print(f"{example_path_obj.name:<20} | {k:<30} | Добавить в {example_path_obj.name} (пустое значение)")
+            for k in diff.missing_in_env:
+                self.console.print(f"{env_path_obj.name:<20} | {k:<30} | Добавить в {env_path_obj.name} (дефолтное значение из {example_path_obj.name})")
+            self.console.print()
 
         if args.dry_run:
             self.console.print("[yellow]Dry-run режим. Изменения не внесены.[/yellow]")
@@ -120,16 +131,25 @@ class SyncEnvSubCommand(SubCommand):
             sync_env = bool(diff.missing_in_env)
             sync_example = bool(diff.missing_in_example)
         else:
-            if diff.missing_in_env:
-                sync_env = Confirm.ask(
-                    f"Добавить отсутствующие переменные в [cyan]{env_path_obj.name}[/cyan]?",
-                    default=False,
-                )
-            if diff.missing_in_example:
-                sync_example = Confirm.ask(
-                    f"Добавить отсутствующие переменные в [cyan]{example_path_obj.name}[/cyan]?",
-                    default=False,
-                )
+            if use_rich:
+                from rich.prompt import Confirm
+                if diff.missing_in_env:
+                    sync_env = Confirm.ask(
+                        f"Добавить отсутствующие переменные в [cyan]{env_path_obj.name}[/cyan]?",
+                        default=False,
+                    )
+                if diff.missing_in_example:
+                    sync_example = Confirm.ask(
+                        f"Добавить отсутствующие переменные в [cyan]{example_path_obj.name}[/cyan]?",
+                        default=False,
+                    )
+            else:
+                if diff.missing_in_env:
+                    ans = input(f"Добавить отсутствующие переменные в {env_path_obj.name}? [y/N]: ").strip().lower()
+                    sync_env = ans in ("y", "yes")
+                if diff.missing_in_example:
+                    ans = input(f"Добавить отсутствующие переменные в {example_path_obj.name}? [y/N]: ").strip().lower()
+                    sync_example = ans in ("y", "yes")
 
         if not sync_env and not sync_example:
             self.console.print("[yellow]Синхронизация отменена пользователем.[/yellow]")
