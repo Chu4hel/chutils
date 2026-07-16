@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from chutils.dev.generate_few_shot import (
+from chutils.dev.few_shot import (
     ArchitectureDetector,
     DetectedEntities,
     FewShotBankWriter,
@@ -507,5 +507,5 @@ class TestLazyImport:
         assert func is not None or hasattr(chutils, "dev")
 
     def test_direct_import(self) -> None:
-        from chutils.dev.generate_few_shot import generate_few_shot_bank as gfb
+        from chutils.dev.few_shot import generate_few_shot_bank as gfb
         assert callable(gfb)

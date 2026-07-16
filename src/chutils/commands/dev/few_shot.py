@@ -42,7 +42,7 @@ class FewShotSubCommand(SubCommand):
         Args:
             args: Объект Namespace с аргументами командной строки.
         """
-        from chutils.dev.generate_few_shot import generate_few_shot_bank
+        from chutils.dev.few_shot import generate_few_shot_bank
 
         try:
             generate_few_shot_bank(
