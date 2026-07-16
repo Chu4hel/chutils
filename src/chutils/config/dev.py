@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Any
 
 from chutils.typing import JSONDict
 from .core import get_config
@@ -28,7 +29,7 @@ def _parse_flat_toml(path: Path) -> JSONDict:
     result: JSONDict = {}
     current_section: str | None = None
     root_data: dict[str, Any] = {}
-    
+
     try:
         with open(path, encoding="utf-8") as f:
             lines = f.readlines()
@@ -42,12 +43,12 @@ def _parse_flat_toml(path: Path) -> JSONDict:
         if line.startswith("[") and line.endswith("]"):
             current_section = line[1:-1].strip()
             continue
-            
+
         if "=" in line:
             key, val_str = line.split("=", 1)
             key = key.strip()
             val_str = val_str.strip()
-            
+
             try:
                 val = ast.literal_eval(val_str)
             except Exception:
@@ -57,11 +58,12 @@ def _parse_flat_toml(path: Path) -> JSONDict:
                     val = False
                 elif val_str.startswith("[") and val_str.endswith("]"):
                     val = [item.strip(" '\"") for item in val_str[1:-1].split(",") if item.strip()]
-                elif (val_str.startswith('"') and val_str.endswith('"')) or (val_str.startswith("'") and val_str.endswith("'")):
+                elif (val_str.startswith('"') and val_str.endswith('"')) or (
+                        val_str.startswith("'") and val_str.endswith("'")):
                     val = val_str[1:-1]
                 else:
                     val = val_str
-                    
+
             if current_section is None:
                 root_data[key] = val
             else:
@@ -82,7 +84,7 @@ def _parse_flat_toml(path: Path) -> JSONDict:
     for k, v in root_data.items():
         if k not in result:
             result[k] = v
-            
+
     return result
 
 
@@ -97,7 +99,7 @@ def load_external_config(path: Path) -> JSONDict:
     """
     if not path.exists():
         return {}
-        
+
     if path.suffix == ".json":
         import json
         try:
@@ -113,7 +115,7 @@ def load_external_config(path: Path) -> JSONDict:
                     return data
         except Exception:
             pass
-            
+
     elif path.suffix == ".toml":
         data = {}
         try:
@@ -127,7 +129,7 @@ def load_external_config(path: Path) -> JSONDict:
                     data = tomli.load(f)
             except ImportError:
                 data = _parse_flat_toml(path)
-                
+
         if isinstance(data, dict):
             # 1. Сначала ищем вложенную структуру [tool.chutils.ai-lint]
             if "tool" in data and isinstance(data["tool"], dict):
@@ -141,7 +143,7 @@ def load_external_config(path: Path) -> JSONDict:
                 return data["ai-lint"]
             # 3. Иначе возвращаем корневой словарь
             return data
-            
+
     return {}
 
 
