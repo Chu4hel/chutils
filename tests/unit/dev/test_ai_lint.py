@@ -4,7 +4,7 @@ from chutils.dev.ai_lint import Rule, LintResult, LinterEngine, load_custom_rule
 from chutils.dev.rules import (
     ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
     ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule,
-    APIMapHashRule
+    APIMapHashRule, FileDependencySyncRule
 )
 
 
@@ -627,6 +627,66 @@ def test_api_map_hash_rule_cache(tmp_path):
         json.dump(custom_data, f)
 
     save_context_metadata_cache(tmp_path, str(custom_file_path), "json", correct_hash)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+
+def test_file_dependency_sync_rule(tmp_path, mocker):
+    """Тестирует FileDependencySyncRule."""
+    rule = FileDependencySyncRule()
+    rule.config = {
+        "dependencies": {
+            "src/chutils/**/*.py": ["README.md", "docs/api_map.md"]
+        }
+    }
+
+    # Сценарий 1: Нет измененных файлов
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[]
+    )
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # Сценарий 2: Изменен исходный файл, но зависимые файлы не изменились (должно быть предупреждение)
+    src_file = tmp_path / "src" / "chutils" / "cli.py"
+    src_file.parent.mkdir(parents=True, exist_ok=True)
+    src_file.write_text("print('hello')", encoding="utf-8")
+
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[str(src_file.resolve())]
+    )
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "были изменены, но связанные файлы" in results[0].message
+    assert results[0].file_path == str(src_file.resolve())
+
+    # Сценарий 3: Изменен исходный файл и один из зависимых (все ок, 0 предупреждений)
+    dep_file = tmp_path / "README.md"
+    dep_file.write_text("Documentation", encoding="utf-8")
+
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[str(src_file.resolve()), str(dep_file.resolve())]
+    )
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # Сценарий 4: Изменен исходный файл, но на него добавлена директива игнорирования
+    src_file_ignored = tmp_path / "src" / "chutils" / "ignored.py"
+    src_file_ignored.write_text(
+        "# chutils: ignore[FileDependencySyncRule]\nprint('ignore')",
+        encoding="utf-8"
+    )
+
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[str(src_file_ignored.resolve())]
+    )
 
     results = rule.check(str(tmp_path), [])
     assert len(results) == 0

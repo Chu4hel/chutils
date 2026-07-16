@@ -17,8 +17,130 @@ DEFAULT_AI_LINT_CONFIG: JSONDict = {
     "env_path": ".env",
     "example_path": ".env.example",
     "max_file_lines": 700,
-    "max_file_classes": 5
+    "max_file_classes": 5,
+    "dependencies": {}  # chutils: ignore[ChutilsIntegrationRule]
 }
+
+
+def _parse_flat_toml(path: Path) -> JSONDict:
+    """Легковесный TOML-парсер для извлечения параметров без сторонних зависимостей."""
+    import ast
+    result: JSONDict = {}
+    current_section: str | None = None
+    root_data: dict[str, Any] = {}
+    
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = f.readlines()
+    except Exception:
+        return result
+
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("[") and line.endswith("]"):
+            current_section = line[1:-1].strip()
+            continue
+            
+        if "=" in line:
+            key, val_str = line.split("=", 1)
+            key = key.strip()
+            val_str = val_str.strip()
+            
+            try:
+                val = ast.literal_eval(val_str)
+            except Exception:
+                if val_str.lower() == "true":
+                    val = True
+                elif val_str.lower() == "false":
+                    val = False
+                elif val_str.startswith("[") and val_str.endswith("]"):
+                    val = [item.strip(" '\"") for item in val_str[1:-1].split(",") if item.strip()]
+                elif (val_str.startswith('"') and val_str.endswith('"')) or (val_str.startswith("'") and val_str.endswith("'")):
+                    val = val_str[1:-1]
+                else:
+                    val = val_str
+                    
+            if current_section is None:
+                root_data[key] = val
+            else:
+                parts = current_section.split(".")
+                if len(parts) == 1:
+                    sect = parts[0]
+                    if sect not in result:
+                        result[sect] = {}
+                    result[sect][key] = val
+                else:
+                    if parts[-1] == "dependencies":
+                        if "dependencies" not in result:
+                            result["dependencies"] = {}
+                        result["dependencies"][key] = val
+                    elif parts[-1] == "ai-lint":
+                        result[key] = val
+
+    for k, v in root_data.items():
+        if k not in result:
+            result[k] = v
+            
+    return result
+
+
+def load_external_config(path: Path) -> JSONDict:
+    """Загружает настройки из внешнего файла (JSON или TOML).
+
+    Args:
+        path: Путь к внешнему файлу конфигурации.
+
+    Returns:
+        Словарь с загруженными настройками.
+    """
+    if not path.exists():
+        return {}
+        
+    if path.suffix == ".json":
+        import json
+        try:
+            with open(path, encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    if "tool" in data and isinstance(data["tool"], dict):
+                        chutils = data["tool"].get("chutils", {})
+                        if isinstance(chutils, dict) and "ai-lint" in chutils:
+                            return chutils["ai-lint"]
+                    if "ai-lint" in data:
+                        return data["ai-lint"]
+                    return data
+        except Exception:
+            pass
+            
+    elif path.suffix == ".toml":
+        data = {}
+        try:
+            import tomllib
+            with open(path, "rb") as f:
+                data = tomllib.load(f)
+        except ImportError:
+            try:
+                import tomli
+                with open(path, "rb") as f:
+                    data = tomli.load(f)
+            except ImportError:
+                data = _parse_flat_toml(path)
+                
+        if isinstance(data, dict):
+            tool_dict = data.get("tool", {})
+            if isinstance(tool_dict, dict):
+                chutils_dict = tool_dict.get("chutils", {})
+                if isinstance(chutils_dict, dict):
+                    ai_lint_dict = chutils_dict.get("ai-lint", {})
+                    if isinstance(ai_lint_dict, dict):
+                        return ai_lint_dict
+            if "ai-lint" in data:
+                return data["ai-lint"]
+            return data
+            
+    return {}
 
 
 def parse_chutils_ignore(base_dir: str) -> list[str]:
@@ -100,6 +222,17 @@ def load_ai_lint_config(cli_args: JSONDict | None = None) -> JSONDict:
         pyproject_config = load_pyproject_toml(str(pyproject_path))
         for k, v in pyproject_config.items():
             merged_config[k] = v
+
+    # Fallback внешние файлы конфигурации (ai-lint.toml, ai-lint.json)
+    for filename in ("ai-lint.toml", "ai-lint.json"):
+        ext_path = Path(base_dir) / filename
+        if ext_path.exists():
+            ext_config = load_external_config(ext_path)
+            for k, v in ext_config.items():
+                if k == "dependencies" and isinstance(v, dict) and isinstance(merged_config.get("dependencies"), dict):
+                    merged_config["dependencies"].update(v)
+                else:
+                    merged_config[k] = v
 
     # 3. config.yml (Dev.AI-Lint)
     try:

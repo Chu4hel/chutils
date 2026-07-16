@@ -1,5 +1,6 @@
 from .api_map import APIMapRule, APIMapHashRule
 from .decomposition import CodeDecompositionRule
+from .dependency_sync import FileDependencySyncRule
 from .docstring import DocstringQualityRule
 from .env import EnvSyncRule
 from .integration import ChutilsIntegrationRule
@@ -15,4 +16,5 @@ __all__ = [
     "APIMapHashRule",
     "EnvSyncRule",
     "CodeDecompositionRule",
+    "FileDependencySyncRule",
 ]
