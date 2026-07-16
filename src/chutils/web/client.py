@@ -2,7 +2,7 @@ import asyncio
 import time
 from typing import Any, cast, TYPE_CHECKING
 
-import httpx
+import httpx  # chutils: ignore[ChutilsIntegrationRule]
 from httpx._utils import URLPattern
 
 from chutils.cache import InMemoryCacheBackend
@@ -53,6 +53,7 @@ class WebClient(httpx.Client):
         """Инициализирует WebClient.
 
         Args:
+            *args: Позиционные аргументы для родительского класса httpx.Client.
             user_agent_rotator: Ротатор User-Agent.
             proxy_pool: Менеджер пула прокси.
             rotate_ua: Включить ли ротацию User-Agent.
@@ -67,6 +68,7 @@ class WebClient(httpx.Client):
             rate_limit_wait: Ждать ли освобождения токена (или вызывать исключение).
             cache_ttl: Время жизни кэша GET-запросов в секундах.
             cache_backend: Бэкенд кэша.
+            **kwargs: Именованные аргументы для родительского класса httpx.Client.
         """
         self.user_agent_rotator: UserAgentRotator = (
                 user_agent_rotator or UserAgentRotator()
@@ -135,7 +137,16 @@ class WebClient(httpx.Client):
     def send(
             self, request: httpx.Request, *args: Any, **kwargs: Any
     ) -> httpx.Response:
-        """Перехватывает отправку запроса для ротации, лимитов и кэширования."""
+        """Перехватывает отправку запроса для ротации, лимитов и кэширования.
+
+        Args:
+            request: Объект отправляемого запроса httpx.Request.
+            *args: Произвольные позиционные аргументы.
+            **kwargs: Произвольные именованные аргументы.
+
+        Returns:
+            Ответ сервера httpx.Response.
+        """
         # 1. Rate Limit
         if self._rate_limit_calls:
             limit_key = f"web_host_{request.url.host}"
@@ -236,7 +247,26 @@ class AsyncWebClient(httpx.AsyncClient):
             cache_backend: Any | None = None,
             **kwargs: Any,
     ) -> None:
-        """Инициализирует AsyncWebClient."""
+        """Инициализирует AsyncWebClient.
+
+        Args:
+            *args: Позиционные аргументы для родительского класса httpx.AsyncClient.
+            user_agent_rotator: Ротатор User-Agent.
+            proxy_pool: Менеджер пула прокси.
+            rotate_ua: Включить ли ротацию User-Agent.
+            rotate_proxy: Включить ли смену прокси при ошибках.
+            retries: Количество повторов при ошибках.
+            retry_delay: Базовая задержка между попытками в секундах.
+            retry_backoff: Множитель задержки.
+            retry_on_5xx: Считать ли 5xx ошибки сбоем для повтора.
+            rate_limit_calls: Ограничение количества запросов к хосту.
+            rate_limit_period: Период ограничения в секундах.
+            rate_limit_strategy: Стратегия лимитирования ('token_bucket' или 'leaky_bucket').
+            rate_limit_wait: Ждать ли освобождения токена (или вызывать исключение).
+            cache_ttl: Время жизни кэша GET-запросов в секундах.
+            cache_backend: Бэкенд кэша.
+            **kwargs: Именованные аргументы для родительского класса httpx.AsyncClient.
+        """
         self.user_agent_rotator: UserAgentRotator = (
                 user_agent_rotator or UserAgentRotator()
         )
@@ -301,7 +331,16 @@ class AsyncWebClient(httpx.AsyncClient):
     async def send(
             self, request: httpx.Request, *args: Any, **kwargs: Any
     ) -> httpx.Response:
-        """Перехватывает отправку запроса для ротации, лимитов и кэширования."""
+        """Перехватывает отправку запроса для ротации, лимитов и кэширования.
+
+        Args:
+            request: Объект отправляемого запроса httpx.Request.
+            *args: Произвольные позиционные аргументы.
+            **kwargs: Произвольные именованные аргументы.
+
+        Returns:
+            Ответ сервера httpx.Response.
+        """
         # 1. Rate Limit
         if self._rate_limit_calls:
             limit_key = f"web_host_{request.url.host}"

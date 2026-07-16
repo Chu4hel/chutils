@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from typing import Any, TYPE_CHECKING
 
 from chutils.env import JSON_LOGGER_AVAILABLE
@@ -47,6 +47,13 @@ class ChutilsJsonFormatter(_BaseFormatter):
     """
 
     def add_fields(self, log_record: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]) -> None:
+        """Добавляет кастомные поля в запись JSON-лога.
+
+        Args:
+            log_record: Итоговый словарь записи лога для сериализации.
+            record: Оригинальный объект LogRecord.
+            message_dict: Дополнительные параметры сообщения.
+        """
         if not JSON_LOGGER_AVAILABLE:
             return
 

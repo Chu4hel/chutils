@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import threading
 import time
 from pathlib import Path
@@ -153,11 +153,11 @@ class _ConfigManager:
                 return
 
             # Проверка глобального флага отключения переопределения через ENV
-            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")
+            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
             if disable_env_override:
                 return
 
-            for env_key, env_value in os.environ.items():
+            for env_key, env_value in os.environ.items():  # chutils: ignore[ChutilsIntegrationRule]
                 if env_key.startswith("CH_") and env_key not in ("CH_ENV", "CH_DISABLE_ENV_OVERRIDE",
                                                                  "CH_DISABLE_KEYRING_WARNING"):
                     # Шаблон: CH_[SECTION]_[KEY]
@@ -171,7 +171,7 @@ class _ConfigManager:
                         self.record_trace(section.lower(), key.lower(), env_value, "env")
 
             # Специфический ключ для secrets
-            secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")
+            secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")  # chutils: ignore[ChutilsIntegrationRule]
             if secrets_env is not None:
                 self.record_trace("secrets", "disable_keyring", secrets_env, "env")
 
@@ -386,7 +386,7 @@ class _ConfigManager:
 
                 # 1. Специфичный для окружения (например, config.production.yml)
                 import os
-                ch_env = os.getenv("CH_ENV", "development")
+                ch_env = os.getenv("CH_ENV", "development")  # chutils: ignore[ChutilsIntegrationRule]
                 env_file_name = f"{main_path_obj.stem}.{ch_env}{file_ext}"
                 potential_env_path = main_path_obj.parent / env_file_name
                 if potential_env_path.exists():

@@ -1,5 +1,4 @@
-import logging
-from typing import Dict, Optional
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 
 from .base import MetricsProvider
 from .in_memory import InMemoryMetricsProvider
@@ -29,11 +28,13 @@ _active_provider: MetricsProvider | None = None
 
 
 def get_provider() -> MetricsProvider:
-    """
-    Получить текущий активный провайдер метрик.
+    """Получить текущий активный провайдер метрик.
     
     Если провайдер не задан вручную, инициализирует PrometheusMetricsProvider
     (если библиотека доступна) или InMemoryMetricsProvider в качестве fallback.
+
+    Returns:
+        Текущий активный экземпляр MetricsProvider.
     """
     global _active_provider
     if _active_provider is None:
@@ -77,16 +78,22 @@ def get_provider() -> MetricsProvider:
 
 
 def set_provider(provider: MetricsProvider) -> None:
-    """
-    Установить провайдер метрик вручную (например, для тестирования).
+    """Установить провайдер метрик вручную (например, для тестирования).
+
+    Args:
+        provider: Экземпляр MetricsProvider для установки.
     """
     global _active_provider
     _active_provider = provider
 
 
 def increment(name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
-    """
-    Увеличить счетчик (Counter) на заданное значение.
+    """Увеличить счетчик (Counter) на заданное значение.
+
+    Args:
+        name: Имя метрики.
+        value: Значение, на которое нужно увеличить счетчик.
+        labels: Словарь меток для метрики.
     """
     try:
         get_provider().increment(name, value, labels)
@@ -95,8 +102,12 @@ def increment(name: str, value: float = 1.0, labels: dict[str, str] | None = Non
 
 
 def set_gauge(name: str, value: float, labels: dict[str, str] | None = None) -> None:
-    """
-    Установить значение датчика (Gauge).
+    """Установить значение датчика (Gauge).
+
+    Args:
+        name: Имя датчика.
+        value: Устанавливаемое значение датчика.
+        labels: Словарь меток для метрики.
     """
     try:
         get_provider().set_gauge(name, value, labels)
@@ -105,8 +116,12 @@ def set_gauge(name: str, value: float, labels: dict[str, str] | None = None) -> 
 
 
 def observe(name: str, value: float, labels: dict[str, str] | None = None) -> None:
-    """
-    Записать значение в гистограмму/таймер (Histogram/Timer).
+    """Записать значение в гистограмму/таймер (Histogram/Timer).
+
+    Args:
+        name: Имя метрики гистограммы/таймера.
+        value: Наблюдаемое значение.
+        labels: Словарь меток для метрики.
     """
     try:
         get_provider().observe(name, value, labels)
@@ -115,8 +130,10 @@ def observe(name: str, value: float, labels: dict[str, str] | None = None) -> No
 
 
 def generate_latest() -> str:
-    """
-    Сгенерировать дамп последних метрик в текстовом формате.
+    """Сгенерировать дамп последних метрик в текстовом формате.
+
+    Returns:
+        Дамп метрик в формате Prometheus или пустая строка при ошибке.
     """
     try:
         return get_provider().generate_latest()

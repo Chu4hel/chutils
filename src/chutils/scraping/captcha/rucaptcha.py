@@ -2,7 +2,7 @@ import base64
 import time
 from typing import Any
 
-import httpx
+import httpx  # chutils: ignore[ChutilsIntegrationRule]
 
 from .base import BaseCaptchaSolver, BaseAsyncCaptchaSolver
 from .exceptions import (
@@ -27,6 +27,12 @@ class RuCaptchaSolver(BaseCaptchaSolver):
     secret_key_name = "RUCAPTCHA_API_KEY"
 
     def __init__(self, api_key: str | None = None, host: str = "https://rucaptcha.com") -> None:
+        """Инициализирует RuCaptchaSolver.
+
+        Args:
+            api_key: Явно заданный API-ключ.
+            host: Адрес API-сервиса RuCaptcha.
+        """
         # Также проверяем TWOCAPTCHA_API_KEY как альтернативу
         if not api_key:
             from chutils.secret_manager import SecretManager
@@ -45,7 +51,17 @@ class RuCaptchaSolver(BaseCaptchaSolver):
             poll_interval: float = 5.0,
             **kwargs: Any,
     ) -> str:
-        """Синхронно решает капчу-изображение."""
+        """Синхронно решает капчу-изображение.
+
+        Args:
+            image_data: Бинарные данные картинки или base64-строка.
+            timeout: Максимальное время ожидания решения (в секундах).
+            poll_interval: Интервал опроса статуса решения (в секундах).
+            **kwargs: Дополнительные параметры задачи.
+
+        Returns:
+            Распознанный текст с изображения.
+        """
         # 1. Отправка капчи
         img_b64 = image_data if isinstance(image_data, str) else base64.b64encode(image_data).decode("utf-8")
 
@@ -94,7 +110,18 @@ class RuCaptchaSolver(BaseCaptchaSolver):
             poll_interval: float = 5.0,
             **kwargs: Any,
     ) -> str:
-        """Синхронно решает ReCaptcha v2/v3."""
+        """Синхронно решает ReCaptcha v2/v3.
+
+        Args:
+            sitekey: Ключ рекапчи на целевом сайте.
+            page_url: URL страницы, на которой расположена рекапча.
+            timeout: Максимальное время ожидания решения (в секундах).
+            poll_interval: Интервал опроса статуса решения (в секундах).
+            **kwargs: Дополнительные параметры задачи.
+
+        Returns:
+            Токен ответа рекапчи.
+        """
         payload = {
             "key": self.api_key,
             "method": "userrecaptcha",
@@ -138,6 +165,12 @@ class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
     secret_key_name = "RUCAPTCHA_API_KEY"
 
     def __init__(self, api_key: str | None = None, host: str = "https://rucaptcha.com") -> None:
+        """Инициализирует AsyncRuCaptchaSolver.
+
+        Args:
+            api_key: Явно заданный API-ключ.
+            host: Адрес API-сервиса RuCaptcha.
+        """
         if not api_key:
             from chutils.secret_manager import SecretManager
             try:
@@ -155,7 +188,17 @@ class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
             poll_interval: float = 5.0,
             **kwargs: Any,
     ) -> str:
-        """Асинхронно решает капчу-изображение."""
+        """Асинхронно решает капчу-изображение.
+
+        Args:
+            image_data: Бинарные данные картинки или base64-строка.
+            timeout: Максимальное время ожидания решения (в секундах).
+            poll_interval: Интервал опроса статуса решения (в секундах).
+            **kwargs: Дополнительные параметры задачи.
+
+        Returns:
+            Распознанный текст с изображения.
+        """
         import asyncio
 
         img_b64 = image_data if isinstance(image_data, str) else base64.b64encode(image_data).decode("utf-8")
@@ -204,7 +247,18 @@ class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
             poll_interval: float = 5.0,
             **kwargs: Any,
     ) -> str:
-        """Асинхронно решает ReCaptcha v2/v3."""
+        """Асинхронно решает ReCaptcha v2/v3.
+
+        Args:
+            sitekey: Ключ рекапчи на целевом сайте.
+            page_url: URL страницы, на которой расположена рекапча.
+            timeout: Максимальное время ожидания решения (в секундах).
+            poll_interval: Интервал опроса статуса решения (в секундах).
+            **kwargs: Дополнительные параметры задачи.
+
+        Returns:
+            Токен ответа рекапчи.
+        """
         import asyncio
 
         payload = {

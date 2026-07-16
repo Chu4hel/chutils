@@ -3,7 +3,8 @@ import pytest
 from chutils.dev.ai_lint import Rule, LintResult, LinterEngine, load_custom_rules
 from chutils.dev.rules import (
     ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
-    ChutilsIntegrationRule, APIMapRule
+    ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule,
+    APIMapHashRule, FileDependencySyncRule
 )
 
 
@@ -300,20 +301,42 @@ def test_chutils_integration_rule(tmp_path):
 import logging
 import os
 import keyring
+import requests
+import httpx
+import tempfile
+import json
+import datetime
+from datetime import timezone
+from pathlib import Path
 
 logging.info("Test message")
 db_host = os.environ.get("DB_HOST")
 token = keyring.get_password("system", "user")
+Path("test").mkdir(parents=True, exist_ok=True)
+Path("test.txt").write_text("hello")
+tempfile.mkstemp()
+os.replace("src", "dst")
+json.dump({"data": 1}, None)
+t1 = datetime.datetime.utcnow()
+t2 = datetime.datetime.now(timezone.utc)
 """
     file_path = tmp_path / "bad.py"
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(bad_code)
 
     results = rule.check(str(tmp_path), [str(file_path)])
-    assert len(results) == 3
+    assert len(results) == 11
     assert any("logging" in r.message for r in results)
     assert any("os.environ" in r.message or "os.getenv" in r.message for r in results)
     assert any("keyring" in r.message for r in results)
+    assert any("requests" in r.message for r in results)
+    assert any("httpx" in r.message for r in results)
+    assert any("mkdir" in r.message for r in results)
+    assert any("write_text" in r.message for r in results)
+    assert any("паттерн ручной атомарной записи" in r.message for r in results)
+    assert any("json.dump" in r.message for r in results)
+    assert any(".utcnow()" in r.message for r in results)
+    assert any(".now(timezone.utc)" in r.message for r in results)
 
 
 def test_api_map_rule(tmp_path):
@@ -339,3 +362,373 @@ def test_api_map_rule(tmp_path):
     results_outdated = rule.check(str(tmp_path), [])
     assert len(results_outdated) == 1
     assert "устарел или не соответствует" in results_outdated[0].message
+
+
+def test_api_map_rule_formats(tmp_path):
+    """Тестирует APIMapRule для форматов JSON и Tree."""
+    rule = APIMapRule()
+    (tmp_path / "src" / "chutils").mkdir(parents=True, exist_ok=True)
+    chutils_dir = tmp_path / ".chutils"
+    chutils_dir.mkdir(exist_ok=True)
+
+    # 1. Формат JSON: файл отсутствует
+    import json
+    cache_path = chutils_dir / "context_metadata.json"
+    cache_data = {
+        "file_path": "my_api.json",
+        "format": "json",
+        "project_hash": "hash"
+    }
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(cache_data, f)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "Файл контекста не найден: my_api.json" in results[0].message
+
+    # 2. Формат JSON: файл устарел
+    api_json_path = tmp_path / "my_api.json"
+    with open(api_json_path, "w", encoding="utf-8") as f:
+        json.dump({"api": []}, f)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "устарел или не соответствует" in results[0].message
+
+
+def test_env_sync_rule(tmp_path, mocker):
+    """Тестирует EnvSyncRule."""
+    mock_config = {
+        "env_path": "custom.env",
+        "example_path": "custom.env.example"
+    }
+    mocker.patch("chutils.config.dev.load_ai_lint_config", return_value=mock_config)
+
+    rule = EnvSyncRule()
+
+    # 1. Если файлов нет вообще - нет ошибок
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # 2. Если есть .env, но нет .env.example
+    env_file = tmp_path / "custom.env"
+    env_file.write_text("A=1\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "отсутствует шаблон" in results[0].message
+
+    # 3. Если есть .env.example, но нет .env
+    env_file.unlink()
+    example_file = tmp_path / "custom.env.example"
+    example_file.write_text("A=10\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "отсутствует локальный" in results[0].message
+
+    # 4. Оба файла есть, но не синхронизированы
+    env_file.write_text("A=1\nB=2\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "Расхождение в ключах окружения" in results[0].message
+    assert "отсутствуют в custom.env.example: B" in results[0].message
+
+    # 5. Оба файла синхронизированы
+    example_file.write_text("A=10\nB=\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+
+def test_code_decomposition_rule(tmp_path):
+    """Тестирует CodeDecompositionRule."""
+    rule = CodeDecompositionRule()
+    rule.config = {
+        "max_file_lines": 10,
+        "max_file_classes": 2
+    }
+
+    # 1. Файл в пределах нормы
+    ok_code = """
+class A:
+    pass
+
+class B:
+    pass
+"""
+    file_ok = tmp_path / "ok.py"
+    file_ok.write_text(ok_code, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_ok)])
+    assert len(results) == 0
+
+    # 2. Превышение количества строк
+    long_code = "\n" * 12
+    file_long = tmp_path / "long.py"
+    file_long.write_text(long_code, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_long)])
+    assert len(results) == 1
+    assert "превышает ограничение по размеру" in results[0].message
+    assert results[0].severity == "warn"
+
+    # 3. Превышение количества классов
+    many_classes_code = """
+class A: pass
+class B: pass
+class C: pass
+"""
+    file_many = tmp_path / "many.py"
+    file_many.write_text(many_classes_code, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_many)])
+    assert len(results) == 1
+    assert "содержит слишком много классов" in results[0].message
+
+    # 4. Превышение строк и классов одновременно
+    both_exceeded_code = """
+class A: pass
+class B: pass
+class C: pass
+""" + ("\n" * 10)
+    file_both = tmp_path / "both.py"
+    file_both.write_text(both_exceeded_code, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_both)])
+    assert len(results) == 2
+    assert any("превышает ограничение по размеру" in r.message for r in results)
+    assert any("содержит слишком много классов" in r.message for r in results)
+
+    # 5. Игнорирование правила через комментарий # chutils: ignore [CodeDecompositionRule]
+    ignored_code_1 = """# chutils: ignore [CodeDecompositionRule]
+class A: pass
+class B: pass
+class C: pass
+""" + ("\n" * 10)
+    file_ignored_1 = tmp_path / "ignored_1.py"
+    file_ignored_1.write_text(ignored_code_1, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_ignored_1)])
+    assert len(results) == 0
+
+    # 6. Игнорирование правила через комментарий # chutils: ignore [all]
+    ignored_code_2 = """# chutils: ignore [all]
+class A: pass
+class B: pass
+class C: pass
+""" + ("\n" * 10)
+    file_ignored_2 = tmp_path / "ignored_2.py"
+    file_ignored_2.write_text(ignored_code_2, encoding="utf-8")
+    results = rule.check(str(tmp_path), [str(file_ignored_2)])
+    assert len(results) == 0
+
+
+def test_api_map_hash_rule(tmp_path):
+    """Тестирует APIMapHashRule."""
+    rule = APIMapHashRule()
+
+    # 1. Если директория src/chutils отсутствует - выход без проверки
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # Создаем структуру проекта chutils
+    (tmp_path / "src" / "chutils").mkdir(parents=True, exist_ok=True)
+    api_map_path = tmp_path / "api_map.md"
+
+    # 2. Если api_map.md не существует - выход без ошибок
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # 3. api_map.md пустой
+    api_map_path.write_text("", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "отсутствует блок метаданных" in results[0].message
+
+    # 4. Frontmatter не закрыт
+    api_map_path.write_text("---\nproject_version: 1.0\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "не закрыт" in results[0].message
+
+    # 5. Отсутствует project_hash
+    api_map_path.write_text("---\nproject_version: 1.0\n---\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "отсутствует хэш проекта" in results[0].message
+
+    # 6. Хэш совпадает
+    from chutils.dev.ast_indexer import calculate_project_hash
+    # Создаем python файл для хэширования
+    (tmp_path / "src" / "chutils" / "helper.py").write_text("def run(): pass\n", encoding="utf-8")
+    correct_hash = calculate_project_hash(tmp_path)
+    api_map_path.write_text(f"---\nproject_hash: {correct_hash}\n---\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # 7. Хэш не совпадает
+    # Изменяем файл, хэш меняется
+    (tmp_path / "src" / "chutils" / "helper.py").write_text("def run(): pass\n# Изменение\n", encoding="utf-8")
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "Файл контекста (api_map.md) устарел" in results[0].message
+    assert results[0].severity == "warn"
+
+    # 8. Режим staged: если файлы не менялись - проверка пропускается
+    rule.staged = True
+    results = rule.check(str(tmp_path), ["docs/README.md"])
+    assert len(results) == 0
+
+    # Режим staged: если файлы менялись - проверка работает
+    results = rule.check(str(tmp_path), ["src/chutils/helper.py"])
+    assert len(results) == 1
+    assert "Файл контекста (api_map.md) устарел" in results[0].message
+
+
+def test_api_map_hash_rule_cache(tmp_path):
+    """Тестирует APIMapHashRule с использованием кэша .chutils/context_metadata.json."""
+    rule = APIMapHashRule()
+    (tmp_path / "src" / "chutils").mkdir(parents=True, exist_ok=True)
+
+    # 1. Создаем кэш, указывающий на кастомный JSON-файл
+    chutils_dir = tmp_path / ".chutils"
+    chutils_dir.mkdir(exist_ok=True)
+
+    import json
+    cache_path = chutils_dir / "context_metadata.json"
+    cache_data = {
+        "file_path": "my_custom_index.json",
+        "format": "json",
+        "project_hash": "some_old_hash"
+    }
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(cache_data, f)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "Файл контекста не найден: my_custom_index.json" in results[0].message
+
+    # 2. Создаем файл my_custom_index.json с несовпадающим хэшем
+    custom_file_path = tmp_path / "my_custom_index.json"
+    (tmp_path / "src" / "chutils" / "helper.py").write_text("def run(): pass\n", encoding="utf-8")
+
+    custom_data = {
+        "metadata": {
+            "project_hash": "mismatched_hash"
+        },
+        "api": []
+    }
+    with open(custom_file_path, "w", encoding="utf-8") as f:
+        json.dump(custom_data, f)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "Файл контекста (my_custom_index.json) устарел" in results[0].message
+
+    # 3. Совпадающий хэш
+    from chutils.dev.ast_indexer import calculate_project_hash, save_context_metadata_cache
+    correct_hash = calculate_project_hash(tmp_path)
+
+    custom_data["metadata"]["project_hash"] = correct_hash
+    with open(custom_file_path, "w", encoding="utf-8") as f:
+        json.dump(custom_data, f)
+
+    save_context_metadata_cache(tmp_path, str(custom_file_path), "json", correct_hash)
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+
+def test_file_dependency_sync_rule(tmp_path, mocker):
+    """Тестирует FileDependencySyncRule."""
+    rule = FileDependencySyncRule()
+    rule.config = {
+        "dependencies": {
+            "src/chutils/**/*.py": ["README.md", "docs/api_map.md"]
+        }
+    }
+
+    # Сценарий 1: Нет измененных файлов
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[]
+    )
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_new_files",
+        return_value=[]
+    )
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # Сценарий 2: Изменен исходный файл, но зависимые файлы не изменились (должно быть предупреждение)
+    src_file = tmp_path / "src" / "chutils" / "cli.py"
+    src_file.parent.mkdir(parents=True, exist_ok=True)
+    src_file.write_text("print('hello')", encoding="utf-8")
+
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[str(src_file.resolve())]
+    )
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "были изменены, но связанные файлы" in results[0].message
+    assert results[0].file_path == str(src_file.resolve())
+
+    # Сценарий 3: Изменен исходный файл и один из зависимых (все ок, 0 предупреждений)
+    dep_file = tmp_path / "README.md"
+    dep_file.write_text("Documentation", encoding="utf-8")
+
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[str(src_file.resolve()), str(dep_file.resolve())]
+    )
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # Сценарий 4: Изменен исходный файл, но на него добавлена директива игнорирования
+    src_file_ignored = tmp_path / "src" / "chutils" / "ignored.py"
+    src_file_ignored.write_text(
+        "# chutils: ignore[FileDependencySyncRule]\nprint('ignore')",
+        encoding="utf-8"
+    )
+
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[str(src_file_ignored.resolve())]
+    )
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+    # Сценарий 5: Использование new: префикса. Файл изменен, но не является новым
+    rule.config = {
+        "dependencies": {
+            "new:src/chutils/dev/rules/*.py": ["docs/ai_lint.md"]
+        }
+    }
+    rules_file = tmp_path / "src" / "chutils" / "dev" / "rules" / "my_rule.py"
+    rules_file.parent.mkdir(parents=True, exist_ok=True)
+    rules_file.write_text("print('rule')", encoding="utf-8")
+
+    # Имитируем, что файл изменен, но get_git_new_files возвращает пустой список
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[str(rules_file.resolve())]
+    )
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_new_files",
+        return_value=[]
+    )
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0  # Срабатывать не должно, так как файл не новый
+
+    # Сценарий 6: Использование new: префикса. Добавлен новый файл
+    # Имитируем, что файл и изменен, и является новым
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[str(rules_file.resolve())]
+    )
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_new_files",
+        return_value=[str(rules_file.resolve())]
+    )
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1  # Должно сработать предупреждение
+    assert "были созданы новые файлы, но связанные файлы" in results[0].message

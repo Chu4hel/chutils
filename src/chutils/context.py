@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import contextvars
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import sys
 from typing import Any
 
@@ -15,14 +15,22 @@ _context: contextvars.ContextVar[dict[str, Any]] = _chutils_context_var
 
 
 def get_context() -> dict[str, Any]:
-    """Возвращает копию текущего контекста."""
+    """Возвращает копию текущего контекста.
+
+    Returns:
+        Словарь с текущими контекстными переменными.
+    """
     return _context.get().copy()
 
 
 def bind_context(**kwargs: Any) -> contextvars.Token[dict[str, Any]]:
-    """
-    Привязывает значения к текущему контексту.
-    Возвращает токен для последующей очистки через unbind_context.
+    """Привязывает значения к текущему контексту.
+
+    Args:
+        **kwargs: Ключи и значения для привязки к контексту.
+
+    Returns:
+        Токен для последующей очистки контекста через unbind_context.
     """
     current = get_context()
     current.update(kwargs)
@@ -30,7 +38,11 @@ def bind_context(**kwargs: Any) -> contextvars.Token[dict[str, Any]]:
 
 
 def unbind_context(token: contextvars.Token[dict[str, Any]]) -> None:
-    """Восстанавливает контекст до состояния, предшествующего bind_context."""
+    """Восстанавливает контекст до состояния, предшествующего bind_context.
+
+    Args:
+        token: Токен, возвращенный соответствующим вызовом bind_context.
+    """
     _context.reset(token)
 
 
@@ -50,6 +62,14 @@ class ContextFilter(logging.Filter):
     """
 
     def filter(self, record: logging.LogRecord) -> bool:
+        """Обогащает запись лога контекстными данными.
+
+        Args:
+            record: Запись лога, которую необходимо отфильтровать/обогатить.
+
+        Returns:
+            Всегда возвращает True для продолжения обработки записи.
+        """
         ctx = get_context()
 
         # Добавляем данные трассировки OpenTelemetry, если они доступны

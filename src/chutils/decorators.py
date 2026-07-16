@@ -245,6 +245,12 @@ class TokenBucket:
     """Алгоритм маркерной корзины (Token Bucket)."""
 
     def __init__(self, capacity: int, period: float) -> None:
+        """Инициализирует маркерную корзину.
+
+        Args:
+            capacity: Максимальная вместимость корзины (количество токенов).
+            period: Временной интервал в секундах, за который корзина полностью пополняется.
+        """
         self.capacity = float(capacity)
         self.period = float(period)
         self.refill_rate = self.capacity / self.period
@@ -254,6 +260,15 @@ class TokenBucket:
         self.lock = threading.Lock()
 
     def acquire(self, wait: bool = False) -> float | None:
+        """Запрашивает получение токена из корзины.
+
+        Args:
+            wait: Флаг необходимости блокирующего ожидания, если токенов нет.
+
+        Returns:
+            Время ожидания в секундах, если необходимо подождать, 0.0 если токен получен сразу,
+            или None, если токенов нет и wait=False.
+        """
         with self.lock:
             now = time.monotonic()
 
@@ -294,6 +309,12 @@ class LeakyBucket:
     """Алгоритм дырявого ведра (Leaky Bucket)."""
 
     def __init__(self, capacity: int, period: float) -> None:
+        """Инициализирует дырявое ведро.
+
+        Args:
+            capacity: Максимальная вместимость ведра (максимальный уровень воды).
+            period: Временной интервал в секундах, за который ведро полностью опустошается.
+        """
         self.capacity = float(capacity)
         self.period = float(period)
         self.leak_rate = self.capacity / self.period
@@ -303,6 +324,15 @@ class LeakyBucket:
         self.lock = threading.Lock()
 
     def acquire(self, wait: bool = False) -> float | None:
+        """Запрашивает добавление единицы воды в ведро.
+
+        Args:
+            wait: Флаг необходимости блокирующего ожидания до тех пор, пока уровень воды не спадет.
+
+        Returns:
+            Время ожидания в секундах, если необходимо подождать, 0.0 если вода добавлена сразу,
+            или None, если ведро переполнено и wait=False.
+        """
         with self.lock:
             now = time.monotonic()
 
@@ -345,7 +375,17 @@ _limiters_lock = threading.Lock()
 def get_limiter(
         key: str, max_calls: int, period: float, strategy: str = "token_bucket"
 ) -> TokenBucket | LeakyBucket:
-    """Возвращает или создает ограничитель частоты по ключу."""
+    """Возвращает или создает ограничитель частоты по ключу.
+
+    Args:
+        key: Уникальный ключ для идентификации ограничителя.
+        max_calls: Максимальное число вызовов за период.
+        period: Временной интервал в секундах.
+        strategy: Стратегия ограничения частоты ("token_bucket" или "leaky_bucket").
+
+    Returns:
+        Экземпляр ограничителя частоты (TokenBucket или LeakyBucket).
+    """
     global _limiters
     with _limiters_lock:
         if key not in _limiters:
@@ -455,6 +495,14 @@ class CircuitBreakerState:
             exceptions: tuple[type[Exception], ...],
             name: str,
     ) -> None:
+        """Инициализирует состояние предохранителя (Circuit Breaker).
+
+        Args:
+            failure_threshold: Порог неудачных попыток для открытия цепи.
+            recovery_timeout: Таймаут восстановления в секундах.
+            exceptions: Исключения, расцениваемые как ошибки.
+            name: Имя предохранителя (обычно имя декорируемой функции).
+        """
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
         self.exceptions = exceptions
@@ -470,6 +518,7 @@ class CircuitBreakerState:
         self._lock = threading.Lock()
 
     def record_success(self) -> None:
+        """Записывает успешное выполнение и сбрасывает состояние сбоев в CLOSED."""
         with self._lock:
             if self.state != "CLOSED":
                 logger = _get_logger()
@@ -481,8 +530,14 @@ class CircuitBreakerState:
             self._half_open_in_progress = False
             self.failure_count = 0
             self.last_failure_time = 0.0
+            self._report_metrics_state()
 
     def record_failure(self, exc: Exception) -> None:
+        """Записывает неудачную попытку выполнения.
+
+        Args:
+            exc: Возникшее исключение.
+        """
         if not isinstance(exc, self.exceptions):
             if self.state == "HALF_OPEN":
                 with self._lock:
@@ -506,9 +561,31 @@ class CircuitBreakerState:
                         self.recovery_timeout,
                     )
                     self.state = "OPEN"
+                    self._report_metrics_state()
             self._half_open_in_progress = False
 
+    def _report_metrics_state(self) -> None:
+        """Экспортирует текущее состояние предохранителя в модуль метрик.
+        CLOSED = 0, OPEN = 1, HALF_OPEN = 2.
+        """
+        try:
+            from chutils.metrics import set_gauge
+            state_val = 0.0
+            if self.state == "OPEN":
+                state_val = 1.0
+            elif self.state == "HALF_OPEN":
+                state_val = 2.0
+            set_gauge("circuit_breaker_state", state_val, labels={"name": self.name})
+        except Exception:
+            # Игнорируем ошибки при отправке метрик, чтобы не ломать логику предохранителя
+            pass
+
     def can_execute(self) -> bool:
+        """Проверяет возможность выполнения операции в текущем состоянии цепи.
+
+        Returns:
+            True, если выполнение разрешено, иначе False.
+        """
         with self._lock:
             if self.state == "CLOSED":
                 return True
@@ -517,6 +594,7 @@ class CircuitBreakerState:
                 if now - self.last_failure_time >= self.recovery_timeout:
                     self.state = "HALF_OPEN"
                     self._half_open_in_progress = True
+                    self._report_metrics_state()
                     return True
                 return False
             if self.state == "HALF_OPEN":
@@ -532,13 +610,15 @@ def circuit_breaker(
         recovery_timeout: float = 60.0,
         exceptions: tuple[type[Exception], ...] = (Exception,),
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
-    """
-    Декоратор Circuit Breaker (Предохранитель) для защиты от каскадных сбоев.
+    """Декоратор Circuit Breaker (Предохранитель) для защиты от каскадных сбоев.
 
     Args:
         failure_threshold: Количество последовательных ошибок для открытия цепи.
         recovery_timeout: Время в секундах, в течение которого цепь остается открытой.
         exceptions: Кортеж исключений, которые считаются ошибками.
+
+    Returns:
+        Декоратор, оборачивающий функцию механизмом автоматического отключения при сбоях.
     """
     from .exceptions import CircuitBreakerOpenError
 

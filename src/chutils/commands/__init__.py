@@ -1,14 +1,14 @@
 """
 Пакет команд для CLI.
 """
-from typing import List, Type
-
 from .base import BaseCommand
 
 
 def get_commands() -> list[type[BaseCommand]]:
-    """
-    Возвращает список всех классов команд.
+    """Возвращает список всех классов команд.
+
+    Returns:
+        Список классов, унаследованных от BaseCommand.
     """
     from .secrets import SecretsCommand
     from .init import InitCommand
@@ -17,6 +17,8 @@ def get_commands() -> list[type[BaseCommand]]:
     from .template import TemplateCommand
     from .config import ConfigCommand
     from .dev import DevCommand
+    from .env import EnvCommand
+    from .pypi import PyPiCommand
 
     return [
         SecretsCommand,
@@ -25,5 +27,7 @@ def get_commands() -> list[type[BaseCommand]]:
         ShowPathsCommand,
         TemplateCommand,
         ConfigCommand,
-        DevCommand
+        DevCommand,
+        EnvCommand,
+        PyPiCommand
     ]

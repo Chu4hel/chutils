@@ -43,13 +43,23 @@ def _get_lognormal_delay(min_seconds: float, max_seconds: float) -> float:
 
 
 def human_sleep(min_seconds: float, max_seconds: float) -> None:
-    """Синхронно задерживает выполнение на случайное время, имитируя поведение человека."""
+    """Синхронно задерживает выполнение на случайное время, имитируя поведение человека.
+
+    Args:
+        min_seconds: Минимальное время задержки (в секундах).
+        max_seconds: Максимальное время задержки (в секундах).
+    """
     delay = _get_lognormal_delay(min_seconds, max_seconds)
     time.sleep(delay)
 
 
 async def async_human_sleep(min_seconds: float, max_seconds: float) -> None:
-    """Асинхронно задерживает выполнение на случайное время, имитируя поведение человека."""
+    """Асинхронно задерживает выполнение на случайное время, имитируя поведение человека.
+
+    Args:
+        min_seconds: Минимальное время задержки (в секундах).
+        max_seconds: Максимальное время задержки (в секундах).
+    """
     delay = _get_lognormal_delay(min_seconds, max_seconds)
     await asyncio.sleep(delay)
 
@@ -62,7 +72,16 @@ async def async_move_mouse(
         steps: int = 30,
         delay_between_steps: float = 0.01,
 ) -> None:
-    """Имитирует плавное перемещение мыши Playwright."""
+    """Имитирует плавное перемещение мыши Playwright.
+
+    Args:
+        page: Объект страницы Playwright Page.
+        x: Конечная координата X.
+        y: Конечная координата Y.
+        start: Начальные координаты X, Y. Если не задано, используется (0, 0).
+        steps: Количество промежуточных шагов движения.
+        delay_between_steps: Задержка между шагами в секундах.
+    """
     _ensure_playwright()
 
     start_pt = start or (0, 0)
@@ -83,7 +102,16 @@ async def async_scroll_to(
         steps: int = 10,
         delay_between_steps: float = 0.01,
 ) -> None:
-    """Имитирует плавный скроллинг Playwright."""
+    """Имитирует плавный скроллинг Playwright.
+
+    Args:
+        page: Объект страницы Playwright Page.
+        x: Конечная горизонтальная позиция скролла.
+        y: Конечная вертикальная позиция скролла.
+        selector: Необязательный селектор элемента для скролла.
+        steps: Количество промежуточных шагов.
+        delay_between_steps: Задержка между шагами в секундах.
+    """
     _ensure_playwright()
 
     scroll_x = await page.evaluate("window.scrollX || window.pageXOffset || 0")
@@ -105,7 +133,15 @@ async def async_scroll_to(
 async def async_type_text(
         page: Any, selector: str, text: str, error_rate: float = 0.05, speed_wpm: float = 40.0
 ) -> None:
-    """Имитирует ввод текста с опечатками Playwright."""
+    """Имитирует ввод текста с опечатками Playwright.
+
+    Args:
+        page: Объект страницы Playwright Page.
+        selector: Селектор поля ввода.
+        text: Текст для ввода.
+        error_rate: Вероятность совершения опечатки (0.0 - 1.0).
+        speed_wpm: Скорость ввода в словах в минуту (WPM).
+    """
     _ensure_playwright()
     await page.focus(selector)
 
@@ -134,7 +170,16 @@ def move_mouse(
         steps: int = 30,
         delay_between_steps: float = 0.01,
 ) -> None:
-    """Имитирует плавное перемещение мыши Selenium."""
+    """Имитирует плавное перемещение мыши Selenium.
+
+    Args:
+        driver: Экземпляр Selenium WebDriver.
+        x: Конечная координата X.
+        y: Конечная координата Y.
+        start: Начальные координаты X, Y. Если не задано, используется (0, 0).
+        steps: Количество промежуточных шагов.
+        delay_between_steps: Задержка между шагами в секундах.
+    """
     _ensure_selenium()
     from selenium.webdriver.common.action_chains import ActionChains
 
@@ -160,7 +205,16 @@ def scroll_to(
         steps: int = 10,
         delay_between_steps: float = 0.01,
 ) -> None:
-    """Имитирует плавный скроллинг Selenium."""
+    """Имитирует плавный скроллинг Selenium.
+
+    Args:
+        driver: Экземпляр Selenium WebDriver.
+        x: Конечная горизонтальная позиция скролла.
+        y: Конечная вертикальная позиция скролла.
+        selector: Необязательный селектор элемента для скролла.
+        steps: Количество промежуточных шагов.
+        delay_between_steps: Задержка между шагами в секундах.
+    """
     _ensure_selenium()
 
     scroll_x = driver.execute_script("return window.scrollX || window.pageXOffset || 0;")
@@ -182,7 +236,15 @@ def scroll_to(
 def type_text(
         driver: Any, selector: str, text: str, error_rate: float = 0.05, speed_wpm: float = 40.0
 ) -> None:
-    """Имитирует ввод текста с опечатками Selenium."""
+    """Имитирует ввод текста с опечатками Selenium.
+
+    Args:
+        driver: Экземпляр Selenium WebDriver.
+        selector: CSS-селектор поля ввода.
+        text: Текст для ввода.
+        error_rate: Вероятность совершения опечатки (0.0 - 1.0).
+        speed_wpm: Скорость ввода в словах в минуту (WPM).
+    """
     _ensure_selenium()
     from selenium.webdriver.common.by import By
     from selenium.webdriver.common.keys import Keys

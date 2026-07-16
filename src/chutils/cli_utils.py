@@ -31,16 +31,30 @@ class FallbackConsole:
     Упрощенный аналог rich.Console для случаев, когда rich не установлен.
     """
 
-    def __init__(self, stderr: bool = False):
+    def __init__(self, stderr: bool = False) -> None:
+        """Инициализирует экземпляр FallbackConsole.
+
+        Args:
+            stderr: Если True, вывод будет направлен в sys.stderr, иначе в sys.stdout.
+        """
         self._is_stderr = stderr
 
     @property
     def width(self) -> int:
-        """Возвращает текущую установленную ширину консоли."""
+        """Возвращает текущую установленную ширину консоли.
+
+        Returns:
+            Текущая ширина консоли в символах.
+        """
         return _get_default_width() or 80
 
     @property
     def file(self) -> t.TextIO:
+        """Возвращает объект потока вывода консоли.
+
+        Returns:
+            Поток вывода (sys.stderr или sys.stdout).
+        """
         return sys.stderr if self._is_stderr else sys.stdout
 
     @staticmethod
@@ -53,6 +67,12 @@ class FallbackConsole:
             "", text)
 
     def print(self, *args: Any, **kwargs: Any) -> None:
+        """Выводит аргументы в консоль с поддержкой очистки rich-разметки.
+
+        Args:
+            *args: Выводимые объекты.
+            **kwargs: Ключевые параметры для встроенной функции print (например, end, flush, file).
+        """
         # Игнорируем специфичные для Rich аргументы
         kwargs.pop("style", None)
         kwargs.pop("justify", None)
@@ -88,6 +108,11 @@ class FallbackConsole:
         print(*processed_args, **kwargs)
 
     def rule(self, title: str = "") -> None:
+        """Выводит разделительную линию с заголовком в консоль.
+
+        Args:
+            title: Заголовок разделительной линии.
+        """
         f = sys.stderr if self._is_stderr else sys.stdout
         print(f"\n--- {title} ---\n", file=f)
 
@@ -98,8 +123,10 @@ _console_width: int | None = None
 
 
 def set_console_width(width: int) -> None:
-    """
-    Устанавливает ширину консоли и сбрасывает кэшированные экземпляры консолей.
+    """Устанавливает ширину консоли и сбрасывает кэшированные экземпляры консолей.
+
+    Args:
+        width: Новая ширина консоли в символах.
     """
     global _console_width, _console, _err_console
     _console_width = width
@@ -116,15 +143,20 @@ def _get_default_width() -> int | None:
     width, _ = shutil.get_terminal_size(fallback=(80, 24))
 
     # Специфичное поведение для PyCharm (часто ограничивает ширину в 80 символов при запуске логов)
-    if os.getenv("PYCHARM_HOSTED") == "1" and width == 80:
+    if os.getenv("PYCHARM_HOSTED") == "1" and width == 80:  # chutils: ignore[ChutilsIntegrationRule]
         return 140
 
     return width
 
 
 def get_console(stderr: bool = False) -> ConsoleLike:
-    """
-    Возвращает экземпляр rich.Console или FallbackConsole.
+    """Возвращает экземпляр rich.Console или FallbackConsole.
+
+    Args:
+        stderr: Если True, возвращает консоль для вывода в поток ошибок stderr.
+
+    Returns:
+        Экземпляр консоли (ConsoleLike).
     """
     global _console, _err_console
 

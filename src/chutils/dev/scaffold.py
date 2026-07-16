@@ -11,7 +11,14 @@ MODULE_NAME_REGEX = re.compile(r"^[a-z_][a-z0-9_]*$")
 
 
 def to_camel_case(s: str) -> str:
-    """Преобразует snake_case строку в CamelCase."""
+    """Преобразует snake_case строку в CamelCase.
+
+    Args:
+        s: Входная строка в стиле snake_case.
+
+    Returns:
+        Строка, преобразованная в CamelCase.
+    """
     return "".join(word.capitalize() for word in s.split("_"))
 
 
@@ -339,6 +346,13 @@ class Scaffolder:
             output_dir: str | None = None,
             force: bool = False,
     ) -> None:
+        """Инициализирует Scaffolder.
+
+        Args:
+            module_name: Имя генерируемого модуля.
+            output_dir: Путь, куда будет сгенерирован модуль.
+            force: Флаг принудительной генерации (перезаписи).
+        """
         self.module_name = module_name.strip()
         self.force = force
 
@@ -397,7 +411,8 @@ class Scaffolder:
             file_path = self.output_path / rel_path
 
             # Создаем родительские директории, если их нет
-            file_path.parent.mkdir(parents=True, exist_ok=True)
+            from chutils.fs import ensure_dir, atomic_write  # chutils: ignore[ChutilsIntegrationRule]
+            ensure_dir(file_path.parent)
 
             # Интерполяция шаблона
             content = template_str.format(
@@ -406,5 +421,5 @@ class Scaffolder:
                 value_object_name=value_object_name,
             )
 
-            # Запись с перезаписью (если force=True, это затрет существующий файл)
-            file_path.write_text(content, encoding="utf-8")
+            # Запись с перезаписью (если force=True, это затрет существующий файл) chutils: ignore[ChutilsIntegrationRule]
+            atomic_write(file_path, content)

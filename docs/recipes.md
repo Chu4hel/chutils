@@ -384,6 +384,26 @@ from chutils import get_config_section
 db_cfg = get_config_section("Database", model=DbConfig)
 ```
 
+### Групповая валидация обязательных ключей
+
+Если вам нужно проверить наличие нескольких обязательных переменных конфигурации (например, при запуске сервиса) без
+использования тяжелых Pydantic моделей, используйте `validate_required_keys`. В случае отсутствия одного или нескольких
+ключей функция сгенерирует агрегированную ошибку `ConfigValidationGroupError`.
+
+```python
+from chutils.config import validate_required_keys
+from chutils.exceptions import ConfigValidationGroupError
+
+try:
+    validate_required_keys(
+        section="Secrets",
+        keys=["telegram_bot_token", "database_url", "api_key"]
+    )
+except ConfigValidationGroupError as e:
+    # Выведет структурированный список всех недостающих настроек за один проход
+    print(f"Ошибка инициализации сервиса: {e}")
+```
+
 ### Интеграция с IDE (VSCode, PyCharm) через JSON Schema
 
 Чтобы получить автодополнение и проверку типов прямо в YAML файле, вы можете сгенерировать JSON Schema для вашей
@@ -984,6 +1004,35 @@ def fragile_task():
     raise RuntimeError("Неустранимая ошибка в задаче")
 ```
 
+### Динамические интервалы (Dynamic Intervals)
+
+Интервал запуска `interval_seconds` может быть динамическим:
+
+1. **Callable-функция**: Передайте функцию, возвращающую `int`. Планировщик будет вычислять интервал заново на каждом
+   шаге цикла.
+2. **Конфигурация `chutils.config`**: Передайте строку вида `section.key` (или просто `key` для поиска в секции
+   `default`). Значение будет считываться из конфигурации на лету перед каждым запуском задачи.
+
+```python
+# А. Динамический интервал через функцию
+current_interval = 5
+
+
+def get_interval():
+    return current_interval  # Может меняться динамически во время работы
+
+
+@periodic_task(interval_seconds=get_interval)
+async def dynamic_job():
+    print("Выполнение с динамическим интервалом...")
+
+
+# Б. Динамический интервал из chutils.config (ключ 'scheduler.cleanup_delay')
+@periodic_task(interval_seconds="scheduler.cleanup_delay")
+async def config_bound_job():
+    print("Интервал берется и динамически обновляется из конфигурации...")
+```
+
 ## 19. Ограничение частоты вызовов (Rate Limiting / Throttling)
 
 Декоратор `@rate_limit` из модуля `chutils.decorators` позволяет ограничить частоту выполнения синхронных и асинхронных
@@ -1194,6 +1243,20 @@ set_gauge("cpu_usage_percent", 45.2, {"node": "worker-1"})
 observe("request_size_bytes", 1024.0, {"client": "ios"})
 ```
 
+### Автоматические метрики Circuit Breaker (Предохранителя)
+
+Декоратор `@circuit_breaker` автоматически экспортирует метрику состояния цепи типа Gauge под именем
+`circuit_breaker_state` с меткой `name` (имя декорируемой функции).
+
+Метрика состояния кодируется числовыми значениями:
+
+* `0.0` — `CLOSED` (цепь замкнута, всё работает нормально).
+* `1.0` — `OPEN` (цепь разомкнута из-за сбоев, вызовы заблокированы).
+* `2.0` — `HALF_OPEN` (период восстановления, пробные вызовы).
+
+Это позволяет визуализировать аварийные режимы и работоспособность интеграций в реальном времени (например, на дашборде
+Grafana).
+
 ### Автоматический замер времени (@timer)
 
 Используйте `@timer` в качестве декоратора (для синхронных и асинхронных функций) или в качестве контекстного менеджера.
@@ -1241,3 +1304,227 @@ def metrics_endpoint():
 Prometheus-совместимый текстовый формат.
 
 Таким образом, ваше приложение гарантированно продолжит работу без внешних зависимостей.
+
+## 22. Универсальная валидация данных (chutils.validation)
+
+Модуль `chutils.validation` предоставляет удобный инструмент для валидации структурированных данных (JSON, dict) с
+использованием Pydantic, а также автоматическую валидацию аргументов функций с генерацией детальных, структурированных
+ошибок `ChutilsValidationError`.
+
+### Валидация словарей и JSON-строк (`validate_data`)
+
+Функция `validate_data` принимает Pydantic модель и данные (словарь или JSON-строку), возвращая валидный объект модели.
+В случае ошибки выбрасывается `ChutilsValidationError`.
+
+```python
+from pydantic import BaseModel, Field
+from chutils import validate_data
+from chutils.exceptions import ChutilsValidationError
+
+
+class User(BaseModel):
+    name: str
+    age: int = Field(gt=0)
+
+
+try:
+    # 1. Валидация словаря
+    user1 = validate_data(User, {"name": "Alice", "age": 30})
+
+    # 2. Валидация JSON-строки
+    user2 = validate_data(User, '{"name": "Bob", "age": 25}')
+except ChutilsValidationError as e:
+    print(f"Ошибка: {e}")
+```
+
+### Автоматическая валидация аргументов функций (`@validate_call`)
+
+Декоратор `@validate_call` автоматически проверяет типы и значения аргументов при вызове функции. Поддерживает как
+синхронные, так и асинхронные функции.
+
+```python
+from chutils import validate_call
+from chutils.exceptions import ChutilsValidationError
+
+
+@validate_call
+def send_message(user_id: int, message: str) -> None:
+    print(f"Отправка пользователю {user_id}: {message}")
+
+
+try:
+    # Вызовет ошибку валидации, так как передан неверный тип
+    send_message("not_an_int", "Привет")
+except ChutilsValidationError as e:
+    print(f"Неверные аргументы вызова:\n{e}")
+```
+
+### Красивый вывод ошибок через Rich
+
+Исключение `ChutilsValidationError` бесшовно интегрировано с библиотекой `rich`. Если `rich` установлен, при печати
+исключения в консоль автоматически выводится красивая структурированная таблица ошибок с указанием пути к полю, причины
+ошибки и полученного невалидного значения.
+
+```python
+from chutils import get_console
+from chutils.exceptions import ChutilsValidationError
+
+console = get_console()
+
+try:
+    validate_data(User, {"name": "Alice", "age": -5})
+except ChutilsValidationError as e:
+    # Автоматически отрендерит красивую таблицу ошибок в консоль
+    console.print(e)
+```
+
+## 23. Мониторинг работоспособности и Diagnostics API (chutils.diagnostics)
+
+Модуль `chutils.diagnostics` предназначен для проверки жизнедеятельности (health check) компонентов системы с контролем
+таймаутов, встроенными проверками и готовыми хелперами для веб-фреймворков.
+
+### Использование DiagnosticsManager
+
+Вы можете зарегистрировать кастомные функции проверок (как синхронные, так и асинхронные) с указанием таймаутов
+выполнения.
+
+```python
+import asyncio
+from chutils.diagnostics import DiagnosticsManager
+
+manager = DiagnosticsManager()
+
+
+# Регистрация асинхронной проверки с таймаутом 2 секунды
+@manager.register(name="database", critical=True, timeout=2.0)
+async def check_db() -> str:
+    await asyncio.sleep(0.1)  # Симуляция пинга БД
+    return "Соединение с БД успешно установлено."
+
+
+# Запуск проверок асинхронно
+async def main():
+    report = await manager.run_checks()
+    print(f"Статус системы: {report.status}")  # HEALTHY, DEGRADED, UNHEALTHY
+    for name, result in report.results.items():
+        print(f"[{name}] {result.status} - {result.message}")
+
+
+asyncio.run(main())
+```
+
+### Встроенные проверки
+
+Модуль предоставляет встроенные проверки из коробки:
+
+* `check_keyring` — проверяет доступность системного хранилища секретов (`keyring`) путём пробной записи и удаления
+  тестового секрета.
+* `check_config` — проверяет валидность и физическое наличие конфигурационного файла на диске.
+
+Встроенные проверки зарегистрированы в `DiagnosticsManager` по умолчанию.
+
+### Интеграция с FastAPI и Flask
+
+Модуль содержит готовые хелперы для быстрой отдачи статуса здоровья системы по HTTP-эндпоинтам.
+
+**FastAPI:**
+
+```python
+from fastapi import FastAPI
+from chutils.diagnostics import DiagnosticsManager
+from chutils.diagnostics.web import get_fastapi_health_handler
+
+app = FastAPI()
+manager = DiagnosticsManager()
+
+# Регистрируем роут /health
+app.add_api_route("/health", get_fastapi_health_handler(manager), methods=["GET"])
+```
+
+При возникновении критических сбоев (`UNHEALTHY`) обработчик автоматически возвращает HTTP-код
+`503 Service Unavailable`, а при успешной или частично деградировавшей работе (`HEALTHY`, `DEGRADED`) — `200 OK`.
+
+### Проверка через CLI
+
+Вы можете запустить диагностику системы напрямую из терминала:
+
+```bash
+# Красивая таблица результатов в rich
+chutils dev diagnostics
+
+# Вывод в формате структурированного JSON для систем мониторинга
+chutils dev diagnostics --json
+```
+
+## 24. Декларативный манифест переменных окружения (chutils.env)
+
+Модуль `chutils.env` предоставляет механизм для декларативного описания, загрузки и валидации переменных окружения с
+использованием Pydantic моделей, поддержкой автоматического маскирования секретов и интеграцией с `SecretManager`.
+
+### Создание манифеста
+
+Опишите ожидаемые переменные окружения как поля класса, наследующегося от `BaseEnvManifest`:
+
+```python
+from pydantic import Field
+
+from chutils.env import BaseEnvManifest
+
+
+class AppEnv(BaseEnvManifest):
+    DATABASE_URL: str = Field(description="URL подключения к базе данных")
+    API_KEY: str = Field(json_schema_extra={"secret": True}, description="Секретный API-ключ")
+    PORT: int = Field(default=8080, description="Порт веб-сервера")
+```
+
+### Загрузка и валидация в коде
+
+Метод `load()` автоматически считывает значения из `os.environ` и выполняет приведение типов:
+
+```python
+import os
+from chutils.exceptions import EnvValidationError
+
+# Устанавливаем переменные для теста
+os.environ["DATABASE_URL"] = "postgresql://localhost:5432/db"
+os.environ["API_KEY"] = "super-secret-token"
+
+try:
+    env = AppEnv.load()
+    print(f"Server will run on port {env.PORT}")
+except EnvValidationError as e:
+    # Все секретные поля (API_KEY) будут автоматически замаскированы (показано как ***)
+    print(f"Ошибка валидации окружения: {e}")
+```
+
+Если переменная отсутствует в `os.environ`, но помечена как `secret=True`, метод `load()` автоматически попытается
+получить её значение через `SecretManager` (если он доступен).
+
+### Валидация окружения через CLI
+
+Вы можете автоматически валидировать переменные окружения при развертывании приложения (например, в Docker/K8s
+init-контейнерах) с помощью CLI-команды `chutils env validate`.
+
+1. **Явный запуск с указанием манифеста:**
+
+```bash
+chutils env validate --manifest myapp.env:AppEnv
+```
+
+2. **Запуск через конфигурацию проекта (`pyproject.toml`):**
+
+Добавьте секцию в ваш `pyproject.toml`:
+
+```toml
+[tool.chutils.env]
+manifest = "myapp.env:AppEnv"
+```
+
+После этого вы можете запускать проверку без параметров:
+
+```bash
+chutils env validate
+```
+
+При успешной валидации команда вернет код `0`, при сбое — выведет подробную таблицу ошибок и вернет код `1`.
+

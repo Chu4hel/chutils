@@ -1,6 +1,6 @@
 import os
 
-from chutils.config import _cm, find_project_root
+from chutils.config import find_project_root
 from chutils.config.dev import parse_chutils_ignore, load_ai_lint_config, DEFAULT_AI_LINT_CONFIG
 
 
@@ -46,6 +46,8 @@ def test_load_ai_lint_config_defaults(project_with_marker):
     assert config["ignore"] == DEFAULT_AI_LINT_CONFIG["ignore"]
     assert config["rules"] == DEFAULT_AI_LINT_CONFIG["rules"]
     assert config["custom_rules_path"] is DEFAULT_AI_LINT_CONFIG["custom_rules_path"]
+    assert config["max_file_lines"] == DEFAULT_AI_LINT_CONFIG["max_file_lines"]
+    assert config["max_file_classes"] == DEFAULT_AI_LINT_CONFIG["max_file_classes"]
 
 
 def test_load_ai_lint_config_pyproject_toml(project_with_marker):

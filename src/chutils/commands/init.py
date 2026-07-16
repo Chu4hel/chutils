@@ -16,6 +16,11 @@ class InitCommand(BaseCommand):
     """
 
     def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
+        """Регистрирует команду init в argparse.
+
+        Args:
+            subparsers: Объект subparsers для добавления подкоманд.
+        """
         init_parser = subparsers.add_parser(
             "init",
             help="Инициализировать новый проект",
@@ -33,7 +38,11 @@ class InitCommand(BaseCommand):
         init_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace) -> None:
-        """Обработчик команды инициализации проекта."""
+        """Обработчик команды инициализации проекта.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         print("--- Инициализация проекта chutils ---")
 
         if args.yes:

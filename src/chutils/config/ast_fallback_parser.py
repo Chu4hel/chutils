@@ -31,8 +31,13 @@ def _evaluate_node(node: ast.AST) -> Any:
 
 
 def parse_fallbacks_from_file(file_path: str) -> dict[str, dict[str, Any]]:
-    """
-    Парсит один Python-файл и извлекает значения fallback из вызовов get_config_*.
+    """Парсит один Python-файл и извлекает значения fallback из вызовов get_config_*.
+
+    Args:
+        file_path: Путь к Python-файлу.
+
+    Returns:
+        Словарь вида {секция: {ключ: значение}} с извлеченными fallback-значениями.
     """
     fallbacks: dict[str, dict[str, Any]] = {}
     try:
@@ -108,8 +113,13 @@ def parse_fallbacks_from_file(file_path: str) -> dict[str, dict[str, Any]]:
 
 
 def parse_fallbacks_from_project(base_dir: str) -> dict[str, dict[str, Any]]:
-    """
-    Рекурсивно обходит директорию проекта и собирает все дефолтные fallback значения.
+    """Рекурсивно обходит директорию проекта и собирает все дефолтные fallback значения.
+
+    Args:
+        base_dir: Базовая директория проекта для обхода.
+
+    Returns:
+        Объединенный словарь всех найденных fallback-значений в проекте.
     """
     project_fallbacks: dict[str, dict[str, Any]] = {}
     base_path = Path(base_dir)

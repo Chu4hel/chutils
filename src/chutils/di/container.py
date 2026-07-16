@@ -16,12 +16,14 @@ class InjectMarker:
 
 
 def Inject() -> Any:
-    """
-    Маркер инъекции зависимостей (в стиле FastAPI / Depends).
+    """Маркер инъекции зависимостей (в стиле FastAPI / Depends).
     
     Пример:
         def handle(service: MyService = Inject()):
             ...
+
+    Returns:
+        Маркерный объект InjectMarker.
     """
     return InjectMarker()
 
@@ -39,6 +41,7 @@ class Container:
     """
 
     def __init__(self) -> None:
+        """Инициализирует DI-контейнер."""
         # Реестр провайдеров: {type: (provider_callable, scope)}
         self._providers: dict[type[Any], tuple[Callable[..., Any], str]] = {}
         # Кэш инстансов для scope="singleton": {type: instance}
@@ -88,13 +91,25 @@ class Container:
             self._instances.pop(dependency_type, None)
 
     def has_provider(self, dependency_type: type[Any]) -> bool:
-        """Проверить, зарегистрирован ли провайдер для данного типа."""
+        """Проверить, зарегистрирован ли провайдер для данного типа.
+
+        Args:
+            dependency_type: Класс/тип зависимости.
+
+        Returns:
+            True, если провайдер зарегистрирован, иначе False.
+        """
         with self._lock:
             return dependency_type in self._providers
 
     def resolve(self, dependency_type: type[T]) -> T:
-        """
-        Разрешить зависимость (найти провайдер, разрешить его аргументы и вернуть инстанс).
+        """Разрешить зависимость (найти провайдер, разрешить его аргументы и вернуть инстанс).
+
+        Args:
+            dependency_type: Класс/тип запрашиваемой зависимости.
+
+        Returns:
+            Разрешенный экземпляр запрашиваемой зависимости.
         """
         # Предотвращение циклических зависимостей
         if dependency_type in self._resolving_stack:
@@ -209,8 +224,7 @@ default_container = Container()
 
 
 def provide(scope: str = "singleton", container: Container | None = None) -> Callable[[Any], Any]:
-    """
-    Декоратор для декларативной регистрации класса или функции-фабрики в контейнере.
+    """Декоратор для декларативной регистрации класса или функции-фабрики в контейнере.
     
     Пример:
         @provide()
@@ -220,6 +234,13 @@ def provide(scope: str = "singleton", container: Container | None = None) -> Cal
         @provide()
         def create_connection() -> Connection:
             return Connection(...)
+
+    Args:
+        scope: Время жизни зависимости ("singleton" или "transient").
+        container: Контейнер для регистрации (по умолчанию глобальный).
+
+    Returns:
+        Декоратор для регистрации класса или фабрики.
     """
     target_container = container or default_container
 
@@ -240,13 +261,18 @@ def provide(scope: str = "singleton", container: Container | None = None) -> Cal
 
 
 def inject(container: Container | None = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    """
-    Декоратор для автоматического внедрения зависимостей в аргументы функции.
+    """Декоратор для автоматического внедрения зависимостей в аргументы функции.
     
     Пример:
         @inject()
         def process_data(db: DatabaseService = Inject()):
             db.query(...)
+
+    Args:
+        container: Контейнер для разрешения зависимостей (по умолчанию глобальный).
+
+    Returns:
+        Декоратор, автоматически подставляющий зависимости в аргументы функции.
     """
     target_container = container or default_container
 

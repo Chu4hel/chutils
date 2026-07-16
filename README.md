@@ -46,7 +46,11 @@ Every time you start a new project, you have to solve the same tasks:
 - **🛡️ Secure Paths:** Prevent Path Traversal attacks by safely resolving file paths against a base directory using
   `resolve_safe_path()`.
 - **🤖 AI Linter:** Run static analysis checks on your codebase to ensure AI readiness (strict type hints, structured
-  docstrings, API map sync) via `chutils dev ai-lint`.
+  docstrings, API map sync, and file dependency synchronization) via `chutils dev ai-lint`.
+- **✅ Data Validation (chutils.validation):** An all-in-one Pydantic-based data and JSON validation module featuring
+  `@validate_call` decorator for function argument checks and rich exception formatting.
+- **🩺 Diagnostics API (chutils.diagnostics):** An asynchronous, thread-safe health checking framework with built-in
+  checks (keyring, config) and integrations for popular web frameworks (FastAPI, Flask).
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.
 - **🚀 Ready to Use:** Just install and use.
 
@@ -272,6 +276,22 @@ except PathTraversalError as e:
 - `get_secret(key, fallback=None, required=False)` / `aget_secret(...)`
 - `delete_secret` / `adelete_secret`
 
+### Environment Manifest (`chutils.env`)
+
+- `BaseEnvManifest`: Declarative specification of environment variables using Pydantic typing, automatic secret masking,
+  and `load()` classmethod.
+
+### Data Validation (`chutils.validation`)
+
+- `validate_data(model, data)`: Validates dictionaries or JSON strings against Pydantic models, raising
+  `ChutilsValidationError`.
+- `@validate_call`: Automatically validates function arguments using Pydantic.
+
+### Health Checking (`chutils.diagnostics`)
+
+- `DiagnosticsManager`: Registers and аsynchronously executes system health checks with timeouts.
+- Web Framework helpers: `get_fastapi_health_handler` and `get_flask_health_handler`.
+
 ### Decorators (`chutils.decorators`)
 
 - `@log_function_details`: Logs arguments, execution time, and result (uses `DEVDEBUG` level).
@@ -375,6 +395,21 @@ chutils dev ai-lint --strict --ignore "temp/,build/"
 ```
 
 See [docs/ai_lint.md](docs/ai_lint.md) for more details.
+
+### 7. Environment Variables Synchronization
+
+Keep `.env` and `.env.example` files in sync with format preservation, comments, and values masking:
+
+```bash
+# Compare .env and .env.example keys without making changes
+chutils dev sync-env --dry-run
+
+# Synchronize files automatically
+chutils dev sync-env --yes
+
+# Specify custom paths
+chutils dev sync-env --env-path .env.dev --example-path .env.dev.example
+```
 
 ## License
 

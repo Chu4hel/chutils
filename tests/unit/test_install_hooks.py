@@ -93,3 +93,28 @@ def test_install_hooks_force_overwrite(tmp_path, monkeypatch) -> None:
     content = hook_path.read_text(encoding="utf-8")
     assert "echo 'hello'" not in content
     assert "# chutils pre-commit hook" in content
+
+
+def test_install_hooks_with_ruff_and_flake8(tmp_path, monkeypatch) -> None:
+    """Проверяет создание pre-commit хука с дополнительными проверками ruff и flake8."""
+    from chutils.commands.dev import DevCommand
+
+    git_dir = tmp_path / ".git"
+    git_dir.mkdir()
+
+    monkeypatch.setattr("os.getcwd", lambda: str(tmp_path))
+
+    cmd = DevCommand()
+    args = MagicMock()
+    args.force = False
+    args.ruff = True
+    args.flake8 = True
+
+    cmd.handle_install_hooks(args)
+
+    hook_path = git_dir / "hooks" / "pre-commit"
+    assert hook_path.exists()
+
+    content = hook_path.read_text(encoding="utf-8")
+    assert "ruff check --fix" in content
+    assert "flake8 ." in content

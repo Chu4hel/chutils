@@ -2,7 +2,7 @@ import base64
 import time
 from typing import Any
 
-import httpx
+import httpx  # chutils: ignore[ChutilsIntegrationRule]
 
 from .base import BaseCaptchaSolver, BaseAsyncCaptchaSolver
 from .exceptions import (
@@ -34,6 +34,12 @@ class CapMonsterSolver(BaseCaptchaSolver):
     secret_key_name = "CAPMONSTER_API_KEY"
 
     def __init__(self, api_key: str | None = None, host: str = "https://api.capmonster.cloud") -> None:
+        """Инициализирует CapMonsterSolver.
+
+        Args:
+            api_key: Явно заданный API-ключ.
+            host: Адрес API-сервиса CapMonster Cloud.
+        """
         super().__init__(api_key=api_key)
         self.host = host.rstrip("/")
 
@@ -44,7 +50,17 @@ class CapMonsterSolver(BaseCaptchaSolver):
             poll_interval: float = 5.0,
             **kwargs: Any,
     ) -> str:
-        """Синхронно решает капчу-изображение."""
+        """Синхронно решает капчу-изображение.
+
+        Args:
+            image_data: Бинарные данные картинки или base64-строка.
+            timeout: Максимальное время ожидания решения (в секундах).
+            poll_interval: Интервал опроса статуса решения (в секундах).
+            **kwargs: Дополнительные параметры задачи.
+
+        Returns:
+            Распознанный текст с изображения.
+        """
         img_b64 = image_data if isinstance(image_data, str) else base64.b64encode(image_data).decode("utf-8")
 
         task = {
@@ -89,7 +105,18 @@ class CapMonsterSolver(BaseCaptchaSolver):
             poll_interval: float = 5.0,
             **kwargs: Any,
     ) -> str:
-        """Синхронно решает ReCaptcha v2/v3."""
+        """Синхронно решает ReCaptcha v2/v3.
+
+        Args:
+            sitekey: Ключ рекапчи на целевом сайте.
+            page_url: URL страницы, на которой расположена рекапча.
+            timeout: Максимальное время ожидания решения (в секундах).
+            poll_interval: Интервал опроса статуса решения (в секундах).
+            **kwargs: Дополнительные параметры задачи.
+
+        Returns:
+            Токен ответа рекапчи.
+        """
         task = {
             "type": "RecaptchaV2TaskProxyless",
             "websiteURL": page_url,
@@ -131,6 +158,12 @@ class AsyncCapMonsterSolver(BaseAsyncCaptchaSolver):
     secret_key_name = "CAPMONSTER_API_KEY"
 
     def __init__(self, api_key: str | None = None, host: str = "https://api.capmonster.cloud") -> None:
+        """Инициализирует AsyncCapMonsterSolver.
+
+        Args:
+            api_key: Явно заданный API-ключ.
+            host: Адрес API-сервиса CapMonster Cloud.
+        """
         super().__init__(api_key=api_key)
         self.host = host.rstrip("/")
 
@@ -141,7 +174,17 @@ class AsyncCapMonsterSolver(BaseAsyncCaptchaSolver):
             poll_interval: float = 5.0,
             **kwargs: Any,
     ) -> str:
-        """Асинхронно решает капчу-изображение."""
+        """Асинхронно решает капчу-изображение.
+
+        Args:
+            image_data: Бинарные данные картинки или base64-строка.
+            timeout: Максимальное время ожидания решения (в секундах).
+            poll_interval: Интервал опроса статуса решения (в секундах).
+            **kwargs: Дополнительные параметры задачи.
+
+        Returns:
+            Распознанный текст с изображения.
+        """
         import asyncio
 
         img_b64 = image_data if isinstance(image_data, str) else base64.b64encode(image_data).decode("utf-8")
@@ -188,7 +231,18 @@ class AsyncCapMonsterSolver(BaseAsyncCaptchaSolver):
             poll_interval: float = 5.0,
             **kwargs: Any,
     ) -> str:
-        """Асинхронно решает ReCaptcha v2/v3."""
+        """Асинхронно решает ReCaptcha v2/v3.
+
+        Args:
+            sitekey: Ключ рекапчи на целевом сайте.
+            page_url: URL страницы, на которой расположена рекапча.
+            timeout: Максимальное время ожидания решения (в секундах).
+            poll_interval: Интервал опроса статуса решения (в секундах).
+            **kwargs: Дополнительные параметры задачи.
+
+        Returns:
+            Токен ответа рекапчи.
+        """
         import asyncio
 
         task = {

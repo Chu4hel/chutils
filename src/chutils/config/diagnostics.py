@@ -15,8 +15,15 @@ SECRET_KEYWORDS = {
 
 
 def mask_value(key: str, value: Any, show_secrets: bool = False) -> str:
-    """
-    Маскирует значение, если ключ похож на секрет.
+    """Маскирует значение, если ключ похож на секрет.
+
+    Args:
+        key: Имя ключа.
+        value: Значение ключа.
+        show_secrets: Флаг принудительного показа секретов без маскирования.
+
+    Returns:
+        Строковое представление значения (возможно маскированное).
     """
     if show_secrets:
         return str(value)
@@ -30,8 +37,15 @@ def mask_value(key: str, value: Any, show_secrets: bool = False) -> str:
 
 def format_trace(trace_data: dict[str, dict[str, list[dict[str, Any]]]], format_type: str = 'tree',
                  show_secrets: bool = False) -> str:
-    """
-    Форматирует данные трассировки в выбранный формат.
+    """Форматирует данные трассировки в выбранный формат.
+
+    Args:
+        trace_data: Данные трассировки конфигурации.
+        format_type: Тип форматирования ('tree', 'table', 'json').
+        show_secrets: Флаг принудительного показа секретов без маскирования.
+
+    Returns:
+        Отформатированная строка с диагностическим отчетом.
     """
     if format_type == 'json':
         return _format_json(trace_data, show_secrets)

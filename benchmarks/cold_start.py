@@ -3,7 +3,16 @@ import subprocess
 import sys
 
 
-def run_benchmark(import_stmt):
+def run_benchmark(import_stmt: str) -> dict[str, float | list[str] | str] | None:
+    """Запускает бенчмарк времени импорта для переданного оператора импорта.
+
+    Args:
+        import_stmt: Строка с оператором импорта для бенчмаркинга.
+
+    Returns:
+        Словарь с результатами бенчмарка (время выполнения и загруженные модули)
+        или None в случае ошибки.
+    """
     script = f"""
 import time
 import sys

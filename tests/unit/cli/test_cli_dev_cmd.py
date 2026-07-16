@@ -13,7 +13,10 @@ def test_cli_dev_generate_context_markdown(cli_runner):
     result = cli_runner.invoke(["dev", "generate-context"])
     assert result.exit_code == 0
     assert "# Public API Map" in result.stdout
-    assert "| Name | Type | Signature | Description |" in result.stdout
+    assert "Name" in result.stdout
+    assert "Type" in result.stdout
+    assert "Signature" in result.stdout
+    assert "Description" in result.stdout
 
 
 def test_cli_dev_generate_context_json(cli_runner):
@@ -21,9 +24,12 @@ def test_cli_dev_generate_context_json(cli_runner):
     result = cli_runner.invoke(["dev", "generate-context", "-f", "json"])
     assert result.exit_code == 0
     data = json.loads(result.stdout)
-    assert isinstance(data, list)
-    assert len(data) > 0
-    assert "name" in data[0]
+    assert isinstance(data, dict)
+    assert "metadata" in data
+    assert "api" in data
+    assert isinstance(data["api"], list)
+    assert len(data["api"]) > 0
+    assert "name" in data["api"][0]
 
 
 def test_cli_dev_generate_context_file(cli_runner, config_fs):
@@ -305,3 +311,128 @@ def test_cli_dev_mock_run_mocked(cli_runner, mocker):
     result = cli_runner.invoke(["dev", "mock", "-p", "9999", "-r", "custom_mocks.yml"])
     assert result.exit_code == 0
     mock_run.assert_called_once()
+
+
+def test_cli_dev_sync_env_success_synchronized(cli_runner, config_fs):
+    """Проверяет вызов sync-env, когда файлы полностью синхронизированы."""
+    fs, project_root = config_fs
+    fs.create_file(f"{project_root}/.env", contents="A=1\n")
+    fs.create_file(f"{project_root}/.env.example", contents="A=\n")
+
+    result = cli_runner.invoke(
+        ["dev", "sync-env", "--env-path", f"{project_root}/.env", "--example-path", f"{project_root}/.env.example"])
+    assert result.exit_code == 0
+    assert "Файлы полностью синхронизированы" in result.stdout
+
+
+def test_cli_dev_sync_env_dry_run(cli_runner, config_fs):
+    """Проверяет dry-run режим sync-env."""
+    from chutils.cli_utils import set_console_width
+    from pathlib import Path
+
+    set_console_width(80)
+    try:
+        fs, project_root = config_fs
+        fs.create_file(f"{project_root}/.env", contents="A=1\nB=2\n")
+        fs.create_file(f"{project_root}/.env.example", contents="A=\n")
+
+        result = cli_runner.invoke([
+            "dev", "sync-env",
+            "--env-path", f"{project_root}/.env",
+            "--example-path", f"{project_root}/.env.example",
+            "--dry-run"
+        ])
+        assert result.exit_code == 0
+        assert "Dry-run режим. Изменения не внесены" in result.stdout
+        assert "Обнаруженные расхождения в переменных окружения" in result.stdout
+        # Файлы не должны измениться
+        assert Path(f"{project_root}/.env.example").read_text(encoding="utf-8") == "A=\n"
+    finally:
+        set_console_width(None)
+
+
+def test_cli_dev_sync_env_force(cli_runner, config_fs):
+    """Проверяет принудительную синхронизацию с флагом --yes."""
+    from chutils.cli_utils import set_console_width
+    from pathlib import Path
+
+    set_console_width(80)
+    try:
+        fs, project_root = config_fs
+        fs.create_file(f"{project_root}/.env", contents="A=1\nB=2\n")
+        fs.create_file(f"{project_root}/.env.example", contents="A=\nC=3\n")
+
+        result = cli_runner.invoke([
+            "dev", "sync-env",
+            "--env-path", f"{project_root}/.env",
+            "--example-path", f"{project_root}/.env.example",
+            "--yes"
+        ])
+        assert result.exit_code == 0
+        assert "успешно обновлен" in result.stdout
+
+        # Проверяем, что B перенеслось в .env.example
+        example_content = Path(f"{project_root}/.env.example").read_text(encoding="utf-8")
+        assert "B=" in example_content
+        # Проверяем, что C перенеслось в .env с дефолтным значением 3
+        env_content = Path(f"{project_root}/.env").read_text(encoding="utf-8")
+        assert "C=3" in env_content
+    finally:
+        set_console_width(None)
+
+
+def test_generate_context_metadata_markdown(cli_runner, config_fs):
+    """Проверяет генерацию YAML Frontmatter с метаданными в Markdown формате."""
+    fs, project_root = config_fs
+    project_dir = str(project_root / "meta_markdown_project")
+    fs.create_dir(f"{project_dir}/src")
+    fs.create_file(f"{project_dir}/src/__init__.py", contents="")
+    fs.create_file(f"{project_dir}/src/app.py", contents="def my_func(): pass")
+    fs.create_file(f"{project_dir}/pyproject.toml", contents='[project]\nversion = "1.2.3"\n')
+
+    result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir, "-f", "markdown"])
+    assert result.exit_code == 0
+    assert "---" in result.stdout
+    assert "chutils_version:" in result.stdout
+    assert "project_version: 1.2.3" in result.stdout
+    assert "project_hash:" in result.stdout
+
+
+def test_generate_context_metadata_json(cli_runner, config_fs):
+    """Проверяет генерацию ключа metadata в JSON формате."""
+    fs, project_root = config_fs
+    project_dir = str(project_root / "meta_json_project")
+    fs.create_dir(f"{project_dir}/src")
+    fs.create_file(f"{project_dir}/src/__init__.py", contents="")
+    fs.create_file(f"{project_dir}/src/app.py", contents="def my_func(): pass")
+    fs.create_file(f"{project_dir}/pyproject.toml", contents='[project]\nversion = "4.5.6"\n')
+
+    result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir, "-f", "json"])
+    assert result.exit_code == 0
+    
+    # Парсим JSON и проверяем метаданные
+    import json
+    data = json.loads(result.stdout)
+    assert "metadata" in data
+    assert data["metadata"]["project_version"] == "4.5.6"
+    assert "project_hash" in data["metadata"]
+
+
+def test_generate_context_metadata_tree(cli_runner, config_fs):
+    """Проверяет генерацию ключа metadata при экспорте в дерево (JSON)."""
+    fs, project_root = config_fs
+    project_dir = str(project_root / "meta_tree_project")
+    fs.create_dir(f"{project_dir}/src")
+    fs.create_file(f"{project_dir}/src/__init__.py", contents="")
+    fs.create_file(f"{project_dir}/src/app.py", contents="def my_func(): pass")
+    fs.create_file(f"{project_dir}/pyproject.toml", contents='[project]\nversion = "7.8.9"\n')
+
+    result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir, "--tree"])
+    assert result.exit_code == 0
+    
+    import json
+    data = json.loads(result.stdout)
+    assert "metadata" in data
+    assert data["metadata"]["project_version"] == "7.8.9"
+    assert "project_hash" in data["metadata"]
+

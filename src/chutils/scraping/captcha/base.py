@@ -18,6 +18,11 @@ class BaseCaptchaSolver:
     secret_key_name: str = ""
 
     def __init__(self, api_key: str | None = None) -> None:
+        """Инициализирует BaseCaptchaSolver.
+
+        Args:
+            api_key: Явно переданный API-ключ. Если не передан, запрашивается из SecretManager.
+        """
         _ensure_httpx()
         self.api_key = api_key or self._get_secret_key()
         if not self.api_key:
@@ -42,6 +47,11 @@ class BaseAsyncCaptchaSolver:
     secret_key_name: str = ""
 
     def __init__(self, api_key: str | None = None) -> None:
+        """Инициализирует BaseAsyncCaptchaSolver.
+
+        Args:
+            api_key: Явно переданный API-ключ. Если не передан, запрашивается из SecretManager.
+        """
         _ensure_httpx()
         self.api_key = api_key or self._get_secret_key()
         if not self.api_key:

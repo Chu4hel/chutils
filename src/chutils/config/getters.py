@@ -7,7 +7,7 @@
 
 from __future__ import annotations
 
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from pathlib import Path
 from typing import Any, TYPE_CHECKING, TypeVar, overload, cast
 
@@ -27,11 +27,11 @@ logger = logging.getLogger(__name__)
 
 
 def get_config_value(
-    section: str,
-    key: str,
-    fallback: Any = None,
-    config: JSONDict | None = None,
-    required: bool = False,
+        section: str,
+        key: str,
+        fallback: Any = None,
+        config: JSONDict | None = None,
+        required: bool = False,
 ) -> Any:
     """
     Получает произвольное значение из конфигурации.
@@ -92,11 +92,11 @@ def get_config_value(
 
 
 def get_config_int(
-    section: str,
-    key: str,
-    fallback: int = 0,
-    config: JSONDict | None = None,
-    required: bool = False,
+        section: str,
+        key: str,
+        fallback: int = 0,
+        config: JSONDict | None = None,
+        required: bool = False,
 ) -> int:
     """
     Получает целочисленное значение из конфигурации.
@@ -121,11 +121,11 @@ def get_config_int(
 
 
 def get_config_float(
-    section: str,
-    key: str,
-    fallback: float = 0.0,
-    config: JSONDict | None = None,
-    required: bool = False,
+        section: str,
+        key: str,
+        fallback: float = 0.0,
+        config: JSONDict | None = None,
+        required: bool = False,
 ) -> float:
     """
     Получает дробное значение из конфигурации.
@@ -150,11 +150,11 @@ def get_config_float(
 
 
 def get_config_boolean(
-    section: str,
-    key: str,
-    fallback: bool = False,
-    config: JSONDict | None = None,
-    required: bool = False,
+        section: str,
+        key: str,
+        fallback: bool = False,
+        config: JSONDict | None = None,
+        required: bool = False,
 ) -> bool:
     """
     Получает булево значение из конфигурации.
@@ -206,11 +206,11 @@ def get_config_boolean(
 
 
 def get_config_list(
-    section: str,
-    key: str,
-    fallback: list[Any] | None = None,
-    config: JSONDict | None = None,
-    required: bool = False,
+        section: str,
+        key: str,
+        fallback: list[Any] | None = None,
+        config: JSONDict | None = None,
+        required: bool = False,
 ) -> list[Any]:
     """
     Получает значение как список из конфигурации.
@@ -256,30 +256,30 @@ def get_config_list(
 
 @overload
 def get_config_section(
-    section_name: str,
-    fallback: JSONDict | None = None,
-    config: JSONDict | None = None,
-    model: None = None,
-    required: bool = False,
+        section_name: str,
+        fallback: JSONDict | None = None,
+        config: JSONDict | None = None,
+        model: None = None,
+        required: bool = False,
 ) -> JSONDict: ...
 
 
 @overload
 def get_config_section(
-    section_name: str,
-    fallback: JSONDict | None = None,
-    config: JSONDict | None = None,
-    model: type[T] = ...,
-    required: bool = False,
+        section_name: str,
+        fallback: JSONDict | None = None,
+        config: JSONDict | None = None,
+        model: type[T] = ...,
+        required: bool = False,
 ) -> T: ...
 
 
 def get_config_section(
-    section_name: str,
-    fallback: JSONDict | None = None,
-    config: JSONDict | None = None,
-    model: type[T] | None = None,
-    required: bool = False,
+        section_name: str,
+        fallback: JSONDict | None = None,
+        config: JSONDict | None = None,
+        model: type[T] | None = None,
+        required: bool = False,
 ) -> JSONDict | T:
     """
     Получает всю секцию конфигурации как словарь или Pydantic модель.
@@ -335,12 +335,12 @@ def get_config_section(
 
 
 def get_config_path(
-    section: str,
-    key: str,
-    fallback: str | None = None,
-    config: JSONDict | None = None,
-    resolve_from_root: bool = True,
-    required: bool = False,
+        section: str,
+        key: str,
+        fallback: str | None = None,
+        config: JSONDict | None = None,
+        resolve_from_root: bool = True,
+        required: bool = False,
 ) -> str | None:
     """
     Получает путь из конфигурации.
@@ -387,3 +387,41 @@ def get_config_path(
             return fallback
 
     return path_str
+
+
+def validate_required_keys(
+        section: str,
+        keys: list[str],
+        config: JSONDict | None = None,
+) -> None:
+    """
+    Проверяет наличие списка обязательных ключей в указанной секции конфигурации.
+    Служит для групповой валидации за один проход. Выбрасывает ConfigValidationGroupError,
+    если один или несколько ключей отсутствуют или пусты.
+
+    Args:
+        section: Имя секции для валидации.
+        keys: Список ключей, которые должны присутствовать и быть не пустыми.
+        config: Опциональный, предварительно загруженный словарь конфигурации.
+
+    Raises:
+        ConfigValidationGroupError: Если один или несколько ключей отсутствуют.
+    """
+    if config is None:
+        config = cast(JSONDict, get_config())
+
+    errors: list[Exception] = []
+
+    for key in keys:
+        try:
+            get_config_value(section, key, config=config, required=True)
+        except Exception as e:
+            errors.append(e)
+
+    if errors:
+        from chutils.exceptions import ConfigValidationGroupError
+
+        raise ConfigValidationGroupError(
+            f"Validation failed for section '{section}'. Missing or empty required keys.",
+            exceptions=errors,
+        )

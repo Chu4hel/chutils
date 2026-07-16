@@ -26,25 +26,31 @@ def test_chutils_imports_without_optional_deps():
     for m in to_delete:
         del sys.modules[m]
 
-    with patch.dict(sys.modules, {mod: None for mod in optional_mods}):
-        try:
-            # Пытаемся импортировать корень
-            import chutils
-            importlib.reload(chutils)
+    try:
+        with patch.dict(sys.modules, {mod: None for mod in optional_mods}):
+            try:
+                # Пытаемся импортировать корень
+                import chutils
+                importlib.reload(chutils)
 
-            # Проверяем доступ к основным ленивым атрибутам
-            # Они не должны вызывать ImportError при обращении
-            assert chutils.setup_logger is not None
-            assert chutils.get_config is not None
+                # Проверяем доступ к основным ленивым атрибутам
+                # Они не должны вызывать ImportError при обращении
+                assert chutils.setup_logger is not None
+                assert chutils.get_config is not None
 
-            # Попытка вызова setup_logger (должна откатиться к стандартному logging)
-            logger = chutils.setup_logger("smoke_test")
-            logger.info("Smoke test passed")
+                # Попытка вызова setup_logger (должна откатиться к стандартному logging)
+                logger = chutils.setup_logger("smoke_test")
+                logger.info("Smoke test passed")
 
-        except ImportError as e:
-            pytest.fail(f"Библиотека не импортируется без опциональных зависимостей: {e}")
-        except Exception as e:
-            pytest.fail(f"Ошибка при работе в минимальном окружении: {e}")
+            except ImportError as e:
+                pytest.fail(f"Библиотека не импортируется без опциональных зависимостей: {e}")
+            except Exception as e:
+                pytest.fail(f"Ошибка при работе в минимальном окружении: {e}")
+    finally:
+        # Очищаем кэш импортов chutils повторно, чтобы не загрязнять среду для следующих тестов
+        to_delete_post = [m for m in sys.modules if m.startswith('chutils')]
+        for m in to_delete_post:
+            del sys.modules[m]
 
 
 def test_env_discovery_resilience():
@@ -58,18 +64,21 @@ def test_env_discovery_resilience():
 
     # Имитируем отсутствие opentelemetry через перехват find_spec
     # Мы не можем просто пропатчить sys.modules для find_spec, так как он лезет глубже
-    with patch('importlib.util.find_spec') as mock_find:
-        # Настраиваем так, чтобы поиск любого подмодуля opentelemetry вызывал ошибку,
-        # имитируя поведение при отсутствии родительского пакета.
-        def side_effect(name, package=None):
-            if name.startswith('opentelemetry'):
-                raise ModuleNotFoundError(f"No module named '{name.split('.')[0]}'")
-            return None
+    try:
+        with patch('importlib.util.find_spec') as mock_find:
+            def side_effect(name, package=None):
+                if name.startswith('opentelemetry'):
+                    raise ModuleNotFoundError(f"No module named '{name.split('.')[0]}'")
+                return None
 
-        mock_find.side_effect = side_effect
+            mock_find.side_effect = side_effect
 
-        from chutils import env
-        importlib.reload(env)
+            from chutils import env
+            importlib.reload(env)
 
-        assert env.OTEL_AVAILABLE is False
-        assert env.is_otel_enabled() is False
+            assert env.OTEL_AVAILABLE is False
+            assert env.is_otel_enabled() is False
+    finally:
+        to_delete_post = [m for m in sys.modules if m.startswith('chutils')]
+        for m in to_delete_post:
+            del sys.modules[m]

@@ -18,6 +18,11 @@ class ConfigCommand(BaseCommand):
     """
 
     def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
+        """Регистрирует команду config и её подкоманды в argparse.
+
+        Args:
+            subparsers: Объект subparsers для добавления подкоманд.
+        """
         config_parser = subparsers.add_parser(
             "config",
             help="Управление и диагностика конфигурации",
@@ -95,11 +100,19 @@ class ConfigCommand(BaseCommand):
         schema_parser.set_defaults(handler=self.handle_generate_schema)
 
     def handle(self, args: argparse.Namespace) -> None:
-        """Вызывается, если подкоманда не указана."""
+        """Вызывается, если подкоманда не указана.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         print("Используйте 'chutils config --help' для просмотра доступных подкоманд.")
 
     def handle_debug(self, args: argparse.Namespace) -> None:
-        """Обработчик команды отладки конфигурации."""
+        """Обработчик команды отладки конфигурации.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         # 1. Загружаем модель, если указана
         model_class = None
         if args.model:
@@ -186,7 +199,11 @@ class ConfigCommand(BaseCommand):
         return defaults
 
     def handle_generate_schema(self, args: argparse.Namespace) -> None:
-        """Обработчик команды генерации JSON Schema."""
+        """Обработчик команды генерации JSON Schema.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
         from chutils.config import export_schema
 
         try:

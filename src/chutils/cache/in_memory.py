@@ -16,6 +16,7 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
     """
 
     def __init__(self) -> None:
+        """Инициализирует бэкенд кэширования в памяти."""
         # Структура: {key: (value, expires_at)}
         self._cache: dict[str, tuple[T, float | None]] = {}
         self._lock = threading.Lock()
@@ -27,7 +28,14 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
         return self._async_lock
 
     def get(self, key: str) -> T | None:
-        """Получить значение. Если просрочено - удаляет его."""
+        """Получает значение по ключу. Если значение просрочено - удаляет его.
+
+        Args:
+            key: Ключ кэша.
+
+        Returns:
+            Значение из кэша или None, если оно отсутствует или просрочено.
+        """
         with self._lock:
             return self._get_without_lock(key)
 
@@ -44,7 +52,13 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
         return value
 
     def set(self, key: str, value: T, ttl: int | None = None) -> None:
-        """Сохранить значение с TTL."""
+        """Сохраняет значение с заданным TTL.
+
+        Args:
+            key: Ключ кэша.
+            value: Сохраняемое значение.
+            ttl: Время жизни записи в секундах.
+        """
         expires_at = time.time() + ttl if ttl is not None else None
         with self._lock:
             self._cache[key] = (value, expires_at)
@@ -52,12 +66,23 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
             self._lazy_evict()
 
     def delete(self, key: str) -> None:
-        """Удалить ключ."""
+        """Удаляет запись из кэша по ключу.
+
+        Args:
+            key: Ключ для удаления.
+        """
         with self._lock:
             self._cache.pop(key, None)
 
     def exists(self, key: str) -> bool:
-        """Проверить наличие ключа (удаляет, если просрочен)."""
+        """Проверяет существование ключа в кэше (удаляет его, если он просрочен).
+
+        Args:
+            key: Ключ для проверки.
+
+        Returns:
+            True, если ключ существует и не просрочен, иначе False.
+        """
         with self._lock:
             return self._get_without_lock(key) is not None
 
@@ -79,13 +104,26 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
                 del self._cache[k]
 
     async def aget(self, key: str) -> T | None:
-        """Асинхронное получение значения."""
+        """Асинхронно получает значение по ключу.
+
+        Args:
+            key: Ключ кэша.
+
+        Returns:
+            Значение из кэша или None, если оно отсутствует или просрочено.
+        """
         async with self._get_async_lock():
             with self._lock:
                 return self._get_without_lock(key)
 
     async def aset(self, key: str, value: T, ttl: int | None = None) -> None:
-        """Асинхронное сохранение значения."""
+        """Асинхронно сохраняет значение с TTL.
+
+        Args:
+            key: Ключ кэша.
+            value: Сохраняемое значение.
+            ttl: Время жизни записи в секундах.
+        """
         expires_at = time.time() + ttl if ttl is not None else None
         async with self._get_async_lock():
             with self._lock:
@@ -93,13 +131,24 @@ class InMemoryCacheBackend(BaseCacheBackend[T]):
                 self._lazy_evict()
 
     async def adelete(self, key: str) -> None:
-        """Асинхронное удаление значения."""
+        """Асинхронно удаляет запись из кэша по ключу.
+
+        Args:
+            key: Ключ для удаления.
+        """
         async with self._get_async_lock():
             with self._lock:
                 self._cache.pop(key, None)
 
     async def aexists(self, key: str) -> bool:
-        """Асинхронная проверка наличия ключа."""
+        """Асинхронно проверяет существование ключа в кэше.
+
+        Args:
+            key: Ключ для проверки.
+
+        Returns:
+            True, если ключ существует и не просрочен, иначе False.
+        """
         async with self._get_async_lock():
             with self._lock:
                 return self._get_without_lock(key) is not None

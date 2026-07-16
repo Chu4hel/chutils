@@ -121,7 +121,7 @@ def encrypt_file(
     key = _get_fernet_key(seed)
     f = Fernet(key)
     encrypted_bytes = f.encrypt(data_bytes)
-    out_p.write_bytes(encrypted_bytes)
+    out_p.write_bytes(encrypted_bytes)  # chutils: ignore[ChutilsIntegrationRule]
     return out_p
 
 
@@ -158,7 +158,7 @@ def decrypt_file(
         key = _get_fernet_key(seed)
         f = Fernet(key)
         decrypted_bytes = f.decrypt(encrypted_bytes)
-        out_p.write_bytes(decrypted_bytes)
+        out_p.write_bytes(decrypted_bytes)  # chutils: ignore[ChutilsIntegrationRule]
         return True
     except (InvalidToken, Exception):
         return False

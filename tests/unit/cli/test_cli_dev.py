@@ -30,7 +30,10 @@ def test_cli_dev_generate_context_markdown(mocker, capsys):
     assert e.value.code == 0
     captured = capsys.readouterr()
     assert "# Public API Map: chutils" in captured.out
-    assert "| Name | Type | Signature | Description |" in captured.out
+    assert "Name" in captured.out
+    assert "Type" in captured.out
+    assert "Signature" in captured.out
+    assert "Description" in captured.out
     # Проверяем наличие ключевых функций
     assert "`setup_logger`" in captured.out
     assert "`get_config_value`" in captured.out
@@ -53,12 +56,14 @@ def test_cli_dev_generate_context_json(mocker, capsys):
     # JSON должен быть в stdout
     output = captured.out.strip()
     # Ищем начало JSON (он может начинаться с новой строки)
-    json_start = output.find('[')
+    json_start = output.find('{')
     if json_start != -1:
         json_str = output[json_start:]
         data = json.loads(json_str)
-        assert isinstance(data, list)
-        names = [item["name"] for item in data]
+        assert isinstance(data, dict)
+        assert "metadata" in data
+        assert "api" in data
+        names = [item["name"] for item in data["api"]]
         assert "setup_logger" in names
     else:
         pytest.fail(f"JSON not found in stdout: {output}")

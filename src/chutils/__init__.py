@@ -54,12 +54,16 @@ _LAZY_MAPPING = {
     'dev': ('.dev', None),
     'Scaffolder': ('.dev.scaffold', 'Scaffolder'),
     'MockServerRunner': ('.dev.mock_server', 'MockServerRunner'),
-    'generate_few_shot': ('.dev.generate_few_shot', None),
+    'generate_few_shot': ('.dev.few_shot', None),
+    'few_shot': ('.dev.few_shot', None),
     'events': ('.events', None),
     'tasks': ('.tasks', None),
     'text': ('.text', None),
     'crypto': ('.crypto', None),
     'fs': ('.fs', None),
+    'diagnostics': ('.diagnostics', None),
+    'DiagnosticsManager': ('.diagnostics', 'DiagnosticsManager'),
+    'validation': ('.validation', None),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -88,6 +92,7 @@ _LAZY_MAPPING = {
     'export_schema': ('.config', 'export_schema'),
     'load_ai_lint_config': ('.config', 'load_ai_lint_config'),
     'parse_chutils_ignore': ('.config', 'parse_chutils_ignore'),
+    'validate_required_keys': ('.config', 'validate_required_keys'),
 
     # features
     'is_feature_enabled': ('.features', 'is_feature_enabled'),
@@ -117,6 +122,7 @@ _LAZY_MAPPING = {
     'WATCHDOG_AVAILABLE': ('.env', 'WATCHDOG_AVAILABLE'),
     'JSON_LOGGER_AVAILABLE': ('.env', 'JSON_LOGGER_AVAILABLE'),
     'OTEL_AVAILABLE': ('.env', 'OTEL_AVAILABLE'),
+    'BaseEnvManifest': ('.env', 'BaseEnvManifest'),
 
     # cache
     'cache_with_ttl': ('.cache', 'cache_with_ttl'),
@@ -162,6 +168,7 @@ _LAZY_MAPPING = {
     'ConfigLoadError': ('.exceptions', 'ConfigLoadError'),
     'ConfigParseError': ('.exceptions', 'ConfigParseError'),
     'ConfigKeyNotFoundError': ('.exceptions', 'ConfigKeyNotFoundError'),
+    'ConfigValidationGroupError': ('.exceptions', 'ConfigValidationGroupError'),
     'SecretError': ('.exceptions', 'SecretError'),
     'SecretNotFoundError': ('.exceptions', 'SecretNotFoundError'),
     'SecretProviderError': ('.exceptions', 'SecretProviderError'),
@@ -174,6 +181,8 @@ _LAZY_MAPPING = {
     'CacheError': ('.exceptions', 'CacheError'),
     'EventBusError': ('.exceptions', 'EventBusError'),
     'EventBusExceptionGroup': ('.exceptions', 'EventBusExceptionGroup'),
+    'ChutilsValidationError': ('.exceptions', 'ChutilsValidationError'),
+    'EnvValidationError': ('.exceptions', 'EnvValidationError'),
 
     # events
     'subscribe': ('.events', 'subscribe'),
@@ -213,6 +222,10 @@ _LAZY_MAPPING = {
     'cleanup_paths': ('.fs', 'cleanup_paths'),
     'safe_filename': ('.fs', 'safe_filename'),
     'zip_folder': ('.fs', 'zip_folder'),
+
+    # validation
+    'validate_data': ('.validation', 'validate_data'),
+    'validate_call': ('.validation', 'validate_call'),
 
     # web
     'web': ('.web', None),
@@ -269,7 +282,7 @@ def __getattr__(name: str) -> Any:
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
-def __dir__():
+def __dir__() -> list[str]:
     """
     Возвращает список всех доступных атрибутов для поддержки автодополнения и интроспекции.
     """
@@ -279,7 +292,7 @@ def __dir__():
     ])
 
 
-def init(base_dir: str):
+def init(base_dir: str) -> None:
     """
     Ручная инициализация пакета с указанием базовой директории проекта.
 

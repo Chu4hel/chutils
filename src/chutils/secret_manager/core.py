@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import asyncio
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from chutils.exceptions import SecretError
 from .providers import SecretProvider, KeyringProvider, DotEnvProvider, EnvProvider
@@ -9,7 +11,7 @@ if TYPE_CHECKING:
     from ..logger import ChutilsLogger
 
 # Ленивая инициализация логгера модуля
-_module_logger: Optional["ChutilsLogger"] = None
+_module_logger: ChutilsLogger | None = None
 
 # Флаг для однократного вывода предупреждения о отсутствующей зависимости keyring
 _keyring_missing_warned = False
@@ -41,7 +43,7 @@ def _warn_about_missing_keyring() -> None:
 
     import os
 
-    if os.environ.get("CH_DISABLE_KEYRING_WARNING", "").lower() in ("true", "1", "yes"):
+    if os.environ.get("CH_DISABLE_KEYRING_WARNING", "").lower() in ("true", "1", "yes"):  # chutils: ignore[ChutilsIntegrationRule]
         _keyring_missing_warned = True
         return
 
@@ -175,10 +177,17 @@ class SecretManager:
                 _get_logger().error("Ошибка при загрузке плагинов секретов: %s", str(e))
 
     def get_secret(
-            self, key: str, fallback: Optional[str] = None, required: bool = False
-    ) -> Optional[str]:
-        """
-        Получает секрет, опрашивая провайдеры по порядку.
+            self, key: str, fallback: str | None = None, required: bool = False
+    ) -> str | None:
+        """Получает секрет, опрашивая провайдеры по порядку.
+
+        Args:
+            key: Имя запрашиваемого секрета.
+            fallback: Значение по умолчанию, если секрет не найден.
+            required: Флаг обязательности. Если True, выбрасывает исключение SecretNotFoundError при отсутствии.
+
+        Returns:
+            Значение секрета или fallback.
         """
         self._ensure_plugins_loaded()
         for provider in self.providers:
@@ -198,8 +207,14 @@ class SecretManager:
         return fallback
 
     def save_secret(self, key: str, value: str) -> bool:
-        """
-        Сохраняет секрет в первом провайдере, поддерживающем запись.
+        """Сохраняет секрет в первом провайдере, поддерживающем запись.
+
+        Args:
+            key: Имя секрета.
+            value: Значение секрета.
+
+        Returns:
+            True, если сохранение успешно, иначе False.
         """
         self._ensure_plugins_loaded()
         for provider in self.providers:
@@ -208,8 +223,13 @@ class SecretManager:
         return False
 
     def delete_secret(self, key: str) -> bool:
-        """
-        Удаляет секрет во всех провайдерах, поддерживающих удаление.
+        """Удаляет секрет во всех провайдерах, поддерживающих удаление.
+
+        Args:
+            key: Имя удаляемого секрета.
+
+        Returns:
+            True, если секрет был успешно удален хотя бы из одного провайдера, иначе False.
         """
         self._ensure_plugins_loaded()
         success = False
@@ -219,19 +239,52 @@ class SecretManager:
         return success
 
     def update_secret(self, key: str, value: str) -> bool:
-        """
-        Обновляет секрет (псевдоним для save_secret).
+        """Обновляет секрет (псевдоним для save_secret).
+
+        Args:
+            key: Имя секрета.
+            value: Новое значение секрета.
+
+        Returns:
+            True, если обновление успешно, иначе False.
         """
         return self.save_secret(key, value)
 
     # Асинхронные обертки
     async def aget_secret(
-            self, key: str, fallback: Optional[str] = None, required: bool = False
-    ) -> Optional[str]:
+            self, key: str, fallback: str | None = None, required: bool = False
+    ) -> str | None:
+        """Асинхронно получает секрет.
+
+        Args:
+            key: Имя секрета.
+            fallback: Значение по умолчанию.
+            required: Флаг обязательности.
+
+        Returns:
+            Значение секрета или fallback.
+        """
         return await asyncio.to_thread(self.get_secret, key, fallback, required)
 
     async def asave_secret(self, key: str, value: str) -> bool:
+        """Асинхронно сохраняет секрет.
+
+        Args:
+            key: Имя секрета.
+            value: Значение секрета.
+
+        Returns:
+            True при успехе, иначе False.
+        """
         return await asyncio.to_thread(self.save_secret, key, value)
 
     async def adelete_secret(self, key: str) -> bool:
+        """Асинхронно удаляет секрет.
+
+        Args:
+            key: Имя удаляемого секрета.
+
+        Returns:
+            True при успехе, иначе False.
+        """
         return await asyncio.to_thread(self.delete_secret, key)

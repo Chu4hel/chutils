@@ -35,8 +35,14 @@ def _check_pydantic() -> None:
 
 
 def generate_yaml_template(model_class: type[BaseModel], indent: int = 0) -> str:
-    """
-    Генерирует YAML шаблон на основе Pydantic модели с комментариями.
+    """Генерирует YAML шаблон на основе Pydantic модели с комментариями.
+
+    Args:
+        model_class: Класс Pydantic модели.
+        indent: Начальный отступ в пробелах (уровень вложенности).
+
+    Returns:
+        Строковое представление сгенерированного YAML-шаблона.
     """
     _check_pydantic()
     lines = []
@@ -88,8 +94,14 @@ def generate_yaml_template(model_class: type[BaseModel], indent: int = 0) -> str
 
 
 def generate_env_template(model_class: type[BaseModel], prefix: str = "CH") -> str:
-    """
-    Генерирует .env шаблон (плоский формат).
+    """Генерирует .env шаблон (плоский формат).
+
+    Args:
+        model_class: Класс Pydantic модели.
+        prefix: Префикс для имен переменных окружения.
+
+    Returns:
+        Строковое представление сгенерированного .env-шаблона.
     """
     _check_pydantic()
     lines = []
@@ -130,8 +142,13 @@ def generate_env_template(model_class: type[BaseModel], prefix: str = "CH") -> s
 
 
 def generate_json_schema(model_class: type[BaseModel]) -> str:
-    """
-    Генерирует JSON схему на основе Pydantic модели.
+    """Генерирует JSON схему на основе Pydantic модели.
+
+    Args:
+        model_class: Класс Pydantic модели.
+
+    Returns:
+        JSON-строка схемы.
     """
     from .schema import export_schema
     return export_schema(model_class)
