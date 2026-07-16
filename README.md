@@ -46,7 +46,7 @@ Every time you start a new project, you have to solve the same tasks:
 - **🛡️ Secure Paths:** Prevent Path Traversal attacks by safely resolving file paths against a base directory using
   `resolve_safe_path()`.
 - **🤖 AI Linter:** Run static analysis checks on your codebase to ensure AI readiness (strict type hints, structured
-  docstrings, API map sync) via `chutils dev ai-lint`.
+  docstrings, API map sync, and file dependency synchronization) via `chutils dev ai-lint`.
 - **✅ Data Validation (chutils.validation):** An all-in-one Pydantic-based data and JSON validation module featuring
   `@validate_call` decorator for function argument checks and rich exception formatting.
 - **🩺 Diagnostics API (chutils.diagnostics):** An asynchronous, thread-safe health checking framework with built-in
