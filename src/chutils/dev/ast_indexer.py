@@ -519,4 +519,6 @@ class Indexer:
 # Re-export metadata utilities to maintain backward compatibility
 from .project_metadata import (
     collect_project_metadata,
+    calculate_project_hash,
+    save_context_metadata_cache,
 )
