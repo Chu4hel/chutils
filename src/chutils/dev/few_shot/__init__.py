@@ -64,7 +64,8 @@ def generate_few_shot_bank(
 
     # 2. Подготовка директории
     output_dir = project_root / "docs" / "ai_examples"
-    output_dir.mkdir(parents=True, exist_ok=True)
+    from chutils.fs import ensure_dir  # chutils: ignore[ChutilsIntegrationRule]
+    ensure_dir(output_dir)
 
     # 3. Рендер и запись
     renderer = TemplateRenderer(entities)

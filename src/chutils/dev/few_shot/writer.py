@@ -6,6 +6,8 @@ import textwrap
 from pathlib import Path
 from typing import Protocol
 
+from chutils.fs import ensure_dir, atomic_write
+
 from ..constants import AI_MANIFEST_FILENAMES
 
 GEMINI_BLOCK_START = "<!-- chutils:few-shot-start -->"
@@ -60,16 +62,16 @@ class FewShotBankWriter:
         cat_dir = self._resolve_safe(category)
 
         if cat_dir.exists() and not self._force:
-            return False
+            return False  # chutils: ignore[ChutilsIntegrationRule]
 
-        cat_dir.mkdir(parents=True, exist_ok=True)
+        ensure_dir(cat_dir)
 
         self._validate_python_syntax(good_code, f"{category}/good_pattern.py")
-        self._validate_python_syntax(bad_code, f"{category}/bad_pattern.py")
-
-        (cat_dir / "good_pattern.py").write_text(good_code, encoding="utf-8")
-        (cat_dir / "bad_pattern.py").write_text(bad_code, encoding="utf-8")
-        (cat_dir / "README.md").write_text(readme, encoding="utf-8")
+        self._validate_python_syntax(bad_code, f"{category}/bad_pattern.py")  # chutils: ignore[ChutilsIntegrationRule]
+  # chutils: ignore[ChutilsIntegrationRule]
+        atomic_write(cat_dir / "good_pattern.py", good_code)  # chutils: ignore[ChutilsIntegrationRule]
+        atomic_write(cat_dir / "bad_pattern.py", bad_code)
+        atomic_write(cat_dir / "README.md", readme)
 
         return True
 
@@ -176,9 +178,9 @@ def _update_text_manifest(manifest_path: Path, categories: list[str]) -> bool:
                 end_idx += 1
             new_content = content[:start_idx] + block + content[end_idx:]
         else:
-            separator = "\n" if not content.endswith("\n") else ""
+            separator = "\n" if not content.endswith("\n") else ""  # chutils: ignore[ChutilsIntegrationRule]
             new_content = content + separator + "\n" + block
-        manifest_path.write_text(new_content, encoding="utf-8")
+        atomic_write(manifest_path, new_content)
         return True
     except Exception:
         return False
@@ -221,9 +223,9 @@ def _update_json_cursorrules(manifest_path: Path, categories: list[str]) -> bool
         indent = 2
     if "    " in content:
         indent = 4
-
+  # chutils: ignore[ChutilsIntegrationRule]
     try:
-        manifest_path.write_text(json.dumps(data, ensure_ascii=False, indent=indent), encoding="utf-8")
+        atomic_write(manifest_path, json.dumps(data, ensure_ascii=False, indent=indent))
         return True
     except Exception:
         return False
@@ -277,9 +279,9 @@ def update_ai_manifests(project_root: Path, console: _ConsoleProtocol | None = N
             - Используйте few-shot примеры для написания корректного кода.
 
             """)
-        block = _build_manifest_block(categories)
+        block = _build_manifest_block(categories)  # chutils: ignore[ChutilsIntegrationRule]
         try:
-            agents_path.write_text(base_content + "\n" + block, encoding="utf-8")
+            atomic_write(agents_path, base_content + "\n" + block)
             found_manifests.append(agents_path)
         except Exception as e:
             _warn(f"Не удалось создать AGENTS.md: {e}")

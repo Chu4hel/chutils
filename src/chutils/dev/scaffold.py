@@ -411,7 +411,8 @@ class Scaffolder:
             file_path = self.output_path / rel_path
 
             # Создаем родительские директории, если их нет
-            file_path.parent.mkdir(parents=True, exist_ok=True)
+            from chutils.fs import ensure_dir, atomic_write  # chutils: ignore[ChutilsIntegrationRule]
+            ensure_dir(file_path.parent)
 
             # Интерполяция шаблона
             content = template_str.format(
@@ -420,5 +421,5 @@ class Scaffolder:
                 value_object_name=value_object_name,
             )
 
-            # Запись с перезаписью (если force=True, это затрет существующий файл)
-            file_path.write_text(content, encoding="utf-8")
+            # Запись с перезаписью (если force=True, это затрет существующий файл) chutils: ignore[ChutilsIntegrationRule]
+            atomic_write(file_path, content)
