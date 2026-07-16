@@ -1,6 +1,6 @@
 [project]
 name = "chutils"
-version = "3.0.0"
+version = "3.1.0"
 description = "Набор простых и удобных утилит для Python, который избавляет от рутины при работе с конфигурацией и логированием в новых проектах."
 authors = [{ name = "Chu4hel", email = "sergeiivanov636@gmail.com" }]
 license = "MIT"
@@ -122,3 +122,13 @@ ignore = [
     "src/chutils/testing",
     "src/chutils/typing.py"
 ]
+
+[tool.bumpversion]
+current_version = "3.1.0"
+commit = false
+tag = false
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'

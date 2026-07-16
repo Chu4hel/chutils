@@ -129,15 +129,17 @@ def load_external_config(path: Path) -> JSONDict:
                 data = _parse_flat_toml(path)
                 
         if isinstance(data, dict):
-            tool_dict = data.get("tool", {})
-            if isinstance(tool_dict, dict):
-                chutils_dict = tool_dict.get("chutils", {})
-                if isinstance(chutils_dict, dict):
-                    ai_lint_dict = chutils_dict.get("ai-lint", {})
+            # 1. Сначала ищем вложенную структуру [tool.chutils.ai-lint]
+            if "tool" in data and isinstance(data["tool"], dict):
+                chutils_dict = data["tool"].get("chutils")
+                if isinstance(chutils_dict, dict) and "ai-lint" in chutils_dict:
+                    ai_lint_dict = chutils_dict.get("ai-lint")
                     if isinstance(ai_lint_dict, dict):
                         return ai_lint_dict
-            if "ai-lint" in data:
+            # 2. Затем ищем секцию [ai-lint]
+            if "ai-lint" in data and isinstance(data["ai-lint"], dict):
                 return data["ai-lint"]
+            # 3. Иначе возвращаем корневой словарь
             return data
             
     return {}

@@ -102,3 +102,7 @@ except OptionalDependencyError as e:
 | Интеграция с решателями капчи              | `pip install "chutils[captcha]"`  |
 | Автоматизация браузера / анти-детекция     | `pip install "chutils[scraping]"` |
 | Полная установка для разработки            | `pip install "chutils[full]"`     |
+
+---
+
+*Последнее обновление карты зависимостей: 2026-07-16 (для версии 3.1.0).*
