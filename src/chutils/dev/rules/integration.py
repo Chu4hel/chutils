@@ -217,4 +217,44 @@ class ChutilsIntegrationRule(Rule):
                                     fix_suggestion="Используйте: from chutils.fs import atomic_write; atomic_write(file_path, data)"
                                 )
                             )
+                    elif node.func.attr == "utcnow":
+                        results.append(
+                            LintResult(
+                                rule_name=self.name,
+                                message="Используется ручной вызов получения UTC-времени '.utcnow()'. Рекомендуется использовать 'chutils.time.utc_now()'.",
+                                severity=self.severity,
+                                file_path=file_path,
+                                line_number=node.lineno,
+                                fix_suggestion="Используйте: from chutils.time import utc_now; utc_now()"
+                            )
+                        )
+                    elif node.func.attr == "now":
+                        has_utc_tz = False
+
+                        def is_utc_node(arg_node: ast.AST) -> bool:
+                            if isinstance(arg_node, ast.Attribute):
+                                return isinstance(arg_node.value,
+                                                  ast.Name) and arg_node.value.id == "timezone" and arg_node.attr == "utc"
+                            elif isinstance(arg_node, ast.Name):
+                                return arg_node.id in ("utc", "UTC")
+                            return False
+
+                        for arg in node.args:
+                            if is_utc_node(arg):
+                                has_utc_tz = True
+                        for kw in node.keywords:
+                            if kw.arg == "tz" and is_utc_node(kw.value):
+                                has_utc_tz = True
+
+                        if has_utc_tz:
+                            results.append(
+                                LintResult(
+                                    rule_name=self.name,
+                                    message="Используется ручной вызов получения UTC-времени '.now(timezone.utc)'. Рекомендуется использовать 'chutils.time.utc_now()'.",
+                                    severity=self.severity,
+                                    file_path=file_path,
+                                    line_number=node.lineno,
+                                    fix_suggestion="Используйте: from chutils.time import utc_now; utc_now()"
+                                )
+                            )
         return results

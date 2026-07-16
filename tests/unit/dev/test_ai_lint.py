@@ -305,6 +305,8 @@ import requests
 import httpx
 import tempfile
 import json
+import datetime
+from datetime import timezone
 from pathlib import Path
 
 logging.info("Test message")
@@ -315,13 +317,15 @@ Path("test.txt").write_text("hello")
 tempfile.mkstemp()
 os.replace("src", "dst")
 json.dump({"data": 1}, None)
+t1 = datetime.datetime.utcnow()
+t2 = datetime.datetime.now(timezone.utc)
 """
     file_path = tmp_path / "bad.py"
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(bad_code)
 
     results = rule.check(str(tmp_path), [str(file_path)])
-    assert len(results) == 9
+    assert len(results) == 11
     assert any("logging" in r.message for r in results)
     assert any("os.environ" in r.message or "os.getenv" in r.message for r in results)
     assert any("keyring" in r.message for r in results)
@@ -331,6 +335,8 @@ json.dump({"data": 1}, None)
     assert any("write_text" in r.message for r in results)
     assert any("паттерн ручной атомарной записи" in r.message for r in results)
     assert any("json.dump" in r.message for r in results)
+    assert any(".utcnow()" in r.message for r in results)
+    assert any(".now(timezone.utc)" in r.message for r in results)
 
 
 def test_api_map_rule(tmp_path):
