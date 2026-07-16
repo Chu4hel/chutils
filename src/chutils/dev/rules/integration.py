@@ -38,6 +38,18 @@ class ChutilsIntegrationRule(Rule):
             except Exception:
                 continue
 
+            # Предварительный сбор вызовов tempfile в файле
+            has_tempfile_call = False
+            for subnode in ast.walk(tree):
+                if isinstance(subnode, ast.Call):
+                    if isinstance(subnode.func, ast.Attribute) and subnode.func.attr in ("NamedTemporaryFile",
+                                                                                         "mkstemp"):
+                        has_tempfile_call = True
+                        break
+                    elif isinstance(subnode.func, ast.Name) and subnode.func.id in ("NamedTemporaryFile", "mkstemp"):
+                        has_tempfile_call = True
+                        break
+
             for node in ast.walk(tree):
                 # Проверка импорта logging/keyring/requests/httpx
                 if isinstance(node, ast.Import):
@@ -165,4 +177,44 @@ class ChutilsIntegrationRule(Rule):
                                 fix_suggestion="Используйте: from chutils.fs import ensure_dir; ensure_dir(path)"
                             )
                         )
+                # Проверка write_text/write_bytes и других паттернов атомарной записи
+                elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+                    if node.func.attr in ("write_text", "write_bytes"):
+                        results.append(
+                            LintResult(
+                                rule_name=self.name,
+                                message=f"Используется метод '.{node.func.attr}()'. Рекомендуется использовать безопасную атомарную запись 'chutils.fs.atomic_write'.",
+                                severity=self.severity,
+                                file_path=file_path,
+                                line_number=node.lineno,
+                                fix_suggestion="Используйте: from chutils.fs import atomic_write; atomic_write(file_path, data)"
+                            )
+                        )
+                    elif node.func.attr in ("replace", "rename", "move") and has_tempfile_call:
+                        is_os_or_shutil = False
+                        if isinstance(node.func.value, ast.Name) and node.func.value.id in ("os", "shutil"):
+                            is_os_or_shutil = True
+                        if is_os_or_shutil:
+                            results.append(
+                                LintResult(
+                                    rule_name=self.name,
+                                    message=f"Обнаружен паттерн ручной атомарной записи через tempfile и '{node.func.value.id}.{node.func.attr}'. Рекомендуется использовать 'chutils.fs.atomic_write'.",
+                                    severity=self.severity,
+                                    file_path=file_path,
+                                    line_number=node.lineno,
+                                    fix_suggestion="Используйте: from chutils.fs import atomic_write; atomic_write(file_path, data)"
+                                )
+                            )
+                    elif node.func.attr in ("dump", "dump_all"):
+                        if isinstance(node.func.value, ast.Name) and node.func.value.id in ("json", "yaml"):
+                            results.append(
+                                LintResult(
+                                    rule_name=self.name,
+                                    message=f"Прямой вызов '{node.func.value.id}.{node.func.attr}' для записи файла. Рекомендуется использовать 'chutils.fs.atomic_write' с автоматической сериализацией.",
+                                    severity=self.severity,
+                                    file_path=file_path,
+                                    line_number=node.lineno,
+                                    fix_suggestion="Используйте: from chutils.fs import atomic_write; atomic_write(file_path, data)"
+                                )
+                            )
         return results
