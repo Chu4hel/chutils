@@ -397,6 +397,8 @@ class Indexer:
                 # Простые константы
                 for target in top_level.targets:
                     if isinstance(target, ast.Name):
+                        if target.id.startswith("__") and target.id.endswith("__"):
+                            continue
                         symbols.append(Symbol(
                             name=target.id,
                             type="constant",
