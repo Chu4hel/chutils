@@ -646,6 +646,10 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
         "chutils.dev.rules.dependency_sync.get_git_changed_files",
         return_value=[]
     )
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_new_files",
+        return_value=[]
+    )
     results = rule.check(str(tmp_path), [])
     assert len(results) == 0
 
@@ -690,3 +694,41 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
 
     results = rule.check(str(tmp_path), [])
     assert len(results) == 0
+
+    # Сценарий 5: Использование new: префикса. Файл изменен, но не является новым
+    rule.config = {
+        "dependencies": {
+            "new:src/chutils/dev/rules/*.py": ["docs/ai_lint.md"]
+        }
+    }
+    rules_file = tmp_path / "src" / "chutils" / "dev" / "rules" / "my_rule.py"
+    rules_file.parent.mkdir(parents=True, exist_ok=True)
+    rules_file.write_text("print('rule')", encoding="utf-8")
+
+    # Имитируем, что файл изменен, но get_git_new_files возвращает пустой список
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[str(rules_file.resolve())]
+    )
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_new_files",
+        return_value=[]
+    )
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0  # Срабатывать не должно, так как файл не новый
+
+    # Сценарий 6: Использование new: префикса. Добавлен новый файл
+    # Имитируем, что файл и изменен, и является новым
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_changed_files",
+        return_value=[str(rules_file.resolve())]
+    )
+    mocker.patch(
+        "chutils.dev.rules.dependency_sync.get_git_new_files",
+        return_value=[str(rules_file.resolve())]
+    )
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1  # Должно сработать предупреждение
+    assert "были созданы новые файлы, но связанные файлы" in results[0].message

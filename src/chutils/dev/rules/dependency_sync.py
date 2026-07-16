@@ -65,6 +65,51 @@ def get_git_changed_files(base_dir: str) -> list[str]:
     return sorted(list(changed_files))
 
 
+def get_git_new_files(base_dir: str) -> list[str]:
+    """Возвращает список всех новых (добавленных или неотслеживаемых) файлов в Git.
+
+    Args:
+        base_dir: Путь к корню проекта.
+
+    Returns:
+        Список абсолютных путей к новым файлам.
+    """
+    new_files = set()
+    base_path = Path(base_dir)
+
+    try:
+        # 1. Staged Added (новые файлы, добавленные в индекс)
+        res_staged = subprocess.run(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"],
+            cwd=str(base_path),
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        for line in res_staged.stdout.splitlines():
+            line = line.strip()
+            if line:
+                new_files.add(str((base_path / line).resolve()))
+
+        # 2. Untracked (неотслеживаемые файлы, которые еще не добавлены)
+        res_untracked = subprocess.run(
+            ["git", "ls-files", "--others", "--exclude-standard"],
+            cwd=str(base_path),
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        for line in res_untracked.stdout.splitlines():
+            line = line.strip()
+            if line:
+                new_files.add(str((base_path / line).resolve()))
+
+    except (subprocess.SubprocessError, FileNotFoundError):
+        pass
+
+    return sorted(list(new_files))
+
+
 def match_glob(file_path: Path, glob_pattern: str, base_dir: Path) -> bool:
     """Проверяет, подходит ли файл под глоб-шаблон (поддерживает **).
 
@@ -148,8 +193,9 @@ class FileDependencySyncRule(Rule):
         if not dependencies:
             return results
 
-        # Получаем все измененные в Git файлы
+        # Получаем все измененные в Git файлы и новые файлы
         git_changed = get_git_changed_files(base_dir)
+        git_new = get_git_new_files(base_dir)
         if not git_changed:
             return results
 
@@ -160,17 +206,28 @@ class FileDependencySyncRule(Rule):
             if not is_file_ignored(f_path):
                 active_changed.append(f_path)
 
+        # Фильтруем новые файлы на предмет игнорирования
+        active_new = []
+        for f_str in git_new:
+            f_path = Path(f_str)
+            if not is_file_ignored(f_path):
+                active_new.append(f_path)
+
         # Выполняем проверку по карте зависимостей
         for source_glob, dep_globs in dependencies.items():
             if not isinstance(dep_globs, list):
                 dep_globs = [dep_globs]
 
-            # 1. Находим измененные файлы, подходящие под source_glob
-            matching_sources = [f for f in active_changed if match_glob(f, source_glob, base_path)]
+            is_new_only = source_glob.startswith("new:")
+            clean_glob = source_glob[4:] if is_new_only else source_glob
+
+            # Находим файлы-источники (новые или любые измененные)
+            source_pool = active_new if is_new_only else active_changed
+            matching_sources = [f for f in source_pool if match_glob(f, clean_glob, base_path)]
             if not matching_sources:
                 continue
 
-            # 2. Проверяем, изменился ли хотя бы один из зависимых файлов
+            # Проверяем, изменился ли хотя бы один из зависимых файлов
             has_dep_change = False
             for dep_glob in dep_globs:
                 matching_deps = [f for f in active_changed if match_glob(f, dep_glob, base_path)]
@@ -178,15 +235,15 @@ class FileDependencySyncRule(Rule):
                     has_dep_change = True
                     break
 
-            # 3. Если зависимые файлы не изменились, регистрируем предупреждение
+            # Если зависимые файлы не изменились, регистрируем предупреждение
             if not has_dep_change:
-                # В качестве файла подсвечиваем первый измененный источник
                 trigger_file = str(matching_sources[0])
+                action_word = "созданы новые файлы" if is_new_only else "изменены"
                 results.append(
                     LintResult(
                         rule_name=self.name,
                         message=(
-                            f"Файл(ы) под шаблоном '{source_glob}' были изменены, но связанные "
+                            f"Для шаблона '{source_glob}' были {action_word}, но связанные "
                             f"файлы ({', '.join(dep_globs)}) не обновлены. Пожалуйста, синхронизируйте изменения."
                         ),
                         severity=self.severity,
