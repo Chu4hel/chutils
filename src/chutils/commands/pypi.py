@@ -231,7 +231,7 @@ def find_best_mirror(results: list[dict[str, Any]], current_url: str) -> str | N
 
     # Если текущее зеркало недоступно или не в списке, рекомендуем лучшее из доступных
     if not current_result or not current_result["available"]:
-        return best_result["url"]
+        return str(best_result["url"])
 
     # Если лучшее зеркало совпадает с текущим, рекомендация не нужна
     if normalize_mirror_url(best_result["url"]) == norm_current:
@@ -245,14 +245,14 @@ def find_best_mirror(results: list[dict[str, Any]], current_url: str) -> str | N
     # Сравниваем скорость: если скорость выше на 50%+
     if best_speed > 0 and current_speed > 0:
         if best_speed >= current_speed * 1.5:
-            return best_result["url"]
+            return str(best_result["url"])
     elif best_speed > 0 and current_speed == 0:
-        return best_result["url"]
+        return str(best_result["url"])
 
     # Сравниваем пинг: если пинг ниже на 30%+ и разница не менее 50 мс
     if best_latency < current_latency:
         if current_latency > 0 and best_latency <= current_latency * 0.7 and (current_latency - best_latency) >= 50:
-            return best_result["url"]
+            return str(best_result["url"])
 
     return None
 

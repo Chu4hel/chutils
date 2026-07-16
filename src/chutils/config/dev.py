@@ -109,10 +109,14 @@ def load_external_config(path: Path) -> JSONDict:
                     if "tool" in data and isinstance(data["tool"], dict):
                         chutils = data["tool"].get("chutils", {})
                         if isinstance(chutils, dict) and "ai-lint" in chutils:
-                            return chutils["ai-lint"]
+                            ai_lint_val = chutils.get("ai-lint")
+                            if isinstance(ai_lint_val, dict):
+                                return ai_lint_val
                     if "ai-lint" in data:
-                        return data["ai-lint"]
-                    return data
+                        ai_lint_val = data.get("ai-lint")
+                        if isinstance(ai_lint_val, dict):
+                            return ai_lint_val
+                    return {str(k): v for k, v in data.items()}
         except Exception:
             pass
 

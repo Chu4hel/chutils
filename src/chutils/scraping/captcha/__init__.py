@@ -36,12 +36,14 @@ except Exception:
         return FallbackSolver
 
 
-    RuCaptchaSolver = _create_fallback("RuCaptchaSolver")
-    AsyncRuCaptchaSolver = _create_fallback("AsyncRuCaptchaSolver")
-    AntiCaptchaSolver = _create_fallback("AntiCaptchaSolver")
-    AsyncAntiCaptchaSolver = _create_fallback("AsyncAntiCaptchaSolver")
-    CapMonsterSolver = _create_fallback("CapMonsterSolver")
-    AsyncCapMonsterSolver = _create_fallback("AsyncCapMonsterSolver")
+    # Используем type ignore, так как mypy статически не разрешает
+    # переопределять типы импортированных классов динамическими заглушками.
+    RuCaptchaSolver = _create_fallback("RuCaptchaSolver")  # type: ignore[misc]
+    AsyncRuCaptchaSolver = _create_fallback("AsyncRuCaptchaSolver")  # type: ignore[misc]
+    AntiCaptchaSolver = _create_fallback("AntiCaptchaSolver")  # type: ignore[misc]
+    AsyncAntiCaptchaSolver = _create_fallback("AsyncAntiCaptchaSolver")  # type: ignore[misc]
+    CapMonsterSolver = _create_fallback("CapMonsterSolver")  # type: ignore[misc]
+    AsyncCapMonsterSolver = _create_fallback("AsyncCapMonsterSolver")  # type: ignore[misc]
 
 __all__ = [
     "RuCaptchaSolver",

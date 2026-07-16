@@ -43,7 +43,8 @@ class KeyringProvider(SecretProvider):
             value = providers.keyring.get_password(service_name, key)
             if value is not None:
                 providers._get_logger().devdebug("Секрет '%s' получен из keyring (сервис: %s).", key, service_name)
-            return value
+                return str(value)
+            return None
         except Exception as e:
             # Проверяем по имени класса ошибки, чтобы избежать ImportError
             if type(e).__name__ == "NoKeyringError":

@@ -30,4 +30,5 @@ __all__ = [
     "DotEnvProvider",
     "EnvProvider",
     "KEYRING_AVAILABLE",
+    "keyring",
 ]

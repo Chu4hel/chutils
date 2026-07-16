@@ -132,48 +132,59 @@ class EnvCommand(BaseCommand):
         # 2. Из pyproject.toml
         try:
             from chutils.config.utils import find_project_root
+            from pathlib import Path
 
-            root = find_project_root()
-            pyproject_path = root / "pyproject.toml"
-            if pyproject_path.exists():
-                data = {}
-                try:
-                    import tomllib
-                    with open(pyproject_path, "rb") as f:
-                        data = tomllib.load(f)
-                except ImportError:
+            try:
+                current_dir = Path.cwd()
+            except OSError:
+                current_dir = Path('.')
+
+            markers = [
+                'config.yml', 'config.yaml', 'config.ini', 'config.json',
+                'pyproject.toml', '.git'
+            ]
+            root = find_project_root(current_dir, markers)
+            if root:
+                pyproject_path = root / "pyproject.toml"
+                if pyproject_path.exists():
+                    data = {}
                     try:
-                        import tomli
+                        import tomllib
                         with open(pyproject_path, "rb") as f:
-                            data = tomli.load(f)
+                            data = tomllib.load(f)
                     except ImportError:
-                        # Текстовый фолбек, если библиотек нет в рантайме
-                        with open(pyproject_path, encoding="utf-8") as f:
-                            content = f.read()
-                        in_section = False
-                        for line in content.splitlines():
-                            line = line.strip()
-                            if not line or line.startswith("#"):
-                                continue
-                            if line.startswith("[") and line.endswith("]"):
-                                in_section = (line == "[tool.chutils.env]")
-                                continue
-                            if in_section and "=" in line:
-                                k, v = line.split("=", 1)
-                                if k.strip() == "manifest":
-                                    val = v.strip().strip('"').strip("'")
-                                    return val
+                        try:
+                            import tomli
+                            with open(pyproject_path, "rb") as f:
+                                data = tomli.load(f)
+                        except ImportError:
+                            # Текстовый фолбек, если библиотек нет в рантайме
+                            with open(pyproject_path, encoding="utf-8") as f:
+                                content = f.read()
+                            in_section = False
+                            for line in content.splitlines():
+                                line = line.strip()
+                                if not line or line.startswith("#"):
+                                    continue
+                                if line.startswith("[") and line.endswith("]"):
+                                    in_section = (line == "[tool.chutils.env]")
+                                    continue
+                                if in_section and "=" in line:
+                                    k, v = line.split("=", 1)
+                                    if k.strip() == "manifest":
+                                        val = v.strip().strip('"').strip("'")
+                                        return val
 
-                if isinstance(data, dict):
-                    tool_dict = data.get("tool", {})
-                    if isinstance(tool_dict, dict):
-                        chutils_dict = tool_dict.get("chutils", {})
-                        if isinstance(chutils_dict, dict):
-                            env_dict = chutils_dict.get("env", {})
-                            if isinstance(env_dict, dict):
-                                manifest = env_dict.get("manifest")
-                                if manifest:
-                                    return str(manifest)
+                    if isinstance(data, dict):
+                        tool_dict = data.get("tool", {})
+                        if isinstance(tool_dict, dict):
+                            chutils_dict = tool_dict.get("chutils", {})
+                            if isinstance(chutils_dict, dict):
+                                env_dict = chutils_dict.get("env", {})
+                                if isinstance(env_dict, dict):
+                                    manifest = env_dict.get("manifest")
+                                    if manifest:
+                                        return str(manifest)
         except Exception:
             pass
 

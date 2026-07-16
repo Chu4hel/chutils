@@ -192,13 +192,16 @@ class ChutilsIntegrationRule(Rule):
                         )
                     elif node.func.attr in ("replace", "rename", "move") and has_tempfile_call:
                         is_os_or_shutil = False
-                        if isinstance(node.func.value, ast.Name) and node.func.value.id in ("os", "shutil"):
+                        module_name = ""
+                        func_value = node.func.value
+                        if isinstance(func_value, ast.Name) and func_value.id in ("os", "shutil"):
                             is_os_or_shutil = True
+                            module_name = func_value.id
                         if is_os_or_shutil:
                             results.append(
                                 LintResult(
                                     rule_name=self.name,
-                                    message=f"Обнаружен паттерн ручной атомарной записи через tempfile и '{node.func.value.id}.{node.func.attr}'. Рекомендуется использовать 'chutils.fs.atomic_write'.",
+                                    message=f"Обнаружен паттерн ручной атомарной записи через tempfile и '{module_name}.{node.func.attr}'. Рекомендуется использовать 'chutils.fs.atomic_write'.",
                                     severity=self.severity,
                                     file_path=file_path,
                                     line_number=node.lineno,

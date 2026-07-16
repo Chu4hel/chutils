@@ -69,6 +69,9 @@ else:
             self.fix_suggestion = fix_suggestion
 
 
+from typing import Any
+
+
 class Rule:
     """
     Абстрактный базовый класс для всех правил линтера.
@@ -76,6 +79,8 @@ class Rule:
     name: str = ""
     description: str = ""
     severity: str = "error"  # Может быть "error" или "warn"
+    staged: bool = False
+    config: dict[str, Any] = {}
 
     def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
         """

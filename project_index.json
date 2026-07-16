@@ -3737,7 +3737,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 150,
+                "line_number": 154,
                 "bases": [],
                 "children": []
               },
@@ -3757,7 +3757,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 175,
+                "line_number": 179,
                 "bases": [],
                 "children": []
               },
@@ -3777,7 +3777,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 200,
+                "line_number": 204,
                 "bases": [],
                 "children": []
               }
@@ -7200,7 +7200,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 72,
+                "line_number": 75,
                 "bases": [],
                 "children": [
                   {
@@ -7219,7 +7219,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 80,
+                    "line_number": 85,
                     "bases": [],
                     "children": []
                   }
@@ -7241,7 +7241,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 94,
+                "line_number": 99,
                 "bases": [],
                 "children": []
               },
@@ -7261,7 +7261,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 125,
+                "line_number": 130,
                 "bases": [],
                 "children": [
                   {
@@ -7280,7 +7280,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 130,
+                    "line_number": 135,
                     "bases": [],
                     "children": []
                   },
@@ -7300,7 +7300,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 153,
+                    "line_number": 158,
                     "bases": [],
                     "children": []
                   },
@@ -7320,7 +7320,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 178,
+                    "line_number": 183,
                     "bases": [],
                     "children": []
                   },
@@ -7340,7 +7340,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 208,
+                    "line_number": 213,
                     "bases": [],
                     "children": []
                   },
@@ -7360,7 +7360,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 236,
+                    "line_number": 241,
                     "bases": [],
                     "children": []
                   },
@@ -7380,7 +7380,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 247,
+                    "line_number": 252,
                     "bases": [],
                     "children": []
                   },
@@ -7400,7 +7400,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 282,
+                    "line_number": 287,
                     "bases": [],
                     "children": []
                   },
@@ -7420,7 +7420,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 304,
+                    "line_number": 309,
                     "bases": [],
                     "children": []
                   },
@@ -7440,7 +7440,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 366,
+                    "line_number": 371,
                     "bases": [],
                     "children": []
                   }
@@ -9743,7 +9743,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 25,
+                    "line_number": 27,
                     "bases": [
                       "BaseModel"
                     ],
@@ -18052,7 +18052,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 55,
+                        "line_number": 56,
                         "bases": [],
                         "children": []
                       },
@@ -18072,7 +18072,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 89,
+                        "line_number": 90,
                         "bases": [],
                         "children": []
                       }
@@ -21543,8 +21543,8 @@
   "metadata": {
     "chutils_version": "3.1.0",
     "project_version": "3.1.0",
-    "git_commit": "75c66fde293efa0e8ac4d4dc36666fd35d35e076 (dirty)",
-    "generated_at": "2026-07-16T20:11:59.185913+00:00",
-    "project_hash": "6b774e620d01070f6187f58924c534146a81442217bc900f679f1be99feeaac3"
+    "git_commit": "084d77e50763cdfeff4b019bea165d1c11d891ca (dirty)",
+    "generated_at": "2026-07-16T20:22:18.585945+00:00",
+    "project_hash": "a1bacd6ddb12b0528070111380bab55f4759d6c9b554ce3069c1d3a44bc0f8d4"
   }
 }

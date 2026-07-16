@@ -66,11 +66,11 @@ class PeriodicTask:
                 # Пытаемся распарсить строку вида 'section.key' или 'key'
                 if "." in self.interval_seconds:
                     section, key = self.interval_seconds.split(".", 1)
-                    val = get_config_int(section, key, default=None)
+                    val = get_config_int(section, key, fallback=0)
                 else:
-                    val = get_config_int("default", self.interval_seconds, default=None)
+                    val = get_config_int("default", self.interval_seconds, fallback=0)
 
-                if val is None or val <= 0:
+                if val <= 0:
                     logger.warning(
                         "Интервал из конфигурации по ключу '%s' для задачи '%s' не найден или <= 0. Используется 1 сек.",
                         self.interval_seconds, self.name
