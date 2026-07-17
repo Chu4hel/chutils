@@ -109,34 +109,34 @@ def test_add_provider():
 import sys
 from unittest.mock import MagicMock
 
+if "boto3" not in sys.modules:
+    sys.modules["boto3"] = MagicMock()
+
 if "botocore" not in sys.modules:
     botocore_mock = MagicMock()
     sys.modules["botocore"] = botocore_mock
     sys.modules["botocore.exceptions"] = botocore_mock.exceptions
-
-
     # Создаем класс исключения ClientError для моков
     class MockClientError(Exception):
         def __init__(self, error_response, operation_name):
             self.response = error_response
             self.operation_name = operation_name
             super().__init__(str(error_response))
-
-
     botocore_mock.exceptions.ClientError = MockClientError
 
-if "google.api_core" not in sys.modules:
+if "google.cloud.secretmanager" not in sys.modules:
     google_mock = MagicMock()
     sys.modules["google"] = google_mock
-    sys.modules["google.api_core"] = google_mock.api_core
-    sys.modules["google.api_core.exceptions"] = google_mock.api_core.exceptions
+    sys.modules["google.cloud"] = google_mock.cloud
+    sys.modules["google.cloud.secretmanager"] = google_mock.cloud.secretmanager
 
-
+if "google.api_core" not in sys.modules:
+    google_api_mock = MagicMock()
+    sys.modules["google.api_core"] = google_api_mock
+    sys.modules["google.api_core.exceptions"] = google_api_mock.exceptions
     class MockNotFound(Exception):
         pass
-
-
-    google_mock.api_core.exceptions.NotFound = MockNotFound
+    google_api_mock.exceptions.NotFound = MockNotFound
 
 
 def test_aws_provider_get_success(mocker):
@@ -264,8 +264,10 @@ def test_gcp_provider_set_new_secret(mocker):
 
     mock_client.create_secret.assert_called_once()
     mock_client.add_secret_version.assert_called_once_with(
-        parent="projects/my-project/secrets/test_service_my_key",
-        payload={"data": b"secret_val"}
+        request={
+            "parent": "projects/my-project/secrets/test_service_my_key",
+            "payload": {"data": b"secret_val"}
+        }
     )
 
 
@@ -282,8 +284,10 @@ def test_gcp_provider_set_existing_secret(mocker):
 
     mock_client.create_secret.assert_not_called()
     mock_client.add_secret_version.assert_called_once_with(
-        parent="projects/my-project/secrets/test_service_my_key",
-        payload={"data": b"secret_val"}
+        request={
+            "parent": "projects/my-project/secrets/test_service_my_key",
+            "payload": {"data": b"secret_val"}
+        }
     )
 
 

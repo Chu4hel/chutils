@@ -10,9 +10,11 @@ def _get_logger() -> 'ChutilsLogger':  # type: ignore
     return _module_logger
 
 
+from .aws import AWSSecretManagerProvider
 from .base import SecretProvider
 from .dotenv import DotEnvProvider
 from .env import EnvProvider
+from .gcp import GCPSecretManagerProvider
 from .keyring_provider import KeyringProvider
 
 # Expose keyring for mock compatibility in tests
@@ -25,10 +27,12 @@ except ImportError:
     KEYRING_AVAILABLE = False
 
 __all__ = [
+"AWSSecretManagerProvider",
     "SecretProvider",
     "KeyringProvider",
     "DotEnvProvider",
     "EnvProvider",
     "KEYRING_AVAILABLE",
+    "GCPSecretManagerProvider",
     "keyring",
 ]
