@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import json
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import time
 import urllib.error
 import urllib.request
@@ -67,9 +67,10 @@ def save_releases_to_cache(cache_dir: Path, cache_file: Path, releases: list[dic
         releases: Данные для сохранения.
     """
     try:
-        cache_dir.mkdir(parents=True, exist_ok=True)
+        from chutils.fs import ensure_dir, atomic_write
+        ensure_dir(cache_dir)
         content = json.dumps(releases, ensure_ascii=False, indent=2)
-        cache_file.write_text(content, encoding="utf-8")
+        atomic_write(cache_file, content)
     except Exception as e:
         logger.warning("Не удалось сохранить кэш чейнджлогов: %s", e)
 
