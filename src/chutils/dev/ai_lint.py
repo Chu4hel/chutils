@@ -187,7 +187,7 @@ class LinterEngine:
         from .rules import (
             ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
             ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule,
-            APIMapHashRule, FileDependencySyncRule
+            APIMapHashRule, FileDependencySyncRule, UpgradeCheckRule
         )
 
         # Регистрируем встроенные правила
@@ -200,7 +200,8 @@ class LinterEngine:
             EnvSyncRule(),
             CodeDecompositionRule(),
             APIMapHashRule(),
-            FileDependencySyncRule()
+            FileDependencySyncRule(),
+            UpgradeCheckRule()
         ]
 
         # Загружаем кастомные правила

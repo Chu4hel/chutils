@@ -6,6 +6,7 @@ from .env import EnvSyncRule
 from .integration import ChutilsIntegrationRule
 from .manifest import ManifestRule
 from .security import SecurityHardcodeRule
+from .upgrade_check import UpgradeCheckRule
 
 __all__ = [
     "ManifestRule",
@@ -17,4 +18,5 @@ __all__ = [
     "EnvSyncRule",
     "CodeDecompositionRule",
     "FileDependencySyncRule",
+    "UpgradeCheckRule",
 ]
