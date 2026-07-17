@@ -23,6 +23,7 @@ def get_subcommands() -> list[type[SubCommand]]:
     from .diagnostics import DiagnosticsSubCommand
     from .sync_env import SyncEnvSubCommand
     from .profile_imports import ProfileImportsSubCommand
+    from .dashboard import DashboardSubCommand
 
     return [
         GenerateContextSubCommand,
@@ -35,6 +36,7 @@ def get_subcommands() -> list[type[SubCommand]]:
         DiagnosticsSubCommand,
         SyncEnvSubCommand,
         ProfileImportsSubCommand,
+        DashboardSubCommand,
     ]
 
 
@@ -385,6 +387,14 @@ class DevCommand(BaseCommand):
         )
         profile_parser.set_defaults(handler=self.handle_profile_imports)
 
+        # dev dashboard
+        dashboard_parser = dev_subparsers.add_parser(
+            "dashboard",
+            help="Запустить интерактивный TUI-дашборд CLI команд",
+            description="Отображает интерактивный консольный дашборд для просмотра, заполнения параметров и запуска CLI-команд проекта.",
+        )
+        dashboard_parser.set_defaults(handler=self.handle_dashboard)
+
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана.
 
@@ -484,3 +494,12 @@ class DevCommand(BaseCommand):
         """
         from .profile_imports import ProfileImportsSubCommand
         ProfileImportsSubCommand().handle(args)
+
+    def handle_dashboard(self, args: argparse.Namespace) -> None:
+        """Обработчик интерактивного TUI-дашборда.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .dashboard import DashboardSubCommand
+        DashboardSubCommand().handle(args)

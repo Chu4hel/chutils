@@ -57,6 +57,7 @@ _LAZY_MAPPING = {
     'generate_few_shot': ('.dev.few_shot', None),
     'few_shot': ('.dev.few_shot', None),
     'profile_imports': ('.dev.profile_imports', None),
+    'dashboard': ('.dev.dashboard', None),
     'events': ('.events', None),
     'tasks': ('.tasks', None),
     'text': ('.text', None),

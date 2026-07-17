@@ -183,3 +183,4 @@ changelog.txt
 
 # Local chutils cache
 .chutils/
+.chutils_dashboard_history.json
