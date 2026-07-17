@@ -136,7 +136,7 @@ class TestDatabaseManagerConfigReading:
         mock_session_factory = MagicMock()
 
         def mock_get_config_value(section: str, key: str, default: str | None = None) -> str | None:
-            if section == "Database" and key in ("url", "database_url"):
+            if section == "Database" and key == "url":
                 return "postgresql+asyncpg://user:pass@localhost/db"
             return default
 
@@ -151,6 +151,29 @@ class TestDatabaseManagerConfigReading:
             assert db is not None
             call_args_str = str(mock_create.call_args)
             assert "postgresql+asyncpg://user:pass@localhost/db" in call_args_str
+
+    def test_reads_url_from_database_section_database_url_key(self) -> None:
+        """Проверяет считывание URL из секции [Database], ключ database_url (второй fallback)."""
+        mock_engine = MagicMock()
+        mock_session_factory = MagicMock()
+
+        def mock_get_config_value(section: str, key: str, default: str | None = None) -> str | None:
+            # url возвращает None, database_url — нет
+            if section == "Database" and key == "database_url":
+                return "postgresql+asyncpg://user:pass@db-key-host/db"
+            return default
+
+        with (
+            patch("chutils.db.create_async_engine", return_value=mock_engine) as mock_create,
+            patch("chutils.db.async_sessionmaker", return_value=mock_session_factory),
+            patch("chutils.db.get_config_value", side_effect=mock_get_config_value),
+        ):
+            from chutils.db import DatabaseManager
+
+            db = DatabaseManager()
+            assert db is not None
+            call_args_str = str(mock_create.call_args)
+            assert "postgresql+asyncpg://user:pass@db-key-host/db" in call_args_str
 
     def test_reads_url_from_secrets_section_as_fallback(self) -> None:
         """Проверяет fallback-поиск URL в секции [Secrets]."""
