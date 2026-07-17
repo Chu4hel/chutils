@@ -342,6 +342,13 @@ def circuit_breaker(
 ) -> Callable[[F], F]: ...
 
 
+def semaphore(max_concurrent: int, key: Callable[..., Any] | None = None) -> Callable[[F], F]: ...
+
+
+def bulkhead(max_concurrent: int, max_waiting: int = 0, timeout: float | None = None, fallback: Any = ...,
+             key: Callable[..., Any] | None = None) -> Callable[[F], F]: ...
+
+
 # --- exceptions ---
 class ChutilsException(Exception):
     context: dict[str, Any]
@@ -400,6 +407,9 @@ class RateLimitExceededError(ChutilsException): ...
 
 
 class CircuitBreakerOpenError(ChutilsException): ...
+
+
+class BulkheadLimitExceeded(ChutilsException): ...
 
 
 class DependencyError(ChutilsException): ...

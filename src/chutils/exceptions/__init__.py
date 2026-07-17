@@ -24,6 +24,7 @@ from .logger import LoggerConfigurationError
 from .resilience import (
     RateLimitExceededError,
     CircuitBreakerOpenError,
+    BulkheadLimitExceeded,
 )
 from .secrets import (
     SecretError,
@@ -64,6 +65,7 @@ __all__ = [
     "EventBusExceptionGroup",
     "RateLimitExceededError",
     "CircuitBreakerOpenError",
+    "BulkheadLimitExceeded",
     "DependencyError",
     "DependencyNotFoundError",
     "DependencyResolutionError",
