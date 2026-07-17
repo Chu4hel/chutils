@@ -22,6 +22,7 @@ def get_subcommands() -> list[type[SubCommand]]:
     from .few_shot import FewShotSubCommand
     from .diagnostics import DiagnosticsSubCommand
     from .sync_env import SyncEnvSubCommand
+    from .profile_imports import ProfileImportsSubCommand
 
     return [
         GenerateContextSubCommand,
@@ -33,6 +34,7 @@ def get_subcommands() -> list[type[SubCommand]]:
         FewShotSubCommand,
         DiagnosticsSubCommand,
         SyncEnvSubCommand,
+        ProfileImportsSubCommand,
     ]
 
 
@@ -345,6 +347,44 @@ class DevCommand(BaseCommand):
         )
         sync_parser.set_defaults(handler=self.handle_sync_env)
 
+        # dev profile-imports
+        profile_parser = dev_subparsers.add_parser(
+            "profile-imports",
+            help="Профилировать время холодного старта и импорта модулей",
+            description="Запускает профилирование времени импорта с флагом -X importtime, анализирует вывод и отображает дерево импортов или таблицы зависимостей.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev profile-imports
+  chutils dev profile-imports chutils.logger -t 0.5
+  chutils dev profile-imports --table
+  chutils dev profile-imports --json
+""",
+        )
+        profile_parser.add_argument(
+            "target",
+            nargs="?",
+            default="chutils",
+            help="Имя целевого модуля или путь к файлу для импорта (по умолчанию: chutils)",
+        )
+        profile_parser.add_argument(
+            "-t",
+            "--threshold",
+            type=float,
+            default=1.0,
+            help="Порог времени импорта в миллисекундах для скрытия мелких веток (по умолчанию: 1.0)",
+        )
+        profile_parser.add_argument(
+            "--table",
+            action="store_true",
+            help="Вывести плоскую таблицу импортов, отсортированную по собственному времени",
+        )
+        profile_parser.add_argument(
+            "--json",
+            action="store_true",
+            help="Вывести распарсенную структуру данных в формате JSON",
+        )
+        profile_parser.set_defaults(handler=self.handle_profile_imports)
+
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана.
 
@@ -435,3 +475,12 @@ class DevCommand(BaseCommand):
         """
         from .sync_env import SyncEnvSubCommand
         SyncEnvSubCommand().handle(args)
+
+    def handle_profile_imports(self, args: argparse.Namespace) -> None:
+        """Обработчик профилирования импортов.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .profile_imports import ProfileImportsSubCommand
+        ProfileImportsSubCommand().handle(args)
