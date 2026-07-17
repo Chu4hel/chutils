@@ -137,17 +137,18 @@ def _init_migrations_dir(migrations_path: Path) -> None:
     console = get_console()
 
     if not migrations_path.exists():
-        migrations_path.mkdir(parents=True, exist_ok=True)
-        (migrations_path / "versions").mkdir(exist_ok=True)
+        from chutils.fs import ensure_dir, atomic_write
+
+        ensure_dir(migrations_path)
+        ensure_dir(migrations_path / "versions")
 
         env_py = migrations_path / "env.py"
-        env_py.write_text(_ASYNC_ENV_PY_TEMPLATE, encoding="utf-8")
+        atomic_write(env_py, _ASYNC_ENV_PY_TEMPLATE)
 
-        script_mako = migrations_path / "script.py.mako"
-        script_mako.write_text(
-            '"""${message}\n\nRevision ID: ${up_revision}\n'
+        mako_content = (
+            '{"""${message}\n\nRevision ID: ${up_revision}\n'
             'Revises: ${down_revision | comma,n}\n'
-            'Create Date: ${create_date}\n\n"""\n'
+            'Create Date: ${create_date}\n\n"""}\n'
             'from alembic import op\nimport sqlalchemy as sa\n'
             '${imports if imports else ""}\n\n'
             'revision = ${repr(up_revision)}\n'
@@ -155,9 +156,10 @@ def _init_migrations_dir(migrations_path: Path) -> None:
             'branch_labels = ${repr(branch_labels)}\n'
             'depends_on = ${repr(depends_on)}\n\n\n'
             'def upgrade() -> None:\n    ${upgrades if upgrades else "pass"}\n\n\n'
-            'def downgrade() -> None:\n    ${downgrades if downgrades else "pass"}\n',
-            encoding="utf-8",
+            'def downgrade() -> None:\n    ${downgrades if downgrades else "pass"}\n'
         )
+        script_mako = migrations_path / "script.py.mako"
+        atomic_write(script_mako, mako_content)
 
         console.print(
             f"[green]✓[/green] Директория миграций инициализирована: {migrations_path}"

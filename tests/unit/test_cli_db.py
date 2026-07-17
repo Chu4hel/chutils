@@ -9,6 +9,7 @@
 """
 import sys
 import argparse
+from typing import Any
 from unittest.mock import patch, MagicMock
 
 import pytest
@@ -194,3 +195,125 @@ class TestDbCommandOptionalDependency:
         # Если этот тест выполнился — импорт chutils успешен
         import chutils
         assert chutils is not None
+
+
+# ---------------------------------------------------------------------------
+# Тесты веток handle() без подкоманды и с неизвестной подкомандой
+# ---------------------------------------------------------------------------
+
+
+class TestDbCommandHandleEdgeCases:
+    """Тесты edge-cases в методе handle()."""
+
+    def test_handle_without_subcommand_prints_hint(self) -> None:
+        """Проверяет вывод подсказки, если subcommand не передан."""
+        from chutils.commands.db import DbCommand
+
+        cmd = DbCommand()
+        args = argparse.Namespace()  # нет атрибута subcommand
+
+        messages: list[str] = []
+        cmd.err_console.print = lambda msg, **kw: messages.append(str(msg))  # type: ignore[method-assign]
+
+        cmd.handle(args)
+        assert any("help" in m.lower() or "подкоманд" in m.lower() for m in messages)
+
+    def test_handle_with_unknown_subcommand_prints_error(self) -> None:
+        """Проверяет вывод ошибки при неизвестной подкоманде."""
+        from chutils.commands.db import DbCommand
+
+        cmd = DbCommand()
+        args = argparse.Namespace(subcommand="nonexistent")
+
+        messages: list[str] = []
+        cmd.err_console.print = lambda msg, **kw: messages.append(str(msg))  # type: ignore[method-assign]
+
+        cmd.handle(args)
+        assert any("nonexistent" in m or "Неизвестная" in m for m in messages)
+
+
+# ---------------------------------------------------------------------------
+# Тесты _resolve_config
+# ---------------------------------------------------------------------------
+
+
+class TestResolveConfig:
+    """Тесты функции _resolve_config."""
+
+    def test_raises_config_error_when_no_url(self) -> None:
+        """Проверяет ConfigError при отсутствии URL БД в конфиге."""
+        from chutils.commands.db import _resolve_config
+        from chutils.exceptions import ConfigError
+
+        args = argparse.Namespace(metadata=None)
+
+        # get_config_value импортируется внутри функции — патчим в chutils.config
+        with patch("chutils.config.get_config_value", return_value=None):
+            with pytest.raises(ConfigError):
+                _resolve_config(args)
+
+    def test_reads_url_from_database_section(self) -> None:
+        """Проверяет чтение URL из секции [Database]."""
+        from chutils.commands.db import _resolve_config
+
+        args = argparse.Namespace(metadata=None)
+
+        def mock_config(section: str, key: str, default: object = None) -> str | None:
+            if section == "Database" and key == "url":
+                return "sqlite+aiosqlite:///test.db"
+            return None
+
+        with patch("chutils.config.get_config_value", side_effect=mock_config):
+            db_url, _, _ = _resolve_config(args)
+            assert db_url == "sqlite+aiosqlite:///test.db"
+
+    def test_reads_metadata_from_args(self) -> None:
+        """Проверяет считывание метаданных из аргументов командной строки."""
+        from chutils.commands.db import _resolve_config
+
+        fake_meta = MagicMock()
+        fake_module = MagicMock()
+        fake_module.Base = MagicMock(metadata=fake_meta)
+
+        args = argparse.Namespace(metadata="myapp.db:Base.metadata")
+
+        def mock_config(section: str, key: str, default: object = None) -> str | None:
+            if section == "Database" and key == "url":
+                return "sqlite+aiosqlite:///test.db"
+            return None
+
+        with (
+            patch("chutils.config.get_config_value", side_effect=mock_config),
+            patch.dict(sys.modules, {"myapp.db": fake_module}),
+        ):
+            _, _, metadata = _resolve_config(args)
+            assert metadata is fake_meta
+
+
+# ---------------------------------------------------------------------------
+# Тест history без директории
+# ---------------------------------------------------------------------------
+
+
+class TestHistoryNoDirBranch:
+    """Покрытие ветки history при отсутствии директории миграций."""
+
+    def test_history_without_migrations_dir_prints_hint(self, tmp_path: Any) -> None:
+        """Проверяет, что history без директории миграций выводит предупреждение."""
+        from chutils.commands.db import DbCommand
+        from pathlib import Path
+
+        missing_dir = tmp_path / "no_migrations"  # type: ignore[operator]
+        mock_cfg = MagicMock(return_value=("sqlite+aiosqlite:///x.db", missing_dir, None))
+
+        cmd = DbCommand()
+        args = argparse.Namespace(subcommand="history", metadata=None)
+
+        messages: list[str] = []
+        cmd.console.print = lambda msg, **kw: messages.append(str(msg))  # type: ignore[method-assign]
+
+        with patch("chutils.commands.db._resolve_config", mock_cfg):
+            cmd.handle(args)
+
+        assert any("не найдена" in m or "history" in m.lower() for m in messages)
+
