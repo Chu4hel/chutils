@@ -266,6 +266,10 @@ _LAZY_MAPPING = {
     'CaptchaBalanceError': ('.scraping.captcha', 'CaptchaBalanceError'),
     'CaptchaServiceError': ('.scraping.captcha', 'CaptchaServiceError'),
 
+    # db
+    'db': ('.db', None),
+    'DatabaseManager': ('.db', 'DatabaseManager'),
+
     # plugins
     'plugins': ('.plugins', None),
     'register_plugin': ('.plugins', 'register_plugin'),
