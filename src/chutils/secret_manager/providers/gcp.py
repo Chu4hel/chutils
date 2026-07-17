@@ -38,7 +38,7 @@ class GCPSecretManagerProvider(SecretProvider):
         if self._project_id is not None:
             return self._project_id
 
-        project = os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get("GCP_PROJECT")
+        project = os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get("GCP_PROJECT")  # chutils: ignore[ChutilsIntegrationRule]
         if not project:
             raise ValueError(
                 "Идентификатор проекта Google Cloud (project_id) не задан. "
@@ -67,7 +67,15 @@ class GCPSecretManagerProvider(SecretProvider):
         return self._client
 
     def get(self, key: str, service_name: str) -> str | None:
-        """Получает секрет из GCP Secret Manager."""
+        """Получает секрет из GCP Secret Manager.
+
+        Args:
+            key: Имя секрета.
+            service_name: Имя сервиса.
+
+        Returns:
+            Значение секрета или None, если секрет не найден.
+        """
         client = self._get_client()
         # Заменяем запрещенные символы в имени секрета
         secret_name = f"{service_name}_{key}".replace("/", "_")
@@ -90,7 +98,16 @@ class GCPSecretManagerProvider(SecretProvider):
             return None
 
     def set(self, key: str, value: str, service_name: str) -> bool:
-        """Сохраняет секрет в GCP Secret Manager."""
+        """Сохраняет секрет в GCP Secret Manager.
+
+        Args:
+            key: Имя секрета.
+            value: Значение секрета.
+            service_name: Имя сервиса.
+
+        Returns:
+            True, если сохранение успешно, иначе False.
+        """
         client = self._get_client()
         secret_name = f"{service_name}_{key}".replace("/", "_")
         parent = f"projects/{self.project_id}"
@@ -132,7 +149,15 @@ class GCPSecretManagerProvider(SecretProvider):
             return False
 
     def delete(self, key: str, service_name: str) -> bool:
-        """Удаляет секрет из GCP Secret Manager."""
+        """Удаляет секрет из GCP Secret Manager.
+
+        Args:
+            key: Имя секрета.
+            service_name: Имя сервиса.
+
+        Returns:
+            True, если удаление успешно, иначе False.
+        """
         client = self._get_client()
         secret_name = f"{service_name}_{key}".replace("/", "_")
         secret_path = f"projects/{self.project_id}/secrets/{secret_name}"

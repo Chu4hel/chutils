@@ -50,7 +50,15 @@ class AWSSecretManagerProvider(SecretProvider):
         return self._client
 
     def get(self, key: str, service_name: str) -> str | None:
-        """Получает секрет из AWS Secrets Manager."""
+        """Получает секрет из AWS Secrets Manager.
+
+        Args:
+            key: Имя секрета.
+            service_name: Имя сервиса.
+
+        Returns:
+            Значение секрета или None, если секрет не найден.
+        """
         client = self._get_client()
         secret_name = f"{service_name}/{key}"
         try:
@@ -73,7 +81,16 @@ class AWSSecretManagerProvider(SecretProvider):
             return None
 
     def set(self, key: str, value: str, service_name: str) -> bool:
-        """Сохраняет секрет в AWS Secrets Manager."""
+        """Сохраняет секрет в AWS Secrets Manager.
+
+        Args:
+            key: Имя секрета.
+            value: Значение секрета.
+            service_name: Имя сервиса.
+
+        Returns:
+            True, если сохранение успешно, иначе False.
+        """
         client = self._get_client()
         secret_name = f"{service_name}/{key}"
         try:
@@ -102,7 +119,15 @@ class AWSSecretManagerProvider(SecretProvider):
             return False
 
     def delete(self, key: str, service_name: str) -> bool:
-        """Удаляет секрет из AWS Secrets Manager."""
+        """Удаляет секрет из AWS Secrets Manager.
+
+        Args:
+            key: Имя секрета.
+            service_name: Имя сервиса.
+
+        Returns:
+            True, если удаление успешно, иначе False.
+        """
         client = self._get_client()
         secret_name = f"{service_name}/{key}"
         try:
