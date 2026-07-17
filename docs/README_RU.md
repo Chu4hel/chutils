@@ -233,18 +233,68 @@ logger.info("Действие выполнено")
 
 ### 3. Управление секретами
 
-`SecretManager` ищет секреты в порядке: **Keyring > .env файл > Переменные окружения**.
+`SecretManager` предоставляет абстракцию для работы с секретами с поддержкой цепочки провайдеров (`SecretProvider`) и
+автоматическим механизмом fallback.
+
+По умолчанию `SecretManager` опрашивает провайдеров в порядке: **Keyring > .env файл > Переменные окружения**.
 
 ```python
 from chutils import SecretManager
 
 secrets = SecretManager("my_awesome_app")
 
-# Сохранить (один раз)
+# Сохранить (будет записано в первый доступный для записи провайдер)
 secrets.save_secret("API_KEY", "secret-value-123")
 
-# Использовать везде
+# Получить значение
 key = secrets.get_secret("API_KEY")
+```
+
+#### Встроенные провайдеры секретов
+
+Вы можете явно настроить список используемых провайдеров:
+
+```python
+from chutils import SecretManager
+from chutils.secret_manager.providers import KeyringProvider, DotEnvProvider, EnvProvider
+
+secrets = SecretManager(
+    service_name="my_app",
+    providers=[
+        KeyringProvider(),
+        DotEnvProvider(),
+        EnvProvider()
+    ]
+)
+```
+
+#### Облачные провайдеры (Cloud Secret Managers)
+
+Библиотека поддерживает интеграцию с AWS Secrets Manager и Google Secret Manager:
+
+```python
+from chutils import SecretManager
+from chutils.secret_manager.providers import AWSSecretManagerProvider, GCPSecretManagerProvider, EnvProvider
+
+# Инициализируем облачные провайдеры (требуется установка chutils[aws,gcp])
+aws_provider = AWSSecretManagerProvider(region_name="us-east-1")
+gcp_provider = GCPSecretManagerProvider(project_id="my-gcp-project")
+
+# Создаем менеджер секретов с цепочкой: AWS -> GCP -> Переменные окружения.
+# Если обращение к AWS/GCP вызовет ошибку сети или секрет там отсутствует,
+# SecretManager залогирует предупреждение и автоматически перейдет к EnvProvider (Fallback).
+secrets = SecretManager(
+    service_name="my_service",
+    providers=[aws_provider, gcp_provider, EnvProvider()]
+)
+```
+
+Для установки необходимых облачных зависимостей используйте:
+
+```bash
+pip install chutils[aws]   # Для AWS (boto3)
+pip install chutils[gcp]   # Для GCP (google-cloud-secret-manager)
+pip install chutils[all]   # Для всех зависимостей
 ```
 
 #### Отключение Keyring (Опционально)

@@ -116,12 +116,16 @@ if "botocore" not in sys.modules:
     botocore_mock = MagicMock()
     sys.modules["botocore"] = botocore_mock
     sys.modules["botocore.exceptions"] = botocore_mock.exceptions
+
+
     # Создаем класс исключения ClientError для моков
     class MockClientError(Exception):
         def __init__(self, error_response, operation_name):
             self.response = error_response
             self.operation_name = operation_name
             super().__init__(str(error_response))
+
+
     botocore_mock.exceptions.ClientError = MockClientError
 
 if "google.cloud.secretmanager" not in sys.modules:
@@ -134,8 +138,12 @@ if "google.api_core" not in sys.modules:
     google_api_mock = MagicMock()
     sys.modules["google.api_core"] = google_api_mock
     sys.modules["google.api_core.exceptions"] = google_api_mock.exceptions
+
+
     class MockNotFound(Exception):
         pass
+
+
     google_api_mock.exceptions.NotFound = MockNotFound
 
 
@@ -303,3 +311,145 @@ def test_gcp_provider_delete_success(mocker):
     mock_client.delete_secret.assert_called_once_with(
         request={"name": "projects/my-project/secrets/test_service_my_key"}
     )
+
+
+def test_aws_provider_boto3_missing(monkeypatch):
+    """Проверяет выброс OptionalDependencyError при отсутствии boto3."""
+    import sys
+    # Сохраняем и временно удаляем модуль из sys.modules
+    original_boto3 = sys.modules.get("boto3")
+    monkeypatch.setitem(sys.modules, "boto3", None)
+
+    from chutils.secret_manager.providers import AWSSecretManagerProvider
+    provider = AWSSecretManagerProvider()
+
+    from chutils.exceptions import OptionalDependencyError
+    import pytest
+    with pytest.raises(OptionalDependencyError):
+        provider.get("key", SERVICE_NAME)
+
+    if original_boto3 is not None:
+        sys.modules["boto3"] = original_boto3
+    else:
+        sys.modules.pop("boto3", None)
+
+
+def test_gcp_provider_sdk_missing(monkeypatch):
+    """Проверяет выброс OptionalDependencyError при отсутствии google-cloud-secret-manager."""
+    import sys
+    original_cloud = sys.modules.get("google.cloud")
+    original_sm = sys.modules.get("google.cloud.secretmanager")
+
+    monkeypatch.setitem(sys.modules, "google.cloud", None)
+    monkeypatch.setitem(sys.modules, "google.cloud.secretmanager", None)
+
+    from chutils.secret_manager.providers import GCPSecretManagerProvider
+    provider = GCPSecretManagerProvider(project_id="my-project")
+
+    from chutils.exceptions import OptionalDependencyError
+    import pytest
+    with pytest.raises(OptionalDependencyError):
+        provider.get("key", SERVICE_NAME)
+
+    if original_cloud is not None:
+        sys.modules["google.cloud"] = original_cloud
+    else:
+        sys.modules.pop("google.cloud", None)
+
+    if original_sm is not None:
+        sys.modules["google.cloud.secretmanager"] = original_sm
+    else:
+        sys.modules.pop("google.cloud.secretmanager", None)
+
+
+def test_gcp_provider_project_id_missing(monkeypatch):
+    """Проверяет выброс ValueError, если project_id не задан и не найден в окружении."""
+    monkeypatch.delenv("GOOGLE_CLOUD_PROJECT", raising=False)
+    monkeypatch.delenv("GCP_PROJECT", raising=False)
+
+    from chutils.secret_manager.providers import GCPSecretManagerProvider
+    provider = GCPSecretManagerProvider(project_id=None)
+
+    import pytest
+    with pytest.raises(ValueError, match="Идентификатор проекта Google Cloud"):
+        _ = provider.project_id
+
+
+def test_gcp_provider_project_id_from_env(monkeypatch):
+    """Проверяет успешное получение project_id из переменной окружения GOOGLE_CLOUD_PROJECT."""
+    monkeypatch.setenv("GOOGLE_CLOUD_PROJECT", "env-project")
+    from chutils.secret_manager.providers import GCPSecretManagerProvider
+    provider = GCPSecretManagerProvider(project_id=None)
+    assert provider.project_id == "env-project"
+
+
+def test_gcp_provider_set_generic_exception(mocker):
+    """Проверяет корректную обработку непредвиденного исключения при создании секрета GCP."""
+    mock_client_class = mocker.patch("google.cloud.secretmanager.SecretManagerServiceClient")
+    mock_client = mock_client_class.return_value
+    mock_client.get_secret.side_effect = Exception("Unexpected connection error")
+
+    from chutils.secret_manager.providers import GCPSecretManagerProvider
+    provider = GCPSecretManagerProvider(project_id="my-project")
+
+    assert provider.set("my_key", "val", SERVICE_NAME) is False
+
+
+def test_aws_provider_set_generic_exception(mocker):
+    """Проверяет корректную обработку непредвиденного исключения при создании секрета AWS."""
+    mock_boto = mocker.patch("boto3.client")
+    mock_client = mock_boto.return_value
+    mock_client.create_secret.side_effect = Exception("AWS error")
+
+    from chutils.secret_manager.providers import AWSSecretManagerProvider
+    provider = AWSSecretManagerProvider()
+
+    assert provider.set("my_key", "val", SERVICE_NAME) is False
+
+
+def test_aws_provider_get_generic_exception(mocker):
+    """Проверяет корректную обработку непредвиденного исключения при получении секрета AWS."""
+    mock_boto = mocker.patch("boto3.client")
+    mock_client = mock_boto.return_value
+    mock_client.get_secret_value.side_effect = Exception("AWS unknown error")
+
+    from chutils.secret_manager.providers import AWSSecretManagerProvider
+    provider = AWSSecretManagerProvider()
+
+    assert provider.get("my_key", SERVICE_NAME) is None
+
+
+def test_aws_provider_delete_generic_exception(mocker):
+    """Проверяет корректную обработку непредвиденного исключения при удалении секрета AWS."""
+    mock_boto = mocker.patch("boto3.client")
+    mock_client = mock_boto.return_value
+    mock_client.delete_secret.side_effect = Exception("AWS delete error")
+
+    from chutils.secret_manager.providers import AWSSecretManagerProvider
+    provider = AWSSecretManagerProvider()
+
+    assert provider.delete("my_key", SERVICE_NAME) is False
+
+
+def test_gcp_provider_get_generic_exception(mocker):
+    """Проверяет корректную обработку непредвиденного исключения при получении секрета GCP."""
+    mock_client_class = mocker.patch("google.cloud.secretmanager.SecretManagerServiceClient")
+    mock_client = mock_client_class.return_value
+    mock_client.access_secret_version.side_effect = Exception("GCP unknown error")
+
+    from chutils.secret_manager.providers import GCPSecretManagerProvider
+    provider = GCPSecretManagerProvider(project_id="my-project")
+
+    assert provider.get("my_key", SERVICE_NAME) is None
+
+
+def test_gcp_provider_delete_generic_exception(mocker):
+    """Проверяет корректную обработку непредвиденного исключения при удалении секрета GCP."""
+    mock_client_class = mocker.patch("google.cloud.secretmanager.SecretManagerServiceClient")
+    mock_client = mock_client_class.return_value
+    mock_client.delete_secret.side_effect = Exception("GCP delete error")
+
+    from chutils.secret_manager.providers import GCPSecretManagerProvider
+    provider = GCPSecretManagerProvider(project_id="my-project")
+
+    assert provider.delete("my_key", SERVICE_NAME) is False

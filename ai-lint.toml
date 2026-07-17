@@ -31,3 +31,7 @@
 
 # При обновлении пакетов и зависимостей в pyproject.toml
 "pyproject.toml" = ["docs/dependencies.md"]
+
+# Взаимная зависимость README файлов (русского и английского)
+"README.md" = ["docs/README_RU.md"]
+"docs/README_RU.md" = ["README.md"]

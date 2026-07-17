@@ -217,18 +217,69 @@ To use this feature, install `watchdog`:
 
 ### 3. Secret Management
 
-`SecretManager` looks for secrets in the following order: **Keyring > .env File > Environment Variables**.
+`SecretManager` provides a unified abstraction for managing secrets using a custom chain of providers (`SecretProvider`)
+and automatic fallback logic.
+
+By default, `SecretManager` searches for secrets in the following order: **Keyring > .env File > Environment Variables
+**.
 
 ```python
 from chutils import SecretManager
 
 secrets = SecretManager("my_awesome_app")
 
-# Save once
+# Save secret (will be written to the first writable provider in the chain)
 secrets.save_secret("API_KEY", "secret-value-123")
 
-# Use everywhere
+# Retrieve secret
 key = secrets.get_secret("API_KEY")
+```
+
+#### Built-in Providers
+
+You can configure the providers list explicitly:
+
+```python
+from chutils import SecretManager
+from chutils.secret_manager.providers import KeyringProvider, DotEnvProvider, EnvProvider
+
+secrets = SecretManager(
+    service_name="my_app",
+    providers=[
+        KeyringProvider(),
+        DotEnvProvider(),
+        EnvProvider()
+    ]
+)
+```
+
+#### Cloud Secret Managers
+
+The library supports transparent integration with AWS Secrets Manager and Google Secret Manager:
+
+```python
+from chutils import SecretManager
+from chutils.secret_manager.providers import AWSSecretManagerProvider, GCPSecretManagerProvider, EnvProvider
+
+# Initialize cloud providers (requires installation of chutils[aws,gcp])
+aws_provider = AWSSecretManagerProvider(region_name="us-east-1")
+gcp_provider = GCPSecretManagerProvider(project_id="my-gcp-project")
+
+# Create a SecretManager with the chain: AWS -> GCP -> Environment Variables.
+# If AWS or GCP calls fail due to network/permissions or the secret is missing,
+# SecretManager logs a warning and automatically falls back to EnvProvider.
+secrets = SecretManager(
+    service_name="my_service",
+    providers=[aws_provider, gcp_provider, EnvProvider()]
+)
+```
+
+Install cloud dependencies:
+
+```bash
+pip install chutils[aws]   # For AWS (boto3)
+pip install chutils[gcp]   # For GCP (google-cloud-secret-manager)
+pip install chutils[all]   # For all optional packages
 ```
 
 #### Disabling Keyring (Optional)
