@@ -2,6 +2,13 @@
 # При изменении исходного кода chutils необходимо перегенерировать карту API и семантический индекс
 "src/chutils/**/*.py" = ["api_map.md", "project_index.json"]
 
+# При изменении модуля конфигурации необходимо обновить документацию API
+"src/chutils/config/**/*.py" = ["docs/api.md"]
+
+# При изменении провайдеров конфигурации необходимо обновить документацию провайдеров
+"new:src/chutils/config/custom_providers.py" = ["docs/custom_config_providers.md"]
+"src/chutils/config/custom_providers.py" = ["docs/custom_config_providers.md", "docs/api.md"]
+
 # При создании новых правил линтера необходимо дополнить документацию по линтеру и командам разработчика
 "new:src/chutils/dev/rules/*.py" = ["docs/ai_lint.md", "docs/cli/dev.md"]
 
