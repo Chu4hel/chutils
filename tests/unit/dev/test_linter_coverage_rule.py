@@ -88,3 +88,72 @@ def test_linter_coverage_rule_fully_covered(tmp_path):
 
     results = rule.check(str(tmp_path), [])
     assert len(results) == 0
+
+
+def test_linter_coverage_rule_global_ignore(tmp_path):
+    """Тест: LinterCoverageRule не ругается на файлы, подходящие под глобальный игнор."""
+    rule = LinterCoverageRule()
+    rule.config = {
+        "dependencies": {
+            "src/chutils/covered.py": ["docs/api.md"]
+        },
+        "ignore": [
+            "**/ignored_dir/*",
+            "special_ignore.py"
+        ]
+    }
+
+    src_dir = tmp_path / "src" / "chutils"
+    src_dir.mkdir(parents=True, exist_ok=True)
+    (src_dir / "covered.py").write_text("print('covered')", encoding="utf-8")
+
+    # Файл во внутренней директории (игнорируемой)
+    ignored_dir = src_dir / "ignored_dir"
+    ignored_dir.mkdir(parents=True, exist_ok=True)
+    (ignored_dir / "some_file.py").write_text("print('hidden')", encoding="utf-8")
+
+    # Игнорируемый файл
+    (src_dir / "special_ignore.py").write_text("print('special')", encoding="utf-8")
+
+    # Непокрытый неигнорируемый файл
+    (src_dir / "must_warn.py").write_text("print('warn')", encoding="utf-8")
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert Path(results[0].file_path).name == "must_warn.py"
+
+
+def test_linter_coverage_rule_inline_ignore(tmp_path):
+    """Тест: LinterCoverageRule не ругается на файлы с инлайн-комментарием игнорирования."""
+    rule = LinterCoverageRule()
+    rule.config = {
+        "dependencies": {
+            "src/chutils/covered.py": ["docs/api.md"]
+        }
+    }
+
+    src_dir = tmp_path / "src" / "chutils"
+    src_dir.mkdir(parents=True, exist_ok=True)
+    (src_dir / "covered.py").write_text("print('covered')", encoding="utf-8")
+
+    # Файл, игнорирующий конкретное правило
+    inline_ignored = src_dir / "inline_ignored.py"
+    inline_ignored.write_text(
+        "# chutils: ignore[LinterCoverageRule]\nprint('ignore me')",
+        encoding="utf-8"
+    )
+
+    # Файл, игнорирующий все правила
+    all_ignored = src_dir / "all_ignored.py"
+    all_ignored.write_text(
+        "# chutils: ignore[all]\nprint('ignore all')",
+        encoding="utf-8"
+    )
+
+    # Обычный непокрытый файл
+    uncovered = src_dir / "uncovered.py"
+    uncovered.write_text("print('uncovered')", encoding="utf-8")
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert Path(results[0].file_path).name == "uncovered.py"

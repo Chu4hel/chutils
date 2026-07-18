@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -47,12 +48,65 @@ class LinterCoverageRule(Rule):
         if not src_path.exists():
             return results
 
-        # Получаем список всех .py файлов, исключая __pycache__ и временные файлы
+        # Получаем паттерны глобального игнорирования из конфигурации
+        import fnmatch
+        ignore_patterns: list[str] = []
+        raw_ignore = self.config.get("ignore")
+        if isinstance(raw_ignore, list):
+            ignore_patterns = [str(item) for item in raw_ignore]
+
+        # Регулярное выражение для инлайн-игнорирования
+        inline_ignore_pattern = re.compile(
+            r'#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]', re.IGNORECASE
+        )
+
+        def is_file_ignored(path: Path) -> bool:
+            # 1. Проверяем __pycache__
+            if "__pycache__" in path.parts:
+                return True
+
+            # 2. Проверяем шаблоны глобального игнорирования из конфига
+            try:
+                rel_path = path.relative_to(base_path)
+            except ValueError:
+                return False
+
+            rel_str = str(rel_path).replace("\\", "/")
+            for pattern in ignore_patterns:
+                if not pattern:
+                    continue
+                # Проверяем части пути
+                for part in rel_path.parts:
+                    if fnmatch.fnmatch(part, pattern):
+                        return True
+                # Проверяем весь относительный путь
+                if fnmatch.fnmatch(rel_str, pattern):
+                    return True
+                if pattern in rel_str:
+                    return True
+
+            # 3. Проверяем инлайн-директиву игнорирования в первых 10 строках файла
+            try:
+                with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                    for _ in range(10):
+                        line = f.readline()
+                        if not line:
+                            break
+                        match = inline_ignore_pattern.search(line)
+                        if match:
+                            ignored_rules = [r.strip().lower() for r in match.group(1).split(",")]
+                            if "all" in ignored_rules or "lintercoveragerule" in ignored_rules:
+                                return True
+            except Exception:
+                pass
+
+            return False
+
+        # Получаем список всех .py файлов, исключая игнорируемые
         py_files: list[Path] = []
         for p in src_path.glob("**/*.py"):
-            if "__pycache__" in p.parts:
-                continue
-            py_files.append(p)
+            if not is_file_ignored(p):
+                py_files.append(p)
 
         # Проверяем каждый файл на покрытие хотя бы одним глоб-шаблоном из dependencies
         # Ключи могут быть обычными глоб-шаблонами или начинаться с "new:"
