@@ -95,6 +95,11 @@ _LAZY_MAPPING = {
     'load_ai_lint_config': ('.config', 'load_ai_lint_config'),
     'parse_chutils_ignore': ('.config', 'parse_chutils_ignore'),
     'validate_required_keys': ('.config', 'validate_required_keys'),
+    'register_provider': ('.config', 'register_provider'),
+    'reset_providers': ('.config', 'reset_providers'),
+    'aget_config_value': ('.config', 'aget_config_value'),
+    'BaseConfigProvider': ('.config', 'BaseConfigProvider'),
+    'DictConfigProvider': ('.config', 'DictConfigProvider'),
 
     # features
     'is_feature_enabled': ('.features', 'is_feature_enabled'),
