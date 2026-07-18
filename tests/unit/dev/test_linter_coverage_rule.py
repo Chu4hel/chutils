@@ -157,3 +157,38 @@ def test_linter_coverage_rule_inline_ignore(tmp_path):
     results = rule.check(str(tmp_path), [])
     assert len(results) == 1
     assert Path(results[0].file_path).name == "uncovered.py"
+
+
+def test_linter_coverage_rule_files_ignore_by_file_configs(tmp_path):
+    """Тест: LinterCoverageRule игнорирует файлы из .chutilsignore, но НЕ из .gitignore."""
+    rule = LinterCoverageRule()
+    rule.config = {
+        "dependencies": {
+            "src/chutils/covered.py": ["docs/api.md"]
+        }
+    }
+
+    # 1. Создаём файлы игнорирования в корне проекта
+    gitignore = tmp_path / ".gitignore"
+    gitignore.write_text("**/git_ignored.py\n", encoding="utf-8")
+
+    chutilsignore = tmp_path / ".chutilsignore"
+    chutilsignore.write_text("**/chutils_ignored.py\n", encoding="utf-8")
+
+    src_dir = tmp_path / "src" / "chutils"
+    src_dir.mkdir(parents=True, exist_ok=True)
+
+    # 2. Создаем файлы исходников
+    (src_dir / "covered.py").write_text("print('covered')", encoding="utf-8")
+
+    # Файл, прописанный в Git (должен выдать предупреждение, так как gitignore не учитывается)
+    (src_dir / "git_ignored.py").write_text("print('git ignore')", encoding="utf-8")
+
+    # Файл, прописанный в .chutilsignore (должен быть проигнорирован)
+    (src_dir / "chutils_ignored.py").write_text("print('chutils ignore')", encoding="utf-8")
+
+    results = rule.check(str(tmp_path), [])
+
+    # Должно быть ровно 1 предупреждение (на git_ignored.py)
+    assert len(results) == 1
+    assert Path(results[0].file_path).name == "git_ignored.py"

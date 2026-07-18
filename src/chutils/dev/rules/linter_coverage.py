@@ -60,19 +60,36 @@ class LinterCoverageRule(Rule):
             r'#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]', re.IGNORECASE
         )
 
+        # Загружаем шаблоны игнорирования из .chutilsignore
+        chutils_ignore_patterns: list[str] = []
+        chutils_ignore_file = base_path / ".chutilsignore"
+        if chutils_ignore_file.exists():
+            try:
+                with open(chutils_ignore_file, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#"):
+                            chutils_ignore_patterns.append(line)
+            except Exception:
+                pass
+
+        # Объединяем все шаблоны игнорирования
+        all_ignore_patterns = ignore_patterns + chutils_ignore_patterns
+
         def is_file_ignored(path: Path) -> bool:
             # 1. Проверяем __pycache__
             if "__pycache__" in path.parts:
                 return True
 
-            # 2. Проверяем шаблоны глобального игнорирования из конфига
             try:
                 rel_path = path.relative_to(base_path)
             except ValueError:
                 return False
 
             rel_str = str(rel_path).replace("\\", "/")
-            for pattern in ignore_patterns:
+
+            # 2. Проверяем шаблоны игнорирования из конфига и .chutilsignore
+            for pattern in all_ignore_patterns:
                 if not pattern:
                     continue
                 # Проверяем части пути
