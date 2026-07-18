@@ -1,3 +1,4 @@
+from .audit import AuditError, AuditIntegrityError
 from .base import (
     ChutilsException,
     OptionalDependencyError,
@@ -72,4 +73,6 @@ __all__ = [
     "ChutilsConfigurationError",
     "ChutilsValidationError",
     "EnvValidationError",
+    "AuditError",
+    "AuditIntegrityError",
 ]
