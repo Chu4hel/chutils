@@ -322,3 +322,44 @@ class TestSqliteBackend:
         """verify_integrity для пустой БД возвращает True."""
         backend = self._make_backend(tmp_path)
         assert backend.verify_integrity() is True  # type: ignore[attr-defined]
+
+
+# ---------------------------------------------------------------------------
+# Тесты ленивого импорта
+# ---------------------------------------------------------------------------
+
+def test_lazy_import_no_pydantic(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Тест проверки ленивого импорта при отсутствии Pydantic."""
+    import sys
+
+    # Сохраняем оригинальное состояние
+    orig_pydantic = sys.modules.get("pydantic")
+
+    to_delete = [
+        "chutils", "chutils.audit", "chutils.audit.schema",
+        "chutils.audit.backends", "chutils.audit.backends.file",
+        "chutils.audit.backends.sqlite", "chutils.audit.backends.postgres",
+        "chutils.audit.api"
+    ]
+
+    try:
+        # Замаскируем pydantic как отсутствующий
+        monkeypatch.setitem(sys.modules, "pydantic", None)  # type: ignore[assignment]
+        for mod in to_delete:
+            sys.modules.pop(mod, None)
+
+        # Импорт chutils не должен приводить к падению
+        import chutils
+
+        # chutils.AuditEvent должен быть None, так как Pydantic отсутствует
+        assert chutils.AuditEvent is None
+    finally:
+        # Восстанавливаем
+        if orig_pydantic is not None:
+            sys.modules["pydantic"] = orig_pydantic
+        else:
+            sys.modules.pop("pydantic", None)
+
+        # Снова сбрасываем кэш, чтобы вернуть нормальный импорт в остальных тестах
+        for mod in to_delete:
+            sys.modules.pop(mod, None)

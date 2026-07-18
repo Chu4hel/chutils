@@ -5,6 +5,13 @@
 # При создании новых правил линтера необходимо дополнить документацию по линтеру и командам разработчика
 "new:src/chutils/dev/rules/*.py" = ["docs/ai_lint.md", "docs/cli/dev.md"]
 
+# При изменении модулей веб-скрейпинга и капчи
+"src/chutils/scraping/**/*.py" = ["docs/scraping.md"]
+"src/chutils/scraping/captcha/**/*.py" = ["docs/captcha.md"]
+
+# При изменении модуля неизменяемого журнала аудита
+"src/chutils/audit/**/*.py" = ["docs/audit.md"]
+
 # При изменении CLI команд необходимо обновить соответствующее руководство
 "src/chutils/commands/dev/**/*.py" = ["docs/cli/dev.md"]
 "src/chutils/commands/env.py" = ["docs/cli/env.md"]
@@ -15,10 +22,7 @@
 "src/chutils/commands/pypi.py" = ["docs/cli/pypi.md"]
 "src/chutils/commands/template.py" = ["docs/cli/template.md"]
 "src/chutils/commands/validate.py" = ["docs/cli/validate.md"]
-
-# При изменении модулей веб-скрейпинга и капчи
-"src/chutils/scraping/**/*.py" = ["docs/scraping.md"]
-"src/chutils/scraping/captcha/**/*.py" = ["docs/captcha.md"]
+"src/chutils/commands/db.py" = ["docs/cli/db.md"]
 
 # При изменении HTTP-клиента
 "src/chutils/web/**/*.py" = ["docs/web.md"]

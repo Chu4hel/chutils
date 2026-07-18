@@ -182,12 +182,11 @@ def test_profile_imports_many_duplicates(mocker: Any, capsys: Any) -> None:
 
 def test_profile_imports_fallback_no_rich(mocker: Any, monkeypatch: Any, capsys: Any) -> None:
     """Проверяет текстовый fallback-рендеринг дерева и таблицы при отсутствии rich."""
-    import sys
-    for mod_name, mod in list(sys.modules.items()):
-        if "chutils.dev.profile_imports" in mod_name and mod:
-            monkeypatch.setattr(mod, "RICH_AVAILABLE", False)
-            monkeypatch.setattr(mod, "Tree", None)
-            monkeypatch.setattr(mod, "Table", None)
+    # Патчим globals непосредственно у тестируемой функции, чтобы обойти дублирование модулей
+    globals_dict = profile_imports.__globals__
+    monkeypatch.setitem(globals_dict, "RICH_AVAILABLE", False)
+    monkeypatch.setitem(globals_dict, "Tree", None)
+    monkeypatch.setitem(globals_dict, "Table", None)
 
     mock_run = mocker.patch("subprocess.run")
     mock_proc = MagicMock()

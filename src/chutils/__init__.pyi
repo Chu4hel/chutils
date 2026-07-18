@@ -415,6 +415,13 @@ class BulkheadLimitExceeded(ChutilsException): ...
 class DependencyError(ChutilsException): ...
 
 
+class AuditError(ChutilsException): ...
+
+
+class AuditIntegrityError(AuditError):
+    def __init__(self, message: str, record_id: str, **context: Any) -> None: ...
+
+
 class DependencyNotFoundError(DependencyError): ...
 
 
@@ -781,8 +788,100 @@ from . import web as web
 from . import scraping as scraping
 from . import diagnostics as diagnostics
 from . import validation as validation
+from . import db as db
+from . import audit as audit
 
 from .diagnostics import DiagnosticsManager as DiagnosticsManager
 from .validation import validate_data as validate_data, validate_call as validate_call
 from .exceptions import ChutilsValidationError as ChutilsValidationError, EnvValidationError as EnvValidationError
 from .env import BaseEnvManifest as BaseEnvManifest
+
+# --- db ---
+from sqlalchemy.orm import declarative_base, Session
+from sqlalchemy import Engine
+class DatabaseManager:
+    def __init__(
+        self,
+        database_url: str | None = None,
+        echo: bool = False,
+        pool_size: int = 5,
+        max_overflow: int = 10,
+        pool_recycle: int = 3600,
+        pool_pre_ping: bool = True,
+        metadata: Any = None,
+    ) -> None: ...
+    @property
+    def engine(self) -> Engine: ...
+    @property
+    def base(self) -> Any: ...
+    @property
+    def session_factory(self) -> Any: ...
+    def get_session(self) -> Session: ...
+    def run_migrations(self, directory: str | Path | None = None) -> None: ...
+
+# --- audit ---
+import contextlib
+class AuditEvent:
+    id: str
+    timestamp: datetime.datetime
+    actor: str
+    action: str
+    target: str | None
+    status: str
+    details: dict[str, Any]
+    env: dict[str, Any]
+    prev_hash: str
+    hash: str
+    def __init__(
+        self,
+        actor: str,
+        action: str,
+        target: str | None = None,
+        status: str = "success",
+        details: dict[str, Any] | None = None,
+        prev_hash: str = "",
+    ) -> None: ...
+    def to_jsonl(self) -> str: ...
+    @classmethod
+    def from_jsonl(cls, line: str) -> AuditEvent: ...
+
+class BaseAuditBackend:
+    def log(
+        self,
+        action: str,
+        actor: str,
+        *,
+        target: str | None = None,
+        status: str = "success",
+        details: dict[str, Any] | None = None,
+    ) -> str: ...
+    def verify_integrity(self) -> bool: ...
+
+class FileBackend(BaseAuditBackend):
+    def __init__(self, path: str | Path) -> None: ...
+
+class SqliteBackend(BaseAuditBackend):
+    def __init__(self, path: str | Path) -> None: ...
+
+class PostgresBackend(BaseAuditBackend):
+    def __init__(self, connection: Any) -> None: ...
+
+class _AuditContextState:
+    status: str
+    details: dict[str, Any]
+
+def audit_context(
+    action: str,
+    actor: str,
+    *,
+    target: str | None = None,
+    backend: Any,
+) -> contextlib.AbstractContextManager[_AuditContextState]: ...
+
+def audit_event(
+    action: str,
+    actor: str | Callable[..., str] = "system",
+    *,
+    target: str | Callable[..., str] | None = None,
+    backend: Any,
+) -> Callable[[F], F]: ...

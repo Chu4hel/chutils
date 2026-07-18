@@ -270,6 +270,18 @@ _LAZY_MAPPING = {
     'db': ('.db', None),
     'DatabaseManager': ('.db', 'DatabaseManager'),
 
+    # audit
+    'audit': ('.audit', None),
+    'AuditEvent': ('.audit', 'AuditEvent'),
+    'BaseAuditBackend': ('.audit', 'BaseAuditBackend'),
+    'FileBackend': ('.audit', 'FileBackend'),
+    'SqliteBackend': ('.audit', 'SqliteBackend'),
+    'PostgresBackend': ('.audit', 'PostgresBackend'),
+    'audit_event': ('.audit', 'audit_event'),
+    'audit_context': ('.audit', 'audit_context'),
+    'AuditError': ('.exceptions', 'AuditError'),
+    'AuditIntegrityError': ('.exceptions', 'AuditIntegrityError'),
+
     # plugins
     'plugins': ('.plugins', None),
     'register_plugin': ('.plugins', 'register_plugin'),

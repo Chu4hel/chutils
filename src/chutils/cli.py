@@ -8,6 +8,11 @@ from chutils.commands import get_commands
 
 def main() -> None:
     """Точка входа в CLI."""
+    # Сбрасываем кэш консолей для корректного перехвата вывода в тестах
+    from chutils import cli_utils
+    cli_utils._console = None
+    cli_utils._err_console = None
+
     from chutils.secret_manager.providers import KEYRING_AVAILABLE
 
     description = """

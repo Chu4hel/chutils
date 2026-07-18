@@ -7,8 +7,8 @@
 - Аргументы каждой подкоманды парсятся корректно.
 - При отсутствии alembic выбрасывается OptionalDependencyError.
 """
-import sys
 import argparse
+import sys
 from typing import Any
 from unittest.mock import patch, MagicMock
 
@@ -301,7 +301,6 @@ class TestHistoryNoDirBranch:
     def test_history_without_migrations_dir_prints_hint(self, tmp_path: Any) -> None:
         """Проверяет, что history без директории миграций выводит предупреждение."""
         from chutils.commands.db import DbCommand
-        from pathlib import Path
 
         missing_dir = tmp_path / "no_migrations"  # type: ignore[operator]
         mock_cfg = MagicMock(return_value=("sqlite+aiosqlite:///x.db", missing_dir, None))
@@ -310,10 +309,13 @@ class TestHistoryNoDirBranch:
         args = argparse.Namespace(subcommand="history", metadata=None)
 
         messages: list[str] = []
-        cmd.console.print = lambda msg, **kw: messages.append(str(msg))  # type: ignore[method-assign]
-
-        with patch("chutils.commands.db._resolve_config", mock_cfg):
-            cmd.handle(args)
+        orig_print = cmd.console.print
+        try:
+            cmd.console.print = lambda *args, **kw: messages.append(
+                " ".join(str(a) for a in args))  # type: ignore[method-assign]
+            with patch("chutils.commands.db._resolve_config", mock_cfg):
+                cmd.handle(args)
+        finally:
+            cmd.console.print = orig_print
 
         assert any("не найдена" in m or "history" in m.lower() for m in messages)
-
