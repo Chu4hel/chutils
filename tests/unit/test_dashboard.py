@@ -346,6 +346,10 @@ def test_tui_process_execution(mocker: Any) -> None:
     tui.selected_cmd_idx = 0
     tui.mode = "form"
 
+    # Мокаем fcntl на Unix-системах, чтобы избежать TypeError при вызове с MagicMock
+    if sys.platform != "win32":
+        mocker.patch("fcntl.fcntl")
+
     # Мокаем subprocess.Popen
     mock_popen = mocker.patch("subprocess.Popen")
     mock_process = MagicMock()
