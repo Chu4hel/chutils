@@ -26,6 +26,7 @@ from .resilience import (
     RateLimitExceededError,
     CircuitBreakerOpenError,
     BulkheadLimitExceeded,
+    HttpClientError,
 )
 from .secrets import (
     SecretError,
@@ -67,6 +68,7 @@ __all__ = [
     "RateLimitExceededError",
     "CircuitBreakerOpenError",
     "BulkheadLimitExceeded",
+    "HttpClientError",
     "DependencyError",
     "DependencyNotFoundError",
     "DependencyResolutionError",
