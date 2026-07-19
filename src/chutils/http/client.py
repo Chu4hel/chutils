@@ -14,7 +14,7 @@
 from __future__ import annotations
 
 import importlib.util
-from typing import TYPE_CHECKING, Optional
+from typing import Any, TYPE_CHECKING, Optional
 
 from .fallback import HttpResponse, UrllibFallbackClient, _SENSITIVE_HEADERS
 
@@ -29,7 +29,7 @@ HTTPX_AVAILABLE: bool = importlib.util.find_spec("httpx") is not None
 # Lazy-импорт httpx (только если доступен)
 if HTTPX_AVAILABLE:
     try:
-        import httpx  # type: ignore[import-untyped]  # chutils: ignore[ChutilsIntegrationRule]
+        import httpx  # chutils: ignore[ChutilsIntegrationRule]
     except ImportError:
         httpx = None  # type: ignore[assignment]
         HTTPX_AVAILABLE = False
@@ -72,12 +72,13 @@ def _httpx_to_response(resp: object) -> HttpResponse:
         Объект HttpResponse.
     """
     # Используем duck-typing чтобы избежать прямого импорта httpx в аннотациях
+    resp_any: Any = resp
     return HttpResponse(
-        status_code=resp.status_code,  # type: ignore[union-attr]
-        headers=dict(resp.headers),  # type: ignore[union-attr]
-        content=resp.content,  # type: ignore[union-attr]
-        elapsed=resp.elapsed.total_seconds(),  # type: ignore[union-attr]
-        url=str(resp.url),  # type: ignore[union-attr]
+        status_code=resp_any.status_code,
+        headers=dict(resp_any.headers),
+        content=resp_any.content,
+        elapsed=resp_any.elapsed.total_seconds(),
+        url=str(resp_any.url),
     )
 
 
@@ -152,7 +153,7 @@ class HttpClient:
             h.lower() for h in (sensitive_headers or set())
         )
         self._fallback: UrllibFallbackClient | None = None
-        self._httpx_client: object | None = None  # httpx.Client instance
+        self._httpx_client: Any = None  # httpx.Client instance
 
     def _get_fallback_client(self) -> UrllibFallbackClient:
         """Возвращает (или создаёт) fallback-клиент на urllib.
@@ -240,7 +241,7 @@ class HttpClient:
         def _call() -> HttpResponse:
             assert httpx is not None  # noqa: S101
             if self._httpx_client is not None:
-                raw = self._httpx_client.request(  # type: ignore[union-attr]
+                raw = self._httpx_client.request(
                     method.upper(),
                     url,
                     headers=merged_headers,
@@ -374,7 +375,7 @@ class HttpClient:
         """Закрывает клиент и освобождает ресурсы."""
         if self._httpx_client is not None:
             try:
-                self._httpx_client.close()  # type: ignore[union-attr]
+                self._httpx_client.close()
             except Exception:  # noqa: BLE001
                 pass
             self._httpx_client = None
@@ -463,7 +464,7 @@ class AsyncHttpClient:
         self._extra_sensitive: frozenset[str] = frozenset(
             h.lower() for h in (sensitive_headers or set())
         )
-        self._async_client: object | None = None  # httpx.AsyncClient
+        self._async_client: Any = None  # httpx.AsyncClient
 
     def _build_url(self, path: str) -> str:
         """Строит полный URL.
@@ -517,7 +518,7 @@ class AsyncHttpClient:
         async def _call() -> HttpResponse:
             assert httpx is not None  # noqa: S101
             if self._async_client is not None:
-                raw = await self._async_client.request(  # type: ignore[union-attr]
+                raw = await self._async_client.request(
                     method.upper(),
                     url,
                     headers=merged_headers,
@@ -653,7 +654,7 @@ class AsyncHttpClient:
         """Закрывает async-клиент и освобождает ресурсы."""
         if self._async_client is not None:
             try:
-                await self._async_client.aclose()  # type: ignore[union-attr]
+                await self._async_client.aclose()
             except Exception:  # noqa: BLE001
                 pass
             self._async_client = None

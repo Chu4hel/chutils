@@ -8,7 +8,7 @@
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from chutils.env import OTEL_AVAILABLE
 
@@ -17,15 +17,15 @@ if TYPE_CHECKING:
 
 # ─── Ленивый импорт OTEL ─────────────────────────────────────────────────────
 
-_otel_trace = None
-_otel_propagate = None
-_otel_context = None
+_otel_trace: Any = None
+_otel_propagate: Any = None
+_otel_context: Any = None
 
 if OTEL_AVAILABLE:
     try:
-        from opentelemetry import trace as _otel_trace  # type: ignore[no-redef]
-        from opentelemetry import propagate as _otel_propagate  # type: ignore[no-redef]
-        from opentelemetry import context as _otel_context  # type: ignore[no-redef]
+        from opentelemetry import trace as _otel_trace
+        from opentelemetry import propagate as _otel_propagate
+        from opentelemetry import context as _otel_context
     except Exception:  # noqa: BLE001
         _otel_trace = None
         _otel_propagate = None
@@ -104,13 +104,14 @@ def create_http_span(
 
     try:
         tracer = _otel_trace.get_tracer(tracer_name)
-        return tracer.start_as_current_span(
+        span: object = tracer.start_as_current_span(
             f"HTTP {method.upper()}",
             attributes={
                 "http.method": method.upper(),
                 "http.url": url,
             },
         )
+        return span
     except Exception:  # noqa: BLE001
         return None
 
@@ -126,12 +127,13 @@ def record_span_status(span: object | None, status_code: int) -> None:
         return
 
     try:
-        span.set_attribute("http.status_code", status_code)  # type: ignore[union-attr]
+        span_any: Any = span
+        span_any.set_attribute("http.status_code", status_code)
         if status_code >= 400:
-            span.set_status(  # type: ignore[union-attr]
+            span_any.set_status(
                 _otel_trace.Status(_otel_trace.StatusCode.ERROR, f"HTTP {status_code}")
             )
         else:
-            span.set_status(_otel_trace.Status(_otel_trace.StatusCode.OK))  # type: ignore[union-attr]
+            span_any.set_status(_otel_trace.Status(_otel_trace.StatusCode.OK))
     except Exception:  # noqa: BLE001
         pass
