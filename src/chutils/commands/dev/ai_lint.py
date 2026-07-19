@@ -26,6 +26,21 @@ class AiLintSubCommand(SubCommand):
   chutils dev ai-lint
   chutils dev ai-lint --strict
   chutils dev ai-lint --ignore "temp/,build/"
+  chutils dev ai-lint --rules ChutilsIntegrationRule,ManifestRule
+  chutils dev ai-lint --staged
+
+Подавление срабатываний для отдельной строки:
+  Добавьте комментарий в конец строки или строкой выше:
+    import logging  # chutils: ignore[ChutilsIntegrationRule]
+    code()          # chutils: ignore[RuleA, RuleB]
+    # chutils: ignore[ChutilsIntegrationRule]
+    some_call()
+    code()          # chutils: ignore[all]   <- все правила
+
+Доступные правила по умолчанию:
+  ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
+  ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule,
+  APIMapHashRule, FileDependencySyncRule, UpgradeCheckRule, LinterCoverageRule
 """,
         )
         lint_parser.add_argument(

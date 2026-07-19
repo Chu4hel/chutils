@@ -1,6 +1,36 @@
 """
 Ядро движка проверки AI-готовности (ai-lint).
 Определяет базовые классы Rule, LintResult и LinterEngine.
+
+## Инлайное подавление предупреждений
+
+Чтобы подавить срабатывание специфического правила на отдельной строке или блоке, добавь
+в конец строки (или в строку непосредственно перед ней) комментарий в формате::
+
+    # chutils: ignore[<ИмяПравила>]
+
+Примеры::
+
+    import logging  # chutils: ignore[ChutilsIntegrationRule]
+    os.mkdir(path, parents=True)  # chutils: ignore[ChutilsIntegrationRule]
+
+    # chutils: ignore[ChutilsIntegrationRule]
+    some_call_on_next_line()
+
+Можно перечислить несколько правил через запятую::
+
+    code()  # chutils: ignore[ChutilsIntegrationRule, SecurityHardcodeRule]
+
+Чтобы подавить все правила сразу::
+
+    code()  # chutils: ignore[all]
+
+Правила, доступные по умолчанию::
+
+    ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
+    ChutilsIntegrationRule, APIMapRule, EnvSyncRule,
+    CodeDecompositionRule, APIMapHashRule, FileDependencySyncRule,
+    UpgradeCheckRule, LinterCoverageRule
 """
 
 from __future__ import annotations
@@ -11,6 +41,17 @@ import os
 import re
 from pathlib import Path
 from typing import Any
+
+
+INLINE_IGNORE_SYNTAX: str = "# chutils: ignore[<RuleName>]"
+"""Синтаксис инлайного подавления предупреждений ai-lint.
+
+Добавьте комментарий в конец строки или строкой выше:
+
+    import logging  # chutils: ignore[ChutilsIntegrationRule]
+    code()  # chutils: ignore[RuleA, RuleB]
+    code()  # chutils: ignore[all]
+"""
 
 IGNORE_PATTERN = re.compile(r'#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]', re.IGNORECASE)
 
@@ -73,6 +114,26 @@ else:
 class Rule:
     """
     Абстрактный базовый класс для всех правил линтера.
+
+    Каждое правило должно переопределить метод ``check()`` и задать атрибуты ``name``,
+    ``description`` и ``severity``.
+
+    ## Подавление срабатываний инлайн (inline suppress)
+
+    Любое срабатывание правила можно подавить без изменения правил, добавив комментарий
+    в конец проблемной строки или в строку непосредственно перед ней::
+
+        import logging  # chutils: ignore[ChutilsIntegrationRule]
+        code()         # chutils: ignore[RuleA, RuleB]
+        # chutils: ignore[ChutilsIntegrationRule]
+        some_call()
+
+    Для подавления всех правил сразу используйте ``all``::
+
+        code()  # chutils: ignore[all]
+
+    Правила не должны сами проверять инлайн-комментарии: фильтрация выполняется
+    автоматически в ``LinterEngine.run()``.
     """
     name: str = ""
     description: str = ""
@@ -90,6 +151,10 @@ class Rule:
 
         Returns:
             Список объектов LintResult с найденными проблемами.
+
+        Note:
+            Подавить срабатывания отдельного срабатывания можно инлайн-комментарием
+            ``# chutils: ignore[<name>]`` — без изменения правила.
         """
         raise NotImplementedError("Каждое правило должно реализовывать метод check.")
 
