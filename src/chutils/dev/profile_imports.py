@@ -10,7 +10,6 @@ import sys
 from typing import Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from rich.console import Console
     from chutils.cli_utils import ConsoleLike
 
 # Импорт опциональных зависимостей rich с безопасным fallback
@@ -148,11 +147,11 @@ def build_tree(flat_imports: list[ImportNode]) -> list[ImportNode]:
 
 
 def profile_imports(
-    target: str,
-    threshold_ms: float,
-    as_table: bool,
-    as_json: bool,
-    console: ConsoleLike,
+        target: str,
+        threshold_ms: float,
+        as_table: bool,
+        as_json: bool,
+        console: ConsoleLike,
 ) -> None:
     """Выполняет профилирование импортов для указанной цели.
 

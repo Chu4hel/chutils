@@ -390,7 +390,7 @@ class PyPiCommand(BaseCommand):
                     latency = f"{r['latency_ms']:.1f}" if r["latency_ms"] is not None else "-"
                     speed = f"{r['download_speed_kbs']:.1f}" if r["download_speed_kbs"] is not None else "-"
                 else:
-                    status = f"[red]Ошибка[/red]"
+                    status = "[red]Ошибка[/red]"
                     latency = "-"
                     speed = "-"
                     if r["error"]:
@@ -418,7 +418,7 @@ class PyPiCommand(BaseCommand):
         if best_mirror:
             self.console.print("\n[bold green]Рекомендация:[/bold green]")
             self.console.print(f"Зеркало [cyan]{best_mirror}[/cyan] работает значительно быстрее вашего текущего.")
-            self.console.print(f"Вы можете переключиться на него, выполнив команду:")
+            self.console.print("Вы можете переключиться на него, выполнив команду:")
             self.console.print(f"  [yellow]pip config set global.index-url {best_mirror}[/yellow]\n")
         else:
             self.console.print("\n[bold green]Рекомендация:[/bold green]")

@@ -1,3 +1,4 @@
+import importlib.util
 import threading
 from typing import Any
 
@@ -5,12 +6,7 @@ from chutils.exceptions import OptionalDependencyError
 from .base import MetricsProvider
 
 # Глобальный флаг доступности prometheus_client
-try:
-    import prometheus_client
-
-    PROMETHEUS_AVAILABLE = True
-except ImportError:
-    PROMETHEUS_AVAILABLE = False
+PROMETHEUS_AVAILABLE = importlib.util.find_spec("prometheus_client") is not None
 
 
 class PrometheusMetricsProvider(MetricsProvider):
