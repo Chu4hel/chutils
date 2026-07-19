@@ -23,12 +23,11 @@ from __future__ import annotations
 import argparse
 import importlib
 import importlib.util
-import sys
 from pathlib import Path
 from typing import Any
 
-from chutils.commands.base import BaseCommand
 from chutils.cli_utils import get_console
+from chutils.commands.base import BaseCommand
 
 # ---------------------------------------------------------------------------
 # Проверка опциональной зависимости alembic
@@ -210,9 +209,9 @@ def _resolve_config(args: argparse.Namespace) -> tuple[str, Path, Any | None]:
 
     # database_url
     db_url = (
-        get_config_value("Database", "url")
-        or get_config_value("Database", "database_url")
-        or get_config_value("Secrets", "database_url")
+            get_config_value("Database", "url")
+            or get_config_value("Database", "database_url")
+            or get_config_value("Secrets", "database_url")
     )
     if not db_url:
         raise ConfigError(
@@ -245,7 +244,7 @@ def _build_alembic_config(db_url: str, migrations_path: Path) -> Any:
     Returns:
         Настроенный объект alembic.config.Config.
     """
-    from alembic.config import Config  # type: ignore[import-not-found]
+    from alembic.config import Config
 
     cfg = Config()
     cfg.set_main_option("script_location", str(migrations_path))
@@ -266,7 +265,7 @@ class DbCommand(BaseCommand):
     конфигурации без необходимости создавать alembic.ini вручную.
     """
 
-    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:  # type: ignore[type-arg]
+    def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
         """Регистрирует команду db и все её подкоманды в argparse.
 
         Args:
@@ -403,7 +402,7 @@ class DbCommand(BaseCommand):
         Args:
             args: Аргументы с полями message и metadata.
         """
-        from alembic import command  # type: ignore[import-not-found]
+        from alembic import command
 
         db_url, migrations_path, metadata_obj = _resolve_config(args)
         _init_migrations_dir(migrations_path)
@@ -425,7 +424,7 @@ class DbCommand(BaseCommand):
         Args:
             args: Аргументы с полем revision.
         """
-        from alembic import command  # type: ignore[import-not-found]
+        from alembic import command
 
         db_url, migrations_path, metadata_obj = _resolve_config(args)
         _init_migrations_dir(migrations_path)
@@ -445,7 +444,7 @@ class DbCommand(BaseCommand):
         Args:
             args: Аргументы с полем revision.
         """
-        from alembic import command  # type: ignore[import-not-found]
+        from alembic import command
 
         db_url, migrations_path, _metadata_obj = _resolve_config(args)
 
@@ -461,7 +460,7 @@ class DbCommand(BaseCommand):
         Args:
             args: Аргументы командной строки (не используются).
         """
-        from alembic import command  # type: ignore[import-not-found]
+        from alembic import command
 
         db_url, migrations_path, _metadata_obj = _resolve_config(args)
 
@@ -482,7 +481,7 @@ class DbCommand(BaseCommand):
         Args:
             args: Аргументы командной строки (не используются).
         """
-        from alembic import command  # type: ignore[import-not-found]
+        from alembic import command
 
         db_url, migrations_path, _metadata_obj = _resolve_config(args)
 

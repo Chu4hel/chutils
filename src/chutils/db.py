@@ -1,3 +1,4 @@
+# ruff: noqa: E402
 """
 Модуль chutils.db — готовый менеджер подключений к реляционным БД.
 
@@ -46,7 +47,7 @@ if not _HAS_SQLALCHEMY:
 # Импорты SQLAlchemy (безопасны, т.к. выше уже проверено наличие)
 # ---------------------------------------------------------------------------
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING, AsyncIterator
+from typing import TYPE_CHECKING, AsyncIterator, cast
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -163,14 +164,14 @@ class DatabaseManager:
         """
         url = get_config_value("Database", "url")
         if url:
-            return url
+            return cast(str, url)
 
         url = get_config_value("Database", "database_url")
         if url:
-            return url
+            return cast(str, url)
 
         url = get_config_value("Secrets", "database_url")
-        return url
+        return cast(str | None, url)
 
     # ------------------------------------------------------------------
     # Публичный API: управление сессиями
