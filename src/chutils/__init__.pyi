@@ -797,30 +797,40 @@ from .exceptions import ChutilsValidationError as ChutilsValidationError, EnvVal
 from .env import BaseEnvManifest as BaseEnvManifest
 
 # --- db ---
-from sqlalchemy.orm import declarative_base, Session
+from sqlalchemy.orm import Session
 from sqlalchemy import Engine
+
+
 class DatabaseManager:
     def __init__(
-        self,
-        database_url: str | None = None,
-        echo: bool = False,
-        pool_size: int = 5,
-        max_overflow: int = 10,
-        pool_recycle: int = 3600,
-        pool_pre_ping: bool = True,
-        metadata: Any = None,
+            self,
+            database_url: str | None = None,
+            echo: bool = False,
+            pool_size: int = 5,
+            max_overflow: int = 10,
+            pool_recycle: int = 3600,
+            pool_pre_ping: bool = True,
+            metadata: Any = None,
     ) -> None: ...
+
     @property
     def engine(self) -> Engine: ...
+
     @property
     def base(self) -> Any: ...
+
     @property
     def session_factory(self) -> Any: ...
+
     def get_session(self) -> Session: ...
+
     def run_migrations(self, directory: str | Path | None = None) -> None: ...
+
 
 # --- audit ---
 import contextlib
+
+
 class AuditEvent:
     id: str
     timestamp: datetime.datetime
@@ -832,56 +842,247 @@ class AuditEvent:
     env: dict[str, Any]
     prev_hash: str
     hash: str
+
     def __init__(
-        self,
-        actor: str,
-        action: str,
-        target: str | None = None,
-        status: str = "success",
-        details: dict[str, Any] | None = None,
-        prev_hash: str = "",
+            self,
+            actor: str,
+            action: str,
+            target: str | None = None,
+            status: str = "success",
+            details: dict[str, Any] | None = None,
+            prev_hash: str = "",
     ) -> None: ...
+
     def to_jsonl(self) -> str: ...
+
     @classmethod
     def from_jsonl(cls, line: str) -> AuditEvent: ...
 
+
 class BaseAuditBackend:
     def log(
-        self,
-        action: str,
-        actor: str,
-        *,
-        target: str | None = None,
-        status: str = "success",
-        details: dict[str, Any] | None = None,
+            self,
+            action: str,
+            actor: str,
+            *,
+            target: str | None = None,
+            status: str = "success",
+            details: dict[str, Any] | None = None,
     ) -> str: ...
+
     def verify_integrity(self) -> bool: ...
+
 
 class FileBackend(BaseAuditBackend):
     def __init__(self, path: str | Path) -> None: ...
 
+
 class SqliteBackend(BaseAuditBackend):
     def __init__(self, path: str | Path) -> None: ...
 
+
 class PostgresBackend(BaseAuditBackend):
     def __init__(self, connection: Any) -> None: ...
+
 
 class _AuditContextState:
     status: str
     details: dict[str, Any]
 
+
 def audit_context(
-    action: str,
-    actor: str,
-    *,
-    target: str | None = None,
-    backend: Any,
+        action: str,
+        actor: str,
+        *,
+        target: str | None = None,
+        backend: Any,
 ) -> contextlib.AbstractContextManager[_AuditContextState]: ...
 
+
 def audit_event(
-    action: str,
-    actor: str | Callable[..., str] = "system",
-    *,
-    target: str | Callable[..., str] | None = None,
-    backend: Any,
+        action: str,
+        actor: str | Callable[..., str] = "system",
+        *,
+        target: str | Callable[..., str] | None = None,
+        backend: Any,
 ) -> Callable[[F], F]: ...
+
+
+# --- http ---
+
+class HttpResponse:
+    status_code: int
+    headers: dict[str, str]
+    content: bytes
+    elapsed: float
+    url: str
+
+    @property
+    def text(self) -> str: ...
+
+    def json(self) -> Any: ...
+
+    def raise_for_status(self) -> None: ...
+
+
+class ResiliencePolicy:
+    retries: int
+    retry_delay: float
+    retry_backoff: float
+    retry_jitter: bool
+    timeout: float | None
+    max_concurrency: int | None
+    cb_failure_threshold: int
+    cb_recovery_timeout: float
+
+    def __init__(
+            self,
+            *,
+            retries: int = 3,
+            retry_delay: float = 0.5,
+            retry_backoff: float = 2.0,
+            retry_jitter: bool = False,
+            retry_exceptions: tuple[type[Exception], ...] = ...,
+            retry_on_status_codes: tuple[int, ...] = ...,
+            timeout: float | None = None,
+            max_concurrency: int | None = None,
+            cb_failure_threshold: int = 5,
+            cb_recovery_timeout: float = 30.0,
+    ) -> None: ...
+
+    def apply_sync(self, func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any: ...
+
+    async def apply_async(self, func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any: ...
+
+
+class HttpClient:
+    base_url: str
+    timeout: float | None
+    policy: ResiliencePolicy | None
+
+    def __init__(
+            self,
+            *,
+            base_url: str = "",
+            default_headers: dict[str, str] | None = None,
+            timeout: float | None = 30.0,
+            policy: ResiliencePolicy | None = None,
+            sensitive_headers: set[str] | None = None,
+    ) -> None: ...
+
+    def request(self, method: str, path: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+                data: bytes | str | None = None, timeout: float | None = None) -> HttpResponse: ...
+
+    def get(self, path: str, *, headers: dict[str, str] | None = None,
+            timeout: float | None = None) -> HttpResponse: ...
+
+    def post(self, path: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+             data: bytes | str | None = None, timeout: float | None = None) -> HttpResponse: ...
+
+    def put(self, path: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+            data: bytes | str | None = None, timeout: float | None = None) -> HttpResponse: ...
+
+    def delete(self, path: str, *, headers: dict[str, str] | None = None,
+               timeout: float | None = None) -> HttpResponse: ...
+
+    def patch(self, path: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+              data: bytes | str | None = None, timeout: float | None = None) -> HttpResponse: ...
+
+    def close(self) -> None: ...
+
+    def __enter__(self) -> HttpClient: ...
+
+    def __exit__(self, *args: Any) -> None: ...
+
+
+class AsyncHttpClient:
+    base_url: str
+    timeout: float | None
+    policy: ResiliencePolicy | None
+
+    def __init__(
+            self,
+            *,
+            base_url: str = "",
+            default_headers: dict[str, str] | None = None,
+            timeout: float | None = 30.0,
+            policy: ResiliencePolicy | None = None,
+            sensitive_headers: set[str] | None = None,
+    ) -> None: ...
+
+    async def request(self, method: str, path: str, *, headers: dict[str, str] | None = None,
+                      json_data: Any | None = None, data: bytes | str | None = None,
+                      timeout: float | None = None) -> HttpResponse: ...
+
+    async def get(self, path: str, *, headers: dict[str, str] | None = None,
+                  timeout: float | None = None) -> HttpResponse: ...
+
+    async def post(self, path: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+                   data: bytes | str | None = None, timeout: float | None = None) -> HttpResponse: ...
+
+    async def put(self, path: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+                  data: bytes | str | None = None, timeout: float | None = None) -> HttpResponse: ...
+
+    async def delete(self, path: str, *, headers: dict[str, str] | None = None,
+                     timeout: float | None = None) -> HttpResponse: ...
+
+    async def patch(self, path: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+                    data: bytes | str | None = None, timeout: float | None = None) -> HttpResponse: ...
+
+    async def aclose(self) -> None: ...
+
+    async def __aenter__(self) -> AsyncHttpClient: ...
+
+    async def __aexit__(self, *args: Any) -> None: ...
+
+
+class UrllibFallbackClient:
+    def __init__(self, *, base_url: str = "", default_headers: dict[str, str] | None = None,
+                 timeout: float | None = 30.0, policy: ResiliencePolicy | None = None,
+                 sensitive_headers: set[str] | None = None) -> None: ...
+
+    def get(self, path: str, *, headers: dict[str, str] | None = None,
+            timeout: float | None = None) -> HttpResponse: ...
+
+    def post(self, path: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+             data: bytes | str | None = None, timeout: float | None = None) -> HttpResponse: ...
+
+    def close(self) -> None: ...
+
+    def __enter__(self) -> UrllibFallbackClient: ...
+
+    def __exit__(self, *args: Any) -> None: ...
+
+
+class HttpClientError(ChutilsException):
+    pass
+
+
+def inject_trace_headers(headers: dict[str, str]) -> dict[str, str]: ...
+
+
+def create_http_span(method: str, url: str, tracer_name: str = "chutils.http") -> Any: ...
+
+
+# standalone http functions
+def get(url: str, *, headers: dict[str, str] | None = None, timeout: float | None = None,
+        policy: ResiliencePolicy | None = None) -> HttpResponse: ...
+
+
+def post(url: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+         data: bytes | str | None = None, timeout: float | None = None,
+         policy: ResiliencePolicy | None = None) -> HttpResponse: ...
+
+
+def put(url: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+        data: bytes | str | None = None, timeout: float | None = None,
+        policy: ResiliencePolicy | None = None) -> HttpResponse: ...
+
+
+def delete(url: str, *, headers: dict[str, str] | None = None, timeout: float | None = None,
+           policy: ResiliencePolicy | None = None) -> HttpResponse: ...
+
+
+def patch(url: str, *, headers: dict[str, str] | None = None, json_data: Any | None = None,
+          data: bytes | str | None = None, timeout: float | None = None,
+          policy: ResiliencePolicy | None = None) -> HttpResponse: ...

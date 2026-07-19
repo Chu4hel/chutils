@@ -66,6 +66,16 @@ _LAZY_MAPPING = {
     'diagnostics': ('.diagnostics', None),
     'DiagnosticsManager': ('.diagnostics', 'DiagnosticsManager'),
     'validation': ('.validation', None),
+    'http': ('.http', None),
+
+    # http
+    'HttpClient': ('.http', 'HttpClient'),
+    'AsyncHttpClient': ('.http', 'AsyncHttpClient'),
+    'HttpResponse': ('.http', 'HttpResponse'),
+    'ResiliencePolicy': ('.http', 'ResiliencePolicy'),
+    'UrllibFallbackClient': ('.http', 'UrllibFallbackClient'),
+    'inject_trace_headers': ('.http', 'inject_trace_headers'),
+    'create_http_span': ('.http', 'create_http_span'),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -193,6 +203,7 @@ _LAZY_MAPPING = {
     'EventBusExceptionGroup': ('.exceptions', 'EventBusExceptionGroup'),
     'ChutilsValidationError': ('.exceptions', 'ChutilsValidationError'),
     'EnvValidationError': ('.exceptions', 'EnvValidationError'),
+    'HttpClientError': ('.exceptions', 'HttpClientError'),
 
     # events
     'subscribe': ('.events', 'subscribe'),

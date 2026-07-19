@@ -28,10 +28,11 @@ Async-использование:
 """
 from __future__ import annotations
 
+from .api import delete, get, patch, post, put
 from .client import AsyncHttpClient, HttpClient
 from .fallback import HttpResponse, UrllibFallbackClient
 from .resilience import ResiliencePolicy
-from .tracing import inject_trace_headers, create_http_span
+from .tracing import create_http_span, inject_trace_headers
 
 __all__ = [
     "HttpClient",
@@ -41,4 +42,10 @@ __all__ = [
     "UrllibFallbackClient",
     "inject_trace_headers",
     "create_http_span",
+    # standalone API
+    "get",
+    "post",
+    "put",
+    "delete",
+    "patch",
 ]
