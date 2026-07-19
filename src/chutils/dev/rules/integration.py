@@ -38,6 +38,13 @@ class ChutilsIntegrationRule(Rule):
             except Exception:
                 continue
 
+            # Карта родительских узлов для контекстного анализа AST
+            # (напр., определения subprocess-паттернов для os.environ)
+            parent_map: dict[int, ast.AST] = {}
+            for _parent_node in ast.walk(tree):
+                for _child in ast.iter_child_nodes(_parent_node):
+                    parent_map[id(_child)] = _parent_node
+
             # Предварительный сбор вызовов tempfile в файле
             has_tempfile_call = False
             for subnode in ast.walk(tree):
@@ -144,19 +151,30 @@ class ChutilsIntegrationRule(Rule):
                             )
                         )
                 # Проверка os.getenv/os.environ
+                # Исключения (не ложноположительные):
+                #   - os.environ.copy() — передача окружения в подпроцесс
+                #   - env=os.environ — прямая передача окружения по именованному аргументу
                 elif isinstance(node, ast.Attribute):
                     if isinstance(node.value, ast.Name) and node.value.id == "os" and node.attr in ("environ",
                                                                                                     "getenv"):
-                        results.append(
-                            LintResult(
-                                rule_name=self.name,
-                                message=f"Используется прямое обращение к 'os.{node.attr}'. Рекомендуется использовать 'chutils.config'.",
-                                severity=self.severity,
-                                file_path=file_path,
-                                line_number=node.lineno,
-                                fix_suggestion="Получайте конфигурацию через 'chutils.get_config_value'."
+                        _parent = parent_map.get(id(node))
+                        # os.environ.copy() — легитимный паттерн для subprocess
+                        if isinstance(_parent, ast.Attribute) and _parent.attr == "copy":
+                            pass
+                        # env=os.environ — прямая передача в ключевой аргумент subprocess
+                        elif isinstance(_parent, ast.keyword) and _parent.arg == "env":
+                            pass
+                        else:
+                            results.append(
+                                LintResult(
+                                    rule_name=self.name,
+                                    message=f"Используется прямое обращение к 'os.{node.attr}'. Рекомендуется использовать 'chutils.config'.",
+                                    severity=self.severity,
+                                    file_path=file_path,
+                                    line_number=node.lineno,
+                                    fix_suggestion="Получайте конфигурацию через 'chutils.get_config_value'."
+                                )
                             )
-                        )
                 # Проверка mkdir(parents=True, exist_ok=True)
                 elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "mkdir":
                     has_parents_true = False
