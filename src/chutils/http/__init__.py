@@ -18,14 +18,27 @@ Standalone-функции:
 -------------------
     from chutils import http
     resp = http.get("https://httpbin.org/get")
+
+Async-использование:
+--------------------
+    from chutils.http import AsyncHttpClient
+
+    async with AsyncHttpClient(base_url="https://api.example.com") as client:
+        resp = await client.get("/status")
 """
 from __future__ import annotations
 
+from .client import AsyncHttpClient, HttpClient
 from .fallback import HttpResponse, UrllibFallbackClient
 from .resilience import ResiliencePolicy
+from .tracing import inject_trace_headers, create_http_span
 
 __all__ = [
+    "HttpClient",
+    "AsyncHttpClient",
     "HttpResponse",
     "ResiliencePolicy",
     "UrllibFallbackClient",
+    "inject_trace_headers",
+    "create_http_span",
 ]

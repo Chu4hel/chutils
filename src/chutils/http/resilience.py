@@ -9,18 +9,28 @@ retry, timeout, semaphore (max_concurrency) и circuit_breaker,
 from __future__ import annotations
 
 import asyncio
-import logging
 import random
 import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    pass
+    from chutils.logger import ChutilsLogger
 
-_log = logging.getLogger(__name__)
+_module_logger: Optional["ChutilsLogger"] = None
+
+
+def _get_log() -> "ChutilsLogger":
+    """Возвращает лениво инициализированный логгер модуля."""
+    global _module_logger
+    if _module_logger is None:
+        from chutils import logger as chutils_logger
+        _module_logger = chutils_logger.setup_logger(__name__)
+    if _module_logger is None:
+        raise RuntimeError("Не удалось инициализировать логгер chutils.http.resilience")
+    return _module_logger
 
 # Значение-маркер: статус-код ещё не извлечён
 _UNSET = object()
@@ -66,7 +76,7 @@ class _CircuitBreakerState:
             self._failure_count += 1
             if self._failure_count >= self.failure_threshold:
                 self._opened_at = time.monotonic()
-                _log.warning(
+                _get_log().warning(
                     "Circuit Breaker открыт после %d отказов. "
                     "Восстановление через %.1f сек.",
                     self._failure_count,
@@ -291,7 +301,7 @@ class ResiliencePolicy:
 
                 if attempt < self.retries and self._should_retry_exception(exc, http_error_extractor):
                     delay = self._compute_delay(attempt, self.retry_delay)
-                    _log.debug(
+                    _get_log().debug(
                         "Попытка %d/%d не удалась (%s). Повтор через %.2f сек.",
                         attempt + 1,
                         self.retries + 1,
@@ -376,7 +386,7 @@ class ResiliencePolicy:
 
                 if attempt < self.retries and self._should_retry_exception(exc, http_error_extractor):
                     delay = self._compute_delay(attempt, self.retry_delay)
-                    _log.debug(
+                    _get_log().debug(
                         "Async попытка %d/%d не удалась (%s). Повтор через %.2f сек.",
                         attempt + 1,
                         self.retries + 1,

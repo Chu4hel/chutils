@@ -12,18 +12,29 @@ Fallback HTTP-клиент на базе стандартной библиоте
 from __future__ import annotations
 
 import json
-import logging
 import time
 import urllib.error
 import urllib.request
 from collections.abc import Mapping
-from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from .resilience import ResiliencePolicy
+    from chutils.logger import ChutilsLogger
 
-_log = logging.getLogger(__name__)
+_module_logger: Optional["ChutilsLogger"] = None
+
+
+def _get_log() -> "ChutilsLogger":
+    """Возвращает лениво инициализированный логгер модуля."""
+    global _module_logger
+    if _module_logger is None:
+        from chutils import logger as chutils_logger
+        _module_logger = chutils_logger.setup_logger(__name__)
+    if _module_logger is None:
+        raise RuntimeError("Не удалось инициализировать логгер chutils.http.fallback")
+    return _module_logger
 
 # ─── Сенситивные заголовки для маскирования в логах ─────────────────────────
 
@@ -305,7 +316,7 @@ class UrllibFallbackClient:
         elif data is not None:
             body = data.encode("utf-8") if isinstance(data, str) else data
 
-        _log.debug(
+        _get_log().debug(
             "→ %s %s  headers=%s",
             method.upper(),
             url,
@@ -324,7 +335,7 @@ class UrllibFallbackClient:
 
         assert isinstance(resp, HttpResponse)  # noqa: S101
 
-        _log.debug(
+        _get_log().debug(
             "← %s %s  status=%d  elapsed=%.3fs",
             method.upper(),
             url,
