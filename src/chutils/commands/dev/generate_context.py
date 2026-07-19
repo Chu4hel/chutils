@@ -277,6 +277,10 @@ class GenerateContextSubCommand(SubCommand):
                     f"(кроме volatile-полей). Запись пропущена: [cyan]{args.output}[/cyan]. "
                     "Используйте [bold]--force[/bold] для принудительной перегенерации."
                 )
+                # Обновляем хэш в реестре, чтобы AIMapHashRule не ругался на
+                # "устаревший" файл, который на самом деле актуален по содержимому
+                from chutils.dev.ast_indexer import save_context_metadata_cache
+                save_context_metadata_cache(project_path, args.output, args.format, metadata["project_hash"])
                 return
             with open(args.output, "w", encoding="utf-8") as f:
                 f.write(output_content)
@@ -424,6 +428,12 @@ class GenerateContextSubCommand(SubCommand):
                         "[dim green] [SKIP] [/dim green] Содержимое не изменилось "
                         f"(кроме volatile-полей). Запись пропущена: [cyan]{args.output}[/cyan]. "
                         "Используйте [bold]--force[/bold] для принудительной перегенерации."
+                    )
+                    # Обновляем хэш в реестре, чтобы AIMapHashRule не ругался на
+                    # "устаревший" файл, который на самом деле актуален по содержимому
+                    from chutils.dev.ast_indexer import save_context_metadata_cache
+                    save_context_metadata_cache(
+                        Path(".").resolve(), args.output, "tree", index.metadata.get("project_hash", "")
                     )
                     return
                 with open(args.output, "w", encoding="utf-8") as f:
