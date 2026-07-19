@@ -58,6 +58,7 @@ _LAZY_MAPPING = {
     'few_shot': ('.dev.few_shot', None),
     'profile_imports': ('.dev.profile_imports', None),
     'dashboard': ('.dev.dashboard', None),
+    'generate_workflow_yaml': ('.dev.github_actions', 'generate_workflow_yaml'),
     'events': ('.events', None),
     'tasks': ('.tasks', None),
     'text': ('.text', None),

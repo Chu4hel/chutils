@@ -7,6 +7,7 @@ from .ai_lint import Rule as Rule, LintResult as LintResult, LinterEngine as Lin
 from .chat_context import collect_context_slice as collect_context_slice, run_interactive_menu as run_interactive_menu
 from .constants import AI_MANIFEST_FILENAMES as AI_MANIFEST_FILENAMES
 from .few_shot import generate_few_shot_bank as generate_few_shot_bank
+from .github_actions import generate_workflow_yaml as generate_workflow_yaml
 from .mock_server import MockServerRunner as MockServerRunner
 from .scaffold import Scaffolder as Scaffolder
 
@@ -20,4 +21,5 @@ __all__ = [
     "MockServerRunner",
     "Scaffolder",
     "AI_MANIFEST_FILENAMES",
+    "generate_workflow_yaml",
 ]

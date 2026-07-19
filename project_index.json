@@ -3449,6 +3449,120 @@
                 ]
               },
               {
+                "name": "setup_github_actions",
+                "path": "chutils/commands/dev/setup_github_actions",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "SetupGithubActionsSubCommand",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Подкоманда для интерактивной настройки и генерации GitHub Actions.",
+                    "docstring": "Подкоманда для интерактивной настройки и генерации GitHub Actions.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 11,
+                    "bases": [
+                      ".base.SubCommand"
+                    ],
+                    "children": [
+                      {
+                        "name": "register",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, subparsers)",
+                        "summary": "Регистрирует подкоманду setup-github-actions в argparse.",
+                        "docstring": "Регистрирует подкоманду setup-github-actions в argparse.\n\nArgs:\n    subparsers: Объект subparsers для добавления подкоманд.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 16,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "handle",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, args)",
+                        "summary": "Выполняет генерацию и настройку GitHub Actions workflow.",
+                        "docstring": "Выполняет генерацию и настройку GitHub Actions workflow.\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 74,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_ask_str",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, prompt, default)",
+                        "summary": "Спрашивает у пользователя строку.",
+                        "docstring": "Спрашивает у пользователя строку.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 136,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_ask_yes_no",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, prompt, default)",
+                        "summary": "Спрашивает у пользователя булево значение.",
+                        "docstring": "Спрашивает у пользователя булево значение.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 141,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
                 "name": "sync_env",
                 "path": "chutils/commands/dev/sync_env",
                 "type": "module",
@@ -3560,7 +3674,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 43,
+                "line_number": 45,
                 "bases": [
                   "BaseCommand"
                 ],
@@ -3581,7 +3695,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 50,
+                    "line_number": 52,
                     "bases": [],
                     "children": []
                   },
@@ -3601,7 +3715,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 398,
+                    "line_number": 453,
                     "bases": [],
                     "children": []
                   },
@@ -3621,7 +3735,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 408,
+                    "line_number": 463,
                     "bases": [],
                     "children": []
                   },
@@ -3641,7 +3755,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 417,
+                    "line_number": 472,
                     "bases": [],
                     "children": []
                   },
@@ -3661,7 +3775,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 426,
+                    "line_number": 481,
                     "bases": [],
                     "children": []
                   },
@@ -3681,7 +3795,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 435,
+                    "line_number": 490,
                     "bases": [],
                     "children": []
                   },
@@ -3701,7 +3815,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 444,
+                    "line_number": 499,
                     "bases": [],
                     "children": []
                   },
@@ -3721,7 +3835,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 453,
+                    "line_number": 508,
                     "bases": [],
                     "children": []
                   },
@@ -3741,7 +3855,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 462,
+                    "line_number": 517,
                     "bases": [],
                     "children": []
                   },
@@ -3761,7 +3875,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 471,
+                    "line_number": 526,
                     "bases": [],
                     "children": []
                   },
@@ -3781,7 +3895,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 480,
+                    "line_number": 535,
                     "bases": [],
                     "children": []
                   },
@@ -3801,7 +3915,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 489,
+                    "line_number": 544,
                     "bases": [],
                     "children": []
                   },
@@ -3821,7 +3935,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 498,
+                    "line_number": 553,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "handle_setup_github_actions",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, args)",
+                    "summary": "Обработчик интерактивной настройки и генерации GitHub Actions.",
+                    "docstring": "Обработчик интерактивной настройки и генерации GitHub Actions.\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 562,
                     "bases": [],
                     "children": []
                   }
@@ -8505,8 +8639,8 @@
               "is_abstract": false,
               "decorators": [],
               "tags": [
-                "func",
-                "memory"
+                "memory",
+                "func"
               ],
               "custom_metadata": {}
             },
@@ -8573,8 +8707,8 @@
                     "asynccontextmanager"
                   ],
                   "tags": [
-                    "class",
-                    "meth"
+                    "meth",
+                    "class"
                   ],
                   "custom_metadata": {}
                 },
@@ -8598,8 +8732,8 @@
                     "asynccontextmanager"
                   ],
                   "tags": [
-                    "class",
-                    "meth"
+                    "meth",
+                    "class"
                   ],
                   "custom_metadata": {}
                 },
@@ -12206,6 +12340,37 @@
                   "custom_metadata": {}
                 },
                 "line_number": 17,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "github_actions",
+            "path": "chutils/dev/github_actions",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "generate_workflow_yaml",
+                "type": "function",
+                "layer": "public",
+                "signature": "(python_versions, with_pytest, with_mypy, with_ruff, with_ai_lint)",
+                "summary": "Генерирует валидный YAML-конфиг для GitHub Actions на основе setup-uv.",
+                "docstring": "Генерирует валидный YAML-конфиг для GitHub Actions на основе setup-uv.\n\nArgs:\n    python_versions: Список версий Python для матрицы тестирования.\n    with_pytest: Запускать ли тесты с pytest.\n    with_mypy: Запускать ли статический анализ типов с mypy.\n    with_ruff: Запускать ли линтинг кода с ruff.\n    with_ai_lint: Запускать ли аудит готовности к AI с chutils dev ai-lint.\n\nReturns:\n    Строка с содержимым YAML-файла.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 4,
                 "bases": [],
                 "children": []
               }
@@ -25677,7 +25842,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 307,
+        "line_number": 308,
         "bases": [],
         "children": []
       },
@@ -25697,7 +25862,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 322,
+        "line_number": 323,
         "bases": [],
         "children": []
       },
@@ -25717,7 +25882,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 332,
+        "line_number": 333,
         "bases": [],
         "children": []
       }
@@ -25951,6 +26116,16 @@
     },
     {
       "source": "chutils/commands/dev/scaffold",
+      "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/commands/dev/setup_github_actions",
+      "target": "chutils/dev/github_actions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/commands/dev/setup_github_actions",
       "target": "/base",
       "weight": 1
     },
@@ -26242,6 +26417,11 @@
     {
       "source": "chutils/dev",
       "target": "/few_shot",
+      "weight": 1
+    },
+    {
+      "source": "chutils/dev",
+      "target": "/github_actions",
       "weight": 1
     },
     {
@@ -27154,8 +27334,8 @@
   "metadata": {
     "chutils_version": "3.1.0",
     "project_version": "3.1.0",
-    "git_commit": "628bb4a5e387f31b0e45b0e40454cecc5701f5e5 (dirty)",
-    "generated_at": "2026-07-19T13:23:25.993569+00:00",
-    "project_hash": "8acada9e4971e2b7a4b0db464b7c6c070a4a6f70c02f717535e6e46fe909d3e6"
+    "git_commit": "08ba6e796845eea19ecd456d920853bf3f758a22 (dirty)",
+    "generated_at": "2026-07-19T13:31:25.863083+00:00",
+    "project_hash": "403d4a2b64d277842072c808584acad83e7667ba6af63fa45856c6911ed7162c"
   }
 }

@@ -9,7 +9,7 @@ Gemini, Cursor).
 ## Синтаксис
 
 ```bash
-chutils dev [-h] {generate-context,ai-lint,chat-context,scaffold,mock,install-hooks,generate-few-shot,profile-imports} ...
+chutils dev [-h] {generate-context,ai-lint,chat-context,scaffold,mock,install-hooks,generate-few-shot,profile-imports,setup-github-actions,dashboard} ...
 ```
 
 ### Подкоманды:
@@ -22,6 +22,9 @@ chutils dev [-h] {generate-context,ai-lint,chat-context,scaffold,mock,install-ho
 6. [**`install-hooks`**](#dev-install-hooks) — Установка Git-хуков для автоматических проверок.
 7. [**`generate-few-shot`**](#dev-generate-few-shot) — Автогенерация few-shot банка примеров для ИИ-ассистентов.
 8. [**`profile-imports`**](#dev-profile-imports) — Профилирование времени холодного старта и импорта модулей.
+9. [**`setup-github-actions`**](#dev-setup-github-actions) — Интерактивная настройка и генерация GitHub Actions
+   workflows.
+10. [**`dashboard`**](#dev-dashboard) — Запуск интерактивного TUI-дашборда CLI команд.
 
 ---
 
@@ -510,6 +513,52 @@ chutils dev profile-imports --table
 
 ```bash
 chutils dev profile-imports --json > import_tree.json
+```
+
+---
+
+## dev setup-github-actions
+
+Настраивает и генерирует workflow-файл для GitHub Actions CI на основе Astral `setup-uv`.
+Поддерживает интерактивный режим (по умолчанию) и автоматический режим через CLI-параметры.
+
+### Синтаксис подкоманды:
+
+```bash
+chutils dev setup-github-actions [-h] [--interactive | --no-interactive] [--python-versions PYTHON_VERSIONS] [--with-pytest | --without-pytest] [--with-mypy | --without-mypy] [--with-ruff | --without-ruff] [--with-ai-lint | --without-ai-lint] [--output-file OUTPUT_FILE]
+```
+
+### Параметры и флаги:
+
+| Флаг                                     | Описание                                                                  | Обязательный |
+|:-----------------------------------------|:--------------------------------------------------------------------------|:-------------|
+| **`--interactive`**                      | Запустить интерактивную настройку в консоли (по умолчанию).               | Нет          |
+| **`--no-interactive`**                   | Использовать значения по умолчанию или явно переданные флаги.             | Нет          |
+| **`--python-versions`**                  | Список версий Python через запятую (по умолчанию: `3.10,3.11,3.12,3.13`). | Нет          |
+| **`--with-pytest / --without-pytest`**   | Включить/выключить запуск тестов с pytest.                                | Нет          |
+| **`--with-mypy / --without-mypy`**       | Включить/выключить запуск статического анализа mypy.                      | Нет          |
+| **`--with-ruff / --without-ruff`**       | Включить/выключить запуск линтера ruff.                                   | Нет          |
+| **`--with-ai-lint / --without-ai-lint`** | Включить/выключить запуск ai-lint.                                        | Нет          |
+| **`--output-file`**                      | Путь для сохранения workflow (по умолчанию: `.github/workflows/ci.yml`).  | Нет          |
+
+### Примеры использования:
+
+**1. Интерактивная настройка:**
+
+```bash
+chutils dev setup-github-actions
+```
+
+**2. Быстрая генерация с дефолтными настройками без вопросов:**
+
+```bash
+chutils dev setup-github-actions --no-interactive
+```
+
+**3. Генерация с кастомными версиями Python без тестов:**
+
+```bash
+chutils dev setup-github-actions --no-interactive --python-versions "3.11,3.12" --without-pytest --output-file ".github/workflows/main_ci.yml"
 ```
 
 ---

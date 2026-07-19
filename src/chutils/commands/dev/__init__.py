@@ -24,6 +24,7 @@ def get_subcommands() -> list[type[SubCommand]]:
     from .sync_env import SyncEnvSubCommand
     from .profile_imports import ProfileImportsSubCommand
     from .dashboard import DashboardSubCommand
+    from .setup_github_actions import SetupGithubActionsSubCommand
 
     return [
         GenerateContextSubCommand,
@@ -37,6 +38,7 @@ def get_subcommands() -> list[type[SubCommand]]:
         SyncEnvSubCommand,
         ProfileImportsSubCommand,
         DashboardSubCommand,
+        SetupGithubActionsSubCommand,
     ]
 
 
@@ -395,6 +397,59 @@ class DevCommand(BaseCommand):
         )
         dashboard_parser.set_defaults(handler=self.handle_dashboard)
 
+        # dev setup-github-actions
+        setup_gha_parser = dev_subparsers.add_parser(
+            "setup-github-actions",
+            help="Интерактивная настройка и генерация GitHub Actions",
+            description="Генерирует и настраивает workflow для GitHub Actions на основе setup-uv.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+        )
+
+        interactive_group = setup_gha_parser.add_mutually_exclusive_group()
+        interactive_group.add_argument(
+            "--interactive",
+            action="store_true",
+            dest="interactive",
+            default=True,
+            help="Запустить интерактивную настройку (по умолчанию)"
+        )
+        interactive_group.add_argument(
+            "--no-interactive",
+            action="store_false",
+            dest="interactive",
+            help="Отключить интерактивный опрос"
+        )
+
+        setup_gha_parser.add_argument(
+            "--python-versions",
+            default="3.10,3.11,3.12,3.13",
+            help="Список версий Python через запятую (например, 3.10,3.11,3.12,3.13)"
+        )
+
+        pytest_group = setup_gha_parser.add_mutually_exclusive_group()
+        pytest_group.add_argument("--with-pytest", action="store_true", dest="with_pytest", default=None)
+        pytest_group.add_argument("--without-pytest", action="store_false", dest="with_pytest", default=None)
+
+        mypy_group = setup_gha_parser.add_mutually_exclusive_group()
+        mypy_group.add_argument("--with-mypy", action="store_true", dest="with_mypy", default=None)
+        mypy_group.add_argument("--without-mypy", action="store_false", dest="with_mypy", default=None)
+
+        ruff_group = setup_gha_parser.add_mutually_exclusive_group()
+        ruff_group.add_argument("--with-ruff", action="store_true", dest="with_ruff", default=None)
+        ruff_group.add_argument("--without-ruff", action="store_false", dest="with_ruff", default=None)
+
+        ailint_group = setup_gha_parser.add_mutually_exclusive_group()
+        ailint_group.add_argument("--with-ai-lint", action="store_true", dest="with_ai_lint", default=None)
+        ailint_group.add_argument("--without-ai-lint", action="store_false", dest="with_ai_lint", default=None)
+
+        setup_gha_parser.add_argument(
+            "--output-file",
+            default=".github/workflows/ci.yml",
+            help="Путь для сохранения сгенерированного workflow (по умолчанию: .github/workflows/ci.yml)"
+        )
+
+        setup_gha_parser.set_defaults(handler=self.handle_setup_github_actions)
+
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана.
 
@@ -503,3 +558,12 @@ class DevCommand(BaseCommand):
         """
         from .dashboard import DashboardSubCommand
         DashboardSubCommand().handle(args)
+
+    def handle_setup_github_actions(self, args: argparse.Namespace) -> None:
+        """Обработчик интерактивной настройки и генерации GitHub Actions.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .setup_github_actions import SetupGithubActionsSubCommand
+        SetupGithubActionsSubCommand().handle(args)

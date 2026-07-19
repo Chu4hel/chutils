@@ -238,6 +238,7 @@ members:
 - generate_few_shot_bank
 - MockServerRunner
 - Scaffolder
+- generate_workflow_yaml
 
 ## Модуль `diagnostics` (Мониторинг работоспособности)
 
