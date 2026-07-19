@@ -42,3 +42,34 @@ def test_generate_workflow_yaml_minimal():
     assert "mypy" not in yaml_content
     assert "ai-lint" not in yaml_content
     assert "pytest" not in yaml_content
+
+
+def test_setup_github_actions_subcommand_methods(monkeypatch):
+    """Тестирует внутренние методы класса SetupGithubActionsSubCommand для 100% покрытия."""
+    from chutils.commands.dev.setup_github_actions import SetupGithubActionsSubCommand
+    import argparse
+
+    cmd = SetupGithubActionsSubCommand()
+
+    # Тест register
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers()
+    cmd.register(subparsers)
+    assert "setup-github-actions" in subparsers.choices
+
+    # Тест _ask_str с вводом
+    monkeypatch.setattr("builtins.input", lambda prompt="": "my_val")
+    assert cmd._ask_str("Prompt", "default") == "my_val"
+
+    # Тест _ask_str с пустым вводом (дефолт)
+    monkeypatch.setattr("builtins.input", lambda prompt="": "")
+    assert cmd._ask_str("Prompt", "default") == "default"
+
+    # Тест _ask_yes_no с вводом y/yes
+    monkeypatch.setattr("builtins.input", lambda prompt="": "y")
+    assert cmd._ask_yes_no("Prompt", False) is True
+
+    # Тест _ask_yes_no с пустым вводом (дефолт)
+    monkeypatch.setattr("builtins.input", lambda prompt="": "")
+    assert cmd._ask_yes_no("Prompt", True) is True
+    assert cmd._ask_yes_no("Prompt", False) is False
