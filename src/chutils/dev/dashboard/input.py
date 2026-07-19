@@ -13,18 +13,20 @@ class RawTerminalUnix:
         """Инициализирует контекстный менеджер."""
         import termios
         self.fd = sys.stdin.fileno()
-        self.old_settings = termios.tcgetattr(self.fd)  # type: ignore[attr-defined]
+        self.old_settings = getattr(termios, "tcgetattr")(self.fd)
 
     def __enter__(self) -> RawTerminalUnix:
         """Включает raw режим для терминала."""
         import tty
-        tty.setraw(self.fd)  # type: ignore[attr-defined]
+        getattr(tty, "setraw")(self.fd)
         return self
 
     def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
         """Восстанавливает исходные настройки терминала."""
         import termios
-        termios.tcsetattr(self.fd, termios.TCSADRAIN, self.old_settings)  # type: ignore[attr-defined]
+        tcsetattr = getattr(termios, "tcsetattr")
+        tcsadrain = getattr(termios, "TCSADRAIN")
+        tcsetattr(self.fd, tcsadrain, self.old_settings)
 
 
 class InputReader:
@@ -65,15 +67,18 @@ class InputReader:
     def _get_key_win(self) -> str | None:
         """Читает клавишу на Windows."""
         import msvcrt
-        if msvcrt.kbhit():
-            ch = msvcrt.getch()
+        kbhit = getattr(msvcrt, "kbhit")
+        getch = getattr(msvcrt, "getch")
+
+        if kbhit():
+            ch = getch()
             # Ctrl+C
             if ch == b"\x03":
                 return "ctrl-c"
 
             # Спецсимволы (стрелки, Shift+Tab и др.)
             if ch in (b"\x00", b"\xe0"):
-                ch2 = msvcrt.getch()
+                ch2 = getch()
                 code = ch2.hex()
                 win_special = {
                     "48": "up",
@@ -94,7 +99,8 @@ class InputReader:
                 return "tab"
 
             try:
-                return ch.decode("utf-8")
+                from typing import cast
+                return cast(str, ch.decode("utf-8"))
             except Exception:
                 return None
         return None
