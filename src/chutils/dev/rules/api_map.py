@@ -47,11 +47,19 @@ class APIMapRule(Rule):
             try:
                 with open(cache_path, encoding="utf-8") as f:
                     cache_data = json.load(f)
-                file_rel = cache_data.get("file_path")
-                if file_rel:
-                    t_path = base_path / file_rel
-                    t_format = cache_data.get("format", "markdown")
-                    targets.append((t_path, t_format))
+                if "files" in cache_data and isinstance(cache_data["files"], dict):
+                    # Новый многофайловый формат
+                    for file_rel, file_meta in cache_data["files"].items():
+                        t_path = base_path / file_rel
+                        t_format = file_meta.get("format", "markdown")
+                        targets.append((t_path, t_format))
+                elif "file_path" in cache_data:
+                    # Старый однофайловый формат (обратная совместимость)
+                    file_rel = cache_data.get("file_path")
+                    if file_rel:
+                        t_path = base_path / file_rel
+                        t_format = cache_data.get("format", "markdown")
+                        targets.append((t_path, t_format))
             except Exception:
                 pass
 
@@ -311,12 +319,21 @@ class APIMapHashRule(Rule):
             try:
                 with open(cache_path, encoding="utf-8") as f:
                     cache_data = json.load(f)
-                file_rel = cache_data.get("file_path")
-                if file_rel:
-                    t_path = base_path / file_rel
-                    t_format = cache_data.get("format", "markdown")
-                    t_hash = cache_data.get("project_hash")
-                    targets.append((t_path, t_format, t_hash))
+                if "files" in cache_data and isinstance(cache_data["files"], dict):
+                    # Новый многофайловый формат
+                    for file_rel, file_meta in cache_data["files"].items():
+                        t_path = base_path / file_rel
+                        t_format = file_meta.get("format", "markdown")
+                        t_hash = file_meta.get("project_hash")
+                        targets.append((t_path, t_format, t_hash))
+                elif "file_path" in cache_data:
+                    # Старый однофайловый формат (обратная совместимость)
+                    file_rel = cache_data.get("file_path")
+                    if file_rel:
+                        t_path = base_path / file_rel
+                        t_format = cache_data.get("format", "markdown")
+                        t_hash = cache_data.get("project_hash")
+                        targets.append((t_path, t_format, t_hash))
             except Exception:
                 pass
 
