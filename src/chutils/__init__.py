@@ -317,6 +317,15 @@ def __getattr__(name: str) -> Any:
             return module
         return getattr(module, attr_name)
 
+    # Поддержка импорта субмодулей (например, для unittest.mock.patch в Python 3.10)
+    try:
+        import importlib.util as importlib_util
+        spec = importlib_util.find_spec(f".{name}", __name__)
+        if spec is not None:
+            return importlib.import_module(f".{name}", __name__)
+    except Exception:
+        pass
+
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
