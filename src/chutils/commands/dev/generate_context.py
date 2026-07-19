@@ -10,6 +10,10 @@ from typing import Any
 import chutils
 from .base import SubCommand
 
+# Поля метаданных, которые меняются при каждой генерации, но не отражают
+# реальных изменений в API проекта. Используются для сравнения содержимого.
+_VOLATILE_FIELDS: tuple[str, ...] = ("git_commit", "generated_at", "project_hash")
+
 
 class GenerateContextSubCommand(SubCommand):
     """
@@ -66,6 +70,14 @@ class GenerateContextSubCommand(SubCommand):
             const=".",
             default=None,
             help="Путь к целевому проекту для сканирования (если не указан, сканируется сама библиотека chutils)",
+        )
+        gen_parser.add_argument(
+            "--force",
+            action="store_true",
+            help=(
+                "Принудительно перезаписать файл, даже если содержимое не изменилось "
+                "(игнорирует проверку volatile-полей: git_commit, generated_at, project_hash)"
+            ),
         )
         gen_parser.set_defaults(handler=self.handle)
 
@@ -258,6 +270,14 @@ class GenerateContextSubCommand(SubCommand):
                         output_content += f"\n#### Как не надо (bad_pattern.py)\n```python\n{ex.bad_pattern}\n```\n"
 
         if args.output:
+            force: bool = getattr(args, "force", False)
+            if not force and self._is_content_effectively_unchanged(output_content, args.output, args.format):
+                self.err_console.print(
+                    "[dim green] [SKIP] [/dim green] Содержимое не изменилось "
+                    f"(кроме volatile-полей). Запись пропущена: [cyan]{args.output}[/cyan]. "
+                    "Используйте [bold]--force[/bold] для принудительной перегенерации."
+                )
+                return
             with open(args.output, "w", encoding="utf-8") as f:
                 f.write(output_content)
             self.console.print(
@@ -304,6 +324,66 @@ class GenerateContextSubCommand(SubCommand):
 
         return symbols_data
 
+    @staticmethod
+    def _normalize_for_comparison(content: str, fmt: str) -> str:
+        """Нормализует содержимое файла, заменяя volatile-поля на плейсхолдер.
+
+        Volatile-поля (git_commit, generated_at, project_hash) изменяются при
+        каждом запуске, но не отражают реальных изменений в API проекта.
+        Нормализация позволяет корректно сравнивать старое и новое содержимое.
+
+        Args:
+            content: Строковое содержимое файла.
+            fmt: Формат файла ('markdown', 'json' или 'tree').
+
+        Returns:
+            Нормализованная строка для сравнения.
+        """
+        placeholder = "__VOLATILE__"
+        if fmt == "markdown":
+            for field in _VOLATILE_FIELDS:
+                content = re.sub(
+                    rf"^({re.escape(field)}:\s*).*$",
+                    rf"\g<1>{placeholder}",
+                    content,
+                    flags=re.MULTILINE,
+                )
+        else:
+            # JSON-форматы (json и tree)
+            for field in _VOLATILE_FIELDS:
+                content = re.sub(
+                    rf'("{re.escape(field)}":\s*)"(?:[^"\\]|\\.)*"',
+                    rf'\g<1>"{placeholder}"',
+                    content,
+                )
+        return content
+
+    def _is_content_effectively_unchanged(self, new_content: str, output_path: str, fmt: str) -> bool:
+        """Проверяет, изменилось ли содержимое файла (игнорируя volatile-поля).
+
+        Читает существующий файл по output_path и сравнивает нормализованное
+        содержимое с новым сгенерированным содержимым.
+
+        Args:
+            new_content: Новое сгенерированное содержимое.
+            output_path: Путь к существующему файлу.
+            fmt: Формат файла ('markdown', 'json' или 'tree').
+
+        Returns:
+            True, если содержимое эффективно не изменилось, False иначе.
+        """
+        path = Path(output_path)
+        if not path.exists():
+            return False
+        try:
+            existing = path.read_text(encoding="utf-8")
+        except Exception:
+            return False
+        return (
+            self._normalize_for_comparison(existing, fmt)
+            == self._normalize_for_comparison(new_content, fmt)
+        )
+
     def _handle_tree_index(self, args: argparse.Namespace) -> None:
         """Генерация иерархического семантического индекса проекта.
 
@@ -338,6 +418,14 @@ class GenerateContextSubCommand(SubCommand):
             output_content = index.model_dump_json(indent=2)
 
             if args.output:
+                force: bool = getattr(args, "force", False)
+                if not force and self._is_content_effectively_unchanged(output_content, args.output, "tree"):
+                    self.err_console.print(
+                        "[dim green] [SKIP] [/dim green] Содержимое не изменилось "
+                        f"(кроме volatile-полей). Запись пропущена: [cyan]{args.output}[/cyan]. "
+                        "Используйте [bold]--force[/bold] для принудительной перегенерации."
+                    )
+                    return
                 with open(args.output, "w", encoding="utf-8") as f:
                     f.write(output_content)
                 self.console.print(

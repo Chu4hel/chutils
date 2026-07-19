@@ -111,6 +111,14 @@ class DevCommand(BaseCommand):
             default=None,
             help="Путь к целевому проекту для сканирования (если не указан, сканируется сама библиотека chutils)",
         )
+        gen_parser.add_argument(
+            "--force",
+            action="store_true",
+            help=(
+                "Принудительно перезаписать файл, даже если содержимое не изменилось "
+                "(игнорирует проверку volatile-полей: git_commit, generated_at, project_hash)"
+            ),
+        )
         gen_parser.set_defaults(handler=self.handle_generate_context)
 
         # dev ai-lint
