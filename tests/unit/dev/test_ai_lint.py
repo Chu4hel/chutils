@@ -831,3 +831,34 @@ def test_linter_output_formats(capsys):
     engine_table_rule.print_results(results)
     captured = capsys.readouterr().out
     assert "Правило: RuleA" in captured or "RuleA" in captured
+
+
+def test_linter_exclude_rules():
+    """Тестирует исключение правил (exclude_rules)."""
+    from chutils.dev.ai_lint import LinterEngine, Rule, LintResult
+
+    class TestRuleA(Rule):
+        name = "TestRuleA"
+        def check(self, base_dir, files):
+            return [LintResult(rule_name=self.name, message="Error A", severity="error")]
+
+    class TestRuleB(Rule):
+        name = "TestRuleB"
+        def check(self, base_dir, files):
+            return [LintResult(rule_name=self.name, message="Error B", severity="error")]
+
+    # Без исключения: обе запускаются
+    engine = LinterEngine({"exclude_rules": []})
+    engine.rules = [TestRuleA(), TestRuleB()]
+    res = engine.run()
+    assert len(res) == 2
+    assert any(r.rule_name == "TestRuleA" for r in res)
+    assert any(r.rule_name == "TestRuleB" for r in res)
+
+    # Исключаем TestRuleA
+    engine_ex = LinterEngine({"exclude_rules": ["TestRuleA"]})
+    engine_ex.rules = [TestRuleA(), TestRuleB()]
+    res_ex = engine_ex.run()
+    assert len(res_ex) == 1
+    assert res_ex[0].rule_name == "TestRuleB"
+

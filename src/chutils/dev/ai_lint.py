@@ -216,6 +216,11 @@ class LinterEngine:
         self.staged = bool(config.get("staged", False))
         self.output_format = str(config.get("output_format") or "table")
         self.group_by = str(config.get("group_by") or "file")
+        raw_exclude = config.get("exclude_rules")
+        if isinstance(raw_exclude, list):
+            self.exclude_rules = [str(item) for item in raw_exclude]
+        else:
+            self.exclude_rules = []
         self.rules: list[Rule] = []
         self._file_lines_cache: dict[str, list[str]] = {}
 
@@ -393,6 +398,8 @@ class LinterEngine:
 
         for rule in self.rules:
             if enabled_names and rule.name not in enabled_names:
+                continue
+            if self.exclude_rules and rule.name in self.exclude_rules:
                 continue
 
             try:

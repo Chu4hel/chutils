@@ -187,6 +187,10 @@ class DevCommand(BaseCommand):
             default=None,
             help="Группировка вывода результатов (по умолчанию: file).",
         )
+        lint_parser.add_argument(
+            "--exclude-rules",
+            help="Список исключаемых правил через запятую.",
+        )
         lint_parser.set_defaults(handler=self.handle_ai_lint)
 
         # dev chat-context
