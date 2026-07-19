@@ -1,3 +1,4 @@
+from .audit import AuditError, AuditIntegrityError
 from .base import (
     ChutilsException,
     OptionalDependencyError,
@@ -24,6 +25,8 @@ from .logger import LoggerConfigurationError
 from .resilience import (
     RateLimitExceededError,
     CircuitBreakerOpenError,
+    BulkheadLimitExceeded,
+    HttpClientError,
 )
 from .secrets import (
     SecretError,
@@ -64,10 +67,14 @@ __all__ = [
     "EventBusExceptionGroup",
     "RateLimitExceededError",
     "CircuitBreakerOpenError",
+    "BulkheadLimitExceeded",
+    "HttpClientError",
     "DependencyError",
     "DependencyNotFoundError",
     "DependencyResolutionError",
     "ChutilsConfigurationError",
     "ChutilsValidationError",
     "EnvValidationError",
+    "AuditError",
+    "AuditIntegrityError",
 ]

@@ -71,78 +71,86 @@ class DocstringVisitor(ast.NodeVisitor):
         if not is_public:
             return
 
+        is_property = False
+        for dec in node.decorator_list:
+            if isinstance(dec, ast.Name) and dec.id == "property":
+                is_property = True
+            elif isinstance(dec, ast.Attribute) and dec.attr in ("setter", "deleter"):
+                is_property = True
+
         doc = ast.get_docstring(node)
-        if not doc:
-            self.issues.append(
-                LintResult(
-                    rule_name=self.rule_name,
-                    message=f"У публичной функции/метода {node.name} отсутствует docstring.",
-                    severity="error",
-                    file_path=self.file_path,
-                    line_number=node.lineno,
-                    fix_suggestion=f"Добавьте docstring для {node.name}."
-                )
-            )
-        else:
-            # Парсим аргументы из сигнатуры
-            args_names: list[str] = []
-            for arg in node.args.args:
-                if arg.arg not in ("self", "cls"):
-                    args_names.append(arg.arg)
-            if node.args.kwarg:
-                args_names.append(node.args.kwarg.arg)
-            if node.args.vararg:
-                args_names.append(node.args.vararg.arg)
-
-            if args_names:
-                # Проверка наличия раздела аргументов
-                if "Args:" not in doc and "Parameters:" not in doc:
-                    self.issues.append(
-                        LintResult(
-                            rule_name=self.rule_name,
-                            message=f"Docstring функции {node.name} не содержит раздела аргументов 'Args:'.",
-                            severity="warn",
-                            file_path=self.file_path,
-                            line_number=node.lineno,
-                            fix_suggestion="Добавьте раздел 'Args:' в Google Style для описания параметров."
-                        )
-                    )
-                else:
-                    # Проверка документированности каждого аргумента
-                    for arg_name in args_names:
-                        if arg_name not in doc:
-                            self.issues.append(
-                                LintResult(
-                                    rule_name=self.rule_name,
-                                    message=f"Параметр '{arg_name}' функции {node.name} не описан в docstring.",
-                                    severity="warn",
-                                    file_path=self.file_path,
-                                    line_number=node.lineno,
-                                    fix_suggestion=f"Опишите параметр '{arg_name}' в разделе 'Args:'."
-                                )
-                            )
-
-            # Проверка Returns: в docstring при непустом возвращаемом типе
-            has_return = False
-            if node.returns:
-                if isinstance(node.returns, ast.Constant) and node.returns.value is None:
-                    pass
-                elif isinstance(node.returns, ast.Name) and node.returns.id == "None":
-                    pass
-                else:
-                    has_return = True
-
-            if has_return and "Returns:" not in doc and "Yields:" not in doc:
+        if not is_property:
+            if not doc:
                 self.issues.append(
                     LintResult(
                         rule_name=self.rule_name,
-                        message=f"Docstring функции {node.name} не содержит раздела возвращаемого значения 'Returns:'.",
-                        severity="warn",
+                        message=f"У публичной функции/метода {node.name} отсутствует docstring.",
+                        severity="error",
                         file_path=self.file_path,
                         line_number=node.lineno,
-                        fix_suggestion="Добавьте раздел 'Returns:' в Google Style для описания возвращаемого значения."
+                        fix_suggestion=f"Добавьте docstring для {node.name}."
                     )
                 )
+            else:
+                # Парсим аргументы из сигнатуры
+                args_names: list[str] = []
+                for arg in node.args.args:
+                    if arg.arg not in ("self", "cls"):
+                        args_names.append(arg.arg)
+                if node.args.kwarg:
+                    args_names.append(node.args.kwarg.arg)
+                if node.args.vararg:
+                    args_names.append(node.args.vararg.arg)
+
+                if args_names:
+                    # Проверка наличия раздела аргументов
+                    if "Args:" not in doc and "Parameters:" not in doc:
+                        self.issues.append(
+                            LintResult(
+                                rule_name=self.rule_name,
+                                message=f"Docstring функции {node.name} не содержит раздела аргументов 'Args:'.",
+                                severity="warn",
+                                file_path=self.file_path,
+                                line_number=node.lineno,
+                                fix_suggestion="Добавьте раздел 'Args:' в Google Style для описания параметров."
+                            )
+                        )
+                    else:
+                        # Проверка документированности каждого аргумента
+                        for arg_name in args_names:
+                            if arg_name not in doc:
+                                self.issues.append(
+                                    LintResult(
+                                        rule_name=self.rule_name,
+                                        message=f"Параметр '{arg_name}' функции {node.name} не описан в docstring.",
+                                        severity="warn",
+                                        file_path=self.file_path,
+                                        line_number=node.lineno,
+                                        fix_suggestion=f"Опишите параметр '{arg_name}' в разделе 'Args:'."
+                                    )
+                                )
+
+                # Проверка Returns: в docstring при непустом возвращаемом типе
+                has_return = False
+                if node.returns:
+                    if isinstance(node.returns, ast.Constant) and node.returns.value is None:
+                        pass
+                    elif isinstance(node.returns, ast.Name) and node.returns.id == "None":
+                        pass
+                    else:
+                        has_return = True
+
+                if has_return and "Returns:" not in doc and "Yields:" not in doc:
+                    self.issues.append(
+                        LintResult(
+                            rule_name=self.rule_name,
+                            message=f"Docstring функции {node.name} не содержит раздела возвращаемого значения 'Returns:'.",
+                            severity="warn",
+                            file_path=self.file_path,
+                            line_number=node.lineno,
+                            fix_suggestion="Добавьте раздел 'Returns:' в Google Style для описания возвращаемого значения."
+                        )
+                    )
 
         # Проверка аннотаций типов параметров (всегда, даже без docstring)
         for arg in node.args.args:

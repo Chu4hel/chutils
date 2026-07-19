@@ -22,6 +22,9 @@ def get_subcommands() -> list[type[SubCommand]]:
     from .few_shot import FewShotSubCommand
     from .diagnostics import DiagnosticsSubCommand
     from .sync_env import SyncEnvSubCommand
+    from .profile_imports import ProfileImportsSubCommand
+    from .dashboard import DashboardSubCommand
+    from .setup_github_actions import SetupGithubActionsSubCommand
 
     return [
         GenerateContextSubCommand,
@@ -33,6 +36,9 @@ def get_subcommands() -> list[type[SubCommand]]:
         FewShotSubCommand,
         DiagnosticsSubCommand,
         SyncEnvSubCommand,
+        ProfileImportsSubCommand,
+        DashboardSubCommand,
+        SetupGithubActionsSubCommand,
     ]
 
 
@@ -345,6 +351,105 @@ class DevCommand(BaseCommand):
         )
         sync_parser.set_defaults(handler=self.handle_sync_env)
 
+        # dev profile-imports
+        profile_parser = dev_subparsers.add_parser(
+            "profile-imports",
+            help="Профилировать время холодного старта и импорта модулей",
+            description="Запускает профилирование времени импорта с флагом -X importtime, анализирует вывод и отображает дерево импортов или таблицы зависимостей.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev profile-imports
+  chutils dev profile-imports chutils.logger -t 0.5
+  chutils dev profile-imports --table
+  chutils dev profile-imports --json
+""",
+        )
+        profile_parser.add_argument(
+            "target",
+            nargs="?",
+            default="chutils",
+            help="Имя целевого модуля или путь к файлу для импорта (по умолчанию: chutils)",
+        )
+        profile_parser.add_argument(
+            "-t",
+            "--threshold",
+            type=float,
+            default=1.0,
+            help="Порог времени импорта в миллисекундах для скрытия мелких веток (по умолчанию: 1.0)",
+        )
+        profile_parser.add_argument(
+            "--table",
+            action="store_true",
+            help="Вывести плоскую таблицу импортов, отсортированную по собственному времени",
+        )
+        profile_parser.add_argument(
+            "--json",
+            action="store_true",
+            help="Вывести распарсенную структуру данных в формате JSON",
+        )
+        profile_parser.set_defaults(handler=self.handle_profile_imports)
+
+        # dev dashboard
+        dashboard_parser = dev_subparsers.add_parser(
+            "dashboard",
+            help="Запустить интерактивный TUI-дашборд CLI команд",
+            description="Отображает интерактивный консольный дашборд для просмотра, заполнения параметров и запуска CLI-команд проекта.",
+        )
+        dashboard_parser.set_defaults(handler=self.handle_dashboard)
+
+        # dev setup-github-actions
+        setup_gha_parser = dev_subparsers.add_parser(
+            "setup-github-actions",
+            help="Интерактивная настройка и генерация GitHub Actions",
+            description="Генерирует и настраивает workflow для GitHub Actions на основе setup-uv.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+        )
+
+        interactive_group = setup_gha_parser.add_mutually_exclusive_group()
+        interactive_group.add_argument(
+            "--interactive",
+            action="store_true",
+            dest="interactive",
+            default=True,
+            help="Запустить интерактивную настройку (по умолчанию)"
+        )
+        interactive_group.add_argument(
+            "--no-interactive",
+            action="store_false",
+            dest="interactive",
+            help="Отключить интерактивный опрос"
+        )
+
+        setup_gha_parser.add_argument(
+            "--python-versions",
+            default="3.10,3.11,3.12,3.13",
+            help="Список версий Python через запятую (например, 3.10,3.11,3.12,3.13)"
+        )
+
+        pytest_group = setup_gha_parser.add_mutually_exclusive_group()
+        pytest_group.add_argument("--with-pytest", action="store_true", dest="with_pytest", default=None)
+        pytest_group.add_argument("--without-pytest", action="store_false", dest="with_pytest", default=None)
+
+        mypy_group = setup_gha_parser.add_mutually_exclusive_group()
+        mypy_group.add_argument("--with-mypy", action="store_true", dest="with_mypy", default=None)
+        mypy_group.add_argument("--without-mypy", action="store_false", dest="with_mypy", default=None)
+
+        ruff_group = setup_gha_parser.add_mutually_exclusive_group()
+        ruff_group.add_argument("--with-ruff", action="store_true", dest="with_ruff", default=None)
+        ruff_group.add_argument("--without-ruff", action="store_false", dest="with_ruff", default=None)
+
+        ailint_group = setup_gha_parser.add_mutually_exclusive_group()
+        ailint_group.add_argument("--with-ai-lint", action="store_true", dest="with_ai_lint", default=None)
+        ailint_group.add_argument("--without-ai-lint", action="store_false", dest="with_ai_lint", default=None)
+
+        setup_gha_parser.add_argument(
+            "--output-file",
+            default=".github/workflows/ci.yml",
+            help="Путь для сохранения сгенерированного workflow (по умолчанию: .github/workflows/ci.yml)"
+        )
+
+        setup_gha_parser.set_defaults(handler=self.handle_setup_github_actions)
+
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана.
 
@@ -435,3 +540,30 @@ class DevCommand(BaseCommand):
         """
         from .sync_env import SyncEnvSubCommand
         SyncEnvSubCommand().handle(args)
+
+    def handle_profile_imports(self, args: argparse.Namespace) -> None:
+        """Обработчик профилирования импортов.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .profile_imports import ProfileImportsSubCommand
+        ProfileImportsSubCommand().handle(args)
+
+    def handle_dashboard(self, args: argparse.Namespace) -> None:
+        """Обработчик интерактивного TUI-дашборда.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .dashboard import DashboardSubCommand
+        DashboardSubCommand().handle(args)
+
+    def handle_setup_github_actions(self, args: argparse.Namespace) -> None:
+        """Обработчик интерактивной настройки и генерации GitHub Actions.
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .setup_github_actions import SetupGithubActionsSubCommand
+        SetupGithubActionsSubCommand().handle(args)

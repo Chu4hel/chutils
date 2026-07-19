@@ -130,7 +130,7 @@ async def test_error_strategy_ignore(caplog):
 
         # Должно быть 2 запуска (первый упал, второй прошел успешно)
         assert calls == 2
-        assert any("Ошибка при выполнении задачи" in record.message for record in caplog.records)
+        assert any("Ошибка выполнения задачи" in record.message for record in caplog.records)
 
         await stop_scheduler()
 
@@ -261,3 +261,27 @@ async def test_dynamic_interval_config(mocker):
     assert called == 2
 
     await stop_scheduler()
+
+
+async def test_scheduler_task_logging(caplog):
+    """Проверяет структурированное логирование запусков периодических задач."""
+    @periodic_task(interval_seconds=1, run_immediately=True, name="boosty_sync")
+    async def boosty_sync():
+        await asyncio.sleep(0.05)
+
+    @periodic_task(interval_seconds=1, run_immediately=True, name="failing_sync", error_strategy=ErrorStrategy.IGNORE)
+    def failing_sync():
+        raise ValueError("Oops")
+
+    with caplog.at_level(logging.INFO):
+        start_scheduler()
+        await asyncio.sleep(0.2)
+        await stop_scheduler()
+
+    # Проверяем старт задачи
+    assert any("Задача 'boosty_sync' запущена." in record.message for record in caplog.records)
+    # Проверяем успешное завершение
+    assert any("Задача 'boosty_sync' выполнена за" in record.message and "сек." in record.message for record in caplog.records)
+    # Проверяем ошибку
+    assert any("Ошибка выполнения задачи 'failing_sync': Oops" in record.message for record in caplog.records)
+

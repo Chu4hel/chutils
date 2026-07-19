@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Protocol
 
 from chutils.fs import ensure_dir, atomic_write
-
 from ..constants import AI_MANIFEST_FILENAMES
 
 GEMINI_BLOCK_START = "<!-- chutils:few-shot-start -->"
@@ -68,7 +67,7 @@ class FewShotBankWriter:
 
         self._validate_python_syntax(good_code, f"{category}/good_pattern.py")
         self._validate_python_syntax(bad_code, f"{category}/bad_pattern.py")  # chutils: ignore[ChutilsIntegrationRule]
-  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule]
         atomic_write(cat_dir / "good_pattern.py", good_code)  # chutils: ignore[ChutilsIntegrationRule]
         atomic_write(cat_dir / "bad_pattern.py", bad_code)
         atomic_write(cat_dir / "README.md", readme)
@@ -223,7 +222,7 @@ def _update_json_cursorrules(manifest_path: Path, categories: list[str]) -> bool
         indent = 2
     if "    " in content:
         indent = 4
-  # chutils: ignore[ChutilsIntegrationRule]
+    # chutils: ignore[ChutilsIntegrationRule]
     try:
         atomic_write(manifest_path, json.dumps(data, ensure_ascii=False, indent=indent))
         return True
@@ -268,7 +267,7 @@ def update_ai_manifests(project_root: Path, console: _ConsoleProtocol | None = N
     # Если ни один манифест не найден — создаём AGENTS.md по умолчанию
     if not found_manifests:
         agents_path = project_root / "AGENTS.md"
-        base_content = textwrap.dedent(f"""\
+        base_content = textwrap.dedent("""\
             # Project Agents and AI Instructions
 
             Этот файл содержит инструкции для ИИ-ассистентов, работающих с проектом.

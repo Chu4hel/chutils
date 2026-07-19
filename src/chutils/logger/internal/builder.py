@@ -390,7 +390,8 @@ class LoggerBuilder:
         mask_patterns = self.settings.get('mask_patterns', [])
         if isinstance(mask_patterns, list):
             for pattern in mask_patterns:
-                if not pattern: continue
+                if not pattern:
+                    continue
                 secret_value = self.settings.get(pattern)
                 if secret_value and isinstance(secret_value, str):
                     _GLOBAL_MASKS.add(secret_value)

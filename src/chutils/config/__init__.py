@@ -21,8 +21,13 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 from typing import Any, TYPE_CHECKING, TypeVar
 
 from .core import get_config, aget_config, save_config_value, asave_config_value
+from .custom_providers import (
+    BaseConfigProvider,
+    DictConfigProvider,
+)
 from .getters import (
     get_config_value,
+    aget_config_value,
     get_config_int,
     get_config_float,
     get_config_boolean,
@@ -66,6 +71,7 @@ __all__ = [
     'save_config_value',
     'asave_config_value',
     'get_config_value',
+    'aget_config_value',
     'get_config_int',
     'get_config_float',
     'get_config_boolean',
@@ -88,7 +94,11 @@ __all__ = [
     'export_schema',
     'import_model_class',
     'load_ai_lint_config',
-    'parse_chutils_ignore'
+    'parse_chutils_ignore',
+    'register_provider',
+    'reset_providers',
+    'BaseConfigProvider',
+    'DictConfigProvider',
 ]
 
 
@@ -203,3 +213,44 @@ def get_all_config_paths(cfg_file: str | None = None) -> tuple[str | None, str |
     if not _cm.paths_initialized:
         _cm.initialize_paths(find_project_root)
     return _cm.get_all_config_paths(cfg_file)
+
+
+def register_provider(provider: 'BaseConfigProvider', priority: int = 100) -> None:
+    """Регистрирует кастомный провайдер конфигурации.
+
+    Провайдеры опрашиваются перед чтением локальных файлов конфигурации.
+    Если провайдер возвращает значение (не ``None``), оно используется как итоговое.
+
+    Приоритет: **меньшее число → выше приоритет** (опрашивается первым).
+
+    Args:
+        provider: Экземпляр класса, реализующего :class:`BaseConfigProvider`.
+        priority: Числовой приоритет провайдера. По умолчанию: 100.
+
+    Example:
+        ::
+
+            from chutils.config import register_provider
+            from chutils.config.custom_providers import DictConfigProvider
+
+            provider = DictConfigProvider({"db": {"host": "prod-db"}})
+            register_provider(provider, priority=10)
+    """
+    _cm.register_provider(provider, priority)
+
+
+def reset_providers() -> None:
+    """Очищает реестр всех зарегистрированных кастомных провайдеров.
+
+    Используется в тестах для сброса состояния между тест-кейсами,
+    а также при необходимости переконфигурирования провайдеров в рантайме.
+
+    Example:
+        ::
+
+            from chutils.config import reset_providers
+
+            def teardown():
+                reset_providers()
+    """
+    _cm.reset_providers()

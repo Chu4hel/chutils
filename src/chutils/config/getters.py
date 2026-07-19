@@ -33,12 +33,19 @@ def get_config_value(
         config: JSONDict | None = None,
         required: bool = False,
 ) -> Any:
-    """
-    Получает произвольное значение из конфигурации.
+    """Получает произвольное значение из конфигурации.
 
     Если значение не найдено или оно пустое, возвращает `fallback`.
     Поддерживает универсальное переопределение через переменные окружения
     по шаблону `CH_[SECTION]_[KEY]`, если не установлено `CH_DISABLE_ENV_OVERRIDE=true`.
+
+    Порядок приоритетов (от высшего к низшему):
+
+    1. Зарегистрированные кастомные провайдеры (по их приоритету).
+    2. Переменные окружения ``CH_[SECTION]_[KEY]``.
+    3. Локальный файл конфигурации (config.local.yml).
+    4. Файл окружения (config.{CH_ENV}.yml).
+    5. Основной файл конфигурации (config.yml).
 
     Args:
         section: Имя секции.
@@ -50,6 +57,12 @@ def get_config_value(
     Returns:
         Значение из конфигурации или `fallback`.
     """
+    # 1. Опрашиваем кастомные провайдеры (наивысший приоритет)
+    from .custom_providers import get_registry
+    provider_value = get_registry().get_value(section, key)
+    if provider_value is not None:
+        return provider_value
+
     if config is None:
         config = cast(JSONDict, get_config())
 
@@ -89,6 +102,54 @@ def get_config_value(
         return fallback
 
     return value
+
+
+async def aget_config_value(
+        section: str,
+        key: str,
+        fallback: Any = None,
+        config: JSONDict | None = None,
+        required: bool = False,
+) -> Any:
+    """Асинхронно получает произвольное значение из конфигурации.
+
+    Сначала опрашивает зарегистрированные кастомные провайдеры через их
+    асинхронный интерфейс ``aget_value``. Если ни один из них не вернул
+    значение, выполняет синхронный поиск в уже загруженном кэше конфигурации
+    (через ``run_in_executor``, чтобы не блокировать event loop).
+
+    Args:
+        section: Имя секции.
+        key: Имя ключа.
+        fallback: Значение по умолчанию, если ключ не найден.
+        config: Опциональный, предварительно загруженный словарь конфигурации.
+        required: Если True, выбросит ConfigKeyNotFoundError при отсутствии ключа.
+
+    Returns:
+        Значение из конфигурации или `fallback`.
+    """
+    import asyncio
+    import functools
+
+    # 1. Асинхронно опрашиваем кастомные провайдеры
+    from .custom_providers import get_registry
+    provider_value = await get_registry().aget_value(section, key)
+    if provider_value is not None:
+        return provider_value
+
+    # 2. Синхронный fallback по кэшу/файлам без блокировки event loop
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(
+        None,
+        functools.partial(
+            get_config_value,
+            section,
+            key,
+            fallback,
+            config,
+            required,
+        ),
+    )
 
 
 def get_config_int(

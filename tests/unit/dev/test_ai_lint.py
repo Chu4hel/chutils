@@ -235,7 +235,17 @@ class MyGoodClass:
     \"\"\"
     Это класс с документацией.
     \"\"\"
-    pass
+    def __init__(self) -> None:
+        \"\"\"Инициализирует класс.\"\"\"
+        self._value = 0
+
+    @property
+    def value(self) -> int:
+        return self._value
+
+    @value.setter
+    def value(self, val: int) -> None:
+        self._value = val
 
 def good_func(a: int, b: str) -> bool:
     \"\"\"

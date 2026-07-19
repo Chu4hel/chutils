@@ -19,6 +19,7 @@ def get_commands() -> list[type[BaseCommand]]:
     from .dev import DevCommand
     from .env import EnvCommand
     from .pypi import PyPiCommand
+    from .db import DbCommand
 
     return [
         SecretsCommand,
@@ -29,5 +30,6 @@ def get_commands() -> list[type[BaseCommand]]:
         ConfigCommand,
         DevCommand,
         EnvCommand,
-        PyPiCommand
+        PyPiCommand,
+        DbCommand,
     ]

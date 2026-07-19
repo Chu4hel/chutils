@@ -10,6 +10,7 @@ import importlib.util
 import os
 import re
 from pathlib import Path
+from typing import Any
 
 IGNORE_PATTERN = re.compile(r'#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]', re.IGNORECASE)
 
@@ -67,9 +68,6 @@ else:
             self.file_path = file_path
             self.line_number = line_number
             self.fix_suggestion = fix_suggestion
-
-
-from typing import Any
 
 
 class Rule:
@@ -187,7 +185,8 @@ class LinterEngine:
         from .rules import (
             ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
             ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule,
-            APIMapHashRule, FileDependencySyncRule
+            APIMapHashRule, FileDependencySyncRule, UpgradeCheckRule,
+            LinterCoverageRule
         )
 
         # Регистрируем встроенные правила
@@ -200,7 +199,9 @@ class LinterEngine:
             EnvSyncRule(),
             CodeDecompositionRule(),
             APIMapHashRule(),
-            FileDependencySyncRule()
+            FileDependencySyncRule(),
+            UpgradeCheckRule(),
+            LinterCoverageRule()
         ]
 
         # Загружаем кастомные правила

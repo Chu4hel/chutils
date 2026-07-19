@@ -12,8 +12,8 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 import signal
 import sys
 import time
-from typing import Union, Any, TYPE_CHECKING
 from collections.abc import Callable, Awaitable
+from typing import Union, Any, TYPE_CHECKING, cast
 
 from chutils.config import get_config_int
 
@@ -210,6 +210,3 @@ def setup_graceful_shutdown() -> None:
     Рекомендуется вызывать в самом начале работы приложения.
     """
     _manager.setup_graceful_shutdown()
-
-
-from typing import cast

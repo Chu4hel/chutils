@@ -11,3 +11,15 @@ class CircuitBreakerOpenError(ChutilsException):
     """Ошибка: цепь предохранителя открыта (запросы заблокированы)."""
 
     pass
+
+
+class BulkheadLimitExceeded(ChutilsException):
+    """Ошибка: превышен предел параллельных запросов Bulkhead."""
+
+    pass
+
+
+class HttpClientError(ChutilsException):
+    """Базовая ошибка HTTP-клиента chutils."""
+
+    pass

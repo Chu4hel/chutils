@@ -7,6 +7,7 @@ import asyncio
 import functools
 import inspect
 import logging  # chutils: ignore[ChutilsIntegrationRule]
+import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
@@ -98,13 +99,20 @@ def periodic_task(
         error_strategy: ErrorStrategy = ErrorStrategy.IGNORE,
         name: str = "",
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    """
-    Декоратор для привязки функции к расписанию планировщика задач.
+    """Декоратор для привязки функции к расписанию планировщика задач.
 
     Args:
-        interval_seconds: Интервал запуска в секундах. Может быть int, callable-функцией
-                          возвращающей int, или строкой вида 'section.key' для динамического
-                          получения из chutils.config.
+        interval_seconds: Интервал запуска в секундах. Может быть:
+            - int: Фиксированный интервал.
+            - callable: Функция без аргументов, возвращающая int. Вызывается перед
+              каждым циклом ожидания (поддерживает hot-reload интервалов "на лету").
+            - str: Строка вида 'section.key' (или 'key') для чтения значения из chutils.config.
+              Значение перечитывается из конфигурации перед каждым циклом ожидания
+              (поддерживает hot-reload интервалов "на лету").
+
+            В случае ошибок вычисления интервала (неверный тип, отсутствие ключа в конфиге или
+            исключение) планировщик логирует предупреждение/ошибку и безопасно
+            переключается на резервный интервал в 1 секунду. Вся служба при этом не падает.
         run_immediately: Если True, задача запустится сразу при старте планировщика.
         overlap: Если True, задача запускается независимо от предыдущих запусков.
         error_strategy: Стратегия обработки ошибок.
@@ -194,13 +202,17 @@ class TaskScheduler:
 
             # Локальная обертка для выполнения
             async def execute_and_handle_errors() -> None:
+                logger.info("Задача '%s' запущена.", task.name)
+                start_time = time.perf_counter()
                 try:
                     if task.is_async:
                         await task.func()
                     else:
                         await asyncio.to_thread(task.func)
+                    elapsed = time.perf_counter() - start_time
+                    logger.info("Задача '%s' выполнена за %.2f сек.", task.name, elapsed)
                 except Exception as e:
-                    logger.exception("Ошибка при выполнении задачи '%s': %s", task.name, e)
+                    logger.exception("Ошибка выполнения задачи '%s': %s", task.name, e)
 
                     if task.error_strategy == ErrorStrategy.STOP_TASK:
                         logger.error("Задача '%s' исключена из планировщика из-за ошибки.", task.name)

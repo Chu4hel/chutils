@@ -1,8 +1,17 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+# ruff: noqa: E402
+
+if TYPE_CHECKING:
+    from chutils.logger import ChutilsLogger
+
 # Ленивая инициализация логгера модуля
 _module_logger = None
 
 
-def _get_logger() -> 'ChutilsLogger':  # type: ignore
+def _get_logger() -> ChutilsLogger:
     global _module_logger
     if _module_logger is None:
         from ... import logger as chutils_logger
@@ -10,9 +19,11 @@ def _get_logger() -> 'ChutilsLogger':  # type: ignore
     return _module_logger
 
 
+from .aws import AWSSecretManagerProvider
 from .base import SecretProvider
 from .dotenv import DotEnvProvider
 from .env import EnvProvider
+from .gcp import GCPSecretManagerProvider
 from .keyring_provider import KeyringProvider
 
 # Expose keyring for mock compatibility in tests
@@ -25,10 +36,12 @@ except ImportError:
     KEYRING_AVAILABLE = False
 
 __all__ = [
+    "AWSSecretManagerProvider",
     "SecretProvider",
     "KeyringProvider",
     "DotEnvProvider",
     "EnvProvider",
     "KEYRING_AVAILABLE",
+    "GCPSecretManagerProvider",
     "keyring",
 ]

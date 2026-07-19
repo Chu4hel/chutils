@@ -8,9 +8,9 @@ from __future__ import annotations
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import threading
 import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
-from collections.abc import Callable
 
 from chutils.typing import JSONDict
 
@@ -44,6 +44,7 @@ class _ConfigManager:
     _tracing_enabled: bool
     _trace_data: dict[str, dict[str, list[dict[str, Any]]]]
     _remote_provider: Any | None
+    _custom_providers_registry: Any | None
 
     # Список маркеров, по которым ищется корень проекта и конфигурационные файлы.
     # Порядок в списке определяет приоритет при поиске.
@@ -80,6 +81,30 @@ class _ConfigManager:
             self._tracing_enabled = False
             self._trace_data = {}
             self._remote_provider = None
+            # Сбрасываем реестр кастомных провайдеров (если уже инициализирован)
+            if hasattr(self, '_custom_providers_registry') and self._custom_providers_registry is not None:
+                self._custom_providers_registry.reset()
+            else:
+                self._custom_providers_registry = None
+
+    def register_provider(self, provider: Any, priority: int = 100) -> None:
+        """Регистрирует кастомный провайдер конфигурации.
+
+        Args:
+            provider: Экземпляр, реализующий BaseConfigProvider.
+            priority: Числовой приоритет (меньше → выше). По умолчанию: 100.
+        """
+        from .custom_providers import get_registry
+        registry = get_registry()
+        registry.register(provider, priority)
+
+    def reset_providers(self) -> None:
+        """Очищает реестр кастомных провайдеров.
+
+        Используется в тестах для сброса состояния между тест-кейсами.
+        """
+        from .custom_providers import get_registry
+        get_registry().reset()
 
     @property
     def remote_provider(self) -> Any | None:
@@ -152,7 +177,6 @@ class _ConfigManager:
             if not self._tracing_enabled:
                 return
 
-            # Проверка глобального флага отключения переопределения через ENV
             disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
             if disable_env_override:
                 return

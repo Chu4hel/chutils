@@ -1,3 +1,4 @@
+# chutils: ignore[CodeDecompositionRule]
 """
 Модуль с полезными декораторами для автоматизации задач.
 
@@ -660,6 +661,257 @@ def circuit_breaker(
                 except Exception as e:
                     state.record_failure(e)
                     raise e
+
+            return sync_wrapper
+
+    return decorator
+
+
+def semaphore(
+        max_concurrent: int,
+        key: Optional[Callable[..., Any]] = None,
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
+    """
+    Декоратор для ограничения максимального количества параллельных вызовов функции (Semaphore).
+
+    Поддерживает как синхронные, так и асинхронные функции.
+    Позволяет группировать ограничения динамически по ключу с помощью параметра `key`.
+
+    Args:
+        max_concurrent: Максимальное количество параллельных вызовов.
+        key: Опциональная функция для вычисления динамического ключа группировки
+             на основе аргументов функции.
+
+    Returns:
+        Декорированная функция.
+    """
+    sync_semaphores: dict[Any, threading.Semaphore] = {}
+    sync_lock = threading.Lock()
+
+    async_semaphores: dict[tuple[asyncio.AbstractEventLoop, Any], asyncio.Semaphore] = {}
+    async_lock = threading.Lock()
+
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+        if inspect.iscoroutinefunction(func):
+
+            @functools.wraps(func)
+            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+                try:
+                    loop = asyncio.get_running_loop()
+                except RuntimeError:
+                    loop = asyncio.get_event_loop()
+
+                k_val = key(*args, **kwargs) if key is not None else None
+
+                with async_lock:
+                    sem_key = (loop, k_val)
+                    sem = async_semaphores.get(sem_key)
+                    if sem is None:
+                        sem = asyncio.Semaphore(max_concurrent)
+                        async_semaphores[sem_key] = sem
+
+                async with sem:
+                    return await cast(Awaitable[R], func(*args, **kwargs))
+
+            return cast(Callable[P, R], async_wrapper)
+        else:
+
+            @functools.wraps(func)
+            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+                k_val = key(*args, **kwargs) if key is not None else None
+
+                with sync_lock:
+                    sem = sync_semaphores.get(k_val)
+                    if sem is None:
+                        sem = threading.Semaphore(max_concurrent)
+                        sync_semaphores[k_val] = sem
+
+                with sem:
+                    return func(*args, **kwargs)
+
+            return sync_wrapper
+
+    return decorator
+
+
+def bulkhead(
+        max_concurrent: int,
+        max_waiting: int = 0,
+        timeout: Optional[float] = None,
+        fallback: Any = _NO_FALLBACK,
+        key: Optional[Callable[..., Any]] = None,
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
+    """
+    Декоратор для изоляции ресурсов (Bulkhead).
+
+    Ограничивает максимальное количество параллельных запросов и
+    размер очереди ожидания. Поддерживает таймауты и fallback.
+
+    Args:
+        max_concurrent: Максимальное количество параллельно выполняющихся запросов.
+        max_waiting: Максимальное количество запросов в очереди ожидания.
+        timeout: Таймаут ожидания свободного слота в секундах.
+        fallback: Значение или callable для возврата при отклонении.
+        key: Опциональная функция вычисления динамического ключа группировки.
+
+    Returns:
+        Декорированная функция.
+    """
+    from .exceptions import BulkheadLimitExceeded
+
+    class SyncBulkheadState:
+        def __init__(self) -> None:
+            self.active_count = 0
+            self.waiting_count = 0
+            self.condition = threading.Condition()
+
+    sync_states: dict[Any, SyncBulkheadState] = {}
+    sync_lock = threading.Lock()
+
+    class AsyncBulkheadState:
+        def __init__(self, loop: asyncio.AbstractEventLoop) -> None:
+            self.active_count = 0
+            self.waiting_count = 0
+            self.condition = asyncio.Condition()
+
+    async_states: dict[tuple[asyncio.AbstractEventLoop, Any], AsyncBulkheadState] = {}
+    async_lock = threading.Lock()
+
+    def handle_rejected(err_msg: str, *args: Any, **kwargs: Any) -> Any:
+        if fallback is _NO_FALLBACK:
+            raise BulkheadLimitExceeded(err_msg)
+        if callable(fallback):
+            return fallback(*args, **kwargs)
+        return fallback
+
+    async def handle_rejected_async(err_msg: str, *args: Any, **kwargs: Any) -> Any:
+        if fallback is _NO_FALLBACK:
+            raise BulkheadLimitExceeded(err_msg)
+        if callable(fallback):
+            res = fallback(*args, **kwargs)
+            if inspect.isawaitable(res):
+                return await res
+            return res
+        return fallback
+
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
+        if inspect.iscoroutinefunction(func):
+
+            @functools.wraps(func)
+            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+                try:
+                    loop = asyncio.get_running_loop()
+                except RuntimeError:
+                    loop = asyncio.get_event_loop()
+
+                k_val = key(*args, **kwargs) if key is not None else None
+                state_key = (loop, k_val)
+
+                with async_lock:
+                    state = async_states.get(state_key)
+                    if state is None:
+                        state = AsyncBulkheadState(loop)
+                        async_states[state_key] = state
+
+                async with state.condition:
+                    if state.active_count < max_concurrent:
+                        state.active_count += 1
+                    else:
+                        if state.waiting_count >= max_waiting:
+                            return cast(
+                                R,
+                                await handle_rejected_async(
+                                    f"Bulkhead limit exceeded (max_concurrent={max_concurrent}, max_waiting={max_waiting})",
+                                    *args,
+                                    **kwargs
+                                )
+                            )
+
+                        state.waiting_count += 1
+                        slot_acquired = False
+                        try:
+                            if timeout is not None:
+                                try:
+                                    await asyncio.wait_for(state.condition.wait(), timeout=timeout)
+                                    slot_acquired = True
+                                except asyncio.TimeoutError:
+                                    slot_acquired = False
+                            else:
+                                await state.condition.wait()
+                                slot_acquired = True
+                        finally:
+                            state.waiting_count -= 1
+
+                        if not slot_acquired:
+                            return cast(
+                                R,
+                                await handle_rejected_async(
+                                    f"Bulkhead acquire timeout (timeout={timeout}s)",
+                                    *args,
+                                    **kwargs
+                                )
+                            )
+
+                        state.active_count += 1
+
+                try:
+                    return await cast(Awaitable[R], func(*args, **kwargs))
+                finally:
+                    async with state.condition:
+                        state.active_count -= 1
+                        state.condition.notify()
+
+            return cast(Callable[P, R], async_wrapper)
+        else:
+
+            @functools.wraps(func)
+            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+                k_val = key(*args, **kwargs) if key is not None else None
+
+                with sync_lock:
+                    state = sync_states.get(k_val)
+                    if state is None:
+                        state = SyncBulkheadState()
+                        sync_states[k_val] = state
+
+                with state.condition:
+                    if state.active_count < max_concurrent:
+                        state.active_count += 1
+                    else:
+                        if state.waiting_count >= max_waiting:
+                            return cast(
+                                R,
+                                handle_rejected(
+                                    f"Bulkhead limit exceeded (max_concurrent={max_concurrent}, max_waiting={max_waiting})",
+                                    *args,
+                                    **kwargs
+                                )
+                            )
+
+                        state.waiting_count += 1
+                        try:
+                            slot_acquired = state.condition.wait(timeout=timeout)
+                        finally:
+                            state.waiting_count -= 1
+
+                        if not slot_acquired:
+                            return cast(
+                                R,
+                                handle_rejected(
+                                    f"Bulkhead acquire timeout (timeout={timeout}s)",
+                                    *args,
+                                    **kwargs
+                                )
+                            )
+
+                        state.active_count += 1
+
+                try:
+                    return func(*args, **kwargs)
+                finally:
+                    with state.condition:
+                        state.active_count -= 1
+                        state.condition.notify()
 
             return sync_wrapper
 

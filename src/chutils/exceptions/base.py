@@ -8,7 +8,7 @@ else:
     if sys.version_info >= (3, 11):
         _BaseExceptionGroup = ExceptionGroup  # noqa: F821
     else:
-        from exceptiongroup import ExceptionGroup as _BaseExceptionGroup
+        from exceptiongroup import ExceptionGroup as _BaseExceptionGroup  # noqa: F401
 
 
 class ChutilsException(Exception):

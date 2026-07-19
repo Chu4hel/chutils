@@ -18,6 +18,7 @@ members:
 - get_config
 - aget_config
 - get_config_value
+- aget_config_value
 - HttpConfigProvider
 - get_config_int
 - get_config_float
@@ -40,6 +41,19 @@ members:
 - generate_json_schema
 - export_schema
 - import_model_class
+- register_provider
+- reset_providers
+- BaseConfigProvider
+- DictConfigProvider
+
+## Модуль `config.custom_providers` (Custom Config Providers API)
+
+::: chutils.config.custom_providers
+options:
+members:
+
+- BaseConfigProvider
+- DictConfigProvider
 
 ## Модуль `logger`
 
@@ -224,6 +238,7 @@ members:
 - generate_few_shot_bank
 - MockServerRunner
 - Scaffolder
+- generate_workflow_yaml
 
 ## Модуль `diagnostics` (Мониторинг работоспособности)
 
@@ -316,3 +331,20 @@ members:
 - ConfigProviderPlugin
 - LoggerHandlerPlugin
 - MetricsPlugin
+
+## Модуль `http` (HTTP-клиент и отказоустойчивость)
+
+::: chutils.http
+options:
+members:
+
+- HttpClient
+- AsyncHttpClient
+- ResiliencePolicy
+- HttpResponse
+- get
+- post
+- put
+- delete
+- patch
+

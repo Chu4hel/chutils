@@ -56,6 +56,9 @@ _LAZY_MAPPING = {
     'MockServerRunner': ('.dev.mock_server', 'MockServerRunner'),
     'generate_few_shot': ('.dev.few_shot', None),
     'few_shot': ('.dev.few_shot', None),
+    'profile_imports': ('.dev.profile_imports', None),
+    'dashboard': ('.dev.dashboard', None),
+    'generate_workflow_yaml': ('.dev.github_actions', 'generate_workflow_yaml'),
     'events': ('.events', None),
     'tasks': ('.tasks', None),
     'text': ('.text', None),
@@ -64,6 +67,16 @@ _LAZY_MAPPING = {
     'diagnostics': ('.diagnostics', None),
     'DiagnosticsManager': ('.diagnostics', 'DiagnosticsManager'),
     'validation': ('.validation', None),
+    'http': ('.http', None),
+
+    # http
+    'HttpClient': ('.http', 'HttpClient'),
+    'AsyncHttpClient': ('.http', 'AsyncHttpClient'),
+    'HttpResponse': ('.http', 'HttpResponse'),
+    'ResiliencePolicy': ('.http', 'ResiliencePolicy'),
+    'UrllibFallbackClient': ('.http', 'UrllibFallbackClient'),
+    'inject_trace_headers': ('.http', 'inject_trace_headers'),
+    'create_http_span': ('.http', 'create_http_span'),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -93,6 +106,11 @@ _LAZY_MAPPING = {
     'load_ai_lint_config': ('.config', 'load_ai_lint_config'),
     'parse_chutils_ignore': ('.config', 'parse_chutils_ignore'),
     'validate_required_keys': ('.config', 'validate_required_keys'),
+    'register_provider': ('.config', 'register_provider'),
+    'reset_providers': ('.config', 'reset_providers'),
+    'aget_config_value': ('.config', 'aget_config_value'),
+    'BaseConfigProvider': ('.config', 'BaseConfigProvider'),
+    'DictConfigProvider': ('.config', 'DictConfigProvider'),
 
     # features
     'is_feature_enabled': ('.features', 'is_feature_enabled'),
@@ -155,6 +173,8 @@ _LAZY_MAPPING = {
     'timeout': ('.decorators', 'timeout'),
     'rate_limit': ('.decorators', 'rate_limit'),
     'circuit_breaker': ('.decorators', 'circuit_breaker'),
+    'semaphore': ('.decorators', 'semaphore'),
+    'bulkhead': ('.decorators', 'bulkhead'),
 
     # tracing
     'trace': ('.tracing', 'trace'),
@@ -178,11 +198,13 @@ _LAZY_MAPPING = {
     'ChutilsTimeoutError': ('.exceptions', 'ChutilsTimeoutError'),
     'RateLimitExceededError': ('.exceptions', 'RateLimitExceededError'),
     'CircuitBreakerOpenError': ('.exceptions', 'CircuitBreakerOpenError'),
+    'BulkheadLimitExceeded': ('.exceptions', 'BulkheadLimitExceeded'),
     'CacheError': ('.exceptions', 'CacheError'),
     'EventBusError': ('.exceptions', 'EventBusError'),
     'EventBusExceptionGroup': ('.exceptions', 'EventBusExceptionGroup'),
     'ChutilsValidationError': ('.exceptions', 'ChutilsValidationError'),
     'EnvValidationError': ('.exceptions', 'EnvValidationError'),
+    'HttpClientError': ('.exceptions', 'HttpClientError'),
 
     # events
     'subscribe': ('.events', 'subscribe'),
@@ -261,6 +283,22 @@ _LAZY_MAPPING = {
     'CaptchaBalanceError': ('.scraping.captcha', 'CaptchaBalanceError'),
     'CaptchaServiceError': ('.scraping.captcha', 'CaptchaServiceError'),
 
+    # db
+    'db': ('.db', None),
+    'DatabaseManager': ('.db', 'DatabaseManager'),
+
+    # audit
+    'audit': ('.audit', None),
+    'AuditEvent': ('.audit', 'AuditEvent'),
+    'BaseAuditBackend': ('.audit', 'BaseAuditBackend'),
+    'FileBackend': ('.audit', 'FileBackend'),
+    'SqliteBackend': ('.audit', 'SqliteBackend'),
+    'PostgresBackend': ('.audit', 'PostgresBackend'),
+    'audit_event': ('.audit', 'audit_event'),
+    'audit_context': ('.audit', 'audit_context'),
+    'AuditError': ('.exceptions', 'AuditError'),
+    'AuditIntegrityError': ('.exceptions', 'AuditIntegrityError'),
+
     # plugins
     'plugins': ('.plugins', None),
     'register_plugin': ('.plugins', 'register_plugin'),
@@ -278,6 +316,15 @@ def __getattr__(name: str) -> Any:
         if attr_name is None:
             return module
         return getattr(module, attr_name)
+
+    # Поддержка импорта субмодулей (например, для unittest.mock.patch в Python 3.10)
+    try:
+        import importlib.util as importlib_util
+        spec = importlib_util.find_spec(f".{name}", __name__)
+        if spec is not None:
+            return importlib.import_module(f".{name}", __name__)
+    except Exception:
+        pass
 
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
