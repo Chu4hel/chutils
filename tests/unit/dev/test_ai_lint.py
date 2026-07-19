@@ -525,6 +525,56 @@ class C: pass
     results = rule.check(str(tmp_path), [str(file_ignored_2)])
     assert len(results) == 0
 
+    # 7. Исключение docstrings
+    doc_code = '''"""
+Module docstring
+that spans
+multiple lines
+"""
+
+def my_func():
+    """Function docstring."""
+    pass
+'''
+    file_doc = tmp_path / "doc.py"
+    file_doc.write_text(doc_code, encoding="utf-8")
+
+    # Без исключения - файл содержит 9 физических строк
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5
+    }
+    results = rule.check(str(tmp_path), [str(file_doc)])
+    assert len(results) == 1  # Должен ругнуться, так как 9 > 5
+
+    # С исключением докстрингов - докстринги убираются (5 строк у модуля + 1 у функции = 6 строк уходят), остается 3 строки
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5,
+        "decomposition_exclude_docstrings": True
+    }
+    results = rule.check(str(tmp_path), [str(file_doc)])
+    assert len(results) == 0  # 3 <= 5
+
+    # С весом docstrings = 0.5 - 6 строк docstrings * 0.5 = 3 + 3 = 6 строк взвешенных. 6 > 5
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5,
+        "decomposition_docstrings_weight": 0.5
+    }
+    results = rule.check(str(tmp_path), [str(file_doc)])
+    assert len(results) == 1  # 6 > 5
+
+    # С весом docstrings = 0.2 - 6 * 0.2 = 1.2 + 3 = 4.2 -> округляется до 4. 4 <= 5
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5,
+        "decomposition_docstrings_weight": 0.2
+    }
+    results = rule.check(str(tmp_path), [str(file_doc)])
+    assert len(results) == 0  # 4 <= 5
+
+
 
 def test_api_map_hash_rule(tmp_path):
     """Тестирует APIMapHashRule."""
