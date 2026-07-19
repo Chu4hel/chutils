@@ -1,7 +1,6 @@
 """FileBackend — хранение журнала аудита в append-only JSONL файле."""
 from __future__ import annotations
 
-import hashlib
 import json
 import threading
 from pathlib import Path
@@ -44,7 +43,7 @@ class FileBackend(BaseAuditBackend):
         if not last_line:
             return ""
         record = json.loads(last_line)
-        return record.get("hash", "")
+        return str(record.get("hash", ""))
 
     def log(
             self,
@@ -82,7 +81,7 @@ class FileBackend(BaseAuditBackend):
             ensure_dir(self._path.parent)
             with open(self._path, "a", encoding="utf-8") as f:
                 f.write(event.to_jsonl() + "\n")
-            return event.id
+            return str(event.id)
 
     def verify_integrity(self) -> bool:
         """Проверяет целостность цепочки хэшей в JSONL-файле.

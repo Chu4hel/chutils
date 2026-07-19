@@ -111,6 +111,6 @@ def _build_audit_event_class() -> type:
 try:
     AuditEvent = _build_audit_event_class()
 except ImportError:
-    AuditEvent = None  # type: ignore[assignment,misc]
+    AuditEvent = None  # type: ignore[assignment]
 
 __all__ = ["AuditEvent"]

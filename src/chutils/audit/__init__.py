@@ -30,8 +30,8 @@ except ImportError:
 try:
     from chutils.audit.api import audit_event, audit_context
 except ImportError:
-    audit_event = None  # type: ignore[assignment,misc]
-    audit_context = None  # type: ignore[assignment,misc]
+    audit_event = None  # type: ignore[assignment]
+    audit_context = None  # type: ignore[assignment]
 
 __all__ = [
     "AuditEvent",

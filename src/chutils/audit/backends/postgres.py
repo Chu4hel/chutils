@@ -14,33 +14,75 @@ from chutils.audit._hash import compute_record_hash
 from chutils.audit.backends.base import BaseAuditBackend
 
 if TYPE_CHECKING:
-    from typing import Protocol
+    from typing import Protocol, Any
+
+
+    class _DBAPICursor(Protocol):
+        def execute(self, query: str, params: tuple[Any, ...] | dict[str, Any] | None = None) -> Any: ...
+
+        def fetchone(self) -> Any: ...
+
+        def fetchall(self) -> list[tuple[Any, ...]]: ...
+
+        def __enter__(self) -> _DBAPICursor: ...
+
+        def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> object: ...
+
 
     class _DBAPIConnection(Protocol):
-        def cursor(self) -> object: ...
+        def cursor(self) -> _DBAPICursor: ...
+
         def commit(self) -> None: ...
 
 _CREATE_TABLE = """
-CREATE TABLE IF NOT EXISTS audit_log (
-    id          TEXT NOT NULL,
-    timestamp   TEXT NOT NULL,
-    actor       TEXT NOT NULL,
-    action      TEXT NOT NULL,
-    target      TEXT,
-    status      TEXT NOT NULL,
-    details     TEXT NOT NULL,
-    env         TEXT NOT NULL,
-    prev_hash   TEXT NOT NULL,
-    hash        TEXT NOT NULL
-)
-"""
+                CREATE TABLE IF NOT EXISTS audit_log
+                (
+                    id
+                    TEXT
+                    NOT
+                    NULL,
+                    timestamp
+                    TEXT
+                    NOT
+                    NULL,
+                    actor
+                    TEXT
+                    NOT
+                    NULL,
+                    action
+                    TEXT
+                    NOT
+                    NULL,
+                    target
+                    TEXT,
+                    status
+                    TEXT
+                    NOT
+                    NULL,
+                    details
+                    TEXT
+                    NOT
+                    NULL,
+                    env
+                    TEXT
+                    NOT
+                    NULL,
+                    prev_hash
+                    TEXT
+                    NOT
+                    NULL,
+                    hash
+                    TEXT
+                    NOT
+                    NULL
+                ) \
+                """
 
 _INSERT = """
-INSERT INTO audit_log
-    (id, timestamp, actor, action, target, status, details, env, prev_hash, hash)
-VALUES
-    (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-"""
+          INSERT INTO audit_log
+          (id, timestamp, actor, action, target, status, details, env, prev_hash, hash)
+          VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) \
+          """
 
 _SELECT_LAST_HASH = "SELECT hash FROM audit_log ORDER BY id DESC LIMIT 1"
 
@@ -60,8 +102,9 @@ class PostgresBackend(BaseAuditBackend):
     Args:
         connection: Открытое DBAPI2-соединение с PostgreSQL.
     """
+    _conn: _DBAPIConnection
 
-    def __init__(self, connection: object) -> None:
+    def __init__(self, connection: _DBAPIConnection) -> None:
         """Инициализирует PostgresBackend и создаёт таблицу audit_log.
 
         Args:
@@ -72,23 +115,23 @@ class PostgresBackend(BaseAuditBackend):
         self._ensure_table()
 
     def _ensure_table(self) -> None:
-        with self._conn.cursor() as cur:  # type: ignore[union-attr]
+        with self._conn.cursor() as cur:
             cur.execute(_CREATE_TABLE)
 
     def _get_last_hash(self) -> str:
-        with self._conn.cursor() as cur:  # type: ignore[union-attr]
+        with self._conn.cursor() as cur:
             cur.execute(_SELECT_LAST_HASH)
             row = cur.fetchone()
         return row[0] if row else ""
 
     def log(
-        self,
-        action: str,
-        actor: str,
-        *,
-        target: str | None = None,
-        status: str = "success",
-        details: dict[str, object] | None = None,
+            self,
+            action: str,
+            actor: str,
+            *,
+            target: str | None = None,
+            status: str = "success",
+            details: dict[str, object] | None = None,
     ) -> str:
         """Добавляет событие в таблицу audit_log PostgreSQL.
 
@@ -115,7 +158,7 @@ class PostgresBackend(BaseAuditBackend):
                 prev_hash=prev_hash,
             )
             dumped = event.model_dump(mode="json")
-            with self._conn.cursor() as cur:  # type: ignore[union-attr]
+            with self._conn.cursor() as cur:
                 cur.execute(
                     _INSERT,
                     (
@@ -131,7 +174,7 @@ class PostgresBackend(BaseAuditBackend):
                         event.hash,
                     ),
                 )
-            return event.id
+            return str(event.id)
 
     def verify_integrity(self) -> bool:
         """Проверяет целостность цепочки хэшей в таблице PostgreSQL.
@@ -144,7 +187,7 @@ class PostgresBackend(BaseAuditBackend):
         """
         from chutils.exceptions import AuditIntegrityError
 
-        with self._conn.cursor() as cur:  # type: ignore[union-attr]
+        with self._conn.cursor() as cur:
             cur.execute(_SELECT_ALL)
             rows = cur.fetchall()
 

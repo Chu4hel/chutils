@@ -55,11 +55,11 @@ class _AuditContextState:
 
 @contextmanager
 def audit_context(
-    action: str,
-    actor: str,
-    *,
-    target: str | None = None,
-    backend: object,
+        action: str,
+        actor: str,
+        *,
+        target: str | None = None,
+        backend: object,
 ) -> Generator[_AuditContextState, None, None]:
     """Контекстный менеджер для регистрации события аудита в блоке кода.
 
@@ -107,11 +107,11 @@ _TargetOrCallable = Union[str, Callable[..., str], None]
 
 
 def audit_event(
-    action: str,
-    actor: _ActorOrCallable = "system",
-    *,
-    target: _TargetOrCallable = None,
-    backend: object,
+        action: str,
+        actor: _ActorOrCallable = "system",
+        *,
+        target: _TargetOrCallable = None,
+        backend: object,
 ) -> Callable:  # type: ignore[type-arg]
     """Декоратор для автоматической регистрации события аудита при вызове функции.
 
@@ -133,6 +133,7 @@ def audit_event(
         def delete_user(user_id: str) -> None:
             ...
     """
+
     def decorator(func: Callable) -> Callable:  # type: ignore[type-arg]
         @functools.wraps(func)
         def sync_wrapper(*args: object, **kwargs: object) -> object:
@@ -167,7 +168,7 @@ def audit_event(
             status = "success"
             details: dict[str, object] = {}
             try:
-                return await func(*args, **kwargs)  # type: ignore[misc]
+                return await func(*args, **kwargs)
             except Exception as exc:
                 status = "failed"
                 details["error_type"] = type(exc).__name__

@@ -1,7 +1,6 @@
 """SqliteBackend — хранение журнала аудита в SQLite через стандартную библиотеку sqlite3."""
 from __future__ import annotations
 
-import hashlib
 import json
 import sqlite3
 import threading
@@ -12,19 +11,48 @@ from chutils.audit.backends.base import BaseAuditBackend
 from chutils.fs import ensure_dir
 
 _CREATE_TABLE = """
-CREATE TABLE IF NOT EXISTS audit_log (
-    id          TEXT NOT NULL,
-    timestamp   TEXT NOT NULL,
-    actor       TEXT NOT NULL,
-    action      TEXT NOT NULL,
-    target      TEXT,
-    status      TEXT NOT NULL,
-    details     TEXT NOT NULL,
-    env         TEXT NOT NULL,
-    prev_hash   TEXT NOT NULL,
-    hash        TEXT NOT NULL
-)
-"""
+                CREATE TABLE IF NOT EXISTS audit_log
+                (
+                    id
+                    TEXT
+                    NOT
+                    NULL,
+                    timestamp
+                    TEXT
+                    NOT
+                    NULL,
+                    actor
+                    TEXT
+                    NOT
+                    NULL,
+                    action
+                    TEXT
+                    NOT
+                    NULL,
+                    target
+                    TEXT,
+                    status
+                    TEXT
+                    NOT
+                    NULL,
+                    details
+                    TEXT
+                    NOT
+                    NULL,
+                    env
+                    TEXT
+                    NOT
+                    NULL,
+                    prev_hash
+                    TEXT
+                    NOT
+                    NULL,
+                    hash
+                    TEXT
+                    NOT
+                    NULL
+                ) \
+                """
 
 
 class SqliteBackend(BaseAuditBackend):
@@ -66,13 +94,13 @@ class SqliteBackend(BaseAuditBackend):
         return row[0] if row else ""
 
     def log(
-        self,
-        action: str,
-        actor: str,
-        *,
-        target: str | None = None,
-        status: str = "success",
-        details: dict[str, object] | None = None,
+            self,
+            action: str,
+            actor: str,
+            *,
+            target: str | None = None,
+            status: str = "success",
+            details: dict[str, object] | None = None,
     ) -> str:
         """Добавляет событие в таблицу audit_log.
 
@@ -119,7 +147,7 @@ class SqliteBackend(BaseAuditBackend):
                         event.hash,
                     ),
                 )
-            return event.id
+            return str(event.id)
 
     def verify_integrity(self) -> bool:
         """Проверяет целостность цепочки хэшей в таблице audit_log.
