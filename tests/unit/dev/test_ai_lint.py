@@ -267,6 +267,48 @@ def good_func(a: int, b: str) -> bool:
     results_good = rule.check(str(tmp_path), [str(file_path_good)])
     assert len(results_good) == 0
 
+    # Сценарий 3: Проверка расслабленных правил для __init__ и непубличных функций
+    relaxed_code = """
+class MyRelaxedClass:
+    \"\"\"
+    Класс с docstring.
+    \"\"\"
+    def __init__(self, value: int):
+        # Нет docstring у __init__, но есть docstring у класса -> ок, 0 ошибок docstring
+        # Отсутствует возвращаемый тип -> __init__ не проверяется на возвращаемое значение -> ок
+        self.value = value
+
+    def _private_func(self, a, b: int):
+        # Непубличная функция: отсутствует docstring -> ок (не публичная)
+        # Отсутствует тип у 'a' и возврат -> непубличные функции вызывают WARN, а не ERROR
+        pass
+"""
+    file_path_relaxed = tmp_path / "relaxed.py"
+    with open(file_path_relaxed, "w", encoding="utf-8") as f:
+        f.write(relaxed_code)
+
+    results_relaxed = rule.check(str(tmp_path), [str(file_path_relaxed)])
+    # Должен быть только 1 WARN на тип параметра 'a' приватной функции и 1 WARN на возвращаемый тип
+    assert len(results_relaxed) == 2
+    assert all(r.severity == "warn" for r in results_relaxed)
+    assert any("параметра 'a'" in r.message for r in results_relaxed)
+    assert any("возвращаемого значения" in r.message for r in results_relaxed)
+
+    # Проверим, что __init__ без docstring у класса без docstring дает WARN
+    bad_init_code = """
+class BadClassNoDoc:
+    def __init__(self):
+        pass
+"""
+    file_bad_init = tmp_path / "bad_init.py"
+    file_bad_init.write_text(bad_init_code, encoding="utf-8")
+    res_bad_init = rule.check(str(tmp_path), [str(file_bad_init)])
+    # Ошибка docstring класса (ERROR) + предупреждение для __init__ (WARN)
+    assert len(res_bad_init) == 2
+    assert any(r.severity == "error" and "BadClassNoDoc" in r.message for r in res_bad_init)
+    assert any(r.severity == "warn" and "__init__" in r.message for r in res_bad_init)
+
+
 
 def test_security_hardcode_rule(tmp_path):
     """Тестирует SecurityHardcodeRule."""
