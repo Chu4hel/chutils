@@ -1,8 +1,8 @@
 ---
-chutils_version: 3.1.0
-project_version: 3.1.0
-git_commit: f5a97c5ca1b408c53d82d35cadd0ac28c3d780e8 (dirty)
-generated_at: 2026-07-19T13:53:28.008020+00:00
+chutils_version: 3.2.0
+project_version: 3.2.0
+git_commit: 27b7c303e3774d02a9d4daec5eefc674e172ad52 (dirty)
+generated_at: 2026-07-19T14:24:11.521848+00:00
 project_hash: e37e0c0e56fc61a87f2b15a2fe20898352217000f5fe9e1f168a026a8ee72745
 ---
 
