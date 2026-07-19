@@ -355,7 +355,7 @@ def test_tui_process_execution(mocker: Any) -> None:
     mock_process = MagicMock()
     mock_process.stdout = MagicMock()
     mock_process.stdout.readline.side_effect = ["log line 1\n", "log line 2\n", ""]
-    mock_process.poll.side_effect = [None, None, 0, 0, 0]
+    mock_process.poll.return_value = None
     mock_popen.return_value = mock_process
 
     tui._run_command_process(arg)
@@ -365,6 +365,9 @@ def test_tui_process_execution(mocker: Any) -> None:
     # Считываем логи (проход 1)
     tui._update_logs()
     assert "log line 1" in "".join(tui.log_lines)
+
+    # Симулируем завершение процесса перед вторым проходом
+    mock_process.poll.return_value = 0
 
     # Считываем логи (проход 2, процесс завершился)
     tui._update_logs()
