@@ -575,7 +575,6 @@ def my_func():
     assert len(results) == 0  # 4 <= 5
 
 
-
 def test_api_map_hash_rule(tmp_path):
     """Тестирует APIMapHashRule."""
     rule = APIMapHashRule()
@@ -792,3 +791,43 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
     results = rule.check(str(tmp_path), [])
     assert len(results) == 1  # Должно сработать предупреждение
     assert "были созданы новые файлы, но связанные файлы" in results[0].message
+
+
+def test_linter_output_formats(capsys):
+    """Тестирует различные форматы вывода и группировки линтера."""
+    from chutils.dev.ai_lint import LinterEngine, LintResult
+
+    # Тестовые результаты
+    results = [
+        LintResult(rule_name="RuleA", message="Message A", severity="error", file_path="file1.py", line_number=10, fix_suggestion="Fix A"),
+        LintResult(rule_name="RuleB", message="Message B", severity="warn", file_path="file2.py", line_number=20, fix_suggestion="Fix B"),
+        LintResult(rule_name="RuleA", message="Message A2", severity="warn", file_path="file1.py", line_number=30, fix_suggestion="Fix A2"),
+    ]
+
+    # 1. Default (обычный) формат, группировка по файлам
+    engine_default = LinterEngine({"output_format": "default", "group_by": "file"})
+    engine_default.print_results(results)
+    captured = capsys.readouterr().out
+    assert "file1.py:10" in captured
+    assert "file2.py:20" in captured
+    assert "Message A" in captured
+    assert "Message B" in captured
+
+    # 2. Default формат, группировка по правилам
+    engine_rule = LinterEngine({"output_format": "default", "group_by": "rule"})
+    engine_rule.print_results(results)
+    captured = capsys.readouterr().out
+    assert "RuleA" in captured
+    assert "RuleB" in captured
+
+    # 3. Table формат (должен пройти без ошибок выполнения)
+    engine_table = LinterEngine({"output_format": "table", "group_by": "file"})
+    engine_table.print_results(results)
+    captured = capsys.readouterr().out
+    assert "Файл: file1.py" in captured or "file1.py" in captured
+
+    # 4. Table формат, группировка по правилам
+    engine_table_rule = LinterEngine({"output_format": "table", "group_by": "rule"})
+    engine_table_rule.print_results(results)
+    captured = capsys.readouterr().out
+    assert "Правило: RuleA" in captured or "RuleA" in captured

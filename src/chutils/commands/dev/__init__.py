@@ -175,6 +175,18 @@ class DevCommand(BaseCommand):
             action="store_true",
             help="Проверять только файлы, подготовленные к коммиту (staged) в Git.",
         )
+        lint_parser.add_argument(
+            "--output-format",
+            choices=["default", "table"],
+            default=None,
+            help="Формат вывода результатов (по умолчанию: table).",
+        )
+        lint_parser.add_argument(
+            "--group-by",
+            choices=["file", "rule"],
+            default=None,
+            help="Группировка вывода результатов (по умолчанию: file).",
+        )
         lint_parser.set_defaults(handler=self.handle_ai_lint)
 
         # dev chat-context

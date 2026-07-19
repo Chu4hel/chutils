@@ -70,6 +70,18 @@ class AiLintSubCommand(SubCommand):
             action="store_true",
             help="Проверять только файлы, подготовленные к коммиту (staged) в Git.",
         )
+        lint_parser.add_argument(
+            "--output-format",
+            choices=["default", "table"],
+            default=None,
+            help="Формат вывода результатов (по умолчанию: table).",
+        )
+        lint_parser.add_argument(
+            "--group-by",
+            choices=["file", "rule"],
+            default=None,
+            help="Группировка вывода результатов (по умолчанию: file).",
+        )
         lint_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace) -> None:
@@ -93,6 +105,10 @@ class AiLintSubCommand(SubCommand):
             cli_args["custom_rules_path"] = args.custom_rules_path
         if getattr(args, "staged", None) is not None:
             cli_args["staged"] = args.staged
+        if getattr(args, "output_format", None) is not None:
+            cli_args["output_format"] = args.output_format
+        if getattr(args, "group_by", None) is not None:
+            cli_args["group_by"] = args.group_by
 
         from chutils.config.dev import load_ai_lint_config
         from chutils.dev.ai_lint import LinterEngine
