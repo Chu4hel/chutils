@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from chutils.logger import ChutilsLogger
 
-# Ленивая инициализация логгера модуля
 _module_logger = None
+"""Логгер для провайдеров секретов, инициализируемый лениво при первом запросе."""
 
 
 def _get_logger() -> ChutilsLogger:

@@ -23,8 +23,8 @@ __all__ = [
 
 logger = logging.getLogger(__name__)
 
-# Активный провайдер метрик
 _active_provider: MetricsProvider | None = None
+"""Текущий глобально активный провайдер метрик (синглтон)."""
 
 
 def get_provider() -> MetricsProvider:

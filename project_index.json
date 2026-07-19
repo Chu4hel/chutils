@@ -5487,7 +5487,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 281,
+                "line_number": 280,
                 "bases": [],
                 "children": []
               },
@@ -7157,7 +7157,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 494,
+                "line_number": 493,
                 "bases": [],
                 "children": []
               }
@@ -13657,9 +13657,9 @@
                         "name": "__init__",
                         "type": "method",
                         "layer": "private",
-                        "signature": "(self, file_path, rule_name)",
+                        "signature": "(self, file_path, rule_name, content)",
                         "summary": "Инициализирует AST-посетитель docstring'ов.",
-                        "docstring": "Инициализирует AST-посетитель docstring'ов.\n\nArgs:\n    file_path: Путь к анализируемому файлу.\n    rule_name: Название запускаемого правила.",
+                        "docstring": "Инициализирует AST-посетитель docstring'ов.\n\nArgs:\n    file_path: Путь к анализируемому файлу.\n    rule_name: Название запускаемого правила.\n    content: Содержимое файла (опционально).",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -13670,6 +13670,26 @@
                           "custom_metadata": {}
                         },
                         "line_number": 14,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "visit_Module",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, node)",
+                        "summary": "Проверяет модуль и его глобальные переменные на документирование через docstring.",
+                        "docstring": "Проверяет модуль и его глобальные переменные на документирование через docstring.\n\nArgs:\n    node: AST-узел модуля.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 28,
                         "bases": [],
                         "children": []
                       },
@@ -13689,7 +13709,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 26,
+                        "line_number": 83,
                         "bases": [],
                         "children": []
                       },
@@ -13709,7 +13729,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 50,
+                        "line_number": 107,
                         "bases": [],
                         "children": []
                       },
@@ -13729,7 +13749,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 58,
+                        "line_number": 115,
                         "bases": [],
                         "children": []
                       },
@@ -13749,7 +13769,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 66,
+                        "line_number": 123,
                         "bases": [],
                         "children": []
                       }
@@ -13771,7 +13791,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 200,
+                    "line_number": 257,
                     "bases": [
                       "..ai_lint.Rule"
                     ],
@@ -13792,7 +13812,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 208,
+                        "line_number": 265,
                         "bases": [],
                         "children": []
                       }
@@ -14780,7 +14800,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 256,
+                "line_number": 255,
                 "bases": [],
                 "children": []
               },
@@ -15726,7 +15746,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 229,
+                "line_number": 228,
                 "bases": [],
                 "children": []
               },
@@ -18702,7 +18722,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 175,
+            "line_number": 174,
             "bases": [],
             "children": []
           },
@@ -20243,7 +20263,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 9,
+                "line_number": 8,
                 "bases": [],
                 "children": []
               },
@@ -20924,7 +20944,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 133,
+                "line_number": 132,
                 "bases": [],
                 "children": []
               },
@@ -22315,7 +22335,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 7,
+                    "line_number": 6,
                     "bases": [],
                     "children": []
                   },
@@ -22446,7 +22466,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 6,
+                    "line_number": 5,
                     "bases": [],
                     "children": []
                   },
@@ -22656,7 +22676,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 17,
+                "line_number": 16,
                 "bases": [],
                 "children": []
               },
@@ -23721,7 +23741,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 11,
+                "line_number": 10,
                 "bases": [],
                 "children": []
               },
@@ -24677,7 +24697,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 13,
+            "line_number": 14,
             "bases": [],
             "children": []
           },
@@ -24697,7 +24717,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 16,
+            "line_number": 17,
             "bases": [],
             "children": []
           },
@@ -24717,7 +24737,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 26,
+            "line_number": 27,
             "bases": [],
             "children": []
           },
@@ -24739,7 +24759,7 @@
               ],
               "custom_metadata": {}
             },
-            "line_number": 47,
+            "line_number": 48,
             "bases": [],
             "children": []
           },
@@ -24759,7 +24779,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 131,
+            "line_number": 132,
             "bases": [],
             "children": []
           },
@@ -24779,7 +24799,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 141,
+            "line_number": 142,
             "bases": [],
             "children": []
           }
@@ -24810,7 +24830,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 16,
+            "line_number": 15,
             "bases": [],
             "children": []
           },
@@ -27436,8 +27456,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "ae3eeda40b91a842ae5180f58a65b82c50b2fc59 (dirty)",
-    "generated_at": "2026-07-19T22:56:28.519173+00:00",
-    "project_hash": "ac8ee5ab7bf4788939d68c71840f97a5d5fe8e708b8995436e8db1ea15f9ff59"
+    "git_commit": "237df7496da197ae68e2d2198dde660dc1f9a1d3 (dirty)",
+    "generated_at": "2026-07-19T23:56:31.785914+00:00",
+    "project_hash": "153fdd57d7e4216e67f6a3ef689bbc53173f9eb1c9abc03cd87aceda202d184f"
   }
 }

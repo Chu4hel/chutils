@@ -2,7 +2,6 @@ import math
 import random
 from typing import NamedTuple
 
-# Карта соседних клавиш для QWERTY раскладки (нижний регистр)
 _QWERTY_NEIGHBORS = {
     "q": "wa",
     "w": "qase",
@@ -31,6 +30,7 @@ _QWERTY_NEIGHBORS = {
     "n": "bhjm",
     "m": "njk",
 }
+"""Карта соседних клавиш для QWERTY-раскладки, используемая для имитации опечаток."""
 
 
 class BezierCurveGenerator:

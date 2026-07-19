@@ -3,7 +3,6 @@ from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
 
-# JS-скрипт для скрытия автоматизации и подмены Canvas/WebGL/Plugins/Hardware
 ANTIDETECT_JS_SCRIPT = """
 (function() {
     // 1. Скрытие navigator.webdriver
@@ -58,6 +57,7 @@ ANTIDETECT_JS_SCRIPT = """
     });
 })();
 """
+"""JavaScript-инъекция для скрытия признаков автоматизации браузера (webdriver, Canvas WebGL и др.)."""
 
 
 def _ensure_playwright() -> None:
