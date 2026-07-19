@@ -207,7 +207,7 @@ class LinterEngine:
         # Безопасное приведение типов для ignore
         raw_ignore = config.get("ignore")
         if isinstance(raw_ignore, list):
-            self.ignore_patterns = [str(item) for item in raw_ignore]
+            self.ignore_patterns = [str(item).replace("\\", "/") for item in raw_ignore]
         else:
             self.ignore_patterns = []
 
@@ -297,16 +297,25 @@ class LinterEngine:
         except ValueError:
             return False
 
-        parts = rel_path.parts
+        # Приводим путь к универсальному Unix-виду с "/"
+        rel_path_str = str(rel_path).replace("\\", "/")
+
         for pattern in self.ignore_patterns:
             if not pattern:
                 continue
-            for part in parts:
-                if fnmatch.fnmatch(part, pattern):
+
+            # Нормализуем шаблон
+            norm_pattern = pattern.replace("\\", "/")
+
+            # Проверка по сегментам пути
+            for part in rel_path.parts:
+                norm_part = part.replace("\\", "/")
+                if fnmatch.fnmatch(norm_part, norm_pattern):
                     return True
-            if fnmatch.fnmatch(str(rel_path).replace("\\", "/"), pattern):
+
+            if fnmatch.fnmatch(rel_path_str, norm_pattern):
                 return True
-            if pattern in str(rel_path).replace("\\", "/"):
+            if norm_pattern in rel_path_str:
                 return True
         return False
 

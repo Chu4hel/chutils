@@ -904,3 +904,22 @@ def test_linter_exclude_rules():
     assert len(res_ex) == 1
     assert res_ex[0].rule_name == "TestRuleB"
 
+
+def test_linter_should_ignore_slashes(tmp_path):
+    """Тестирует нормализацию слэшей в should_ignore."""
+    from chutils.dev.ai_lint import LinterEngine
+
+    # Передаем шаблоны с разными слэшами
+    engine = LinterEngine({
+        "base_dir": str(tmp_path),
+        "ignore": ["temp/build", "foo\\bar", "src/*.py"]
+    })
+
+    # Проверяем пути с разными слэшами
+    assert engine.should_ignore(tmp_path / "temp" / "build") is True
+    assert engine.should_ignore(tmp_path / "temp\\build") is True
+    assert engine.should_ignore(tmp_path / "foo" / "bar") is True
+    assert engine.should_ignore(tmp_path / "foo\\bar") is True
+    assert engine.should_ignore(tmp_path / "src" / "test.py") is True
+
+
