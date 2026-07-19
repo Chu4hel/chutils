@@ -490,5 +490,5 @@ class _ConfigManager:
         self._file_lock.release()
 
 
-# Глобальный экземпляр менеджера
 _cm = _ConfigManager()
+"Глобальный экземпляр менеджера"

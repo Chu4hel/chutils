@@ -5,8 +5,8 @@ from typing import Any
 from chutils.exceptions import OptionalDependencyError
 from .base import MetricsProvider
 
-# Глобальный флаг доступности prometheus_client
 PROMETHEUS_AVAILABLE = importlib.util.find_spec("prometheus_client") is not None
+"Глобальный флаг доступности prometheus_client"
 
 
 class PrometheusMetricsProvider(MetricsProvider):

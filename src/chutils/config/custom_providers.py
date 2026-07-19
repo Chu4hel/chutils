@@ -277,8 +277,8 @@ class _CustomProviderRegistry:
             return len(self._entries)
 
 
-# Глобальный реестр кастомных провайдеров
 _registry = _CustomProviderRegistry()
+"Глобальный реестр кастомных провайдеров"
 
 
 def get_registry() -> _CustomProviderRegistry:

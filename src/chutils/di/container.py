@@ -252,8 +252,8 @@ class Container:
             self._resolving_stack.clear()
 
 
-# Глобальный контейнер по умолчанию
 default_container = Container()
+"Глобальный контейнер по умолчанию"
 
 
 def provide(scope: str = "singleton", container: Container | None = None) -> Callable[[Any], Any]:
