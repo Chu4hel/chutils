@@ -303,7 +303,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 14,
+                    "line_number": 13,
                     "bases": [
                       "chutils.audit.backends.base.BaseAuditBackend"
                     ],
@@ -324,7 +324,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 25,
+                        "line_number": 24,
                         "bases": [],
                         "children": []
                       },
@@ -344,7 +344,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 34,
+                        "line_number": 33,
                         "bases": [],
                         "children": []
                       },
@@ -364,7 +364,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 49,
+                        "line_number": 48,
                         "bases": [],
                         "children": []
                       },
@@ -384,7 +384,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 87,
+                        "line_number": 86,
                         "bases": [],
                         "children": []
                       }
@@ -417,7 +417,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 23,
+                    "line_number": 37,
                     "bases": [],
                     "children": []
                   },
@@ -437,7 +437,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 38,
+                    "line_number": 81,
                     "bases": [],
                     "children": []
                   },
@@ -457,7 +457,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 45,
+                    "line_number": 87,
                     "bases": [],
                     "children": []
                   },
@@ -477,7 +477,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 47,
+                    "line_number": 89,
                     "bases": [],
                     "children": []
                   },
@@ -497,7 +497,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 53,
+                    "line_number": 95,
                     "bases": [
                       "chutils.audit.backends.base.BaseAuditBackend"
                     ],
@@ -518,7 +518,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 64,
+                        "line_number": 107,
                         "bases": [],
                         "children": []
                       },
@@ -538,7 +538,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 74,
+                        "line_number": 117,
                         "bases": [],
                         "children": []
                       },
@@ -558,7 +558,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 78,
+                        "line_number": 121,
                         "bases": [],
                         "children": []
                       },
@@ -578,7 +578,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 84,
+                        "line_number": 127,
                         "bases": [],
                         "children": []
                       },
@@ -598,7 +598,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 136,
+                        "line_number": 179,
                         "bases": [],
                         "children": []
                       }
@@ -631,7 +631,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 14,
+                    "line_number": 13,
                     "bases": [],
                     "children": []
                   },
@@ -651,7 +651,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 30,
+                    "line_number": 58,
                     "bases": [
                       "chutils.audit.backends.base.BaseAuditBackend"
                     ],
@@ -672,7 +672,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 41,
+                        "line_number": 69,
                         "bases": [],
                         "children": []
                       },
@@ -692,7 +692,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 51,
+                        "line_number": 79,
                         "bases": [],
                         "children": []
                       },
@@ -712,7 +712,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 56,
+                        "line_number": 84,
                         "bases": [],
                         "children": []
                       },
@@ -732,7 +732,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 61,
+                        "line_number": 89,
                         "bases": [],
                         "children": []
                       },
@@ -752,7 +752,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 68,
+                        "line_number": 96,
                         "bases": [],
                         "children": []
                       },
@@ -772,7 +772,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 124,
+                        "line_number": 152,
                         "bases": [],
                         "children": []
                       }
@@ -2293,7 +2293,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 40,
+                "line_number": 39,
                 "bases": [],
                 "children": []
               },
@@ -2313,7 +2313,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 115,
+                "line_number": 114,
                 "bases": [],
                 "children": []
               },
@@ -2333,7 +2333,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 131,
+                "line_number": 130,
                 "bases": [],
                 "children": []
               },
@@ -2353,7 +2353,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 169,
+                "line_number": 168,
                 "bases": [],
                 "children": []
               },
@@ -2373,7 +2373,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 196,
+                "line_number": 195,
                 "bases": [],
                 "children": []
               },
@@ -2393,7 +2393,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 238,
+                "line_number": 237,
                 "bases": [],
                 "children": []
               },
@@ -2413,7 +2413,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 261,
+                "line_number": 260,
                 "bases": [
                   "chutils.commands.base.BaseCommand"
                 ],
@@ -2434,7 +2434,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 269,
+                    "line_number": 268,
                     "bases": [],
                     "children": []
                   },
@@ -2454,7 +2454,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 363,
+                    "line_number": 362,
                     "bases": [],
                     "children": []
                   },
@@ -2474,7 +2474,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 400,
+                    "line_number": 399,
                     "bases": [],
                     "children": []
                   },
@@ -2494,7 +2494,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 422,
+                    "line_number": 421,
                     "bases": [],
                     "children": []
                   },
@@ -2514,7 +2514,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 442,
+                    "line_number": 441,
                     "bases": [],
                     "children": []
                   },
@@ -2534,7 +2534,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 458,
+                    "line_number": 457,
                     "bases": [],
                     "children": []
                   },
@@ -2554,7 +2554,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 479,
+                    "line_number": 478,
                     "bases": [],
                     "children": []
                   }
@@ -2636,7 +2636,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 60,
+                        "line_number": 91,
                         "bases": [],
                         "children": []
                       }
@@ -3063,7 +3063,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 14,
+                    "line_number": 18,
                     "bases": [
                       ".base.SubCommand"
                     ],
@@ -3084,7 +3084,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 19,
+                        "line_number": 23,
                         "bases": [],
                         "children": []
                       },
@@ -3104,7 +3104,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 72,
+                        "line_number": 84,
                         "bases": [],
                         "children": []
                       },
@@ -3124,7 +3124,49 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 274,
+                        "line_number": 298,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_normalize_for_comparison",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(content, fmt)",
+                        "summary": "Нормализует содержимое файла, заменяя volatile-поля на плейсхолдер.",
+                        "docstring": "Нормализует содержимое файла, заменяя volatile-поля на плейсхолдер.\n\nVolatile-поля (git_commit, generated_at, project_hash) изменяются при\nкаждом запуске, но не отражают реальных изменений в API проекта.\nНормализация позволяет корректно сравнивать старое и новое содержимое.\n\nArgs:\n    content: Строковое содержимое файла.\n    fmt: Формат файла ('markdown', 'json' или 'tree').\n\nReturns:\n    Нормализованная строка для сравнения.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 332,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_is_content_effectively_unchanged",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, new_content, output_path, fmt)",
+                        "summary": "Проверяет, изменилось ли содержимое файла (игнорируя volatile-поля).",
+                        "docstring": "Проверяет, изменилось ли содержимое файла (игнорируя volatile-поля).\n\nЧитает существующий файл по output_path и сравнивает нормализованное\nсодержимое с новым сгенерированным содержимым.\n\nArgs:\n    new_content: Новое сгенерированное содержимое.\n    output_path: Путь к существующему файлу.\n    fmt: Формат файла ('markdown', 'json' или 'tree').\n\nReturns:\n    True, если содержимое эффективно не изменилось, False иначе.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 365,
                         "bases": [],
                         "children": []
                       },
@@ -3144,7 +3186,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 307,
+                        "line_number": 391,
                         "bases": [],
                         "children": []
                       }
@@ -3715,7 +3757,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 453,
+                    "line_number": 492,
                     "bases": [],
                     "children": []
                   },
@@ -3735,7 +3777,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 463,
+                    "line_number": 502,
                     "bases": [],
                     "children": []
                   },
@@ -3755,7 +3797,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 472,
+                    "line_number": 511,
                     "bases": [],
                     "children": []
                   },
@@ -3775,7 +3817,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 481,
+                    "line_number": 520,
                     "bases": [],
                     "children": []
                   },
@@ -3795,7 +3837,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 490,
+                    "line_number": 529,
                     "bases": [],
                     "children": []
                   },
@@ -3815,7 +3857,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 499,
+                    "line_number": 538,
                     "bases": [],
                     "children": []
                   },
@@ -3835,7 +3877,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 508,
+                    "line_number": 547,
                     "bases": [],
                     "children": []
                   },
@@ -3855,7 +3897,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 517,
+                    "line_number": 556,
                     "bases": [],
                     "children": []
                   },
@@ -3875,7 +3917,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 526,
+                    "line_number": 565,
                     "bases": [],
                     "children": []
                   },
@@ -3895,7 +3937,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 535,
+                    "line_number": 574,
                     "bases": [],
                     "children": []
                   },
@@ -3915,7 +3957,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 544,
+                    "line_number": 583,
                     "bases": [],
                     "children": []
                   },
@@ -3935,7 +3977,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 553,
+                    "line_number": 592,
                     "bases": [],
                     "children": []
                   },
@@ -3955,7 +3997,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 562,
+                    "line_number": 601,
                     "bases": [],
                     "children": []
                   }
@@ -5498,7 +5540,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 26,
+                "line_number": 27,
                 "bases": [],
                 "children": []
               },
@@ -5518,7 +5560,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 91,
+                "line_number": 92,
                 "bases": [],
                 "children": []
               },
@@ -5538,7 +5580,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 154,
+                "line_number": 155,
                 "bases": [],
                 "children": []
               },
@@ -5558,7 +5600,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 179,
+                "line_number": 180,
                 "bases": [],
                 "children": []
               },
@@ -5578,7 +5620,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 204,
+                "line_number": 205,
                 "bases": [],
                 "children": []
               }
@@ -8621,7 +8663,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 32,
+            "line_number": 33,
             "bases": [],
             "children": []
           },
@@ -8639,12 +8681,12 @@
               "is_abstract": false,
               "decorators": [],
               "tags": [
-                "memory",
-                "func"
+                "func",
+                "memory"
               ],
               "custom_metadata": {}
             },
-            "line_number": 65,
+            "line_number": 66,
             "bases": [],
             "children": [
               {
@@ -8665,7 +8707,7 @@
                   ],
                   "custom_metadata": {}
                 },
-                "line_number": 107,
+                "line_number": 108,
                 "bases": [],
                 "children": []
               },
@@ -8687,7 +8729,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 153,
+                "line_number": 154,
                 "bases": [],
                 "children": []
               },
@@ -8707,12 +8749,12 @@
                     "asynccontextmanager"
                   ],
                   "tags": [
-                    "meth",
-                    "class"
+                    "class",
+                    "meth"
                   ],
                   "custom_metadata": {}
                 },
-                "line_number": 180,
+                "line_number": 181,
                 "bases": [],
                 "children": []
               },
@@ -8732,12 +8774,12 @@
                     "asynccontextmanager"
                   ],
                   "tags": [
-                    "meth",
-                    "class"
+                    "class",
+                    "meth"
                   ],
                   "custom_metadata": {}
                 },
-                "line_number": 198,
+                "line_number": 199,
                 "bases": [],
                 "children": []
               },
@@ -8757,7 +8799,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 224,
+                "line_number": 225,
                 "bases": [],
                 "children": []
               },
@@ -8779,7 +8821,7 @@
                   ],
                   "custom_metadata": {}
                 },
-                "line_number": 245,
+                "line_number": 246,
                 "bases": [],
                 "children": []
               }
@@ -9295,7 +9337,7 @@
             "type": "module",
             "layer": "internal",
             "summary": "Ядро движка проверки AI-готовности (ai-lint).",
-            "docstring": "Ядро движка проверки AI-готовности (ai-lint).\nОпределяет базовые классы Rule, LintResult и LinterEngine.",
+            "docstring": "Ядро движка проверки AI-готовности (ai-lint).\nОпределяет базовые классы Rule, LintResult и LinterEngine.\n\n## Инлайное подавление предупреждений\n\nЧтобы подавить срабатывание специфического правила на отдельной строке или блоке, добавь\nв конец строки (или в строку непосредственно перед ней) комментарий в формате::\n\n    # chutils: ignore[<ИмяПравила>]\n\nПримеры::\n\n    import logging  # chutils: ignore[ChutilsIntegrationRule]\n    os.mkdir(path, parents=True)  # chutils: ignore[ChutilsIntegrationRule]\n\n    # chutils: ignore[ChutilsIntegrationRule]\n    some_call_on_next_line()\n\nМожно перечислить несколько правил через запятую::\n\n    code()  # chutils: ignore[ChutilsIntegrationRule, SecurityHardcodeRule]\n\nЧтобы подавить все правила сразу::\n\n    code()  # chutils: ignore[all]\n\nПравила, доступные по умолчанию::\n\n    ManifestRule, DocstringQualityRule, SecurityHardcodeRule,\n    ChutilsIntegrationRule, APIMapRule, EnvSyncRule,\n    CodeDecompositionRule, APIMapHashRule, FileDependencySyncRule,\n    UpgradeCheckRule, LinterCoverageRule",
             "children": [],
             "symbols": [
               {
@@ -9314,7 +9356,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 14,
+                "line_number": 55,
                 "bases": [],
                 "children": []
               },
@@ -9324,7 +9366,7 @@
                 "layer": "internal",
                 "signature": "",
                 "summary": "Абстрактный базовый класс для всех правил линтера.",
-                "docstring": "Абстрактный базовый класс для всех правил линтера.",
+                "docstring": "Абстрактный базовый класс для всех правил линтера.\n\nКаждое правило должно переопределить метод ``check()`` и задать атрибуты ``name``,\n``description`` и ``severity``.\n\n## Подавление срабатываний инлайн (inline suppress)\n\nЛюбое срабатывание правила можно подавить без изменения правил, добавив комментарий\nв конец проблемной строки или в строку непосредственно перед ней::\n\n    import logging  # chutils: ignore[ChutilsIntegrationRule]\n    code()         # chutils: ignore[RuleA, RuleB]\n    # chutils: ignore[ChutilsIntegrationRule]\n    some_call()\n\nДля подавления всех правил сразу используйте ``all``::\n\n    code()  # chutils: ignore[all]\n\nПравила не должны сами проверять инлайн-комментарии: фильтрация выполняется\nавтоматически в ``LinterEngine.run()``.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -9334,7 +9376,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 75,
+                "line_number": 113,
                 "bases": [],
                 "children": [
                   {
@@ -9343,7 +9385,7 @@
                     "layer": "internal",
                     "signature": "(self, base_dir, files)",
                     "summary": "Выполняет проверку правила по списку файлов.",
-                    "docstring": "Выполняет проверку правила по списку файлов.\n\nArgs:\n    base_dir: Путь к корню проверяемого проекта.\n    files: Список абсолютных путей к файлам проекта.\n\nReturns:\n    Список объектов LintResult с найденными проблемами.",
+                    "docstring": "Выполняет проверку правила по списку файлов.\n\nArgs:\n    base_dir: Путь к корню проверяемого проекта.\n    files: Список абсолютных путей к файлам проекта.\n\nReturns:\n    Список объектов LintResult с найденными проблемами.\n\nNote:\n    Подавить срабатывания отдельного срабатывания можно инлайн-комментарием\n    ``# chutils: ignore[<name>]`` — без изменения правила.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -9353,7 +9395,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 85,
+                    "line_number": 143,
                     "bases": [],
                     "children": []
                   }
@@ -9375,7 +9417,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 99,
+                "line_number": 161,
                 "bases": [],
                 "children": []
               },
@@ -9395,7 +9437,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 130,
+                "line_number": 192,
                 "bases": [],
                 "children": [
                   {
@@ -9414,7 +9456,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 135,
+                    "line_number": 197,
                     "bases": [],
                     "children": []
                   },
@@ -9434,7 +9476,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 158,
+                    "line_number": 227,
                     "bases": [],
                     "children": []
                   },
@@ -9454,7 +9496,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 183,
+                    "line_number": 252,
                     "bases": [],
                     "children": []
                   },
@@ -9474,7 +9516,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 216,
+                    "line_number": 285,
                     "bases": [],
                     "children": []
                   },
@@ -9494,7 +9536,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 244,
+                    "line_number": 322,
                     "bases": [],
                     "children": []
                   },
@@ -9514,7 +9556,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 255,
+                    "line_number": 333,
                     "bases": [],
                     "children": []
                   },
@@ -9534,7 +9576,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 290,
+                    "line_number": 368,
                     "bases": [],
                     "children": []
                   },
@@ -9554,7 +9596,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 312,
+                    "line_number": 390,
                     "bases": [],
                     "children": []
                   },
@@ -9574,7 +9616,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 374,
+                    "line_number": 454,
                     "bases": [],
                     "children": []
                   }
@@ -9607,7 +9649,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 14,
+                "line_number": 15,
                 "bases": [],
                 "children": [
                   {
@@ -9626,7 +9668,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 17,
+                    "line_number": 18,
                     "bases": [],
                     "children": []
                   },
@@ -9646,7 +9688,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 28,
+                    "line_number": 29,
                     "bases": [],
                     "children": []
                   },
@@ -9666,7 +9708,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 50,
+                    "line_number": 51,
                     "bases": [],
                     "children": []
                   },
@@ -9686,7 +9728,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 103,
+                    "line_number": 104,
                     "bases": [],
                     "children": []
                   }
@@ -9708,7 +9750,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 123,
+                "line_number": 124,
                 "bases": [],
                 "children": [
                   {
@@ -9727,7 +9769,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 126,
+                    "line_number": 127,
                     "bases": [],
                     "children": []
                   },
@@ -9749,7 +9791,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 146,
+                    "line_number": 147,
                     "bases": [],
                     "children": []
                   },
@@ -9769,7 +9811,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 154,
+                    "line_number": 155,
                     "bases": [],
                     "children": []
                   },
@@ -9789,7 +9831,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 173,
+                    "line_number": 174,
                     "bases": [],
                     "children": []
                   },
@@ -9809,7 +9851,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 195,
+                    "line_number": 196,
                     "bases": [],
                     "children": []
                   },
@@ -9829,7 +9871,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 223,
+                    "line_number": 224,
                     "bases": [],
                     "children": []
                   },
@@ -9849,7 +9891,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 255,
+                    "line_number": 256,
                     "bases": [],
                     "children": []
                   },
@@ -9869,7 +9911,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 275,
+                    "line_number": 276,
                     "bases": [],
                     "children": []
                   },
@@ -9889,7 +9931,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 293,
+                    "line_number": 294,
                     "bases": [],
                     "children": []
                   },
@@ -9909,7 +9951,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 387,
+                    "line_number": 388,
                     "bases": [],
                     "children": []
                   },
@@ -9929,7 +9971,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 410,
+                    "line_number": 411,
                     "bases": [],
                     "children": []
                   },
@@ -9949,7 +9991,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 414,
+                    "line_number": 415,
                     "bases": [],
                     "children": []
                   }
@@ -10618,7 +10660,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 30,
+                    "line_number": 32,
                     "bases": [],
                     "children": [
                       {
@@ -10637,7 +10679,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 33,
+                        "line_number": 35,
                         "bases": [],
                         "children": []
                       },
@@ -10657,7 +10699,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 51,
+                        "line_number": 53,
                         "bases": [],
                         "children": []
                       },
@@ -10677,7 +10719,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 65,
+                        "line_number": 67,
                         "bases": [],
                         "children": []
                       },
@@ -10697,7 +10739,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 102,
+                        "line_number": 108,
                         "bases": [],
                         "children": []
                       }
@@ -12049,7 +12091,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 13,
+                    "line_number": 12,
                     "bases": [],
                     "children": []
                   },
@@ -12069,7 +12111,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 14,
+                    "line_number": 13,
                     "bases": [],
                     "children": []
                   },
@@ -12089,7 +12131,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 17,
+                    "line_number": 16,
                     "bases": [
                       "typing.Protocol"
                     ],
@@ -12110,7 +12152,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 20,
+                        "line_number": 19,
                         "bases": [],
                         "children": []
                       }
@@ -12132,7 +12174,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 23,
+                    "line_number": 22,
                     "bases": [],
                     "children": [
                       {
@@ -12151,7 +12193,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 31,
+                        "line_number": 30,
                         "bases": [],
                         "children": []
                       },
@@ -12171,7 +12213,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 41,
+                        "line_number": 40,
                         "bases": [],
                         "children": []
                       },
@@ -12191,7 +12233,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 78,
+                        "line_number": 77,
                         "bases": [],
                         "children": []
                       },
@@ -12213,7 +12255,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 99,
+                        "line_number": 98,
                         "bases": [],
                         "children": []
                       }
@@ -12235,7 +12277,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 117,
+                    "line_number": 116,
                     "bases": [],
                     "children": []
                   },
@@ -12255,7 +12297,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 141,
+                    "line_number": 140,
                     "bases": [],
                     "children": []
                   },
@@ -12275,7 +12317,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 161,
+                    "line_number": 160,
                     "bases": [],
                     "children": []
                   },
@@ -12295,7 +12337,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 189,
+                    "line_number": 188,
                     "bases": [],
                     "children": []
                   },
@@ -12315,7 +12357,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 234,
+                    "line_number": 233,
                     "bases": [],
                     "children": []
                   }
@@ -13050,7 +13092,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 28,
+                "line_number": 27,
                 "bases": [],
                 "children": []
               },
@@ -13070,7 +13112,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 43,
+                "line_number": 42,
                 "bases": [],
                 "children": [
                   {
@@ -13089,7 +13131,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 46,
+                    "line_number": 45,
                     "bases": [],
                     "children": []
                   },
@@ -13109,7 +13151,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 67,
+                    "line_number": 66,
                     "bases": [],
                     "children": []
                   }
@@ -13131,7 +13173,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 82,
+                "line_number": 81,
                 "bases": [],
                 "children": []
               },
@@ -13151,7 +13193,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 119,
+                "line_number": 118,
                 "bases": [],
                 "children": []
               },
@@ -13171,7 +13213,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 150,
+                "line_number": 149,
                 "bases": [],
                 "children": []
               },
@@ -13191,7 +13233,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 264,
+                "line_number": 263,
                 "bases": [],
                 "children": []
               },
@@ -13211,7 +13253,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 312,
+                "line_number": 311,
                 "bases": [],
                 "children": []
               }
@@ -13272,7 +13314,7 @@
                 "layer": "internal",
                 "signature": "(project_path, output_file, format_str, project_hash)",
                 "summary": "Сохраняет кэш метаданных сгенерированного контекста в .chutils/context_metadata.json.",
-                "docstring": "Сохраняет кэш метаданных сгенерированного контекста в .chutils/context_metadata.json.\n\nArgs:\n    project_path: Корневой путь проекта.\n    output_file: Выходной путь файла контекста.\n    format_str: Формат вывода ('markdown', 'json' или 'tree').\n    project_hash: Сгенерированный хэш проекта.",
+                "docstring": "Сохраняет кэш метаданных сгенерированного контекста в .chutils/context_metadata.json.\n\nФайл хранит реестр ВСЕХ сгенерированных файлов контекста проекта.\nПри каждом вызове обновляется только запись для конкретного output_file —\nостальные записи сохраняются.\n\nФормат файла::\n\n    {\n      \"files\": {\n        \"api_map.md\":         {\"format\": \"markdown\", \"project_hash\": \"...\"},\n        \"project_index.json\": {\"format\": \"tree\",     \"project_hash\": \"...\"},\n        \"docs/context.json\":  {\"format\": \"json\",     \"project_hash\": \"...\"}\n      }\n    }\n\nСтарый однофайловый формат автоматически мигрируется при первом обращении.\n\nArgs:\n    project_path: Корневой путь проекта.\n    output_file: Выходной путь файла контекста.\n    format_str: Формат вывода ('markdown', 'json' или 'tree').\n    project_hash: Сгенерированный хэш проекта.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -13364,7 +13406,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 278,
+                    "line_number": 286,
                     "bases": [
                       "..ai_lint.Rule"
                     ],
@@ -13385,7 +13427,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 286,
+                        "line_number": 294,
                         "bases": [],
                         "children": []
                       }
@@ -13647,7 +13689,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 25,
+                        "line_number": 26,
                         "bases": [],
                         "children": []
                       },
@@ -13667,7 +13709,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 46,
+                        "line_number": 50,
                         "bases": [],
                         "children": []
                       },
@@ -13687,7 +13729,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 54,
+                        "line_number": 58,
                         "bases": [],
                         "children": []
                       },
@@ -13707,7 +13749,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 62,
+                        "line_number": 66,
                         "bases": [],
                         "children": []
                       }
@@ -13729,7 +13771,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 183,
+                    "line_number": 200,
                     "bases": [
                       "..ai_lint.Rule"
                     ],
@@ -13750,7 +13792,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 191,
+                        "line_number": 208,
                         "bases": [],
                         "children": []
                       }
@@ -14621,12 +14663,12 @@
                     "children": []
                   },
                   {
-                    "name": "register",
+                    "name": "_find_provider",
                     "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, dependency_type, provider, scope)",
-                    "summary": "Зарегистрировать зависимость.",
-                    "docstring": "Зарегистрировать зависимость.\n\nArgs:\n    dependency_type: Класс или интерфейс (тип зависимости).\n    provider: Функция-фабрика или класс для создания объекта.\n        Если не указан, используется сам dependency_type.\n    scope: Время жизни зависимости: \"singleton\" или \"transient\".",
+                    "layer": "private",
+                    "signature": "(self, key)",
+                    "summary": "Вспомогательный метод для поиска зарегистрированного провайдера.",
+                    "docstring": "Вспомогательный метод для поиска зарегистрированного провайдера.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -14641,12 +14683,12 @@
                     "children": []
                   },
                   {
-                    "name": "has_provider",
+                    "name": "register",
                     "type": "method",
                     "layer": "internal",
-                    "signature": "(self, dependency_type)",
-                    "summary": "Проверить, зарегистрирован ли провайдер для данного типа.",
-                    "docstring": "Проверить, зарегистрирован ли провайдер для данного типа.\n\nArgs:\n    dependency_type: Класс/тип зависимости.\n\nReturns:\n    True, если провайдер зарегистрирован, иначе False.",
+                    "signature": "(self, dependency_type, provider, scope)",
+                    "summary": "Зарегистрировать зависимость.",
+                    "docstring": "Зарегистрировать зависимость.\n\nArgs:\n    dependency_type: Класс, интерфейс или строковый идентификатор.\n    provider: Функция-фабрика или класс для создания объекта.\n        Если не указан, используется сам dependency_type (только для классов).\n    scope: Время жизни зависимости: \"singleton\" или \"transient\".",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -14656,7 +14698,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 93,
+                    "line_number": 86,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "has_provider",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, dependency_type)",
+                    "summary": "Проверить, зарегистрирован ли провайдер для данного типа/строки.",
+                    "docstring": "Проверить, зарегистрирован ли провайдер для данного типа/строки.\n\nArgs:\n    dependency_type: Класс/тип/строка зависимости.\n\nReturns:\n    True, если провайдер зарегистрирован, иначе False.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 123,
                     "bases": [],
                     "children": []
                   },
@@ -14666,7 +14728,7 @@
                     "layer": "internal",
                     "signature": "(self, dependency_type)",
                     "summary": "Разрешить зависимость (найти провайдер, разрешить его аргументы и вернуть инстанс).",
-                    "docstring": "Разрешить зависимость (найти провайдер, разрешить его аргументы и вернуть инстанс).\n\nArgs:\n    dependency_type: Класс/тип запрашиваемой зависимости.\n\nReturns:\n    Разрешенный экземпляр запрашиваемой зависимости.",
+                    "docstring": "Разрешить зависимость (найти провайдер, разрешить его аргументы и вернуть инстанс).\n\nArgs:\n    dependency_type: Класс/тип/строка запрашиваемой зависимости.\n\nReturns:\n    Разрешенный экземпляр запрашиваемой зависимости.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -14676,7 +14738,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 105,
+                    "line_number": 135,
                     "bases": [],
                     "children": []
                   },
@@ -14696,7 +14758,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 214,
+                    "line_number": 247,
                     "bases": [],
                     "children": []
                   }
@@ -14718,7 +14780,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 223,
+                "line_number": 256,
                 "bases": [],
                 "children": []
               },
@@ -14738,7 +14800,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 226,
+                "line_number": 259,
                 "bases": [],
                 "children": []
               },
@@ -14746,9 +14808,9 @@
                 "name": "inject",
                 "type": "function",
                 "layer": "public",
-                "signature": "(container)",
+                "signature": "(func_or_container)",
                 "summary": "Декоратор для автоматического внедрения зависимостей в аргументы функции.",
-                "docstring": "Декоратор для автоматического внедрения зависимостей в аргументы функции.\n\nПример:\n    @inject()\n    def process_data(db: DatabaseService = Inject()):\n        db.query(...)\n\nArgs:\n    container: Контейнер для разрешения зависимостей (по умолчанию глобальный).\n\nReturns:\n    Декоратор, автоматически подставляющий зависимости в аргументы функции.",
+                "docstring": "Декоратор для автоматического внедрения зависимостей в аргументы функции.\n\nПоддерживает два варианта вызова:\n1. Без скобок: @inject\n2. Со скобками: @inject() или @inject(container=custom_container)\n\nПример:\n    @inject\n    def process(db: DatabaseService = Inject()):\n        ...\n\n    @inject()\n    def process_with_parens(db: DatabaseService = Inject()):\n        ...\n\nArgs:\n    func_or_container: Декорируемая функция при вызове без скобок, либо DI-контейнер.\n    container: Контейнер для разрешения зависимостей (по умолчанию глобальный).\n\nReturns:\n    Декорированная функция или декоратор.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -14758,7 +14820,27 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 263,
+                "line_number": 296,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_make_inject_decorator",
+                "type": "function",
+                "layer": "private",
+                "signature": "(target_container)",
+                "summary": "Внутренний хелпер для создания декоратора inject под конкретный контейнер.",
+                "docstring": "Внутренний хелпер для создания декоратора inject под конкретный контейнер.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 335,
                 "bases": [],
                 "children": []
               }
@@ -19315,7 +19397,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 419,
+                        "line_number": 420,
                         "bases": [],
                         "children": []
                       }
@@ -20146,6 +20228,26 @@
             "children": [],
             "symbols": [
               {
+                "name": "PROMETHEUS_AVAILABLE",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 9,
+                "bases": [],
+                "children": []
+              },
+              {
                 "name": "PrometheusMetricsProvider",
                 "type": "class",
                 "layer": "internal",
@@ -20161,7 +20263,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 16,
+                "line_number": 12,
                 "bases": [
                   ".base.MetricsProvider"
                 ],
@@ -20182,7 +20284,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 24,
+                    "line_number": 20,
                     "bases": [],
                     "children": []
                   },
@@ -20202,7 +20304,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 37,
+                    "line_number": 33,
                     "bases": [],
                     "children": []
                   },
@@ -20222,7 +20324,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 61,
+                    "line_number": 57,
                     "bases": [],
                     "children": []
                   },
@@ -20242,7 +20344,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 75,
+                    "line_number": 71,
                     "bases": [],
                     "children": []
                   },
@@ -20262,7 +20364,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 89,
+                    "line_number": 85,
                     "bases": [],
                     "children": []
                   },
@@ -20282,7 +20384,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 103,
+                    "line_number": 99,
                     "bases": [],
                     "children": []
                   },
@@ -20302,7 +20404,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 112,
+                    "line_number": 108,
                     "bases": [],
                     "children": []
                   }
@@ -22955,7 +23057,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 83,
+                        "line_number": 81,
                         "bases": [],
                         "children": []
                       },
@@ -22975,7 +23077,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 121,
+                        "line_number": 117,
                         "bases": [],
                         "children": []
                       }
@@ -23419,7 +23521,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 49,
+                        "line_number": 50,
                         "bases": [],
                         "children": []
                       },
@@ -23439,7 +23541,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 69,
+                        "line_number": 70,
                         "bases": [],
                         "children": []
                       },
@@ -23459,7 +23561,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 100,
+                        "line_number": 99,
                         "bases": [],
                         "children": []
                       },
@@ -23479,7 +23581,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 151,
+                        "line_number": 150,
                         "bases": [],
                         "children": []
                       }
@@ -23619,7 +23721,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 2,
+                "line_number": 11,
                 "bases": [],
                 "children": []
               },
@@ -23639,7 +23741,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 5,
+                "line_number": 14,
                 "bases": [],
                 "children": []
               }
@@ -25862,7 +25964,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 323,
+        "line_number": 332,
         "bases": [],
         "children": []
       },
@@ -25882,7 +25984,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 333,
+        "line_number": 342,
         "bases": [],
         "children": []
       }
@@ -26041,12 +26143,12 @@
     },
     {
       "source": "chutils/commands/db",
-      "target": "chutils/commands/base",
+      "target": "chutils/cli_utils",
       "weight": 1
     },
     {
       "source": "chutils/commands/db",
-      "target": "chutils/cli_utils",
+      "target": "chutils/commands/base",
       "weight": 1
     },
     {
@@ -27332,10 +27434,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.1.0",
-    "project_version": "3.1.0",
-    "git_commit": "08ba6e796845eea19ecd456d920853bf3f758a22 (dirty)",
-    "generated_at": "2026-07-19T13:31:25.863083+00:00",
-    "project_hash": "403d4a2b64d277842072c808584acad83e7667ba6af63fa45856c6911ed7162c"
+    "chutils_version": "3.2.0",
+    "project_version": "3.2.0",
+    "git_commit": "ae3eeda40b91a842ae5180f58a65b82c50b2fc59 (dirty)",
+    "generated_at": "2026-07-19T22:56:28.519173+00:00",
+    "project_hash": "ac8ee5ab7bf4788939d68c71840f97a5d5fe8e708b8995436e8db1ea15f9ff59"
   }
 }

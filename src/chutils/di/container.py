@@ -42,24 +42,50 @@ class Container:
 
     def __init__(self) -> None:
         """Инициализирует DI-контейнер."""
-        # Реестр провайдеров: {type: (provider_callable, scope)}
-        self._providers: dict[type[Any], tuple[Callable[..., Any], str]] = {}
-        # Кэш инстансов для scope="singleton": {type: instance}
-        self._instances: dict[type[Any], Any] = {}
+        # Реестр провайдеров: {type_or_str: (provider_callable, scope)}
+        self._providers: dict[Any, tuple[Callable[..., Any], str]] = {}
+        # Кэш инстансов для scope="singleton": {type_or_str: instance}
+        self._instances: dict[Any, Any] = {}
         # Блокировка для обеспечения потокобезопасности
         self._lock = threading.Lock()
         # Потокобезопасный контекст для стека разрешения зависимостей
         self._local = threading.local()
 
     @property
-    def _resolving_stack(self) -> list[type[Any]]:
+    def _resolving_stack(self) -> list[Any]:
         if not hasattr(self._local, "stack"):
             self._local.stack = []
         return self._local.stack  # type: ignore[no-any-return]
 
+    def _find_provider(self, key: Any) -> tuple[Any, tuple[Callable[..., Any], str]] | None:
+        """Вспомогательный метод для поиска зарегистрированного провайдера."""
+        # 1. Прямое совпадение
+        if key in self._providers:
+            return key, self._providers[key]
+
+        # 2. Если это класс, ищем по его имени-строке
+        if isinstance(key, type):
+            name = key.__name__
+            if name in self._providers:
+                return name, self._providers[name]
+
+        # 3. Если это строка (или ForwardRef/строковая аннотация), нормализуем её в чистую строку
+        key_str = str(key)
+        if hasattr(key, "__forward_arg__"):
+            key_str = getattr(key, "__forward_arg__")
+
+        if key_str in self._providers:
+            return key_str, self._providers[key_str]
+
+        for reg_type, info in self._providers.items():
+            if isinstance(reg_type, type) and reg_type.__name__ == key_str:
+                return reg_type, info
+
+        return None
+
     def register(
             self,
-            dependency_type: type[Any],
+            dependency_type: type[Any] | str,
             provider: Callable[..., Any] | None = None,
             scope: str = "singleton"
     ) -> None:
@@ -67,9 +93,9 @@ class Container:
         Зарегистрировать зависимость.
         
         Args:
-            dependency_type: Класс или интерфейс (тип зависимости).
+            dependency_type: Класс, интерфейс или строковый идентификатор.
             provider: Функция-фабрика или класс для создания объекта.
-                Если не указан, используется сам dependency_type.
+                Если не указан, используется сам dependency_type (только для классов).
             scope: Время жизни зависимости: "singleton" или "transient".
         """
         if scope not in ("singleton", "transient"):
@@ -79,6 +105,10 @@ class Container:
 
         actual_provider = provider
         if actual_provider is None:
+            if isinstance(dependency_type, str):
+                raise DependencyResolutionError(
+                    f"Невозможно зарегистрировать строковый ключ '{dependency_type}' без провайдера."
+                )
             if not inspect.isclass(dependency_type):
                 raise DependencyResolutionError(
                     f"Невозможно зарегистрировать тип '{dependency_type}' без провайдера, так как он не является классом."
@@ -90,30 +120,33 @@ class Container:
             # Если объект уже был закэширован, удаляем его для корректного переопределения
             self._instances.pop(dependency_type, None)
 
-    def has_provider(self, dependency_type: type[Any]) -> bool:
-        """Проверить, зарегистрирован ли провайдер для данного типа.
+    def has_provider(self, dependency_type: type[Any] | str) -> bool:
+        """Проверить, зарегистрирован ли провайдер для данного типа/строки.
 
         Args:
-            dependency_type: Класс/тип зависимости.
+            dependency_type: Класс/тип/строка зависимости.
 
         Returns:
             True, если провайдер зарегистрирован, иначе False.
         """
         with self._lock:
-            return dependency_type in self._providers
+            return self._find_provider(dependency_type) is not None
 
-    def resolve(self, dependency_type: type[T]) -> T:
+    def resolve(self, dependency_type: type[T] | str | Any) -> T:
         """Разрешить зависимость (найти провайдер, разрешить его аргументы и вернуть инстанс).
 
         Args:
-            dependency_type: Класс/тип запрашиваемой зависимости.
+            dependency_type: Класс/тип/строка запрашиваемой зависимости.
 
         Returns:
             Разрешенный экземпляр запрашиваемой зависимости.
         """
         # Предотвращение циклических зависимостей
         if dependency_type in self._resolving_stack:
-            cycle = " -> ".join(cls.__name__ for cls in self._resolving_stack + [dependency_type])
+            cycle = " -> ".join(
+                (cls.__name__ if hasattr(cls, "__name__") else str(cls))
+                for cls in self._resolving_stack + [dependency_type]
+            )
             raise DependencyResolutionError(
                 f"Обнаружена циклическая зависимость: {cycle}"
             )
@@ -123,29 +156,29 @@ class Container:
         try:
             # 1. Получаем провайдер
             with self._lock:
-                provider_info = self._providers.get(dependency_type)
+                found = self._find_provider(dependency_type)
 
             # Автоматическая регистрация конкретных классов (Auto-wiring)
-            if provider_info is None:
-                if inspect.isclass(dependency_type) and not inspect.isabstract(dependency_type):
+            if found is None:
+                if isinstance(dependency_type, type) and not inspect.isabstract(dependency_type):
                     # Проверяем, что класс не является стандартным примитивом
                     if dependency_type.__module__ != "builtins":
                         self.register(dependency_type)
                         with self._lock:
-                            provider_info = self._providers.get(dependency_type)
+                            found = self._find_provider(dependency_type)
 
-            if provider_info is None:
+            if found is None:
                 raise DependencyNotFoundError(
                     f"Зависимость '{dependency_type.__name__ if hasattr(dependency_type, '__name__') else dependency_type}' не зарегистрирована в контейнере."
                 )
 
-            provider, scope = provider_info
+            registered_key, (provider, scope) = found
 
             # 2. Если singleton, проверяем кэш инстансов
             if scope == "singleton":
                 with self._lock:
-                    if dependency_type in self._instances:
-                        return self._instances[dependency_type]  # type: ignore[no-any-return]
+                    if registered_key in self._instances:
+                        return self._instances[registered_key]  # type: ignore[no-any-return]
 
             # 3. Разрешаем аргументы провайдера
             resolved_args: dict[str, Any] = {}
@@ -185,9 +218,9 @@ class Container:
                 has_no_default = param.default is inspect.Parameter.empty
 
                 if is_explicit_inject or has_no_default:
-                    if param_type is inspect.Parameter.empty or isinstance(param_type, str):
+                    if param_type is inspect.Parameter.empty:
                         raise DependencyResolutionError(
-                            f"Невозможно разрешить параметр '{param_name}' для провайдера '{provider}': отсутствует аннотация типа или тип не разрешен."
+                            f"Невозможно разрешить параметр '{param_name}' для провайдера '{provider}': отсутствует аннотация типа."
                         )
                     # Рекурсивно разрешаем параметр
                     resolved_args[param_name] = self.resolve(param_type)
@@ -199,11 +232,11 @@ class Container:
             if scope == "singleton":
                 with self._lock:
                     # Double-checked locking
-                    if dependency_type in self._instances:
-                        return self._instances[dependency_type]  # type: ignore[no-any-return]
+                    if registered_key in self._instances:
+                        return self._instances[registered_key]  # type: ignore[no-any-return]
 
                     instance = provider(**resolved_args)
-                    self._instances[dependency_type] = instance
+                    self._instances[registered_key] = instance
                     return instance  # type: ignore[no-any-return]
             else:
                 return provider(**resolved_args)  # type: ignore[no-any-return]
@@ -260,22 +293,47 @@ def provide(scope: str = "singleton", container: Container | None = None) -> Cal
     return decorator
 
 
-def inject(container: Container | None = None) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+def inject(
+    func_or_container: Callable[..., Any] | Container | None = None,
+    *,
+    container: Container | None = None
+) -> Any:
     """Декоратор для автоматического внедрения зависимостей в аргументы функции.
-    
+
+    Поддерживает два варианта вызова:
+    1. Без скобок: @inject
+    2. Со скобками: @inject() или @inject(container=custom_container)
+
     Пример:
+        @inject
+        def process(db: DatabaseService = Inject()):
+            ...
+
         @inject()
-        def process_data(db: DatabaseService = Inject()):
-            db.query(...)
+        def process_with_parens(db: DatabaseService = Inject()):
+            ...
 
     Args:
+        func_or_container: Декорируемая функция при вызове без скобок, либо DI-контейнер.
         container: Контейнер для разрешения зависимостей (по умолчанию глобальный).
 
     Returns:
-        Декоратор, автоматически подставляющий зависимости в аргументы функции.
+        Декорированная функция или декоратор.
     """
-    target_container = container or default_container
+    # Если вызвано без скобок: @inject
+    if callable(func_or_container) and not isinstance(func_or_container, Container):
+        func = func_or_container
+        target_container = container or default_container
+        return _make_inject_decorator(target_container)(func)
 
+    # Если вызвано со скобками: @inject()
+    target_container = container or func_or_container or default_container
+    return _make_inject_decorator(target_container)
+
+
+
+def _make_inject_decorator(target_container: Container) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    """Внутренний хелпер для создания декоратора inject под конкретный контейнер."""
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         sig = inspect.signature(func)
         is_async = asyncio.iscoroutinefunction(func)
