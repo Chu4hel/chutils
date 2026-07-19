@@ -20,13 +20,9 @@
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from .client import HttpClient
 from .fallback import HttpResponse
-
-if TYPE_CHECKING:
-    from .resilience import ResiliencePolicy
+from .resilience import ResiliencePolicy
 
 
 def get(
@@ -34,7 +30,7 @@ def get(
         *,
         headers: dict[str, str] | None = None,
         timeout: float | None = None,
-        policy: "ResiliencePolicy" | None = None,
+        policy: ResiliencePolicy | None = None,
 ) -> HttpResponse:
     """Выполняет GET-запрос.
 
@@ -69,7 +65,7 @@ def post(
         json_data: object | None = None,
         data: bytes | str | None = None,
         timeout: float | None = None,
-        policy: "ResiliencePolicy" | None = None,
+        policy: ResiliencePolicy | None = None,
 ) -> HttpResponse:
     """Выполняет POST-запрос.
 
@@ -104,7 +100,7 @@ def put(
         json_data: object | None = None,
         data: bytes | str | None = None,
         timeout: float | None = None,
-        policy: "ResiliencePolicy" | None = None,
+        policy: ResiliencePolicy | None = None,
 ) -> HttpResponse:
     """Выполняет PUT-запрос.
 
@@ -128,7 +124,7 @@ def delete(
         *,
         headers: dict[str, str] | None = None,
         timeout: float | None = None,
-        policy: "ResiliencePolicy" | None = None,
+        policy: ResiliencePolicy | None = None,
 ) -> HttpResponse:
     """Выполняет DELETE-запрос.
 
@@ -152,7 +148,7 @@ def patch(
         json_data: object | None = None,
         data: bytes | str | None = None,
         timeout: float | None = None,
-        policy: "ResiliencePolicy" | None = None,
+        policy: ResiliencePolicy | None = None,
 ) -> HttpResponse:
     """Выполняет PATCH-запрос.
 

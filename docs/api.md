@@ -330,3 +330,20 @@ members:
 - ConfigProviderPlugin
 - LoggerHandlerPlugin
 - MetricsPlugin
+
+## Модуль `http` (HTTP-клиент и отказоустойчивость)
+
+::: chutils.http
+options:
+members:
+
+- HttpClient
+- AsyncHttpClient
+- ResiliencePolicy
+- HttpResponse
+- get
+- post
+- put
+- delete
+- patch
+

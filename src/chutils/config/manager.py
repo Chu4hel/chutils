@@ -177,9 +177,7 @@ class _ConfigManager:
             if not self._tracing_enabled:
                 return
 
-            # Проверка глобального флага отключения переопределения через ENV
-            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes",
-                                                                                        "y")  # chutils: ignore[ChutilsIntegrationRule]
+            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
             if disable_env_override:
                 return
 

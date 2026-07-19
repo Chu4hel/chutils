@@ -29,7 +29,7 @@ HTTPX_AVAILABLE: bool = importlib.util.find_spec("httpx") is not None
 # Lazy-импорт httpx (только если доступен)
 if HTTPX_AVAILABLE:
     try:
-        import httpx  # type: ignore[import-untyped]
+        import httpx  # type: ignore[import-untyped]  # chutils: ignore[ChutilsIntegrationRule]
     except ImportError:
         httpx = None  # type: ignore[assignment]
         HTTPX_AVAILABLE = False
