@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import os
-from typing import Any
+from typing import Any, cast
 
 from chutils.exceptions import OptionalDependencyError
 from .base import SecretProvider
@@ -38,7 +38,8 @@ class GCPSecretManagerProvider(SecretProvider):
         if self._project_id is not None:
             return self._project_id
 
-        project = os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get("GCP_PROJECT")  # chutils: ignore[ChutilsIntegrationRule]
+        project = os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get(
+            "GCP_PROJECT")  # chutils: ignore[ChutilsIntegrationRule]
         if not project:
             raise ValueError(
                 "Идентификатор проекта Google Cloud (project_id) не задан. "
@@ -82,17 +83,15 @@ class GCPSecretManagerProvider(SecretProvider):
         name = f"projects/{self.project_id}/secrets/{secret_name}/versions/latest"
         try:
             response = client.access_secret_version(request={"name": name})
-            return response.payload.data.decode("UTF-8")
+            return cast(str, response.payload.data.decode("UTF-8"))
         except Exception as e:
             try:
                 from google.api_core.exceptions import NotFound
-                is_not_found = isinstance(e, NotFound)
+                if isinstance(e, NotFound):
+                    logger.debug("Секрет %s не найден в GCP Secret Manager.", secret_name)
+                    return None
             except ImportError:
-                is_not_found = False
-
-            if is_not_found:
-                logger.debug("Секрет %s не найден в GCP Secret Manager.", secret_name)
-                return None
+                pass
 
             logger.warning("Ошибка при получении секрета %s из GCP Secret Manager: %s", secret_name, e)
             return None

@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
-from typing import Any
+from typing import Any, cast
 
 from chutils.exceptions import OptionalDependencyError
 from .base import SecretProvider
@@ -63,19 +63,17 @@ class AWSSecretManagerProvider(SecretProvider):
         secret_name = f"{service_name}/{key}"
         try:
             response = client.get_secret_value(SecretId=secret_name)
-            return response.get("SecretString")
+            return cast(str | None, response.get("SecretString"))
         except Exception as e:
             try:
                 from botocore.exceptions import ClientError
-                is_client_error = isinstance(e, ClientError)
+                if isinstance(e, ClientError):
+                    error_code = e.response.get("Error", {}).get("Code")
+                    if error_code in ("ResourceNotFoundException", "AccessDeniedException"):
+                        logger.debug("Секрет %s не найден в AWS Secrets Manager: %s", secret_name, e)
+                        return None
             except ImportError:
-                is_client_error = False
-
-            if is_client_error:
-                error_code = e.response.get("Error", {}).get("Code")
-                if error_code in ("ResourceNotFoundException", "AccessDeniedException"):
-                    logger.debug("Секрет %s не найден в AWS Secrets Manager: %s", secret_name, e)
-                    return None
+                pass
 
             logger.warning("Ошибка при получении секрета %s из AWS Secrets Manager: %s", secret_name, e)
             return None
@@ -99,21 +97,19 @@ class AWSSecretManagerProvider(SecretProvider):
         except Exception as e:
             try:
                 from botocore.exceptions import ClientError
-                is_client_error = isinstance(e, ClientError)
+                if isinstance(e, ClientError):
+                    error_code = e.response.get("Error", {}).get("Code")
+                    if error_code == "ResourceExistsException":
+                        try:
+                            client.put_secret_value(SecretId=secret_name, SecretString=value)
+                            return True
+                        except Exception as ex:
+                            logger.error(
+                                "Не удалось обновить значение секрета %s в AWS Secrets Manager: %s", secret_name, ex
+                            )
+                            return False
             except ImportError:
-                is_client_error = False
-
-            if is_client_error:
-                error_code = e.response.get("Error", {}).get("Code")
-                if error_code == "ResourceExistsException":
-                    try:
-                        client.put_secret_value(SecretId=secret_name, SecretString=value)
-                        return True
-                    except Exception as ex:
-                        logger.error(
-                            "Не удалось обновить значение секрета %s в AWS Secrets Manager: %s", secret_name, ex
-                        )
-                        return False
+                pass
 
             logger.error("Не удалось создать секрет %s в AWS Secrets Manager: %s", secret_name, e)
             return False
