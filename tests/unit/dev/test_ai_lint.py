@@ -229,6 +229,23 @@ def doc_func(x: str) -> str:
     assert any("doc_func" in r.message and "Args:" in r.message for r in results)
     assert any("doc_func" in r.message and "Returns:" in r.message for r in results)
 
+    # Сценарий 1.5: Проверка документирования глобальных переменных
+    var_code = """
+# Глобальная переменная
+my_global = 42
+
+default_container = "test"
+"Глобальный контейнер по умолчанию"
+"""
+    file_path_var = tmp_path / "var.py"
+    with open(file_path_var, "w", encoding="utf-8") as f:
+        f.write(var_code)
+
+    results_var = rule.check(str(tmp_path), [str(file_path_var)])
+    assert len(results_var) == 1
+    assert "Глобальная переменная" in results_var[0].message
+    assert results_var[0].severity == "warn"
+
     # Сценарий 2: Корректный код
     good_code = """
 class MyGoodClass:
@@ -307,7 +324,6 @@ class BadClassNoDoc:
     assert len(res_bad_init) == 2
     assert any(r.severity == "error" and "BadClassNoDoc" in r.message for r in res_bad_init)
     assert any(r.severity == "warn" and "__init__" in r.message for r in res_bad_init)
-
 
 
 def test_security_hardcode_rule(tmp_path):
@@ -841,9 +857,12 @@ def test_linter_output_formats(capsys):
 
     # Тестовые результаты
     results = [
-        LintResult(rule_name="RuleA", message="Message A", severity="error", file_path="file1.py", line_number=10, fix_suggestion="Fix A"),
-        LintResult(rule_name="RuleB", message="Message B", severity="warn", file_path="file2.py", line_number=20, fix_suggestion="Fix B"),
-        LintResult(rule_name="RuleA", message="Message A2", severity="warn", file_path="file1.py", line_number=30, fix_suggestion="Fix A2"),
+        LintResult(rule_name="RuleA", message="Message A", severity="error", file_path="file1.py", line_number=10,
+                   fix_suggestion="Fix A"),
+        LintResult(rule_name="RuleB", message="Message B", severity="warn", file_path="file2.py", line_number=20,
+                   fix_suggestion="Fix B"),
+        LintResult(rule_name="RuleA", message="Message A2", severity="warn", file_path="file1.py", line_number=30,
+                   fix_suggestion="Fix A2"),
     ]
 
     # 1. Default (обычный) формат, группировка по файлам
@@ -881,11 +900,13 @@ def test_linter_exclude_rules():
 
     class TestRuleA(Rule):
         name = "TestRuleA"
+
         def check(self, base_dir, files):
             return [LintResult(rule_name=self.name, message="Error A", severity="error")]
 
     class TestRuleB(Rule):
         name = "TestRuleB"
+
         def check(self, base_dir, files):
             return [LintResult(rule_name=self.name, message="Error B", severity="error")]
 
@@ -921,5 +942,3 @@ def test_linter_should_ignore_slashes(tmp_path):
     assert engine.should_ignore(tmp_path / "foo" / "bar") is True
     assert engine.should_ignore(tmp_path / "foo\\bar") is True
     assert engine.should_ignore(tmp_path / "src" / "test.py") is True
-
-

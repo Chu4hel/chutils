@@ -11,17 +11,74 @@ class DocstringVisitor(ast.NodeVisitor):
     Вспомогательный AST-посетитель для проверки docstrings и type hints.
     """
 
-    def __init__(self, file_path: str, rule_name: str) -> None:
+    def __init__(self, file_path: str, rule_name: str, content: str | None = None) -> None:
         """Инициализирует AST-посетитель docstring'ов.
 
         Args:
             file_path: Путь к анализируемому файлу.
             rule_name: Название запускаемого правила.
+            content: Содержимое файла (опционально).
         """
         self.file_path = file_path
         self.rule_name = rule_name
+        self.content = content
         self.issues: list[LintResult] = []
         self._current_class_doc: str | None = None
+
+    def visit_Module(self, node: ast.Module) -> None:
+        """Проверяет модуль и его глобальные переменные на документирование через docstring.
+
+        Args:
+            node: AST-узел модуля.
+        """
+        # Если содержимое не передано, не проверяем комментарии
+        if self.content:
+            lines = self.content.splitlines()
+            for stmt in node.body:
+                # Нас интересуют присваивания на верхнем уровне (глобальные переменные)
+                # но не функции, классы, импорты
+                if isinstance(stmt, (ast.Assign, ast.AnnAssign)):
+                    # Проверяем, есть ли над этим выражением комментарий
+                    # Предыдущая строка (1-indexed, так что stmt.lineno - 2 в массиве 0-indexed)
+                    prev_idx = stmt.lineno - 2
+                    if prev_idx >= 0:
+                        prev_line = lines[prev_idx].strip()
+                        if prev_line.startswith("#") and not prev_line.startswith(
+                                "# ruff:") and not prev_line.startswith("# type:"):
+                            # Проверяем, есть ли под этим выражением docstring (следующее выражение - строковая константа)
+                            # Ищем, идет ли следующим выражением Expr с константой-строкой
+                            has_docstring = False
+                            # Ищем индекс текущего выражения в node.body
+                            try:
+                                curr_idx = node.body.index(stmt)
+                                if curr_idx + 1 < len(node.body):
+                                    next_stmt = node.body[curr_idx + 1]
+                                    if isinstance(next_stmt, ast.Expr):
+                                        val = next_stmt.value
+                                        if isinstance(val, ast.Constant) and isinstance(val.value, str):
+                                            has_docstring = True
+                                        elif hasattr(ast, "Str") and isinstance(val, getattr(ast, "Str")):
+                                            has_docstring = True
+                            except ValueError:
+                                pass
+
+                            if not has_docstring:
+                                self.issues.append(
+                                    LintResult(
+                                        rule_name=self.rule_name,
+                                        message="Глобальная переменная документирована комментарием перед объявлением вместо докстринга.",
+                                        severity="warn",
+                                        file_path=self.file_path,
+                                        line_number=stmt.lineno,
+                                        fix_suggestion=(
+                                            "Напишите содержательный строковый докстринг после объявления переменной. "
+                                            "Если комментарий технический, отделите его от переменной пустой строкой, "
+                                            "или добавьте '# chutils: ignore[DocstringQualityRule]'."
+                                        )
+                                    )
+                                )
+
+        self.generic_visit(node)
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         """Анализирует класс на наличие docstring.
@@ -162,7 +219,7 @@ class DocstringVisitor(ast.NodeVisitor):
                                 rule_name=self.rule_name,
                                 message=f"Docstring функции {node.name} не содержит раздела возвращаемого значения 'Returns:'.",
                                 severity="warn",
-                                  file_path=self.file_path,
+                                file_path=self.file_path,
                                 line_number=node.lineno,
                                 fix_suggestion="Добавьте раздел 'Returns:' в Google Style для описания возвращаемого значения."
                             )
@@ -227,7 +284,7 @@ class DocstringQualityRule(Rule):
                 with open(file_path, encoding="utf-8") as f:
                     content = f.read()
                 tree = ast.parse(content)
-                visitor = DocstringVisitor(file_path, self.name)
+                visitor = DocstringVisitor(file_path, self.name, content=content)
                 visitor.visit(tree)
                 results.extend(visitor.issues)
             except Exception:
