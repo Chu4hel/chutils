@@ -901,9 +901,9 @@
                     "name": "set",
                     "type": "method",
                     "layer": "internal",
-                    "signature": "(self, key, value, ttl)",
+                    "signature": "(self, key, value, ttl, tags)",
                     "summary": "Сохранить значение в кэше.",
-                    "docstring": "Сохранить значение в кэше.\n\nArgs:\n    key (str): Ключ кэша.\n    value: Значение для сохранения.\n    ttl (Optional[int]): Время жизни в секундах. Если None, используется вечное хранение.",
+                    "docstring": "Сохранить значение в кэше.\n\nArgs:\n    key (str): Ключ кэша.\n    value: Значение для сохранения.\n    ttl (Optional[int]): Время жизни в секундах. Если None, используется вечное хранение.\n    tags (Optional[list[str]]): Список тегов для связывания с ключом.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -937,7 +937,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 40,
+                    "line_number": 47,
                     "bases": [],
                     "children": []
                   },
@@ -959,7 +959,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 50,
+                    "line_number": 57,
                     "bases": [],
                     "children": []
                   },
@@ -981,7 +981,29 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 63,
+                    "line_number": 70,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "invalidate_tag",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, tag)",
+                    "summary": "Удалить все ключи, связанные с указанным тегом.",
+                    "docstring": "Удалить все ключи, связанные с указанным тегом.\n\nArgs:\n    tag (str): Тег для инвалидации.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 75,
                     "bases": [],
                     "children": []
                   },
@@ -1001,7 +1023,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 69,
+                    "line_number": 86,
                     "bases": [],
                     "children": []
                   },
@@ -1009,9 +1031,9 @@
                     "name": "aset",
                     "type": "method",
                     "layer": "internal",
-                    "signature": "(self, key, value, ttl)",
+                    "signature": "(self, key, value, ttl, tags)",
                     "summary": "Асинхронное сохранение значения в кэше.",
-                    "docstring": "Асинхронное сохранение значения в кэше.\n\nArgs:\n    key: Ключ кэша.\n    value: Значение для сохранения.\n    ttl: Время жизни в секундах.",
+                    "docstring": "Асинхронное сохранение значения в кэше.\n\nArgs:\n    key: Ключ кэша.\n    value: Значение для сохранения.\n    ttl: Время жизни в секундах.\n    tags: Список тегов для связывания с ключом.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -1021,7 +1043,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 80,
+                    "line_number": 97,
                     "bases": [],
                     "children": []
                   },
@@ -1041,7 +1063,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 90,
+                    "line_number": 114,
                     "bases": [],
                     "children": []
                   },
@@ -1061,7 +1083,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 98,
+                    "line_number": 122,
                     "bases": [],
                     "children": []
                   },
@@ -1081,7 +1103,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 109,
+                    "line_number": 133,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "ainvalidate_tag",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, tag)",
+                    "summary": "Асинхронное удаление всех ключей, связанных с указанным тегом.",
+                    "docstring": "Асинхронное удаление всех ключей, связанных с указанным тегом.\n\nArgs:\n    tag: Тег для инвалидации.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 137,
                     "bases": [],
                     "children": []
                   }
@@ -1142,9 +1184,9 @@
                 "name": "cache_with_ttl",
                 "type": "function",
                 "layer": "public",
-                "signature": "(ttl, key_prefix, sliding, backend)",
+                "signature": "(ttl, key_prefix, sliding, backend, tags)",
                 "summary": "Декоратор для кэширования результатов выполнения функций с поддержкой TTL.",
-                "docstring": "Декоратор для кэширования результатов выполнения функций с поддержкой TTL.\n\nArgs:\n    ttl (int): Время жизни закэшированного значения в секундах. По умолчанию 60.\n    key_prefix (str): Префикс для ключа кэша.\n    sliding (bool): Если True, TTL продлевается при каждом успешном чтении из кэша.\n    backend: Инстанс бэкенда для хранения (по умолчанию InMemoryCacheBackend).\n\nReturns:\n    Callable: Обернутая функция.",
+                "docstring": "Декоратор для кэширования результатов выполнения функций с поддержкой TTL.\n\nДекорированная функция получает дополнительные методы управления кэшем:\n* `invalidate(*args, **kwargs)` / `ainvalidate(*args, **kwargs)` — удаляет запись из кэша для указанных аргументов.\n* `invalidate_all()` / `ainvalidate_all()` — полностью очищает все записи этой функции.\n* `invalidate_tag(tag)` / `ainvalidate_tag(tag)` — сбрасывает все записи кэша, помеченные данным тегом.\n\nArgs:\n    ttl (int): Время жизни закэшированного значения в секундах. По умолчанию 60.\n    key_prefix (str): Префикс для ключа кэша.\n    sliding (bool): Если True, TTL продлевается при каждом успешном чтении из кэша.\n    backend: Инстанс бэкенда для хранения (по умолчанию InMemoryCacheBackend).\n    tags: Статические теги (list[str]) или вызываемый объект (callable), принимающий те же\n          аргументы, что и декорируемая функция, и генерирующий тег или список тегов.\n\nReturns:\n    Callable: Обернутая функция со встроенными методами инвалидации.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -1244,7 +1286,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 25,
+                    "line_number": 27,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_remove_key_associations",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, key)",
+                    "summary": "Внутренний метод для удаления ассоциаций ключа с тегами.",
+                    "docstring": "Внутренний метод для удаления ассоциаций ключа с тегами.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 32,
                     "bases": [],
                     "children": []
                   },
@@ -1264,7 +1326,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 30,
+                    "line_number": 42,
                     "bases": [],
                     "children": []
                   },
@@ -1284,7 +1346,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 42,
+                    "line_number": 54,
                     "bases": [],
                     "children": []
                   },
@@ -1292,9 +1354,9 @@
                     "name": "set",
                     "type": "method",
                     "layer": "internal",
-                    "signature": "(self, key, value, ttl)",
-                    "summary": "Сохраняет значение с заданным TTL.",
-                    "docstring": "Сохраняет значение с заданным TTL.\n\nArgs:\n    key: Ключ кэша.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.",
+                    "signature": "(self, key, value, ttl, tags)",
+                    "summary": "Сохраняет значение с заданным TTL и тегами.",
+                    "docstring": "Сохраняет значение с заданным TTL и тегами.\n\nArgs:\n    key: Ключ кэша.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.\n    tags: Список тегов для связывания с ключом.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -1304,7 +1366,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 54,
+                    "line_number": 67,
                     "bases": [],
                     "children": []
                   },
@@ -1324,7 +1386,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 68,
+                    "line_number": 94,
                     "bases": [],
                     "children": []
                   },
@@ -1333,8 +1395,8 @@
                     "type": "method",
                     "layer": "internal",
                     "signature": "(self, key)",
-                    "summary": "Проверяет существование ключа в кэше (удаляет его, если он просрочен).",
-                    "docstring": "Проверяет существование ключа в кэше (удаляет его, если он просрочен).\n\nArgs:\n    key: Ключ для проверки.\n\nReturns:\n    True, если ключ существует и не просрочен, иначе False.",
+                    "summary": "Проверить наличие ключа в кэше.",
+                    "docstring": "Проверить наличие ключа в кэше.\n\nArgs:\n    key: Ключ кэша.\n\nReturns:\n    bool: True, если ключ существует и не просрочен.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -1344,7 +1406,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 77,
+                    "line_number": 104,
                     "bases": [],
                     "children": []
                   },
@@ -1364,7 +1426,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 89,
+                    "line_number": 116,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "invalidate_tag",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, tag)",
+                    "summary": "Удаляет все ключи, связанные с указанным тегом.",
+                    "docstring": "Удаляет все ключи, связанные с указанным тегом.\n\nArgs:\n    tag: Тег для инвалидации.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 123,
                     "bases": [],
                     "children": []
                   },
@@ -1384,7 +1466,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 94,
+                    "line_number": 135,
                     "bases": [],
                     "children": []
                   },
@@ -1404,7 +1486,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 106,
+                    "line_number": 148,
                     "bases": [],
                     "children": []
                   },
@@ -1412,9 +1494,9 @@
                     "name": "aset",
                     "type": "method",
                     "layer": "internal",
-                    "signature": "(self, key, value, ttl)",
-                    "summary": "Асинхронно сохраняет значение с TTL.",
-                    "docstring": "Асинхронно сохраняет значение с TTL.\n\nArgs:\n    key: Ключ кэша.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.",
+                    "signature": "(self, key, value, ttl, tags)",
+                    "summary": "Асинхронно сохраняет значение с TTL и тегами.",
+                    "docstring": "Асинхронно сохраняет значение с TTL и тегами.\n\nArgs:\n    key: Ключ кэша.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.\n    tags: Список тегов для связывания с ключом.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -1424,7 +1506,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 119,
+                    "line_number": 161,
                     "bases": [],
                     "children": []
                   },
@@ -1444,7 +1526,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 133,
+                    "line_number": 188,
                     "bases": [],
                     "children": []
                   },
@@ -1464,7 +1546,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 143,
+                    "line_number": 199,
                     "bases": [],
                     "children": []
                   },
@@ -1484,7 +1566,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 156,
+                    "line_number": 212,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "ainvalidate_tag",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, tag)",
+                    "summary": "Асинхронно удаляет все ключи, связанные с указанным тегом.",
+                    "docstring": "Асинхронно удаляет все ключи, связанные с указанным тегом.\n\nArgs:\n    tag: Тег для инвалидации.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 220,
                     "bases": [],
                     "children": []
                   }
@@ -27636,8 +27738,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "7b1f3f77f2d83ee59ae5f04c9274e3fcd891f96e (dirty)",
-    "generated_at": "2026-07-20T06:22:41.979377+00:00",
-    "project_hash": "34dfdaa6dda51a291b6387ccefe779d53e6641789515a4b9d531c1c77932f737"
+    "git_commit": "e9482a4af31939720879d9854bf1db9e71205525 (dirty)",
+    "generated_at": "2026-07-20T17:35:28.684014+00:00",
+    "project_hash": "d9e5dc9041d1c748f6476ef50ff2cebbf99d63fd94732b844d988e6820faac4d"
   }
 }
