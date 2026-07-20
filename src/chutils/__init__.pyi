@@ -687,10 +687,24 @@ def type_text(
 ) -> None: ...
 
 
-async def apply_antidetect_playwright(context: Any) -> None: ...
+async def apply_antidetect_playwright(
+        context: Any,
+        *,
+        webgl_vendor: str = ...,
+        webgl_renderer: str = ...,
+        hardware_concurrency: int = ...,
+        device_memory: int = ...,
+) -> None: ...
 
 
-def apply_antidetect_selenium(driver: Any) -> None: ...
+def apply_antidetect_selenium(
+        driver: Any,
+        *,
+        webgl_vendor: str = ...,
+        webgl_renderer: str = ...,
+        hardware_concurrency: int = ...,
+        device_memory: int = ...,
+) -> None: ...
 
 
 def get_browser_launch_args() -> list[str]: ...

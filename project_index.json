@@ -22320,6 +22320,106 @@
                 "children": [],
                 "symbols": [
                   {
+                    "name": "DEFAULT_WEBGL_VENDOR",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 7,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "DEFAULT_WEBGL_RENDERER",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 8,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "DEFAULT_HARDWARE_CONCURRENCY",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 9,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "DEFAULT_DEVICE_MEMORY",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 10,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_get_antidetect_js",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory)",
+                    "summary": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
+                    "docstring": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 13,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
                     "name": "ANTIDETECT_JS_SCRIPT",
                     "type": "constant",
                     "layer": "internal",
@@ -22335,7 +22435,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 6,
+                    "line_number": 79,
                     "bases": [],
                     "children": []
                   },
@@ -22355,7 +22455,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 63,
+                    "line_number": 88,
                     "bases": [],
                     "children": []
                   },
@@ -22375,7 +22475,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 73,
+                    "line_number": 98,
                     "bases": [],
                     "children": []
                   },
@@ -22385,7 +22485,7 @@
                     "layer": "public",
                     "signature": "(context)",
                     "summary": "Применяет JS-инъекции анти-детекта к контексту Playwright.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к контексту Playwright.\n\nArgs:\n    context: Объект контекста Playwright BrowserContext.",
+                    "docstring": "Применяет JS-инъекции анти-детекта к контексту Playwright.\n\nArgs:\n    context: Объект контекста Playwright BrowserContext.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -22395,7 +22495,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 83,
+                    "line_number": 108,
                     "bases": [],
                     "children": []
                   },
@@ -22405,7 +22505,7 @@
                     "layer": "public",
                     "signature": "(driver)",
                     "summary": "Применяет JS-инъекции анти-детекта к сессии Selenium.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к сессии Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.",
+                    "docstring": "Применяет JS-инъекции анти-детекта к сессии Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -22415,7 +22515,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 93,
+                    "line_number": 135,
                     "bases": [],
                     "children": []
                   },
@@ -22435,7 +22535,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 109,
+                    "line_number": 168,
                     "bases": [],
                     "children": []
                   }
@@ -27456,8 +27556,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "b5f16fb21f3468f8159a3dc53f561c72292755e1 (dirty)",
-    "generated_at": "2026-07-20T00:07:03.029938+00:00",
-    "project_hash": "e96959e04592d86f79c9b45cc8d2f1abc4b3bfd70a86750fa8c3af8ff66612ad"
+    "git_commit": "dc1bbd458921d13f6910d31264e7273047fd6fe4 (dirty)",
+    "generated_at": "2026-07-20T00:12:14.550821+00:00",
+    "project_hash": "7616d66510337b0ac666ddda6d97e8c98ab8f115106ede4119396ce9eef84a4f"
   }
 }
