@@ -509,19 +509,20 @@ class Container:
 
     def register(
             self,
-            dependency_type: type[Any],
+            dependency_type: type[Any] | str,
             provider: Callable[..., Any] | None = None,
             scope: str = "singleton",
     ) -> None: ...
 
-    def has_provider(self, dependency_type: type[Any]) -> bool: ...
+    def has_provider(self, dependency_type: type[Any] | str) -> bool: ...
 
-    def resolve(self, dependency_type: type[T]) -> T: ...
+    def resolve(self, dependency_type: type[T] | str | Any) -> T: ...
 
     def clear(self) -> None: ...
 
 
 container: Container
+default_container: Container
 
 
 def provide(
@@ -530,8 +531,10 @@ def provide(
 
 
 def inject(
+        func_or_container: Callable[..., Any] | Container | None = None,
+        *,
         container: Container | None = None,
-) -> Callable[[Callable[..., Any]], Callable[..., Any]]: ...
+) -> Any: ...
 
 
 def Inject() -> Any: ...
