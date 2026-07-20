@@ -89,3 +89,45 @@ def test_antidetect_custom_params(mock_ensure_sel: MagicMock, mock_ensure_pw: Ma
     assert '"Intel UHD Graphics"' in sel_script
     assert "4" in sel_script
     assert "16" in sel_script
+
+
+@patch("chutils.scraping.humanize.antidetect._ensure_nodriver")
+def test_antidetect_nodriver(mock_ensure: MagicMock) -> None:
+    import sys
+    mock_page = MagicMock()
+    mock_page.add_script_to_evaluate_on_new_document = MagicMock(return_value="mock_cdp_command")
+
+    mock_cdp = MagicMock()
+    mock_cdp.page = mock_page
+
+    modules = {
+        "nodriver": MagicMock(),
+        "nodriver.cdp": mock_cdp,
+        "nodriver.cdp.page": mock_page
+    }
+
+    with patch.dict(sys.modules, modules):
+        from chutils.scraping.humanize.antidetect import apply_antidetect_nodriver
+        import asyncio
+
+        tab = MagicMock()
+        tab.send = AsyncMock()
+
+        asyncio.run(apply_antidetect_nodriver(
+            tab,
+            webgl_vendor="NVIDIA Corporation",
+            webgl_renderer="NVIDIA GeForce RTX 4090",
+            hardware_concurrency=24,
+            device_memory=64
+        ))
+
+        # Проверяем, что CDP-метод вызван с правильным JS-кодом
+        mock_page.add_script_to_evaluate_on_new_document.assert_called_once()
+        js_code = mock_page.add_script_to_evaluate_on_new_document.call_args[1]["source"]
+        assert '"NVIDIA Corporation"' in js_code
+        assert '"NVIDIA GeForce RTX 4090"' in js_code
+        assert "24" in js_code
+        assert "64" in js_code
+
+        # Проверяем, что команда отправлена вкладке
+        tab.send.assert_called_once_with("mock_cdp_command")

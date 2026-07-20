@@ -140,7 +140,11 @@ JS-инъекции и флаги запуска.
 - Эмулирует список установленных системных плагинов и количество ядер процессора.
 
 ```python
-from chutils.scraping.humanize import apply_antidetect_playwright, apply_antidetect_selenium
+from chutils.scraping.humanize import (
+    apply_antidetect_playwright,
+    apply_antidetect_selenium,
+    apply_antidetect_nodriver,
+)
 
 # Для Playwright (применяется к BrowserContext)
 # Все параметры ниже опциональны (по умолчанию эмулируется NVIDIA RTX 3060, 8 ядер CPU и 8 ГБ RAM):
@@ -159,6 +163,15 @@ apply_antidetect_selenium(
     webgl_renderer="Intel UHD Graphics",
     hardware_concurrency=4,
     device_memory=8
+)
+
+# Для nodriver (применяется к вкладке Tab через CDP протокол)
+await apply_antidetect_nodriver(
+    tab,
+    webgl_vendor="NVIDIA Corporation",
+    webgl_renderer="NVIDIA GeForce RTX 4090",
+    hardware_concurrency=24,
+    device_memory=64
 )
 ```
 

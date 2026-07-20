@@ -707,6 +707,16 @@ def apply_antidetect_selenium(
 ) -> None: ...
 
 
+async def apply_antidetect_nodriver(
+        tab: Any,
+        *,
+        webgl_vendor: str = ...,
+        webgl_renderer: str = ...,
+        hardware_concurrency: int = ...,
+        device_memory: int = ...,
+) -> None: ...
+
+
 def get_browser_launch_args() -> list[str]: ...
 
 

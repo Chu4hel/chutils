@@ -271,6 +271,7 @@ _LAZY_MAPPING = {
     'type_text': ('.scraping.humanize', 'type_text'),
     'apply_antidetect_playwright': ('.scraping.humanize', 'apply_antidetect_playwright'),
     'apply_antidetect_selenium': ('.scraping.humanize', 'apply_antidetect_selenium'),
+    'apply_antidetect_nodriver': ('.scraping.humanize', 'apply_antidetect_nodriver'),
     'get_browser_launch_args': ('.scraping.humanize', 'get_browser_launch_args'),
 
     # scraping captcha

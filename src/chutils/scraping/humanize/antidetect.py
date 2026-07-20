@@ -105,6 +105,16 @@ def _ensure_selenium() -> None:
         )
 
 
+def _ensure_nodriver() -> None:
+    if importlib.util.find_spec("nodriver") is None:
+        raise OptionalDependencyError(
+            "Для использования nodriver-функций требуется библиотека 'nodriver'.\n"
+            "Установите её: pip install nodriver",
+            dependency="nodriver",
+            hint="Выполните pip install nodriver"
+        )
+
+
 async def apply_antidetect_playwright(
         context: Any,
         *,
@@ -163,6 +173,35 @@ def apply_antidetect_selenium(
         )
     else:
         driver.execute_script(script)
+
+
+async def apply_antidetect_nodriver(
+        tab: Any,
+        *,
+        webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
+        webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
+        hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
+        device_memory: int = DEFAULT_DEVICE_MEMORY,
+) -> None:
+    """Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.
+
+    Args:
+        tab: Объект вкладки nodriver Tab.
+        webgl_vendor: Подменяемый производитель WebGL.
+        webgl_renderer: Подменяемая видеокарта WebGL.
+        hardware_concurrency: Эмулируемое количество ядер процессора.
+        device_memory: Эмулируемый объем оперативной памяти в ГБ.
+    """
+    _ensure_nodriver()
+    from nodriver.cdp import page
+
+    script = _get_antidetect_js(
+        webgl_vendor=webgl_vendor,
+        webgl_renderer=webgl_renderer,
+        hardware_concurrency=hardware_concurrency,
+        device_memory=device_memory,
+    )
+    await tab.send(page.add_script_to_evaluate_on_new_document(source=script))
 
 
 def get_browser_launch_args() -> list[str]:

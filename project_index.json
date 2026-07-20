@@ -22480,6 +22480,26 @@
                     "children": []
                   },
                   {
+                    "name": "_ensure_nodriver",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "()",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 108,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
                     "name": "apply_antidetect_playwright",
                     "type": "function",
                     "layer": "public",
@@ -22495,7 +22515,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 108,
+                    "line_number": 118,
                     "bases": [],
                     "children": []
                   },
@@ -22515,7 +22535,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 135,
+                    "line_number": 145,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "apply_antidetect_nodriver",
+                    "type": "function",
+                    "layer": "public",
+                    "signature": "(tab)",
+                    "summary": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.",
+                    "docstring": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.\n\nArgs:\n    tab: Объект вкладки nodriver Tab.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 178,
                     "bases": [],
                     "children": []
                   },
@@ -22535,7 +22575,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 168,
+                    "line_number": 207,
                     "bases": [],
                     "children": []
                   }
@@ -26064,7 +26104,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 310,
+        "line_number": 311,
         "bases": [],
         "children": []
       },
@@ -26084,7 +26124,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 334,
+        "line_number": 335,
         "bases": [],
         "children": []
       },
@@ -26104,7 +26144,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 344,
+        "line_number": 345,
         "bases": [],
         "children": []
       }
@@ -27339,7 +27379,7 @@
     {
       "source": "chutils/scraping/humanize",
       "target": "/antidetect",
-      "weight": 3
+      "weight": 4
     },
     {
       "source": "chutils/scraping/humanize",
@@ -27556,8 +27596,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "dc1bbd458921d13f6910d31264e7273047fd6fe4 (dirty)",
-    "generated_at": "2026-07-20T00:12:14.550821+00:00",
-    "project_hash": "7616d66510337b0ac666ddda6d97e8c98ab8f115106ede4119396ce9eef84a4f"
+    "git_commit": "a0502af79022ccd571586d850379d274a04fc579 (dirty)",
+    "generated_at": "2026-07-20T00:15:23.105593+00:00",
+    "project_hash": "60df8897f550a2d57b8c38e010dcb71887257bfc510503ad8a0786d1923dcdbe"
   }
 }

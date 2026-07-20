@@ -11,6 +11,7 @@ from .actions import (
 from .antidetect import (
     apply_antidetect_playwright,
     apply_antidetect_selenium,
+    apply_antidetect_nodriver,
     get_browser_launch_args,
 )
 from .math_utils import BezierCurveGenerator, JitterDelayGenerator, KeyboardTypoGenerator
@@ -29,5 +30,6 @@ __all__ = [
     "type_text",
     "apply_antidetect_playwright",
     "apply_antidetect_selenium",
+    "apply_antidetect_nodriver",
     "get_browser_launch_args",
 ]
