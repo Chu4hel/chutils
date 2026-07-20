@@ -22246,7 +22246,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 12,
+                    "line_number": 13,
                     "bases": [],
                     "children": []
                   },
@@ -22266,7 +22266,67 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 22,
+                    "line_number": 28,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_ensure_nodriver",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "()",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 43,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_is_nodriver",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(obj)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 64,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_is_playwright",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(obj)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 77,
                     "bases": [],
                     "children": []
                   },
@@ -22286,7 +22346,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 32,
+                    "line_number": 89,
                     "bases": [],
                     "children": []
                   },
@@ -22306,7 +22366,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 45,
+                    "line_number": 102,
                     "bases": [],
                     "children": []
                   },
@@ -22326,7 +22386,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 56,
+                    "line_number": 113,
                     "bases": [],
                     "children": []
                   },
@@ -22335,8 +22395,8 @@
                     "type": "function",
                     "layer": "public",
                     "signature": "(page, x, y, start, steps, delay_between_steps)",
-                    "summary": "Имитирует плавное перемещение мыши Playwright.",
-                    "docstring": "Имитирует плавное перемещение мыши Playwright.\n\nArgs:\n    page: Объект страницы Playwright Page.\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты X, Y. Если не задано, используется (0, 0).\n    steps: Количество промежуточных шагов движения.\n    delay_between_steps: Задержка между шагами в секундах.",
+                    "summary": "Имитирует плавное перемещение мыши Playwright или nodriver.",
+                    "docstring": "Имитирует плавное перемещение мыши Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты X, Y. Если не задано, используется (0, 0).\n    steps: Количество промежуточных шагов движения.\n    delay_between_steps: Задержка между шагами в секундах.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -22346,7 +22406,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 67,
+                    "line_number": 124,
                     "bases": [],
                     "children": []
                   },
@@ -22355,8 +22415,8 @@
                     "type": "function",
                     "layer": "public",
                     "signature": "(page, x, y, selector, steps, delay_between_steps)",
-                    "summary": "Имитирует плавный скроллинг Playwright.",
-                    "docstring": "Имитирует плавный скроллинг Playwright.\n\nArgs:\n    page: Объект страницы Playwright Page.\n    x: Конечная горизонтальная позиция скролла.\n    y: Конечная вертикальная позиция скролла.\n    selector: Необязательный селектор элемента для скролла.\n    steps: Количество промежуточных шагов.\n    delay_between_steps: Задержка между шагами в секундах.",
+                    "summary": "Имитирует плавный скроллинг Playwright или nodriver.",
+                    "docstring": "Имитирует плавный скроллинг Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    x: Конечная горизонтальная позиция скролла.\n    y: Конечная вертикальная позиция скролла.\n    selector: Необязательный селектор элемента для скролла.\n    steps: Количество промежуточных шагов.\n    delay_between_steps: Задержка между шагами в секундах.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -22366,7 +22426,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 97,
+                    "line_number": 178,
                     "bases": [],
                     "children": []
                   },
@@ -22375,8 +22435,8 @@
                     "type": "function",
                     "layer": "public",
                     "signature": "(page, selector, text, error_rate, speed_wpm)",
-                    "summary": "Имитирует ввод текста с опечатками Playwright.",
-                    "docstring": "Имитирует ввод текста с опечатками Playwright.\n\nArgs:\n    page: Объект страницы Playwright Page.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).",
+                    "summary": "Имитирует ввод текста с опечатками Playwright или nodriver.",
+                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -22386,7 +22446,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 133,
+                    "line_number": 247,
                     "bases": [],
                     "children": []
                   },
@@ -22406,7 +22466,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 165,
+                    "line_number": 335,
                     "bases": [],
                     "children": []
                   },
@@ -22426,7 +22486,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 200,
+                    "line_number": 370,
                     "bases": [],
                     "children": []
                   },
@@ -22446,7 +22506,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 236,
+                    "line_number": 406,
                     "bases": [],
                     "children": []
                   }
@@ -27738,8 +27798,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "e9482a4af31939720879d9854bf1db9e71205525 (dirty)",
-    "generated_at": "2026-07-20T17:35:28.684014+00:00",
-    "project_hash": "d9e5dc9041d1c748f6476ef50ff2cebbf99d63fd94732b844d988e6820faac4d"
+    "git_commit": "2f8ea8867e17fbe55a64b40e3a2d00cb0ce40fee (dirty)",
+    "generated_at": "2026-07-20T17:56:27.293260+00:00",
+    "project_hash": "7ecccb5d7e2e46fd3fa6af83fa34b316199adcc12bf2f3e53aa588dd682795fd"
   }
 }

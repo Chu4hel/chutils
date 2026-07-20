@@ -100,6 +100,27 @@ await async_type_text(page, selector="#username", text="my_user_login", error_ra
 await async_human_sleep(1.0, 3.0)
 ```
 
+### Обертки для nodriver (асинхронные)
+
+Те же асинхронные функции поддерживают автоматизацию на базе `nodriver` (все действия транслируются напрямую через CDP протокол):
+
+```python
+from chutils.scraping.humanize import (
+    async_move_mouse,
+    async_scroll_to,
+    async_type_text,
+)
+
+# Плавное движение мыши (транслируется в CDP dispatchMouseEvent)
+await async_move_mouse(tab, x=400, y=300, start=(0, 0))
+
+# Плавный скролл страницы через JS evaluate
+await async_scroll_to(tab, x=0, y=800)
+
+# Ввод текста с опечатками (через CDP dispatchKeyEvent)
+await async_type_text(tab, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0)
+```
+
 ### Обертки для Selenium (синхронные)
 
 ```python
