@@ -4134,7 +4134,7 @@
                 "layer": "internal",
                 "signature": "",
                 "summary": "Инициализация нового проекта с использованием chutils.",
-                "docstring": "Инициализация нового проекта с использованием chutils.\n\nСоздает базовый файл config.yml с рекомендуемыми настройками и\nобновляет .gitignore для предотвращения утечки секретов и логов.",
+                "docstring": "Инициализация нового проекта с использованием chutils.\n\nСоздает базовый или расширенный файл config.yml с рекомендуемыми настройками,\nнастраивает Git-исключения, а также опционально разворачивает окружение,\nмиграции, CI/CD, диагностику и скелет чистой архитектуры.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -4144,7 +4144,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 10,
+                "line_number": 12,
                 "bases": [
                   ".base.BaseCommand"
                 ],
@@ -4165,7 +4165,47 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 18,
+                    "line_number": 21,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_ask_yes_no",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, prompt, default)",
+                    "summary": "Спрашивает у пользователя булево значение.",
+                    "docstring": "Спрашивает у пользователя булево значение.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 43,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_ask_str",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, prompt, default)",
+                    "summary": "Спрашивает у пользователя строку.",
+                    "docstring": "Спрашивает у пользователя строку.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 54,
                     "bases": [],
                     "children": []
                   },
@@ -4185,7 +4225,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 40,
+                    "line_number": 62,
                     "bases": [],
                     "children": []
                   },
@@ -4193,7 +4233,7 @@
                     "name": "_get_default_config",
                     "type": "method",
                     "layer": "private",
-                    "signature": "(self, project_name)",
+                    "signature": "(self, project_name, setup_db, setup_audit, setup_cloud_secrets, setup_metrics, setup_diagnostics)",
                     "summary": "",
                     "docstring": "",
                     "breadcrumbs": {
@@ -4205,7 +4245,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 140,
+                    "line_number": 304,
                     "bases": [],
                     "children": []
                   }
@@ -27596,8 +27636,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "a0502af79022ccd571586d850379d274a04fc579 (dirty)",
-    "generated_at": "2026-07-20T00:15:23.105593+00:00",
-    "project_hash": "60df8897f550a2d57b8c38e010dcb71887257bfc510503ad8a0786d1923dcdbe"
+    "git_commit": "7b1f3f77f2d83ee59ae5f04c9274e3fcd891f96e (dirty)",
+    "generated_at": "2026-07-20T06:22:41.979377+00:00",
+    "project_hash": "34dfdaa6dda51a291b6387ccefe779d53e6641789515a4b9d531c1c77932f737"
   }
 }
