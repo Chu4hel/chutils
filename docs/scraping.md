@@ -208,4 +208,46 @@ from chutils.scraping.humanize import get_browser_launch_args
 launch_flags = get_browser_launch_args()
 ```
 
+---
+
+## 4. Прогрев профилей (ProfileWarmer)
+
+Инструмент `ProfileWarmer` (асинхронный для Playwright/nodriver) и `SyncProfileWarmer` (синхронный для Selenium) предназначены для прогрева браузерных профилей (сохраняемых в директории `user_data_dir`) путем посещения трастовых веб-ресурсов и симуляции действий реального пользователя (скроллинг, движения курсора по траектории Безье, паузы, клики по внутренним ссылкам).
+
+Это позволяет сформировать историю посещений, нагулять cookies и заполнить localStorage/sessionStorage, повышая Trust Score сессии браузера.
+
+### Асинхронный прогрев (Playwright и nodriver)
+
+```python
+from chutils.scraping.humanize import ProfileWarmer
+
+# Для Playwright (принимает объект Page)
+# или для nodriver (принимает объект Tab)
+warmer = ProfileWarmer(page_or_tab)
+
+# Прогрев: посетит 3 случайных сайта из встроенного списка
+# На каждом сайте проведет от 10 до 20 секунд, имитируя скроллинг, мышь и переходы по ссылкам
+await warmer.warm_up(
+    sites_count=3,
+    duration_per_site=(10.0, 20.0),
+    click_random_links=True
+)
+```
+
+### Синхронный прогрев (Selenium)
+
+```python
+from chutils.scraping.humanize import SyncProfileWarmer
+
+# Принимает экземпляр Selenium WebDriver
+warmer = SyncProfileWarmer(driver)
+
+warmer.warm_up(
+    sites_count=3,
+    duration_per_site=(10.0, 20.0),
+    click_random_links=True
+)
+```
+
+
 

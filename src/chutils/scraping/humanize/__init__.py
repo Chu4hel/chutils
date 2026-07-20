@@ -15,6 +15,7 @@ from .antidetect import (
     get_browser_launch_args,
 )
 from .math_utils import BezierCurveGenerator, JitterDelayGenerator, KeyboardTypoGenerator
+from .warmer import ProfileWarmer, SyncProfileWarmer
 
 __all__ = [
     "BezierCurveGenerator",
@@ -32,4 +33,6 @@ __all__ = [
     "apply_antidetect_selenium",
     "apply_antidetect_nodriver",
     "get_browser_launch_args",
+    "ProfileWarmer",
+    "SyncProfileWarmer",
 ]

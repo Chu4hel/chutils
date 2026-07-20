@@ -22978,6 +22978,159 @@
                     ]
                   }
                 ]
+              },
+              {
+                "name": "warmer",
+                "path": "chutils/scraping/humanize/warmer",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "DEFAULT_TRUST_SITES",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 18,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "ProfileWarmer",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Класс для асинхронного прогрева браузерных профилей (Playwright, nodriver).",
+                    "docstring": "Класс для асинхронного прогрева браузерных профилей (Playwright, nodriver).\n\nОбеспечивает естественный цифровой след путем посещения сайтов, скроллинга,\nимитации мыши и переходов по внутренним ссылкам.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 28,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, browser_or_tab)",
+                        "summary": "Инициализирует ProfileWarmer.",
+                        "docstring": "Инициализирует ProfileWarmer.\n\nArgs:\n    browser_or_tab: Объект страницы Playwright Page или вкладки nodriver Tab.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 36,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "warm_up",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, sites, sites_count, duration_per_site, click_random_links)",
+                        "summary": "Запускает процесс прогрева профиля.",
+                        "docstring": "Запускает процесс прогрева профиля.\n\nArgs:\n    sites: Список URL-адресов трастовых сайтов для прогрева. Если None, используется встроенный список.\n    sites_count: Количество посещаемых сайтов.\n    duration_per_site: Диапазон времени пребывания на одном сайте (мин, макс в секундах).\n    click_random_links: Флаг перехода по случайным внутренним ссылкам.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 44,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "SyncProfileWarmer",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Класс для синхронного прогрева браузерных профилей (Selenium).",
+                    "docstring": "Класс для синхронного прогрева браузерных профилей (Selenium).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 127,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, driver)",
+                        "summary": "Инициализирует SyncProfileWarmer.",
+                        "docstring": "Инициализирует SyncProfileWarmer.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 132,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "warm_up",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, sites, sites_count, duration_per_site, click_random_links)",
+                        "summary": "Запускает процесс прогрева профиля (синхронно).",
+                        "docstring": "Запускает процесс прогрева профиля (синхронно).\n\nArgs:\n    sites: Список URL-адресов трастовых сайтов для прогрева. Если None, используется встроенный список.\n    sites_count: Количество посещаемых сайтов.\n    duration_per_site: Диапазон времени пребывания на одном сайте (мин, макс в секундах).\n    click_random_links: Флаг перехода по случайным внутренним ссылкам.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 140,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
               }
             ],
             "symbols": []
@@ -27589,6 +27742,11 @@
       "weight": 3
     },
     {
+      "source": "chutils/scraping/humanize",
+      "target": "/warmer",
+      "weight": 2
+    },
+    {
       "source": "chutils/scraping/humanize/actions",
       "target": "chutils/exceptions",
       "weight": 1
@@ -27602,6 +27760,11 @@
       "source": "chutils/scraping/humanize/antidetect",
       "target": "chutils/exceptions",
       "weight": 1
+    },
+    {
+      "source": "chutils/scraping/humanize/warmer",
+      "target": "/actions",
+      "weight": 8
     },
     {
       "source": "chutils/secret_manager",
@@ -27798,8 +27961,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "2f8ea8867e17fbe55a64b40e3a2d00cb0ce40fee (dirty)",
-    "generated_at": "2026-07-20T17:56:27.293260+00:00",
-    "project_hash": "7ecccb5d7e2e46fd3fa6af83fa34b316199adcc12bf2f3e53aa588dd682795fd"
+    "git_commit": "6654866f29add51a6a52ecbeef7ddbdb83230ccb (dirty)",
+    "generated_at": "2026-07-20T18:12:06.591368+00:00",
+    "project_hash": "1c97436214bfaa0774450f29b9a41d924524716d133142b594f410a3dd9fddf4"
   }
 }
