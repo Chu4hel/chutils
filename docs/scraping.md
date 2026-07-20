@@ -140,11 +140,26 @@ JS-инъекции и флаги запуска.
 - Эмулирует список установленных системных плагинов и количество ядер процессора.
 
 ```python
+from chutils.scraping.humanize import apply_antidetect_playwright, apply_antidetect_selenium
+
 # Для Playwright (применяется к BrowserContext)
-await apply_antidetect_playwright(context)
+# Все параметры ниже опциональны (по умолчанию эмулируется NVIDIA RTX 3060, 8 ядер CPU и 8 ГБ RAM):
+await apply_antidetect_playwright(
+    context,
+    webgl_vendor="AMD Inc.",
+    webgl_renderer="Radeon RX 6800",
+    hardware_concurrency=12,
+    device_memory=16
+)
 
 # Для Selenium (применяется к WebDriver через CDP)
-apply_antidetect_selenium(driver)
+apply_antidetect_selenium(
+    driver,
+    webgl_vendor="Intel",
+    webgl_renderer="Intel UHD Graphics",
+    hardware_concurrency=4,
+    device_memory=8
+)
 ```
 
 ### Флаги запуска браузера (`get_browser_launch_args`)
