@@ -14787,7 +14787,7 @@
               {
                 "name": "default_container",
                 "type": "constant",
-                "layer": "internal",
+                "layer": "public",
                 "signature": null,
                 "summary": "",
                 "docstring": null,
@@ -25944,7 +25944,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 41,
+        "line_number": 42,
         "bases": [],
         "children": []
       },
@@ -25964,7 +25964,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 308,
+        "line_number": 310,
         "bases": [],
         "children": []
       },
@@ -25984,7 +25984,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 332,
+        "line_number": 334,
         "bases": [],
         "children": []
       },
@@ -26004,7 +26004,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 342,
+        "line_number": 344,
         "bases": [],
         "children": []
       }
@@ -27456,8 +27456,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "237df7496da197ae68e2d2198dde660dc1f9a1d3 (dirty)",
-    "generated_at": "2026-07-19T23:56:31.785914+00:00",
-    "project_hash": "153fdd57d7e4216e67f6a3ef689bbc53173f9eb1c9abc03cd87aceda202d184f"
+    "git_commit": "b5f16fb21f3468f8159a3dc53f561c72292755e1 (dirty)",
+    "generated_at": "2026-07-20T00:07:03.029938+00:00",
+    "project_hash": "e96959e04592d86f79c9b45cc8d2f1abc4b3bfd70a86750fa8c3af8ff66612ad"
   }
 }

@@ -38,6 +38,7 @@ from typing import Any
 
 # Словарь соответствия имен атрибутов их модулям и именам внутри этих модулей.
 # Формат: 'имя_атрибута': ('относительный_путь_к_модулю', 'имя_в_модуле' или None для самого модуля)
+
 _LAZY_MAPPING = {
     # modules
     'config': ('.config', None),
@@ -225,6 +226,7 @@ _LAZY_MAPPING = {
     'inject': ('.di.container', 'inject'),
     'Inject': ('.di.container', 'Inject'),
     'container': ('.di.container', 'default_container'),
+    'default_container': ('.di.container', 'default_container'),
 
     # metrics
     'metrics': ('.metrics', None),
@@ -370,4 +372,5 @@ def init(base_dir: str) -> None:
 
 
 # --- Определение публичного API (`__all__`) ---
+
 __all__ = list(_LAZY_MAPPING.keys()) + ['init']
