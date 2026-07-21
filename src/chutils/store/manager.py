@@ -183,7 +183,7 @@ class StoreManager:
         if tracing is not None and hasattr(tracing, "trace"):
             try:
                 res = tracing.trace(f"store.{op}")
-                if hasattr(res, "__enter__"):
+                if res is not None and hasattr(res, "__enter__"):
                     return res
             except Exception:
                 pass

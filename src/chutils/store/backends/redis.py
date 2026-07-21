@@ -4,6 +4,7 @@ Redis бэкенд для chutils.store.
 from __future__ import annotations
 
 import importlib.util
+import sys
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
@@ -16,7 +17,12 @@ def is_redis_available() -> bool:
     Returns:
         True, если пакет redis установлен.
     """
-    return importlib.util.find_spec("redis") is not None
+    if "redis" in sys.modules:
+        return True
+    try:
+        return importlib.util.find_spec("redis") is not None
+    except Exception:
+        return False
 
 
 class RedisStore(BaseStoreBackend):

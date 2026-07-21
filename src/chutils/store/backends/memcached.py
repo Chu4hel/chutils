@@ -4,6 +4,7 @@ Memcached бэкенд для chutils.store.
 from __future__ import annotations
 
 import importlib.util
+import sys
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
@@ -16,7 +17,12 @@ def is_pymemcache_available() -> bool:
     Returns:
         True, если пакет pymemcache установлен.
     """
-    return importlib.util.find_spec("pymemcache") is not None
+    if "pymemcache" in sys.modules:
+        return True
+    try:
+        return importlib.util.find_spec("pymemcache") is not None
+    except Exception:
+        return False
 
 
 def is_aiomemcache_available() -> bool:
@@ -25,7 +31,12 @@ def is_aiomemcache_available() -> bool:
     Returns:
         True, если пакет aiomemcache установлен.
     """
-    return importlib.util.find_spec("aiomemcache") is not None
+    if "aiomemcache" in sys.modules:
+        return True
+    try:
+        return importlib.util.find_spec("aiomemcache") is not None
+    except Exception:
+        return False
 
 
 class MemcachedStore(BaseStoreBackend):

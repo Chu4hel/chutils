@@ -25408,7 +25408,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 13,
+                    "line_number": 14,
                     "bases": [],
                     "children": []
                   },
@@ -25428,7 +25428,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 22,
+                    "line_number": 28,
                     "bases": [],
                     "children": []
                   },
@@ -25448,7 +25448,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 31,
+                    "line_number": 42,
                     "bases": [
                       ".base.BaseStoreBackend"
                     ],
@@ -25469,7 +25469,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 34,
+                        "line_number": 45,
                         "bases": [],
                         "children": []
                       },
@@ -25489,7 +25489,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 41,
+                        "line_number": 52,
                         "bases": [],
                         "children": []
                       },
@@ -25509,7 +25509,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 49,
+                        "line_number": 60,
                         "bases": [],
                         "children": []
                       },
@@ -25529,7 +25529,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 57,
+                        "line_number": 68,
                         "bases": [],
                         "children": []
                       },
@@ -25549,7 +25549,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 70,
+                        "line_number": 81,
                         "bases": [],
                         "children": []
                       },
@@ -25569,7 +25569,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 84,
+                        "line_number": 95,
                         "bases": [],
                         "children": []
                       },
@@ -25589,7 +25589,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 100,
+                        "line_number": 111,
                         "bases": [],
                         "children": []
                       },
@@ -25609,7 +25609,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 113,
+                        "line_number": 124,
                         "bases": [],
                         "children": []
                       },
@@ -25629,7 +25629,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 126,
+                        "line_number": 137,
                         "bases": [],
                         "children": []
                       },
@@ -25649,7 +25649,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 136,
+                        "line_number": 147,
                         "bases": [],
                         "children": []
                       },
@@ -25669,7 +25669,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 150,
+                        "line_number": 161,
                         "bases": [],
                         "children": []
                       },
@@ -25689,7 +25689,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 167,
+                        "line_number": 178,
                         "bases": [],
                         "children": []
                       },
@@ -25709,7 +25709,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 180,
+                        "line_number": 191,
                         "bases": [],
                         "children": []
                       },
@@ -25729,7 +25729,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 192,
+                        "line_number": 203,
                         "bases": [],
                         "children": []
                       }
@@ -26036,7 +26036,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 13,
+                    "line_number": 14,
                     "bases": [],
                     "children": []
                   },
@@ -26056,7 +26056,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 22,
+                    "line_number": 28,
                     "bases": [
                       ".base.BaseStoreBackend"
                     ],
@@ -26077,7 +26077,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 25,
+                        "line_number": 31,
                         "bases": [],
                         "children": []
                       },
@@ -26097,7 +26097,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 31,
+                        "line_number": 37,
                         "bases": [],
                         "children": []
                       },
@@ -26117,7 +26117,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 39,
+                        "line_number": 45,
                         "bases": [],
                         "children": []
                       },
@@ -26137,7 +26137,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 47,
+                        "line_number": 53,
                         "bases": [],
                         "children": []
                       },
@@ -26157,7 +26157,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 55,
+                        "line_number": 61,
                         "bases": [],
                         "children": []
                       },
@@ -26177,7 +26177,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 69,
+                        "line_number": 75,
                         "bases": [],
                         "children": []
                       },
@@ -26197,7 +26197,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 85,
+                        "line_number": 91,
                         "bases": [],
                         "children": []
                       },
@@ -26217,7 +26217,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 98,
+                        "line_number": 104,
                         "bases": [],
                         "children": []
                       },
@@ -26237,7 +26237,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 111,
+                        "line_number": 117,
                         "bases": [],
                         "children": []
                       },
@@ -26257,7 +26257,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 121,
+                        "line_number": 127,
                         "bases": [],
                         "children": []
                       },
@@ -26277,7 +26277,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 135,
+                        "line_number": 141,
                         "bases": [],
                         "children": []
                       },
@@ -26297,7 +26297,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 151,
+                        "line_number": 157,
                         "bases": [],
                         "children": []
                       },
@@ -26317,7 +26317,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 164,
+                        "line_number": 170,
                         "bases": [],
                         "children": []
                       },
@@ -26337,7 +26337,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 177,
+                        "line_number": 183,
                         "bases": [],
                         "children": []
                       }
@@ -30795,8 +30795,8 @@
   "metadata": {
     "chutils_version": "3.3.0",
     "project_version": "3.3.0",
-    "git_commit": "88a3dd437c5969fcd5cbd5805a8a277dfebd0657 (dirty)",
-    "generated_at": "2026-07-21T19:29:58.063152+00:00",
-    "project_hash": "671ddc0d304e293e3392d3bbd47ebe6181a4f6899643ae2d6de277ed03bd3644"
+    "git_commit": "5fcaebe066a65d8bd2a171ee369854e1896b2d41 (dirty)",
+    "generated_at": "2026-07-21T19:34:21.841399+00:00",
+    "project_hash": "5b0cbdf99960e0bb5e4def93d301fb59acd628e1d41403d170d44b817ea36c22"
   }
 }

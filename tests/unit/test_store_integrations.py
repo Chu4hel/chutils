@@ -3,6 +3,7 @@
 """
 from __future__ import annotations
 
+from contextlib import nullcontext
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -15,6 +16,7 @@ from chutils.store.manager import StoreManager
 def test_store_manager_metrics_and_tracing_hooks() -> None:
     """Проверяет вызов хуков метрик и трассировки при операциях get/set."""
     mock_tracer = MagicMock()
+    mock_tracer.trace.side_effect = lambda op: nullcontext()
     mock_metrics = MagicMock()
 
     with patch("chutils.store.manager._get_tracing", return_value=mock_tracer), patch(
