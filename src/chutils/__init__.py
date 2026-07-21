@@ -78,6 +78,11 @@ _LAZY_MAPPING = {
     'UrllibFallbackClient': ('.http', 'UrllibFallbackClient'),
     'inject_trace_headers': ('.http', 'inject_trace_headers'),
     'create_http_span': ('.http', 'create_http_span'),
+    'AsyncEventStreamClient': ('.http', 'AsyncEventStreamClient'),
+    'EventStreamClient': ('.http', 'EventStreamClient'),
+    'AsyncWebSocketClient': ('.http', 'AsyncWebSocketClient'),
+    'WebSocketClient': ('.http', 'WebSocketClient'),
+    'ServerSentEvent': ('.http', 'ServerSentEvent'),
 
     # config
     'get_config': ('.config', 'get_config'),
