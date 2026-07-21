@@ -129,8 +129,8 @@ class PluginRegistry:
         self._loaded_groups.add(group)
 
 
-# Глобальный экземпляр реестра
 registry = PluginRegistry()
+"Глобальный экземпляр реестра"
 
 
 def register_plugin(plugin: Any) -> None:

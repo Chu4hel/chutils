@@ -26,6 +26,21 @@ class AiLintSubCommand(SubCommand):
   chutils dev ai-lint
   chutils dev ai-lint --strict
   chutils dev ai-lint --ignore "temp/,build/"
+  chutils dev ai-lint --rules ChutilsIntegrationRule,ManifestRule
+  chutils dev ai-lint --staged
+
+Подавление срабатываний для отдельной строки:
+  Добавьте комментарий в конец строки или строкой выше:
+    import logging  # chutils: ignore[ChutilsIntegrationRule]
+    code()          # chutils: ignore[RuleA, RuleB]
+    # chutils: ignore[ChutilsIntegrationRule]
+    some_call()
+    code()          # chutils: ignore[all]   <- все правила
+
+Доступные правила по умолчанию:
+  ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
+  ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule,
+  APIMapHashRule, FileDependencySyncRule, UpgradeCheckRule, LinterCoverageRule
 """,
         )
         lint_parser.add_argument(
@@ -55,6 +70,22 @@ class AiLintSubCommand(SubCommand):
             action="store_true",
             help="Проверять только файлы, подготовленные к коммиту (staged) в Git.",
         )
+        lint_parser.add_argument(
+            "--output-format",
+            choices=["default", "table"],
+            default=None,
+            help="Формат вывода результатов (по умолчанию: table).",
+        )
+        lint_parser.add_argument(
+            "--group-by",
+            choices=["file", "rule"],
+            default=None,
+            help="Группировка вывода результатов (по умолчанию: file).",
+        )
+        lint_parser.add_argument(
+            "--exclude-rules",
+            help="Список исключаемых правил через запятую.",
+        )
         lint_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace) -> None:
@@ -74,10 +105,16 @@ class AiLintSubCommand(SubCommand):
             ]
         if args.rules:
             cli_args["rules"] = [r.strip() for r in args.rules.split(",") if r.strip()]
+        if args.exclude_rules:
+            cli_args["exclude_rules"] = [r.strip() for r in args.exclude_rules.split(",") if r.strip()]
         if args.custom_rules_path:
             cli_args["custom_rules_path"] = args.custom_rules_path
         if getattr(args, "staged", None) is not None:
             cli_args["staged"] = args.staged
+        if getattr(args, "output_format", None) is not None:
+            cli_args["output_format"] = args.output_format
+        if getattr(args, "group_by", None) is not None:
+            cli_args["group_by"] = args.group_by
 
         from chutils.config.dev import load_ai_lint_config
         from chutils.dev.ai_lint import LinterEngine

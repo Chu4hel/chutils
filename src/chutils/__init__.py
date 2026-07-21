@@ -38,6 +38,7 @@ from typing import Any
 
 # Словарь соответствия имен атрибутов их модулям и именам внутри этих модулей.
 # Формат: 'имя_атрибута': ('относительный_путь_к_модулю', 'имя_в_модуле' или None для самого модуля)
+
 _LAZY_MAPPING = {
     # modules
     'config': ('.config', None),
@@ -68,6 +69,13 @@ _LAZY_MAPPING = {
     'DiagnosticsManager': ('.diagnostics', 'DiagnosticsManager'),
     'validation': ('.validation', None),
     'http': ('.http', None),
+    'store': ('.store', None),
+    'StoreManager': ('.store', 'StoreManager'),
+    'BaseStoreBackend': ('.store', 'BaseStoreBackend'),
+    'MemoryStore': ('.store.backends.memory', 'MemoryStore'),
+    'RedisStore': ('.store.backends.redis', 'RedisStore'),
+    'MemcachedStore': ('.store.backends.memcached', 'MemcachedStore'),
+    'store_cache': ('.store.decorator', 'store_cache'),
 
     # http
     'HttpClient': ('.http', 'HttpClient'),
@@ -77,6 +85,11 @@ _LAZY_MAPPING = {
     'UrllibFallbackClient': ('.http', 'UrllibFallbackClient'),
     'inject_trace_headers': ('.http', 'inject_trace_headers'),
     'create_http_span': ('.http', 'create_http_span'),
+    'AsyncEventStreamClient': ('.http', 'AsyncEventStreamClient'),
+    'EventStreamClient': ('.http', 'EventStreamClient'),
+    'AsyncWebSocketClient': ('.http', 'AsyncWebSocketClient'),
+    'WebSocketClient': ('.http', 'WebSocketClient'),
+    'ServerSentEvent': ('.http', 'ServerSentEvent'),
 
     # config
     'get_config': ('.config', 'get_config'),
@@ -225,6 +238,7 @@ _LAZY_MAPPING = {
     'inject': ('.di.container', 'inject'),
     'Inject': ('.di.container', 'Inject'),
     'container': ('.di.container', 'default_container'),
+    'default_container': ('.di.container', 'default_container'),
 
     # metrics
     'metrics': ('.metrics', None),
@@ -269,6 +283,7 @@ _LAZY_MAPPING = {
     'type_text': ('.scraping.humanize', 'type_text'),
     'apply_antidetect_playwright': ('.scraping.humanize', 'apply_antidetect_playwright'),
     'apply_antidetect_selenium': ('.scraping.humanize', 'apply_antidetect_selenium'),
+    'apply_antidetect_nodriver': ('.scraping.humanize', 'apply_antidetect_nodriver'),
     'get_browser_launch_args': ('.scraping.humanize', 'get_browser_launch_args'),
 
     # scraping captcha
@@ -370,4 +385,5 @@ def init(base_dir: str) -> None:
 
 
 # --- Определение публичного API (`__all__`) ---
+
 __all__ = list(_LAZY_MAPPING.keys()) + ['init']

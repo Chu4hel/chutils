@@ -171,8 +171,8 @@ class LifecycleManager:
         self._setup_done = False
 
 
-# Глобальный экземпляр менеджера
 _manager = LifecycleManager()
+"Глобальный экземпляр менеджера"
 
 
 def register_cleanup(func: CleanupCallback) -> CleanupCallback:

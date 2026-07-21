@@ -88,8 +88,8 @@ class PeriodicTask:
             return 1
 
 
-# Глобальный реестр зарегистрированных задач
 _tasks_registry: list[PeriodicTask] = []
+"Глобальный реестр зарегистрированных задач"
 
 
 def periodic_task(
@@ -281,8 +281,8 @@ class TaskScheduler:
         logger.info("Планировщик фоновых задач остановлен.")
 
 
-# Глобальный синглтон планировщика
 _scheduler: TaskScheduler | None = None
+"Глобальный синглтон планировщика"
 
 
 def start_scheduler() -> None:

@@ -1,6 +1,6 @@
 [project]
 name = "chutils"
-version = "3.2.0"
+version = "3.3.0"
 description = "Набор простых и удобных утилит для Python, который избавляет от рутины при работе с конфигурацией и логированием в новых проектах."
 authors = [{ name = "Chu4hel", email = "sergeiivanov636@gmail.com" }]
 license = "MIT"
@@ -25,6 +25,7 @@ metrics = ["prometheus-client (>=0.20.0,<1.0.0)"]
 text = ["rapidfuzz (>=3.9.0)"]
 crypto = ["cryptography (>=42.0.0)"]
 web = ["httpx (>=0.27.0)"]
+websockets = ["websockets (>=14.0.0)"]
 db = [
     "sqlalchemy (>=2.0.0)",
     "asyncpg (>=0.29.0)",
@@ -58,6 +59,7 @@ full = [
     "rapidfuzz (>=3.9.0)",
     "cryptography (>=42.0.0)",
     "httpx (>=0.27.0)",
+    "websockets (>=14.0.0)",
     "playwright (>=1.49.0)",
     "selenium (>=4.27.0)",
     "pytest (>=9.0.3)",
@@ -85,6 +87,7 @@ dev = [
     "ruff (>=0.15.12)",
     "mypy (>=2.1.0)",
     "fastapi (>=0.110.0)",
+    "websockets (>=14.0.0)",
 ]
 
 [[tool.uv.index]]

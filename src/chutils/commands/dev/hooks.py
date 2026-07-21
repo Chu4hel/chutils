@@ -71,30 +71,54 @@ class HooksSubCommand(SubCommand):
         ensure_dir(hooks_dir)
         hook_path = hooks_dir / "pre-commit"
 
-        # Подготовка вспомогательных вызовов ruff/flake8
+        # Подготовка вспомогательных вызовов ruff/flake8.
+        # Все инструменты работают ТОЛЬКО по staged .py файлам,
+        # чтобы не проверять весь проект при каждом коммите.
+        use_ruff = getattr(args, "ruff", False)
+        use_flake8 = getattr(args, "flake8", False)
         extra_checks = ""
-        if getattr(args, "ruff", False):
+
+        if use_ruff or use_flake8:
+            # Список staged .py файлов вычисляется один раз и переиспользуется
             extra_checks += (
-                "# Запуск ruff check & format\n"
-                "if [ -f uv.lock ] && command -v uv >/dev/null 2>&1; then\n"
-                "    uv run ruff check --fix && uv run ruff format\n"
-                "elif [ -f poetry.lock ] && command -v poetry >/dev/null 2>&1; then\n"
-                "    poetry run ruff check --fix && poetry run ruff format\n"
-                "elif command -v ruff >/dev/null 2>&1; then\n"
-                "    ruff check --fix && ruff format\n"
+                "# Сбор staged .py файлов для точечных проверок\n"
+                "CHUTILS_STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM | grep '\\.py$')\n\n"
+            )
+
+        if use_ruff:
+            extra_checks += (
+                "# Запуск ruff check & format (только staged .py файлы)\n"
+                "if [ -n \"$CHUTILS_STAGED_PY\" ]; then\n"
+                "    if [ -f uv.lock ] && command -v uv >/dev/null 2>&1; then\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs uv run ruff check --fix\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs uv run ruff format\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs git add\n"
+                "    elif [ -f poetry.lock ] && command -v poetry >/dev/null 2>&1; then\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs poetry run ruff check --fix\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs poetry run ruff format\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs git add\n"
+                "    elif command -v ruff >/dev/null 2>&1; then\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs ruff check --fix\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs ruff format\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs git add\n"
+                "    fi\n"
                 "fi\n\n"
             )
-        if getattr(args, "flake8", False):
+
+        if use_flake8:
             extra_checks += (
-                "# Запуск flake8\n"
-                "if [ -f uv.lock ] && command -v uv >/dev/null 2>&1; then\n"
-                "    uv run flake8 .\n"
-                "elif [ -f poetry.lock ] && command -v poetry >/dev/null 2>&1; then\n"
-                "    poetry run flake8 .\n"
-                "elif command -v flake8 >/dev/null 2>&1; then\n"
-                "    flake8 .\n"
+                "# Запуск flake8 (только staged .py файлы)\n"
+                "if [ -n \"$CHUTILS_STAGED_PY\" ]; then\n"
+                "    if [ -f uv.lock ] && command -v uv >/dev/null 2>&1; then\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs uv run flake8\n"
+                "    elif [ -f poetry.lock ] && command -v poetry >/dev/null 2>&1; then\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs poetry run flake8\n"
+                "    elif command -v flake8 >/dev/null 2>&1; then\n"
+                "        echo \"$CHUTILS_STAGED_PY\" | xargs flake8\n"
+                "    fi\n"
                 "fi\n\n"
             )
+
 
         hook_template = (
             "#!/bin/sh\n"

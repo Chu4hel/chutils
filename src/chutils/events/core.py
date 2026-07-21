@@ -225,8 +225,8 @@ class EventBus:
                         logger.error("Ошибка в обработчике события %s: %s", event_name, err, exc_info=True)
 
 
-# Глобальный инстанс шины событий
 _global_bus = EventBus()
+"Глобальный инстанс шины событий"
 
 def subscribe(event_name: str) -> Callable[[Callable[..., t.Any]], Callable[..., t.Any]]:
     """Декоратор для подписки на событие в глобальной шине.

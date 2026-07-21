@@ -156,12 +156,29 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
 def save_context_metadata_cache(project_path: Path, output_file: str, format_str: str, project_hash: str) -> None:
     """Сохраняет кэш метаданных сгенерированного контекста в .chutils/context_metadata.json.
 
+    Файл хранит реестр ВСЕХ сгенерированных файлов контекста проекта.
+    При каждом вызове обновляется только запись для конкретного output_file —
+    остальные записи сохраняются.
+
+    Формат файла::
+
+        {
+          "files": {
+            "api_map.md":         {"format": "markdown", "project_hash": "..."},
+            "project_index.json": {"format": "tree",     "project_hash": "..."},
+            "docs/context.json":  {"format": "json",     "project_hash": "..."}
+          }
+        }
+
+    Старый однофайловый формат автоматически мигрируется при первом обращении.
+
     Args:
         project_path: Корневой путь проекта.
         output_file: Выходной путь файла контекста.
         format_str: Формат вывода ('markdown', 'json' или 'tree').
         project_hash: Сгенерированный хэш проекта.
     """
+    import json
     import sys
     if "pytest" in sys.modules:
         # Не пишем на реальный диск из тестов
@@ -182,14 +199,35 @@ def save_context_metadata_cache(project_path: Path, output_file: str, format_str
         except ValueError:
             file_path_str = output_file
 
-        cache_data = {
-            "file_path": file_path_str,
+        # Читаем существующий реестр (с автоматической миграцией старого формата)
+        files_registry: dict[str, dict[str, str]] = {}
+        if cache_path.exists():
+            try:
+                with open(cache_path, encoding="utf-8") as f:
+                    existing = json.load(f)
+                if isinstance(existing, dict):
+                    if "files" in existing and isinstance(existing["files"], dict):
+                        # Текущий многофайловый формат
+                        files_registry = existing["files"]
+                    elif "file_path" in existing:
+                        # Старый однофайловый формат — мигрируем запись
+                        old_fp = existing.get("file_path", "")
+                        if old_fp:
+                            files_registry[old_fp] = {
+                                "format": str(existing.get("format", "markdown")),
+                                "project_hash": str(existing.get("project_hash", "")),
+                            }
+            except Exception:
+                pass
+
+        # Обновляем только запись для текущего файла, остальные не трогаем
+        files_registry[file_path_str] = {
             "format": format_str,
             "project_hash": project_hash,
         }
 
-        import json
         with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump(cache_data, f, indent=2, ensure_ascii=False)  # chutils: ignore[ChutilsIntegrationRule]
+            json.dump({"files": files_registry}, f, indent=2, ensure_ascii=False)  # chutils: ignore[ChutilsIntegrationRule]
     except Exception:
         pass
+

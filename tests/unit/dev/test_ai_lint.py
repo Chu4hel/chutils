@@ -229,6 +229,23 @@ def doc_func(x: str) -> str:
     assert any("doc_func" in r.message and "Args:" in r.message for r in results)
     assert any("doc_func" in r.message and "Returns:" in r.message for r in results)
 
+    # Сценарий 1.5: Проверка документирования глобальных переменных
+    var_code = """
+# Глобальная переменная
+my_global = 42
+
+default_container = "test"
+"Глобальный контейнер по умолчанию"
+"""
+    file_path_var = tmp_path / "var.py"
+    with open(file_path_var, "w", encoding="utf-8") as f:
+        f.write(var_code)
+
+    results_var = rule.check(str(tmp_path), [str(file_path_var)])
+    assert len(results_var) == 1
+    assert "Глобальная переменная" in results_var[0].message
+    assert results_var[0].severity == "warn"
+
     # Сценарий 2: Корректный код
     good_code = """
 class MyGoodClass:
@@ -266,6 +283,47 @@ def good_func(a: int, b: str) -> bool:
 
     results_good = rule.check(str(tmp_path), [str(file_path_good)])
     assert len(results_good) == 0
+
+    # Сценарий 3: Проверка расслабленных правил для __init__ и непубличных функций
+    relaxed_code = """
+class MyRelaxedClass:
+    \"\"\"
+    Класс с docstring.
+    \"\"\"
+    def __init__(self, value: int):
+        # Нет docstring у __init__, но есть docstring у класса -> ок, 0 ошибок docstring
+        # Отсутствует возвращаемый тип -> __init__ не проверяется на возвращаемое значение -> ок
+        self.value = value
+
+    def _private_func(self, a, b: int):
+        # Непубличная функция: отсутствует docstring -> ок (не публичная)
+        # Отсутствует тип у 'a' и возврат -> непубличные функции вызывают WARN, а не ERROR
+        pass
+"""
+    file_path_relaxed = tmp_path / "relaxed.py"
+    with open(file_path_relaxed, "w", encoding="utf-8") as f:
+        f.write(relaxed_code)
+
+    results_relaxed = rule.check(str(tmp_path), [str(file_path_relaxed)])
+    # Должен быть только 1 WARN на тип параметра 'a' приватной функции и 1 WARN на возвращаемый тип
+    assert len(results_relaxed) == 2
+    assert all(r.severity == "warn" for r in results_relaxed)
+    assert any("параметра 'a'" in r.message for r in results_relaxed)
+    assert any("возвращаемого значения" in r.message for r in results_relaxed)
+
+    # Проверим, что __init__ без docstring у класса без docstring дает WARN
+    bad_init_code = """
+class BadClassNoDoc:
+    def __init__(self):
+        pass
+"""
+    file_bad_init = tmp_path / "bad_init.py"
+    file_bad_init.write_text(bad_init_code, encoding="utf-8")
+    res_bad_init = rule.check(str(tmp_path), [str(file_bad_init)])
+    # Ошибка docstring класса (ERROR) + предупреждение для __init__ (WARN)
+    assert len(res_bad_init) == 2
+    assert any(r.severity == "error" and "BadClassNoDoc" in r.message for r in res_bad_init)
+    assert any(r.severity == "warn" and "__init__" in r.message for r in res_bad_init)
 
 
 def test_security_hardcode_rule(tmp_path):
@@ -525,6 +583,55 @@ class C: pass
     results = rule.check(str(tmp_path), [str(file_ignored_2)])
     assert len(results) == 0
 
+    # 7. Исключение docstrings
+    doc_code = '''"""
+Module docstring
+that spans
+multiple lines
+"""
+
+def my_func():
+    """Function docstring."""
+    pass
+'''
+    file_doc = tmp_path / "doc.py"
+    file_doc.write_text(doc_code, encoding="utf-8")
+
+    # Без исключения - файл содержит 9 физических строк
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5
+    }
+    results = rule.check(str(tmp_path), [str(file_doc)])
+    assert len(results) == 1  # Должен ругнуться, так как 9 > 5
+
+    # С исключением докстрингов - докстринги убираются (5 строк у модуля + 1 у функции = 6 строк уходят), остается 3 строки
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5,
+        "decomposition_exclude_docstrings": True
+    }
+    results = rule.check(str(tmp_path), [str(file_doc)])
+    assert len(results) == 0  # 3 <= 5
+
+    # С весом docstrings = 0.5 - 6 строк docstrings * 0.5 = 3 + 3 = 6 строк взвешенных. 6 > 5
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5,
+        "decomposition_docstrings_weight": 0.5
+    }
+    results = rule.check(str(tmp_path), [str(file_doc)])
+    assert len(results) == 1  # 6 > 5
+
+    # С весом docstrings = 0.2 - 6 * 0.2 = 1.2 + 3 = 4.2 -> округляется до 4. 4 <= 5
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5,
+        "decomposition_docstrings_weight": 0.2
+    }
+    results = rule.check(str(tmp_path), [str(file_doc)])
+    assert len(results) == 0  # 4 <= 5
+
 
 def test_api_map_hash_rule(tmp_path):
     """Тестирует APIMapHashRule."""
@@ -742,3 +849,96 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
     results = rule.check(str(tmp_path), [])
     assert len(results) == 1  # Должно сработать предупреждение
     assert "были созданы новые файлы, но связанные файлы" in results[0].message
+
+
+def test_linter_output_formats(capsys):
+    """Тестирует различные форматы вывода и группировки линтера."""
+    from chutils.dev.ai_lint import LinterEngine, LintResult
+
+    # Тестовые результаты
+    results = [
+        LintResult(rule_name="RuleA", message="Message A", severity="error", file_path="file1.py", line_number=10,
+                   fix_suggestion="Fix A"),
+        LintResult(rule_name="RuleB", message="Message B", severity="warn", file_path="file2.py", line_number=20,
+                   fix_suggestion="Fix B"),
+        LintResult(rule_name="RuleA", message="Message A2", severity="warn", file_path="file1.py", line_number=30,
+                   fix_suggestion="Fix A2"),
+    ]
+
+    # 1. Default (обычный) формат, группировка по файлам
+    engine_default = LinterEngine({"output_format": "default", "group_by": "file"})
+    engine_default.print_results(results)
+    captured = capsys.readouterr().out
+    assert "file1.py:10" in captured
+    assert "file2.py:20" in captured
+    assert "Message A" in captured
+    assert "Message B" in captured
+
+    # 2. Default формат, группировка по правилам
+    engine_rule = LinterEngine({"output_format": "default", "group_by": "rule"})
+    engine_rule.print_results(results)
+    captured = capsys.readouterr().out
+    assert "RuleA" in captured
+    assert "RuleB" in captured
+
+    # 3. Table формат (должен пройти без ошибок выполнения)
+    engine_table = LinterEngine({"output_format": "table", "group_by": "file"})
+    engine_table.print_results(results)
+    captured = capsys.readouterr().out
+    assert "Файл: file1.py" in captured or "file1.py" in captured
+
+    # 4. Table формат, группировка по правилам
+    engine_table_rule = LinterEngine({"output_format": "table", "group_by": "rule"})
+    engine_table_rule.print_results(results)
+    captured = capsys.readouterr().out
+    assert "Правило: RuleA" in captured or "RuleA" in captured
+
+
+def test_linter_exclude_rules():
+    """Тестирует исключение правил (exclude_rules)."""
+    from chutils.dev.ai_lint import LinterEngine, Rule, LintResult
+
+    class TestRuleA(Rule):
+        name = "TestRuleA"
+
+        def check(self, base_dir, files):
+            return [LintResult(rule_name=self.name, message="Error A", severity="error")]
+
+    class TestRuleB(Rule):
+        name = "TestRuleB"
+
+        def check(self, base_dir, files):
+            return [LintResult(rule_name=self.name, message="Error B", severity="error")]
+
+    # Без исключения: обе запускаются
+    engine = LinterEngine({"exclude_rules": []})
+    engine.rules = [TestRuleA(), TestRuleB()]
+    res = engine.run()
+    assert len(res) == 2
+    assert any(r.rule_name == "TestRuleA" for r in res)
+    assert any(r.rule_name == "TestRuleB" for r in res)
+
+    # Исключаем TestRuleA
+    engine_ex = LinterEngine({"exclude_rules": ["TestRuleA"]})
+    engine_ex.rules = [TestRuleA(), TestRuleB()]
+    res_ex = engine_ex.run()
+    assert len(res_ex) == 1
+    assert res_ex[0].rule_name == "TestRuleB"
+
+
+def test_linter_should_ignore_slashes(tmp_path):
+    """Тестирует нормализацию слэшей в should_ignore."""
+    from chutils.dev.ai_lint import LinterEngine
+
+    # Передаем шаблоны с разными слэшами
+    engine = LinterEngine({
+        "base_dir": str(tmp_path),
+        "ignore": ["temp/build", "foo\\bar", "src/*.py"]
+    })
+
+    # Проверяем пути с разными слэшами
+    assert engine.should_ignore(tmp_path / "temp" / "build") is True
+    assert engine.should_ignore(tmp_path / "temp\\build") is True
+    assert engine.should_ignore(tmp_path / "foo" / "bar") is True
+    assert engine.should_ignore(tmp_path / "foo\\bar") is True
+    assert engine.should_ignore(tmp_path / "src" / "test.py") is True

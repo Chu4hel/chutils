@@ -10,11 +10,11 @@ from .. import config
 if TYPE_CHECKING:
     from ..logger import ChutilsLogger
 
-# Ленивая инициализация логгера модуля
 _module_logger: ChutilsLogger | None = None
+"""Экземпляр логгера, лениво инициализируемый для нужд менеджера секретов."""
 
-# Флаг для однократного вывода предупреждения о отсутствующей зависимости keyring
 _keyring_missing_warned = False
+"""Флаг-предохранитель, предотвращающий повторный вывод предупреждения об отсутствии пакета keyring."""
 
 
 def _warn_about_missing_keyring() -> None:

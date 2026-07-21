@@ -1,6 +1,36 @@
 """
 Ядро движка проверки AI-готовности (ai-lint).
 Определяет базовые классы Rule, LintResult и LinterEngine.
+
+## Инлайное подавление предупреждений
+
+Чтобы подавить срабатывание специфического правила на отдельной строке или блоке, добавь
+в конец строки (или в строку непосредственно перед ней) комментарий в формате::
+
+    # chutils: ignore[<ИмяПравила>]
+
+Примеры::
+
+    import logging  # chutils: ignore[ChutilsIntegrationRule]
+    os.mkdir(path, parents=True)  # chutils: ignore[ChutilsIntegrationRule]
+
+    # chutils: ignore[ChutilsIntegrationRule]
+    some_call_on_next_line()
+
+Можно перечислить несколько правил через запятую::
+
+    code()  # chutils: ignore[ChutilsIntegrationRule, SecurityHardcodeRule]
+
+Чтобы подавить все правила сразу::
+
+    code()  # chutils: ignore[all]
+
+Правила, доступные по умолчанию::
+
+    ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
+    ChutilsIntegrationRule, APIMapRule, EnvSyncRule,
+    CodeDecompositionRule, APIMapHashRule, FileDependencySyncRule,
+    UpgradeCheckRule, LinterCoverageRule
 """
 
 from __future__ import annotations
@@ -11,6 +41,16 @@ import os
 import re
 from pathlib import Path
 from typing import Any
+
+INLINE_IGNORE_SYNTAX: str = "# chutils: ignore[<RuleName>]"
+"""Синтаксис инлайного подавления предупреждений ai-lint.
+
+Добавьте комментарий в конец строки или строкой выше:
+
+    import logging  # chutils: ignore[ChutilsIntegrationRule]
+    code()  # chutils: ignore[RuleA, RuleB]
+    code()  # chutils: ignore[all]
+"""
 
 IGNORE_PATTERN = re.compile(r'#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]', re.IGNORECASE)
 
@@ -73,6 +113,26 @@ else:
 class Rule:
     """
     Абстрактный базовый класс для всех правил линтера.
+
+    Каждое правило должно переопределить метод ``check()`` и задать атрибуты ``name``,
+    ``description`` и ``severity``.
+
+    ## Подавление срабатываний инлайн (inline suppress)
+
+    Любое срабатывание правила можно подавить без изменения правил, добавив комментарий
+    в конец проблемной строки или в строку непосредственно перед ней::
+
+        import logging  # chutils: ignore[ChutilsIntegrationRule]
+        code()         # chutils: ignore[RuleA, RuleB]
+        # chutils: ignore[ChutilsIntegrationRule]
+        some_call()
+
+    Для подавления всех правил сразу используйте ``all``::
+
+        code()  # chutils: ignore[all]
+
+    Правила не должны сами проверять инлайн-комментарии: фильтрация выполняется
+    автоматически в ``LinterEngine.run()``.
     """
     name: str = ""
     description: str = ""
@@ -90,6 +150,10 @@ class Rule:
 
         Returns:
             Список объектов LintResult с найденными проблемами.
+
+        Note:
+            Подавить срабатывания отдельного срабатывания можно инлайн-комментарием
+            ``# chutils: ignore[<name>]`` — без изменения правила.
         """
         raise NotImplementedError("Каждое правило должно реализовывать метод check.")
 
@@ -143,13 +207,20 @@ class LinterEngine:
         # Безопасное приведение типов для ignore
         raw_ignore = config.get("ignore")
         if isinstance(raw_ignore, list):
-            self.ignore_patterns = [str(item) for item in raw_ignore]
+            self.ignore_patterns = [str(item).replace("\\", "/") for item in raw_ignore]
         else:
             self.ignore_patterns = []
 
         self.strict = bool(config.get("strict", False))
         self.soft_mode = bool(config.get("soft_mode", False))
         self.staged = bool(config.get("staged", False))
+        self.output_format = str(config.get("output_format") or "table")
+        self.group_by = str(config.get("group_by") or "file")
+        raw_exclude = config.get("exclude_rules")
+        if isinstance(raw_exclude, list):
+            self.exclude_rules = [str(item) for item in raw_exclude]
+        else:
+            self.exclude_rules = []
         self.rules: list[Rule] = []
         self._file_lines_cache: dict[str, list[str]] = {}
 
@@ -226,16 +297,25 @@ class LinterEngine:
         except ValueError:
             return False
 
-        parts = rel_path.parts
+        # Приводим путь к универсальному Unix-виду с "/"
+        rel_path_str = str(rel_path).replace("\\", "/")
+
         for pattern in self.ignore_patterns:
             if not pattern:
                 continue
-            for part in parts:
-                if fnmatch.fnmatch(part, pattern):
+
+            # Нормализуем шаблон
+            norm_pattern = pattern.replace("\\", "/")
+
+            # Проверка по сегментам пути
+            for part in rel_path.parts:
+                norm_part = part.replace("\\", "/")
+                if fnmatch.fnmatch(norm_part, norm_pattern):
                     return True
-            if fnmatch.fnmatch(str(rel_path).replace("\\", "/"), pattern):
+
+            if fnmatch.fnmatch(rel_path_str, norm_pattern):
                 return True
-            if pattern in str(rel_path).replace("\\", "/"):
+            if norm_pattern in rel_path_str:
                 return True
         return False
 
@@ -328,6 +408,8 @@ class LinterEngine:
         for rule in self.rules:
             if enabled_names and rule.name not in enabled_names:
                 continue
+            if self.exclude_rules and rule.name in self.exclude_rules:
+                continue
 
             try:
                 rule.staged = self.staged
@@ -381,46 +463,120 @@ class LinterEngine:
             False в противном случае.
         """
         from chutils.cli_utils import get_console
+        from chutils.env import RICH_AVAILABLE
         console = get_console()
 
         if not results:
             console.print("[green]✓ Все проверки пройдены! Код готов к работе с AI.[/green]")
             return True
 
+        # Считаем количество ошибок и предупреждений
         errors_count = 0
         warnings_count = 0
-
-        # Сортируем результаты по путям файлов, критичности и строкам
-        sorted_results = sorted(
-            results,
-            key=lambda r: (r.file_path or "", r.severity, r.line_number or 0)
-        )
-
-        for r in sorted_results:
-            color = "red" if r.severity == "error" else "yellow"
-            severity_str = f"[{color}]{r.severity.upper()}[/{color}]"
-
-            loc_str = ""
-            if r.file_path:
-                try:
-                    rel_file = str(Path(r.file_path).relative_to(self.base_dir))
-                except ValueError:
-                    rel_file = r.file_path
-                loc_str = f"{rel_file}"
-                if r.line_number is not None:
-                    loc_str += f":{r.line_number}"
-                loc_str = f"[cyan]{loc_str}[/cyan]: "
-
-            rule_str = f"[blue][{r.rule_name}][/blue]"
-            console.print(f"{loc_str}{severity_str} {rule_str} {r.message}")
-            if r.fix_suggestion:
-                console.print(f"    [dim]Рекомендация: {r.fix_suggestion}[/dim]")
-
+        for r in results:
             if r.severity == "error":
                 errors_count += 1
             elif r.rule_name != "APIMapHashRule":
                 warnings_count += 1
 
+        # Определяем относительный путь для удобства вывода
+        def get_rel_path(p: str | None) -> str:
+            if not p:
+                return "Глобальные проверки"
+            try:
+                return str(Path(p).relative_to(self.base_dir))
+            except ValueError:
+                return p
+
+        # 1. Табличный вывод (при доступности rich)
+        if self.output_format == "table" and RICH_AVAILABLE:
+            from rich.table import Table
+
+            if self.group_by == "rule":
+                # Группировка по правилам (типам ошибок)
+                by_rule: dict[str, list[LintResult]] = {}
+                for r in results:
+                    by_rule.setdefault(r.rule_name, []).append(r)
+
+                for rule_name, rule_results in sorted(by_rule.items()):
+                    # Выводим имя правила как заголовок группы
+                    console.print(f"\n[bold blue]Правило: {rule_name}[/bold blue]")
+                    table = Table(box=None, show_header=True, collapse_padding=True)
+                    table.add_column("Файл:Строка", style="cyan", width=40)
+                    table.add_column("Важность", width=12)
+                    table.add_column("Описание / Рекомендация", style="dim")
+
+                    for r in sorted(rule_results, key=lambda x: (get_rel_path(x.file_path), x.line_number or 0)):
+                        color = "red" if r.severity == "error" else "yellow"
+                        sev_str = f"[{color}]{r.severity.upper()}[/{color}]"
+                        loc = get_rel_path(r.file_path)
+                        if r.line_number is not None:
+                            loc += f":{r.line_number}"
+
+                        msg = r.message
+                        if r.fix_suggestion:
+                            msg += f"\n[dim italic]Рекомендация: {r.fix_suggestion}[/dim italic]"
+
+                        table.add_row(loc, sev_str, msg)
+                    console.print(table)
+            else:
+                # Группировка по файлам (по умолчанию)
+                by_file: dict[str, list[LintResult]] = {}
+                for r in results:
+                    by_file.setdefault(get_rel_path(r.file_path), []).append(r)
+
+                for file_rel, file_results in sorted(by_file.items()):
+                    # Выводим путь к файлу как заголовок группы
+                    console.print(f"\n[bold cyan]Файл: {file_rel}[/bold cyan]")
+                    table = Table(box=None, show_header=True, collapse_padding=True)
+                    table.add_column("Строка", style="magenta", width=8, justify="right")
+                    table.add_column("Важность", width=12)
+                    table.add_column("Правило", style="blue", width=25)
+                    table.add_column("Описание / Рекомендация")
+
+                    for r in sorted(file_results, key=lambda x: (x.line_number or 0, x.rule_name)):
+                        color = "red" if r.severity == "error" else "yellow"
+                        sev_str = f"[{color}]{r.severity.upper()}[/{color}]"
+                        line_str = str(r.line_number) if r.line_number is not None else "-"
+                        msg = r.message
+                        if r.fix_suggestion:
+                            msg += f"\n[dim italic]Рекомендация: {r.fix_suggestion}[/dim italic]"
+
+                        table.add_row(line_str, sev_str, r.rule_name, msg)
+                    console.print(table)
+
+        # 2. Обычный текстовый вывод (default или при отсутствии rich)
+        else:
+            # Сортируем в зависимости от группировки
+            if self.group_by == "rule":
+                sorted_results = sorted(
+                    results,
+                    key=lambda r: (r.rule_name, get_rel_path(r.file_path), r.line_number or 0)
+                )
+            else:
+                sorted_results = sorted(
+                    results,
+                    key=lambda r: (get_rel_path(r.file_path), r.severity, r.line_number or 0)
+                )
+
+            for r in sorted_results:
+                color = "red" if r.severity == "error" else "yellow"
+                severity_str = f"[{color}]{r.severity.upper()}[/{color}]"
+
+                loc_str = ""
+                if r.file_path:
+                    rel_file = get_rel_path(r.file_path)
+                    loc_str = f"{rel_file}"
+                    if r.line_number is not None:
+                        loc_str += f":{r.line_number}"
+                    loc_str = f"[cyan]{loc_str}[/cyan]: "
+
+                rule_str = f"[blue][{r.rule_name}][/blue]"
+                console.print(f"{loc_str}{severity_str} {rule_str} {r.message}")
+                if r.fix_suggestion:
+                    console.print(f"    [dim]Рекомендация: {r.fix_suggestion}[/dim]")
+
+        console.print()
         console.rule("Итоги аудита")
         summary_msg = f"Найдено проблем: {len(results)} (Ошибок: {errors_count}, Предупреждений: {warnings_count})"
         if errors_count > 0:

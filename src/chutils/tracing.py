@@ -12,8 +12,8 @@ from .typing import P, R
 if t.TYPE_CHECKING:
     from opentelemetry.sdk.trace.export import SpanExporter
 
-# Совместимость с внутренним кодом
 IS_OTEL_AVAILABLE = OTEL_AVAILABLE
+"""Флаг доступности OpenTelemetry, используемый для обратной совместимости."""
 
 if IS_OTEL_AVAILABLE:
     try:

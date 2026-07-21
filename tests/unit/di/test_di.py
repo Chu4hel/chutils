@@ -249,3 +249,45 @@ def test_autowiring_unregistered_concrete_class():
     # Повторный резолв должен вернуть тот же инстанс
     c2 = container.resolve(DummyDependencyC)
     assert c is c2
+
+
+def test_inject_no_parens():
+    """Тест работы декоратора @inject без скобок."""
+    from chutils.di import default_container
+    
+    # Регистрируем в глобальный контейнер
+    default_container.register(DummyDependencyC)
+    
+    @inject
+    def handle_global(c: DummyDependencyC = Inject()):
+        return c.value
+        
+    assert handle_global() == "C"
+    default_container.clear()
+
+
+def test_string_dependencies():
+    """Тест поддержки строковых имен и forward refs при разрешении зависимостей."""
+    container = Container()
+
+    # 1. Регистрация строкового имени напрямую
+    container.register("Repository", lambda: "DatabaseRepository")
+    assert container.resolve("Repository") == "DatabaseRepository"
+
+    # 2. Разрешение зависимости с типом класса, если зарегистрирована строка
+    class RepositoryClass:
+        pass
+        
+    container.register("RepositoryClass", lambda: RepositoryClass())
+    resolved = container.resolve(RepositoryClass)
+    assert isinstance(resolved, RepositoryClass)
+
+    # 3. Разрешение строковой аннотации в сигнатуре класса (forward ref)
+    class Service:
+        def __init__(self, repo: "Repository") -> None:
+            self.repo = repo
+
+    container.register(Service)
+    service = container.resolve(Service)
+    assert service.repo == "DatabaseRepository"
+

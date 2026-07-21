@@ -25,7 +25,13 @@ class BaseCacheBackend(ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def set(self, key: str, value: T, ttl: int | None = None) -> None:
+    def set(
+        self,
+        key: str,
+        value: T,
+        ttl: int | None = None,
+        tags: list[str] | None = None,
+    ) -> None:
         """
         Сохранить значение в кэше.
 
@@ -33,6 +39,7 @@ class BaseCacheBackend(ABC, Generic[T]):
             key (str): Ключ кэша.
             value: Значение для сохранения.
             ttl (Optional[int]): Время жизни в секундах. Если None, используется вечное хранение.
+            tags (Optional[list[str]]): Список тегов для связывания с ключом.
         """
         pass
 
@@ -64,6 +71,16 @@ class BaseCacheBackend(ABC, Generic[T]):
         """Очистить весь кэш."""
         pass
 
+    @abstractmethod
+    def invalidate_tag(self, tag: str) -> None:
+        """
+        Удалить все ключи, связанные с указанным тегом.
+
+        Args:
+            tag (str): Тег для инвалидации.
+        """
+        pass
+
     # --- Асинхронные методы (по умолчанию вызывают синхронные) ---
 
     async def aget(self, key: str) -> T | None:
@@ -77,15 +94,22 @@ class BaseCacheBackend(ABC, Generic[T]):
         """
         return self.get(key)
 
-    async def aset(self, key: str, value: T, ttl: int | None = None) -> None:
+    async def aset(
+        self,
+        key: str,
+        value: T,
+        ttl: int | None = None,
+        tags: list[str] | None = None,
+    ) -> None:
         """Асинхронное сохранение значения в кэше.
 
         Args:
             key: Ключ кэша.
             value: Значение для сохранения.
             ttl: Время жизни в секундах.
+            tags: Список тегов для связывания с ключом.
         """
-        self.set(key, value, ttl)
+        self.set(key, value, ttl, tags)
 
     async def adelete(self, key: str) -> None:
         """Асинхронное удаление значения из кэша.
@@ -109,3 +133,11 @@ class BaseCacheBackend(ABC, Generic[T]):
     async def aclear(self) -> None:
         """Асинхронная очистка кэша."""
         self.clear()
+
+    async def ainvalidate_tag(self, tag: str) -> None:
+        """Асинхронное удаление всех ключей, связанных с указанным тегом.
+
+        Args:
+            tag: Тег для инвалидации.
+        """
+        self.invalidate_tag(tag)

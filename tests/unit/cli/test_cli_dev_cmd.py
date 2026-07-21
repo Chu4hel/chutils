@@ -101,7 +101,7 @@ def test_cli_dev_ai_lint_failure(cli_runner, mocker):
         line_number=5,
     )
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_error])
-    result = cli_runner.invoke(["dev", "ai-lint"])
+    result = cli_runner.invoke(["dev", "ai-lint", "--output-format", "default"])
     assert result.exit_code == 1
     assert "Critical error detected" in result.stdout
 
@@ -117,7 +117,7 @@ def test_cli_dev_ai_lint_soft_mode(cli_runner, mocker):
         file_path="app.py",
     )
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_error])
-    result = cli_runner.invoke(["dev", "ai-lint", "--soft-mode"])
+    result = cli_runner.invoke(["dev", "ai-lint", "--soft-mode", "--output-format", "default"])
     assert result.exit_code == 0
     assert "Critical error detected" in result.stdout
 
@@ -135,11 +135,11 @@ def test_cli_dev_ai_lint_strict_mode(cli_runner, mocker):
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_warn])
 
     # Сначала без strict - должен пройти успешно
-    res_normal = cli_runner.invoke(["dev", "ai-lint"])
+    res_normal = cli_runner.invoke(["dev", "ai-lint", "--output-format", "default"])
     assert res_normal.exit_code == 0
 
     # Со strict - должен упасть
-    res_strict = cli_runner.invoke(["dev", "ai-lint", "--strict"])
+    res_strict = cli_runner.invoke(["dev", "ai-lint", "--strict", "--output-format", "default"])
     assert res_strict.exit_code == 1
     assert "Warning detected" in res_strict.stdout
 

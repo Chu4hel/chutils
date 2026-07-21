@@ -32,6 +32,13 @@ from .api import delete, get, patch, post, put
 from .client import AsyncHttpClient, HttpClient
 from .fallback import HttpResponse, UrllibFallbackClient
 from .resilience import ResiliencePolicy
+from .streaming import (
+    AsyncEventStreamClient,
+    AsyncWebSocketClient,
+    EventStreamClient,
+    ServerSentEvent,
+    WebSocketClient,
+)
 from .tracing import create_http_span, inject_trace_headers
 
 __all__ = [
@@ -42,6 +49,11 @@ __all__ = [
     "UrllibFallbackClient",
     "inject_trace_headers",
     "create_http_span",
+    "AsyncEventStreamClient",
+    "EventStreamClient",
+    "AsyncWebSocketClient",
+    "WebSocketClient",
+    "ServerSentEvent",
     # standalone API
     "get",
     "post",

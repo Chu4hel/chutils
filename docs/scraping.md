@@ -100,6 +100,27 @@ await async_type_text(page, selector="#username", text="my_user_login", error_ra
 await async_human_sleep(1.0, 3.0)
 ```
 
+### Обертки для nodriver (асинхронные)
+
+Те же асинхронные функции поддерживают автоматизацию на базе `nodriver` (все действия транслируются напрямую через CDP протокол):
+
+```python
+from chutils.scraping.humanize import (
+    async_move_mouse,
+    async_scroll_to,
+    async_type_text,
+)
+
+# Плавное движение мыши (транслируется в CDP dispatchMouseEvent)
+await async_move_mouse(tab, x=400, y=300, start=(0, 0))
+
+# Плавный скролл страницы через JS evaluate
+await async_scroll_to(tab, x=0, y=800)
+
+# Ввод текста с опечатками (через CDP dispatchKeyEvent)
+await async_type_text(tab, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0)
+```
+
 ### Обертки для Selenium (синхронные)
 
 ```python
@@ -140,11 +161,39 @@ JS-инъекции и флаги запуска.
 - Эмулирует список установленных системных плагинов и количество ядер процессора.
 
 ```python
+from chutils.scraping.humanize import (
+    apply_antidetect_playwright,
+    apply_antidetect_selenium,
+    apply_antidetect_nodriver,
+)
+
 # Для Playwright (применяется к BrowserContext)
-await apply_antidetect_playwright(context)
+# Все параметры ниже опциональны (по умолчанию эмулируется NVIDIA RTX 3060, 8 ядер CPU и 8 ГБ RAM):
+await apply_antidetect_playwright(
+    context,
+    webgl_vendor="AMD Inc.",
+    webgl_renderer="Radeon RX 6800",
+    hardware_concurrency=12,
+    device_memory=16
+)
 
 # Для Selenium (применяется к WebDriver через CDP)
-apply_antidetect_selenium(driver)
+apply_antidetect_selenium(
+    driver,
+    webgl_vendor="Intel",
+    webgl_renderer="Intel UHD Graphics",
+    hardware_concurrency=4,
+    device_memory=8
+)
+
+# Для nodriver (применяется к вкладке Tab через CDP протокол)
+await apply_antidetect_nodriver(
+    tab,
+    webgl_vendor="NVIDIA Corporation",
+    webgl_renderer="NVIDIA GeForce RTX 4090",
+    hardware_concurrency=24,
+    device_memory=64
+)
 ```
 
 ### Флаги запуска браузера (`get_browser_launch_args`)
@@ -158,5 +207,47 @@ from chutils.scraping.humanize import get_browser_launch_args
 # '--disable-blink-features=AutomationControlled', '--disable-infobars' и т.д.
 launch_flags = get_browser_launch_args()
 ```
+
+---
+
+## 4. Прогрев профилей (ProfileWarmer)
+
+Инструмент `ProfileWarmer` (асинхронный для Playwright/nodriver) и `SyncProfileWarmer` (синхронный для Selenium) предназначены для прогрева браузерных профилей (сохраняемых в директории `user_data_dir`) путем посещения трастовых веб-ресурсов и симуляции действий реального пользователя (скроллинг, движения курсора по траектории Безье, паузы, клики по внутренним ссылкам).
+
+Это позволяет сформировать историю посещений, нагулять cookies и заполнить localStorage/sessionStorage, повышая Trust Score сессии браузера.
+
+### Асинхронный прогрев (Playwright и nodriver)
+
+```python
+from chutils.scraping.humanize import ProfileWarmer
+
+# Для Playwright (принимает объект Page)
+# или для nodriver (принимает объект Tab)
+warmer = ProfileWarmer(page_or_tab)
+
+# Прогрев: посетит 3 случайных сайта из встроенного списка
+# На каждом сайте проведет от 10 до 20 секунд, имитируя скроллинг, мышь и переходы по ссылкам
+await warmer.warm_up(
+    sites_count=3,
+    duration_per_site=(10.0, 20.0),
+    click_random_links=True
+)
+```
+
+### Синхронный прогрев (Selenium)
+
+```python
+from chutils.scraping.humanize import SyncProfileWarmer
+
+# Принимает экземпляр Selenium WebDriver
+warmer = SyncProfileWarmer(driver)
+
+warmer.warm_up(
+    sites_count=3,
+    duration_per_site=(10.0, 20.0),
+    click_random_links=True
+)
+```
+
 
 

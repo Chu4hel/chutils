@@ -368,8 +368,8 @@ class LeakyBucket:
                 return wait_time
 
 
-# Глобальный реестр ограничителей частоты
 _limiters: dict[str, TokenBucket | LeakyBucket] = {}
+"Глобальный реестр ограничителей частоты"
 _limiters_lock = threading.Lock()
 
 
