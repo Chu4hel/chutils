@@ -46,63 +46,133 @@ class RedisStore(BaseStoreBackend):
         return self._async_client
 
     def get(self, key: str, default: Any = None) -> Any:
-        """Извлекает значение по ключу (синхронно)."""
+        """Извлекает значение по ключу (синхронно).
+
+        Args:
+            key: Ключ записи.
+            default: Значение по умолчанию, если ключ не найден.
+
+        Returns:
+            Сохраненное значение или default.
+        """
         client = self._get_sync_client()
         val = client.get(key)
         return default if val is None else val
 
     def set(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
-        """Сохраняет значение по ключу с опциональным TTL (синхронно)."""
+        """Сохраняет значение по ключу с опциональным TTL (синхронно).
+
+        Args:
+            key: Ключ записи.
+            value: Сохраняемое значение.
+            ttl: Время жизни записи в секундах.
+
+        Returns:
+            True, если запись успешно сохранена.
+        """
         client = self._get_sync_client()
         ex = int(ttl) if ttl is not None else None
         res = client.set(key, value, ex=ex)
         return bool(res)
 
     def delete(self, key: str) -> bool:
-        """Удаляет запись по ключу (синхронно)."""
+        """Удаляет запись по ключу (синхронно).
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существовал и был удален.
+        """
         client = self._get_sync_client()
         res = client.delete(key)
         return int(res) > 0
 
     def exists(self, key: str) -> bool:
-        """Проверяет существование ключа (синхронно)."""
+        """Проверяет существование ключа (синхронно).
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существует.
+        """
         client = self._get_sync_client()
         res = client.exists(key)
         return int(res) > 0
 
     def clear(self) -> bool:
-        """Очищает базу данных (синхронно)."""
+        """Очищает базу данных (синхронно).
+
+        Returns:
+            True при успешной очистке.
+        """
         client = self._get_sync_client()
         res = client.flushdb()
         return bool(res)
 
     async def aget(self, key: str, default: Any = None) -> Any:
-        """Извлекает значение по ключу (асинхронно)."""
+        """Извлекает значение по ключу (асинхронно).
+
+        Args:
+            key: Ключ записи.
+            default: Значение по умолчанию, если ключ не найден.
+
+        Returns:
+            Сохраненное значение или default.
+        """
         client = self._get_async_client()
         val = await client.get(key)
         return default if val is None else val
 
     async def aset(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
-        """Сохраняет значение по ключу (асинхронно)."""
+        """Сохраняет значение по ключу (асинхронно).
+
+        Args:
+            key: Ключ записи.
+            value: Сохраняемое значение.
+            ttl: Время жизни записи в секундах.
+
+        Returns:
+            True, если запись успешно сохранена.
+        """
         client = self._get_async_client()
         ex = int(ttl) if ttl is not None else None
         res = await client.set(key, value, ex=ex)
         return bool(res)
 
     async def adelete(self, key: str) -> bool:
-        """Удаляет запись по ключу (асинхронно)."""
+        """Удаляет запись по ключу (асинхронно).
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существовал и был удален.
+        """
         client = self._get_async_client()
         res = await client.delete(key)
         return int(res) > 0
 
     async def aexists(self, key: str) -> bool:
-        """Проверяет существование ключа (асинхронно)."""
+        """Проверяет существование ключа (асинхронно).
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существует.
+        """
         client = self._get_async_client()
         res = await client.exists(key)
         return int(res) > 0
 
     async def aclear(self) -> bool:
-        """Очищает базу данных (асинхронно)."""
+        """Очищает базу данных (асинхронно).
+
+        Returns:
+            True при успешной очистке.
+        """
         client = self._get_async_client()
         res = await client.flushdb()
         return bool(res)

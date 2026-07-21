@@ -26,9 +26,25 @@ class JSONSerializer:
     """Сериализатор данных в формате JSON."""
 
     def dumps(self, value: Any) -> str:
+        """Сериализует значение в JSON-строку.
+
+        Args:
+            value: Значение для сериализации.
+
+        Returns:
+            JSON строка.
+        """
         return json.dumps(value, ensure_ascii=False)
 
     def loads(self, raw_value: str | bytes) -> Any:
+        """Десериализует JSON значение.
+
+        Args:
+            raw_value: Исходное значение JSON.
+
+        Returns:
+            Десериализованный объект.
+        """
         if isinstance(raw_value, bytes):
             raw_value = raw_value.decode("utf-8")
         return json.loads(raw_value)
@@ -38,9 +54,25 @@ class PickleSerializer:
     """Сериализатор данных в формате Pickle."""
 
     def dumps(self, value: Any) -> bytes:
+        """Сериализует значение в байты Pickle.
+
+        Args:
+            value: Значение для сериализации.
+
+        Returns:
+            Сериализованные байты.
+        """
         return pickle.dumps(value)
 
     def loads(self, raw_value: str | bytes) -> Any:
+        """Десериализует значение Pickle.
+
+        Args:
+            raw_value: Исходные байты или строка.
+
+        Returns:
+            Десериализованный объект.
+        """
         if isinstance(raw_value, str):
             raw_value = raw_value.encode("utf-8")
         return pickle.loads(raw_value)
@@ -50,9 +82,25 @@ class RawSerializer:
     """Пасс-через сериализатор без изменений."""
 
     def dumps(self, value: Any) -> Any:
+        """Возвращает значение без изменений.
+
+        Args:
+            value: Исходное значение.
+
+        Returns:
+            То же значение.
+        """
         return value
 
     def loads(self, raw_value: Any) -> Any:
+        """Возвращает значение без изменений.
+
+        Args:
+            raw_value: Исходное значение.
+
+        Returns:
+            То же значение.
+        """
         return raw_value
 
 
@@ -87,7 +135,14 @@ class StoreManager:
 
     @classmethod
     def from_config(cls, config: dict[str, Any] | None = None) -> StoreManager:
-        """Создает менеджер хранилища на основе конфигурационного словаря."""
+        """Создает менеджер хранилища на основе конфигурационного словаря.
+
+        Args:
+            config: Словарь конфигурации.
+
+        Returns:
+            Новый экземпляр StoreManager.
+        """
         cfg = config or {}
         backend_type = str(cfg.get("backend", "memory")).lower()
         serializer_type = cfg.get("serializer", "json")
@@ -137,7 +192,15 @@ class StoreManager:
                 pass
 
     def get(self, key: str, default: Any = None) -> Any:
-        """Извлекает и десериализует значение по ключу."""
+        """Извлекает и десериализует значение по ключу.
+
+        Args:
+            key: Ключ записи.
+            default: Значение по умолчанию, если ключ не найден.
+
+        Returns:
+            Десериализованное значение или default.
+        """
         with self._trace("get"):
             full_key = self._format_key(key)
             raw_val = self._backend.get(full_key, default=None)
@@ -153,7 +216,16 @@ class StoreManager:
                 return default
 
     def set(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
-        """Сериализует и сохраняет значение по ключу."""
+        """Сериализует и сохраняет значение по ключу.
+
+        Args:
+            key: Ключ записи.
+            value: Значение для сохранения.
+            ttl: Время жизни записи в секундах.
+
+        Returns:
+            True, если запись успешно сохранена.
+        """
         with self._trace("set"):
             full_key = self._format_key(key)
             serialized_val = self._serializer.dumps(value)
@@ -162,7 +234,14 @@ class StoreManager:
             return res
 
     def delete(self, key: str) -> bool:
-        """Удаляет запись по ключу."""
+        """Удаляет запись по ключу.
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существовал и был удален.
+        """
         with self._trace("delete"):
             full_key = self._format_key(key)
             res = self._backend.delete(full_key)
@@ -170,7 +249,14 @@ class StoreManager:
             return res
 
     def exists(self, key: str) -> bool:
-        """Проверяет существование ключа."""
+        """Проверяет существование ключа.
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существует.
+        """
         with self._trace("exists"):
             full_key = self._format_key(key)
             res = self._backend.exists(full_key)
@@ -178,14 +264,26 @@ class StoreManager:
             return res
 
     def clear(self) -> bool:
-        """Очищает хранилище."""
+        """Очищает хранилище.
+
+        Returns:
+            True при успешной очистке.
+        """
         with self._trace("clear"):
             res = self._backend.clear()
             self._record_metric("clear")
             return res
 
     async def aget(self, key: str, default: Any = None) -> Any:
-        """Извлекает и десериализует значение по ключу (асинхронно)."""
+        """Извлекает и десериализует значение по ключу (асинхронно).
+
+        Args:
+            key: Ключ записи.
+            default: Значение по умолчанию, если ключ не найден.
+
+        Returns:
+            Десериализованное значение или default.
+        """
         with self._trace("aget"):
             full_key = self._format_key(key)
             raw_val = await self._backend.aget(full_key, default=None)
@@ -201,7 +299,16 @@ class StoreManager:
                 return default
 
     async def aset(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
-        """Сериализует и сохраняет значение по ключу (асинхронно)."""
+        """Сериализует и сохраняет значение по ключу (асинхронно).
+
+        Args:
+            key: Ключ записи.
+            value: Значение для сохранения.
+            ttl: Время жизни записи в секундах.
+
+        Returns:
+            True, если запись успешно сохранена.
+        """
         with self._trace("aset"):
             full_key = self._format_key(key)
             serialized_val = self._serializer.dumps(value)
@@ -210,7 +317,14 @@ class StoreManager:
             return res
 
     async def adelete(self, key: str) -> bool:
-        """Удаляет запись по ключу (асинхронно)."""
+        """Удаляет запись по ключу (асинхронно).
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существовал и был удален.
+        """
         with self._trace("adelete"):
             full_key = self._format_key(key)
             res = await self._backend.adelete(full_key)
@@ -218,7 +332,14 @@ class StoreManager:
             return res
 
     async def aexists(self, key: str) -> bool:
-        """Проверяет существование ключа (асинхронно)."""
+        """Проверяет существование ключа (асинхронно).
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существует.
+        """
         with self._trace("aexists"):
             full_key = self._format_key(key)
             res = await self._backend.aexists(full_key)
@@ -226,7 +347,11 @@ class StoreManager:
             return res
 
     async def aclear(self) -> bool:
-        """Очищает хранилище (асинхронно)."""
+        """Очищает хранилище (асинхронно).
+
+        Returns:
+            True при успешной очистке.
+        """
         with self._trace("aclear"):
             res = await self._backend.aclear()
             self._record_metric("aclear")

@@ -53,44 +53,96 @@ class MemcachedStore(BaseStoreBackend):
         return self._async_client
 
     def get(self, key: str, default: Any = None) -> Any:
-        """Извлекает значение по ключу (синхронно)."""
+        """Извлекает значение по ключу (синхронно).
+
+        Args:
+            key: Ключ записи.
+            default: Значение по умолчанию, если ключ не найден.
+
+        Returns:
+            Сохраненное значение или default.
+        """
         client = self._get_sync_client()
         val = client.get(key)
         return default if val is None else val
 
     def set(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
-        """Сохраняет значение по ключу с опциональным TTL (синхронно)."""
+        """Сохраняет значение по ключу с опциональным TTL (синхронно).
+
+        Args:
+            key: Ключ записи.
+            value: Сохраняемое значение.
+            ttl: Время жизни записи в секундах.
+
+        Returns:
+            True, если запись успешно сохранена.
+        """
         client = self._get_sync_client()
         expire = int(ttl) if ttl is not None else 0
         res = client.set(key, value, expire=expire)
         return bool(res)
 
     def delete(self, key: str) -> bool:
-        """Удаляет запись по ключу (синхронно)."""
+        """Удаляет запись по ключу (синхронно).
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существовал и был удален.
+        """
         client = self._get_sync_client()
         res = client.delete(key)
         return bool(res)
 
     def exists(self, key: str) -> bool:
-        """Проверяет существование ключа (синхронно)."""
+        """Проверяет существование ключа (синхронно).
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существует.
+        """
         client = self._get_sync_client()
         val = client.get(key)
         return val is not None
 
     def clear(self) -> bool:
-        """Очищает сервер Memcached (синхронно)."""
+        """Очищает сервер Memcached (синхронно).
+
+        Returns:
+            True при успешной очистке.
+        """
         client = self._get_sync_client()
         res = client.flush_all()
         return bool(res)
 
     async def aget(self, key: str, default: Any = None) -> Any:
-        """Извлекает значение по ключу (асинхронно)."""
+        """Извлекает значение по ключу (асинхронно).
+
+        Args:
+            key: Ключ записи.
+            default: Значение по умолчанию, если ключ не найден.
+
+        Returns:
+            Сохраненное значение или default.
+        """
         client = self._get_async_client()
         val = await client.get(key.encode("utf-8"))
         return default if val is None else val
 
     async def aset(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
-        """Сохраняет значение по ключу (асинхронно)."""
+        """Сохраняет значение по ключу (асинхронно).
+
+        Args:
+            key: Ключ записи.
+            value: Сохраняемое значение.
+            ttl: Время жизни записи в секундах.
+
+        Returns:
+            True, если запись успешно сохранена.
+        """
         client = self._get_async_client()
         ex = int(ttl) if ttl is not None else 0
         val = value if isinstance(value, bytes) else str(value).encode("utf-8")
@@ -98,18 +150,36 @@ class MemcachedStore(BaseStoreBackend):
         return bool(res)
 
     async def adelete(self, key: str) -> bool:
-        """Удаляет запись по ключу (асинхронно)."""
+        """Удаляет запись по ключу (асинхронно).
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существовал и был удален.
+        """
         client = self._get_async_client()
         res = await client.delete(key.encode("utf-8"))
         return bool(res)
 
     async def aexists(self, key: str) -> bool:
-        """Проверяет существование ключа (асинхронно)."""
+        """Проверяет существование ключа (асинхронно).
+
+        Args:
+            key: Ключ записи.
+
+        Returns:
+            True, если ключ существует.
+        """
         val = await self.aget(key, default=None)
         return val is not None
 
     async def aclear(self) -> bool:
-        """Очищает сервер Memcached (асинхронно)."""
+        """Очищает сервер Memcached (асинхронно).
+
+        Returns:
+            True при успешной очистке.
+        """
         client = self._get_async_client()
         res = await client.flush_all()
         return bool(res)
