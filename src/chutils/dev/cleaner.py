@@ -4,7 +4,7 @@ chutils.dev.cleaner — Модуль для сканирования и безо
 from __future__ import annotations
 
 import fnmatch
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -34,7 +34,14 @@ class CleanItem:
 
 
 def get_path_size(path: Path) -> int:
-    """Вычисляет суммарный размер файла или директории в байтах."""
+    """Вычисляет суммарный размер файла или директории в байтах.
+
+    Args:
+        path: Путь к файлу или директории.
+
+    Returns:
+        Размер в байтах.
+    """
     if not path.exists():
         return 0
     if path.is_file() or path.is_symlink():
@@ -59,7 +66,15 @@ def get_path_size(path: Path) -> int:
 
 
 def match_pattern(name: str, patterns: list[str]) -> bool:
-    """Проверяет, соответствует ли имя файла/папки хотя бы одному из шаблонов."""
+    """Проверяет, соответствует ли имя файла/папки хотя бы одному из шаблонов.
+
+    Args:
+        name: Имя файла или директории.
+        patterns: Список шаблонов (глобов или фиксированных имен).
+
+    Returns:
+        True, если имя совпадает с хотя бы одним шаблоном, иначе False.
+    """
     for pattern in patterns:
         if pattern.endswith("/"):
             clean_pattern = pattern[:-1]

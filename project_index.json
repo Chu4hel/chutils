@@ -2919,6 +2919,120 @@
                 ]
               },
               {
+                "name": "clean",
+                "path": "chutils/commands/dev/clean",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Подкоманда CLI для очистки проекта от временных файлов и кэшей (chutils dev clean).",
+                "docstring": "Подкоманда CLI для очистки проекта от временных файлов и кэшей (chutils dev clean).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "CleanSubCommand",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Подкоманда dev clean для удаления временных файлов и кэшей разработки.",
+                    "docstring": "Подкоманда dev clean для удаления временных файлов и кэшей разработки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 15,
+                    "bases": [
+                      "chutils.commands.dev.base.SubCommand"
+                    ],
+                    "children": [
+                      {
+                        "name": "register",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, subparsers)",
+                        "summary": "Регистрирует подкоманду в argparse (регистрация делается в DevCommand).",
+                        "docstring": "Регистрирует подкоманду в argparse (регистрация делается в DevCommand).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 18,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "handle",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, args)",
+                        "summary": "Обработчик выполнения подкоманды dev clean.",
+                        "docstring": "Обработчик выполнения подкоманды dev clean.\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 22,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_format_size",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, size_bytes)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 87,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_print_items_table",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, items)",
+                        "summary": "Отображает список элементов для очистки с использованием rich или базовой консоли.",
+                        "docstring": "Отображает список элементов для очистки с использованием rich или базовой консоли.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 95,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
                 "name": "dashboard",
                 "path": "chutils/commands/dev/dashboard",
                 "type": "module",
@@ -3818,7 +3932,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 45,
+                "line_number": 47,
                 "bases": [
                   "BaseCommand"
                 ],
@@ -3839,7 +3953,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 52,
+                    "line_number": 54,
                     "bases": [],
                     "children": []
                   },
@@ -3859,7 +3973,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 492,
+                    "line_number": 532,
                     "bases": [],
                     "children": []
                   },
@@ -3879,7 +3993,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 502,
+                    "line_number": 542,
                     "bases": [],
                     "children": []
                   },
@@ -3899,7 +4013,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 511,
+                    "line_number": 551,
                     "bases": [],
                     "children": []
                   },
@@ -3919,7 +4033,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 520,
+                    "line_number": 560,
                     "bases": [],
                     "children": []
                   },
@@ -3939,7 +4053,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 529,
+                    "line_number": 569,
                     "bases": [],
                     "children": []
                   },
@@ -3959,7 +4073,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 538,
+                    "line_number": 578,
                     "bases": [],
                     "children": []
                   },
@@ -3979,7 +4093,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 547,
+                    "line_number": 587,
                     "bases": [],
                     "children": []
                   },
@@ -3999,7 +4113,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 556,
+                    "line_number": 596,
                     "bases": [],
                     "children": []
                   },
@@ -4019,7 +4133,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 565,
+                    "line_number": 605,
                     "bases": [],
                     "children": []
                   },
@@ -4039,7 +4153,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 574,
+                    "line_number": 614,
                     "bases": [],
                     "children": []
                   },
@@ -4059,7 +4173,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 583,
+                    "line_number": 623,
                     "bases": [],
                     "children": []
                   },
@@ -4079,7 +4193,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 592,
+                    "line_number": 632,
                     "bases": [],
                     "children": []
                   },
@@ -4099,7 +4213,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 601,
+                    "line_number": 641,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "handle_clean",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, args)",
+                    "summary": "Обработчик уборки мусора разработки (chutils dev clean).",
+                    "docstring": "Обработчик уборки мусора разработки (chutils dev clean).\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 650,
                     "bases": [],
                     "children": []
                   }
@@ -5763,6 +5897,26 @@
                   "custom_metadata": {}
                 },
                 "line_number": 205,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "load_clean_config",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(cli_args)",
+                "summary": "Загружает и объединяет конфигурацию для chutils dev clean из всех источников.",
+                "docstring": "Загружает и объединяет конфигурацию для chutils dev clean из всех источников.\n\nПриоритет источников (от наивысшего к низшему):\n1. CLI аргументы (cli_args)\n2. Переменные окружения (CH_DEV_CLEAN_...)\n3. Локальные yml файлы (секция Dev.Clean)\n4. pyproject.toml (секция [tool.chutils.clean])\n5. Значения по умолчанию (DEFAULT_CLEAN_CONFIG)\n\nArgs:\n    cli_args: Аргументы командной строки.\n\nReturns:\n    Объединенный словарь конфигурации очистки.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 331,
                 "bases": [],
                 "children": []
               }
@@ -8070,6 +8224,46 @@
                   "custom_metadata": {}
                 },
                 "line_number": 208,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "load_pyproject_clean_config",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(path)",
+                "summary": "Загружает секцию [tool.chutils.clean] из pyproject.toml.",
+                "docstring": "Загружает секцию [tool.chutils.clean] из pyproject.toml.\n\nArgs:\n    path: Путь к файлу pyproject.toml.\n\nReturns:\n    Словарь с настройками очистки.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 268,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_parse_pyproject_toml_section_fallback",
+                "type": "function",
+                "layer": "private",
+                "signature": "(path, target_section)",
+                "summary": "Ручной парсер для извлечения указанной секции из TOML.",
+                "docstring": "Ручной парсер для извлечения указанной секции из TOML.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 308,
                 "bases": [],
                 "children": []
               }
@@ -10498,6 +10692,162 @@
                   "custom_metadata": {}
                 },
                 "line_number": 369,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "cleaner",
+            "path": "chutils/dev/cleaner",
+            "type": "module",
+            "layer": "internal",
+            "summary": "chutils.dev.cleaner — Модуль для сканирования и безопасной уборки мусора разработки.",
+            "docstring": "chutils.dev.cleaner — Модуль для сканирования и безопасной уборки мусора разработки.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "logger",
+                "type": "constant",
+                "layer": "public",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 14,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "CleanItem",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Элемент, предназначенный для очистки.",
+                "docstring": "Элемент, предназначенный для очистки.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [
+                    "dataclass"
+                  ],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 18,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "display_size",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает человекочитаемый размер элемента.",
+                    "docstring": "Возвращает человекочитаемый размер элемента.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 26,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "get_path_size",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(path)",
+                "summary": "Вычисляет суммарный размер файла или директории в байтах.",
+                "docstring": "Вычисляет суммарный размер файла или директории в байтах.\n\nArgs:\n    path: Путь к файлу или директории.\n\nReturns:\n    Размер в байтах.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 36,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "match_pattern",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(name, patterns)",
+                "summary": "Проверяет, соответствует ли имя файла/папки хотя бы одному из шаблонов.",
+                "docstring": "Проверяет, соответствует ли имя файла/папки хотя бы одному из шаблонов.\n\nArgs:\n    name: Имя файла или директории.\n    patterns: Список шаблонов (глобов или фиксированных имен).\n\nReturns:\n    True, если имя совпадает с хотя бы одним шаблоном, иначе False.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 68,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "scan_project",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(base_dir, excludes, default_targets, extra_targets)",
+                "summary": "Сканирует проект и возвращает список найденных временных файлов и папок.",
+                "docstring": "Сканирует проект и возвращает список найденных временных файлов и папок.\n\nArgs:\n    base_dir: Корневая директория проекта.\n    excludes: Список папок или шаблонов для исключения из обхода.\n    default_targets: Базовый список шаблонов временных файлов/папок.\n    extra_targets: Дополнительные шаблоны для очистки.\n\nReturns:\n    Список объектов CleanItem.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 88,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "execute_clean",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(items)",
+                "summary": "Удаляет найденные мусорные элементы.",
+                "docstring": "Удаляет найденные мусорные элементы.\n\nArgs:\n    items: Список элементов CleanItem для удаления.\n\nReturns:\n    Кортеж (количество удаленных элементов, суммарно освобожденный размер в байтах).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 200,
                 "bases": [],
                 "children": []
               }
@@ -27190,6 +27540,16 @@
       "weight": 1
     },
     {
+      "source": "chutils/commands/dev/clean",
+      "target": "chutils/commands/dev/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/commands/dev/clean",
+      "target": "chutils/dev/cleaner",
+      "weight": 3
+    },
+    {
       "source": "chutils/commands/dev/dashboard",
       "target": "chutils/commands/dev/base",
       "weight": 1
@@ -27397,7 +27757,7 @@
     {
       "source": "chutils/config/dev",
       "target": "/utils",
-      "weight": 2
+      "weight": 3
     },
     {
       "source": "chutils/config/diagnostics",
@@ -27546,8 +27906,8 @@
     },
     {
       "source": "chutils/dev",
-      "target": "/scaffold",
-      "weight": 1
+      "target": "/cleaner",
+      "weight": 3
     },
     {
       "source": "chutils/dev/ast_indexer",
@@ -27572,6 +27932,11 @@
     {
       "source": "chutils/dev/chat_context",
       "target": "chutils/dev/ast_indexer",
+      "weight": 1
+    },
+    {
+      "source": "chutils/dev/cleaner",
+      "target": "chutils/fs",
       "weight": 1
     },
     {
@@ -28469,8 +28834,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "54ec6e7ce949444668fbe196440589ebcf6844da (dirty)",
-    "generated_at": "2026-07-21T18:30:41.304406+00:00",
-    "project_hash": "f5398bba4f8044d95f6059ce097c1677445d76c7d11233f3bd5e7c65968dad59"
+    "git_commit": "212380f824685c36da5117a871d4f089b932d889 (dirty)",
+    "generated_at": "2026-07-21T18:58:27.124289+00:00",
+    "project_hash": "0fd821132d3eb46ff555bc96c85770f54c67f14ef054a309eee4c5379e21c63f"
   }
 }
