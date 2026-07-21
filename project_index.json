@@ -18545,6 +18545,504 @@
             ]
           },
           {
+            "name": "streaming",
+            "path": "chutils/http/streaming",
+            "type": "module",
+            "layer": "internal",
+            "summary": "chutils.http.streaming — Модуль для поддержки HTTP-стриминга (SSE/Chunked) и WebSockets.",
+            "docstring": "chutils.http.streaming — Модуль для поддержки HTTP-стриминга (SSE/Chunked) и WebSockets.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "ServerSentEvent",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Представляет собой отдельное событие Server-Sent Events (SSE).",
+                "docstring": "Представляет собой отдельное событие Server-Sent Events (SSE).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [
+                    "dataclass"
+                  ],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 19,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "default_backoff",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(base_delay, max_delay, factor)",
+                "summary": "Генератор экспоненциального бэкоффа с джиттером.",
+                "docstring": "Генератор экспоненциального бэкоффа с джиттером.\n\nArgs:\n    base_delay: Начальная задержка в секундах.\n    max_delay: Максимальная задержка в секундах.\n    factor: Множитель экспоненциального роста.\n\nReturns:\n    Итератор с функциями задержки в секундах.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 28,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_check_websockets",
+                "type": "function",
+                "layer": "private",
+                "signature": "()",
+                "summary": "Проверяет наличие установленной библиотеки websockets.",
+                "docstring": "Проверяет наличие установленной библиотеки websockets.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 51,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "SSEParser",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Парсер для Server-Sent Events.",
+                "docstring": "Парсер для Server-Sent Events.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 63,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 66,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "feed_line",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, line)",
+                    "summary": "Передает очередную строку в парсер SSE.",
+                    "docstring": "Передает очередную строку в парсер SSE.\n\nArgs:\n    line: Входная строка данных SSE.\n\nReturns:\n    Завершенное событие ServerSentEvent или None.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 73,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "AsyncEventStreamClient",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Асинхронный клиент для HTTP Streaming и SSE.",
+                "docstring": "Асинхронный клиент для HTTP Streaming и SSE.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 129,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, url, headers, timeout, filter_heartbeats, reconnect_strategy)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 132,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "EventStreamClient",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Синхронный клиент-обертка для HTTP Streaming и SSE.",
+                "docstring": "Синхронный клиент-обертка для HTTP Streaming и SSE.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 216,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, url, headers, timeout, filter_heartbeats, reconnect_strategy)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 219,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "AsyncWebSocketClient",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Асинхронный клиент для WebSockets.",
+                "docstring": "Асинхронный клиент для WebSockets.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 302,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, url, headers, filter_heartbeats, reconnect_strategy)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 305,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_reset_reconnect_strategy",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 320,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "connect",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Устанавливает асинхронное соединение по WebSocket.",
+                    "docstring": "Устанавливает асинхронное соединение по WebSocket.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 328,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "send",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, message)",
+                    "summary": "Отправляет текстовое или бинарное сообщение через WebSocket.",
+                    "docstring": "Отправляет текстовое или бинарное сообщение через WebSocket.\n\nArgs:\n    message: Сообщение для отправки.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 349,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "recv",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Принимает текстовое или бинарное сообщение из WebSocket.",
+                    "docstring": "Принимает текстовое или бинарное сообщение из WebSocket.\n\nReturns:\n    Принятое сообщение.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 365,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_handle_reconnect",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, exc)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 385,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "WebSocketClient",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Синхронный клиент-обертка для WebSockets.",
+                "docstring": "Синхронный клиент-обертка для WebSockets.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 416,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, url, headers, filter_heartbeats, reconnect_strategy)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 419,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_reset_reconnect_strategy",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 434,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "connect",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Устанавливает синхронное соединение по WebSocket.",
+                    "docstring": "Устанавливает синхронное соединение по WebSocket.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 442,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "send",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, message)",
+                    "summary": "Отправляет текстовое или бинарное сообщение через WebSocket.",
+                    "docstring": "Отправляет текстовое или бинарное сообщение через WebSocket.\n\nArgs:\n    message: Сообщение для отправки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 465,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "recv",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Принимает текстовое или бинарное сообщение из WebSocket.",
+                    "docstring": "Принимает текстовое или бинарное сообщение из WebSocket.\n\nReturns:\n    Принятое сообщение.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 481,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_handle_reconnect",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, exc)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 501,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "tracing",
             "path": "chutils/http/tracing",
             "type": "module",
@@ -26459,7 +26957,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 311,
+        "line_number": 316,
         "bases": [],
         "children": []
       },
@@ -26479,7 +26977,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 335,
+        "line_number": 340,
         "bases": [],
         "children": []
       },
@@ -26499,7 +26997,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 345,
+        "line_number": 350,
         "bases": [],
         "children": []
       }
@@ -27513,6 +28011,11 @@
     },
     {
       "source": "chutils/http",
+      "target": "/streaming",
+      "weight": 5
+    },
+    {
+      "source": "chutils/http",
       "target": "/tracing",
       "weight": 2
     },
@@ -27535,6 +28038,11 @@
       "source": "chutils/http/client",
       "target": "/fallback",
       "weight": 3
+    },
+    {
+      "source": "chutils/http/streaming",
+      "target": "chutils/exceptions",
+      "weight": 1
     },
     {
       "source": "chutils/http/tracing",
@@ -27961,8 +28469,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "6654866f29add51a6a52ecbeef7ddbdb83230ccb (dirty)",
-    "generated_at": "2026-07-20T18:12:06.591368+00:00",
-    "project_hash": "1c97436214bfaa0774450f29b9a41d924524716d133142b594f410a3dd9fddf4"
+    "git_commit": "54ec6e7ce949444668fbe196440589ebcf6844da (dirty)",
+    "generated_at": "2026-07-21T18:30:41.304406+00:00",
+    "project_hash": "f5398bba4f8044d95f6059ce097c1677445d76c7d11233f3bd5e7c65968dad59"
   }
 }
