@@ -398,8 +398,8 @@ def load_clean_config(cli_args: JSONDict | None = None) -> JSONDict:
                 if isinstance(cli_exclude, str)
                 else cli_exclude
             )
-            current_excludes = list(merged_config.get("default_excludes", []))  # type: ignore[arg-type]
-            for item in excludes:  # type: ignore[union-attr]
+            current_excludes = list(merged_config.get("default_excludes", []))
+            for item in excludes:
                 if item not in current_excludes:
                     current_excludes.append(item)
             merged_config["default_excludes"] = current_excludes
@@ -411,8 +411,8 @@ def load_clean_config(cli_args: JSONDict | None = None) -> JSONDict:
                 if isinstance(cli_include, str)
                 else cli_include
             )
-            current_extras = list(merged_config.get("extra_clean_targets", []))  # type: ignore[arg-type]
-            for item in includes:  # type: ignore[union-attr]
+            current_extras = list(merged_config.get("extra_clean_targets", []))
+            for item in includes:
                 if item not in current_extras:
                     current_extras.append(item)
             merged_config["extra_clean_targets"] = current_extras

@@ -1,4 +1,5 @@
 # ruff: noqa: E402
+from abc import ABC
 import datetime
 import logging
 from collections.abc import AsyncIterator, Callable, Iterable, Iterator
