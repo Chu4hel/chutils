@@ -554,7 +554,9 @@ def is_significant_difference(
 def encrypt_portable(data: str, seed: str) -> str: ...
 
 
-def decrypt_portable(encrypted_data: str, seed: str) -> str | None: ...
+def decrypt_portable(
+        encrypted_data: str, seed: str, raise_on_error: bool = ...
+) -> str | None: ...
 
 
 def encrypt_file(
@@ -563,7 +565,10 @@ def encrypt_file(
 
 
 def decrypt_file(
-        file_path: str | Path, seed: str, output_path: str | Path | None = None
+        file_path: str | Path,
+        seed: str,
+        output_path: str | Path | None = None,
+        raise_on_error: bool = ...
 ) -> bool: ...
 
 

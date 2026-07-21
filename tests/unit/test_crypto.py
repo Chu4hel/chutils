@@ -129,3 +129,20 @@ def test_file_operations_no_cryptography(tmp_path, monkeypatch):
     with pytest.raises(OptionalDependencyError) as exc_info:
         decrypt_file(file_path, "seed")
     assert "chutils[crypto]" in str(exc_info.value)
+
+
+def test_decrypt_raise_on_error(tmp_path):
+    """Проверяет выбрасывание ValueError при raise_on_error=True."""
+    encrypted = encrypt_portable("secret", "seed123")
+
+    with pytest.raises(ValueError) as exc_info:
+        decrypt_portable(encrypted, "wrong_seed", raise_on_error=True)
+    assert "неверный ключ или повреждённый токен" in str(exc_info.value)
+
+    src_file = tmp_path / "data.txt"
+    src_file.write_text("Содержимое", encoding="utf-8")
+    encrypt_file(src_file, "seed123")
+
+    with pytest.raises(ValueError) as exc_info:
+        decrypt_file(src_file, "wrong_seed", raise_on_error=True)
+    assert "неверный ключ или повреждённые данные" in str(exc_info.value)

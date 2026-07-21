@@ -61,18 +61,25 @@ def encrypt_portable(data: str, seed: str) -> str:
     return encrypted_bytes.decode("utf-8")
 
 
-def decrypt_portable(encrypted_data: str, seed: str) -> str | None:
+def decrypt_portable(
+        encrypted_data: str,
+        seed: str,
+        raise_on_error: bool = False
+) -> str | None:
     """Дешифрует строку с использованием детерминированного ключа, полученного из seed.
 
     Args:
         encrypted_data: Зашифрованная строка в формате Base64.
         seed: Строка-пароль для генерации ключа.
+        raise_on_error: Если True, выбрасывает ValueError при ошибке
+            дешифрования (неверный ключ или поврежденный токен).
 
     Returns:
         Расшифрованная строка или None, если дешифрование завершилось ошибкой.
 
     Raises:
         OptionalDependencyError: Если библиотека cryptography не установлена.
+        ValueError: Если raise_on_error равен True и произошла ошибка дешифрования.
     """
     if not _HAS_CRYPTOGRAPHY:
         raise OptionalDependencyError(
@@ -85,7 +92,9 @@ def decrypt_portable(encrypted_data: str, seed: str) -> str | None:
     try:
         decrypted_bytes = f.decrypt(encrypted_data.encode("utf-8"))
         return decrypted_bytes.decode("utf-8")
-    except (InvalidToken, Exception):
+    except (InvalidToken, Exception) as exc:
+        if raise_on_error:
+            raise ValueError(f"Не удалось расшифровать данные: неверный ключ или повреждённый токен ({exc})") from exc
         return None
 
 
@@ -128,7 +137,8 @@ def encrypt_file(
 def decrypt_file(
         file_path: str | Path,
         seed: str,
-        output_path: str | Path | None = None
+        output_path: str | Path | None = None,
+        raise_on_error: bool = False
 ) -> bool:
     """Дешифрует содержимое файла и сохраняет результат.
 
@@ -137,12 +147,15 @@ def decrypt_file(
         seed: Строка-пароль для генерации ключа.
         output_path: Путь для сохранения результата. Если не указан,
             файл перезаписывается.
+        raise_on_error: Если True, выбрасывает ValueError при ошибке
+            дешифрования (неверный ключ или поврежденный файл).
 
     Returns:
         True, если дешифрование прошло успешно, иначе False.
 
     Raises:
         OptionalDependencyError: Если библиотека cryptography не установлена.
+        ValueError: Если raise_on_error равен True и произошла ошибка дешифрования.
     """
     if not _HAS_CRYPTOGRAPHY:
         raise OptionalDependencyError(
@@ -160,5 +173,7 @@ def decrypt_file(
         decrypted_bytes = f.decrypt(encrypted_bytes)
         out_p.write_bytes(decrypted_bytes)  # chutils: ignore[ChutilsIntegrationRule]
         return True
-    except (InvalidToken, Exception):
+    except (InvalidToken, Exception) as exc:
+        if raise_on_error:
+            raise ValueError(f"Не удалось расшифровать файл: неверный ключ или повреждённые данные ({exc})") from exc
         return False

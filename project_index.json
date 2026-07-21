@@ -8916,9 +8916,9 @@
             "name": "decrypt_portable",
             "type": "function",
             "layer": "public",
-            "signature": "(encrypted_data, seed)",
+            "signature": "(encrypted_data, seed, raise_on_error)",
             "summary": "Дешифрует строку с использованием детерминированного ключа, полученного из seed.",
-            "docstring": "Дешифрует строку с использованием детерминированного ключа, полученного из seed.\n\nArgs:\n    encrypted_data: Зашифрованная строка в формате Base64.\n    seed: Строка-пароль для генерации ключа.\n\nReturns:\n    Расшифрованная строка или None, если дешифрование завершилось ошибкой.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.",
+            "docstring": "Дешифрует строку с использованием детерминированного ключа, полученного из seed.\n\nArgs:\n    encrypted_data: Зашифрованная строка в формате Base64.\n    seed: Строка-пароль для генерации ключа.\n    raise_on_error: Если True, выбрасывает ValueError при ошибке\n        дешифрования (неверный ключ или поврежденный токен).\n\nReturns:\n    Расшифрованная строка или None, если дешифрование завершилось ошибкой.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.\n    ValueError: Если raise_on_error равен True и произошла ошибка дешифрования.",
             "breadcrumbs": {
               "is_async": false,
               "is_thread_safe": false,
@@ -8948,7 +8948,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 92,
+            "line_number": 101,
             "bases": [],
             "children": []
           },
@@ -8956,9 +8956,9 @@
             "name": "decrypt_file",
             "type": "function",
             "layer": "public",
-            "signature": "(file_path, seed, output_path)",
+            "signature": "(file_path, seed, output_path, raise_on_error)",
             "summary": "Дешифрует содержимое файла и сохраняет результат.",
-            "docstring": "Дешифрует содержимое файла и сохраняет результат.\n\nArgs:\n    file_path: Путь к зашифрованному файлу.\n    seed: Строка-пароль для генерации ключа.\n    output_path: Путь для сохранения результата. Если не указан,\n        файл перезаписывается.\n\nReturns:\n    True, если дешифрование прошло успешно, иначе False.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.",
+            "docstring": "Дешифрует содержимое файла и сохраняет результат.\n\nArgs:\n    file_path: Путь к зашифрованному файлу.\n    seed: Строка-пароль для генерации ключа.\n    output_path: Путь для сохранения результата. Если не указан,\n        файл перезаписывается.\n    raise_on_error: Если True, выбрасывает ValueError при ошибке\n        дешифрования (неверный ключ или поврежденный файл).\n\nReturns:\n    True, если дешифрование прошло успешно, иначе False.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.\n    ValueError: Если raise_on_error равен True и произошла ошибка дешифрования.",
             "breadcrumbs": {
               "is_async": false,
               "is_thread_safe": false,
@@ -8968,7 +8968,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 128,
+            "line_number": 137,
             "bases": [],
             "children": []
           }
@@ -30875,8 +30875,8 @@
   "metadata": {
     "chutils_version": "3.3.0",
     "project_version": "3.3.0",
-    "git_commit": "95a461172931674934e6595f67f336cca1fc1520 (dirty)",
-    "generated_at": "2026-07-21T21:17:25.222016+00:00",
-    "project_hash": "7288da8a14c20f4d65e962b9aab1c0605e3f89b59c2caa040c3de5af05845d2a"
+    "git_commit": "e62050702bd276fd2c5ee2e0212cf64f422f5e5c (dirty)",
+    "generated_at": "2026-07-21T21:46:24.681655+00:00",
+    "project_hash": "10e3cf7a740dba09e864b47c4e652684ba3b9ea474a5e98d6c530f29beab448b"
   }
 }
