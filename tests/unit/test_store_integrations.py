@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+import chutils
 from chutils.store.backends.memory import MemoryStore
 from chutils.store.decorator import store_cache
 from chutils.store.manager import StoreManager
@@ -15,12 +16,17 @@ from chutils.store.manager import StoreManager
 
 def test_store_manager_metrics_and_tracing_hooks() -> None:
     """Проверяет вызов хуков метрик и трассировки при операциях get/set."""
-    mock_tracer = MagicMock()
-    mock_tracer.trace.side_effect = lambda op: nullcontext()
-    mock_metrics = MagicMock()
+    mock_trace_func = MagicMock(side_effect=lambda op: nullcontext())
+    mock_counter_func = MagicMock()
 
-    with patch("chutils.store.manager._get_tracing", return_value=mock_tracer), patch(
-        "chutils.store.manager._get_metrics", return_value=mock_metrics
+    mock_tracing_mod = MagicMock()
+    mock_tracing_mod.trace = mock_trace_func
+
+    mock_metrics_mod = MagicMock()
+    mock_metrics_mod.counter = mock_counter_func
+
+    with patch.object(chutils, "tracing", mock_tracing_mod), patch.object(
+        chutils, "metrics", mock_metrics_mod
     ):
         manager = StoreManager(backend=MemoryStore())
 
@@ -29,7 +35,8 @@ def test_store_manager_metrics_and_tracing_hooks() -> None:
         assert manager.get("missing") is None
 
         # Проверяем вызов трассировки и метрик
-        assert mock_tracer.trace.call_count >= 3
+        assert mock_trace_func.call_count >= 3
+        assert mock_counter_func.call_count >= 3
 
 
 def test_store_cache_decorator_sync() -> None:

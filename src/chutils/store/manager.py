@@ -12,24 +12,6 @@ from .backends.base import BaseStoreBackend
 from .backends.memory import MemoryStore
 
 
-def _get_tracing() -> Any:
-    try:
-        from chutils import tracing
-
-        return tracing
-    except Exception:
-        return None
-
-
-def _get_metrics() -> Any:
-    try:
-        from chutils import metrics
-
-        return metrics
-    except Exception:
-        return None
-
-
 class JSONSerializer:
     """Сериализатор данных в формате JSON."""
 
@@ -179,27 +161,28 @@ class StoreManager:
         return f"{self._prefix}{key}" if self._prefix else key
 
     def _trace(self, op: str) -> Any:
-        tracing = _get_tracing()
-        if tracing is not None and hasattr(tracing, "trace"):
-            try:
+        try:
+            from chutils import tracing
+
+            if hasattr(tracing, "trace"):
                 res = tracing.trace(f"store.{op}")
                 if res is not None and hasattr(res, "__enter__"):
                     return res
-            except Exception:
-                pass
+        except Exception:
+            pass
         return nullcontext()
 
     def _record_metric(self, op: str, hit: bool | None = None) -> None:
-        metrics = _get_metrics()
-        if metrics is not None:
-            try:
-                if hasattr(metrics, "counter"):
-                    metrics.counter("store_operations_total", labels={"op": op})
-                    if hit is not None:
-                        status = "hit" if hit else "miss"
-                        metrics.counter("store_requests_total", labels={"status": status})
-            except Exception:
-                pass
+        try:
+            from chutils import metrics
+
+            if hasattr(metrics, "counter"):
+                metrics.counter("store_operations_total", labels={"op": op})
+                if hit is not None:
+                    status = "hit" if hit else "miss"
+                    metrics.counter("store_requests_total", labels={"status": status})
+        except Exception:
+            pass
 
     def get(self, key: str, default: Any = None) -> Any:
         """Извлекает и десериализует значение по ключу.
