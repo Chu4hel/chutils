@@ -162,25 +162,25 @@ class StoreManager:
 
     def _trace(self, op: str) -> Any:
         try:
-            from chutils import tracing
+            from chutils.tracing import get_tracer
 
-            if hasattr(tracing, "trace"):
-                res = tracing.trace(f"store.{op}")
-                if res is not None and hasattr(res, "__enter__"):
-                    return res
+            tracer = get_tracer("chutils.store")
+            if tracer is not None and hasattr(tracer, "start_as_current_span"):
+                span = tracer.start_as_current_span(f"store.{op}")
+                if span is not None and hasattr(span, "__enter__"):
+                    return span
         except Exception:
             pass
         return nullcontext()
 
     def _record_metric(self, op: str, hit: bool | None = None) -> None:
         try:
-            from chutils import metrics
+            from chutils.metrics import increment
 
-            if hasattr(metrics, "counter"):
-                metrics.counter("store_operations_total", labels={"op": op})
-                if hit is not None:
-                    status = "hit" if hit else "miss"
-                    metrics.counter("store_requests_total", labels={"status": status})
+            increment("store_operations_total", value=1.0, labels={"op": op})
+            if hit is not None:
+                status = "hit" if hit else "miss"
+                increment("store_requests_total", value=1.0, labels={"status": status})
         except Exception:
             pass
 
