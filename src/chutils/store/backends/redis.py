@@ -9,7 +9,14 @@ from typing import Any
 from chutils.exceptions import OptionalDependencyError
 from .base import BaseStoreBackend
 
-REDIS_AVAILABLE = importlib.util.find_spec("redis") is not None
+
+def is_redis_available() -> bool:
+    """Проверяет доступность библиотеки redis в окружении.
+
+    Returns:
+        True, если пакет redis установлен.
+    """
+    return importlib.util.find_spec("redis") is not None
 
 
 class RedisStore(BaseStoreBackend):
@@ -22,7 +29,7 @@ class RedisStore(BaseStoreBackend):
         self._async_client: Any = None
 
     def _ensure_redis(self) -> None:
-        if not REDIS_AVAILABLE:
+        if not is_redis_available():
             raise OptionalDependencyError(
                 "Пакет 'redis' не установлен.",
                 dependency="redis",

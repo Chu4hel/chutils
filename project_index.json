@@ -25393,32 +25393,12 @@
                 "children": [],
                 "symbols": [
                   {
-                    "name": "PYMEMCACHE_AVAILABLE",
-                    "type": "constant",
+                    "name": "is_pymemcache_available",
+                    "type": "function",
                     "layer": "internal",
-                    "signature": null,
-                    "summary": "",
-                    "docstring": null,
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 12,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "AIOMEMCACHE_AVAILABLE",
-                    "type": "constant",
-                    "layer": "internal",
-                    "signature": null,
-                    "summary": "",
-                    "docstring": null,
+                    "signature": "()",
+                    "summary": "Проверяет доступность библиотеки pymemcache в окружении.",
+                    "docstring": "Проверяет доступность библиотеки pymemcache в окружении.\n\nReturns:\n    True, если пакет pymemcache установлен.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -25429,6 +25409,26 @@
                       "custom_metadata": {}
                     },
                     "line_number": 13,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_aiomemcache_available",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "()",
+                    "summary": "Проверяет доступность библиотеки aiomemcache в окружении.",
+                    "docstring": "Проверяет доступность библиотеки aiomemcache в окружении.\n\nReturns:\n    True, если пакет aiomemcache установлен.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 22,
                     "bases": [],
                     "children": []
                   },
@@ -25448,7 +25448,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 16,
+                    "line_number": 31,
                     "bases": [
                       ".base.BaseStoreBackend"
                     ],
@@ -25469,7 +25469,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 19,
+                        "line_number": 34,
                         "bases": [],
                         "children": []
                       },
@@ -25489,7 +25489,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 26,
+                        "line_number": 41,
                         "bases": [],
                         "children": []
                       },
@@ -25509,7 +25509,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 34,
+                        "line_number": 49,
                         "bases": [],
                         "children": []
                       },
@@ -25529,7 +25529,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 42,
+                        "line_number": 57,
                         "bases": [],
                         "children": []
                       },
@@ -25539,7 +25539,7 @@
                         "layer": "internal",
                         "signature": "(self, key, default)",
                         "summary": "Извлекает значение по ключу (синхронно).",
-                        "docstring": "Извлекает значение по ключу (синхронно).",
+                        "docstring": "Извлекает значение по ключу (синхронно).\n\nArgs:\n    key: Ключ записи.\n    default: Значение по умолчанию, если ключ не найден.\n\nReturns:\n    Сохраненное значение или default.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -25549,7 +25549,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 55,
+                        "line_number": 70,
                         "bases": [],
                         "children": []
                       },
@@ -25559,7 +25559,7 @@
                         "layer": "internal",
                         "signature": "(self, key, value, ttl)",
                         "summary": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
-                        "docstring": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
+                        "docstring": "Сохраняет значение по ключу с опциональным TTL (синхронно).\n\nArgs:\n    key: Ключ записи.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.\n\nReturns:\n    True, если запись успешно сохранена.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -25569,7 +25569,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 61,
+                        "line_number": 84,
                         "bases": [],
                         "children": []
                       },
@@ -25579,109 +25579,9 @@
                         "layer": "internal",
                         "signature": "(self, key)",
                         "summary": "Удаляет запись по ключу (синхронно).",
-                        "docstring": "Удаляет запись по ключу (синхронно).",
+                        "docstring": "Удаляет запись по ключу (синхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существовал и был удален.",
                         "breadcrumbs": {
                           "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 68,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "exists",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, key)",
-                        "summary": "Проверяет существование ключа (синхронно).",
-                        "docstring": "Проверяет существование ключа (синхронно).",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 74,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "clear",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Очищает сервер Memcached (синхронно).",
-                        "docstring": "Очищает сервер Memcached (синхронно).",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 80,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "aget",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, key, default)",
-                        "summary": "Извлекает значение по ключу (асинхронно).",
-                        "docstring": "Извлекает значение по ключу (асинхронно).",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 86,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "aset",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, key, value, ttl)",
-                        "summary": "Сохраняет значение по ключу (асинхронно).",
-                        "docstring": "Сохраняет значение по ключу (асинхронно).",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 92,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "adelete",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, key)",
-                        "summary": "Удаляет запись по ключу (асинхронно).",
-                        "docstring": "Удаляет запись по ключу (асинхронно).",
-                        "breadcrumbs": {
-                          "is_async": true,
                           "is_thread_safe": false,
                           "is_heavy": false,
                           "is_abstract": false,
@@ -25694,12 +25594,52 @@
                         "children": []
                       },
                       {
-                        "name": "aexists",
+                        "name": "exists",
                         "type": "method",
                         "layer": "internal",
                         "signature": "(self, key)",
-                        "summary": "Проверяет существование ключа (асинхронно).",
-                        "docstring": "Проверяет существование ключа (асинхронно).",
+                        "summary": "Проверяет существование ключа (синхронно).",
+                        "docstring": "Проверяет существование ключа (синхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существует.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 113,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "clear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Очищает сервер Memcached (синхронно).",
+                        "docstring": "Очищает сервер Memcached (синхронно).\n\nReturns:\n    True при успешной очистке.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 126,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aget",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, default)",
+                        "summary": "Извлекает значение по ключу (асинхронно).",
+                        "docstring": "Извлекает значение по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n    default: Значение по умолчанию, если ключ не найден.\n\nReturns:\n    Сохраненное значение или default.",
                         "breadcrumbs": {
                           "is_async": true,
                           "is_thread_safe": false,
@@ -25709,7 +25649,67 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 106,
+                        "line_number": 136,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aset",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl)",
+                        "summary": "Сохраняет значение по ключу (асинхронно).",
+                        "docstring": "Сохраняет значение по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.\n\nReturns:\n    True, если запись успешно сохранена.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 150,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "adelete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет запись по ключу (асинхронно).",
+                        "docstring": "Удаляет запись по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существовал и был удален.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 167,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aexists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет существование ключа (асинхронно).",
+                        "docstring": "Проверяет существование ключа (асинхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существует.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 180,
                         "bases": [],
                         "children": []
                       },
@@ -25719,7 +25719,7 @@
                         "layer": "internal",
                         "signature": "(self)",
                         "summary": "Очищает сервер Memcached (асинхронно).",
-                        "docstring": "Очищает сервер Memcached (асинхронно).",
+                        "docstring": "Очищает сервер Memcached (асинхронно).\n\nReturns:\n    True при успешной очистке.",
                         "breadcrumbs": {
                           "is_async": true,
                           "is_thread_safe": false,
@@ -25729,7 +25729,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 111,
+                        "line_number": 192,
                         "bases": [],
                         "children": []
                       }
@@ -25813,7 +25813,7 @@
                         "layer": "internal",
                         "signature": "(self, key, default)",
                         "summary": "Извлекает значение по ключу (синхронно).",
-                        "docstring": "Извлекает значение по ключу (синхронно).",
+                        "docstring": "Извлекает значение по ключу (синхронно).\n\nArgs:\n    key: Ключ записи.\n    default: Значение по умолчанию, если ключ не найден или просрочен.\n\nReturns:\n    Сохраненное значение или default.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -25833,7 +25833,7 @@
                         "layer": "internal",
                         "signature": "(self, key, value, ttl)",
                         "summary": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
-                        "docstring": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
+                        "docstring": "Сохраняет значение по ключу с опциональным TTL (синхронно).\n\nArgs:\n    key: Ключ записи.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.\n\nReturns:\n    True, если запись успешно сохранена.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -25843,7 +25843,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 36,
+                        "line_number": 44,
                         "bases": [],
                         "children": []
                       },
@@ -25853,7 +25853,7 @@
                         "layer": "internal",
                         "signature": "(self, key)",
                         "summary": "Удаляет запись по ключу (синхронно).",
-                        "docstring": "Удаляет запись по ключу (синхронно).",
+                        "docstring": "Удаляет запись по ключу (синхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существовал и был удален.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -25863,7 +25863,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 43,
+                        "line_number": 60,
                         "bases": [],
                         "children": []
                       },
@@ -25873,7 +25873,7 @@
                         "layer": "internal",
                         "signature": "(self, key)",
                         "summary": "Проверяет существование ключа (синхронно).",
-                        "docstring": "Проверяет существование ключа (синхронно).",
+                        "docstring": "Проверяет существование ключа (синхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существует и не просрочен.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -25883,7 +25883,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 51,
+                        "line_number": 75,
                         "bases": [],
                         "children": []
                       },
@@ -25893,7 +25893,7 @@
                         "layer": "internal",
                         "signature": "(self)",
                         "summary": "Полностью очищает хранилище (синхронно).",
-                        "docstring": "Полностью очищает хранилище (синхронно).",
+                        "docstring": "Полностью очищает хранилище (синхронно).\n\nReturns:\n    True при успешной очистке.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -25903,7 +25903,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 62,
+                        "line_number": 93,
                         "bases": [],
                         "children": []
                       },
@@ -25913,7 +25913,7 @@
                         "layer": "internal",
                         "signature": "(self, key, default)",
                         "summary": "Извлекает значение по ключу (асинхронно).",
-                        "docstring": "Извлекает значение по ключу (асинхронно).",
+                        "docstring": "Извлекает значение по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n    default: Значение по умолчанию, если ключ не найден или просрочен.\n\nReturns:\n    Сохраненное значение или default.",
                         "breadcrumbs": {
                           "is_async": true,
                           "is_thread_safe": false,
@@ -25923,7 +25923,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 68,
+                        "line_number": 103,
                         "bases": [],
                         "children": []
                       },
@@ -25933,7 +25933,7 @@
                         "layer": "internal",
                         "signature": "(self, key, value, ttl)",
                         "summary": "Сохраняет значение по ключу (асинхронно).",
-                        "docstring": "Сохраняет значение по ключу (асинхронно).",
+                        "docstring": "Сохраняет значение по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.\n\nReturns:\n    True, если запись успешно сохранена.",
                         "breadcrumbs": {
                           "is_async": true,
                           "is_thread_safe": false,
@@ -25943,7 +25943,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 72,
+                        "line_number": 115,
                         "bases": [],
                         "children": []
                       },
@@ -25953,7 +25953,7 @@
                         "layer": "internal",
                         "signature": "(self, key)",
                         "summary": "Удаляет запись по ключу (асинхронно).",
-                        "docstring": "Удаляет запись по ключу (асинхронно).",
+                        "docstring": "Удаляет запись по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существовал и был удален.",
                         "breadcrumbs": {
                           "is_async": true,
                           "is_thread_safe": false,
@@ -25963,7 +25963,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 76,
+                        "line_number": 128,
                         "bases": [],
                         "children": []
                       },
@@ -25973,7 +25973,7 @@
                         "layer": "internal",
                         "signature": "(self, key)",
                         "summary": "Проверяет существование ключа (асинхронно).",
-                        "docstring": "Проверяет существование ключа (асинхронно).",
+                        "docstring": "Проверяет существование ключа (асинхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существует и не просрочен.",
                         "breadcrumbs": {
                           "is_async": true,
                           "is_thread_safe": false,
@@ -25983,7 +25983,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 80,
+                        "line_number": 139,
                         "bases": [],
                         "children": []
                       },
@@ -25993,7 +25993,7 @@
                         "layer": "internal",
                         "signature": "(self)",
                         "summary": "Полностью очищает хранилище (асинхронно).",
-                        "docstring": "Полностью очищает хранилище (асинхронно).",
+                        "docstring": "Полностью очищает хранилище (асинхронно).\n\nReturns:\n    True при успешной очистке.",
                         "breadcrumbs": {
                           "is_async": true,
                           "is_thread_safe": false,
@@ -26003,7 +26003,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 84,
+                        "line_number": 150,
                         "bases": [],
                         "children": []
                       }
@@ -26021,12 +26021,12 @@
                 "children": [],
                 "symbols": [
                   {
-                    "name": "REDIS_AVAILABLE",
-                    "type": "constant",
+                    "name": "is_redis_available",
+                    "type": "function",
                     "layer": "internal",
-                    "signature": null,
-                    "summary": "",
-                    "docstring": null,
+                    "signature": "()",
+                    "summary": "Проверяет доступность библиотеки redis в окружении.",
+                    "docstring": "Проверяет доступность библиотеки redis в окружении.\n\nReturns:\n    True, если пакет redis установлен.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26036,7 +26036,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 12,
+                    "line_number": 13,
                     "bases": [],
                     "children": []
                   },
@@ -26056,7 +26056,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 15,
+                    "line_number": 22,
                     "bases": [
                       ".base.BaseStoreBackend"
                     ],
@@ -26077,7 +26077,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 18,
+                        "line_number": 25,
                         "bases": [],
                         "children": []
                       },
@@ -26097,7 +26097,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 24,
+                        "line_number": 31,
                         "bases": [],
                         "children": []
                       },
@@ -26117,7 +26117,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 32,
+                        "line_number": 39,
                         "bases": [],
                         "children": []
                       },
@@ -26137,7 +26137,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 40,
+                        "line_number": 47,
                         "bases": [],
                         "children": []
                       },
@@ -26147,7 +26147,7 @@
                         "layer": "internal",
                         "signature": "(self, key, default)",
                         "summary": "Извлекает значение по ключу (синхронно).",
-                        "docstring": "Извлекает значение по ключу (синхронно).",
+                        "docstring": "Извлекает значение по ключу (синхронно).\n\nArgs:\n    key: Ключ записи.\n    default: Значение по умолчанию, если ключ не найден.\n\nReturns:\n    Сохраненное значение или default.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -26157,7 +26157,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 48,
+                        "line_number": 55,
                         "bases": [],
                         "children": []
                       },
@@ -26167,7 +26167,7 @@
                         "layer": "internal",
                         "signature": "(self, key, value, ttl)",
                         "summary": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
-                        "docstring": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
+                        "docstring": "Сохраняет значение по ключу с опциональным TTL (синхронно).\n\nArgs:\n    key: Ключ записи.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.\n\nReturns:\n    True, если запись успешно сохранена.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -26177,7 +26177,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 54,
+                        "line_number": 69,
                         "bases": [],
                         "children": []
                       },
@@ -26187,89 +26187,9 @@
                         "layer": "internal",
                         "signature": "(self, key)",
                         "summary": "Удаляет запись по ключу (синхронно).",
-                        "docstring": "Удаляет запись по ключу (синхронно).",
+                        "docstring": "Удаляет запись по ключу (синхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существовал и был удален.",
                         "breadcrumbs": {
                           "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 61,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "exists",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, key)",
-                        "summary": "Проверяет существование ключа (синхронно).",
-                        "docstring": "Проверяет существование ключа (синхронно).",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 67,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "clear",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Очищает базу данных (синхронно).",
-                        "docstring": "Очищает базу данных (синхронно).",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 73,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "aget",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, key, default)",
-                        "summary": "Извлекает значение по ключу (асинхронно).",
-                        "docstring": "Извлекает значение по ключу (асинхронно).",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 79,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "aset",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, key, value, ttl)",
-                        "summary": "Сохраняет значение по ключу (асинхронно).",
-                        "docstring": "Сохраняет значение по ключу (асинхронно).",
-                        "breadcrumbs": {
-                          "is_async": true,
                           "is_thread_safe": false,
                           "is_heavy": false,
                           "is_abstract": false,
@@ -26282,34 +26202,14 @@
                         "children": []
                       },
                       {
-                        "name": "adelete",
+                        "name": "exists",
                         "type": "method",
                         "layer": "internal",
                         "signature": "(self, key)",
-                        "summary": "Удаляет запись по ключу (асинхронно).",
-                        "docstring": "Удаляет запись по ключу (асинхронно).",
+                        "summary": "Проверяет существование ключа (синхронно).",
+                        "docstring": "Проверяет существование ключа (синхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существует.",
                         "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 92,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "aexists",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, key)",
-                        "summary": "Проверяет существование ключа (асинхронно).",
-                        "docstring": "Проверяет существование ключа (асинхронно).",
-                        "breadcrumbs": {
-                          "is_async": true,
+                          "is_async": false,
                           "is_thread_safe": false,
                           "is_heavy": false,
                           "is_abstract": false,
@@ -26322,12 +26222,32 @@
                         "children": []
                       },
                       {
-                        "name": "aclear",
+                        "name": "clear",
                         "type": "method",
                         "layer": "internal",
                         "signature": "(self)",
-                        "summary": "Очищает базу данных (асинхронно).",
-                        "docstring": "Очищает базу данных (асинхронно).",
+                        "summary": "Очищает базу данных (синхронно).",
+                        "docstring": "Очищает базу данных (синхронно).\n\nReturns:\n    True при успешной очистке.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 111,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aget",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, default)",
+                        "summary": "Извлекает значение по ключу (асинхронно).",
+                        "docstring": "Извлекает значение по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n    default: Значение по умолчанию, если ключ не найден.\n\nReturns:\n    Сохраненное значение или default.",
                         "breadcrumbs": {
                           "is_async": true,
                           "is_thread_safe": false,
@@ -26337,7 +26257,87 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 104,
+                        "line_number": 121,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aset",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl)",
+                        "summary": "Сохраняет значение по ключу (асинхронно).",
+                        "docstring": "Сохраняет значение по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.\n\nReturns:\n    True, если запись успешно сохранена.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 135,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "adelete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет запись по ключу (асинхронно).",
+                        "docstring": "Удаляет запись по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существовал и был удален.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 151,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aexists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет существование ключа (асинхронно).",
+                        "docstring": "Проверяет существование ключа (асинхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существует.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 164,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aclear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Очищает базу данных (асинхронно).",
+                        "docstring": "Очищает базу данных (асинхронно).\n\nReturns:\n    True при успешной очистке.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 177,
                         "bases": [],
                         "children": []
                       }
@@ -26429,6 +26429,46 @@
             "children": [],
             "symbols": [
               {
+                "name": "_get_tracing",
+                "type": "function",
+                "layer": "private",
+                "signature": "()",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 15,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_get_metrics",
+                "type": "function",
+                "layer": "private",
+                "signature": "()",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 24,
+                "bases": [],
+                "children": []
+              },
+              {
                 "name": "JSONSerializer",
                 "type": "class",
                 "layer": "internal",
@@ -26444,7 +26484,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 25,
+                "line_number": 33,
                 "bases": [],
                 "children": [
                   {
@@ -26452,8 +26492,8 @@
                     "type": "method",
                     "layer": "internal",
                     "signature": "(self, value)",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Сериализует значение в JSON-строку.",
+                    "docstring": "Сериализует значение в JSON-строку.\n\nArgs:\n    value: Значение для сериализации.\n\nReturns:\n    JSON строка.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26463,7 +26503,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 28,
+                    "line_number": 36,
                     "bases": [],
                     "children": []
                   },
@@ -26472,8 +26512,8 @@
                     "type": "method",
                     "layer": "internal",
                     "signature": "(self, raw_value)",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Десериализует JSON значение.",
+                    "docstring": "Десериализует JSON значение.\n\nArgs:\n    raw_value: Исходное значение JSON.\n\nReturns:\n    Десериализованный объект.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26483,7 +26523,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 31,
+                    "line_number": 47,
                     "bases": [],
                     "children": []
                   }
@@ -26505,7 +26545,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 37,
+                "line_number": 61,
                 "bases": [],
                 "children": [
                   {
@@ -26513,8 +26553,8 @@
                     "type": "method",
                     "layer": "internal",
                     "signature": "(self, value)",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Сериализует значение в байты Pickle.",
+                    "docstring": "Сериализует значение в байты Pickle.\n\nArgs:\n    value: Значение для сериализации.\n\nReturns:\n    Сериализованные байты.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26524,7 +26564,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 40,
+                    "line_number": 64,
                     "bases": [],
                     "children": []
                   },
@@ -26533,8 +26573,8 @@
                     "type": "method",
                     "layer": "internal",
                     "signature": "(self, raw_value)",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Десериализует значение Pickle.",
+                    "docstring": "Десериализует значение Pickle.\n\nArgs:\n    raw_value: Исходные байты или строка.\n\nReturns:\n    Десериализованный объект.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26544,7 +26584,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 43,
+                    "line_number": 75,
                     "bases": [],
                     "children": []
                   }
@@ -26566,7 +26606,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 49,
+                "line_number": 89,
                 "bases": [],
                 "children": [
                   {
@@ -26574,8 +26614,8 @@
                     "type": "method",
                     "layer": "internal",
                     "signature": "(self, value)",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Возвращает значение без изменений.",
+                    "docstring": "Возвращает значение без изменений.\n\nArgs:\n    value: Исходное значение.\n\nReturns:\n    То же значение.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26585,7 +26625,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 52,
+                    "line_number": 92,
                     "bases": [],
                     "children": []
                   },
@@ -26594,8 +26634,8 @@
                     "type": "method",
                     "layer": "internal",
                     "signature": "(self, raw_value)",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Возвращает значение без изменений.",
+                    "docstring": "Возвращает значение без изменений.\n\nArgs:\n    raw_value: Исходное значение.\n\nReturns:\n    То же значение.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26605,7 +26645,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 55,
+                    "line_number": 103,
                     "bases": [],
                     "children": []
                   }
@@ -26627,7 +26667,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 59,
+                "line_number": 115,
                 "bases": [],
                 "children": []
               },
@@ -26647,7 +26687,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 75,
+                "line_number": 131,
                 "bases": [],
                 "children": [
                   {
@@ -26666,7 +26706,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 78,
+                    "line_number": 134,
                     "bases": [],
                     "children": []
                   },
@@ -26676,7 +26716,7 @@
                     "layer": "internal",
                     "signature": "(cls, config)",
                     "summary": "Создает менеджер хранилища на основе конфигурационного словаря.",
-                    "docstring": "Создает менеджер хранилища на основе конфигурационного словаря.",
+                    "docstring": "Создает менеджер хранилища на основе конфигурационного словаря.\n\nArgs:\n    config: Словарь конфигурации.\n\nReturns:\n    Новый экземпляр StoreManager.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26688,7 +26728,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 89,
+                    "line_number": 145,
                     "bases": [],
                     "children": []
                   },
@@ -26708,7 +26748,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 115,
+                    "line_number": 178,
                     "bases": [],
                     "children": []
                   },
@@ -26728,7 +26768,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 118,
+                    "line_number": 181,
                     "bases": [],
                     "children": []
                   },
@@ -26748,7 +26788,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 128,
+                    "line_number": 192,
                     "bases": [],
                     "children": []
                   },
@@ -26758,7 +26798,7 @@
                     "layer": "internal",
                     "signature": "(self, key, default)",
                     "summary": "Извлекает и десериализует значение по ключу.",
-                    "docstring": "Извлекает и десериализует значение по ключу.",
+                    "docstring": "Извлекает и десериализует значение по ключу.\n\nArgs:\n    key: Ключ записи.\n    default: Значение по умолчанию, если ключ не найден.\n\nReturns:\n    Десериализованное значение или default.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26768,7 +26808,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 139,
+                    "line_number": 204,
                     "bases": [],
                     "children": []
                   },
@@ -26778,7 +26818,7 @@
                     "layer": "internal",
                     "signature": "(self, key, value, ttl)",
                     "summary": "Сериализует и сохраняет значение по ключу.",
-                    "docstring": "Сериализует и сохраняет значение по ключу.",
+                    "docstring": "Сериализует и сохраняет значение по ключу.\n\nArgs:\n    key: Ключ записи.\n    value: Значение для сохранения.\n    ttl: Время жизни записи в секундах.\n\nReturns:\n    True, если запись успешно сохранена.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26788,7 +26828,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 155,
+                    "line_number": 228,
                     "bases": [],
                     "children": []
                   },
@@ -26798,7 +26838,7 @@
                     "layer": "internal",
                     "signature": "(self, key)",
                     "summary": "Удаляет запись по ключу.",
-                    "docstring": "Удаляет запись по ключу.",
+                    "docstring": "Удаляет запись по ключу.\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существовал и был удален.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26808,7 +26848,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 164,
+                    "line_number": 246,
                     "bases": [],
                     "children": []
                   },
@@ -26818,7 +26858,7 @@
                     "layer": "internal",
                     "signature": "(self, key)",
                     "summary": "Проверяет существование ключа.",
-                    "docstring": "Проверяет существование ключа.",
+                    "docstring": "Проверяет существование ключа.\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существует.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26828,7 +26868,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 172,
+                    "line_number": 261,
                     "bases": [],
                     "children": []
                   },
@@ -26838,7 +26878,7 @@
                     "layer": "internal",
                     "signature": "(self)",
                     "summary": "Очищает хранилище.",
-                    "docstring": "Очищает хранилище.",
+                    "docstring": "Очищает хранилище.\n\nReturns:\n    True при успешной очистке.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -26848,7 +26888,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 180,
+                    "line_number": 276,
                     "bases": [],
                     "children": []
                   },
@@ -26858,7 +26898,7 @@
                     "layer": "internal",
                     "signature": "(self, key, default)",
                     "summary": "Извлекает и десериализует значение по ключу (асинхронно).",
-                    "docstring": "Извлекает и десериализует значение по ключу (асинхронно).",
+                    "docstring": "Извлекает и десериализует значение по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n    default: Значение по умолчанию, если ключ не найден.\n\nReturns:\n    Десериализованное значение или default.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -26868,7 +26908,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 187,
+                    "line_number": 287,
                     "bases": [],
                     "children": []
                   },
@@ -26878,7 +26918,7 @@
                     "layer": "internal",
                     "signature": "(self, key, value, ttl)",
                     "summary": "Сериализует и сохраняет значение по ключу (асинхронно).",
-                    "docstring": "Сериализует и сохраняет значение по ключу (асинхронно).",
+                    "docstring": "Сериализует и сохраняет значение по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n    value: Значение для сохранения.\n    ttl: Время жизни записи в секундах.\n\nReturns:\n    True, если запись успешно сохранена.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -26888,7 +26928,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 203,
+                    "line_number": 311,
                     "bases": [],
                     "children": []
                   },
@@ -26898,7 +26938,7 @@
                     "layer": "internal",
                     "signature": "(self, key)",
                     "summary": "Удаляет запись по ключу (асинхронно).",
-                    "docstring": "Удаляет запись по ключу (асинхронно).",
+                    "docstring": "Удаляет запись по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существовал и был удален.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -26908,7 +26948,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 212,
+                    "line_number": 329,
                     "bases": [],
                     "children": []
                   },
@@ -26918,7 +26958,7 @@
                     "layer": "internal",
                     "signature": "(self, key)",
                     "summary": "Проверяет существование ключа (асинхронно).",
-                    "docstring": "Проверяет существование ключа (асинхронно).",
+                    "docstring": "Проверяет существование ключа (асинхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существует.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -26928,7 +26968,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 220,
+                    "line_number": 344,
                     "bases": [],
                     "children": []
                   },
@@ -26938,7 +26978,7 @@
                     "layer": "internal",
                     "signature": "(self)",
                     "summary": "Очищает хранилище (асинхронно).",
-                    "docstring": "Очищает хранилище (асинхронно).",
+                    "docstring": "Очищает хранилище (асинхронно).\n\nReturns:\n    True при успешной очистке.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -26948,7 +26988,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 228,
+                    "line_number": 359,
                     "bases": [],
                     "children": []
                   }
@@ -30753,10 +30793,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.2.0",
-    "project_version": "3.2.0",
-    "git_commit": "c2f31f451d90718c695e4772e1f05e4b94b9144d (dirty)",
-    "generated_at": "2026-07-21T19:08:55.982353+00:00",
-    "project_hash": "7e8092f1bf03655dbe13b0d547d77380fde5ec5dfa1ebfcde894ec3090d3fb0e"
+    "chutils_version": "3.3.0",
+    "project_version": "3.3.0",
+    "git_commit": "88a3dd437c5969fcd5cbd5805a8a277dfebd0657 (dirty)",
+    "generated_at": "2026-07-21T19:29:58.063152+00:00",
+    "project_hash": "671ddc0d304e293e3392d3bbd47ebe6181a4f6899643ae2d6de277ed03bd3644"
   }
 }

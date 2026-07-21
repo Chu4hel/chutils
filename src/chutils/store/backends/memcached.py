@@ -9,8 +9,23 @@ from typing import Any
 from chutils.exceptions import OptionalDependencyError
 from .base import BaseStoreBackend
 
-PYMEMCACHE_AVAILABLE = importlib.util.find_spec("pymemcache") is not None
-AIOMEMCACHE_AVAILABLE = importlib.util.find_spec("aiomemcache") is not None
+
+def is_pymemcache_available() -> bool:
+    """Проверяет доступность библиотеки pymemcache в окружении.
+
+    Returns:
+        True, если пакет pymemcache установлен.
+    """
+    return importlib.util.find_spec("pymemcache") is not None
+
+
+def is_aiomemcache_available() -> bool:
+    """Проверяет доступность библиотеки aiomemcache в окружении.
+
+    Returns:
+        True, если пакет aiomemcache установлен.
+    """
+    return importlib.util.find_spec("aiomemcache") is not None
 
 
 class MemcachedStore(BaseStoreBackend):
@@ -24,7 +39,7 @@ class MemcachedStore(BaseStoreBackend):
         self._async_client: Any = None
 
     def _ensure_pymemcache(self) -> None:
-        if not PYMEMCACHE_AVAILABLE:
+        if not is_pymemcache_available():
             raise OptionalDependencyError(
                 "Пакет 'pymemcache' не установлен.",
                 dependency="pymemcache",
@@ -40,7 +55,7 @@ class MemcachedStore(BaseStoreBackend):
         return self._sync_client
 
     def _get_async_client(self) -> Any:
-        if not AIOMEMCACHE_AVAILABLE:
+        if not is_aiomemcache_available():
             raise OptionalDependencyError(
                 "Пакет 'aiomemcache' не установлен.",
                 dependency="aiomemcache",

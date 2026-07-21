@@ -11,15 +11,23 @@ from typing import Any
 from .backends.base import BaseStoreBackend
 from .backends.memory import MemoryStore
 
-try:
-    from chutils import tracing
-except Exception:
-    tracing = None  # type: ignore[assignment]
 
-try:
-    from chutils import metrics
-except Exception:
-    metrics = None  # type: ignore[assignment]
+def _get_tracing() -> Any:
+    try:
+        from chutils import tracing
+
+        return tracing
+    except Exception:
+        return None
+
+
+def _get_metrics() -> Any:
+    try:
+        from chutils import metrics
+
+        return metrics
+    except Exception:
+        return None
 
 
 class JSONSerializer:
@@ -171,6 +179,7 @@ class StoreManager:
         return f"{self._prefix}{key}" if self._prefix else key
 
     def _trace(self, op: str) -> Any:
+        tracing = _get_tracing()
         if tracing is not None and hasattr(tracing, "trace"):
             try:
                 res = tracing.trace(f"store.{op}")
@@ -181,6 +190,7 @@ class StoreManager:
         return nullcontext()
 
     def _record_metric(self, op: str, hit: bool | None = None) -> None:
+        metrics = _get_metrics()
         if metrics is not None:
             try:
                 if hasattr(metrics, "counter"):

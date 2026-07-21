@@ -17,8 +17,8 @@ def test_store_manager_metrics_and_tracing_hooks() -> None:
     mock_tracer = MagicMock()
     mock_metrics = MagicMock()
 
-    with patch("chutils.store.manager.tracing", mock_tracer), patch(
-        "chutils.store.manager.metrics", mock_metrics
+    with patch("chutils.store.manager._get_tracing", return_value=mock_tracer), patch(
+        "chutils.store.manager._get_metrics", return_value=mock_metrics
     ):
         manager = StoreManager(backend=MemoryStore())
 
@@ -44,7 +44,7 @@ def test_store_cache_decorator_sync() -> None:
     assert compute(5) == 10
     assert call_count == 1
 
-    # Втором вызов берется из кэша
+    # Вторым вызовом берется из кэша
     assert compute(5) == 10
     assert call_count == 1
 
