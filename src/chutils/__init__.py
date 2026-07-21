@@ -69,6 +69,13 @@ _LAZY_MAPPING = {
     'DiagnosticsManager': ('.diagnostics', 'DiagnosticsManager'),
     'validation': ('.validation', None),
     'http': ('.http', None),
+    'store': ('.store', None),
+    'StoreManager': ('.store', 'StoreManager'),
+    'BaseStoreBackend': ('.store', 'BaseStoreBackend'),
+    'MemoryStore': ('.store.backends.memory', 'MemoryStore'),
+    'RedisStore': ('.store.backends.redis', 'RedisStore'),
+    'MemcachedStore': ('.store.backends.memcached', 'MemcachedStore'),
+    'store_cache': ('.store.decorator', 'store_cache'),
 
     # http
     'HttpClient': ('.http', 'HttpClient'),

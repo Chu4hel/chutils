@@ -25114,6 +25114,1852 @@
         "symbols": []
       },
       {
+        "name": "store",
+        "path": "chutils/store",
+        "type": "package",
+        "layer": "public",
+        "summary": "Модуль chutils.store — Абстракция Key-Value хранилища.",
+        "docstring": "Модуль chutils.store — Абстракция Key-Value хранилища.",
+        "children": [
+          {
+            "name": "backends",
+            "path": "chutils/store/backends",
+            "type": "package",
+            "layer": "internal",
+            "summary": "Бэкенды хранилища chutils.store.",
+            "docstring": "Бэкенды хранилища chutils.store.",
+            "children": [
+              {
+                "name": "base",
+                "path": "chutils/store/backends/base",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Абстрактный базовый класс бэкендов Key-Value хранилища chutils.store.",
+                "docstring": "Абстрактный базовый класс бэкендов Key-Value хранилища chutils.store.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "BaseStoreBackend",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Абстрактный базовый класс для всех бэкендов Key-Value хранилищ.",
+                    "docstring": "Абстрактный базовый класс для всех бэкендов Key-Value хранилищ.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 10,
+                    "bases": [
+                      "abc.ABC"
+                    ],
+                    "children": [
+                      {
+                        "name": "get",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, default)",
+                        "summary": "Извлекает значение по ключу (синхронно).",
+                        "docstring": "Извлекает значение по ключу (синхронно).\n\nArgs:\n    key: Ключ записи.\n    default: Значение по умолчанию, если ключ не найден или просрочен.\n\nReturns:\n    Сохраненное значение или default.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 14,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "set",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl)",
+                        "summary": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
+                        "docstring": "Сохраняет значение по ключу с опциональным TTL (синхронно).\n\nArgs:\n    key: Ключ записи.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.\n\nReturns:\n    True, если запись успешно сохранена.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 27,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "delete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет запись по ключу (синхронно).",
+                        "docstring": "Удаляет запись по ключу (синхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существовал и был удален.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 41,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "exists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет существование ключа (синхронно).",
+                        "docstring": "Проверяет существование ключа (синхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существует и не просрочен.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 53,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "clear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Полностью очищает хранилище (синхронно).",
+                        "docstring": "Полностью очищает хранилище (синхронно).\n\nReturns:\n    True при успешной очистке.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 65,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aget",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, default)",
+                        "summary": "Извлекает значение по ключу (асинхронно).",
+                        "docstring": "Извлекает значение по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n    default: Значение по умолчанию, если ключ не найден или просрочен.\n\nReturns:\n    Сохраненное значение или default.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 74,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aset",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl)",
+                        "summary": "Сохраняет значение по ключу с опциональным TTL (асинхронно).",
+                        "docstring": "Сохраняет значение по ключу с опциональным TTL (асинхронно).\n\nArgs:\n    key: Ключ записи.\n    value: Сохраняемое значение.\n    ttl: Время жизни записи в секундах.\n\nReturns:\n    True, если запись успешно сохранена.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 87,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "adelete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет запись по ключу (асинхронно).",
+                        "docstring": "Удаляет запись по ключу (асинхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существовал и был удален.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 101,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aexists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет существование ключа (асинхронно).",
+                        "docstring": "Проверяет существование ключа (асинхронно).\n\nArgs:\n    key: Ключ записи.\n\nReturns:\n    True, если ключ существует и не просрочен.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 113,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aclear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Полностью очищает хранилище (асинхронно).",
+                        "docstring": "Полностью очищает хранилище (асинхронно).\n\nReturns:\n    True при успешной очистке.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 125,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "memcached",
+                "path": "chutils/store/backends/memcached",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Memcached бэкенд для chutils.store.",
+                "docstring": "Memcached бэкенд для chutils.store.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "PYMEMCACHE_AVAILABLE",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 12,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "AIOMEMCACHE_AVAILABLE",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 13,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "MemcachedStore",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Бэкенд хранилища на базе Memcached (требует опционального пакета pymemcache).",
+                    "docstring": "Бэкенд хранилища на базе Memcached (требует опционального пакета pymemcache).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [
+                      ".base.BaseStoreBackend"
+                    ],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, host, port)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 19,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_ensure_pymemcache",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 26,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_get_sync_client",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 34,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_get_async_client",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 42,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, default)",
+                        "summary": "Извлекает значение по ключу (синхронно).",
+                        "docstring": "Извлекает значение по ключу (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 55,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "set",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl)",
+                        "summary": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
+                        "docstring": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 61,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "delete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет запись по ключу (синхронно).",
+                        "docstring": "Удаляет запись по ключу (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 68,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "exists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет существование ключа (синхронно).",
+                        "docstring": "Проверяет существование ключа (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 74,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "clear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Очищает сервер Memcached (синхронно).",
+                        "docstring": "Очищает сервер Memcached (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 80,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aget",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, default)",
+                        "summary": "Извлекает значение по ключу (асинхронно).",
+                        "docstring": "Извлекает значение по ключу (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 86,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aset",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl)",
+                        "summary": "Сохраняет значение по ключу (асинхронно).",
+                        "docstring": "Сохраняет значение по ключу (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 92,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "adelete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет запись по ключу (асинхронно).",
+                        "docstring": "Удаляет запись по ключу (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 100,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aexists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет существование ключа (асинхронно).",
+                        "docstring": "Проверяет существование ключа (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 106,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aclear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Очищает сервер Memcached (асинхронно).",
+                        "docstring": "Очищает сервер Memcached (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 111,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "memory",
+                "path": "chutils/store/backends/memory",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Потокобезопасный In-Memory бэкенд для chutils.store.",
+                "docstring": "Потокобезопасный In-Memory бэкенд для chutils.store.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "MemoryStore",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Потокобезопасный in-memory бэкенд хранилища с поддержкой TTL.",
+                    "docstring": "Потокобезопасный in-memory бэкенд хранилища с поддержкой TTL.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 13,
+                    "bases": [
+                      ".base.BaseStoreBackend"
+                    ],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 16,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_is_expired",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, expires_at)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 20,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, default)",
+                        "summary": "Извлекает значение по ключу (синхронно).",
+                        "docstring": "Извлекает значение по ключу (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 25,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "set",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl)",
+                        "summary": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
+                        "docstring": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 36,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "delete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет запись по ключу (синхронно).",
+                        "docstring": "Удаляет запись по ключу (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 43,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "exists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет существование ключа (синхронно).",
+                        "docstring": "Проверяет существование ключа (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 51,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "clear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Полностью очищает хранилище (синхронно).",
+                        "docstring": "Полностью очищает хранилище (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 62,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aget",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, default)",
+                        "summary": "Извлекает значение по ключу (асинхронно).",
+                        "docstring": "Извлекает значение по ключу (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 68,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aset",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl)",
+                        "summary": "Сохраняет значение по ключу (асинхронно).",
+                        "docstring": "Сохраняет значение по ключу (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 72,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "adelete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет запись по ключу (асинхронно).",
+                        "docstring": "Удаляет запись по ключу (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 76,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aexists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет существование ключа (асинхронно).",
+                        "docstring": "Проверяет существование ключа (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 80,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aclear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Полностью очищает хранилище (асинхронно).",
+                        "docstring": "Полностью очищает хранилище (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 84,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "redis",
+                "path": "chutils/store/backends/redis",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Redis бэкенд для chutils.store.",
+                "docstring": "Redis бэкенд для chutils.store.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "REDIS_AVAILABLE",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 12,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "RedisStore",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Бэкенд хранилища на базе Redis (требует опционального пакета redis).",
+                    "docstring": "Бэкенд хранилища на базе Redis (требует опционального пакета redis).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 15,
+                    "bases": [
+                      ".base.BaseStoreBackend"
+                    ],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, url)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 18,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_ensure_redis",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 24,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_get_sync_client",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 32,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_get_async_client",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 40,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, default)",
+                        "summary": "Извлекает значение по ключу (синхронно).",
+                        "docstring": "Извлекает значение по ключу (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 48,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "set",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl)",
+                        "summary": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
+                        "docstring": "Сохраняет значение по ключу с опциональным TTL (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 54,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "delete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет запись по ключу (синхронно).",
+                        "docstring": "Удаляет запись по ключу (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 61,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "exists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет существование ключа (синхронно).",
+                        "docstring": "Проверяет существование ключа (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 67,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "clear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Очищает базу данных (синхронно).",
+                        "docstring": "Очищает базу данных (синхронно).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 73,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aget",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, default)",
+                        "summary": "Извлекает значение по ключу (асинхронно).",
+                        "docstring": "Извлекает значение по ключу (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 79,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aset",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl)",
+                        "summary": "Сохраняет значение по ключу (асинхронно).",
+                        "docstring": "Сохраняет значение по ключу (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 85,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "adelete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет запись по ключу (асинхронно).",
+                        "docstring": "Удаляет запись по ключу (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 92,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aexists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет существование ключа (асинхронно).",
+                        "docstring": "Проверяет существование ключа (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 98,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "aclear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Очищает базу данных (асинхронно).",
+                        "docstring": "Очищает базу данных (асинхронно).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 104,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "symbols": []
+          },
+          {
+            "name": "decorator",
+            "path": "chutils/store/decorator",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Декоратор кэширования на базе StoreManager (chutils.store.decorator).",
+            "docstring": "Декоратор кэширования на базе StoreManager (chutils.store.decorator).",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_default_store",
+                "type": "constant",
+                "layer": "private",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 13,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_make_key",
+                "type": "function",
+                "layer": "private",
+                "signature": "(prefix, func, args, kwargs)",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 16,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "store_cache",
+                "type": "function",
+                "layer": "public",
+                "signature": "(store, ttl, key_prefix)",
+                "summary": "Декоратор для кэширования результатов вызова функций через StoreManager.",
+                "docstring": "Декоратор для кэширования результатов вызова функций через StoreManager.\n\nArgs:\n    store: Экземпляр StoreManager (по умолчанию локальный in-memory StoreManager).\n    ttl: Время жизни кэша в секундах.\n    key_prefix: Префикс ключей кэша.\n\nReturns:\n    Обернутая функция с методами инвалидации.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 22,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "manager",
+            "path": "chutils/store/manager",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Менеджер Key-Value хранилищ chutils.store с поддержкой сериализации, префиксов, метрик и трассировки.",
+            "docstring": "Менеджер Key-Value хранилищ chutils.store с поддержкой сериализации, префиксов, метрик и трассировки.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "JSONSerializer",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Сериализатор данных в формате JSON.",
+                "docstring": "Сериализатор данных в формате JSON.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 25,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "dumps",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 28,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "loads",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, raw_value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 31,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "PickleSerializer",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Сериализатор данных в формате Pickle.",
+                "docstring": "Сериализатор данных в формате Pickle.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 37,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "dumps",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 40,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "loads",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, raw_value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 43,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "RawSerializer",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Пасс-через сериализатор без изменений.",
+                "docstring": "Пасс-через сериализатор без изменений.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 49,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "dumps",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 52,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "loads",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, raw_value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 55,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "_get_serializer",
+                "type": "function",
+                "layer": "private",
+                "signature": "(serializer_type)",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 59,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "StoreManager",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Центральный менеджер Key-Value хранилища.",
+                "docstring": "Центральный менеджер Key-Value хранилища.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 75,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, backend, serializer, prefix)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 78,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "from_config",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(cls, config)",
+                    "summary": "Создает менеджер хранилища на основе конфигурационного словаря.",
+                    "docstring": "Создает менеджер хранилища на основе конфигурационного словаря.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "classmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 89,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_format_key",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, key)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 115,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_trace",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, op)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 118,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_record_metric",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, op, hit)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 128,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key, default)",
+                    "summary": "Извлекает и десериализует значение по ключу.",
+                    "docstring": "Извлекает и десериализует значение по ключу.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 139,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "set",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key, value, ttl)",
+                    "summary": "Сериализует и сохраняет значение по ключу.",
+                    "docstring": "Сериализует и сохраняет значение по ключу.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 155,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "delete",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key)",
+                    "summary": "Удаляет запись по ключу.",
+                    "docstring": "Удаляет запись по ключу.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 164,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "exists",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key)",
+                    "summary": "Проверяет существование ключа.",
+                    "docstring": "Проверяет существование ключа.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 172,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "clear",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Очищает хранилище.",
+                    "docstring": "Очищает хранилище.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 180,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "aget",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key, default)",
+                    "summary": "Извлекает и десериализует значение по ключу (асинхронно).",
+                    "docstring": "Извлекает и десериализует значение по ключу (асинхронно).",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 187,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "aset",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key, value, ttl)",
+                    "summary": "Сериализует и сохраняет значение по ключу (асинхронно).",
+                    "docstring": "Сериализует и сохраняет значение по ключу (асинхронно).",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 203,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "adelete",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key)",
+                    "summary": "Удаляет запись по ключу (асинхронно).",
+                    "docstring": "Удаляет запись по ключу (асинхронно).",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 212,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "aexists",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key)",
+                    "summary": "Проверяет существование ключа (асинхронно).",
+                    "docstring": "Проверяет существование ключа (асинхронно).",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 220,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "aclear",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Очищает хранилище (асинхронно).",
+                    "docstring": "Очищает хранилище (асинхронно).",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 228,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "symbols": []
+      },
+      {
         "name": "tasks",
         "path": "chutils/tasks",
         "type": "package",
@@ -27307,7 +29153,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 316,
+        "line_number": 323,
         "bases": [],
         "children": []
       },
@@ -27327,7 +29173,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 340,
+        "line_number": 347,
         "bases": [],
         "children": []
       },
@@ -27347,7 +29193,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 350,
+        "line_number": 357,
         "bases": [],
         "children": []
       }
@@ -28745,6 +30591,81 @@
       "weight": 1
     },
     {
+      "source": "chutils/store",
+      "target": "/backends/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store",
+      "target": "/backends/memory",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store",
+      "target": "/manager",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/backends",
+      "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/backends",
+      "target": "/memcached",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/backends",
+      "target": "/memory",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/backends",
+      "target": "/redis",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/backends/memcached",
+      "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/backends/memcached",
+      "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/backends/memory",
+      "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/backends/redis",
+      "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/backends/redis",
+      "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/decorator",
+      "target": "/manager",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/manager",
+      "target": "/backends/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/store/manager",
+      "target": "/backends/memory",
+      "weight": 1
+    },
+    {
       "source": "chutils/tasks",
       "target": "chutils/tasks/core",
       "weight": 7
@@ -28834,8 +30755,8 @@
   "metadata": {
     "chutils_version": "3.2.0",
     "project_version": "3.2.0",
-    "git_commit": "212380f824685c36da5117a871d4f089b932d889 (dirty)",
-    "generated_at": "2026-07-21T18:58:27.124289+00:00",
-    "project_hash": "0fd821132d3eb46ff555bc96c85770f54c67f14ef054a309eee4c5379e21c63f"
+    "git_commit": "c2f31f451d90718c695e4772e1f05e4b94b9144d (dirty)",
+    "generated_at": "2026-07-21T19:08:55.982353+00:00",
+    "project_hash": "7e8092f1bf03655dbe13b0d547d77380fde5ec5dfa1ebfcde894ec3090d3fb0e"
   }
 }
