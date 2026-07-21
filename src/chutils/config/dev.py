@@ -7,7 +7,7 @@ from typing import Any
 from chutils.typing import JSONDict
 from .core import get_config
 from .manager import _cm
-from .utils import load_pyproject_toml, find_project_root
+from .utils import load_pyproject_toml, load_pyproject_clean_config, find_project_root
 
 DEFAULT_AI_LINT_CONFIG: JSONDict = {
     "strict": False,
@@ -293,5 +293,128 @@ def load_ai_lint_config(cli_args: JSONDict | None = None) -> JSONDict:
             merged_config["ignore"] = str_ignore
         else:
             merged_config["ignore"] = ignore_patterns
+
+    return merged_config
+
+
+DEFAULT_CLEAN_CONFIG: JSONDict = {
+    "default_excludes": [
+        ".git",
+        ".venv",
+        "venv",
+        "env",
+        ".chutils",
+        ".idea",
+        ".vscode",
+        "site",
+        "node_modules",
+    ],
+    "default_targets": [
+        "__pycache__",
+        "*.pyc",
+        "*.pyo",
+        "*.pyd",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        ".coverage",
+        "htmlcov",
+        "build",
+        "dist",
+        "*.egg-info",
+        "*.egg",
+    ],
+    "extra_clean_targets": [],
+}
+
+
+def load_clean_config(cli_args: JSONDict | None = None) -> JSONDict:
+    """Загружает и объединяет конфигурацию для chutils dev clean из всех источников.
+
+    Приоритет источников (от наивысшего к низшему):
+    1. CLI аргументы (cli_args)
+    2. Переменные окружения (CH_DEV_CLEAN_...)
+    3. Локальные yml файлы (секция Dev.Clean)
+    4. pyproject.toml (секция [tool.chutils.clean])
+    5. Значения по умолчанию (DEFAULT_CLEAN_CONFIG)
+
+    Args:
+        cli_args: Аргументы командной строки.
+
+    Returns:
+        Объединенный словарь конфигурации очистки.
+    """
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+    base_dir = _cm.base_dir or os.getcwd()
+
+    raw_excludes = DEFAULT_CLEAN_CONFIG.get("default_excludes", [])
+    raw_targets = DEFAULT_CLEAN_CONFIG.get("default_targets", [])
+    raw_extras = DEFAULT_CLEAN_CONFIG.get("extra_clean_targets", [])
+
+    merged_config: JSONDict = {
+        "default_excludes": list(raw_excludes) if isinstance(raw_excludes, list) else [],
+        "default_targets": list(raw_targets) if isinstance(raw_targets, list) else [],
+        "extra_clean_targets": list(raw_extras) if isinstance(raw_extras, list) else [],
+    }
+
+    # 4. pyproject.toml ([tool.chutils.clean])
+    pyproject_path = Path(base_dir) / "pyproject.toml"
+    if pyproject_path.exists():
+        clean_section = load_pyproject_clean_config(str(pyproject_path))
+        for k, v in clean_section.items():
+            merged_config[k] = v
+
+    # 3. config.yml (Dev.Clean)
+    try:
+        main_config = get_config()
+        if isinstance(main_config, dict):
+            dev_section = main_config.get("Dev", {})
+            if isinstance(dev_section, dict):
+                clean_config = dev_section.get("Clean", dev_section.get("clean", {}))
+                if isinstance(clean_config, dict):
+                    for k, v in clean_config.items():
+                        merged_config[k] = v
+    except Exception:
+        pass
+
+    # 2. Env
+    for key, val in os.environ.items():
+        if key.startswith("CH_DEV_CLEAN_"):
+            config_key = key[13:].lower()
+            if val.startswith("[") and val.endswith("]"):
+                merged_config[config_key] = [
+                    item.strip(" '\"") for item in val[1:-1].split(",") if item.strip()
+                ]
+            else:
+                merged_config[config_key] = val
+
+    # 1. CLI
+    if cli_args:
+        cli_exclude = cli_args.get("exclude")
+        if cli_exclude:
+            excludes = (
+                [x.strip() for x in cli_exclude.split(",") if x.strip()]
+                if isinstance(cli_exclude, str)
+                else cli_exclude
+            )
+            current_excludes = list(merged_config.get("default_excludes", []))  # type: ignore[arg-type]
+            for item in excludes:  # type: ignore[union-attr]
+                if item not in current_excludes:
+                    current_excludes.append(item)
+            merged_config["default_excludes"] = current_excludes
+
+        cli_include = cli_args.get("include")
+        if cli_include:
+            includes = (
+                [x.strip() for x in cli_include.split(",") if x.strip()]
+                if isinstance(cli_include, str)
+                else cli_include
+            )
+            current_extras = list(merged_config.get("extra_clean_targets", []))  # type: ignore[arg-type]
+            for item in includes:  # type: ignore[union-attr]
+                if item not in current_extras:
+                    current_extras.append(item)
+            merged_config["extra_clean_targets"] = current_extras
 
     return merged_config

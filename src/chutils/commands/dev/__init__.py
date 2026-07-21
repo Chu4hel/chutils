@@ -25,6 +25,7 @@ def get_subcommands() -> list[type[SubCommand]]:
     from .profile_imports import ProfileImportsSubCommand
     from .dashboard import DashboardSubCommand
     from .setup_github_actions import SetupGithubActionsSubCommand
+    from .clean import CleanSubCommand
 
     return [
         GenerateContextSubCommand,
@@ -39,6 +40,7 @@ def get_subcommands() -> list[type[SubCommand]]:
         ProfileImportsSubCommand,
         DashboardSubCommand,
         SetupGithubActionsSubCommand,
+        CleanSubCommand,
     ]
 
 
@@ -489,6 +491,44 @@ class DevCommand(BaseCommand):
 
         setup_gha_parser.set_defaults(handler=self.handle_setup_github_actions)
 
+        # dev clean
+        clean_parser = dev_subparsers.add_parser(
+            "clean",
+            help="Очистить проект от временных файлов и кэшей",
+            description="Сканирует проект и безопасно удаляет файлы кэшей (__pycache__, .pytest_cache, .mypy_cache, .ruff_cache, .coverage, build/, dist/ и др.).",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev clean
+  chutils dev clean --dry-run
+  chutils dev clean --yes
+  chutils dev clean --exclude ".venv,node_modules" --include "temp_dir/,*.log"
+""",
+        )
+        clean_parser.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Показать список удаляемых файлов и суммарный объем без физического удаления.",
+        )
+        clean_parser.add_argument(
+            "-y",
+            "--yes",
+            "--force",
+            dest="force",
+            action="store_true",
+            help="Удалить файлы без интерактивного подтверждения.",
+        )
+        clean_parser.add_argument(
+            "-e",
+            "--exclude",
+            help="Список исключаемых путей или шаблонов (через запятую).",
+        )
+        clean_parser.add_argument(
+            "-i",
+            "--include",
+            help="Список дополнительных путей или шаблонов для очистки (через запятую).",
+        )
+        clean_parser.set_defaults(handler=self.handle_clean)
+
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана.
 
@@ -606,3 +646,12 @@ class DevCommand(BaseCommand):
         """
         from .setup_github_actions import SetupGithubActionsSubCommand
         SetupGithubActionsSubCommand().handle(args)
+
+    def handle_clean(self, args: argparse.Namespace) -> None:
+        """Обработчик уборки мусора разработки (chutils dev clean).
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .clean import CleanSubCommand
+        CleanSubCommand().handle(args)

@@ -9,7 +9,7 @@ from .constants import AI_MANIFEST_FILENAMES as AI_MANIFEST_FILENAMES
 from .few_shot import generate_few_shot_bank as generate_few_shot_bank
 from .github_actions import generate_workflow_yaml as generate_workflow_yaml
 from .mock_server import MockServerRunner as MockServerRunner
-from .scaffold import Scaffolder as Scaffolder
+from .cleaner import CleanItem as CleanItem, execute_clean as execute_clean, scan_project as scan_project
 
 __all__ = [
     "Rule",
@@ -22,4 +22,7 @@ __all__ = [
     "Scaffolder",
     "AI_MANIFEST_FILENAMES",
     "generate_workflow_yaml",
+    "CleanItem",
+    "scan_project",
+    "execute_clean",
 ]

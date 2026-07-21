@@ -263,3 +263,95 @@ def _parse_pyproject_toml_fallback(path: str) -> JSONDict:
                         result[key] = val_str
 
     return result
+
+
+def load_pyproject_clean_config(path: str) -> JSONDict:
+    """Загружает секцию [tool.chutils.clean] из pyproject.toml.
+
+    Args:
+        path: Путь к файлу pyproject.toml.
+
+    Returns:
+        Словарь с настройками очистки.
+    """
+    try:
+        import tomllib
+
+        with open(path, "rb") as f:
+            data = tomllib.load(f)
+            tool_dict = data.get("tool", {})
+            if isinstance(tool_dict, dict):
+                chutils_dict = tool_dict.get("chutils", {})
+                if isinstance(chutils_dict, dict):
+                    clean_dict = chutils_dict.get("clean", {})
+                    if isinstance(clean_dict, dict):
+                        return clean_dict
+            return {}
+    except ImportError:
+        try:
+            import tomli
+
+            with open(path, "rb") as f:
+                data = tomli.load(f)
+                tool_dict = data.get("tool", {})
+                if isinstance(tool_dict, dict):
+                    chutils_dict = tool_dict.get("chutils", {})
+                    if isinstance(chutils_dict, dict):
+                        clean_dict = chutils_dict.get("clean", {})
+                        if isinstance(clean_dict, dict):
+                            return clean_dict
+                return {}
+        except ImportError:
+            return _parse_pyproject_toml_section_fallback(path, "tool.chutils.clean")
+
+
+def _parse_pyproject_toml_section_fallback(path: str, target_section: str) -> JSONDict:
+    """Ручной парсер для извлечения указанной секции из TOML."""
+    import ast
+
+    result: JSONDict = {}
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = f.readlines()
+    except Exception:
+        return result
+
+    in_section = False
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+
+        if line.startswith("["):
+            section_name = line.strip("[]").strip()
+            in_section = (section_name == target_section)
+            continue
+
+        if in_section and "=" in line:
+            key, val_str = line.split("=", 1)
+            key = key.strip()
+            val_str = val_str.strip()
+
+            try:
+                val = ast.literal_eval(val_str)
+                result[key] = val
+            except Exception:
+                if val_str.lower() == "true":
+                    result[key] = True
+                elif val_str.lower() == "false":
+                    result[key] = False
+                elif val_str.startswith("[") and val_str.endswith("]"):
+                    items = [
+                        item.strip(" '\"")
+                        for item in val_str[1:-1].split(",")
+                        if item.strip()
+                    ]
+                    result[key] = items
+                elif (val_str.startswith('"') and val_str.endswith('"')) or (
+                    val_str.startswith("'") and val_str.endswith("'")
+                ):
+                    result[key] = val_str[1:-1]
+                else:
+                    result[key] = val_str
+
+    return result
