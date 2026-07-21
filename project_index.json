@@ -14928,9 +14928,129 @@
             "type": "module",
             "layer": "internal",
             "summary": "Модуль для обнаружения изменений версии пакета chutils с использованием Git истории.",
-            "docstring": "Модуль для обнаружения изменений версии пакета chutils с использованием Git истории.",
+            "docstring": "Модуль для обнаружения изменений версии пакета chutils с использованием Git истории.\nПоддерживает различные форматы проектов (pyproject.toml, requirements.txt, Pipfile)\nи lock-файлы (uv.lock, poetry.lock, Pipfile.lock).",
             "children": [],
             "symbols": [
+              {
+                "name": "LOCK_FILES",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 14,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "MANIFEST_FILES",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 17,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "clean_version_specifier",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(spec)",
+                "summary": "Извлекает чистый номер версии из строки спецификации зависимости.",
+                "docstring": "Извлекает чистый номер версии из строки спецификации зависимости.\n\nArgs:\n    spec: Строка спецификации (например, '>=3.2.0', '^1.0.0', '==2.5.1', 'chutils (>=3.2.0)').\n\nReturns:\n    Чистая строка версии (например, '3.2.0') или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 21,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "parse_chutils_from_pyproject",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(content)",
+                "summary": "Извлекает версию пакета chutils из pyproject.toml.",
+                "docstring": "Извлекает версию пакета chutils из pyproject.toml.\n\nЕсли текущий проект — сам chutils (name = \"chutils\" в [project]),\nизвлекается версия самого проекта. В противном случае извлекается\nверсия зависимости chutils из секций dependencies.\n\nArgs:\n    content: Содержимое файла pyproject.toml.\n\nReturns:\n    Строка версии chutils или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 38,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "parse_chutils_from_lockfile",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(filename, content)",
+                "summary": "Извлекает версию chutils из lock-файла (uv.lock, poetry.lock, Pipfile.lock).",
+                "docstring": "Извлекает версию chutils из lock-файла (uv.lock, poetry.lock, Pipfile.lock).\n\nArgs:\n    filename: Имя lock-файла.\n    content: Содержимое файла.\n\nReturns:\n    Строка версии или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 77,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "parse_chutils_from_requirements",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(content)",
+                "summary": "Извлекает версию chutils из файла требований (requirements.txt, Pipfile и др.).",
+                "docstring": "Извлекает версию chutils из файла требований (requirements.txt, Pipfile и др.).\n\nArgs:\n    content: Содержимое файла требований.\n\nReturns:\n    Строка версии или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 118,
+                "bases": [],
+                "children": []
+              },
               {
                 "name": "parse_version_from_toml",
                 "type": "function",
@@ -14947,7 +15067,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 11,
+                "line_number": 138,
                 "bases": [],
                 "children": []
               },
@@ -14967,7 +15087,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 31,
+                "line_number": 160,
                 "bases": [],
                 "children": []
               },
@@ -14976,8 +15096,8 @@
                 "type": "function",
                 "layer": "internal",
                 "signature": "(base_dir)",
-                "summary": "Возвращает текущую версию пакета из pyproject.toml в рабочей директории.",
-                "docstring": "Возвращает текущую версию пакета из pyproject.toml в рабочей директории.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Строка версии или None при ошибках.",
+                "summary": "Возвращает текущую версию пакета chutils в рабочей директории.",
+                "docstring": "Возвращает текущую версию пакета chutils в рабочей директории.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Строка версии или None при ошибках.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -14987,7 +15107,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 51,
+                "line_number": 180,
                 "bases": [],
                 "children": []
               },
@@ -14996,8 +15116,8 @@
                 "type": "function",
                 "layer": "internal",
                 "signature": "(base_dir)",
-                "summary": "Возвращает версию пакета из pyproject.toml в Git HEAD.",
-                "docstring": "Возвращает версию пакета из pyproject.toml в Git HEAD.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Строка версии или None при ошибках.",
+                "summary": "Возвращает версию пакета chutils в Git HEAD.",
+                "docstring": "Возвращает версию пакета chutils в Git HEAD.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Строка версии или None при ошибках.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -15007,7 +15127,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 70,
+                "line_number": 232,
                 "bases": [],
                 "children": []
               },
@@ -15016,8 +15136,8 @@
                 "type": "function",
                 "layer": "internal",
                 "signature": "(base_dir)",
-                "summary": "Проверяет, произошло ли обновление версии в pyproject.toml.",
-                "docstring": "Проверяет, произошло ли обновление версии в pyproject.toml.\n\nСравнивает текущую версию в рабочей директории с версией в Git HEAD.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Кортеж (old_version, new_version, is_upgraded).",
+                "summary": "Проверяет, произошло ли обновление версии chutils в проекте.",
+                "docstring": "Проверяет, произошло ли обновление версии chutils в проекте.\n\nСравнивает текущую версию в рабочей директории с версией в Git HEAD.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Кортеж (old_version, new_version, is_upgraded).",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -15027,7 +15147,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 92,
+                "line_number": 270,
                 "bases": [],
                 "children": []
               }
@@ -30755,8 +30875,8 @@
   "metadata": {
     "chutils_version": "3.3.0",
     "project_version": "3.3.0",
-    "git_commit": "dd510da8a0f5b6bd6e074a0384bb569842a8941c (dirty)",
-    "generated_at": "2026-07-21T19:47:29.771006+00:00",
-    "project_hash": "e737166afdd52264741ea61fe6205395550770bf482892941e0198a52a01b61f"
+    "git_commit": "95a461172931674934e6595f67f336cca1fc1520 (dirty)",
+    "generated_at": "2026-07-21T21:17:25.222016+00:00",
+    "project_hash": "7288da8a14c20f4d65e962b9aab1c0605e3f89b59c2caa040c3de5af05845d2a"
   }
 }
