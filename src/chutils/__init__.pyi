@@ -244,7 +244,7 @@ def parse_datetime(value: str | int | float) -> datetime.datetime: ...
 
 
 def humanize_timedelta(
-        dt: datetime.datetime,
+        dt: datetime.datetime | datetime.timedelta | int | float,
         locale: str = "ru",
         custom_locales: dict[str, Any] | None = None,
 ) -> str: ...
@@ -490,7 +490,7 @@ async def publish_async(
 
 # --- tasks ---
 def periodic_task(
-        interval_seconds: int | Callable[[], int] | str,
+        interval_seconds: int | float | Callable[[], int | float] | str,
         run_immediately: bool = False,
         overlap: bool = False,
         error_strategy: Any = ...,
@@ -554,7 +554,9 @@ def is_significant_difference(
 def encrypt_portable(data: str, seed: str) -> str: ...
 
 
-def decrypt_portable(encrypted_data: str, seed: str) -> str | None: ...
+def decrypt_portable(
+        encrypted_data: str, seed: str, raise_on_error: bool = ...
+) -> str | None: ...
 
 
 def encrypt_file(
@@ -563,7 +565,10 @@ def encrypt_file(
 
 
 def decrypt_file(
-        file_path: str | Path, seed: str, output_path: str | Path | None = None
+        file_path: str | Path,
+        seed: str,
+        output_path: str | Path | None = None,
+        raise_on_error: bool = ...
 ) -> bool: ...
 
 

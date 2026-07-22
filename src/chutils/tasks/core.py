@@ -29,7 +29,7 @@ class ErrorStrategy(str, Enum):
 class PeriodicTask:
     """Метаданные периодической задачи."""
     func: Callable[..., Any]
-    interval_seconds: int | Callable[[], int] | str
+    interval_seconds: int | float | Callable[[], int | float] | str
     run_immediately: bool = False
     overlap: bool = False
     error_strategy: ErrorStrategy = ErrorStrategy.IGNORE
@@ -40,18 +40,18 @@ class PeriodicTask:
             self.name = self.func.__name__
         self.is_async = inspect.iscoroutinefunction(self.func)
 
-    def get_interval(self) -> int:
-        """Вычисляет текущий интервал запуска в секундах.
+    def get_interval(self) -> int | float:
+        """Вычисляет текущий интервал запуска в секундах (целое или дробное число).
 
         Returns:
             Текущий вычисленный интервал выполнения задачи в секундах.
         """
-        if isinstance(self.interval_seconds, int):
-            return self.interval_seconds
+        if isinstance(self.interval_seconds, (int, float)):
+            return self.interval_seconds if self.interval_seconds > 0 else 1
         elif callable(self.interval_seconds):
             try:
                 res = self.interval_seconds()
-                if not isinstance(res, int) or res <= 0:
+                if not isinstance(res, (int, float)) or res <= 0:
                     logger.warning(
                         "Динамический интервал для задачи '%s' вернул некорректное значение: %s. Используется 1 сек.",
                         self.name, res
@@ -63,21 +63,22 @@ class PeriodicTask:
                 return 1
         elif isinstance(self.interval_seconds, str):
             try:
-                from chutils.config import get_config_int
+                from chutils.config import get_config_value
                 # Пытаемся распарсить строку вида 'section.key' или 'key'
                 if "." in self.interval_seconds:
                     section, key = self.interval_seconds.split(".", 1)
-                    val = get_config_int(section, key, fallback=0)
+                    val = get_config_value(section, key, fallback=0)
                 else:
-                    val = get_config_int("default", self.interval_seconds, fallback=0)
+                    val = get_config_value("default", self.interval_seconds, fallback=0)
 
-                if val <= 0:
+                val_num = float(val) if val is not None else 0.0
+                if val_num <= 0:
                     logger.warning(
                         "Интервал из конфигурации по ключу '%s' для задачи '%s' не найден или <= 0. Используется 1 сек.",
                         self.interval_seconds, self.name
                     )
                     return 1
-                return val
+                return val_num
             except Exception as e:
                 logger.error(
                     "Ошибка при чтении интервала из конфигурации по ключу '%s' для задачи '%s': %s. Используется 1 сек.",
@@ -93,7 +94,7 @@ _tasks_registry: list[PeriodicTask] = []
 
 
 def periodic_task(
-        interval_seconds: int | Callable[[], int] | str,
+        interval_seconds: int | float | Callable[[], int | float] | str,
         run_immediately: bool = False,
         overlap: bool = False,
         error_strategy: ErrorStrategy = ErrorStrategy.IGNORE,
@@ -103,8 +104,8 @@ def periodic_task(
 
     Args:
         interval_seconds: Интервал запуска в секундах. Может быть:
-            - int: Фиксированный интервал.
-            - callable: Функция без аргументов, возвращающая int. Вызывается перед
+            - int / float: Фиксированный интервал (целый или дробный).
+            - callable: Функция без аргументов, возвращающая int или float. Вызывается перед
               каждым циклом ожидания (поддерживает hot-reload интервалов "на лету").
             - str: Строка вида 'section.key' (или 'key') для чтения значения из chutils.config.
               Значение перечитывается из конфигурации перед каждым циклом ожидания

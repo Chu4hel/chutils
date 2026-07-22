@@ -183,6 +183,15 @@ def test_validate_data_invalid_json() -> None:
     assert "невалидный формат JSON" in str(exc.value)
 
 
+def test_validate_data_invalid_model_type() -> None:
+    """Проверяет выброс TypeError при передаче не-Pydantic модели в validate_data."""
+    from chutils.validation import validate_data
+
+    with pytest.raises(TypeError) as exc:
+        validate_data({"a": int}, {"a": 1})  # type: ignore
+    assert "BaseModel" in str(exc.value)
+
+
 @pytest.mark.asyncio
 async def test_validate_call_async_success() -> None:
     """Проверяет асинхронную валидацию при успешном вызове."""

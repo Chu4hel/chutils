@@ -57,6 +57,11 @@ def validate_data(model: type[T], data: dict[str, Any] | str) -> T:
     else:
         parsed_data = data
 
+    if not hasattr(model, "model_validate"):
+        raise TypeError(
+            f"Аргумент 'model' должен быть классом Pydantic BaseModel (получен {type(model).__name__})."
+        )
+
     try:
         return model.model_validate(parsed_data)
     except pydantic.ValidationError as e:

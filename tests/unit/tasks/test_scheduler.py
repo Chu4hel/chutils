@@ -285,3 +285,22 @@ async def test_scheduler_task_logging(caplog):
     # Проверяем ошибку
     assert any("Ошибка выполнения задачи 'failing_sync': Oops" in record.message for record in caplog.records)
 
+
+async def test_get_interval_supports_float():
+    """Проверяет поддержку float значений интервала в PeriodicTask.get_interval()."""
+    from chutils.tasks.core import PeriodicTask
+
+    def dummy(): pass
+
+    task_int = PeriodicTask(func=dummy, interval_seconds=5)
+    assert task_int.get_interval() == 5
+
+    task_float = PeriodicTask(func=dummy, interval_seconds=0.5)
+    assert task_float.get_interval() == 0.5
+
+    task_float_small = PeriodicTask(func=dummy, interval_seconds=0.05)
+    assert task_float_small.get_interval() == 0.05
+
+    task_callable = PeriodicTask(func=dummy, interval_seconds=lambda: 0.25)
+    assert task_callable.get_interval() == 0.25
+

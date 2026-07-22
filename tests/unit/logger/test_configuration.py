@@ -96,8 +96,8 @@ def test_kwargs_passthrough(project_with_marker, reset_chutils_state):
 
 def test_setup_logger_invalid_kwargs(reset_chutils_state):
     """Проверяет, что setup_logger выбрасывает TypeError при передаче невалидных параметров."""
-    with pytest.raises(TypeError, match="setup_logger\\(\\) got an unexpected keyword argument 'level'"):
-        setup_logger("test_invalid_kwargs", level="DEBUG")
+    with pytest.raises(TypeError, match="setup_logger\\(\\) got an unexpected keyword argument 'invalid_param'"):
+        setup_logger("test_invalid_kwargs", invalid_param="DEBUG")
 
     with pytest.raises(TypeError, match="setup_logger\\(\\) got an unexpected keyword argument 'unknown_arg'"):
         setup_logger("test_invalid_kwargs", unknown_arg=True)

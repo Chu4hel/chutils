@@ -6169,7 +6169,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 24,
+                "line_number": 23,
                 "bases": [],
                 "children": []
               },
@@ -6402,8 +6402,8 @@
                 "type": "function",
                 "layer": "public",
                 "signature": "(section, keys, config)",
-                "summary": "Проверяет наличие списка обязательных ключей в указанной секции конфигурации.",
-                "docstring": "Проверяет наличие списка обязательных ключей в указанной секции конфигурации.\nСлужит для групповой валидации за один проход. Выбрасывает ConfigValidationGroupError,\nесли один или несколько ключей отсутствуют или пусты.\n\nArgs:\n    section: Имя секции для валидации.\n    keys: Список ключей, которые должны присутствовать и быть не пустыми.\n    config: Опциональный, предварительно загруженный словарь конфигурации.\n\nRaises:\n    ConfigValidationGroupError: Если один или несколько ключей отсутствуют.",
+                "summary": "Проверяет наличие списка обязательных ключей в указанной секции конфигурации или словаре.",
+                "docstring": "Проверяет наличие списка обязательных ключей в указанной секции конфигурации или словаре.\nСлужит для групповой валидации за один проход. Выбрасывает ConfigValidationGroupError,\nесли один или несколько ключей отсутствуют или пусты.\n\nArgs:\n    section: Имя секции (str) или непосредственно словарь с данными (dict).\n    keys: Список ключей (list[str]) или одиночный ключ (str).\n    config: Опциональный, предварительно загруженный словарь конфигурации.\n\nRaises:\n    ConfigValidationGroupError: Если один или несколько ключей отсутствуют.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -8916,9 +8916,9 @@
             "name": "decrypt_portable",
             "type": "function",
             "layer": "public",
-            "signature": "(encrypted_data, seed)",
+            "signature": "(encrypted_data, seed, raise_on_error)",
             "summary": "Дешифрует строку с использованием детерминированного ключа, полученного из seed.",
-            "docstring": "Дешифрует строку с использованием детерминированного ключа, полученного из seed.\n\nArgs:\n    encrypted_data: Зашифрованная строка в формате Base64.\n    seed: Строка-пароль для генерации ключа.\n\nReturns:\n    Расшифрованная строка или None, если дешифрование завершилось ошибкой.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.",
+            "docstring": "Дешифрует строку с использованием детерминированного ключа, полученного из seed.\n\nArgs:\n    encrypted_data: Зашифрованная строка в формате Base64.\n    seed: Строка-пароль для генерации ключа.\n    raise_on_error: Если True, выбрасывает ValueError при ошибке\n        дешифрования (неверный ключ или поврежденный токен).\n\nReturns:\n    Расшифрованная строка или None, если дешифрование завершилось ошибкой.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.\n    ValueError: Если raise_on_error равен True и произошла ошибка дешифрования.",
             "breadcrumbs": {
               "is_async": false,
               "is_thread_safe": false,
@@ -8948,7 +8948,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 92,
+            "line_number": 101,
             "bases": [],
             "children": []
           },
@@ -8956,9 +8956,9 @@
             "name": "decrypt_file",
             "type": "function",
             "layer": "public",
-            "signature": "(file_path, seed, output_path)",
+            "signature": "(file_path, seed, output_path, raise_on_error)",
             "summary": "Дешифрует содержимое файла и сохраняет результат.",
-            "docstring": "Дешифрует содержимое файла и сохраняет результат.\n\nArgs:\n    file_path: Путь к зашифрованному файлу.\n    seed: Строка-пароль для генерации ключа.\n    output_path: Путь для сохранения результата. Если не указан,\n        файл перезаписывается.\n\nReturns:\n    True, если дешифрование прошло успешно, иначе False.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.",
+            "docstring": "Дешифрует содержимое файла и сохраняет результат.\n\nArgs:\n    file_path: Путь к зашифрованному файлу.\n    seed: Строка-пароль для генерации ключа.\n    output_path: Путь для сохранения результата. Если не указан,\n        файл перезаписывается.\n    raise_on_error: Если True, выбрасывает ValueError при ошибке\n        дешифрования (неверный ключ или поврежденный файл).\n\nReturns:\n    True, если дешифрование прошло успешно, иначе False.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.\n    ValueError: Если raise_on_error равен True и произошла ошибка дешифрования.",
             "breadcrumbs": {
               "is_async": false,
               "is_thread_safe": false,
@@ -8968,7 +8968,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 128,
+            "line_number": 137,
             "bases": [],
             "children": []
           }
@@ -14928,9 +14928,129 @@
             "type": "module",
             "layer": "internal",
             "summary": "Модуль для обнаружения изменений версии пакета chutils с использованием Git истории.",
-            "docstring": "Модуль для обнаружения изменений версии пакета chutils с использованием Git истории.",
+            "docstring": "Модуль для обнаружения изменений версии пакета chutils с использованием Git истории.\nПоддерживает различные форматы проектов (pyproject.toml, requirements.txt, Pipfile)\nи lock-файлы (uv.lock, poetry.lock, Pipfile.lock).",
             "children": [],
             "symbols": [
+              {
+                "name": "LOCK_FILES",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 14,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "MANIFEST_FILES",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 17,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "clean_version_specifier",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(spec)",
+                "summary": "Извлекает чистый номер версии из строки спецификации зависимости.",
+                "docstring": "Извлекает чистый номер версии из строки спецификации зависимости.\n\nArgs:\n    spec: Строка спецификации (например, '>=3.2.0', '^1.0.0', '==2.5.1', 'chutils (>=3.2.0)').\n\nReturns:\n    Чистая строка версии (например, '3.2.0') или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 21,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "parse_chutils_from_pyproject",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(content)",
+                "summary": "Извлекает версию пакета chutils из pyproject.toml.",
+                "docstring": "Извлекает версию пакета chutils из pyproject.toml.\n\nЕсли текущий проект — сам chutils (name = \"chutils\" в [project]),\nизвлекается версия самого проекта. В противном случае извлекается\nверсия зависимости chutils из секций dependencies.\n\nArgs:\n    content: Содержимое файла pyproject.toml.\n\nReturns:\n    Строка версии chutils или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 38,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "parse_chutils_from_lockfile",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(filename, content)",
+                "summary": "Извлекает версию chutils из lock-файла (uv.lock, poetry.lock, Pipfile.lock).",
+                "docstring": "Извлекает версию chutils из lock-файла (uv.lock, poetry.lock, Pipfile.lock).\n\nArgs:\n    filename: Имя lock-файла.\n    content: Содержимое файла.\n\nReturns:\n    Строка версии или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 77,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "parse_chutils_from_requirements",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(content)",
+                "summary": "Извлекает версию chutils из файла требований (requirements.txt, Pipfile и др.).",
+                "docstring": "Извлекает версию chutils из файла требований (requirements.txt, Pipfile и др.).\n\nArgs:\n    content: Содержимое файла требований.\n\nReturns:\n    Строка версии или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 118,
+                "bases": [],
+                "children": []
+              },
               {
                 "name": "parse_version_from_toml",
                 "type": "function",
@@ -14947,7 +15067,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 11,
+                "line_number": 138,
                 "bases": [],
                 "children": []
               },
@@ -14967,7 +15087,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 31,
+                "line_number": 160,
                 "bases": [],
                 "children": []
               },
@@ -14976,8 +15096,8 @@
                 "type": "function",
                 "layer": "internal",
                 "signature": "(base_dir)",
-                "summary": "Возвращает текущую версию пакета из pyproject.toml в рабочей директории.",
-                "docstring": "Возвращает текущую версию пакета из pyproject.toml в рабочей директории.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Строка версии или None при ошибках.",
+                "summary": "Возвращает текущую версию пакета chutils в рабочей директории.",
+                "docstring": "Возвращает текущую версию пакета chutils в рабочей директории.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Строка версии или None при ошибках.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -14987,7 +15107,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 51,
+                "line_number": 180,
                 "bases": [],
                 "children": []
               },
@@ -14996,8 +15116,8 @@
                 "type": "function",
                 "layer": "internal",
                 "signature": "(base_dir)",
-                "summary": "Возвращает версию пакета из pyproject.toml в Git HEAD.",
-                "docstring": "Возвращает версию пакета из pyproject.toml в Git HEAD.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Строка версии или None при ошибках.",
+                "summary": "Возвращает версию пакета chutils в Git HEAD.",
+                "docstring": "Возвращает версию пакета chutils в Git HEAD.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Строка версии или None при ошибках.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -15007,7 +15127,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 70,
+                "line_number": 232,
                 "bases": [],
                 "children": []
               },
@@ -15016,8 +15136,8 @@
                 "type": "function",
                 "layer": "internal",
                 "signature": "(base_dir)",
-                "summary": "Проверяет, произошло ли обновление версии в pyproject.toml.",
-                "docstring": "Проверяет, произошло ли обновление версии в pyproject.toml.\n\nСравнивает текущую версию в рабочей директории с версией в Git HEAD.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Кортеж (old_version, new_version, is_upgraded).",
+                "summary": "Проверяет, произошло ли обновление версии chutils в проекте.",
+                "docstring": "Проверяет, произошло ли обновление версии chutils в проекте.\n\nСравнивает текущую версию в рабочей директории с версией в Git HEAD.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Кортеж (old_version, new_version, is_upgraded).",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -15027,7 +15147,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 92,
+                "line_number": 270,
                 "bases": [],
                 "children": []
               }
@@ -19845,7 +19965,7 @@
                 "layer": "public",
                 "signature": "(name, config_section_name, log_level, log_file_name, force_reconfigure, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, json_format, use_async, custom_patterns, use_predefined_patterns)",
                 "summary": "Настраивает и возвращает экземпляр логгера.",
-                "docstring": "Настраивает и возвращает экземпляр логгера.\n\nФункция предлагает гибкую настройку, включая управление уровнями, ротацией и сжатием.\nПри каждом вызове для существующего логгера его уровень **всегда обновляется**.\n\n### Приоритет настроек:\n0. Переменные окружения `CH_LOG_NO_TIME` и `CH_LOG_NO_FILE` (высший приоритет).\n1. Явные аргументы, переданные в эту функцию (например, `log_level=...`).\n2. Секция, указанная в `config_section_name` (например, `[AuditLogger]`).\n3. Общая секция `[Logging]` в `config.yml`.\n4. Значения по умолчанию, зашитые в коде.\n\n### Ротация и сжатие:\n- **По времени (`rotation_type='time'`)**: Ротация ежедневно или по интервалу (параметры `when`, `interval`).\n- **По размеру (`rotation_type='size'`)**: Ротация при достижении `max_bytes`.\n- **Сжатие**: Если `compress=True`, старые логи сжимаются в `.gz`.\n\n### Асинхронность:\n- Если `use_async=True`, логи записываются в очередь и обрабатываются в отдельном потоке.\n- Очередь блокирующая, что предотвращает потерю сообщений при переполнении.\n\n### Маскирование:\n- Автоматическая замена секретов и паттернов на `[MASKED]`.\n- Поддержка предустановленных паттернов PII (`email`, `phone`, `credit_card`, `ssn`).\n\nWarning:\n    Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings`\n    для чтения конфигурации из внешних источников (например, `.env` или переменных окружения),\n    рекомендуется явно передавать уровень логирования через параметр `log_level` для исключения\n    рассинхронизации настроек с файлом `config.yml`.\n\nArgs:\n    name: Имя логгера. `app_logger` по умолчанию.\n    config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').\n        Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.\n        Если не указана, используется только общая секция `[Logging]`.\n    log_level: Уровень логирования (строка или LogLevel).\n    log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.\n    force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).\n    rotation_type: Тип ротации ('time' или 'size').\n    max_bytes: Макс. размер файла (для 'size'). По умолчанию 5 МБ.\n    compress: Сжимать ли старые логи в `.gz`. По умолчанию False.\n    backup_count: Количество хранимых ротированных файлов. По умолчанию 3.\n    encoding: Кодировка файла. По умолчанию 'utf-8'.\n    when: Интервал ротации для 'time' (например, 'S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').\n    interval: Для 'time'. Кратность интервала.\n    utc: Для 'time'. Использовать ли UTC время для имен файлов.\n    at_time: Для 'time'. Время ротации (для when='midnight').\n    json_format: Использовать ли JSON формат для логов.\n    use_async: Использовать ли асинхронное логирование.\n    custom_patterns: Список регулярных выражений для маскирования.\n    use_predefined_patterns: Список имен предустановленных паттернов для маскирования.\n\n    **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`).\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
+                "docstring": "Настраивает и возвращает экземпляр логгера.\n\nФункция предлагает гибкую настройку, включая управление уровнями, ротацией и сжатием.\nПри каждом вызове для существующего логгера его уровень **всегда обновляется**.\n\n### Приоритет настроек:\n0. Переменные окружения `CH_LOG_NO_TIME` и `CH_LOG_NO_FILE` (высший приоритет).\n1. Явные аргументы, переданные в эту функцию (например, `log_level=...`).\n2. Секция, указанная в `config_section_name` (например, `[AuditLogger]`).\n3. Общая секция `[Logging]` в `config.yml`.\n4. Значения по умолчанию, зашитые в коде.\n\n### Ротация и сжатие:\n- **По времени (`rotation_type='time'`)**: Ротация ежедневно или по интервалу (параметры `when`, `interval`).\n- **По размеру (`rotation_type='size'`)**: Ротация при достижении `max_bytes`.\n- **Сжатие**: Если `compress=True`, старые логи сжимаются в `.gz`.\n\n### Асинхронность:\n- Если `use_async=True`, логи записываются в очередь и обрабатываются в отдельном потоке.\n- Очередь блокирующая, что предотвращает потерю сообщений при переполнении.\n\n### Маскирование:\n- Автоматическая замена секретов и паттернов на `[MASKED]`.\n- Поддержка предустановленных паттернов PII (`email`, `phone`, `credit_card`, `ssn`).\n\nWarning:\n    Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings`\n    для чтения конфигурации из внешних источников (например, `.env` или переменных окружения),\n    рекомендуется явно передавать уровень логирования через параметр `log_level` для исключения\n    рассинхронизации настроек с файлом `config.yml`.\n\nArgs:\n    name: Имя логгера. `app_logger` по умолчанию.\n    config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').\n        Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.\n        Если не указана, используется только общая секция `[Logging]`.\n    log_level: Уровень логирования (строка или LogLevel). Поддерживается псевдоним `level`.\n    log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.\n    force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).\n    rotation_type: Тип ротации ('time' или 'size').\n    max_bytes: Макс. размер файла (для 'size'). По умолчанию 5 МБ.\n    compress: Сжимать ли старые логи в `.gz`. По умолчанию False.\n    backup_count: Количество хранимых ротированных файлов. По умолчанию 3.\n    encoding: Кодировка файла. По умолчанию 'utf-8'.\n    when: Интервал ротации для 'time' (например, 'S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').\n    interval: Для 'time'. Кратность интервала.\n    utc: Для 'time'. Использовать ли UTC время для имен файлов.\n    at_time: Для 'time'. Время ротации (для when='midnight').\n    json_format: Использовать ли JSON формат для логов.\n    use_async: Использовать ли асинхронное логирование.\n    custom_patterns: Список регулярных выражений для маскирования.\n    use_predefined_patterns: Список имен предустановленных паттернов для маскирования.\n\n    **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`). Также поддерживает `level` как псевдоним `log_level`.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -19875,7 +19995,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 195,
+                "line_number": 198,
                 "bases": [],
                 "children": []
               }
@@ -27045,8 +27165,8 @@
                     "type": "method",
                     "layer": "internal",
                     "signature": "(self)",
-                    "summary": "Вычисляет текущий интервал запуска в секундах.",
-                    "docstring": "Вычисляет текущий интервал запуска в секундах.\n\nReturns:\n    Текущий вычисленный интервал выполнения задачи в секундах.",
+                    "summary": "Вычисляет текущий интервал запуска в секундах (целое или дробное число).",
+                    "docstring": "Вычисляет текущий интервал запуска в секундах (целое или дробное число).\n\nReturns:\n    Текущий вычисленный интервал выполнения задачи в секундах.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -27068,7 +27188,7 @@
                 "layer": "public",
                 "signature": "(interval_seconds, run_immediately, overlap, error_strategy, name)",
                 "summary": "Декоратор для привязки функции к расписанию планировщика задач.",
-                "docstring": "Декоратор для привязки функции к расписанию планировщика задач.\n\nArgs:\n    interval_seconds: Интервал запуска в секундах. Может быть:\n        - int: Фиксированный интервал.\n        - callable: Функция без аргументов, возвращающая int. Вызывается перед\n          каждым циклом ожидания (поддерживает hot-reload интервалов \"на лету\").\n        - str: Строка вида 'section.key' (или 'key') для чтения значения из chutils.config.\n          Значение перечитывается из конфигурации перед каждым циклом ожидания\n          (поддерживает hot-reload интервалов \"на лету\").\n\n        В случае ошибок вычисления интервала (неверный тип, отсутствие ключа в конфиге или\n        исключение) планировщик логирует предупреждение/ошибку и безопасно\n        переключается на резервный интервал в 1 секунду. Вся служба при этом не падает.\n    run_immediately: Если True, задача запустится сразу при старте планировщика.\n    overlap: Если True, задача запускается независимо от предыдущих запусков.\n    error_strategy: Стратегия обработки ошибок.\n    name: Пользовательское имя задачи.\n\nReturns:\n    Декоратор, который регистрирует задачу в планировщике и оборачивает функцию.",
+                "docstring": "Декоратор для привязки функции к расписанию планировщика задач.\n\nArgs:\n    interval_seconds: Интервал запуска в секундах. Может быть:\n        - int / float: Фиксированный интервал (целый или дробный).\n        - callable: Функция без аргументов, возвращающая int или float. Вызывается перед\n          каждым циклом ожидания (поддерживает hot-reload интервалов \"на лету\").\n        - str: Строка вида 'section.key' (или 'key') для чтения значения из chutils.config.\n          Значение перечитывается из конфигурации перед каждым циклом ожидания\n          (поддерживает hot-reload интервалов \"на лету\").\n\n        В случае ошибок вычисления интервала (неверный тип, отсутствие ключа в конфиге или\n        исключение) планировщик логирует предупреждение/ошибку и безопасно\n        переключается на резервный интервал в 1 секунду. Вся служба при этом не падает.\n    run_immediately: Если True, задача запустится сразу при старте планировщика.\n    overlap: Если True, задача запускается независимо от предыдущих запусков.\n    error_strategy: Стратегия обработки ошибок.\n    name: Пользовательское имя задачи.\n\nReturns:\n    Декоратор, который регистрирует задачу в планировщике и оборачивает функцию.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -27078,7 +27198,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 95,
+                "line_number": 96,
                 "bases": [],
                 "children": []
               },
@@ -27098,7 +27218,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 147,
+                "line_number": 148,
                 "bases": [],
                 "children": []
               },
@@ -27118,7 +27238,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 156,
+                "line_number": 157,
                 "bases": [],
                 "children": []
               },
@@ -27138,7 +27258,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 161,
+                "line_number": 162,
                 "bases": [
                   "Exception"
                 ],
@@ -27160,7 +27280,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 166,
+                "line_number": 167,
                 "bases": [
                   "Exception"
                 ],
@@ -27182,7 +27302,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 171,
+                "line_number": 172,
                 "bases": [],
                 "children": [
                   {
@@ -27201,7 +27321,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 174,
+                    "line_number": 175,
                     "bases": [],
                     "children": []
                   },
@@ -27221,7 +27341,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 181,
+                    "line_number": 182,
                     "bases": [],
                     "children": []
                   },
@@ -27241,7 +27361,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 248,
+                    "line_number": 249,
                     "bases": [],
                     "children": []
                   },
@@ -27261,7 +27381,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 262,
+                    "line_number": 263,
                     "bases": [],
                     "children": []
                   }
@@ -27283,7 +27403,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 288,
+                "line_number": 289,
                 "bases": [],
                 "children": []
               },
@@ -27303,7 +27423,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 312,
+                "line_number": 313,
                 "bases": [],
                 "children": []
               }
@@ -27977,8 +28097,8 @@
             "type": "function",
             "layer": "public",
             "signature": "(dt, locale, custom_locales)",
-            "summary": "Превращает дату в человекочитаемую строку относительно текущего времени.",
-            "docstring": "Превращает дату в человекочитаемую строку относительно текущего времени.\n\nArgs:\n    dt: Дата для сравнения.\n    locale: Код локали ('ru' или 'en').\n    custom_locales: Дополнительные локали или переопределения.\n    \nReturns:\n    Строка вида \"5 минут назад\", \"вчера\" и т.д.",
+            "summary": "Превращает дату, timedelta или количество секунд в человекочитаемую строку относительно текущего времени.",
+            "docstring": "Превращает дату, timedelta или количество секунд в человекочитаемую строку относительно текущего времени.\n\nArgs:\n    dt: Дата (datetime), интервал (timedelta) или количество секунд (int/float).\n    locale: Код локали ('ru' или 'en').\n    custom_locales: Дополнительные локали или переопределения.\n    \nReturns:\n    Строка вида \"5 минут назад\", \"вчера\" и т.д.",
             "breadcrumbs": {
               "is_async": false,
               "is_thread_safe": false,
@@ -28596,7 +28716,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 73,
+            "line_number": 78,
             "bases": [],
             "children": []
           }
@@ -30753,10 +30873,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.3.0",
-    "project_version": "3.3.0",
-    "git_commit": "dd510da8a0f5b6bd6e074a0384bb569842a8941c (dirty)",
-    "generated_at": "2026-07-21T19:47:29.771006+00:00",
-    "project_hash": "e737166afdd52264741ea61fe6205395550770bf482892941e0198a52a01b61f"
+    "chutils_version": "3.3.1",
+    "project_version": "3.3.1",
+    "git_commit": "c402e20956e97fdab0248a2643e9da31e8cfe9ad (dirty)",
+    "generated_at": "2026-07-22T20:45:31.330072+00:00",
+    "project_hash": "a2b218f6bf3035eb5ee86e19f3c9871efda0ed7aecd8faac3121d290b08794fb"
   }
 }

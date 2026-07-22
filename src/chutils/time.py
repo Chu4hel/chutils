@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 # Настраиваем логгер
@@ -139,19 +139,29 @@ def _pluralize_ru(n: int, forms: tuple[str, ...]) -> str:
         return forms[2]
 
 
-def humanize_timedelta(dt: datetime, locale: str = 'ru', custom_locales: dict[str, Any] | None = None) -> str:
+def humanize_timedelta(
+        dt: datetime | timedelta | int | float,
+        locale: str = 'ru',
+        custom_locales: dict[str, Any] | None = None
+) -> str:
     """
-    Превращает дату в человекочитаемую строку относительно текущего времени.
+    Превращает дату, timedelta или количество секунд в человекочитаемую строку относительно текущего времени.
     
     Args:
-        dt: Дата для сравнения.
+        dt: Дата (datetime), интервал (timedelta) или количество секунд (int/float).
         locale: Код локали ('ru' или 'en').
         custom_locales: Дополнительные локали или переопределения.
         
     Returns:
         Строка вида "5 минут назад", "вчера" и т.д.
     """
-    target_dt = _ensure_aware_utc(dt)
+    if isinstance(dt, (int, float)):
+        target_dt = utc_now() - timedelta(seconds=float(dt))
+    elif isinstance(dt, timedelta):
+        target_dt = utc_now() - dt
+    else:
+        target_dt = _ensure_aware_utc(dt)
+
     now = utc_now()
     diff = now - target_dt
     seconds = diff.total_seconds()

@@ -12,6 +12,14 @@ def test_setup_logger_returns_custom_logger(config_fs):
     assert isinstance(logger, ChutilsLogger)
 
 
+def test_setup_logger_level_alias(config_fs):
+    """
+    Проверяет, что аргумент level принимается как псевдоним log_level.
+    """
+    logger = setup_logger("test_logger_level_alias", level="INFO")
+    assert isinstance(logger, ChutilsLogger)
+
+
 def test_custom_log_levels(config_fs, caplog):
     """
     Проверяет, что кастомные уровни логирования работают корректно.

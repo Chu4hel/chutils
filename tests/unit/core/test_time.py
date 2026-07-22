@@ -101,3 +101,10 @@ def test_humanize_timedelta_custom_locale():
         }
     }
     assert humanize_timedelta(now - timedelta(minutes=5), locale='fr', custom_locales=custom) == "il y a 5 minutes"
+
+
+def test_humanize_timedelta_int_and_timedelta():
+    """Проверяет передачу int/float секунд и timedelta в humanize_timedelta."""
+    assert humanize_timedelta(300, locale='ru') == "5 минут назад"
+    assert humanize_timedelta(3600.0, locale='ru') == "1 час назад"
+    assert humanize_timedelta(timedelta(minutes=5), locale='ru') == "5 минут назад"
