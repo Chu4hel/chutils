@@ -20,8 +20,8 @@ from .manager import _cm
 if TYPE_CHECKING:
     from pydantic import BaseModel
 
-# Тип для Pydantic моделей
 T = TypeVar("T", bound="BaseModel")
+"""Тип для Pydantic моделей."""
 
 logger = logging.getLogger(__name__)
 
@@ -451,38 +451,48 @@ def get_config_path(
 
 
 def validate_required_keys(
-        section: str,
-        keys: list[str],
+        section: str | dict[str, Any],
+        keys: list[str] | str,
         config: JSONDict | None = None,
 ) -> None:
     """
-    Проверяет наличие списка обязательных ключей в указанной секции конфигурации.
+    Проверяет наличие списка обязательных ключей в указанной секции конфигурации или словаре.
     Служит для групповой валидации за один проход. Выбрасывает ConfigValidationGroupError,
     если один или несколько ключей отсутствуют или пусты.
 
     Args:
-        section: Имя секции для валидации.
-        keys: Список ключей, которые должны присутствовать и быть не пустыми.
+        section: Имя секции (str) или непосредственно словарь с данными (dict).
+        keys: Список ключей (list[str]) или одиночный ключ (str).
         config: Опциональный, предварительно загруженный словарь конфигурации.
 
     Raises:
         ConfigValidationGroupError: Если один или несколько ключей отсутствуют.
     """
-    if config is None:
-        config = cast(JSONDict, get_config())
-
+    keys_list = [keys] if isinstance(keys, str) else list(keys)
     errors: list[Exception] = []
 
-    for key in keys:
-        try:
-            get_config_value(section, key, config=config, required=True)
-        except Exception as e:
-            errors.append(e)
+    if isinstance(section, dict):
+        for key in keys_list:
+            val = section.get(key)
+            if val is None or val == "":
+                from chutils.exceptions import ConfigKeyNotFoundError
+
+                errors.append(ConfigKeyNotFoundError(f"Key '{key}' not found or empty in provided dictionary"))
+    else:
+        if config is None:
+            config = cast(JSONDict, get_config())
+
+        for key in keys_list:
+            try:
+                get_config_value(section, key, config=config, required=True)
+            except Exception as e:
+                errors.append(e)
 
     if errors:
         from chutils.exceptions import ConfigValidationGroupError
 
+        sec_name = "provided dictionary" if isinstance(section, dict) else f"section '{section}'"
         raise ConfigValidationGroupError(
-            f"Validation failed for section '{section}'. Missing or empty required keys.",
+            f"Validation failed for {sec_name}. Missing or empty required keys.",
             exceptions=errors,
         )

@@ -244,7 +244,7 @@ def parse_datetime(value: str | int | float) -> datetime.datetime: ...
 
 
 def humanize_timedelta(
-        dt: datetime.datetime,
+        dt: datetime.datetime | datetime.timedelta | int | float,
         locale: str = "ru",
         custom_locales: dict[str, Any] | None = None,
 ) -> str: ...

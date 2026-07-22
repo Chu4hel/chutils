@@ -141,7 +141,7 @@ def setup_logger(
         config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').
             Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.
             Если не указана, используется только общая секция `[Logging]`.
-        log_level: Уровень логирования (строка или LogLevel).
+        log_level: Уровень логирования (строка или LogLevel). Поддерживается псевдоним `level`.
         log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.
         force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).
         rotation_type: Тип ротации ('time' или 'size').
@@ -158,11 +158,14 @@ def setup_logger(
         custom_patterns: Список регулярных выражений для маскирования.
         use_predefined_patterns: Список имен предустановленных паттернов для маскирования.
 
-        **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`).
+        **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`). Также поддерживает `level` как псевдоним `log_level`.
 
     Returns:
         Настроенный экземпляр ChutilsLogger.
     """
+    if "level" in kwargs and log_level is None:
+        log_level = kwargs.pop("level")
+
     valid_file_handler_kwargs = {'mode', 'delay', 'errors'}
     invalid_kwargs = set(kwargs.keys()) - valid_file_handler_kwargs
     if invalid_kwargs:
