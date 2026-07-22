@@ -490,7 +490,7 @@ async def publish_async(
 
 # --- tasks ---
 def periodic_task(
-        interval_seconds: int | Callable[[], int] | str,
+        interval_seconds: int | float | Callable[[], int | float] | str,
         run_immediately: bool = False,
         overlap: bool = False,
         error_strategy: Any = ...,

@@ -27165,8 +27165,8 @@
                     "type": "method",
                     "layer": "internal",
                     "signature": "(self)",
-                    "summary": "Вычисляет текущий интервал запуска в секундах.",
-                    "docstring": "Вычисляет текущий интервал запуска в секундах.\n\nReturns:\n    Текущий вычисленный интервал выполнения задачи в секундах.",
+                    "summary": "Вычисляет текущий интервал запуска в секундах (целое или дробное число).",
+                    "docstring": "Вычисляет текущий интервал запуска в секундах (целое или дробное число).\n\nReturns:\n    Текущий вычисленный интервал выполнения задачи в секундах.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -27188,7 +27188,7 @@
                 "layer": "public",
                 "signature": "(interval_seconds, run_immediately, overlap, error_strategy, name)",
                 "summary": "Декоратор для привязки функции к расписанию планировщика задач.",
-                "docstring": "Декоратор для привязки функции к расписанию планировщика задач.\n\nArgs:\n    interval_seconds: Интервал запуска в секундах. Может быть:\n        - int: Фиксированный интервал.\n        - callable: Функция без аргументов, возвращающая int. Вызывается перед\n          каждым циклом ожидания (поддерживает hot-reload интервалов \"на лету\").\n        - str: Строка вида 'section.key' (или 'key') для чтения значения из chutils.config.\n          Значение перечитывается из конфигурации перед каждым циклом ожидания\n          (поддерживает hot-reload интервалов \"на лету\").\n\n        В случае ошибок вычисления интервала (неверный тип, отсутствие ключа в конфиге или\n        исключение) планировщик логирует предупреждение/ошибку и безопасно\n        переключается на резервный интервал в 1 секунду. Вся служба при этом не падает.\n    run_immediately: Если True, задача запустится сразу при старте планировщика.\n    overlap: Если True, задача запускается независимо от предыдущих запусков.\n    error_strategy: Стратегия обработки ошибок.\n    name: Пользовательское имя задачи.\n\nReturns:\n    Декоратор, который регистрирует задачу в планировщике и оборачивает функцию.",
+                "docstring": "Декоратор для привязки функции к расписанию планировщика задач.\n\nArgs:\n    interval_seconds: Интервал запуска в секундах. Может быть:\n        - int / float: Фиксированный интервал (целый или дробный).\n        - callable: Функция без аргументов, возвращающая int или float. Вызывается перед\n          каждым циклом ожидания (поддерживает hot-reload интервалов \"на лету\").\n        - str: Строка вида 'section.key' (или 'key') для чтения значения из chutils.config.\n          Значение перечитывается из конфигурации перед каждым циклом ожидания\n          (поддерживает hot-reload интервалов \"на лету\").\n\n        В случае ошибок вычисления интервала (неверный тип, отсутствие ключа в конфиге или\n        исключение) планировщик логирует предупреждение/ошибку и безопасно\n        переключается на резервный интервал в 1 секунду. Вся служба при этом не падает.\n    run_immediately: Если True, задача запустится сразу при старте планировщика.\n    overlap: Если True, задача запускается независимо от предыдущих запусков.\n    error_strategy: Стратегия обработки ошибок.\n    name: Пользовательское имя задачи.\n\nReturns:\n    Декоратор, который регистрирует задачу в планировщике и оборачивает функцию.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -27198,7 +27198,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 95,
+                "line_number": 96,
                 "bases": [],
                 "children": []
               },
@@ -27218,7 +27218,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 147,
+                "line_number": 148,
                 "bases": [],
                 "children": []
               },
@@ -27238,7 +27238,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 156,
+                "line_number": 157,
                 "bases": [],
                 "children": []
               },
@@ -27258,7 +27258,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 161,
+                "line_number": 162,
                 "bases": [
                   "Exception"
                 ],
@@ -27280,7 +27280,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 166,
+                "line_number": 167,
                 "bases": [
                   "Exception"
                 ],
@@ -27302,7 +27302,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 171,
+                "line_number": 172,
                 "bases": [],
                 "children": [
                   {
@@ -27321,7 +27321,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 174,
+                    "line_number": 175,
                     "bases": [],
                     "children": []
                   },
@@ -27341,7 +27341,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 181,
+                    "line_number": 182,
                     "bases": [],
                     "children": []
                   },
@@ -27361,7 +27361,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 248,
+                    "line_number": 249,
                     "bases": [],
                     "children": []
                   },
@@ -27381,7 +27381,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 262,
+                    "line_number": 263,
                     "bases": [],
                     "children": []
                   }
@@ -27403,7 +27403,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 288,
+                "line_number": 289,
                 "bases": [],
                 "children": []
               },
@@ -27423,7 +27423,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 312,
+                "line_number": 313,
                 "bases": [],
                 "children": []
               }
@@ -30875,8 +30875,8 @@
   "metadata": {
     "chutils_version": "3.3.0",
     "project_version": "3.3.0",
-    "git_commit": "784cb3f738bf879f480bc4774c404fb9613a85b0 (dirty)",
-    "generated_at": "2026-07-22T20:22:00.799395+00:00",
-    "project_hash": "555756dc81bbebce909813f3f64a9b419b616131b381a4e16cdba90e59f58d1d"
+    "git_commit": "2789db3a1dfb36cb172f905e4ba8a18c6ee33021 (dirty)",
+    "generated_at": "2026-07-22T20:36:09.541186+00:00",
+    "project_hash": "a2b218f6bf3035eb5ee86e19f3c9871efda0ed7aecd8faac3121d290b08794fb"
   }
 }
