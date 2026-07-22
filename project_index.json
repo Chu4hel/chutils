@@ -30873,10 +30873,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.3.0",
-    "project_version": "3.3.0",
-    "git_commit": "2789db3a1dfb36cb172f905e4ba8a18c6ee33021 (dirty)",
-    "generated_at": "2026-07-22T20:36:09.541186+00:00",
+    "chutils_version": "3.3.1",
+    "project_version": "3.3.1",
+    "git_commit": "c402e20956e97fdab0248a2643e9da31e8cfe9ad (dirty)",
+    "generated_at": "2026-07-22T20:45:31.330072+00:00",
     "project_hash": "a2b218f6bf3035eb5ee86e19f3c9871efda0ed7aecd8faac3121d290b08794fb"
   }
 }
