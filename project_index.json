@@ -24161,6 +24161,567 @@
         "symbols": []
       },
       {
+        "name": "qt",
+        "path": "chutils/qt",
+        "type": "package",
+        "layer": "public",
+        "summary": "Модуль chutils.qt: Интеграция PyQt6/PySide6 (логирование, асинхронность, базовые виджеты).",
+        "docstring": "Модуль chutils.qt: Интеграция PyQt6/PySide6 (логирование, асинхронность, базовые виджеты).",
+        "children": [
+          {
+            "name": "asyncio",
+            "path": "chutils/qt/asyncio",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Интеграция asyncio и фоновых потоков с циклом событий Qt (Async/Qt Bridge).",
+            "docstring": "Интеграция asyncio и фоновых потоков с циклом событий Qt (Async/Qt Bridge).",
+            "children": [],
+            "symbols": [
+              {
+                "name": "T",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 13,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_QtWorkerSignals",
+                "type": "class",
+                "layer": "private",
+                "signature": "",
+                "summary": "Сигналы для передачи результатов из фонового потока в поток UI.",
+                "docstring": "Сигналы для передачи результатов из фонового потока в поток UI.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 16,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "QtAsyncWorker",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "QThread для фонового выполнения асинхронных корутин или тяжелых синхронных функций.",
+                "docstring": "QThread для фонового выполнения асинхронных корутин или тяжелых синхронных функций.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 31,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, target)",
+                    "summary": "Инициализирует воркер.",
+                    "docstring": "Инициализирует воркер.\n\nArgs:\n    target: Асинхронная корутина или синхронная функция для выполнения.\n    *args: Позиционные аргументы.\n    **kwargs: Именованные аргументы.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 34,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "run",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Основной метод потока QThread.",
+                    "docstring": "Основной метод потока QThread.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 54,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "start",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, priority)",
+                    "summary": "Запускает выполнение потока.",
+                    "docstring": "Запускает выполнение потока.\n\nArgs:\n    priority: Приоритет потока Qt.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 73,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "run_async_task",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(target)",
+                "summary": "Запускает функцию или корутину в фоновом потоке QThread без блокировки UI.",
+                "docstring": "Запускает функцию или корутину в фоновом потоке QThread без блокировки UI.\n\nArgs:\n    target: Корутина или синхронная функция.\n    *args: Аргументы функции.\n    on_success: Слот/коллбэк при успешном завершении задачи.\n    on_error: Слот/коллбэк при обработке исключения.\n    **kwargs: Именованные аргументы функции.\n\nReturns:\n    Экземпляр запущенного QtAsyncWorker.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 85,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "async_to_qt",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(on_success, on_error)",
+                "summary": "Декоратор для автоматического запуска асинхронной функции в фоновом потоке Qt.",
+                "docstring": "Декоратор для автоматического запуска асинхронной функции в фоновом потоке Qt.\n\nArgs:\n    on_success: Коллбэк для успешного результата.\n    on_error: Коллбэк для ошибки.\n\nReturns:\n    Декорированная функция, возвращающая QtAsyncWorker.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 121,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "logging",
+            "path": "chutils/qt/logging",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Обработчик логов для Qt приложений (QtLogHandler).",
+            "docstring": "Обработчик логов для Qt приложений (QtLogHandler).",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_QtLogEmitter",
+                "type": "class",
+                "layer": "private",
+                "signature": "",
+                "summary": "Класс-эмиттер Qt сигналов для логгера.",
+                "docstring": "Класс-эмиттер Qt сигналов для логгера.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 13,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "QtLogHandler",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Обработчик логов, транслирующий сообщения в Qt сигналы.",
+                "docstring": "Обработчик логов, транслирующий сообщения в Qt сигналы.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 22,
+                "bases": [
+                  "logging.Handler"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, level)",
+                    "summary": "Инициализирует обработчик логов.",
+                    "docstring": "Инициализирует обработчик логов.\n\nArgs:\n    level: Уровень логирования.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 25,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "emit",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, record)",
+                    "summary": "Отправляет форматированное сообщение лога в сигнал Qt.",
+                    "docstring": "Отправляет форматированное сообщение лога в сигнал Qt.\n\nArgs:\n    record: Запись лога.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 35,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "setup_qt_logging",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(widget, level, formatter, logger_name)",
+                "summary": "Быстро подключает вывод логов к Qt виджету или сигналу.",
+                "docstring": "Быстро подключает вывод логов к Qt виджету или сигналу.\n\nArgs:\n    widget: Виджет Qt (QPlainTextEdit, QTextEdit, QStatusBar, QLabel) или слот-функция.\n    level: Уровень логирования.\n    formatter: Кастомный форматировщик логов.\n    logger_name: Имя логгера (None для корневого логгера).\n\nReturns:\n    Экземпляр QtLogHandler.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 49,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "shim",
+            "path": "chutils/qt/shim",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Слой совместимости для прозрачной работы с PyQt6 и PySide6.",
+            "docstring": "Слой совместимости для прозрачной работы с PyQt6 и PySide6.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_load_qt",
+                "type": "function",
+                "layer": "private",
+                "signature": "()",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 23,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "require_qt",
+                "type": "function",
+                "layer": "internal",
+                "signature": "()",
+                "summary": "Проверяет наличие установленной библиотеки Qt (PyQt6 или PySide6).",
+                "docstring": "Проверяет наличие установленной библиотеки Qt (PyQt6 или PySide6).\n\nRaises:\n    OptionalDependencyError: Если ни PyQt6, ни PySide6 не установлены.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 79,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "widgets",
+            "path": "chutils/qt/widgets",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Базовые шаблонные виджеты Qt (BaseMainWindow, BaseDialog) с интеграцией логирования и конфигов.",
+            "docstring": "Базовые шаблонные виджеты Qt (BaseMainWindow, BaseDialog) с интеграцией логирования и конфигов.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "BaseMainWindow",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Базовое главное окно с встроенным логированием и сохранением геометрии.",
+                "docstring": "Базовое главное окно с встроенным логированием и сохранением геометрии.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 13,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Инициализирует базовое главное окно.",
+                    "docstring": "Инициализирует базовое главное окно.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "save_geometry_settings",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key)",
+                    "summary": "Сохраняет размеры и положение окна в QSettings.",
+                    "docstring": "Сохраняет размеры и положение окна в QSettings.\n\nArgs:\n    key: Ключ настройки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 23,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "restore_geometry_settings",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key)",
+                    "summary": "Восстанавливает размеры и положение окна из QSettings.",
+                    "docstring": "Восстанавливает размеры и положение окна из QSettings.\n\nArgs:\n    key: Ключ настройки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 33,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "showEvent",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, event)",
+                    "summary": "Обработчик события отображения окна.",
+                    "docstring": "Обработчик события отображения окна.\n\nArgs:\n    event: QShowEvent.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 45,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "closeEvent",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, event)",
+                    "summary": "Обработчик события закрытия окна.",
+                    "docstring": "Обработчик события закрытия окна.\n\nArgs:\n    event: QCloseEvent.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 55,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "BaseDialog",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Базовый диалог с логированием жизненного цикла.",
+                "docstring": "Базовый диалог с логированием жизненного цикла.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 67,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Инициализирует базовый диалог.",
+                    "docstring": "Инициализирует базовый диалог.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 70,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "showEvent",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, event)",
+                    "summary": "Обработчик события отображения диалога.",
+                    "docstring": "Обработчик события отображения диалога.\n\nArgs:\n    event: QShowEvent.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 77,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "closeEvent",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, event)",
+                    "summary": "Обработчик события закрытия диалога.",
+                    "docstring": "Обработчик события закрытия диалога.\n\nArgs:\n    event: QCloseEvent.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 87,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "symbols": []
+      },
+      {
         "name": "scraping",
         "path": "chutils/scraping",
         "type": "package",
@@ -32213,7 +32774,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 329,
+        "line_number": 330,
         "bases": [],
         "children": []
       },
@@ -32233,7 +32794,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 353,
+        "line_number": 354,
         "bases": [],
         "children": []
       },
@@ -32253,7 +32814,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 363,
+        "line_number": 364,
         "bases": [],
         "children": []
       }
@@ -33506,6 +34067,46 @@
       "weight": 1
     },
     {
+      "source": "chutils/qt",
+      "target": "/asyncio",
+      "weight": 3
+    },
+    {
+      "source": "chutils/qt",
+      "target": "/logging",
+      "weight": 2
+    },
+    {
+      "source": "chutils/qt",
+      "target": "/shim",
+      "weight": 9
+    },
+    {
+      "source": "chutils/qt",
+      "target": "/widgets",
+      "weight": 2
+    },
+    {
+      "source": "chutils/qt/asyncio",
+      "target": "/shim",
+      "weight": 3
+    },
+    {
+      "source": "chutils/qt/logging",
+      "target": "/shim",
+      "weight": 3
+    },
+    {
+      "source": "chutils/qt/shim",
+      "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/qt/widgets",
+      "target": "/shim",
+      "weight": 3
+    },
+    {
       "source": "chutils/scraping",
       "target": ".",
       "weight": 3
@@ -33910,8 +34511,8 @@
   "metadata": {
     "chutils_version": "3.3.2",
     "project_version": "3.3.2",
-    "git_commit": "993fa5420b80fa326044f6e3fef23541897e0277 (dirty)",
-    "generated_at": "2026-07-24T19:50:34.294788+00:00",
-    "project_hash": "48f9441d5434cd68b43e6b3ad0340ae7902918d1f285c6113ca494130b504ff8"
+    "git_commit": "d3e26ba7f7890f87a61abe41999ca1e8ad8887e9 (dirty)",
+    "generated_at": "2026-07-24T23:12:41.028293+00:00",
+    "project_hash": "3e12ecc6f1d6a37284d1c408c981064c9381c531e01850fb290195570d12244f"
   }
 }

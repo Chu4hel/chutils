@@ -387,4 +387,21 @@ members:
 - DomainRateLimiter
 - WorkerPool
 
+## Модуль `qt` (Интеграция PyQt6 / PySide6)
+
+::: chutils.qt
+options:
+members:
+
+- QT_BINDING
+- require_qt
+- QtLogHandler
+- setup_qt_logging
+- QtAsyncWorker
+- run_async_task
+- async_to_qt
+- BaseMainWindow
+- BaseDialog
+
+
 

@@ -40,6 +40,12 @@ scraping = [
 redis = [
     "redis (>=5.0.0)"
 ]
+qt = [
+    "PyQt6 (>=6.6.0)"
+]
+qt-pyside = [
+    "PySide6 (>=6.6.0)"
+]
 testing = [
     "pytest (>=9.0.3)"
 ]
