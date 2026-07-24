@@ -25044,6 +25044,1084 @@
             ]
           },
           {
+            "name": "concurrency",
+            "path": "chutils/scraping/concurrency",
+            "type": "package",
+            "layer": "internal",
+            "summary": "Модуль chutils.scraping.concurrency: Умная очередь задач, распределение нагрузки и воркеры.",
+            "docstring": "Модуль chutils.scraping.concurrency: Умная очередь задач, распределение нагрузки и воркеры.",
+            "children": [
+              {
+                "name": "base",
+                "path": "chutils/scraping/concurrency/base",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Базовый абстрактный класс очереди задач скрапинга.",
+                "docstring": "Базовый абстрактный класс очереди задач скрапинга.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "BaseTaskQueue",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Абстрактная очередь задач скрапинга.",
+                    "docstring": "Абстрактная очередь задач скрапинга.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 14,
+                    "bases": [
+                      "abc.ABC"
+                    ],
+                    "children": [
+                      {
+                        "name": "push",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task)",
+                        "summary": "Добавляет задачу в очередь.",
+                        "docstring": "Добавляет задачу в очередь.\n\nArgs:\n    task: Задача для добавления.\n\nReturns:\n    True, если задача добавлена; False, если задача дедуплицирована.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 18,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "pop",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Извлекает задачу с наибольшим приоритетом из очереди.",
+                        "docstring": "Извлекает задачу с наибольшим приоритетом из очереди.\n\nReturns:\n    Экземпляр ScrapingTask или None, если очередь пуста.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 29,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "complete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task)",
+                        "summary": "Помечает задачу как успешно выполненную.",
+                        "docstring": "Помечает задачу как успешно выполненную.\n\nArgs:\n    task: Выполненная задача.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 37,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "fail",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task, error)",
+                        "summary": "Обрабатывает ошибку выполнения задачи.",
+                        "docstring": "Обрабатывает ошибку выполнения задачи.\n\nArgs:\n    task: Сбойная задача.\n    error: Текст ошибки.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 45,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "size",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает количество элементов в очереди.",
+                        "docstring": "Возвращает количество элементов в очереди.\n\nReturns:\n    Размер очереди.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 54,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "clear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Очищает очередь и сбрасывает историю дедупликации.",
+                        "docstring": "Очищает очередь и сбрасывает историю дедупликации.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": true,
+                          "decorators": [
+                            "abstractmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 62,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "limiter",
+                "path": "chutils/scraping/concurrency/limiter",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Domain-Aware Rate Limiter для ограничения частоты запросов к отдельным доменам.",
+                "docstring": "Domain-Aware Rate Limiter для ограничения частоты запросов к отдельным доменам.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "DomainRateLimiter",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Ограничитель частоты запросов и параллельных соединений с привязкой к доменам.",
+                    "docstring": "Ограничитель частоты запросов и параллельных соединений с привязкой к доменам.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 13,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, default_delay, domain_rules, max_domain_concurrency)",
+                        "summary": "Инициализирует лимитер.",
+                        "docstring": "Инициализирует лимитер.\n\nArgs:\n    default_delay: Задержка по умолчанию между запросами к одному домену (в секундах).\n    domain_rules: Кастомные задержки по маскам хостов (напр., {\"*.wikipedia.org\": 2.0}).\n    max_domain_concurrency: Максимальное количество одновременных подключений к домену.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 16,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_domain",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, url)",
+                        "summary": "Извлекает домен в нижнем регистре из URL.",
+                        "docstring": "Извлекает домен в нижнем регистре из URL.\n\nArgs:\n    url: Целевой URL.\n\nReturns:\n    Имя хоста (домена).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 39,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_rule_key_and_delay",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, domain)",
+                        "summary": "Возвращает ключ группы правил и соответствующую задержку.",
+                        "docstring": "Возвращает ключ группы правил и соответствующую задержку.\n\nArgs:\n    domain: Имя домена.\n\nReturns:\n    Кортеж (ключ_правила, задержка).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 53,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "acquire",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, url)",
+                        "summary": "Запрашивает разрешение на отправку запроса к указанному URL.",
+                        "docstring": "Запрашивает разрешение на отправку запроса к указанному URL.\n\nПри необходимости выполняет задержку.\n\nArgs:\n    url: Целевой URL.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 68,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "release",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, url)",
+                        "summary": "Освобождает слот подключения после завершения запроса.",
+                        "docstring": "Освобождает слот подключения после завершения запроса.\n\nArgs:\n    url: Целевой URL.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 102,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "models",
+                "path": "chutils/scraping/concurrency/models",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Модели данных для модуля chutils.scraping.concurrency.",
+                "docstring": "Модели данных для модуля chutils.scraping.concurrency.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "ScrapingTask",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Модель задачи скрапинга.",
+                    "docstring": "Модель задачи скрапинга.\n\nAttributes:\n    url: Целевой URL.\n    priority: Числовой приоритет (чем выше, тем раньше выполняется).\n    payload: Произвольный словарь пользовательских данных.\n    attempts: Количество предпринятых попыток выполнения.\n    max_attempts: Максимально допустимое количество попыток.\n    task_id: Уникальный идентификатор задачи.\n    dedup_key: Ключ для дедупликации (по умолчанию совпадает с url).\n    created_at: Временная метка создания задачи.\n    last_error: Сообщение о последней возникшей ошибке.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "dataclass"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 14,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "pool",
+                "path": "chutils/scraping/concurrency/pool",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Пул асинхронных и синхронных воркеров для параллельной обработки задач скрапинга.",
+                "docstring": "Пул асинхронных и синхронных воркеров для параллельной обработки задач скрапинга.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "WorkerPool",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Управляющий пул воркеров с поддержкой асинхронных и синхронных обработчиков.",
+                    "docstring": "Управляющий пул воркеров с поддержкой асинхронных и синхронных обработчиков.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 17,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, queue, handler, limiter, max_workers, retry_backoff)",
+                        "summary": "Инициализирует пул воркеров.",
+                        "docstring": "Инициализирует пул воркеров.\n\nArgs:\n    queue: Очередь задач скрапинга.\n    handler: Синхронная или асинхронная функция-обработчик задач.\n    limiter: Опциональный DomainRateLimiter для контроля нагрузки.\n    max_workers: Количество параллельных воркеров.\n    retry_backoff: Коэффициент повторного вызова (backoff).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 20,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "completed_count",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Количество успешно выполненных задач.",
+                        "docstring": "Количество успешно выполненных задач.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 51,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "failed_count",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Количество проваленных задач.",
+                        "docstring": "Количество проваленных задач.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 56,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_execute_handler",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, task)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 60,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_worker_loop",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 66,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "start",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Запускает фоновые задачи воркеров.",
+                        "docstring": "Запускает фоновые задачи воркеров.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 92,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "stop",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Останавливает все воркеры.",
+                        "docstring": "Останавливает все воркеры.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 102,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "run_until_complete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, poll_interval)",
+                        "summary": "Запускает пул и выполняет задачи до полного опустошения очереди.",
+                        "docstring": "Запускает пул и выполняет задачи до полного опустошения очереди.\n\nArgs:\n    poll_interval: Интервал проверки состояния очереди в секундах.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 111,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "queues",
+                "path": "chutils/scraping/concurrency/queues",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Реализации очередей задач: InMemoryTaskQueue, PersistentTaskQueue, RedisTaskQueue.",
+                "docstring": "Реализации очередей задач: InMemoryTaskQueue, PersistentTaskQueue, RedisTaskQueue.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "InMemoryTaskQueue",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Быстрая очередь задач в оперативной памяти.",
+                    "docstring": "Быстрая очередь задач в оперативной памяти.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 18,
+                    "bases": [
+                      ".base.BaseTaskQueue"
+                    ],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 21,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "push",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task)",
+                        "summary": "Добавляет задачу в оперативную очередь.",
+                        "docstring": "Добавляет задачу в оперативную очередь.\n\nArgs:\n    task: Задача для добавления.\n\nReturns:\n    True, если задача успешно добавлена; False, если задача дедуплицирована.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 27,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "pop",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Извлекает задачу с наивысшим приоритетом из очереди.",
+                        "docstring": "Извлекает задачу с наивысшим приоритетом из очереди.\n\nReturns:\n    Экземпляр ScrapingTask или None, если очередь пуста.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 44,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "complete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task)",
+                        "summary": "Помечает задачу как выполненную.",
+                        "docstring": "Помечает задачу как выполненную.\n\nArgs:\n    task: Выполненная задача.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 55,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "fail",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task, error)",
+                        "summary": "Обрабатывает ошибку выполнения задачи.",
+                        "docstring": "Обрабатывает ошибку выполнения задачи.\n\nArgs:\n    task: Сбойная задача.\n    error: Сообщение об ошибке.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 63,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "size",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает количество ожидающих задач в очереди.",
+                        "docstring": "Возвращает количество ожидающих задач в очереди.\n\nReturns:\n    Размер очереди.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 79,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "clear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Очищает очередь и сбрасывает историю дедупликации.",
+                        "docstring": "Очищает очередь и сбрасывает историю дедупликации.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 88,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "PersistentTaskQueue",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Очередь задач с персистентным сохранением состояния в SQLite.",
+                    "docstring": "Очередь задач с персистентным сохранением состояния в SQLite.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 96,
+                    "bases": [
+                      ".base.BaseTaskQueue"
+                    ],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, db_path)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 99,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_init_db",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 106,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "push",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task)",
+                        "summary": "Сохраняет задачу в базы данных SQLite.",
+                        "docstring": "Сохраняет задачу в базы данных SQLite.\n\nArgs:\n    task: Задача для сохранения.\n\nReturns:\n    True, если задача сохранена; False, если задача дедуплицирована.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 133,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "pop",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Извлекает следующую ожидающую задачу из базы данных SQLite.",
+                        "docstring": "Извлекает следующую ожидающую задачу из базы данных SQLite.\n\nReturns:\n    Экземпляр ScrapingTask или None, если очередь пуста.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 172,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "complete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task)",
+                        "summary": "Обновляет статус задачи в БД на 'completed'.",
+                        "docstring": "Обновляет статус задачи в БД на 'completed'.\n\nArgs:\n    task: Выполненная задача.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 208,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "fail",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task, error)",
+                        "summary": "Обновляет количество попыток и статус сбойной задачи в БД.",
+                        "docstring": "Обновляет количество попыток и статус сбойной задачи в БД.\n\nArgs:\n    task: Сбойная задача.\n    error: Текст ошибки.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 219,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "size",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Подсчитывает количество ожидающих задач в БД.",
+                        "docstring": "Подсчитывает количество ожидающих задач в БД.\n\nReturns:\n    Количество задач со статусом 'pending'.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 242,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "clear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Удаляет все записи очередей и истории дедупликации из БД.",
+                        "docstring": "Удаляет все записи очередей и истории дедупликации из БД.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 254,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "close",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Освобождает ресурсы и закрывает подключение к SQLite.",
+                        "docstring": "Освобождает ресурсы и закрывает подключение к SQLite.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 262,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "RedisTaskQueue",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Распределенная очередь задач на базе Redis.",
+                    "docstring": "Распределенная очередь задач на базе Redis.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 270,
+                    "bases": [
+                      ".base.BaseTaskQueue"
+                    ],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, redis_url, queue_name)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 273,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "push",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task)",
+                        "summary": "Добавляет задачу в структуру Redis ZSET.",
+                        "docstring": "Добавляет задачу в структуру Redis ZSET.\n\nArgs:\n    task: Задача для добавления.\n\nReturns:\n    True, если задача добавлена; False, если задача дедуплицирована.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 286,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "pop",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Извлекает наивысшую по приоритету задачу из Redis.",
+                        "docstring": "Извлекает наивысшую по приоритету задачу из Redis.\n\nReturns:\n    Экземпляр ScrapingTask или None, если очередь пуста.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 318,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "complete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task)",
+                        "summary": "Удаляет данные выполненной задачи из Redis.",
+                        "docstring": "Удаляет данные выполненной задачи из Redis.\n\nArgs:\n    task: Выполненная задача.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 338,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "fail",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, task, error)",
+                        "summary": "Обрабатывает ошибку задачи и помещает ее обратно при наличии попыток.",
+                        "docstring": "Обрабатывает ошибку задачи и помещает ее обратно при наличии попыток.\n\nArgs:\n    task: Сбойная задача.\n    error: Сообщение об ошибке.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 347,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "size",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает количество элементов в очереди Redis.",
+                        "docstring": "Возвращает количество элементов в очереди Redis.\n\nReturns:\n    Число элементов.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 374,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "clear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Удаляет ключи очереди из Redis.",
+                        "docstring": "Удаляет ключи очереди из Redis.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 383,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "symbols": []
+          },
+          {
             "name": "humanize",
             "path": "chutils/scraping/humanize",
             "type": "package",
@@ -32430,7 +33508,7 @@
     {
       "source": "chutils/scraping",
       "target": ".",
-      "weight": 2
+      "weight": 3
     },
     {
       "source": "chutils/scraping/captcha",
@@ -32481,6 +33559,46 @@
       "source": "chutils/scraping/captcha/rucaptcha",
       "target": "/exceptions",
       "weight": 3
+    },
+    {
+      "source": "chutils/scraping/concurrency",
+      "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/concurrency",
+      "target": "/limiter",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/concurrency",
+      "target": "/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/concurrency",
+      "target": "/pool",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/concurrency",
+      "target": "/queues",
+      "weight": 3
+    },
+    {
+      "source": "chutils/scraping/concurrency/queues",
+      "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/concurrency/queues",
+      "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/concurrency/queues",
+      "target": "/models",
+      "weight": 1
     },
     {
       "source": "chutils/scraping/humanize",
@@ -32792,8 +33910,8 @@
   "metadata": {
     "chutils_version": "3.3.2",
     "project_version": "3.3.2",
-    "git_commit": "3463875223ab0834767d776a9bd7fd69b6267312 (dirty)",
-    "generated_at": "2026-07-24T19:02:47.993646+00:00",
-    "project_hash": "47b276d5e1c879afe0aeacaf29d97c2cb049343ccdf5a2fe8cb07d9997977d10"
+    "git_commit": "993fa5420b80fa326044f6e3fef23541897e0277 (dirty)",
+    "generated_at": "2026-07-24T19:50:34.294788+00:00",
+    "project_hash": "48f9441d5434cd68b43e6b3ad0340ae7902918d1f285c6113ca494130b504ff8"
   }
 }

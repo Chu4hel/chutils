@@ -37,6 +37,9 @@ scraping = [
     "playwright (>=1.49.0)",
     "selenium (>=4.27.0)"
 ]
+redis = [
+    "redis (>=5.0.0)"
+]
 testing = [
     "pytest (>=9.0.3)"
 ]

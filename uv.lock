@@ -499,6 +499,9 @@ otel = [
 pydantic = [
     { name = "pydantic" },
 ]
+redis = [
+    { name = "redis" },
+]
 rich = [
     { name = "rich" },
 ]
@@ -581,6 +584,7 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "rapidfuzz", marker = "extra == 'full'", specifier = ">=3.9.0" },
     { name = "rapidfuzz", marker = "extra == 'text'", specifier = ">=3.9.0" },
+    { name = "redis", marker = "extra == 'redis'", specifier = ">=5.0.0" },
     { name = "rich", marker = "extra == 'full'", specifier = ">=15.0.0" },
     { name = "rich", marker = "extra == 'rich'", specifier = ">=15.0.0" },
     { name = "selenium", marker = "extra == 'full'", specifier = ">=4.27.0" },
@@ -591,7 +595,7 @@ requires-dist = [
     { name = "websockets", marker = "extra == 'full'", specifier = ">=14.0.0" },
     { name = "websockets", marker = "extra == 'websockets'", specifier = ">=14.0.0" },
 ]
-provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "websockets", "db", "captcha", "scraping", "testing", "otel", "full"]
+provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "websockets", "db", "captcha", "scraping", "redis", "testing", "otel", "full"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -2329,6 +2333,18 @@ wheels = [
     { url = "https://mirrors.aliyun.com/pypi/packages/ef/9f/a3635cc4ec8fc6e14b46e7db1f7f8763d8c4bef33dcc124eea2e6cb2c8f3/rapidfuzz-3.14.5-pp311-pypy311_pp73-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:8f4a8f5cc84c7ad6bffa0e9947b33eb343ad66e6b53e94fe54378a5508c5ed53" },
     { url = "https://mirrors.aliyun.com/pypi/packages/cc/1b/2b229520f0b48464cfcd7aa758f74551d12c9bc4ab544022a60210aab064/rapidfuzz-3.14.5-pp311-pypy311_pp73-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:97c6d85283629646fa87acc22c66b30ea9d4de7f6fdf887daa2e30fa041829b5" },
     { url = "https://mirrors.aliyun.com/pypi/packages/aa/b5/363906b1064fc6fe611783a61764927bbd91919aaaabe8cba82151ca93ef/rapidfuzz-3.14.5-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:dfef96543ced67d9513a422755db422ae1dc34dade0a1485e0b43e7342ed3ebf" },
+]
+
+[[package]]
+name = "redis"
+version = "8.0.1"
+source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
+dependencies = [
+    { name = "async-timeout", marker = "python_full_version < '3.11.3'" },
+]
+sdist = { url = "https://mirrors.aliyun.com/pypi/packages/cc/c3/928b290c2c0ca99ab96eea5b4ff8f30be8112b075301a7d3ba214a3c8c12/redis-8.0.1.tar.gz", hash = "sha256:afc5a7a2f5a084f5b1880dec548dd45be17db7e43c82a30d84f952aefb05cfb0" }
+wheels = [
+    { url = "https://mirrors.aliyun.com/pypi/packages/fd/0a/c2345ebf1ebe70840ce3f6c6ee612f8fa749cfbd1b03069c53bf0c62aaad/redis-8.0.1-py3-none-any.whl", hash = "sha256:47daa35a058c23468d6437f17a8c76882cb316b838ef763036af99b96cedd743" },
 ]
 
 [[package]]

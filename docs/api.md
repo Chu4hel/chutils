@@ -373,3 +373,18 @@ members:
 - LinterEngine
 - MockServerRunner
 
+## Модуль `scraping.concurrency` (Умная очередь задач и воркеры)
+
+::: chutils.scraping.concurrency
+options:
+members:
+
+- ScrapingTask
+- BaseTaskQueue
+- InMemoryTaskQueue
+- PersistentTaskQueue
+- RedisTaskQueue
+- DomainRateLimiter
+- WorkerPool
+
+
