@@ -93,6 +93,7 @@ members:
 
 - register_cleanup
 - setup_graceful_shutdown
+- run_cleanup
 
 ## Модуль `cli_booster` (Быстрое создание CLI)
 
@@ -355,4 +356,20 @@ members:
 - put
 - delete
 - patch
+
+## Модуль `dev` (Инструменты разработчика и Live Dev)
+
+::: chutils.dev
+options:
+members:
+
+- BaseWatcher
+- PollingWatcher
+- WatchdogWatcher
+- get_watcher
+- BaseRunner
+- SubprocessRunner
+- InProcessReloader
+- LinterEngine
+- MockServerRunner
 

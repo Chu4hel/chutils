@@ -3893,6 +3893,80 @@
                     ]
                   }
                 ]
+              },
+              {
+                "name": "watch",
+                "path": "chutils/commands/dev/watch",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Подкоманда CLI для Live Dev режима с hot-reload (chutils dev watch).",
+                "docstring": "Подкоманда CLI для Live Dev режима с hot-reload (chutils dev watch).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "WatchSubCommand",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Подкоманда dev watch для автоматического перезапуска приложений при изменении файлов.",
+                    "docstring": "Подкоманда dev watch для автоматического перезапуска приложений при изменении файлов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 17,
+                    "bases": [
+                      ".base.SubCommand"
+                    ],
+                    "children": [
+                      {
+                        "name": "register",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, subparsers)",
+                        "summary": "Регистрирует подкоманду в argparse.",
+                        "docstring": "Регистрирует подкоманду в argparse.\n\nArgs:\n    subparsers: Объект subparsers для добавления подкоманд.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 20,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "handle",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, args)",
+                        "summary": "Обработчик выполнения подкоманды dev watch.",
+                        "docstring": "Обработчик выполнения подкоманды dev watch.\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 28,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
               }
             ],
             "symbols": [
@@ -3932,7 +4006,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 47,
+                "line_number": 49,
                 "bases": [
                   "BaseCommand"
                 ],
@@ -3953,7 +4027,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 54,
+                    "line_number": 56,
                     "bases": [],
                     "children": []
                   },
@@ -3973,7 +4047,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 532,
+                    "line_number": 581,
                     "bases": [],
                     "children": []
                   },
@@ -3993,7 +4067,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 542,
+                    "line_number": 591,
                     "bases": [],
                     "children": []
                   },
@@ -4013,7 +4087,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 551,
+                    "line_number": 600,
                     "bases": [],
                     "children": []
                   },
@@ -4033,7 +4107,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 560,
+                    "line_number": 609,
                     "bases": [],
                     "children": []
                   },
@@ -4053,7 +4127,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 569,
+                    "line_number": 618,
                     "bases": [],
                     "children": []
                   },
@@ -4073,7 +4147,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 578,
+                    "line_number": 627,
                     "bases": [],
                     "children": []
                   },
@@ -4093,7 +4167,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 587,
+                    "line_number": 636,
                     "bases": [],
                     "children": []
                   },
@@ -4113,7 +4187,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 596,
+                    "line_number": 645,
                     "bases": [],
                     "children": []
                   },
@@ -4133,7 +4207,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 605,
+                    "line_number": 654,
                     "bases": [],
                     "children": []
                   },
@@ -4153,7 +4227,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 614,
+                    "line_number": 663,
                     "bases": [],
                     "children": []
                   },
@@ -4173,7 +4247,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 623,
+                    "line_number": 672,
                     "bases": [],
                     "children": []
                   },
@@ -4193,7 +4267,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 632,
+                    "line_number": 681,
                     "bases": [],
                     "children": []
                   },
@@ -4213,7 +4287,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 641,
+                    "line_number": 690,
                     "bases": [],
                     "children": []
                   },
@@ -4233,7 +4307,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 650,
+                    "line_number": 699,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "handle_watch",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, args)",
+                    "summary": "Обработчик Live Dev режима с hot-reload (chutils dev watch).",
+                    "docstring": "Обработчик Live Dev режима с hot-reload (chutils dev watch).\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 708,
                     "bases": [],
                     "children": []
                   }
@@ -15473,6 +15567,394 @@
             "symbols": []
           },
           {
+            "name": "runners",
+            "path": "chutils/dev/runners",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Модуль ранеров для перезапуска дочерних процессов и внутрипроцессной перезагрузки функций.",
+            "docstring": "Модуль ранеров для перезапуска дочерних процессов и внутрипроцессной перезагрузки функций.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "logger",
+                "type": "constant",
+                "layer": "public",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 18,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "BaseRunner",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Абстрактный базовый класс ранера для управления перезапуском приложений.",
+                "docstring": "Абстрактный базовый класс ранера для управления перезапуском приложений.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": true,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 21,
+                "bases": [
+                  "abc.ABC"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 24,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_running",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает флаг состояния ранера.",
+                    "docstring": "Возвращает флаг состояния ранера.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 28,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "start",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Запускает процесс или целевую функцию.",
+                    "docstring": "Запускает процесс или целевую функцию.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abc.abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 33,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "stop",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Останавливает процесс или целевую функцию.",
+                    "docstring": "Останавливает процесс или целевую функцию.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abc.abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 37,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "restart",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Выполняет перезапуск (остановка -> запуск).",
+                    "docstring": "Выполняет перезапуск (остановка -> запуск).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 40,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "SubprocessRunner",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Ранер для запуска и управления внешним дочерним процессом.",
+                "docstring": "Ранер для запуска и управления внешним дочерним процессом.\n\nArgs:\n    command: Команда для выполнения (строка или список аргументов).\n    graceful_timeout: Время ожидания в секундах перед принудительным завершением (kill).\n    cwd: Рабочая директория для дочернего процесса.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 46,
+                "bases": [
+                  "BaseRunner"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, command, graceful_timeout, cwd)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 56,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "process",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает текущий экземпляр Popen.",
+                    "docstring": "Возвращает текущий экземпляр Popen.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 69,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "start",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Запускает внешнюю команду через subprocess.Popen.",
+                    "docstring": "Запускает внешнюю команду через subprocess.Popen.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 73,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "stop",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Мягко останавливает процесс (SIGTERM/SIGINT), затем вызывает kill() при необходимости.",
+                    "docstring": "Мягко останавливает процесс (SIGTERM/SIGINT), затем вызывает kill() при необходимости.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 97,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "InProcessReloader",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Ранер для внутрипроцессного перезапуска указанной функции с вызовом очистки lifecycle.",
+                "docstring": "Ранер для внутрипроцессного перезапуска указанной функции с вызовом очистки lifecycle.\n\nArgs:\n    target: Строка формата \"path.to.module:func_name\".\n    args: Опциональные позиционные аргументы функции.\n    kwargs: Опциональные именованные аргументы функции.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 132,
+                "bases": [
+                  "BaseRunner"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, target, args, kwargs)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 142,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_resolve_func",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Динамически импортирует модуль и возвращает целевую функцию.",
+                    "docstring": "Динамически импортирует модуль и возвращает целевую функцию.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 157,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "start",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Вызывает целевую функцию в текущем процессе.",
+                    "docstring": "Вызывает целевую функцию в текущем процессе.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 167,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "stop",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Вызывает глобальную очистку коллбеков через trigger_cleanup().",
+                    "docstring": "Вызывает глобальную очистку коллбеков через trigger_cleanup().",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 177,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "restart",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Выполняет остановку, перезагружает модуль и снова вызывает функцию.",
+                    "docstring": "Выполняет остановку, перезагружает модуль и снова вызывает функцию.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 190,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "scaffold",
             "path": "chutils/dev/scaffold",
             "type": "module",
@@ -15961,6 +16443,533 @@
                   "custom_metadata": {}
                 },
                 "line_number": 270,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "watcher",
+            "path": "chutils/dev/watcher",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Модуль для отслеживания изменений файловой системы в режиме Live Dev (hot-reload).",
+            "docstring": "Модуль для отслеживания изменений файловой системы в режиме Live Dev (hot-reload).\n\nПредоставляет единый интерфейс BaseWatcher, реализацию на базе watchdog (WatchdogWatcher)\nи нетребовательный к внешним зависимостям встроенный PollingWatcher.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "logger",
+                "type": "constant",
+                "layer": "public",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 19,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "DEFAULT_EXTENSIONS",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 29,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "DEFAULT_IGNORE_PATTERNS",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 30,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "BaseWatcher",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Абстрактный базовый класс для отслеживания изменений файлов.",
+                "docstring": "Абстрактный базовый класс для отслеживания изменений файлов.\n\nArgs:\n    paths: Директория или список директорий/файлов для отслеживания.\n    extensions: Список расширений файлов без точки (например, [\"py\", \"json\"]).\n    ignore_patterns: Список шаблонов путей/имен для игнорирования (fnmatch).\n    debounce_seconds: Задержка пакетирования событий перезапуска в секундах.\n    callback: Функция-коллбек, вызываемая при изменении файлов. Принимает список путей.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": true,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 44,
+                "bases": [
+                  "abc.ABC"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, paths, extensions, ignore_patterns, debounce_seconds, callback)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 56,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_running",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает статус запуска вотчера.",
+                    "docstring": "Возвращает статус запуска вотчера.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 85,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_should_process_file",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, file_path)",
+                    "summary": "Проверяет, должен ли файл быть обработан в соответствии с расширениями и фильтрами.",
+                    "docstring": "Проверяет, должен ли файл быть обработан в соответствии с расширениями и фильтрами.\n\nArgs:\n    file_path: Абсолютный или относительный путь к файлу.\n\nReturns:\n    True, если файл подлежит отслеживанию, иначе False.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 89,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_notify_change",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, file_path)",
+                    "summary": "Добавляет измененный файл в очередь и запускает таймер пакетирования (debounce).",
+                    "docstring": "Добавляет измененный файл в очередь и запускает таймер пакетирования (debounce).\n\nArgs:\n    file_path: Путь к измененному файлу.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 117,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_flush_changes",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Вызывает зарегистрированный коллбек с накопленным списком файлов.",
+                    "docstring": "Вызывает зарегистрированный коллбек с накопленным списком файлов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 136,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "start",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Запускает отслеживание файлов.",
+                    "docstring": "Запускает отслеживание файлов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abc.abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 150,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "stop",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Останавливает отслеживание файлов.",
+                    "docstring": "Останавливает отслеживание файлов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abc.abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 154,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "PollingWatcher",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Вотчер на базе периодического сканирования файловой системы (Fallback mode).",
+                "docstring": "Вотчер на базе периодического сканирования файловой системы (Fallback mode).\n\nArgs:\n    paths: Директория или список директорий/файлов для отслеживания.\n    extensions: Список расширений файлов без точки.\n    ignore_patterns: Шаблоны путей для игнорирования.\n    debounce_seconds: Задержка дебаунса.\n    poll_interval: Интервал между опросами файлов в секундах.\n    callback: Коллбек для отправки списка изменившихся файлов.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 158,
+                "bases": [
+                  "BaseWatcher"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, paths, extensions, ignore_patterns, debounce_seconds, poll_interval, callback)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 171,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_scan_files",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Сканирует отслеживаемые пути и возвращает словарь mtime файлов.",
+                    "docstring": "Сканирует отслеживаемые пути и возвращает словарь mtime файлов.\n\nReturns:\n    Словарь {путь_к_файлу: время_модификации}.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 192,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_poll_loop",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Фоновый цикл сканирования изменений mtime файлов.",
+                    "docstring": "Фоновый цикл сканирования изменений mtime файлов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 232,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "start",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Запускает фоновый поток опроса файловой системы.",
+                    "docstring": "Запускает фоновый поток опроса файловой системы.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 251,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "stop",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Останавливает фоновый опрос файлов.",
+                    "docstring": "Останавливает фоновый опрос файлов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 262,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "_WatchdogEventHandler",
+                "type": "class",
+                "layer": "private",
+                "signature": "",
+                "summary": "Внутренний обработчик событий watchdog.",
+                "docstring": "Внутренний обработчик событий watchdog.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 280,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, watcher)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 283,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "dispatch",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, event)",
+                    "summary": "Диспетчеризует события файловой системы.",
+                    "docstring": "Диспетчеризует события файловой системы.\n\nArgs:\n    event: Объект события библиотеки watchdog.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 286,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "WatchdogWatcher",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Вотчер на базе библиотеки watchdog.",
+                "docstring": "Вотчер на базе библиотеки watchdog.\n\nArgs:\n    paths: Директория или список директорий/файлов для отслеживания.\n    extensions: Список расширений файлов без точки.\n    ignore_patterns: Шаблоны путей для игнорирования.\n    debounce_seconds: Задержка дебаунса.\n    callback: Коллбек для отправки списка изменившихся файлов.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 302,
+                "bases": [
+                  "BaseWatcher"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, paths, extensions, ignore_patterns, debounce_seconds, callback)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 314,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "start",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Запускает Observer библиотеки watchdog.",
+                    "docstring": "Запускает Observer библиотеки watchdog.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 336,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "stop",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Останавливает Observer библиотеки watchdog.",
+                    "docstring": "Останавливает Observer библиотеки watchdog.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 358,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "get_watcher",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(paths, extensions, ignore_patterns, debounce_seconds, poll_interval, callback)",
+                "summary": "Фабричная функция для создания наилучшего доступного файлового вотчера.",
+                "docstring": "Фабричная функция для создания наилучшего доступного файлового вотчера.\n\nИспользует WatchdogWatcher, если установлена библиотека watchdog,\nиначе выводит предупреждение в лог и использует PollingWatcher.\n\nArgs:\n    paths: Путь или список путей для отслеживания.\n    extensions: Расширения файлов для отслеживания.\n    ignore_patterns: Шаблоны для игнорирования.\n    debounce_seconds: Таймаут пакетирования событий.\n    poll_interval: Интервал опроса для PollingWatcher.\n    callback: Коллбек при изменении файлов.\n\nReturns:\n    Экземпляр BaseWatcher (WatchdogWatcher или PollingWatcher).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 376,
                 "bases": [],
                 "children": []
               }
@@ -20686,6 +21695,26 @@
               "custom_metadata": {}
             },
             "line_number": 206,
+            "bases": [],
+            "children": []
+          },
+          {
+            "name": "run_cleanup",
+            "type": "function",
+            "layer": "internal",
+            "signature": "()",
+            "summary": "Выполняет все зарегистрированные функции очистки LIFO.",
+            "docstring": "Выполняет все зарегистрированные функции очистки LIFO.",
+            "breadcrumbs": {
+              "is_async": false,
+              "is_thread_safe": false,
+              "is_heavy": false,
+              "is_abstract": false,
+              "decorators": [],
+              "tags": [],
+              "custom_metadata": {}
+            },
+            "line_number": 215,
             "bases": [],
             "children": []
           }
@@ -30389,6 +31418,21 @@
       "weight": 1
     },
     {
+      "source": "chutils/commands/dev/watch",
+      "target": "///dev/runners",
+      "weight": 3
+    },
+    {
+      "source": "chutils/commands/dev/watch",
+      "target": "///dev/watcher",
+      "weight": 1
+    },
+    {
+      "source": "chutils/commands/dev/watch",
+      "target": "/base",
+      "weight": 1
+    },
+    {
       "source": "chutils/commands/env",
       "target": "/base",
       "weight": 1
@@ -30704,6 +31748,16 @@
       "weight": 3
     },
     {
+      "source": "chutils/dev",
+      "target": "/watcher",
+      "weight": 4
+    },
+    {
+      "source": "chutils/dev",
+      "target": "/runners",
+      "weight": 3
+    },
+    {
       "source": "chutils/dev/ast_indexer",
       "target": "/models",
       "weight": 6
@@ -30969,8 +32023,23 @@
       "weight": 1
     },
     {
+      "source": "chutils/dev/runners",
+      "target": "//lifecycle",
+      "weight": 1
+    },
+    {
+      "source": "chutils/dev/runners",
+      "target": "//logger",
+      "weight": 1
+    },
+    {
       "source": "chutils/dev/scaffold",
       "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/dev/watcher",
+      "target": "//logger",
       "weight": 1
     },
     {
@@ -31703,8 +32772,8 @@
   "metadata": {
     "chutils_version": "3.3.2",
     "project_version": "3.3.2",
-    "git_commit": "db2a9427aa47b36345c35c409c995aeb06b3de95 (dirty)",
-    "generated_at": "2026-07-24T18:01:23.251908+00:00",
-    "project_hash": "3ccd5115bd35a028e7a908946177427d29f23fd65029286659652985e83e0c3b"
+    "git_commit": "880101f57e36cd7d0043d2134a78fcbe0d787f15 (dirty)",
+    "generated_at": "2026-07-24T18:14:35.344499+00:00",
+    "project_hash": "42864c543e4a0840783153e7a44981fb4024a2c33658a51b233e6c8ae19043c3"
   }
 }

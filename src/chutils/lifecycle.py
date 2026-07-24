@@ -210,3 +210,10 @@ def setup_graceful_shutdown() -> None:
     Рекомендуется вызывать в самом начале работы приложения.
     """
     _manager.setup_graceful_shutdown()
+
+
+def run_cleanup() -> None:
+    """
+    Выполняет все зарегистрированные функции очистки LIFO.
+    """
+    _manager._run_cleanup()
