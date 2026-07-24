@@ -66,7 +66,9 @@ def get_config(
         model: type[T] | None = None,
         remote_url: str | None = None,
         remote_auth: tuple[str, str] | None = None,
-        polling_interval: int | None = None
+        polling_interval: int | None = None,
+        sse_url: str | None = None,
+        sse_headers: dict[str, str] | None = None,
 ) -> JSONDict | T:
     """
     Загружает и объединяет конфигурацию из всех доступных источников.
@@ -87,6 +89,8 @@ def get_config(
         remote_auth: Кортеж (login, password) для Basic Auth.
         polling_interval: Интервал опроса удаленного источника в секундах.
             Если не указан, опрос не запускается.
+        sse_url: URL для подключения к SSE-серверу событий об обновлениях.
+        sse_headers: HTTP-заголовки для подключений к SSE-серверу.
 
     Returns:
        Словарь со всей конфигурацией проекта или экземпляр Pydantic модели.
@@ -166,6 +170,19 @@ def get_config(
                     utils.deep_merge(config_data, remote_data)
                 except Exception as e:
                     logger.error("Ошибка загрузки удаленной конфигурации с %s: %s", remote_url, e)
+
+            if sse_url:
+                if not _cm.sse_client or _cm.sse_client.url != sse_url:
+                    if _cm.sse_client:
+                        _cm.sse_client.stop()
+                    from .sse import SseConfigClient
+                    sse_client = SseConfigClient(
+                        url=sse_url,
+                        headers=sse_headers,
+                        on_reload=_cm.trigger_reload,
+                    )
+                    _cm.sse_client = sse_client
+                    sse_client.start()
 
             # 5. Переменные окружения (CH_SECTION_KEY)
             disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]

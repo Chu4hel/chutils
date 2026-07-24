@@ -124,6 +124,12 @@ _LAZY_MAPPING = {
     'aget_config_value': ('.config', 'aget_config_value'),
     'BaseConfigProvider': ('.config', 'BaseConfigProvider'),
     'DictConfigProvider': ('.config', 'DictConfigProvider'),
+    'trigger_reload': ('.config', 'trigger_reload'),
+    'start_webhook_server': ('.config', 'start_webhook_server'),
+    'stop_webhook_server': ('.config', 'stop_webhook_server'),
+    'SseConfigClient': ('.config', 'SseConfigClient'),
+    'SseEvent': ('.config', 'SseEvent'),
+    'WebhookConfigServer': ('.config', 'WebhookConfigServer'),
 
     # features
     'is_feature_enabled': ('.features', 'is_feature_enabled'),

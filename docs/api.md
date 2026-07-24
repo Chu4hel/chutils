@@ -45,6 +45,14 @@ members:
 - reset_providers
 - BaseConfigProvider
 - DictConfigProvider
+- trigger_reload
+- start_webhook_server
+- stop_webhook_server
+- SseConfigClient
+- WebhookConfigServer
+- verify_webhook_request
+- create_fastapi_webhook_route
+- create_flask_webhook_route
 
 ## Модуль `config.custom_providers` (Custom Config Providers API)
 

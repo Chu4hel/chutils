@@ -44,6 +44,8 @@ class _ConfigManager:
     _tracing_enabled: bool
     _trace_data: dict[str, dict[str, list[dict[str, Any]]]]
     _remote_provider: Any | None
+    _sse_client: Any | None
+    _webhook_server: Any | None
     _custom_providers_registry: Any | None
 
     # Список маркеров, по которым ищется корень проекта и конфигурационные файлы.
@@ -80,7 +82,27 @@ class _ConfigManager:
             self._last_internal_save_time = 0.0
             self._tracing_enabled = False
             self._trace_data = {}
-            self._remote_provider = None
+            if hasattr(self, '_remote_provider') and self._remote_provider is not None:
+                if hasattr(self._remote_provider, 'stop_polling'):
+                    self._remote_provider.stop_polling()
+                self._remote_provider = None
+            else:
+                self._remote_provider = None
+
+            if hasattr(self, '_sse_client') and self._sse_client is not None:
+                if hasattr(self._sse_client, 'stop'):
+                    self._sse_client.stop()
+                self._sse_client = None
+            else:
+                self._sse_client = None
+
+            if hasattr(self, '_webhook_server') and self._webhook_server is not None:
+                if hasattr(self._webhook_server, 'stop'):
+                    self._webhook_server.stop()
+                self._webhook_server = None
+            else:
+                self._webhook_server = None
+
             # Сбрасываем реестр кастомных провайдеров (если уже инициализирован)
             if hasattr(self, '_custom_providers_registry') and self._custom_providers_registry is not None:
                 self._custom_providers_registry.reset()
@@ -115,6 +137,87 @@ class _ConfigManager:
     def remote_provider(self, value: Any | None) -> None:
         with self._lock:
             self._remote_provider = value
+
+    @property
+    def sse_client(self) -> Any | None:
+        with self._lock:
+            return self._sse_client
+
+    @sse_client.setter
+    def sse_client(self, value: Any | None) -> None:
+        with self._lock:
+            self._sse_client = value
+
+    @property
+    def webhook_server(self) -> Any | None:
+        with self._lock:
+            return self._webhook_server
+
+    @webhook_server.setter
+    def webhook_server(self, value: Any | None) -> None:
+        with self._lock:
+            self._webhook_server = value
+
+    def start_webhook_server(
+        self,
+        host: str = "0.0.0.0",
+        port: int = 8080,
+        path: str = "/webhook/config-reload",
+        secret_token: str | None = None,
+        hmac_secret: str | None = None,
+    ) -> Any:
+        """
+        Запускает встроенный Webhook-сервер для мгновенного обновления конфигурации.
+
+        Args:
+            host: Хост прослушивания (по умолчанию 0.0.0.0).
+            port: Порт прослушивания (0 — случайный порт).
+            path: Путь эндпоинта (по умолчанию /webhook/config-reload).
+            secret_token: Опциональный токен авторизации.
+            hmac_secret: Опциональный секретный ключ HMAC-SHA256.
+
+        Returns:
+            Экземпляр WebhookConfigServer.
+        """
+        with self._lock:
+            if self._webhook_server:
+                self._webhook_server.stop()
+
+            from .webhook_server import WebhookConfigServer
+
+            server = WebhookConfigServer(
+                host=host,
+                port=port,
+                path=path,
+                secret_token=secret_token,
+                hmac_secret=hmac_secret,
+                on_reload=self.trigger_reload,
+            )
+            self._webhook_server = server
+            server.start()
+            return server
+
+    def stop_webhook_server(self) -> None:
+        """Останавливает запущенный встроенный Webhook-сервер."""
+        with self._lock:
+            if self._webhook_server:
+                self._webhook_server.stop()
+                self._webhook_server = None
+
+    def trigger_reload(self) -> None:
+        """
+        Принудительно перезагружает конфигурацию.
+        Сбрасывает кэш и оповещает все зарегистрированные колбэки.
+        """
+        with self._lock:
+            self.clear_cache()
+            callbacks = list(self._callbacks)
+
+        for callback in callbacks:
+            try:
+                callback()
+            except Exception as e:
+                logger.error("Ошибка при вызове колбэка обновления конфигурации: %s", e)
 
     @property
     def tracing_enabled(self) -> bool:
