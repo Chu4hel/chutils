@@ -100,3 +100,29 @@ class MainWindow(BaseMainWindow):
         super().__init__()
         self.setWindowTitle("Моё приложение")
 ```
+
+---
+
+## 5. Типизированные сигналы и Авто-связывание (`TypedSignal`, `AutoBindMixin`, `@qt_slot`)
+
+Для точной проверки типов в IDE, авто-подключения слотов по соглашению об именовании и перехвата исключений:
+
+- `TypedSignal[T1, T2]`: Создает сигнал с точной типизацией для `.emit()` и `.connect()`.
+- `AutoBindMixin`: Автоматически подсоединяет сигналы компонента к методам `on_<signal_name>`.
+- `@qt_slot`: Безопасный декоратор для слотов с логированием исключений в `chutils.logger`.
+
+```python
+from chutils.qt import AutoBindMixin, BaseMainWindow, TypedSignal, qt_slot
+
+
+class MainWindow(BaseMainWindow, AutoBindMixin):
+    user_updated = TypedSignal[str, int](str, int)
+
+    def __init__(self):
+        super().__init__()
+
+    # Автоматически подключится к сигналу user_updated
+    @qt_slot(str, int)
+    def on_user_updated(self, name: str, user_id: int) -> None:
+        print(f"Пользователь {name} обновился: {user_id}")
+```

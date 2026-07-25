@@ -402,6 +402,12 @@ members:
 - async_to_qt
 - BaseMainWindow
 - BaseDialog
+- TypedSignal
+- BoundTypedSignal
+- qt_slot
+- bind_qt_signals
+- AutoBindMixin
+
 
 
 

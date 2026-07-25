@@ -24165,8 +24165,8 @@
         "path": "chutils/qt",
         "type": "package",
         "layer": "public",
-        "summary": "Модуль chutils.qt: Интеграция PyQt6/PySide6 (логирование, асинхронность, базовые виджеты).",
-        "docstring": "Модуль chutils.qt: Интеграция PyQt6/PySide6 (логирование, асинхронность, базовые виджеты).",
+        "summary": "Модуль chutils.qt: Интеграция PyQt6/PySide6 (логирование, асинхронность, базовые виджеты, типизированные сигналы).",
+        "docstring": "Модуль chutils.qt: Интеграция PyQt6/PySide6 (логирование, асинхронность, базовые виджеты, типизированные сигналы).",
         "children": [
           {
             "name": "asyncio",
@@ -24502,6 +24502,280 @@
                 "line_number": 79,
                 "bases": [],
                 "children": []
+              }
+            ]
+          },
+          {
+            "name": "signals",
+            "path": "chutils/qt/signals",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Модуль типизированных сигналов, авто-связывания и безопасных слотов для Qt.",
+            "docstring": "Модуль типизированных сигналов, авто-связывания и безопасных слотов для Qt.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "P",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 13,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "T",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 14,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "BoundTypedSignal",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Связанный типизированный сигнал Qt с точной типизацией connect и emit.",
+                "docstring": "Связанный типизированный сигнал Qt с точной типизацией connect и emit.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 17,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, raw_signal)",
+                    "summary": "Инициализирует связанный сигнал.",
+                    "docstring": "Инициализирует связанный сигнал.\n\nArgs:\n    raw_signal: Нативный сигнал PyQt6 / PySide6.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 20,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "connect",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, slot)",
+                    "summary": "Подключает слот к сигналу.",
+                    "docstring": "Подключает слот к сигналу.\n\nArgs:\n    slot: Функция-обработчик сигналов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 28,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "disconnect",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, slot)",
+                    "summary": "Отключает слот от сигнала.",
+                    "docstring": "Отключает слот от сигнала.\n\nArgs:\n    slot: Опциональная функция-обработчик.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 38,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "emit",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Излучает сигнал с переданными аргументами.",
+                    "docstring": "Излучает сигнал с переданными аргументами.\n\nArgs:\n    *args: Позиционные аргументы.\n    **kwargs: Именованные аргументы.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 50,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "TypedSignal",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Дескриптор типизированного сигнала для Qt классов.",
+                "docstring": "Дескриптор типизированного сигнала для Qt классов.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 61,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Инициализирует типизированный сигнал.",
+                    "docstring": "Инициализирует типизированный сигнал.\n\nArgs:\n    *types: Типы передаваемых сигналом аргументов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 64,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "qt_slot",
+                "type": "function",
+                "layer": "internal",
+                "signature": "()",
+                "summary": "Декоратор для безопасных слотов Qt с автоматическим логированием ошибок.",
+                "docstring": "Декоратор для безопасных слотов Qt с автоматическим логированием ошибок.\n\nArgs:\n    *types: Типы аргументов слота Qt.\n    catch_exceptions: Перехватывать ли исключения.\n    logger_name: Имя логгера для фиксации ошибок.\n\nReturns:\n    Декорированная функция-слот.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 94,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "bind_qt_signals",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(instance, bind_by_signature)",
+                "summary": "Автоматически связывает сигналы объекта со слотами по соглашению об именовании `on_<signal_name>`.",
+                "docstring": "Автоматически связывает сигналы объекта со слотами по соглашению об именовании `on_<signal_name>`.\n\nArgs:\n    instance: Экземпляр QObject или любого класса с сигналами и слотами.\n    bind_by_signature: Включить ли экспериментальное связывание по совпадению типов.\n\nReturns:\n    Количество успешно подключенных сигналов.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 132,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "AutoBindMixin",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Миксин для автоматического подключения сигналов в __init__.",
+                "docstring": "Миксин для автоматического подключения сигналов в __init__.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 174,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 177,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
               }
             ]
           },
@@ -34083,6 +34357,11 @@
     },
     {
       "source": "chutils/qt",
+      "target": "/signals",
+      "weight": 5
+    },
+    {
+      "source": "chutils/qt",
       "target": "/widgets",
       "weight": 2
     },
@@ -34100,6 +34379,11 @@
       "source": "chutils/qt/shim",
       "target": "chutils/exceptions",
       "weight": 1
+    },
+    {
+      "source": "chutils/qt/signals",
+      "target": "/shim",
+      "weight": 2
     },
     {
       "source": "chutils/qt/widgets",
@@ -34511,8 +34795,8 @@
   "metadata": {
     "chutils_version": "3.3.2",
     "project_version": "3.3.2",
-    "git_commit": "d3e26ba7f7890f87a61abe41999ca1e8ad8887e9 (dirty)",
-    "generated_at": "2026-07-24T23:12:41.028293+00:00",
-    "project_hash": "3e12ecc6f1d6a37284d1c408c981064c9381c531e01850fb290195570d12244f"
+    "git_commit": "1056ddfc241c7c49c89d0e5ceb7c71b6a49fcb9e (dirty)",
+    "generated_at": "2026-07-25T09:58:30.276177+00:00",
+    "project_hash": "c9fdfbcccbbcd7da26d504ea6a52c71ac54d3d6ac8ad3db65ab038e0112d8666"
   }
 }

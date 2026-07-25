@@ -1,5 +1,5 @@
 """
-Модуль chutils.qt: Интеграция PyQt6/PySide6 (логирование, асинхронность, базовые виджеты).
+Модуль chutils.qt: Интеграция PyQt6/PySide6 (логирование, асинхронность, базовые виджеты, типизированные сигналы).
 """
 
 from .asyncio import QtAsyncWorker, async_to_qt, run_async_task
@@ -14,6 +14,13 @@ from .shim import (
     QtGui,
     QtWidgets,
     require_qt,
+)
+from .signals import (
+    AutoBindMixin,
+    BoundTypedSignal,
+    TypedSignal,
+    bind_qt_signals,
+    qt_slot,
 )
 from .widgets import BaseDialog, BaseMainWindow
 
@@ -34,4 +41,9 @@ __all__ = [
     "async_to_qt",
     "BaseMainWindow",
     "BaseDialog",
+    "TypedSignal",
+    "BoundTypedSignal",
+    "qt_slot",
+    "bind_qt_signals",
+    "AutoBindMixin",
 ]
