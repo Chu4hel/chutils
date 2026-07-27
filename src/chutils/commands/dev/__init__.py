@@ -26,6 +26,7 @@ def get_subcommands() -> list[type[SubCommand]]:
     from .dashboard import DashboardSubCommand
     from .setup_github_actions import SetupGithubActionsSubCommand
     from .clean import CleanSubCommand
+    from .watch import WatchSubCommand
 
     return [
         GenerateContextSubCommand,
@@ -41,6 +42,7 @@ def get_subcommands() -> list[type[SubCommand]]:
         DashboardSubCommand,
         SetupGithubActionsSubCommand,
         CleanSubCommand,
+        WatchSubCommand,
     ]
 
 
@@ -529,6 +531,53 @@ class DevCommand(BaseCommand):
         )
         clean_parser.set_defaults(handler=self.handle_clean)
 
+        # dev watch
+        watch_parser = dev_subparsers.add_parser(
+            "watch",
+            help="Live Dev режим с автоматическим hot-reload при изменении файлов",
+            description="Отслеживает изменения файлов в проекте и автоматически перезапускает процесс или функцию.",
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev watch -- python main.py
+  chutils dev watch -m myapp.main:start
+  chutils dev watch -p src -e py,yaml -- python main.py
+""",
+        )
+        watch_parser.add_argument(
+            "-p",
+            "--path",
+            action="append",
+            dest="paths",
+            help="Директория или файл для отслеживания (можно указывать несколько раз, по умолчанию: .)",
+        )
+        watch_parser.add_argument(
+            "-e",
+            "--extensions",
+            help="Список расширений файлов через запятую (по умолчанию: py,yaml,yml,json,toml,ini)",
+        )
+        watch_parser.add_argument(
+            "--ignore",
+            help="Шаблоны путей для игнорирования через запятую",
+        )
+        watch_parser.add_argument(
+            "-d",
+            "--debounce",
+            type=float,
+            default=0.5,
+            help="Интервал дебаунса перед перезапуском в секундах (по умолчанию: 0.5)",
+        )
+        watch_parser.add_argument(
+            "-m",
+            "--module",
+            help="Целевая функция для внутрипроцессного перезапуска в формате 'module.path:func_name'",
+        )
+        watch_parser.add_argument(
+            "command",
+            nargs=argparse.REMAINDER,
+            help="Команда для запуска в дочернем процессе (указывается после '--')",
+        )
+        watch_parser.set_defaults(handler=self.handle_watch)
+
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана.
 
@@ -655,3 +704,12 @@ class DevCommand(BaseCommand):
         """
         from .clean import CleanSubCommand
         CleanSubCommand().handle(args)
+
+    def handle_watch(self, args: argparse.Namespace) -> None:
+        """Обработчик Live Dev режима с hot-reload (chutils dev watch).
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .watch import WatchSubCommand
+        WatchSubCommand().handle(args)

@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import inspect
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from typing import Union
@@ -183,7 +184,7 @@ def audit_event(
                     details=details,
                 )
 
-        if asyncio.iscoroutinefunction(func):
+        if inspect.iscoroutinefunction(func):
             return async_wrapper
         return sync_wrapper
 

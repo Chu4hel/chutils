@@ -45,6 +45,14 @@ members:
 - reset_providers
 - BaseConfigProvider
 - DictConfigProvider
+- trigger_reload
+- start_webhook_server
+- stop_webhook_server
+- SseConfigClient
+- WebhookConfigServer
+- verify_webhook_request
+- create_fastapi_webhook_route
+- create_flask_webhook_route
 
 ## Модуль `config.custom_providers` (Custom Config Providers API)
 
@@ -85,6 +93,7 @@ members:
 
 - register_cleanup
 - setup_graceful_shutdown
+- run_cleanup
 
 ## Модуль `cli_booster` (Быстрое создание CLI)
 
@@ -347,4 +356,58 @@ members:
 - put
 - delete
 - patch
+
+## Модуль `dev` (Инструменты разработчика и Live Dev)
+
+::: chutils.dev
+options:
+members:
+
+- BaseWatcher
+- PollingWatcher
+- WatchdogWatcher
+- get_watcher
+- BaseRunner
+- SubprocessRunner
+- InProcessReloader
+- LinterEngine
+- MockServerRunner
+
+## Модуль `scraping.concurrency` (Умная очередь задач и воркеры)
+
+::: chutils.scraping.concurrency
+options:
+members:
+
+- ScrapingTask
+- BaseTaskQueue
+- InMemoryTaskQueue
+- PersistentTaskQueue
+- RedisTaskQueue
+- DomainRateLimiter
+- WorkerPool
+
+## Модуль `qt` (Интеграция PyQt6 / PySide6)
+
+::: chutils.qt
+options:
+members:
+
+- QT_BINDING
+- require_qt
+- QtLogHandler
+- setup_qt_logging
+- QtAsyncWorker
+- run_async_task
+- async_to_qt
+- BaseMainWindow
+- BaseDialog
+- TypedSignal
+- BoundTypedSignal
+- qt_slot
+- bind_qt_signals
+- AutoBindMixin
+
+
+
 

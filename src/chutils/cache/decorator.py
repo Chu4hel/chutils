@@ -1,7 +1,7 @@
-import asyncio
 import functools
-from typing import Any
+import inspect
 from collections.abc import Callable
+from typing import Any
 
 from .in_memory import InMemoryCacheBackend
 from .utils import generate_cache_key, LockManager, AsyncLockManager
@@ -63,7 +63,7 @@ def cache_with_ttl(
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         func_name = f"{func.__module__}.{func.__name__}"
-        is_async = asyncio.iscoroutinefunction(func)
+        is_async = inspect.iscoroutinefunction(func)
         generated_keys: set[str] = set()
 
         if is_async:

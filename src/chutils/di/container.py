@@ -1,9 +1,8 @@
-import asyncio
 import functools
 import inspect
 import threading
-from typing import Any, TypeVar
 from collections.abc import Callable
+from typing import Any, TypeVar
 
 from chutils.exceptions import DependencyNotFoundError, DependencyResolutionError
 
@@ -294,9 +293,9 @@ def provide(scope: str = "singleton", container: Container | None = None) -> Cal
 
 
 def inject(
-    func_or_container: Callable[..., Any] | Container | None = None,
-    *,
-    container: Container | None = None
+        func_or_container: Callable[..., Any] | Container | None = None,
+        *,
+        container: Container | None = None
 ) -> Any:
     """Декоратор для автоматического внедрения зависимостей в аргументы функции.
 
@@ -331,12 +330,12 @@ def inject(
     return _make_inject_decorator(target_container)
 
 
-
 def _make_inject_decorator(target_container: Container) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Внутренний хелпер для создания декоратора inject под конкретный контейнер."""
+
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         sig = inspect.signature(func)
-        is_async = asyncio.iscoroutinefunction(func)
+        is_async = inspect.iscoroutinefunction(func)
 
         # Вычисляем параметры, которые требуют инъекции
         injectable_params: list[tuple[str, inspect.Parameter]] = []

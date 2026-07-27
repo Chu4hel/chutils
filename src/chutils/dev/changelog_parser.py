@@ -8,13 +8,13 @@ from typing import Any
 
 from chutils.dev.version_detector import parse_version_tuple
 
-# Регулярные выражения для определения заголовков секций
 BREAKING_PATTERNS = [
     r"breaking\s*changes?",
     r"breaking",
     r"критические\s*изменения",
     r"обратная\s*совместимость",
 ]
+"""Регулярные выражения для определения заголовков критических изменений."""
 NEW_API_PATTERNS = [
     r"new\s*apis?",
     r"new\s*features?",
@@ -75,17 +75,7 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
                 current_section = "breaking_changes"
                 is_header = True
 
-            # 2. Проверяем начало секции New API
-            elif any(re.search(pat, clean_header) for pat in NEW_API_PATTERNS) and (
-                    line_strip.startswith("#")
-                    or line_strip.startswith("**")
-                    or line_strip.startswith("*")
-                    or clean_header in ["new api", "new features", "added"]
-            ):
-                current_section = "new_api"
-                is_header = True
-
-            # 3. Проверяем начало секции Deprecations
+            # 2. Проверяем начало секции Deprecations
             elif any(re.search(pat, clean_header) for pat in DEPRECATION_PATTERNS) and (
                     line_strip.startswith("#")
                     or line_strip.startswith("**")
@@ -95,11 +85,11 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
                 current_section = "deprecations"
                 is_header = True
 
-            # 4. Если это любой другой заголовок, сбрасываем текущую секцию
+            # 3. Любые другие заголовки относим к категории new_api (общие изменения/улучшения)
             elif line_strip.startswith("#") or (
                     line_strip.startswith("**") and line_strip.endswith("**")
             ):
-                current_section = None
+                current_section = "new_api"
                 is_header = True
 
         if is_header:
@@ -111,6 +101,15 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
             clean_line = re.sub(r"^[\s*\-+\d.]+\s*", "", line_strip)
             if clean_line:
                 sections[current_section].append(clean_line)
+
+    # Фоллбек: если ни один заголовок не отработал, но в тексте есть элементы списка
+    if not any(sections.values()):
+        for line in lines:
+            line_strip = line.strip()
+            if bool(re.match(r"^(\s*[-*+]\s|\s*\d+\.\s)", line_strip)):
+                clean_line = re.sub(r"^[\s*\-+\d.]+\s*", "", line_strip)
+                if clean_line:
+                    sections["new_api"].append(clean_line)
 
     return sections
 

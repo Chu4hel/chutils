@@ -99,6 +99,16 @@ __all__ = [
     'reset_providers',
     'BaseConfigProvider',
     'DictConfigProvider',
+    'trigger_reload',
+    'start_webhook_server',
+    'stop_webhook_server',
+    'SseConfigClient',
+    'SseEvent',
+    'parse_sse_lines',
+    'WebhookConfigServer',
+    'verify_webhook_request',
+    'create_fastapi_webhook_route',
+    'create_flask_webhook_route',
 ]
 
 
@@ -125,6 +135,13 @@ def __getattr__(name: str) -> Any:
         'import_model_class': ('.schema', 'import_model_class'),
         'load_ai_lint_config': ('.dev', 'load_ai_lint_config'),
         'parse_chutils_ignore': ('.dev', 'parse_chutils_ignore'),
+        'SseConfigClient': ('.sse', 'SseConfigClient'),
+        'SseEvent': ('.sse', 'SseEvent'),
+        'parse_sse_lines': ('.sse', 'parse_sse_lines'),
+        'WebhookConfigServer': ('.webhook_server', 'WebhookConfigServer'),
+        'verify_webhook_request': ('.webhook_server', 'verify_webhook_request'),
+        'create_fastapi_webhook_route': ('.integrations', 'create_fastapi_webhook_route'),
+        'create_flask_webhook_route': ('.integrations', 'create_flask_webhook_route'),
     }
 
     if name in lazy_imports:
@@ -254,3 +271,42 @@ def reset_providers() -> None:
                 reset_providers()
     """
     _cm.reset_providers()
+
+
+def trigger_reload() -> None:
+    """Вызывает принудительную перезагрузку конфигурации и оповещает колбэки."""
+    _cm.trigger_reload()
+
+
+def start_webhook_server(
+    host: str = "0.0.0.0",
+    port: int = 8080,
+    path: str = "/webhook/config-reload",
+    secret_token: str | None = None,
+    hmac_secret: str | None = None,
+) -> Any:
+    """
+    Запускает встроенный Webhook-сервер для мгновенного обновления конфигурации.
+
+    Args:
+        host: Хост прослушивания (по умолчанию 0.0.0.0).
+        port: Порт прослушивания (0 — случайный порт).
+        path: Путь эндпоинта (по умолчанию /webhook/config-reload).
+        secret_token: Опциональный токен авторизации.
+        hmac_secret: Опциональный секретный ключ HMAC-SHA256.
+
+    Returns:
+        Экземпляр WebhookConfigServer.
+    """
+    return _cm.start_webhook_server(
+        host=host,
+        port=port,
+        path=path,
+        secret_token=secret_token,
+        hmac_secret=hmac_secret,
+    )
+
+
+def stop_webhook_server() -> None:
+    """Останавливает запущенный встроенный Webhook-сервер."""
+    _cm.stop_webhook_server()

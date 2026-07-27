@@ -14,10 +14,15 @@ from chutils.store.backends.redis import RedisStore
 
 def test_redis_store_missing_dependency() -> None:
     """Проверяет выброс OptionalDependencyError при отсутствии модуля redis."""
-    with patch("chutils.store.backends.redis.is_redis_available", return_value=False):
+    with patch.dict("sys.modules", {"redis": None}), patch(
+        "chutils.store.backends.redis.is_redis_available", return_value=False
+    ):
         store = RedisStore()
         with pytest.raises(OptionalDependencyError):
             store.get("key")
+
+
+
 
 
 def test_redis_store_sync_operations() -> None:

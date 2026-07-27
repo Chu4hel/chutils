@@ -51,6 +51,18 @@ def test_parse_release_body_russian():
     assert result["deprecations"] == ["Метод baz() объявлен устаревшим"]
 
 
+def test_parse_release_body_custom_headers():
+    """Проверяет, что произвольные человеческие заголовки релиза не приводят к потере элементов списка."""
+    body = """
+# 🚀 Релиз v3.3.1  Повышение надежности типов
+## 🛠 Что изменилось в v3.3.1:
+### 🛡 Улучшение DX и контроль ошибок
+* setup_logger: Добавлена поддержка аргумента level наряду с log_level.
+"""
+    result = parse_release_body(body)
+    assert result["new_api"] == ["setup_logger: Добавлена поддержка аргумента level наряду с log_level."]
+
+
 def test_parse_release_body_empty():
     """Проверяет поведение при пустом описании."""
     result = parse_release_body("")

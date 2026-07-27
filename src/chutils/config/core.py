@@ -62,11 +62,110 @@ def _ensure_config_plugins_loaded() -> None:
             logger.error("Ошибка при загрузке плагинов конфигурации: %s", str(e))
 
 
+def _enrich_config_data_with_pydantic_aliases(
+    config_data: JSONDict,
+    model: type[Any],
+    section_prefix: str = ""
+) -> None:
+    """
+    Обогащает словарь конфигурации значениями из переменных окружения
+    с учетом имени полей и их алиасов (включая Pydantic AliasChoices).
+
+    Args:
+        config_data: Загруженный словарь конфигурации для обогащения.
+        model: Pydantic модель.
+        section_prefix: Префикс текущей секции для поиска переменных окружения.
+    """
+    import os
+    from typing import get_args, get_origin
+
+    disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")
+
+    fields = getattr(model, "model_fields", None)
+    if fields is None:
+        fields = getattr(model, "__fields__", {})
+
+    for field_name, field_info in fields.items():
+        annotation = getattr(field_info, "annotation", None)
+        if annotation is None:
+            annotation = getattr(field_info, "type_", None)
+
+        origin = get_origin(annotation)
+        if origin is not None:
+            args = [a for a in get_args(annotation) if a is not type(None)]
+            if args:
+                annotation = args[0]
+
+        if isinstance(annotation, type) and (hasattr(annotation, "model_fields") or hasattr(annotation, "__fields__")):
+            sec_dict = config_data.get(field_name)
+            if not isinstance(sec_dict, dict):
+                for k, v in config_data.items():
+                    if k.lower() == field_name.lower() and isinstance(v, dict):
+                        sec_dict = v
+                        break
+                else:
+                    sec_dict = {}
+                    config_data[field_name] = sec_dict
+
+            new_prefix = f"{section_prefix}_{field_name}" if section_prefix else field_name
+            _enrich_config_data_with_pydantic_aliases(sec_dict, annotation, section_prefix=new_prefix)
+            continue
+
+        aliases: list[str] = [field_name]
+
+        val_alias = getattr(field_info, "validation_alias", None)
+        if val_alias is None:
+            val_alias = getattr(field_info, "alias", None)
+
+        if isinstance(val_alias, str):
+            if val_alias not in aliases:
+                aliases.append(val_alias)
+        elif hasattr(val_alias, "choices"):
+            choices = getattr(val_alias, "choices", [])
+            for choice in choices:
+                if isinstance(choice, str) and choice not in aliases:
+                    aliases.append(choice)
+
+        found_key = None
+        for alias in aliases:
+            if alias in config_data:
+                found_key = alias
+                break
+            for k in config_data.keys():
+                if k.lower() == alias.lower():
+                    found_key = k
+                    break
+            if found_key:
+                break
+
+        if found_key is None and not disable_env_override:
+            for alias in aliases:
+                key_up = alias.upper()
+                candidates: list[str] = []
+                if section_prefix:
+                    sec_up = section_prefix.upper()
+                    candidates.append(f"CH_{sec_up}_{key_up}")
+                candidates.extend([f"CH_{key_up}", key_up])
+
+                env_val = None
+                for cand in candidates:
+                    if cand in os.environ and os.environ[cand] != "":
+                        env_val = os.environ[cand]
+                        break
+
+                if env_val is not None:
+                    for a in aliases:
+                        config_data[a] = env_val
+                    break
+
+
 def get_config(
         model: type[T] | None = None,
         remote_url: str | None = None,
         remote_auth: tuple[str, str] | None = None,
-        polling_interval: int | None = None
+        polling_interval: int | None = None,
+        sse_url: str | None = None,
+        sse_headers: dict[str, str] | None = None,
 ) -> JSONDict | T:
     """
     Загружает и объединяет конфигурацию из всех доступных источников.
@@ -87,6 +186,8 @@ def get_config(
         remote_auth: Кортеж (login, password) для Basic Auth.
         polling_interval: Интервал опроса удаленного источника в секундах.
             Если не указан, опрос не запускается.
+        sse_url: URL для подключения к SSE-серверу событий об обновлениях.
+        sse_headers: HTTP-заголовки для подключений к SSE-серверу.
 
     Returns:
        Словарь со всей конфигурацией проекта или экземпляр Pydantic модели.
@@ -166,6 +267,19 @@ def get_config(
                     utils.deep_merge(config_data, remote_data)
                 except Exception as e:
                     logger.error("Ошибка загрузки удаленной конфигурации с %s: %s", remote_url, e)
+
+            if sse_url:
+                if not _cm.sse_client or _cm.sse_client.url != sse_url:
+                    if _cm.sse_client:
+                        _cm.sse_client.stop()
+                    from .sse import SseConfigClient
+                    sse_client = SseConfigClient(
+                        url=sse_url,
+                        headers=sse_headers,
+                        on_reload=_cm.trigger_reload,
+                    )
+                    _cm.sse_client = sse_client
+                    sse_client.start()
 
             # 5. Переменные окружения (CH_SECTION_KEY)
             disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
@@ -252,6 +366,7 @@ def get_config(
                 dependency="pydantic",
                 hint="Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
             )
+        _enrich_config_data_with_pydantic_aliases(config_data, model)
         return model(**config_data)
 
     return config_data

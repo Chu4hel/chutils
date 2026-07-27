@@ -8,6 +8,9 @@
 
 # При изменении любого файла конфигурации — обновить docs/api.md
 "src/chutils/config/**/*.py" = ["docs/api.md"]
+"new:src/chutils/config/sse.py" = ["docs/api.md"]
+"new:src/chutils/config/webhook_server.py" = ["docs/api.md"]
+"new:src/chutils/config/integrations.py" = ["docs/api.md"]
 
 # При изменении провайдеров конфигурации — обновить специализированную документацию
 "new:src/chutils/config/custom_providers.py" = ["docs/custom_config_providers.md"]

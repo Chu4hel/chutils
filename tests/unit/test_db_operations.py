@@ -10,6 +10,7 @@
 - Метод register_cleanup() регистрирует функцию в chutils.lifecycle.
 """
 import asyncio
+import inspect
 from unittest.mock import patch
 
 import pytest
@@ -221,7 +222,7 @@ class TestRegisterCleanup:
 
         assert len(registered_funcs) == 1
         # Зарегистрированная функция должна быть корутинной
-        assert asyncio.iscoroutinefunction(registered_funcs[0])
+        assert inspect.iscoroutinefunction(registered_funcs[0])
 
     def test_register_cleanup_can_be_called_multiple_times(
             self, db_manager: DatabaseManager

@@ -91,7 +91,31 @@ def get_config_value(
                 value = v
                 break
 
-    # Если значение не найдено или является пустой строкой, возвращаем fallback
+    # Если значение не найдено или является пустой строкой, пробуем fallback-поиск в переменных окружения
+    if value is None or value == "":
+        import os
+        disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")
+        if not disable_env_override:
+            sec_up = section.upper()
+            key_up = key.upper()
+            candidates = (
+                f"CH_{sec_up}_{key_up}",
+                f"CH_{key_up}",
+                key_up,
+            )
+            for candidate in candidates:
+                env_val = os.environ.get(candidate)
+                if env_val is not None and env_val != "":
+                    value = env_val
+                    if section.lower() == "secrets":
+                        try:
+                            from chutils.logger import setup_logger
+                            setup_logger().add_mask(env_val)
+                        except Exception:
+                            pass
+                    break
+
+    # Если значение все еще не найдено или является пустой строкой, возвращаем fallback
     if value is None or value == "":
         if required:
             from chutils.exceptions import ConfigKeyNotFoundError

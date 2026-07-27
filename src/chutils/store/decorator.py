@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import asyncio
 import functools
+import inspect
 from collections.abc import Callable
 from typing import Any
 
@@ -37,7 +38,7 @@ def store_cache(
     target_store = store or _default_store
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-        if asyncio.iscoroutinefunction(func):
+        if inspect.iscoroutinefunction(func):
 
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
