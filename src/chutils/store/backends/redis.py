@@ -17,12 +17,13 @@ def is_redis_available() -> bool:
     Returns:
         True, если пакет redis установлен.
     """
-    if "redis" in sys.modules:
+    if sys.modules.get("redis") is not None:
         return True
     try:
         return importlib.util.find_spec("redis") is not None
     except Exception:
         return False
+
 
 
 class RedisStore(BaseStoreBackend):
