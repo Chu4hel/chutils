@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import asyncio
+import inspect
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import signal
 import sys
@@ -151,7 +152,7 @@ class LifecycleManager:
                 break
 
             try:
-                if asyncio.iscoroutinefunction(func):
+                if inspect.iscoroutinefunction(func):
                     await cast(Awaitable[Any], func())
                 else:
                     # Выполняем синхронную функцию

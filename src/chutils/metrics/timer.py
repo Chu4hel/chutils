@@ -1,5 +1,6 @@
 import asyncio
 import functools
+import inspect
 import time
 from typing import Any, TypeVar
 from collections.abc import Callable
@@ -56,7 +57,7 @@ class TimerContext:
         Returns:
             Обернутая функция, замеряющая время своего выполнения.
         """
-        is_async = asyncio.iscoroutinefunction(func)
+        is_async = inspect.iscoroutinefunction(func)
 
         if is_async:
             @functools.wraps(func)

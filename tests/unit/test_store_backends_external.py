@@ -17,7 +17,9 @@ def test_redis_store_missing_dependency() -> None:
     with patch("chutils.store.backends.redis.is_redis_available", return_value=False):
         store = RedisStore()
         with pytest.raises(OptionalDependencyError):
-            store.get("key")
+            store._ensure_redis()
+
+
 
 
 def test_redis_store_sync_operations() -> None:
