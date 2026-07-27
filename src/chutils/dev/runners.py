@@ -162,7 +162,8 @@ class InProcessReloader(BaseRunner):
         func = getattr(module, self.func_name)
         if not callable(func):
             raise TypeError(f"Атрибут '{self.func_name}' в модуле '{self.module_name}' не является вызываемым объектом")
-        return func
+        from typing import cast
+        return cast(Callable[..., object], func)
 
     def start(self) -> None:
         """Вызывает целевую функцию в текущем процессе."""

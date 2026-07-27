@@ -12,7 +12,7 @@ import fnmatch
 import os
 import threading
 import time
-from typing import Callable
+from typing import Any, Callable
 
 from ..logger import setup_logger
 
@@ -331,7 +331,7 @@ class WatchdogWatcher(BaseWatcher):
                 "Библиотека watchdog не установлена. Используйте pip install watchdog"
             )
 
-        self._observer: watchdog.observers.Observer | None = None
+        self._observer: Any = None
 
     def start(self) -> None:
         """Запускает Observer библиотеки watchdog."""
@@ -343,7 +343,7 @@ class WatchdogWatcher(BaseWatcher):
 
         handler = watchdog.events.FileSystemEventHandler()
         inner_handler = _WatchdogEventHandler(self)
-        handler.on_any_event = inner_handler.dispatch  # type: ignore[assignment]
+        handler.on_any_event = inner_handler.dispatch  # type: ignore[method-assign]
 
         self._observer = watchdog.observers.Observer()
         for path in self.paths:

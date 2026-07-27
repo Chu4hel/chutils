@@ -10,7 +10,7 @@ from typing import Any
 from .shim import QtCore, QtWidgets, require_qt
 
 
-class BaseMainWindow(QtWidgets.QMainWindow if QtWidgets is not None else object):
+class BaseMainWindow(QtWidgets.QMainWindow if QtWidgets is not None else object):  # type: ignore[misc]
     """Базовое главное окно с встроенным логированием и сохранением геометрии."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -64,7 +64,7 @@ class BaseMainWindow(QtWidgets.QMainWindow if QtWidgets is not None else object)
             super().closeEvent(event)
 
 
-class BaseDialog(QtWidgets.QDialog if QtWidgets is not None else object):
+class BaseDialog(QtWidgets.QDialog if QtWidgets is not None else object):  # type: ignore[misc]
     """Базовый диалог с логированием жизненного цикла."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:

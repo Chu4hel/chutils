@@ -13,7 +13,7 @@ from .shim import QtCore, Signal, require_qt
 T = TypeVar("T")
 
 
-class _QtWorkerSignals(QtCore.QObject if QtCore is not None else object):
+class _QtWorkerSignals(QtCore.QObject if QtCore is not None else object):  # type: ignore[misc]
     """Сигналы для передачи результатов из фонового потока в поток UI."""
 
     if Signal is not None:
@@ -28,7 +28,7 @@ class _QtWorkerSignals(QtCore.QObject if QtCore is not None else object):
         progress = None
 
 
-class QtAsyncWorker(QtCore.QThread if QtCore is not None else object):
+class QtAsyncWorker(QtCore.QThread if QtCore is not None else object):  # type: ignore[misc]
     """QThread для фонового выполнения асинхронных корутин или тяжелых синхронных функций."""
 
     def __init__(
@@ -61,7 +61,8 @@ class QtAsyncWorker(QtCore.QThread if QtCore is not None else object):
             elif callable(self.target):
                 result = self.target(*self.args, **self.kwargs)
                 if inspect.isawaitable(result):
-                    result = asyncio.run(result)
+                    from typing import cast
+                    result = asyncio.run(cast(Coroutine[Any, Any, Any], result))
             else:
                 raise ValueError("Параметр target должен быть вызываемым объектом.")
             if self.signals and hasattr(self.signals, "finished") and self.signals.finished:

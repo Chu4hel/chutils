@@ -82,7 +82,7 @@ class TypedSignal(Generic[P]):
                 setattr(instance, "_typed_signals_cache", cache)
 
             if id(self) in cache:
-                return cache[id(self)]
+                return cache[id(self)]  # type: ignore[no-any-return]
 
             bound = BoundTypedSignal[P](self._underlying_signal)
             cache[id(self)] = bound

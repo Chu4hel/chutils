@@ -10,7 +10,7 @@ from typing import Any
 from .shim import QtCore, Signal, require_qt
 
 
-class _QtLogEmitter(QtCore.QObject if QtCore is not None else object):
+class _QtLogEmitter(QtCore.QObject if QtCore is not None else object):  # type: ignore[misc]
     """Класс-эмиттер Qt сигналов для логгера."""
 
     if Signal is not None:
