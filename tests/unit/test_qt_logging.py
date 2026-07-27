@@ -13,10 +13,12 @@ import chutils.qt.shim as shim
 
 def test_qt_log_handler_without_qt() -> None:
     """Проверяет выбрасывание OptionalDependencyError при отсутствии Qt."""
-    with patch.object(shim, "QT_BINDING", None):
+    err = OptionalDependencyError("Библиотека PyQt6 или PySide6 не установлена.", dependency="qt")
+    with patch.object(shim, "QT_BINDING", None), patch("chutils.qt.logging.require_qt", side_effect=err):
         from chutils.qt.logging import QtLogHandler
         with pytest.raises(OptionalDependencyError):
             QtLogHandler()
+
 
 
 def test_qt_log_handler_emit() -> None:

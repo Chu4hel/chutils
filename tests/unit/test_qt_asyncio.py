@@ -13,10 +13,12 @@ import chutils.qt.shim as shim
 
 def test_async_worker_without_qt() -> None:
     """Проверяет выбрасывание OptionalDependencyError при отсутствии Qt."""
-    with patch.object(shim, "QT_BINDING", None):
+    err = OptionalDependencyError("Библиотека PyQt6 или PySide6 не установлена.", dependency="qt")
+    with patch.object(shim, "QT_BINDING", None), patch("chutils.qt.asyncio.require_qt", side_effect=err):
         from chutils.qt.asyncio import run_async_task
         with pytest.raises(OptionalDependencyError):
             run_async_task(lambda: 42)
+
 
 
 def test_qt_async_worker_run_success() -> None:

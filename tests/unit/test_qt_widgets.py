@@ -12,12 +12,14 @@ import chutils.qt.shim as shim
 
 def test_widgets_without_qt() -> None:
     """Проверяет выбрасывание OptionalDependencyError при отсутствии Qt."""
-    with patch.object(shim, "QT_BINDING", None):
+    err = OptionalDependencyError("Библиотека PyQt6 или PySide6 не установлена.", dependency="qt")
+    with patch.object(shim, "QT_BINDING", None), patch("chutils.qt.widgets.require_qt", side_effect=err):
         from chutils.qt.widgets import BaseDialog, BaseMainWindow
         with pytest.raises(OptionalDependencyError):
             BaseMainWindow()
         with pytest.raises(OptionalDependencyError):
             BaseDialog()
+
 
 
 def test_base_main_window_lifecycle() -> None:

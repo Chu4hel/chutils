@@ -12,10 +12,12 @@ from chutils.exceptions import OptionalDependencyError
 
 def test_typed_signal_without_qt() -> None:
     """Проверяет выбрасывание OptionalDependencyError при отсутствии Qt."""
-    with patch.object(shim, "QT_BINDING", None):
+    err = OptionalDependencyError("Библиотека PyQt6 или PySide6 не установлена.", dependency="qt")
+    with patch.object(shim, "QT_BINDING", None), patch("chutils.qt.signals.require_qt", side_effect=err):
         from chutils.qt.signals import TypedSignal
         with pytest.raises(OptionalDependencyError):
             TypedSignal(str)
+
 
 
 def test_bound_typed_signal_operations() -> None:
