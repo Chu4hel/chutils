@@ -16176,12 +16176,12 @@
                 "children": []
               },
               {
-                "name": "load_releases_from_cache",
+                "name": "_get_installed_version",
                 "type": "function",
-                "layer": "internal",
-                "signature": "(cache_file, ignore_lifetime)",
-                "summary": "Загружает список релизов из локального кэша, если он актуален.",
-                "docstring": "Загружает список релизов из локального кэша, если он актуален.\n\nArgs:\n    cache_file: Путь к файлу кэша.\n    ignore_lifetime: Если True, игнорирует время жизни кэша (используется при ошибках сети).\n\nReturns:\n    Список релизов или None, если кэш невалиден или устарел.",
+                "layer": "private",
+                "signature": "()",
+                "summary": "Возвращает текущую установленную версию chutils.",
+                "docstring": "Возвращает текущую установленную версию chutils.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -16196,12 +16196,12 @@
                 "children": []
               },
               {
-                "name": "save_releases_to_cache",
+                "name": "load_releases_from_cache",
                 "type": "function",
                 "layer": "internal",
-                "signature": "(cache_dir, cache_file, releases)",
-                "summary": "Сохраняет список релизов в локальный кэш.",
-                "docstring": "Сохраняет список релизов в локальный кэш.\n\nArgs:\n    cache_dir: Директория кэша.\n    cache_file: Файл кэша.\n    releases: Данные для сохранения.",
+                "signature": "(cache_file, ignore_lifetime)",
+                "summary": "Загружает список релизов из локального кэша, если он актуален.",
+                "docstring": "Загружает список релизов из локального кэша, если он актуален.\n\nArgs:\n    cache_file: Путь к файлу кэша.\n    ignore_lifetime: Если True, игнорирует время жизни кэша (используется при ошибках сети).\n\nReturns:\n    Список релизов или None, если кэш невалиден, устарел или версия библиотеки изменилась.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -16211,7 +16211,27 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 61,
+                "line_number": 45,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "save_releases_to_cache",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(cache_dir, cache_file, releases)",
+                "summary": "Сохраняет список релизов в локальный кэш с метаданными версии.",
+                "docstring": "Сохраняет список релизов в локальный кэш с метаданными версии.\n\nArgs:\n    cache_dir: Директория кэша.\n    cache_file: Файл кэша.\n    releases: Данные для сохранения.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 86,
                 "bases": [],
                 "children": []
               },
@@ -16231,7 +16251,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 78,
+                "line_number": 107,
                 "bases": [],
                 "children": []
               }
@@ -34915,8 +34935,8 @@
   "metadata": {
     "chutils_version": "3.4.1",
     "project_version": "3.4.1",
-    "git_commit": "824417aa80b19bbfbb6cbb86151e5139be92b981 (dirty)",
-    "generated_at": "2026-07-28T19:53:27.535893+00:00",
-    "project_hash": "1001ffd89333fcf5c07c42b89dfebc67f38e7574da9f7166e3845fa464c5bc81"
+    "git_commit": "2d935cedf414ee6640485c0d95c3c9c796cb28f7 (dirty)",
+    "generated_at": "2026-07-28T20:12:58.103269+00:00",
+    "project_hash": "6782aad8af92c2d4f0cbf954346edd5b5ead5ba8c4abfadc21d2296c25937e84"
   }
 }
