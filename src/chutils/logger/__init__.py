@@ -26,7 +26,12 @@ if TYPE_CHECKING:
         CompressingRotatingFileHandler as CompressingRotatingFileHandler,
         CompressingTimedRotatingFileHandler as CompressingTimedRotatingFileHandler
     )
-    from .masking import SecretMaskingFilter as SecretMaskingFilter
+    from .masking import (
+        SecretMaskingFilter as SecretMaskingFilter,
+        register_secret_mask as register_secret_mask,
+        register_pattern_mask as register_pattern_mask,
+        clear_masks as clear_masks,
+    )
 
 _LAZY_MAPPING = {
     'setup_logger': ('.core', 'setup_logger'),
@@ -41,6 +46,9 @@ _LAZY_MAPPING = {
     'CompressingRotatingFileHandler': ('.handlers', 'CompressingRotatingFileHandler'),
     'CompressingTimedRotatingFileHandler': ('.handlers', 'CompressingTimedRotatingFileHandler'),
     'SecretMaskingFilter': ('.masking', 'SecretMaskingFilter'),
+    'register_secret_mask': ('.masking', 'register_secret_mask'),
+    'register_pattern_mask': ('.masking', 'register_pattern_mask'),
+    'clear_masks': ('.masking', 'clear_masks'),
 }
 
 def __getattr__(name: str) -> Any:

@@ -22776,6 +22776,66 @@
                 "children": []
               },
               {
+                "name": "register_secret_mask",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(secret)",
+                "summary": "Регистрирует подстроку (секрет) для глобального маскирования в логах.",
+                "docstring": "Регистрирует подстроку (секрет) для глобального маскирования в логах.\n\nArgs:\n    secret: Значение секрета (пароль, токен и т.д.).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 65,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "register_pattern_mask",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(pattern)",
+                "summary": "Регистрирует регулярное выражение для глобального маскирования в логах.",
+                "docstring": "Регистрирует регулярное выражение для глобального маскирования в логах.\n\nArgs:\n    pattern: Строка регулярного выражения.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 76,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "clear_masks",
+                "type": "function",
+                "layer": "internal",
+                "signature": "()",
+                "summary": "Сбрасывает все зарегистрированные маски и регулярные выражения.",
+                "docstring": "Сбрасывает все зарегистрированные маски и регулярные выражения.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 87,
+                "bases": [],
+                "children": []
+              },
+              {
                 "name": "SecretMaskingFilter",
                 "type": "class",
                 "layer": "public",
@@ -22791,11 +22851,31 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 65,
+                "line_number": 94,
                 "bases": [
                   "logging.Filter"
                 ],
                 "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, name, secrets, patterns)",
+                    "summary": "Инициализирует фильтр маскирования секретов.",
+                    "docstring": "Инициализирует фильтр маскирования секретов.\n\nArgs:\n    name: Имя фильтра (стандартный аргумент logging.Filter).\n    secrets: Опциональный список локальных/глобальных секретов для маскирования.\n    patterns: Опциональный список регулярных выражений для маскирования.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 102,
+                    "bases": [],
+                    "children": []
+                  },
                   {
                     "name": "filter",
                     "type": "method",
@@ -22812,7 +22892,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 73,
+                    "line_number": 128,
                     "bases": [],
                     "children": []
                   }
@@ -22838,7 +22918,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 31,
+            "line_number": 36,
             "bases": [],
             "children": []
           },
@@ -22858,7 +22938,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 46,
+            "line_number": 54,
             "bases": [],
             "children": []
           },
@@ -22878,7 +22958,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 53,
+            "line_number": 61,
             "bases": [],
             "children": []
           }
@@ -34835,8 +34915,8 @@
   "metadata": {
     "chutils_version": "3.4.0",
     "project_version": "3.4.0",
-    "git_commit": "fd3ce84c0244c6ce08b468ad307448a4d0a187d2 (dirty)",
-    "generated_at": "2026-07-28T17:35:07.892175+00:00",
-    "project_hash": "a378730847e2cbdab4e7ad07606c834abcd0c924fdfdf102a75e4a1354027af8"
+    "git_commit": "9dc68ba991338e4ba2e2c840c1486fc319144fe2 (dirty)",
+    "generated_at": "2026-07-28T17:39:33.977886+00:00",
+    "project_hash": "420419328a575460d71bed82fc594360c912b167c567f0cebbf23b3471ce0b2c"
   }
 }
