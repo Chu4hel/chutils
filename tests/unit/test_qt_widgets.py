@@ -54,9 +54,14 @@ def test_base_main_window_lifecycle() -> None:
         patch.object(shim, "require_qt", return_value=None),
         patch.object(shim, "QtWidgets", mock_qtwidgets),
         patch.object(shim, "QtCore", mock_qtcore),
-        patch("chutils.qt.widgets.require_qt", return_value=None),
-        patch("chutils.qt.widgets.QtCore", mock_qtcore),
     ):
+        import sys
+        if "chutils.qt.shim" in sys.modules:
+            sys.modules["chutils.qt.shim"].QT_BINDING = "PyQt6"
+            sys.modules["chutils.qt.shim"].require_qt = lambda: None
+            sys.modules["chutils.qt.shim"].QtWidgets = mock_qtwidgets
+            sys.modules["chutils.qt.shim"].QtCore = mock_qtcore
+
         import importlib
         import chutils.qt.widgets
         importlib.reload(chutils.qt.widgets)
@@ -95,8 +100,13 @@ def test_base_dialog_lifecycle() -> None:
         patch.object(shim, "QT_BINDING", "PyQt6"),
         patch.object(shim, "require_qt", return_value=None),
         patch.object(shim, "QtWidgets", mock_qtwidgets),
-        patch("chutils.qt.widgets.require_qt", return_value=None),
     ):
+        import sys
+        if "chutils.qt.shim" in sys.modules:
+            sys.modules["chutils.qt.shim"].QT_BINDING = "PyQt6"
+            sys.modules["chutils.qt.shim"].require_qt = lambda: None
+            sys.modules["chutils.qt.shim"].QtWidgets = mock_qtwidgets
+
         import importlib
         import chutils.qt.widgets
         importlib.reload(chutils.qt.widgets)
@@ -108,6 +118,7 @@ def test_base_dialog_lifecycle() -> None:
         mock_event = MagicMock()
         dialog.showEvent(mock_event)
         dialog.closeEvent(mock_event)
+
 
 
 
