@@ -139,35 +139,39 @@ class PersistentTaskQueue(BaseTaskQueue):
         Returns:
             True, если задача сохранена; False, если задача дедуплицирована.
         """
+        # Сериализуем payload до работы с БД. Ошибки сериализации (например TypeError)
+        # прервут push до любых изменений в sqlite tables.
+        payload_json = json.dumps(task.payload)
+
         async with self._lock:
             if self._conn is None:
                 return False
+
             try:
-                self._conn.execute("INSERT INTO seen (dedup_key) VALUES (?)", (task.dedup_key,))
+                with self._conn:
+                    self._conn.execute("INSERT INTO seen (dedup_key) VALUES (?)", (task.dedup_key,))
+                    self._conn.execute(
+                        """
+                        INSERT INTO tasks (task_id, url, priority, payload_json, attempts,
+                                           max_attempts, dedup_key, created_at, last_error, status)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+                        """,
+                        (
+                            task.task_id,
+                            task.url,
+                            task.priority,
+                            payload_json,
+                            task.attempts,
+                            task.max_attempts,
+                            task.dedup_key,
+                            task.created_at,
+                            task.last_error,
+                        ),
+                    )
+                return True
             except sqlite3.IntegrityError:
                 return False
 
-            self._conn.execute(
-                """
-                INSERT INTO tasks (
-                    task_id, url, priority, payload_json, attempts,
-                    max_attempts, dedup_key, created_at, last_error, status
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
-                """,
-                (
-                    task.task_id,
-                    task.url,
-                    task.priority,
-                    json.dumps(task.payload),
-                    task.attempts,
-                    task.max_attempts,
-                    task.dedup_key,
-                    task.created_at,
-                    task.last_error,
-                ),
-            )
-            self._conn.commit()
-            return True
 
     async def pop(self) -> ScrapingTask | None:
         """Извлекает следующую ожидающую задачу из базы данных SQLite.
