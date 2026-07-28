@@ -62,6 +62,35 @@ def _update_mask_re() -> None:
         _MASK_RE = re.compile(pattern)
 
 
+def register_secret_mask(secret: str) -> None:
+    """Регистрирует подстроку (секрет) для глобального маскирования в логах.
+
+    Args:
+        secret: Значение секрета (пароль, токен и т.д.).
+    """
+    if secret:
+        _GLOBAL_MASKS.add(secret)
+        _update_mask_re()
+
+
+def register_pattern_mask(pattern: str) -> None:
+    """Регистрирует регулярное выражение для глобального маскирования в логах.
+
+    Args:
+        pattern: Строка регулярного выражения.
+    """
+    if pattern:
+        _CUSTOM_PATTERNS.add(pattern)
+        _update_mask_re()
+
+
+def clear_masks() -> None:
+    """Сбрасывает все зарегистрированные маски и регулярные выражения."""
+    _GLOBAL_MASKS.clear()
+    _CUSTOM_PATTERNS.clear()
+    _update_mask_re()
+
+
 class SecretMaskingFilter(logging.Filter):
     """
     Фильтр для автоматического маскирования секретов в сообщениях логов.
@@ -69,6 +98,32 @@ class SecretMaskingFilter(logging.Filter):
     Ищет в тексте сообщения и в аргументах все зарегистрированные секреты
     и паттерны и заменяет их на '[MASKED]'.
     """
+
+    def __init__(
+        self,
+        name: str = "",
+        secrets: list[str] | set[str] | None = None,
+        patterns: list[str] | set[str] | None = None,
+    ) -> None:
+        """Инициализирует фильтр маскирования секретов.
+
+        Args:
+            name: Имя фильтра (стандартный аргумент logging.Filter).
+            secrets: Опциональный список локальных/глобальных секретов для маскирования.
+            patterns: Опциональный список регулярных выражений для маскирования.
+        """
+        super().__init__(name)
+        if secrets:
+            for s in secrets:
+                if s:
+                    _GLOBAL_MASKS.add(s)
+        if patterns:
+            for p in patterns:
+                if p:
+                    _CUSTOM_PATTERNS.add(p)
+        if secrets or patterns:
+            _update_mask_re()
+
 
     def filter(self, record: logging.LogRecord) -> bool:
         """

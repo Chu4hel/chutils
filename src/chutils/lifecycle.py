@@ -127,17 +127,32 @@ class LifecycleManager:
         logger.info("Выполнение функций очистки (%d)...", len(callbacks))
 
         try:
-            # Пытаемся получить текущую петлю событий
-            asyncio.get_running_loop()
-            # В асинхронном приложении мы не можем использовать asyncio.run()
-            # Но так как мы находимся в обработчике сигнала (синхронном),
-            # мы запускаем корутину и ждем ее завершения (если это возможно)
-            # или полагаемся на asyncio.run ниже, если петля не запущена.
-            # На практике, обработчик сигнала часто вызывается вне контекста петли.
-            raise RuntimeError("Force fallback to asyncio.run for simplicity in signal handler")
+            loop = asyncio.get_running_loop()
         except RuntimeError:
-            # Если петля не запущена или мы решили использовать asyncio.run
+            loop = None
+
+        if loop is not None and loop.is_running():
+            # Запуск из уже работающего цикла событий (например, из асинхронного handler'а):
+            # Сохраняем задачу в фоновое выполнение цикла без блокирующего asyncio.run()
+            loop.create_task(self._execute_all(callbacks, float(timeout)))
+        else:
             asyncio.run(self._execute_all(callbacks, float(timeout)))
+
+    async def _async_run_cleanup(self) -> None:
+        """
+        Асинхронно запускает процесс очистки ресурсов.
+        """
+        self._is_shutting_down = True
+        timeout = get_config_int("shutdown", "timeout", 10)
+        callbacks = self.get_cleanup_callbacks()
+        if not callbacks:
+            logger.debug("Реестр функций очистки пуст.")
+            return
+
+        logger.info("Выполнение функций очистки (%d)...", len(callbacks))
+        await self._execute_all(callbacks, float(timeout))
+
+
 
     async def _execute_all(self, callbacks: list[CleanupCallback], timeout: float) -> None:
         """
@@ -215,6 +230,14 @@ def setup_graceful_shutdown() -> None:
 
 def run_cleanup() -> None:
     """
-    Выполняет все зарегистрированные функции очистки LIFO.
+    Выполняет все зарегистрированные функции очистки LIFO (безопасно для вызова из синхронного кода и активных Event Loop).
     """
     _manager._run_cleanup()
+
+
+async def async_run_cleanup() -> None:
+    """
+    Асинхронно выполняет все зарегистрированные функции очистки LIFO.
+    """
+    await _manager._async_run_cleanup()
+

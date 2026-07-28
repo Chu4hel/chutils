@@ -32,10 +32,10 @@ class QtAsyncWorker(QtCore.QThread if QtCore is not None else object):  # type: 
     """QThread для фонового выполнения асинхронных корутин или тяжелых синхронных функций."""
 
     def __init__(
-        self,
-        target: Callable[..., Coroutine[Any, Any, T] | T],
-        *args: Any,
-        **kwargs: Any,
+            self,
+            target: Callable[..., Coroutine[Any, Any, T] | T],
+            *args: Any,
+            **kwargs: Any,
     ) -> None:
         """Инициализирует воркер.
 
@@ -78,17 +78,20 @@ class QtAsyncWorker(QtCore.QThread if QtCore is not None else object):  # type: 
             priority: Приоритет потока Qt.
         """
         if QtCore is not None and hasattr(super(), "start"):
-            super().start(priority)
+            if priority is not None:
+                super().start(priority)
+            else:
+                super().start()
         else:
             self.run()
 
 
 def run_async_task(
-    target: Callable[..., Coroutine[Any, Any, T] | T],
-    *args: Any,
-    on_success: Callable[[T], None] | None = None,
-    on_error: Callable[[Exception], None] | None = None,
-    **kwargs: Any,
+        target: Callable[..., Coroutine[Any, Any, T] | T],
+        *args: Any,
+        on_success: Callable[[T], None] | None = None,
+        on_error: Callable[[Exception], None] | None = None,
+        **kwargs: Any,
 ) -> QtAsyncWorker:
     """Запускает функцию или корутину в фоновом потоке QThread без блокировки UI.
 
@@ -120,8 +123,8 @@ def run_async_task(
 
 
 def async_to_qt(
-    on_success: Callable[[Any], None] | None = None,
-    on_error: Callable[[Exception], None] | None = None,
+        on_success: Callable[[Any], None] | None = None,
+        on_error: Callable[[Exception], None] | None = None,
 ) -> Callable[[Callable[..., Coroutine[Any, Any, T] | T]], Callable[..., QtAsyncWorker]]:
     """Декоратор для автоматического запуска асинхронной функции в фоновом потоке Qt.
 

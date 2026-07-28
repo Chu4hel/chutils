@@ -2,6 +2,7 @@
 Тесты для базовых виджетов Qt (src/chutils/qt/widgets.py).
 """
 
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -29,27 +30,86 @@ def test_base_main_window_lifecycle() -> None:
     mock_qtcore = MagicMock()
     mock_qtcore.QSettings.return_value = mock_settings
 
-    with patch("chutils.qt.widgets.require_qt"):
-        with patch("chutils.qt.widgets.QtCore", mock_qtcore):
-            from chutils.qt.widgets import BaseMainWindow
+    class FakeMainWindow:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            pass
 
-            window = BaseMainWindow()
-            assert window.logger.name == "BaseMainWindow"
-            window.saveGeometry = MagicMock(return_value=b"geometry_bytes")
-            window.restoreGeometry = MagicMock()
+        def restoreGeometry(self, *args: Any, **kwargs: Any) -> Any:
+            pass
 
-            mock_event = MagicMock()
-            window.showEvent(mock_event)
-            window.restore_geometry_settings()
-            window.restoreGeometry.assert_called_once_with(b"saved_geometry")
+        def saveGeometry(self, *args: Any, **kwargs: Any) -> Any:
+            pass
 
-            window.closeEvent(mock_event)
-            mock_settings.setValue.assert_called_once_with("geometry", b"geometry_bytes")
+        def showEvent(self, event: Any) -> None:
+            pass
+
+        def closeEvent(self, event: Any) -> None:
+            pass
+
+    mock_qtwidgets = MagicMock()
+    mock_qtwidgets.QMainWindow = FakeMainWindow
+
+    with (
+        patch.object(shim, "QT_BINDING", "PyQt6"),
+        patch.object(shim, "require_qt", return_value=None),
+        patch.object(shim, "QtWidgets", mock_qtwidgets),
+        patch.object(shim, "QtCore", mock_qtcore),
+    ):
+        import sys
+        if "chutils.qt.shim" in sys.modules:
+            sys.modules["chutils.qt.shim"].QT_BINDING = "PyQt6"
+            sys.modules["chutils.qt.shim"].require_qt = lambda: None
+            sys.modules["chutils.qt.shim"].QtWidgets = mock_qtwidgets
+            sys.modules["chutils.qt.shim"].QtCore = mock_qtcore
+
+        import importlib
+        import chutils.qt.widgets
+        importlib.reload(chutils.qt.widgets)
+        from chutils.qt.widgets import BaseMainWindow
+
+        window = BaseMainWindow()
+        assert window.logger.name == "BaseMainWindow"
+        window.saveGeometry = MagicMock(return_value=b"geometry_bytes")
+        window.restoreGeometry = MagicMock()
+
+        mock_event = MagicMock()
+        window.showEvent(mock_event)
+        window.restore_geometry_settings()
+        window.restoreGeometry.assert_called_once_with(b"saved_geometry")
+
+        window.closeEvent(mock_event)
+        mock_settings.setValue.assert_called_once_with("geometry", b"geometry_bytes")
 
 
 def test_base_dialog_lifecycle() -> None:
     """Проверяет логирование жизненного цикла BaseDialog."""
-    with patch("chutils.qt.widgets.require_qt"):
+    class FakeDialog:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            pass
+
+        def showEvent(self, event: Any) -> None:
+            pass
+
+        def closeEvent(self, event: Any) -> None:
+            pass
+
+    mock_qtwidgets = MagicMock()
+    mock_qtwidgets.QDialog = FakeDialog
+
+    with (
+        patch.object(shim, "QT_BINDING", "PyQt6"),
+        patch.object(shim, "require_qt", return_value=None),
+        patch.object(shim, "QtWidgets", mock_qtwidgets),
+    ):
+        import sys
+        if "chutils.qt.shim" in sys.modules:
+            sys.modules["chutils.qt.shim"].QT_BINDING = "PyQt6"
+            sys.modules["chutils.qt.shim"].require_qt = lambda: None
+            sys.modules["chutils.qt.shim"].QtWidgets = mock_qtwidgets
+
+        import importlib
+        import chutils.qt.widgets
+        importlib.reload(chutils.qt.widgets)
         from chutils.qt.widgets import BaseDialog
 
         dialog = BaseDialog()
@@ -58,3 +118,10 @@ def test_base_dialog_lifecycle() -> None:
         mock_event = MagicMock()
         dialog.showEvent(mock_event)
         dialog.closeEvent(mock_event)
+
+
+
+
+
+
+

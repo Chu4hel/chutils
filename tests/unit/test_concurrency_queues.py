@@ -95,6 +95,24 @@ async def test_persistent_task_queue_sqlite() -> None:
         await queue2.close()
 
 
+@pytest.mark.asyncio
+async def test_persistent_task_queue_push_serialization_error() -> None:
+    """Проверяет откат транзакции дедупликации при ошибке сериализации payload."""
+    from datetime import datetime
+    with tempfile.TemporaryDirectory() as tmpdir:
+        db_path = os.path.join(tmpdir, "test_leak.db")
+        queue = PersistentTaskQueue(db_path=db_path)
+
+        bad_task = ScrapingTask(url="https://e.com", dedup_key="key1", payload={"t": datetime.now()})
+        with pytest.raises(TypeError):
+            await queue.push(bad_task)
+
+        good_task = ScrapingTask(url="https://e.com", dedup_key="key1", payload={"t": "2026-07-28"})
+        result = await queue.push(good_task)
+        assert result is True
+        await queue.close()
+
+
 def test_redis_task_queue_without_redis() -> None:
     """Проверяет исключение при отсутствии библиотеки redis."""
     with patch.dict("sys.modules", {"redis": None}):

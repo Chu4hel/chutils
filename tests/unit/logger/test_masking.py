@@ -52,3 +52,27 @@ def test_masking_disabled_by_env(caplog, monkeypatch):
 
     assert secret in caplog.text
     assert "[MASKED]" not in caplog.text
+
+
+def test_secret_masking_filter_direct():
+    """Проверяет прямой вызов SecretMaskingFilter и передачу secrets в конструктор."""
+    from chutils.logger import SecretMaskingFilter, register_secret_mask, clear_masks
+
+    clear_masks()
+    filter_obj = SecretMaskingFilter(secrets=["SecretPass123!"])
+    record = logging.LogRecord(
+        name="app", level=logging.INFO, pathname="", lineno=0,
+        msg="User login with password SecretPass123!", args=(), exc_info=None
+    )
+    filter_obj.filter(record)
+    assert record.msg == "User login with password [MASKED]"
+
+    register_secret_mask("AnotherSecret")
+    record2 = logging.LogRecord(
+        name="app", level=logging.INFO, pathname="", lineno=0,
+        msg="Data: AnotherSecret", args=(), exc_info=None
+    )
+    filter_obj.filter(record2)
+    assert record2.msg == "Data: [MASKED]"
+    clear_masks()
+

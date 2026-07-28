@@ -83,7 +83,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 38,
+                "line_number": 39,
                 "bases": [],
                 "children": [
                   {
@@ -102,7 +102,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 46,
+                    "line_number": 47,
                     "bases": [],
                     "children": []
                   }
@@ -126,7 +126,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 57,
+                "line_number": 58,
                 "bases": [],
                 "children": []
               },
@@ -146,7 +146,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 105,
+                "line_number": 106,
                 "bases": [],
                 "children": []
               },
@@ -166,7 +166,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 106,
+                "line_number": 107,
                 "bases": [],
                 "children": []
               },
@@ -186,7 +186,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 109,
+                "line_number": 110,
                 "bases": [],
                 "children": []
               }
@@ -15926,7 +15926,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 167,
+                    "line_number": 168,
                     "bases": [],
                     "children": []
                   },
@@ -15946,7 +15946,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 177,
+                    "line_number": 178,
                     "bases": [],
                     "children": []
                   },
@@ -15966,7 +15966,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 190,
+                    "line_number": 191,
                     "bases": [],
                     "children": []
                   }
@@ -16039,7 +16039,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 340,
+                "line_number": 339,
                 "bases": [],
                 "children": [
                   {
@@ -16058,7 +16058,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 343,
+                    "line_number": 342,
                     "bases": [],
                     "children": []
                   },
@@ -16078,7 +16078,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 365,
+                    "line_number": 364,
                     "bases": [],
                     "children": []
                   },
@@ -16098,7 +16098,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 400,
+                    "line_number": 399,
                     "bases": [],
                     "children": []
                   }
@@ -17031,7 +17031,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 10,
+                "line_number": 9,
                 "bases": [],
                 "children": []
               },
@@ -17051,7 +17051,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 13,
+                "line_number": 12,
                 "bases": [],
                 "children": []
               },
@@ -17071,7 +17071,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 18,
+                "line_number": 17,
                 "bases": [],
                 "children": []
               },
@@ -17091,7 +17091,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 31,
+                "line_number": 30,
                 "bases": [],
                 "children": [
                   {
@@ -17110,7 +17110,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 43,
+                    "line_number": 42,
                     "bases": [],
                     "children": []
                   },
@@ -17132,7 +17132,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 55,
+                    "line_number": 54,
                     "bases": [],
                     "children": []
                   },
@@ -17152,7 +17152,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 60,
+                    "line_number": 59,
                     "bases": [],
                     "children": []
                   },
@@ -17172,7 +17172,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 86,
+                    "line_number": 85,
                     "bases": [],
                     "children": []
                   },
@@ -17192,7 +17192,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 123,
+                    "line_number": 122,
                     "bases": [],
                     "children": []
                   },
@@ -17212,7 +17212,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 135,
+                    "line_number": 134,
                     "bases": [],
                     "children": []
                   },
@@ -17232,7 +17232,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 247,
+                    "line_number": 246,
                     "bases": [],
                     "children": []
                   }
@@ -17254,7 +17254,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 255,
+                "line_number": 254,
                 "bases": [],
                 "children": []
               },
@@ -17274,7 +17274,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 259,
+                "line_number": 258,
                 "bases": [],
                 "children": []
               },
@@ -17294,7 +17294,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 296,
+                "line_number": 295,
                 "bases": [],
                 "children": []
               },
@@ -17314,7 +17314,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 335,
+                "line_number": 333,
                 "bases": [],
                 "children": []
               }
@@ -21453,7 +21453,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 23,
+            "line_number": 24,
             "bases": [],
             "children": []
           },
@@ -21473,7 +21473,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 26,
+            "line_number": 27,
             "bases": [],
             "children": []
           },
@@ -21493,7 +21493,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 29,
+            "line_number": 30,
             "bases": [],
             "children": [
               {
@@ -21512,7 +21512,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 34,
+                "line_number": 35,
                 "bases": [],
                 "children": []
               },
@@ -21532,7 +21532,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 40,
+                "line_number": 41,
                 "bases": [],
                 "children": []
               },
@@ -21552,7 +21552,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 59,
+                "line_number": 60,
                 "bases": [],
                 "children": []
               },
@@ -21572,7 +21572,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 67,
+                "line_number": 68,
                 "bases": [],
                 "children": []
               },
@@ -21592,7 +21592,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 94,
+                "line_number": 95,
                 "bases": [],
                 "children": []
               },
@@ -21612,7 +21612,27 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 112,
+                "line_number": 113,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_async_run_cleanup",
+                "type": "method",
+                "layer": "private",
+                "signature": "(self)",
+                "summary": "Асинхронно запускает процесс очистки ресурсов.",
+                "docstring": "Асинхронно запускает процесс очистки ресурсов.",
+                "breadcrumbs": {
+                  "is_async": true,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 141,
                 "bases": [],
                 "children": []
               },
@@ -21632,7 +21652,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 141,
+                "line_number": 157,
                 "bases": [],
                 "children": []
               },
@@ -21652,7 +21672,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 165,
+                "line_number": 181,
                 "bases": [],
                 "children": []
               }
@@ -21674,7 +21694,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 174,
+            "line_number": 190,
             "bases": [],
             "children": []
           },
@@ -21694,7 +21714,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 178,
+            "line_number": 194,
             "bases": [],
             "children": []
           },
@@ -21714,7 +21734,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 206,
+            "line_number": 222,
             "bases": [],
             "children": []
           },
@@ -21723,8 +21743,8 @@
             "type": "function",
             "layer": "internal",
             "signature": "()",
-            "summary": "Выполняет все зарегистрированные функции очистки LIFO.",
-            "docstring": "Выполняет все зарегистрированные функции очистки LIFO.",
+            "summary": "Выполняет все зарегистрированные функции очистки LIFO (безопасно для вызова из синхронного кода и активных Event Loop).",
+            "docstring": "Выполняет все зарегистрированные функции очистки LIFO (безопасно для вызова из синхронного кода и активных Event Loop).",
             "breadcrumbs": {
               "is_async": false,
               "is_thread_safe": false,
@@ -21734,7 +21754,27 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 215,
+            "line_number": 231,
+            "bases": [],
+            "children": []
+          },
+          {
+            "name": "async_run_cleanup",
+            "type": "function",
+            "layer": "internal",
+            "signature": "()",
+            "summary": "Асинхронно выполняет все зарегистрированные функции очистки LIFO.",
+            "docstring": "Асинхронно выполняет все зарегистрированные функции очистки LIFO.",
+            "breadcrumbs": {
+              "is_async": true,
+              "is_thread_safe": false,
+              "is_heavy": false,
+              "is_abstract": false,
+              "decorators": [],
+              "tags": [],
+              "custom_metadata": {}
+            },
+            "line_number": 238,
             "bases": [],
             "children": []
           }
@@ -22736,6 +22776,66 @@
                 "children": []
               },
               {
+                "name": "register_secret_mask",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(secret)",
+                "summary": "Регистрирует подстроку (секрет) для глобального маскирования в логах.",
+                "docstring": "Регистрирует подстроку (секрет) для глобального маскирования в логах.\n\nArgs:\n    secret: Значение секрета (пароль, токен и т.д.).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 65,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "register_pattern_mask",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(pattern)",
+                "summary": "Регистрирует регулярное выражение для глобального маскирования в логах.",
+                "docstring": "Регистрирует регулярное выражение для глобального маскирования в логах.\n\nArgs:\n    pattern: Строка регулярного выражения.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 76,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "clear_masks",
+                "type": "function",
+                "layer": "internal",
+                "signature": "()",
+                "summary": "Сбрасывает все зарегистрированные маски и регулярные выражения.",
+                "docstring": "Сбрасывает все зарегистрированные маски и регулярные выражения.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 87,
+                "bases": [],
+                "children": []
+              },
+              {
                 "name": "SecretMaskingFilter",
                 "type": "class",
                 "layer": "public",
@@ -22751,11 +22851,31 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 65,
+                "line_number": 94,
                 "bases": [
                   "logging.Filter"
                 ],
                 "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, name, secrets, patterns)",
+                    "summary": "Инициализирует фильтр маскирования секретов.",
+                    "docstring": "Инициализирует фильтр маскирования секретов.\n\nArgs:\n    name: Имя фильтра (стандартный аргумент logging.Filter).\n    secrets: Опциональный список локальных/глобальных секретов для маскирования.\n    patterns: Опциональный список регулярных выражений для маскирования.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 102,
+                    "bases": [],
+                    "children": []
+                  },
                   {
                     "name": "filter",
                     "type": "method",
@@ -22772,7 +22892,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 73,
+                    "line_number": 128,
                     "bases": [],
                     "children": []
                   }
@@ -22798,7 +22918,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 31,
+            "line_number": 36,
             "bases": [],
             "children": []
           },
@@ -22818,7 +22938,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 46,
+            "line_number": 54,
             "bases": [],
             "children": []
           },
@@ -22838,7 +22958,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 53,
+            "line_number": 61,
             "bases": [],
             "children": []
           }
@@ -23429,7 +23549,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 7,
+                "line_number": 8,
                 "bases": [],
                 "children": []
               },
@@ -23449,7 +23569,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 10,
+                "line_number": 11,
                 "bases": [],
                 "children": []
               },
@@ -23469,7 +23589,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 16,
+                "line_number": 17,
                 "bases": [],
                 "children": [
                   {
@@ -23488,7 +23608,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 30,
+                    "line_number": 31,
                     "bases": [],
                     "children": []
                   }
@@ -23510,7 +23630,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 83,
+                "line_number": 84,
                 "bases": [],
                 "children": []
               }
@@ -24292,7 +24412,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 73,
+                    "line_number": 74,
                     "bases": [],
                     "children": []
                   }
@@ -24314,7 +24434,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 85,
+                "line_number": 89,
                 "bases": [],
                 "children": []
               },
@@ -24334,7 +24454,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 121,
+                "line_number": 125,
                 "bases": [],
                 "children": []
               }
@@ -24499,7 +24619,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 79,
+                "line_number": 80,
                 "bases": [],
                 "children": []
               }
@@ -26682,7 +26802,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 172,
+                        "line_number": 176,
                         "bases": [],
                         "children": []
                       },
@@ -26702,7 +26822,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 208,
+                        "line_number": 212,
                         "bases": [],
                         "children": []
                       },
@@ -26722,7 +26842,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 219,
+                        "line_number": 223,
                         "bases": [],
                         "children": []
                       },
@@ -26742,7 +26862,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 242,
+                        "line_number": 246,
                         "bases": [],
                         "children": []
                       },
@@ -26762,7 +26882,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 254,
+                        "line_number": 258,
                         "bases": [],
                         "children": []
                       },
@@ -26782,7 +26902,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 262,
+                        "line_number": 266,
                         "bases": [],
                         "children": []
                       }
@@ -26804,7 +26924,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 270,
+                    "line_number": 274,
                     "bases": [
                       ".base.BaseTaskQueue"
                     ],
@@ -26825,7 +26945,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 273,
+                        "line_number": 277,
                         "bases": [],
                         "children": []
                       },
@@ -26845,7 +26965,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 286,
+                        "line_number": 290,
                         "bases": [],
                         "children": []
                       },
@@ -26865,7 +26985,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 318,
+                        "line_number": 322,
                         "bases": [],
                         "children": []
                       },
@@ -26885,7 +27005,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 338,
+                        "line_number": 342,
                         "bases": [],
                         "children": []
                       },
@@ -26905,7 +27025,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 347,
+                        "line_number": 351,
                         "bases": [],
                         "children": []
                       },
@@ -26925,7 +27045,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 374,
+                        "line_number": 378,
                         "bases": [],
                         "children": []
                       },
@@ -26945,7 +27065,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 383,
+                        "line_number": 387,
                         "bases": [],
                         "children": []
                       }
@@ -29951,7 +30071,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 28,
+                    "line_number": 29,
                     "bases": [
                       ".base.BaseStoreBackend"
                     ],
@@ -29972,7 +30092,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 31,
+                        "line_number": 32,
                         "bases": [],
                         "children": []
                       },
@@ -29992,7 +30112,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 37,
+                        "line_number": 38,
                         "bases": [],
                         "children": []
                       },
@@ -30012,7 +30132,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 45,
+                        "line_number": 46,
                         "bases": [],
                         "children": []
                       },
@@ -30032,7 +30152,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 53,
+                        "line_number": 54,
                         "bases": [],
                         "children": []
                       },
@@ -30052,7 +30172,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 61,
+                        "line_number": 62,
                         "bases": [],
                         "children": []
                       },
@@ -30072,7 +30192,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 75,
+                        "line_number": 76,
                         "bases": [],
                         "children": []
                       },
@@ -30092,7 +30212,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 91,
+                        "line_number": 92,
                         "bases": [],
                         "children": []
                       },
@@ -30112,7 +30232,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 104,
+                        "line_number": 105,
                         "bases": [],
                         "children": []
                       },
@@ -30132,7 +30252,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 117,
+                        "line_number": 118,
                         "bases": [],
                         "children": []
                       },
@@ -30152,7 +30272,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 127,
+                        "line_number": 128,
                         "bases": [],
                         "children": []
                       },
@@ -30172,7 +30292,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 141,
+                        "line_number": 142,
                         "bases": [],
                         "children": []
                       },
@@ -30192,7 +30312,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 157,
+                        "line_number": 158,
                         "bases": [],
                         "children": []
                       },
@@ -30212,7 +30332,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 170,
+                        "line_number": 171,
                         "bases": [],
                         "children": []
                       },
@@ -30232,7 +30352,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 183,
+                        "line_number": 184,
                         "bases": [],
                         "children": []
                       }
@@ -30268,7 +30388,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 13,
+                "line_number": 14,
                 "bases": [],
                 "children": []
               },
@@ -30288,7 +30408,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 16,
+                "line_number": 17,
                 "bases": [],
                 "children": []
               },
@@ -30308,7 +30428,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 22,
+                "line_number": 23,
                 "bases": [],
                 "children": []
               }
@@ -34793,10 +34913,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.3.2",
-    "project_version": "3.3.2",
-    "git_commit": "1056ddfc241c7c49c89d0e5ceb7c71b6a49fcb9e (dirty)",
-    "generated_at": "2026-07-25T09:58:30.276177+00:00",
-    "project_hash": "c9fdfbcccbbcd7da26d504ea6a52c71ac54d3d6ac8ad3db65ab038e0112d8666"
+    "chutils_version": "3.4.1",
+    "project_version": "3.4.1",
+    "git_commit": "824417aa80b19bbfbb6cbb86151e5139be92b981 (dirty)",
+    "generated_at": "2026-07-28T19:53:27.535893+00:00",
+    "project_hash": "1001ffd89333fcf5c07c42b89dfebc67f38e7574da9f7166e3845fa464c5bc81"
   }
 }
