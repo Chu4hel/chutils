@@ -50,9 +50,12 @@ def test_base_main_window_lifecycle() -> None:
     mock_qtwidgets.QMainWindow = FakeMainWindow
 
     with (
+        patch.object(shim, "QT_BINDING", "PyQt6"),
+        patch.object(shim, "require_qt", return_value=None),
         patch.object(shim, "QtWidgets", mock_qtwidgets),
         patch.object(shim, "QtCore", mock_qtcore),
-        patch("chutils.qt.widgets.require_qt"),
+        patch("chutils.qt.widgets.require_qt", return_value=None),
+        patch("chutils.qt.widgets.QtCore", mock_qtcore),
     ):
         import importlib
         import chutils.qt.widgets
@@ -88,7 +91,12 @@ def test_base_dialog_lifecycle() -> None:
     mock_qtwidgets = MagicMock()
     mock_qtwidgets.QDialog = FakeDialog
 
-    with patch.object(shim, "QtWidgets", mock_qtwidgets), patch("chutils.qt.widgets.require_qt"):
+    with (
+        patch.object(shim, "QT_BINDING", "PyQt6"),
+        patch.object(shim, "require_qt", return_value=None),
+        patch.object(shim, "QtWidgets", mock_qtwidgets),
+        patch("chutils.qt.widgets.require_qt", return_value=None),
+    ):
         import importlib
         import chutils.qt.widgets
         importlib.reload(chutils.qt.widgets)
@@ -100,6 +108,7 @@ def test_base_dialog_lifecycle() -> None:
         mock_event = MagicMock()
         dialog.showEvent(mock_event)
         dialog.closeEvent(mock_event)
+
 
 
 
