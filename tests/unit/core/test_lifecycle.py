@@ -125,3 +125,35 @@ def test_timeout_mechanism(mocker):
     
     # ASSERT
     mock_after.assert_not_called() # Не должен быть вызван из-за таймаута
+
+
+@pytest.mark.asyncio
+async def test_run_cleanup_inside_running_loop():
+    """Тест безопасного выполнения run_cleanup() внутри запущенного Event Loop."""
+    cleaned = False
+
+    @register_cleanup
+    async def cleanup_db():
+        nonlocal cleaned
+        cleaned = True
+
+    from chutils.lifecycle import run_cleanup
+    run_cleanup()
+    await asyncio.sleep(0.01)
+    assert cleaned is True
+
+
+@pytest.mark.asyncio
+async def test_async_run_cleanup():
+    """Тест выполнения async_run_cleanup() в асинхронной среде."""
+    cleaned = False
+
+    @register_cleanup
+    async def cleanup_db():
+        nonlocal cleaned
+        cleaned = True
+
+    from chutils.lifecycle import async_run_cleanup
+    await async_run_cleanup()
+    assert cleaned is True
+
