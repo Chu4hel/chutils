@@ -97,8 +97,8 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
 
         # Собираем строки изменений в текущую секцию
         if current_section is not None:
-            # Убираем маркеры списков (-, *, +, цифры)
-            clean_line = re.sub(r"^[\s*\-+\d.]+\s*", "", line_strip)
+            # Убираем маркеры списков (-, *, +, 1.), сохраняя жирный текст (например, **Feature**)
+            clean_line = re.sub(r"^(\s*[-+*]\s+|\s*\d+\.\s*)", "", line_strip)
             if clean_line:
                 sections[current_section].append(clean_line)
 
@@ -107,7 +107,7 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
         for line in lines:
             line_strip = line.strip()
             if bool(re.match(r"^(\s*[-*+]\s|\s*\d+\.\s)", line_strip)):
-                clean_line = re.sub(r"^[\s*\-+\d.]+\s*", "", line_strip)
+                clean_line = re.sub(r"^(\s*[-+*]\s+|\s*\d+\.\s*)", "", line_strip)
                 if clean_line:
                     sections["new_api"].append(clean_line)
 
