@@ -29,7 +29,12 @@ def test_base_main_window_lifecycle() -> None:
     mock_qtcore = MagicMock()
     mock_qtcore.QSettings.return_value = mock_settings
 
-    with patch("chutils.qt.widgets.require_qt"):
+    with (
+        patch("chutils.qt.widgets.require_qt"),
+        patch("chutils.qt.widgets.QtWidgets.QMainWindow.__init__", return_value=None),
+        patch("chutils.qt.widgets.QtWidgets.QMainWindow.showEvent", return_value=None),
+        patch("chutils.qt.widgets.QtWidgets.QMainWindow.closeEvent", return_value=None),
+    ):
         with patch("chutils.qt.widgets.QtCore", mock_qtcore):
             from chutils.qt.widgets import BaseMainWindow
 
@@ -49,7 +54,12 @@ def test_base_main_window_lifecycle() -> None:
 
 def test_base_dialog_lifecycle() -> None:
     """Проверяет логирование жизненного цикла BaseDialog."""
-    with patch("chutils.qt.widgets.require_qt"):
+    with (
+        patch("chutils.qt.widgets.require_qt"),
+        patch("chutils.qt.widgets.QtWidgets.QDialog.__init__", return_value=None),
+        patch("chutils.qt.widgets.QtWidgets.QDialog.showEvent", return_value=None),
+        patch("chutils.qt.widgets.QtWidgets.QDialog.closeEvent", return_value=None),
+    ):
         from chutils.qt.widgets import BaseDialog
 
         dialog = BaseDialog()
@@ -58,3 +68,5 @@ def test_base_dialog_lifecycle() -> None:
         mock_event = MagicMock()
         dialog.showEvent(mock_event)
         dialog.closeEvent(mock_event)
+
+

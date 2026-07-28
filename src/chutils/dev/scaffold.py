@@ -70,16 +70,18 @@ class Container:
 """,
     "domain/__init__.py": """from __future__ import annotations
 
-from .entities import Entity as Entity, {entity_name} as {entity_name}
-from .value_objects import ValueObject as ValueObject, {value_object_name} as {value_object_name}
+from .entities import Entity as Entity
+from .entities import {entity_name} as {entity_name}
 from .repositories import {entity_name}Repository as {entity_name}Repository
+from .value_objects import {value_object_name} as {value_object_name}
+from .value_objects import ValueObject as ValueObject
 
 __all__ = [
     "Entity",
     "{entity_name}",
-    "ValueObject",
     "{value_object_name}",
     "{entity_name}Repository",
+    "ValueObject",
 ]
 """,
     "domain/entities.py": """from __future__ import annotations
@@ -107,7 +109,6 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class ValueObject:
     \"\"\"Базовый класс для Value Objects (объектов-значений).\"\"\"
-    pass
 
 
 @dataclass(frozen=True)
@@ -118,7 +119,7 @@ class {value_object_name}(ValueObject):
     "domain/repositories.py": """from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Sequence
+from collections.abc import Sequence
 
 from .entities import {entity_name}
 
@@ -129,30 +130,31 @@ class {entity_name}Repository(ABC):
     @abstractmethod
     def get_by_id(self, entity_id: str) -> {entity_name} | None:
         \"\"\"Получить сущность по идентификатору.\"\"\"
-        pass
 
     @abstractmethod
     def save(self, entity: {entity_name}) -> None:
         \"\"\"Сохранить или обновить сущность.\"\"\"
-        pass
 
     @abstractmethod
     def list_all(self) -> Sequence[{entity_name}]:
         \"\"\"Получить список всех сущностей.\"\"\"
-        pass
 """,
     "application/__init__.py": """from __future__ import annotations
 
 from .use_cases import (
-    UseCase as UseCase,
-    Get{entity_name}UseCase as Get{entity_name}UseCase,
     Create{entity_name}UseCase as Create{entity_name}UseCase,
+)
+from .use_cases import (
+    Get{entity_name}UseCase as Get{entity_name}UseCase,
+)
+from .use_cases import (
+    UseCase as UseCase,
 )
 
 __all__ = [
-    "UseCase",
-    "Get{entity_name}UseCase",
     "Create{entity_name}UseCase",
+    "Get{entity_name}UseCase",
+    "UseCase",
 ]
 """,
     "application/use_cases.py": """from __future__ import annotations
@@ -163,7 +165,6 @@ from ..domain.repositories import {entity_name}Repository
 
 class UseCase:
     \"\"\"Базовый класс сценария использования.\"\"\"
-    pass
 
 
 class Get{entity_name}UseCase(UseCase):
@@ -217,7 +218,7 @@ class DatabaseAdapter:
 """,
     "infrastructure/repositories.py": """from __future__ import annotations
 
-from typing import Sequence
+from collections.abc import Sequence
 
 from ..domain.entities import {entity_name}
 from ..domain.repositories import {entity_name}Repository
@@ -300,8 +301,6 @@ class CLIController:
 """,
     "presentation/api.py": """from __future__ import annotations
 
-from typing import Union
-
 from ..application.use_cases import Create{entity_name}UseCase, Get{entity_name}UseCase
 
 
@@ -316,7 +315,7 @@ class APIController:
         self.create_use_case = create_use_case
         self.get_use_case = get_use_case
 
-    def handle_get_entity(self, entity_id: str) -> dict[str, Union[str, bool]]:
+    def handle_get_entity(self, entity_id: str) -> dict[str, str | bool]:
         entity = self.get_use_case.execute(entity_id)
         if not entity:
             return {{"error": "Not Found"}}
@@ -326,7 +325,7 @@ class APIController:
             "is_active": entity.is_active,
         }}
 
-    def handle_create_entity(self, entity_id: str, name: str) -> dict[str, Union[str, bool]]:
+    def handle_create_entity(self, entity_id: str, name: str) -> dict[str, str | bool]:
         entity = self.create_use_case.execute(entity_id, name)
         return {{
             "id": entity.id,
