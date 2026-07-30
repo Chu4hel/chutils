@@ -95,20 +95,26 @@ class CheckCommand(BaseCommand):
             from chutils.diagnostics.manager import default_manager
             diag_report = default_manager.run_checks_sync()
 
+            status_str = str(getattr(diag_report.status, "value", diag_report.status))
+            passed_count = getattr(diag_report, "passed_checks", len([c for c in getattr(diag_report, "checks", []) if
+                                                                      getattr(c, "status", None) == "HEALTHY"]))
+            total_count = getattr(diag_report, "total_checks", len(getattr(diag_report, "checks", [])))
+            duration = getattr(diag_report, "total_duration", getattr(diag_report, "total_duration_sec", 0.0))
+
             results["checks"]["system"] = {
-                "status": diag_report.status.value,
-                "duration_sec": diag_report.total_duration_sec,
-                "summary": diag_report.summary,
+                "status": status_str,
+                "duration_sec": duration,
+                "summary": {"passed": passed_count, "total": total_count},
             }
-            if diag_report.status.value == "UNHEALTHY":
+            if status_str == "UNHEALTHY":
                 has_errors = True
                 results["status"] = "UNHEALTHY"
 
             if not args.json:
                 console.print("[bold yellow]1. Системный Health Check:[/bold yellow]")
-                status_color = "green" if diag_report.status.value == "HEALTHY" else "red"
-                console.print(f"Статус системы: [{status_color}]{diag_report.status.value}[/{status_color}]")
-                console.print(f"Успешных проверок: {diag_report.summary['passed']}/{diag_report.summary['total']}\n")
+                status_color = "green" if status_str == "HEALTHY" else "red"
+                console.print(f"Статус системы: [{status_color}]{status_str}[/{status_color}]")
+                console.print(f"Успешных проверок: {passed_count}/{total_count}\n")
 
         # 2. Валидация Pydantic конфигурации
         if run_config:
@@ -192,8 +198,7 @@ class CheckCommand(BaseCommand):
             engine = LinterEngine(lint_config)
             engine.load_rules()
 
-            files = engine.collect_files()
-            lint_results = engine.run(files)
+            lint_results = engine.run()
 
             errors_count = sum(1 for r in lint_results if r.severity == "error")
             warns_count = sum(1 for r in lint_results if r.severity == "warn")

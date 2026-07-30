@@ -42,11 +42,14 @@ def test_cli_doctor_alias(cli_runner, config_fs, mocker):
 
 def test_cli_check_json(cli_runner, config_fs, mocker):
     """Проверяет вывод отчета в формате JSON."""
-    mocker.patch("chutils.diagnostics.manager.default_manager.run_checks_sync", return_value=mocker.MagicMock(
-        status=mocker.MagicMock(value="HEALTHY"),
-        total_duration_sec=0.1,
-        summary={"passed": 5, "total": 5}
-    ))
+    mock_report = mocker.MagicMock()
+    mock_report.status = "HEALTHY"
+    mock_report.total_duration = 0.1
+    mock_report.passed_checks = 5
+    mock_report.total_checks = 5
+    mock_report.checks = []
+
+    mocker.patch("chutils.diagnostics.manager.default_manager.run_checks_sync", return_value=mock_report)
     mocker.patch("chutils.commands.utils._import_string", return_value=None)
     mocker.patch("chutils.dev.ai_lint.LinterEngine.collect_files", return_value=[])
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[])
