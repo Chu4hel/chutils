@@ -14,6 +14,21 @@ def test_import_string_with_dot():
     assert obj == _import_string
 
 
+def test_ensure_project_paths_in_sys_path(tmp_path, monkeypatch):
+    """Проверяет авто-добавление cwd и cwd/src в sys.path."""
+    import sys
+    from chutils.commands.utils import ensure_project_paths_in_sys_path
+
+    src_dir = tmp_path / "src"
+    src_dir.mkdir()
+    monkeypatch.chdir(tmp_path)
+
+    ensure_project_paths_in_sys_path()
+
+    assert str(tmp_path.resolve()) in sys.path
+    assert str(src_dir.resolve()) in sys.path
+
+
 def test_import_string_invalid_module():
     """Проверяет поведение при несуществующем модуле."""
     obj = _import_string("non_existent_module:SomeClass")

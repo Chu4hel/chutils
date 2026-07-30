@@ -5089,12 +5089,12 @@
             "children": [],
             "symbols": [
               {
-                "name": "_import_string",
+                "name": "ensure_project_paths_in_sys_path",
                 "type": "function",
-                "layer": "private",
-                "signature": "(import_str)",
-                "summary": "Импортирует объект по строковому пути (например, 'package.module.Class').",
-                "docstring": "Импортирует объект по строковому пути (например, 'package.module.Class').\n\nArgs:\n    import_str: Строка импорта. Может содержать ':' или '.' как разделитель объекта.\n    \nReturns:\n    Импортированный объект или None при ошибке.",
+                "layer": "internal",
+                "signature": "()",
+                "summary": "Гарантирует, что текущая рабочая директория и папка 'src' добавлены в sys.path.",
+                "docstring": "Гарантирует, что текущая рабочая директория и папка 'src' добавлены в sys.path.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -5104,7 +5104,27 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 5,
+                "line_number": 7,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_import_string",
+                "type": "function",
+                "layer": "private",
+                "signature": "(import_str)",
+                "summary": "Импортирует объект по строковому пути (например, 'package.module.Class').",
+                "docstring": "Импортирует объект по строковому пути (например, 'package.module.Class').\nАвтоматически учитывает структуру проекта (включая src-layout).\n\nArgs:\n    import_str: Строка импорта. Может содержать ':' или '.' как разделитель объекта.\n\nReturns:\n    Импортированный объект или None при ошибке.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 19,
                 "bases": [],
                 "children": []
               }
@@ -34935,8 +34955,8 @@
   "metadata": {
     "chutils_version": "3.4.1",
     "project_version": "3.4.1",
-    "git_commit": "b51d734d3d023d1c42ce5066360597ac93ffaa19 (dirty)",
-    "generated_at": "2026-07-30T20:38:57.248341+00:00",
-    "project_hash": "913c0a7ceca1fefcf77d9d006891d65ac160265b2a5ec2843825c5d8636525e6"
+    "git_commit": "5ae96d8f4d1b57aaf0ce908841580ab430e0da6d (dirty)",
+    "generated_at": "2026-07-30T20:45:58.928289+00:00",
+    "project_hash": "a1cae20a6188f8070d70a242255a8c1e00c9f0de5a0e8ac3051ba7f7f2f39849"
   }
 }
