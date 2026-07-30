@@ -26,13 +26,26 @@ class ValidateCommand(BaseCommand):
         """
         validate_parser = subparsers.add_parser(
             "validate",
-            help="Проверить корректность конфигурации",
-            description="Валидация настроек с использованием Pydantic моделей."
+            help="Проверить корректность конфигурации по Pydantic-модели",
+            description=(
+                "Статическая проверка корректности файлов конфигурации (config.yml, config.yaml, .env) "
+                "с использованием вашей Pydantic-модели. Загружает и объединяет все источники настроек, "
+                "выполняет строгую валидацию типов и завершается с кодом 1 при ошибках (подходит для CI/CD)."
+            ),
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils validate
+  chutils validate -m myapp.config:Settings
+  chutils validate --model myapp.settings:AppConfig
+""",
         )
         validate_parser.add_argument(
             "-m", "--model",
-            help="Путь к модели (например, 'myapp.context:Settings'). "
-                 "Если не указан, ищет 'Settings' в context.py/config.py."
+            help=(
+                "Путь к Pydantic-модели в формате 'module:Class' (например, 'myapp.config:Settings'). "
+                "Если параметр опущен, выполняется авто-поиск класса Settings в файлах: "
+                "src.context, src.config, context, config."
+            )
         )
         validate_parser.set_defaults(handler=self.handle)
 
