@@ -26,6 +26,8 @@ chutils dev [-h] {generate-context,ai-lint,chat-context,scaffold,mock,install-ho
    workflows.
 10. [**`dashboard`**](#dev-dashboard) — Запуск интерактивного TUI-дашборда CLI команд.
 11. [**`clean`**](#dev-clean) — Безопасная очистка проекта от кэшей и артефактов разработки.
+12. [**`watch`**](#dev-watch) — Live Dev отслеживание изменений файлов и автоперезапуск приложения.
+13. [**`diagnostics`**](#dev-diagnostics) — Запуск экспресс-диагностики работоспособности среды (Health Check).
 
 ---
 
@@ -696,6 +698,57 @@ chutils dev watch -m myapp.main:start
 
 ```bash
 chutils dev watch -p src -p config -e py,json,yaml -- python app.py
+```
+
+---
+
+## dev diagnostics
+
+Выполняет встроенную и пользовательскую диагностику среды приложения (Health Check). Сканирует статус загрузки
+конфигурационного файла (`config.yml` / `config.yaml`), доступность системного хранилища секретов (`keyring`) и
+зарегистрированные кастомные проверки.
+
+### Синтаксис подкоманды:
+
+```bash
+chutils dev diagnostics [-h] [--json]
+```
+
+### Параметры и флаги:
+
+| Флаг         | Описание                                                                                              | Обязательный |
+|:-------------|:------------------------------------------------------------------------------------------------------|:-------------|
+| **`--json`** | Вывести структурированный отчет диагностики в формате JSON (подходит для Docker Healthcheck и CI/CD). | Нет          |
+
+### Применение и статус ответа (Exit Codes):
+
+- Статус **`HEALTHY`** или **`DEGRADED`**: завершается с успешным кодом выхода (`0`).
+- Статус **`UNHEALTHY`**: завершается с ошибкой (`1`).
+
+### Использование в Docker Healthcheck:
+
+Команду удобно применять в `Dockerfile` или `docker-compose.yml` для автоматического отслеживания состояния контейнера:
+
+```yaml
+healthcheck:
+  test: [ "CMD", "chutils", "dev", "diagnostics", "--json" ]
+  interval: 30s
+  timeout: 5s
+  retries: 3
+```
+
+### Примеры использования:
+
+**1. Интерактивный запуск проверки с выводом таблицы Rich в консоль:**
+
+```bash
+chutils dev diagnostics
+```
+
+**2. Получение машиночитаемого отчета в формате JSON:**
+
+```bash
+chutils dev diagnostics --json
 ```
 
 
