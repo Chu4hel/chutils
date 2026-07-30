@@ -1,8 +1,8 @@
 ---
 chutils_version: 3.4.1
 project_version: 3.4.1
-git_commit: 891f597e040ff78b35af67f0fef30caf0dbc5b2a (dirty)
-generated_at: 2026-07-30T20:30:23.062715+00:00
+git_commit: b51d734d3d023d1c42ce5066360597ac93ffaa19 (dirty)
+generated_at: 2026-07-30T20:38:01.491355+00:00
 project_hash: 913c0a7ceca1fefcf77d9d006891d65ac160265b2a5ec2843825c5d8636525e6
 ---
 
