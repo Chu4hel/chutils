@@ -106,6 +106,13 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
     chutils_version = getattr(chutils, "__version__", "unknown")
     if chutils_version == "unknown":
         try:
+            import importlib.metadata
+            chutils_version = importlib.metadata.version("chutils")
+        except Exception:
+            pass
+
+    if chutils_version == "unknown":
+        try:
             chutils_root = Path(chutils.__file__).parent.parent.parent
             chutils_version = _get_version_from_pyproject(chutils_root / "pyproject.toml")
         except Exception:
