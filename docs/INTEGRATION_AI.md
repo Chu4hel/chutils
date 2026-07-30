@@ -39,7 +39,9 @@ with bind_context(request_id="unique-uuid"):
 
 ## 3. CLI Команды
 
-- `chutils init -y`: Быстрая инициализация проекта (создает конфиг и .gitignore).
+- `chutils init -y`: Быстрая инициализация проекта (создает конфиг, `.gitignore` и `.chutilsignore`).
+- `chutils dev generate-context --project . -o api_map.md`: Генерация карты публичного API для ИИ-контекста (с учетом
+  `.chutilsignore` и `.gitignore`).
 - `chutils secrets set KEY VALUE`: Сохранение секрета в Keyring.
 - `chutils secrets get KEY`: Получение секрета из Keyring (с поддержкой `--fallback` и `--required`).
 - `chutils validate -m my_app.models:Settings`: Валидация текущего конфига через Pydantic модель.
