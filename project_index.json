@@ -2237,6 +2237,80 @@
             ]
           },
           {
+            "name": "check",
+            "path": "chutils/commands/check",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "CheckCommand",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Команда сводной проверки проекта: система (health check), конфигурация (validate) и AI-линтер (ai-lint).",
+                "docstring": "Команда сводной проверки проекта: система (health check), конфигурация (validate) и AI-линтер (ai-lint).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 11,
+                "bases": [
+                  ".base.BaseCommand"
+                ],
+                "children": [
+                  {
+                    "name": "register",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, subparsers)",
+                    "summary": "Регистрирует команду check и псевдоним doctor в argparse.",
+                    "docstring": "Регистрирует команду check и псевдоним doctor в argparse.\n\nArgs:\n    subparsers: Объект subparsers для добавления подкоманд.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "handle",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, args)",
+                    "summary": "Обработчик комплексной проверки проекта.",
+                    "docstring": "Обработчик комплексной проверки проекта.\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 70,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "config",
             "path": "chutils/commands/config",
             "type": "module",
@@ -33386,6 +33460,16 @@
       "weight": 1
     },
     {
+      "source": "chutils/commands/check",
+      "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/commands/check",
+      "target": "//cli_utils",
+      "weight": 1
+    },
+    {
       "source": "chutils/commands/config",
       "target": "chutils/config",
       "weight": 1
@@ -34955,8 +35039,8 @@
   "metadata": {
     "chutils_version": "3.4.1",
     "project_version": "3.4.1",
-    "git_commit": "2f01d97689c8e35b5e8f2bc4ca92a89d94d8cc4a (dirty)",
-    "generated_at": "2026-07-30T20:53:44.305375+00:00",
-    "project_hash": "5af947476351b019dccee2ffad01dd218d7121c8ec74d9407efa543aa11e124d"
+    "git_commit": "fcbf09654c9641829d54415a53523fc4b38079e8 (dirty)",
+    "generated_at": "2026-07-30T21:00:31.740669+00:00",
+    "project_hash": "bebb23e0e753c80206f99eb65cc18d8eb732e1e350d1ba9db055e6a9ee047739"
   }
 }

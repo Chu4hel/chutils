@@ -13,6 +13,7 @@ def get_commands() -> list[type[BaseCommand]]:
     from .secrets import SecretsCommand
     from .init import InitCommand
     from .validate import ValidateCommand
+    from .check import CheckCommand
     from .paths import ShowPathsCommand
     from .template import TemplateCommand
     from .config import ConfigCommand
@@ -25,6 +26,7 @@ def get_commands() -> list[type[BaseCommand]]:
         SecretsCommand,
         InitCommand,
         ValidateCommand,
+        CheckCommand,
         ShowPathsCommand,
         TemplateCommand,
         ConfigCommand,
