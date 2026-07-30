@@ -199,19 +199,11 @@ class FileDependencySyncRule(Rule):
         if not git_changed:
             return results
 
-        # Фильтруем измененные файлы на предмет игнорирования
-        active_changed = []
-        for f_str in git_changed:
-            f_path = Path(f_str)
-            if not is_file_ignored(f_path):
-                active_changed.append(f_path)
-
-        # Фильтруем новые файлы на предмет игнорирования
-        active_new = []
-        for f_str in git_new:
-            f_path = Path(f_str)
-            if not is_file_ignored(f_path):
-                active_new.append(f_path)
+        # FileDependencySyncRule НАМЕРЕННО ИГНОРИРУЕТ глобальные списки .gitignore, .chutilsignore и [ai-lint] ignore,
+        # так как файлы документации (docs/*.md, api_map.md) и схемы могут находиться во внешних/игнорируемых каталогах.
+        # Учитывается ТОЛЬКО инлайн-директива: # chutils: ignore[FileDependencySyncRule]
+        active_changed = [Path(f_str) for f_str in git_changed if not is_file_ignored(Path(f_str))]
+        active_new = [Path(f_str) for f_str in git_new if not is_file_ignored(Path(f_str))]
 
         # Выполняем проверку по карте зависимостей
         for source_glob, dep_globs in dependencies.items():
