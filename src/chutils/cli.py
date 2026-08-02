@@ -8,6 +8,10 @@ from chutils.commands import get_commands
 
 def main() -> None:
     """Точка входа в CLI."""
+    # Гарантируем доступность CWD и CWD/src в sys.path для прозрачного импорта
+    from chutils.commands.utils import ensure_project_paths_in_sys_path
+    ensure_project_paths_in_sys_path()
+
     # Сбрасываем кэш консолей для корректного перехвата вывода в тестах
     from chutils import cli_utils
     cli_utils._console = None

@@ -74,10 +74,28 @@ def test_fetch_changelogs_network_success(mocker, fake_base_dir):
     assert res[0]["tag_name"] == "v3.2.0"
     assert res[0]["body"] == "From network"
 
-    # Данные должны быть записаны в кэш
+    # Данные должны быть записаны в кэш с метаданными
     _, cache_file = get_cache_paths(fake_base_dir)
     assert cache_file.exists()
-    assert json.loads(cache_file.read_text(encoding="utf-8")) == res
+    cached_data = json.loads(cache_file.read_text(encoding="utf-8"))
+    assert cached_data["releases"] == res
+
+
+def test_cache_invalidated_on_version_change(mocker, fake_base_dir):
+    """Проверяет инвалидацию кэша при изменении установленной версии chutils."""
+    cache_dir, cache_file = get_cache_paths(fake_base_dir)
+    releases = [{"tag_name": "v3.4.0", "body": "Old release"}]
+
+    # Сохраняем кэш с версией 3.4.0
+    mocker.patch("chutils.dev.upgrade_client._get_installed_version", return_value="3.4.0")
+    save_releases_to_cache(cache_dir, cache_file, releases)
+
+    # При той же версии кэш подхватывается
+    assert load_releases_from_cache(cache_file) == releases
+
+    # При симуляции обновления версии библиотеки до 3.4.1 кэш инвалидируется
+    mocker.patch("chutils.dev.upgrade_client._get_installed_version", return_value="3.4.1")
+    assert load_releases_from_cache(cache_file) is None
 
 
 def test_fetch_changelogs_network_failure_fallback_to_stale_cache(mocker, fake_base_dir):
@@ -104,3 +122,4 @@ def test_fetch_changelogs_network_failure_no_cache(mocker, fake_base_dir):
 
     res = fetch_changelogs(fake_base_dir)
     assert res == []
+

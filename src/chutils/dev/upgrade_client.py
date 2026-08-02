@@ -30,6 +30,18 @@ def get_cache_paths(base_dir: str) -> tuple[Path, Path]:
     return cache_dir, cache_file
 
 
+def _get_installed_version() -> str:
+    """Возвращает текущую установленную версию chutils."""
+    try:
+        from chutils.dev.version_detector import get_current_version
+        v = get_current_version(".")
+        if v:
+            return v
+    except Exception:
+        pass
+    return "unknown"
+
+
 def load_releases_from_cache(cache_file: Path, ignore_lifetime: bool = False) -> list[dict[str, Any]] | None:
     """Загружает список релизов из локального кэша, если он актуален.
 
@@ -38,7 +50,7 @@ def load_releases_from_cache(cache_file: Path, ignore_lifetime: bool = False) ->
         ignore_lifetime: Если True, игнорирует время жизни кэша (используется при ошибках сети).
 
     Returns:
-        Список релизов или None, если кэш невалиден или устарел.
+        Список релизов или None, если кэш невалиден, устарел или версия библиотеки изменилась.
     """
     if not cache_file.exists():
         return None
@@ -50,8 +62,21 @@ def load_releases_from_cache(cache_file: Path, ignore_lifetime: bool = False) ->
 
         content = cache_file.read_text(encoding="utf-8")
         data = json.loads(content)
+        
+        # Поддержка нового формата с метаданными {installed_version, releases}
+        if isinstance(data, dict) and "releases" in data:
+            cached_version = data.get("installed_version")
+            current_version = _get_installed_version()
+            if not ignore_lifetime and cached_version != current_version:
+                logger.info("Версия chutils изменилась (%s -> %s), кэш чейнджлогов инвалидирован", cached_version, current_version)
+                return None
+            releases: list[dict[str, Any]] = data["releases"]
+            return releases
+
+        # Поддержка старого формата списка для обратной совместимости при обновлении
         if isinstance(data, list):
-            return data
+            legacy_releases: list[dict[str, Any]] = data
+            return legacy_releases
     except Exception as e:
         logger.warning("Не удалось прочитать кэш чейнджлогов: %s", e)
 
@@ -59,7 +84,7 @@ def load_releases_from_cache(cache_file: Path, ignore_lifetime: bool = False) ->
 
 
 def save_releases_to_cache(cache_dir: Path, cache_file: Path, releases: list[dict[str, Any]]) -> None:
-    """Сохраняет список релизов в локальный кэш.
+    """Сохраняет список релизов в локальный кэш с метаданными версии.
 
     Args:
         cache_dir: Директория кэша.
@@ -69,7 +94,11 @@ def save_releases_to_cache(cache_dir: Path, cache_file: Path, releases: list[dic
     try:
         from chutils.fs import ensure_dir, atomic_write
         ensure_dir(cache_dir)
-        content = json.dumps(releases, ensure_ascii=False, indent=2)
+        payload = {
+            "installed_version": _get_installed_version(),
+            "releases": releases,
+        }
+        content = json.dumps(payload, ensure_ascii=False, indent=2)
         atomic_write(cache_file, content)
     except Exception as e:
         logger.warning("Не удалось сохранить кэш чейнджлогов: %s", e)

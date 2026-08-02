@@ -72,6 +72,14 @@ class GenerateContextSubCommand(SubCommand):
             help="Путь к целевому проекту для сканирования (если не указан, сканируется сама библиотека chutils)",
         )
         gen_parser.add_argument(
+            "--ignore",
+            action="append",
+            help=(
+                "Паттерны путей или файлов для игнорирования при сканировании (например, 'tests/*' или '*.tmp'). "
+                "Можно указывать несколько раз или через запятую. Дополняет .gitignore и .chutilsignore."
+            ),
+        )
+        gen_parser.add_argument(
             "--force",
             action="store_true",
             help=(
@@ -100,6 +108,14 @@ class GenerateContextSubCommand(SubCommand):
         examples = []
         project_name = "chutils"
 
+        custom_ignore: list[str] = []
+        if getattr(args, "ignore", None):
+            for item in args.ignore:
+                if "," in item:
+                    custom_ignore.extend(p.strip() for p in item.split(",") if p.strip())
+                else:
+                    custom_ignore.append(item.strip())
+
         if args.project:
             # Сканируем внешний проект через статический AST-анализ
             project_path = Path(args.project).resolve()
@@ -107,7 +123,7 @@ class GenerateContextSubCommand(SubCommand):
             try:
                 from chutils.dev.ast_indexer import Indexer
 
-                indexer = Indexer(str(project_path))
+                indexer = Indexer(str(project_path), custom_ignore=custom_ignore)
                 index = indexer.index(include_examples=bool(args.include_examples))
 
                 api_data = self._collect_symbols_recursive(index.root)
@@ -384,8 +400,8 @@ class GenerateContextSubCommand(SubCommand):
         except Exception:
             return False
         return (
-            self._normalize_for_comparison(existing, fmt)
-            == self._normalize_for_comparison(new_content, fmt)
+                self._normalize_for_comparison(existing, fmt)
+                == self._normalize_for_comparison(new_content, fmt)
         )
 
     def _handle_tree_index(self, args: argparse.Namespace) -> None:
@@ -406,13 +422,21 @@ class GenerateContextSubCommand(SubCommand):
 
         from chutils.dev.ast_indexer import Indexer
 
+        custom_ignore: list[str] = []
+        if getattr(args, "ignore", None):
+            for item in args.ignore:
+                if "," in item:
+                    custom_ignore.extend(p.strip() for p in item.split(",") if p.strip())
+                else:
+                    custom_ignore.append(item.strip())
+
         try:
             if args.project:
                 project_path = Path(args.project).resolve()
             else:
                 project_path = Path(chutils.__file__).parent
 
-            indexer = Indexer(str(project_path))
+            indexer = Indexer(str(project_path), custom_ignore=custom_ignore)
             index = indexer.index(include_examples=bool(args.include_examples))
 
             if args.no_weights:
@@ -442,7 +466,8 @@ class GenerateContextSubCommand(SubCommand):
                     f"[bold green] [OK] [/bold green] Иерархический индекс успешно сохранен в: [cyan]{args.output}[/cyan]"
                 )
                 from chutils.dev.ast_indexer import save_context_metadata_cache
-                save_context_metadata_cache(Path(".").resolve(), args.output, "tree", index.metadata.get("project_hash", ""))
+                save_context_metadata_cache(Path(".").resolve(), args.output, "tree",
+                                            index.metadata.get("project_hash", ""))
             else:
                 print(output_content)
 

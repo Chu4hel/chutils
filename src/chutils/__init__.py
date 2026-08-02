@@ -348,6 +348,13 @@ def __getattr__(name: str) -> Any:
     except Exception:
         pass
 
+    if name == "__version__":
+        try:
+            import importlib.metadata as importlib_metadata
+            return importlib_metadata.version("chutils")
+        except Exception:
+            return "unknown"
+
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
@@ -356,7 +363,7 @@ def __dir__() -> list[str]:
     Возвращает список всех доступных атрибутов для поддержки автодополнения и интроспекции.
     """
     return sorted(list(_LAZY_MAPPING.keys()) + [
-        'init', '__all__', '__doc__', '__file__', '__path__',
+        'init', '__version__', '__all__', '__doc__', '__file__', '__path__',
         '__name__', '__package__', '__spec__'
     ])
 

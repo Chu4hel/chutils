@@ -2237,6 +2237,80 @@
             ]
           },
           {
+            "name": "check",
+            "path": "chutils/commands/check",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "CheckCommand",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Команда сводной проверки проекта: система (health check), конфигурация (validate) и AI-линтер (ai-lint).",
+                "docstring": "Команда сводной проверки проекта: система (health check), конфигурация (validate) и AI-линтер (ai-lint).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 11,
+                "bases": [
+                  ".base.BaseCommand"
+                ],
+                "children": [
+                  {
+                    "name": "register",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, subparsers)",
+                    "summary": "Регистрирует команду check и псевдоним doctor в argparse.",
+                    "docstring": "Регистрирует команду check и псевдоним doctor в argparse.\n\nArgs:\n    subparsers: Объект subparsers для добавления подкоманд.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "handle",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, args)",
+                    "summary": "Обработчик комплексной проверки проекта.",
+                    "docstring": "Обработчик комплексной проверки проекта.\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 70,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "config",
             "path": "chutils/commands/config",
             "type": "module",
@@ -3172,7 +3246,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 34,
+                        "line_number": 38,
                         "bases": [],
                         "children": []
                       }
@@ -3320,7 +3394,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 84,
+                        "line_number": 92,
                         "bases": [],
                         "children": []
                       },
@@ -3340,7 +3414,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 298,
+                        "line_number": 314,
                         "bases": [],
                         "children": []
                       },
@@ -3362,7 +3436,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 332,
+                        "line_number": 348,
                         "bases": [],
                         "children": []
                       },
@@ -3382,7 +3456,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 365,
+                        "line_number": 381,
                         "bases": [],
                         "children": []
                       },
@@ -3402,7 +3476,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 391,
+                        "line_number": 407,
                         "bases": [],
                         "children": []
                       }
@@ -5089,12 +5163,12 @@
             "children": [],
             "symbols": [
               {
-                "name": "_import_string",
+                "name": "ensure_project_paths_in_sys_path",
                 "type": "function",
-                "layer": "private",
-                "signature": "(import_str)",
-                "summary": "Импортирует объект по строковому пути (например, 'package.module.Class').",
-                "docstring": "Импортирует объект по строковому пути (например, 'package.module.Class').\n\nArgs:\n    import_str: Строка импорта. Может содержать ':' или '.' как разделитель объекта.\n    \nReturns:\n    Импортированный объект или None при ошибке.",
+                "layer": "internal",
+                "signature": "()",
+                "summary": "Гарантирует, что текущая рабочая директория и папка 'src' добавлены в sys.path.",
+                "docstring": "Гарантирует, что текущая рабочая директория и папка 'src' добавлены в sys.path.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -5104,7 +5178,27 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 5,
+                "line_number": 7,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_import_string",
+                "type": "function",
+                "layer": "private",
+                "signature": "(import_str)",
+                "summary": "Импортирует объект по строковому пути (например, 'package.module.Class').",
+                "docstring": "Импортирует объект по строковому пути (например, 'package.module.Class').\nАвтоматически учитывает структуру проекта (включая src-layout).\n\nArgs:\n    import_str: Строка импорта. Может содержать ':' или '.' как разделитель объекта.\n\nReturns:\n    Импортированный объект или None при ошибке.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 19,
                 "bases": [],
                 "children": []
               }
@@ -5176,7 +5270,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 39,
+                    "line_number": 52,
                     "bases": [],
                     "children": []
                   }
@@ -10799,7 +10893,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 322,
+                    "line_number": 319,
                     "bases": [],
                     "children": []
                   },
@@ -10819,7 +10913,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 333,
+                    "line_number": 330,
                     "bases": [],
                     "children": []
                   },
@@ -10839,7 +10933,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 368,
+                    "line_number": 365,
                     "bases": [],
                     "children": []
                   },
@@ -10859,7 +10953,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 390,
+                    "line_number": 387,
                     "bases": [],
                     "children": []
                   },
@@ -10879,7 +10973,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 454,
+                    "line_number": 451,
                     "bases": [],
                     "children": []
                   }
@@ -10901,8 +10995,8 @@
                 "type": "class",
                 "layer": "internal",
                 "signature": "",
-                "summary": "Проверяет соответствие путей правилам .gitignore.",
-                "docstring": "Проверяет соответствие путей правилам .gitignore.",
+                "summary": "Проверяет соответствие путей правилам .gitignore, .chutilsignore и пользовательским флагам.",
+                "docstring": "Проверяет соответствие путей правилам .gitignore, .chutilsignore и пользовательским флагам.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -10919,9 +11013,9 @@
                     "name": "__init__",
                     "type": "method",
                     "layer": "private",
-                    "signature": "(self, root_path)",
+                    "signature": "(self, root_path, custom_ignore)",
                     "summary": "Инициализирует GitIgnoreMatcher.",
-                    "docstring": "Инициализирует GitIgnoreMatcher.\n\nArgs:\n    root_path: Корневой путь проекта.",
+                    "docstring": "Инициализирует GitIgnoreMatcher.\n\nArgs:\n    root_path: Корневой путь проекта.\n    custom_ignore: Дополнительные паттерны для игнорирования.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -10951,7 +11045,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 29,
+                    "line_number": 42,
                     "bases": [],
                     "children": []
                   },
@@ -10971,7 +11065,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 51,
+                    "line_number": 64,
                     "bases": [],
                     "children": []
                   },
@@ -10991,7 +11085,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 104,
+                    "line_number": 117,
                     "bases": [],
                     "children": []
                   }
@@ -11013,16 +11107,16 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 124,
+                "line_number": 137,
                 "bases": [],
                 "children": [
                   {
                     "name": "__init__",
                     "type": "method",
                     "layer": "private",
-                    "signature": "(self, root_path)",
+                    "signature": "(self, root_path, custom_ignore)",
                     "summary": "Инициализирует Indexer.",
-                    "docstring": "Инициализирует Indexer.\n\nArgs:\n    root_path: Корневой путь к исходному коду проекта.",
+                    "docstring": "Инициализирует Indexer.\n\nArgs:\n    root_path: Корневой путь к исходному коду проекта.\n    custom_ignore: Список дополнительных паттернов для игнорирования.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -11032,7 +11126,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 127,
+                    "line_number": 140,
                     "bases": [],
                     "children": []
                   },
@@ -11054,7 +11148,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 147,
+                    "line_number": 161,
                     "bases": [],
                     "children": []
                   },
@@ -11074,7 +11168,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 155,
+                    "line_number": 169,
                     "bases": [],
                     "children": []
                   },
@@ -11094,7 +11188,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 174,
+                    "line_number": 188,
                     "bases": [],
                     "children": []
                   },
@@ -11114,7 +11208,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 196,
+                    "line_number": 210,
                     "bases": [],
                     "children": []
                   },
@@ -11134,7 +11228,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 224,
+                    "line_number": 238,
                     "bases": [],
                     "children": []
                   },
@@ -11154,7 +11248,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 256,
+                    "line_number": 270,
                     "bases": [],
                     "children": []
                   },
@@ -11174,7 +11268,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 276,
+                    "line_number": 290,
                     "bases": [],
                     "children": []
                   },
@@ -11194,7 +11288,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 294,
+                    "line_number": 308,
                     "bases": [],
                     "children": []
                   },
@@ -11214,7 +11308,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 388,
+                    "line_number": 402,
                     "bases": [],
                     "children": []
                   },
@@ -11234,7 +11328,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 411,
+                    "line_number": 425,
                     "bases": [],
                     "children": []
                   },
@@ -11254,7 +11348,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 415,
+                    "line_number": 429,
                     "bases": [],
                     "children": []
                   }
@@ -14743,7 +14837,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 156,
+                "line_number": 163,
                 "bases": [],
                 "children": []
               }
@@ -16176,12 +16270,12 @@
                 "children": []
               },
               {
-                "name": "load_releases_from_cache",
+                "name": "_get_installed_version",
                 "type": "function",
-                "layer": "internal",
-                "signature": "(cache_file, ignore_lifetime)",
-                "summary": "Загружает список релизов из локального кэша, если он актуален.",
-                "docstring": "Загружает список релизов из локального кэша, если он актуален.\n\nArgs:\n    cache_file: Путь к файлу кэша.\n    ignore_lifetime: Если True, игнорирует время жизни кэша (используется при ошибках сети).\n\nReturns:\n    Список релизов или None, если кэш невалиден или устарел.",
+                "layer": "private",
+                "signature": "()",
+                "summary": "Возвращает текущую установленную версию chutils.",
+                "docstring": "Возвращает текущую установленную версию chutils.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -16196,12 +16290,12 @@
                 "children": []
               },
               {
-                "name": "save_releases_to_cache",
+                "name": "load_releases_from_cache",
                 "type": "function",
                 "layer": "internal",
-                "signature": "(cache_dir, cache_file, releases)",
-                "summary": "Сохраняет список релизов в локальный кэш.",
-                "docstring": "Сохраняет список релизов в локальный кэш.\n\nArgs:\n    cache_dir: Директория кэша.\n    cache_file: Файл кэша.\n    releases: Данные для сохранения.",
+                "signature": "(cache_file, ignore_lifetime)",
+                "summary": "Загружает список релизов из локального кэша, если он актуален.",
+                "docstring": "Загружает список релизов из локального кэша, если он актуален.\n\nArgs:\n    cache_file: Путь к файлу кэша.\n    ignore_lifetime: Если True, игнорирует время жизни кэша (используется при ошибках сети).\n\nReturns:\n    Список релизов или None, если кэш невалиден, устарел или версия библиотеки изменилась.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -16211,7 +16305,27 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 61,
+                "line_number": 45,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "save_releases_to_cache",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(cache_dir, cache_file, releases)",
+                "summary": "Сохраняет список релизов в локальный кэш с метаданными версии.",
+                "docstring": "Сохраняет список релизов в локальный кэш с метаданными версии.\n\nArgs:\n    cache_dir: Директория кэша.\n    cache_file: Файл кэша.\n    releases: Данные для сохранения.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 86,
                 "bases": [],
                 "children": []
               },
@@ -16231,7 +16345,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 78,
+                "line_number": 107,
                 "bases": [],
                 "children": []
               }
@@ -33188,7 +33302,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 354,
+        "line_number": 361,
         "bases": [],
         "children": []
       },
@@ -33208,7 +33322,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 364,
+        "line_number": 371,
         "bases": [],
         "children": []
       }
@@ -33343,6 +33457,16 @@
     {
       "source": "chutils/commands/base",
       "target": "chutils/cli_utils",
+      "weight": 1
+    },
+    {
+      "source": "chutils/commands/check",
+      "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/commands/check",
+      "target": "//cli_utils",
       "weight": 1
     },
     {
@@ -34915,8 +35039,8 @@
   "metadata": {
     "chutils_version": "3.4.1",
     "project_version": "3.4.1",
-    "git_commit": "824417aa80b19bbfbb6cbb86151e5139be92b981 (dirty)",
-    "generated_at": "2026-07-28T19:53:27.535893+00:00",
-    "project_hash": "1001ffd89333fcf5c07c42b89dfebc67f38e7574da9f7166e3845fa464c5bc81"
+    "git_commit": "35b0abb02583ebebbd7a918dd74a5056d6b40c5c (dirty)",
+    "generated_at": "2026-07-30T21:04:38.368041+00:00",
+    "project_hash": "73c182750cd7e4d409a97fe4e3797cb39064637a44fe36638c5c113466639683"
   }
 }

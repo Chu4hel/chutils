@@ -13,18 +13,31 @@ from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge, ProjectE
 
 
 class GitIgnoreMatcher:
-    """Проверяет соответствие путей правилам .gitignore."""
+    """Проверяет соответствие путей правилам .gitignore, .chutilsignore и пользовательским флагам."""
 
-    def __init__(self, root_path: Path) -> None:
+    def __init__(self, root_path: Path, custom_ignore: list[str] | None = None) -> None:
         """Инициализирует GitIgnoreMatcher.
 
         Args:
             root_path: Корневой путь проекта.
+            custom_ignore: Дополнительные паттерны для игнорирования.
         """
         self.root_path = root_path
         self.patterns: list[tuple[re.Pattern[str], bool]] = []
         self._load_file_rules(self.root_path / ".gitignore")
         self._load_file_rules(self.root_path / ".chutilsignore")
+        if custom_ignore:
+            for rule in custom_ignore:
+                rule_str = rule.strip()
+                if not rule_str or rule_str.startswith("#"):
+                    continue
+                is_negative = False
+                if rule_str.startswith("!"):
+                    is_negative = True
+                    rule_str = rule_str[1:]
+                regex = self._rule_to_regex(rule_str)
+                if regex:
+                    self.patterns.append((regex, is_negative))
 
     def _load_file_rules(self, file_path: Path) -> None:
         if not file_path.exists():
@@ -124,11 +137,12 @@ class GitIgnoreMatcher:
 class Indexer:
     """Оркестратор индексации проекта."""
 
-    def __init__(self, root_path: str) -> None:
+    def __init__(self, root_path: str, custom_ignore: list[str] | None = None) -> None:
         """Инициализирует Indexer.
 
         Args:
             root_path: Корневой путь к исходному коду проекта.
+            custom_ignore: Список дополнительных паттернов для игнорирования.
         """
         self.root_path = Path(root_path).resolve()
         # Если это пакет (есть __init__), то база для путей - родитель (например, 'src' или корень проекта)
@@ -141,7 +155,7 @@ class Indexer:
         self._current_imports: dict[str, str] = {}
         """Карта импортов текущего модуля {asname: full_path}"""
         self._public_symbols = self._discover_public_api()
-        self.gitignore = GitIgnoreMatcher(self.project_root)
+        self.gitignore = GitIgnoreMatcher(self.project_root, custom_ignore=custom_ignore)
 
     @property
     def _graph(self) -> list[GraphEdge]:

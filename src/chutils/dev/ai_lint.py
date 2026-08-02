@@ -305,17 +305,14 @@ class LinterEngine:
                 continue
 
             # Нормализуем шаблон
-            norm_pattern = pattern.replace("\\", "/")
+            norm_pattern = pattern.replace("\\", "/").strip("/")
 
-            # Проверка по сегментам пути
+            # Проверка точного совпадения сегментов папок (чтобы 'docs' не игнорировал 'docs/api.md', если не указан glob)
             for part in rel_path.parts:
-                norm_part = part.replace("\\", "/")
-                if fnmatch.fnmatch(norm_part, norm_pattern):
+                if part == norm_pattern or fnmatch.fnmatch(part, norm_pattern):
                     return True
 
-            if fnmatch.fnmatch(rel_path_str, norm_pattern):
-                return True
-            if norm_pattern in rel_path_str:
+            if fnmatch.fnmatch(rel_path_str, norm_pattern) or fnmatch.fnmatch(rel_path_str, f"{norm_pattern}/*"):
                 return True
         return False
 

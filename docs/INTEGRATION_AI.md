@@ -39,7 +39,9 @@ with bind_context(request_id="unique-uuid"):
 
 ## 3. CLI Команды
 
-- `chutils init -y`: Быстрая инициализация проекта (создает конфиг и .gitignore).
+- `chutils init -y`: Быстрая инициализация проекта (создает конфиг, `.gitignore` и `.chutilsignore`).
+- `chutils dev generate-context --project . -o api_map.md`: Генерация карты публичного API для ИИ-контекста (с учетом
+  `.chutilsignore` и `.gitignore`).
 - `chutils secrets set KEY VALUE`: Сохранение секрета в Keyring.
 - `chutils secrets get KEY`: Получение секрета из Keyring (с поддержкой `--fallback` и `--required`).
 - `chutils validate -m my_app.models:Settings`: Валидация текущего конфига через Pydantic модель.
@@ -96,5 +98,26 @@ Markdown-таблицу со всеми публичными классами, �
 
 Встроенное правило `APIMapHashRule` в составе команды `chutils dev ai-lint` автоматически сверяет текущий хэш проекта с
 хэшем из сохраненной карты API и выводит предупреждение при несовпадении. Перед коммитом рекомендуется обновлять карту
-API, чтобы ИИ-агенты работали с актуальным контекстом проекта.
+API через `chutils dev generate-context --project . -o api_map.md`.
 
+---
+
+## 8. Игнорирование файлов и `.chutilsignore`
+
+Чтобы исключить из контекста AI-агентов служебные скрипты, временные дампы или тестовые фикстуры, используйте файл
+`.chutilsignore` в корне проекта.
+
+Инструменты `chutils dev` (`generate-context`, `ai-lint`) объединяют правила фильтрации по следующему приоритету:
+
+1. **Флаги CLI (`--ignore "pattern"`)**
+2. **Файл `.chutilsignore` в корне проекта**
+3. **Файл `.gitignore` в корне проекта**
+
+**Пример `.chutilsignore`:**
+
+```gitignore
+# Исключить служебные и тестовые данные из контекста ИИ
+tests/fixtures/*
+*.scratch.py
+temp_dumps/
+```

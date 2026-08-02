@@ -21,8 +21,12 @@ class DiagnosticsSubCommand(SubCommand):
         """
         diagnostics_parser = subparsers.add_parser(
             "diagnostics",
-            help="Запустить диагностику и проверку работоспособности среды (Health Check)",
-            description="Выполняет встроенные и пользовательские проверки среды (keyring, конфигурация и др.) с выводом отчета.",
+            help="Запустить Health Check системных подсистем (конфиг, keyring, БД, API)",
+            description=(
+                "Выполняет экспресс-диагностику работоспособности среды приложения (проверка загрузки конфигурации, "
+                "системного хранилища секретов keyring и кастомных проверок). "
+                "Завершается с кодом 1 при статусе UNHEALTHY (подходит для Docker Healthcheck)."
+            ),
         )
         diagnostics_parser.add_argument(
             "--json",
