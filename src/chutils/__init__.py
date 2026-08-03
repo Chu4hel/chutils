@@ -277,6 +277,8 @@ _LAZY_MAPPING = {
 
     # scraping
     'scraping': ('.scraping', None),
+    'BrowserProfile': ('.scraping.profiles', 'BrowserProfile'),
+    'ProfileManager': ('.scraping.profiles', 'ProfileManager'),
     'BezierCurveGenerator': ('.scraping.humanize', 'BezierCurveGenerator'),
     'JitterDelayGenerator': ('.scraping.humanize', 'JitterDelayGenerator'),
     'KeyboardTypoGenerator': ('.scraping.humanize', 'KeyboardTypoGenerator'),

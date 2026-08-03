@@ -276,8 +276,28 @@ async def main():
     pool = WorkerPool(queue=queue, handler=process, limiter=limiter, max_workers=2)
     await pool.run_until_complete()
 
-asyncio.run(main())
+
+
+---
+
+## 6. Перенос профилей и сессий браузеров (`ProfileManager`)
+
+Класс `ProfileManager` (`chutils.scraping.ProfileManager`) позволяет легко экспортировать, сохранять, конвертировать и импортировать авторизованные сессии и профили между `Playwright`, `nodriver` и `Selenium`.
+
+```python
+from chutils.scraping import ProfileManager
+
+# 1. Экспорт сессии из Playwright
+profile = await ProfileManager.export_from_playwright(browser_context)
+
+# 2. Сохранение в защищенный .chprofile файл
+ProfileManager.save(profile, "my_session.chprofile", password="secret_password")
+
+# 3. Загрузка и импорт сессии в nodriver
+loaded_profile = ProfileManager.load("my_session.chprofile", password="secret_password")
+await ProfileManager.import_to_nodriver(nodriver_tab, loaded_profile)
 ```
+
 
 
 

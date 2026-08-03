@@ -25234,8 +25234,8 @@
         "path": "chutils/scraping",
         "type": "package",
         "layer": "public",
-        "summary": "",
-        "docstring": "",
+        "summary": "Модуль скрейпинга, автоматизации и утилиты антидетекта.",
+        "docstring": "Модуль скрейпинга, автоматизации и утилиты антидетекта.",
         "children": [
           {
             "name": "captcha",
@@ -28111,9 +28111,703 @@
               }
             ],
             "symbols": []
+          },
+          {
+            "name": "profiles",
+            "path": "chutils/scraping/profiles",
+            "type": "package",
+            "layer": "internal",
+            "summary": "Инициализация пакета профилей браузеров.",
+            "docstring": "Инициализация пакета профилей браузеров.",
+            "children": [
+              {
+                "name": "adapters",
+                "path": "chutils/scraping/profiles/adapters",
+                "type": "package",
+                "layer": "internal",
+                "summary": "Пакет адаптеров браузерных профилей.",
+                "docstring": "Пакет адаптеров браузерных профилей.",
+                "children": [
+                  {
+                    "name": "nodriver",
+                    "path": "chutils/scraping/profiles/adapters/nodriver",
+                    "type": "module",
+                    "layer": "internal",
+                    "summary": "Адаптер экспорта и импорта профилей для nodriver (CDP).",
+                    "docstring": "Адаптер экспорта и импорта профилей для nodriver (CDP).",
+                    "children": [],
+                    "symbols": [
+                      {
+                        "name": "logger",
+                        "type": "constant",
+                        "layer": "public",
+                        "signature": null,
+                        "summary": "",
+                        "docstring": null,
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 12,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "export_nodriver_profile",
+                        "type": "function",
+                        "layer": "internal",
+                        "signature": "(tab)",
+                        "summary": "Экспортировать профиль сессии из вкладки nodriver Tab через CDP.",
+                        "docstring": "Экспортировать профиль сессии из вкладки nodriver Tab через CDP.\n\nArgs:\n    tab: Объект nodriver.Tab.\n\nReturns:\n    Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 15,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "import_nodriver_profile",
+                        "type": "function",
+                        "layer": "internal",
+                        "signature": "(tab, profile)",
+                        "summary": "Импортировать профиль сессии во вкладку nodriver Tab через CDP.",
+                        "docstring": "Импортировать профиль сессии во вкладку nodriver Tab через CDP.\n\nArgs:\n    tab: Объект nodriver.Tab.\n    profile: Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 63,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "playwright",
+                    "path": "chutils/scraping/profiles/adapters/playwright",
+                    "type": "module",
+                    "layer": "internal",
+                    "summary": "Адаптер экспорта и импорта профилей для Playwright.",
+                    "docstring": "Адаптер экспорта и импорта профилей для Playwright.",
+                    "children": [],
+                    "symbols": [
+                      {
+                        "name": "logger",
+                        "type": "constant",
+                        "layer": "public",
+                        "signature": null,
+                        "summary": "",
+                        "docstring": null,
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 13,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "export_playwright_profile",
+                        "type": "function",
+                        "layer": "internal",
+                        "signature": "(context)",
+                        "summary": "Экспортировать профиль сессии из Playwright BrowserContext.",
+                        "docstring": "Экспортировать профиль сессии из Playwright BrowserContext.\n\nArgs:\n    context: Объект playwright.async_api.BrowserContext.\n\nReturns:\n    Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 16,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "import_playwright_profile",
+                        "type": "function",
+                        "layer": "internal",
+                        "signature": "(context, profile)",
+                        "summary": "Импортировать профиль сессии в Playwright BrowserContext.",
+                        "docstring": "Импортировать профиль сессии в Playwright BrowserContext.\n\nArgs:\n    context: Объект playwright.async_api.BrowserContext.\n    profile: Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 62,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "selenium",
+                    "path": "chutils/scraping/profiles/adapters/selenium",
+                    "type": "module",
+                    "layer": "internal",
+                    "summary": "Адаптер экспорта и импорта профилей для Selenium / undetected-chromedriver.",
+                    "docstring": "Адаптер экспорта и импорта профилей для Selenium / undetected-chromedriver.",
+                    "children": [],
+                    "symbols": [
+                      {
+                        "name": "logger",
+                        "type": "constant",
+                        "layer": "public",
+                        "signature": null,
+                        "summary": "",
+                        "docstring": null,
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 12,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "export_selenium_profile",
+                        "type": "function",
+                        "layer": "internal",
+                        "signature": "(driver)",
+                        "summary": "Экспортировать профиль сессии из Selenium WebDriver.",
+                        "docstring": "Экспортировать профиль сессии из Selenium WebDriver.\n\nArgs:\n    driver: Объект selenium.webdriver.Chrome/Firefox.\n\nReturns:\n    Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 15,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "import_selenium_profile",
+                        "type": "function",
+                        "layer": "internal",
+                        "signature": "(driver, profile)",
+                        "summary": "Импортировать профиль сессии в Selenium WebDriver.",
+                        "docstring": "Импортировать профиль сессии в Selenium WebDriver.\n\nArgs:\n    driver: Объект selenium.webdriver.\n    profile: Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 59,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "symbols": []
+              },
+              {
+                "name": "manager",
+                "path": "chutils/scraping/profiles/manager",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Единый фасад управления профилями браузеров.",
+                "docstring": "Единый фасад управления профилями браузеров.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 24,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "ProfileManager",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Менеджер для универсального экспорта, конвертации и импорта браузерных профилей.",
+                    "docstring": "Менеджер для универсального экспорта, конвертации и импорта браузерных профилей.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 27,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "export_from_playwright",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(context)",
+                        "summary": "Экспортировать профиль сессии из Playwright BrowserContext.",
+                        "docstring": "Экспортировать профиль сессии из Playwright BrowserContext.\n\nArgs:\n    context: Объект playwright.async_api.BrowserContext.\n\nReturns:\n    Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 31,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "import_to_playwright",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(context, profile)",
+                        "summary": "Импортировать профиль сессии в Playwright BrowserContext.",
+                        "docstring": "Импортировать профиль сессии в Playwright BrowserContext.\n\nArgs:\n    context: Объект playwright.async_api.BrowserContext.\n    profile: Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 43,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "export_from_nodriver",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(tab)",
+                        "summary": "Экспортировать профиль сессии из nodriver Tab.",
+                        "docstring": "Экспортировать профиль сессии из nodriver Tab.\n\nArgs:\n    tab: Объект nodriver.Tab.\n\nReturns:\n    Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 53,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "import_to_nodriver",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(tab, profile)",
+                        "summary": "Импортировать профиль сессии в nodriver Tab.",
+                        "docstring": "Импортировать профиль сессии в nodriver Tab.\n\nArgs:\n    tab: Объект nodriver.Tab.\n    profile: Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 65,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "export_from_selenium",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(driver)",
+                        "summary": "Экспортировать профиль сессии из Selenium WebDriver.",
+                        "docstring": "Экспортировать профиль сессии из Selenium WebDriver.\n\nArgs:\n    driver: Объект selenium.webdriver.\n\nReturns:\n    Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 75,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "import_to_selenium",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(driver, profile)",
+                        "summary": "Импортировать профиль сессии в Selenium WebDriver.",
+                        "docstring": "Импортировать профиль сессии в Selenium WebDriver.\n\nArgs:\n    driver: Объект selenium.webdriver.\n    profile: Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 87,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "save",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(profile, filepath, password)",
+                        "summary": "Сохранить профиль в `.chprofile` файл с опциональным шифрованием.",
+                        "docstring": "Сохранить профиль в `.chprofile` файл с опциональным шифрованием.\n\nArgs:\n    profile: Экземпляр BrowserProfile.\n    filepath: Путь к сохраняемому файлу.\n    password: Пароль для шифрования.\n\nReturns:\n    Path к сохраненному файлу.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 97,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "load",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(filepath, password)",
+                        "summary": "Загрузить профиль из `.chprofile` файла с опциональной расшифровкой.",
+                        "docstring": "Загрузить профиль из `.chprofile` файла с опциональной расшифровкой.\n\nArgs:\n    filepath: Путь к файлу .chprofile.\n    password: Пароль для расшифровки.\n\nReturns:\n    Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 115,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "models",
+                "path": "chutils/scraping/profiles/models",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Модели данных профилей и сессий браузеров.",
+                "docstring": "Модели данных профилей и сессий браузеров.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "CookieData",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Данные Cookie записи.",
+                    "docstring": "Данные Cookie записи.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 7,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "StorageData",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Данные хранилищ браузера (LocalStorage, SessionStorage, IndexedDB).",
+                    "docstring": "Данные хранилищ браузера (LocalStorage, SessionStorage, IndexedDB).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 20,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "HeaderData",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Метаданные заголовков и браузера.",
+                    "docstring": "Метаданные заголовков и браузера.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 28,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "BrowserProfile",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Универсальная модель профиля браузера для экспорта/импорта.",
+                    "docstring": "Универсальная модель профиля браузера для экспорта/импорта.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 37,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "storage",
+                "path": "chutils/scraping/profiles/storage",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Модуль работы со стек-моделями и хранением профилей браузеров (.chprofile).",
+                "docstring": "Модуль работы со стек-моделями и хранением профилей браузеров (.chprofile).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 9,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "save_profile_to_file",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(profile, filepath, password)",
+                    "summary": "Сохранить модель BrowserProfile в zip-архив .chprofile.",
+                    "docstring": "Сохранить модель BrowserProfile в zip-архив .chprofile.\n\nArgs:\n    profile: Экземпляр модели BrowserProfile.\n    filepath: Путь к сохраняемому файлу (.chprofile).\n    password: Необязательный пароль для Fernet-шифрования.\n\nReturns:\n    Path к сохраненному файлу.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 12,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "load_profile_from_file",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(filepath, password)",
+                    "summary": "Загрузить и распарсить модель BrowserProfile из архива .chprofile.",
+                    "docstring": "Загрузить и распарсить модель BrowserProfile из архива .chprofile.\n\nArgs:\n    filepath: Путь к файлу .chprofile.\n    password: Необязательный пароль расшифровки.\n\nReturns:\n    Экземпляр BrowserProfile.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 49,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "symbols": []
           }
         ],
-        "symbols": []
+        "symbols": [
+          {
+            "name": "_LAZY_MAPPING",
+            "type": "constant",
+            "layer": "private",
+            "signature": null,
+            "summary": "",
+            "docstring": null,
+            "breadcrumbs": {
+              "is_async": false,
+              "is_thread_safe": false,
+              "is_heavy": false,
+              "is_abstract": false,
+              "decorators": [],
+              "tags": [],
+              "custom_metadata": {}
+            },
+            "line_number": 12,
+            "bases": [],
+            "children": []
+          },
+          {
+            "name": "__getattr__",
+            "type": "function",
+            "layer": "private",
+            "signature": "(name)",
+            "summary": "",
+            "docstring": "",
+            "breadcrumbs": {
+              "is_async": false,
+              "is_thread_safe": false,
+              "is_heavy": false,
+              "is_abstract": false,
+              "decorators": [],
+              "tags": [],
+              "custom_metadata": {}
+            },
+            "line_number": 18,
+            "bases": [],
+            "children": []
+          },
+          {
+            "name": "__dir__",
+            "type": "function",
+            "layer": "private",
+            "signature": "()",
+            "summary": "",
+            "docstring": "",
+            "breadcrumbs": {
+              "is_async": false,
+              "is_thread_safe": false,
+              "is_heavy": false,
+              "is_abstract": false,
+              "decorators": [],
+              "tags": [],
+              "custom_metadata": {}
+            },
+            "line_number": 26,
+            "bases": [],
+            "children": []
+          }
+        ]
       },
       {
         "name": "secret_manager",
@@ -33282,7 +33976,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 330,
+        "line_number": 332,
         "bases": [],
         "children": []
       },
@@ -33302,7 +33996,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 361,
+        "line_number": 363,
         "bases": [],
         "children": []
       },
@@ -33322,7 +34016,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 371,
+        "line_number": 373,
         "bases": [],
         "children": []
       }
@@ -34635,11 +35329,6 @@
       "weight": 3
     },
     {
-      "source": "chutils/scraping",
-      "target": ".",
-      "weight": 3
-    },
-    {
       "source": "chutils/scraping/captcha",
       "target": "chutils/exceptions",
       "weight": 1
@@ -34768,6 +35457,111 @@
       "source": "chutils/scraping/humanize/warmer",
       "target": "/actions",
       "weight": 8
+    },
+    {
+      "source": "chutils/scraping/profiles",
+      "target": "chutils/scraping/profiles/manager",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/profiles",
+      "target": "chutils/scraping/profiles/models",
+      "weight": 4
+    },
+    {
+      "source": "chutils/scraping/profiles",
+      "target": "chutils/scraping/profiles/storage",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/profiles/adapters",
+      "target": "chutils/scraping/profiles/adapters/nodriver",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/profiles/adapters",
+      "target": "chutils/scraping/profiles/adapters/playwright",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/profiles/adapters",
+      "target": "chutils/scraping/profiles/adapters/selenium",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/profiles/adapters/nodriver",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/profiles/adapters/nodriver",
+      "target": "chutils/scraping/profiles/models",
+      "weight": 4
+    },
+    {
+      "source": "chutils/scraping/profiles/adapters/playwright",
+      "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/profiles/adapters/playwright",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/profiles/adapters/playwright",
+      "target": "chutils/scraping/profiles/models",
+      "weight": 4
+    },
+    {
+      "source": "chutils/scraping/profiles/adapters/selenium",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/profiles/adapters/selenium",
+      "target": "chutils/scraping/profiles/models",
+      "weight": 4
+    },
+    {
+      "source": "chutils/scraping/profiles/manager",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/profiles/manager",
+      "target": "chutils/scraping/profiles/adapters/nodriver",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/profiles/manager",
+      "target": "chutils/scraping/profiles/adapters/playwright",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/profiles/manager",
+      "target": "chutils/scraping/profiles/adapters/selenium",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/profiles/manager",
+      "target": "chutils/scraping/profiles/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/profiles/manager",
+      "target": "chutils/scraping/profiles/storage",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/profiles/storage",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/profiles/storage",
+      "target": "chutils/scraping/profiles/models",
+      "weight": 1
     },
     {
       "source": "chutils/secret_manager",
@@ -35037,10 +35831,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.4.1",
-    "project_version": "3.4.1",
-    "git_commit": "35b0abb02583ebebbd7a918dd74a5056d6b40c5c (dirty)",
-    "generated_at": "2026-07-30T21:04:38.368041+00:00",
-    "project_hash": "73c182750cd7e4d409a97fe4e3797cb39064637a44fe36638c5c113466639683"
+    "chutils_version": "3.4.2",
+    "project_version": "3.4.2",
+    "git_commit": "5b86430447a7502931899a6ff270587131eb2410 (dirty)",
+    "generated_at": "2026-08-03T17:42:42.466373+00:00",
+    "project_hash": "badb18ebe1fbdbe91f7754c46918ac993adb13eacc453644a54d5b88e3033e9f"
   }
 }
