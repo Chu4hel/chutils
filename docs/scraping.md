@@ -253,7 +253,7 @@ warmer.warm_up(
 
 ## 5. Параллельный скрапинг (chutils.scraping.concurrency)
 
-Модуль `chutils.scraping.concurrency` предоставляет инструменты для параллельного скрапинга с дедупликацией, приоритизацией, доменными лимитами (`DomainRateLimiter`) и пулом воркеров (`WorkerPool`).
+Модуль `chutils.scraping.concurrency` предоставляет инструменты для параллельного скрапинга с дедупликацией, приоритизацией, доменными лимитами (`DomainRateLimiter`), пулом воркеров (`WorkerPool`) и автоматическим экспортом Prometheus-метрических показателей (`chutils_queue_pending_size`, `chutils_tasks_processed_total`, `chutils_task_execution_duration_seconds`, `chutils_worker_pool_active_workers`).
 
 ```python
 import asyncio
@@ -265,7 +265,8 @@ from chutils.scraping.concurrency import (
 )
 
 async def main():
-    queue = InMemoryTaskQueue()
+    # Очередь с включенным трекингом Prometheus-метрических показателей
+    queue = InMemoryTaskQueue(name="wiki_queue", enable_metrics=True)
     await queue.push(ScrapingTask(url="https://ru.wikipedia.org/wiki/Python", priority=5))
 
     limiter = DomainRateLimiter(default_delay=0.5, domain_rules={"*.wikipedia.org": 1.0})
@@ -275,6 +276,7 @@ async def main():
 
     pool = WorkerPool(queue=queue, handler=process, limiter=limiter, max_workers=2)
     await pool.run_until_complete()
+```
 
 
 

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import time
 from typing import Any, Callable, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -72,7 +73,12 @@ class WorkerPool:
 
             async with self._lock:
                 self._active_workers_count += 1
+                metrics_collector = getattr(self.queue, "metrics", None)
+                if metrics_collector:
+                    metrics_collector.set_active_workers(self._active_workers_count)
 
+            start_time = time.monotonic()
+            status = "completed"
             try:
                 if self.limiter:
                     await self.limiter.acquire(task.url)
@@ -81,13 +87,22 @@ class WorkerPool:
                 await self.queue.complete(task)
                 self._completed_count += 1
             except Exception as e:
+                status = "failed"
                 await self.queue.fail(task, str(e))
                 self._failed_count += 1
             finally:
+                duration = time.monotonic() - start_time
+                metrics_collector = getattr(self.queue, "metrics", None)
+                if metrics_collector:
+                    metrics_collector.observe_execution_duration(duration, status=status)
+                    metrics_collector.inc_tasks_processed(status=status)
+
                 if self.limiter:
                     self.limiter.release(task.url)
                 async with self._lock:
                     self._active_workers_count -= 1
+                    if metrics_collector:
+                        metrics_collector.set_active_workers(self._active_workers_count)
 
     async def start(self) -> None:
         """Запускает фоновые задачи воркеров."""

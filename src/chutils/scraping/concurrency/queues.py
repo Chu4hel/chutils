@@ -12,17 +12,19 @@ from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
 from .base import BaseTaskQueue
+from .metrics import QueueMetricsCollector
 from .models import ScrapingTask
 
 
 class InMemoryTaskQueue(BaseTaskQueue):
     """Быстрая очередь задач в оперативной памяти."""
 
-    def __init__(self) -> None:
+    def __init__(self, name: str = "default", enable_metrics: bool = True) -> None:
         self._lock = asyncio.Lock()
         self._seen: set[str] = set()
         self._queue: list[ScrapingTask] = []
         self._failed_tasks: list[ScrapingTask] = []
+        self.metrics = QueueMetricsCollector(queue_name=name, queue_type="in_memory", enabled=enable_metrics)
 
     async def push(self, task: ScrapingTask) -> bool:
         """Добавляет задачу в оперативную очередь.
@@ -39,6 +41,7 @@ class InMemoryTaskQueue(BaseTaskQueue):
             self._seen.add(task.dedup_key)
             self._queue.append(task)
             self._queue.sort(key=lambda t: (-t.priority, t.created_at))
+            self.metrics.set_pending_size(len(self._queue))
             return True
 
     async def pop(self) -> ScrapingTask | None:
@@ -50,7 +53,9 @@ class InMemoryTaskQueue(BaseTaskQueue):
         async with self._lock:
             if not self._queue:
                 return None
-            return self._queue.pop(0)
+            task = self._queue.pop(0)
+            self.metrics.set_pending_size(len(self._queue))
+            return task
 
     async def complete(self, task: ScrapingTask) -> None:
         """Помечает задачу как выполненную.
@@ -96,11 +101,17 @@ class InMemoryTaskQueue(BaseTaskQueue):
 class PersistentTaskQueue(BaseTaskQueue):
     """Очередь задач с персистентным сохранением состояния в SQLite."""
 
-    def __init__(self, db_path: str | Path = "scraping_queue.db") -> None:
+    def __init__(
+        self,
+        db_path: str | Path = "scraping_queue.db",
+        name: str = "persistent",
+        enable_metrics: bool = True,
+    ) -> None:
         self.db_path = str(db_path)
         self._lock = asyncio.Lock()
         self._conn: sqlite3.Connection | None = sqlite3.connect(self.db_path, check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
+        self.metrics = QueueMetricsCollector(queue_name=name, queue_type="sqlite", enabled=enable_metrics)
         self._init_db()
 
     def _init_db(self) -> None:
@@ -274,7 +285,12 @@ class PersistentTaskQueue(BaseTaskQueue):
 class RedisTaskQueue(BaseTaskQueue):
     """Распределенная очередь задач на базе Redis."""
 
-    def __init__(self, redis_url: str = "redis://localhost:6379/0", queue_name: str = "scraping_queue") -> None:
+    def __init__(
+        self,
+        redis_url: str = "redis://localhost:6379/0",
+        queue_name: str = "scraping_queue",
+        enable_metrics: bool = True,
+    ) -> None:
         try:
             import redis.asyncio as redis_async
         except ImportError:
@@ -285,6 +301,7 @@ class RedisTaskQueue(BaseTaskQueue):
             )
         self.redis_url = redis_url
         self.queue_name = queue_name
+        self.metrics = QueueMetricsCollector(queue_name=queue_name, queue_type="redis", enabled=enable_metrics)
         self._client = redis_async.from_url(redis_url)
 
     async def push(self, task: ScrapingTask) -> bool:

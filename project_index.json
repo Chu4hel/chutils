@@ -26419,6 +26419,138 @@
                 ]
               },
               {
+                "name": "metrics",
+                "path": "chutils/scraping/concurrency/metrics",
+                "type": "module",
+                "layer": "public",
+                "summary": "Модуль сбора Prometheus-метрических показателей для очередей задач и воркеров.",
+                "docstring": "Модуль сбора Prometheus-метрических показателей для очередей задач и воркеров.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "QueueMetricsCollector",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Коллектор метрик для очередей и воркеров.",
+                    "docstring": "Коллектор метрик для очередей и воркеров.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 6,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, queue_name, queue_type, enabled)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 9,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "set_pending_size",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, size)",
+                        "summary": "Установить текущий размер очереди.",
+                        "docstring": "Установить текущий размер очереди.\n\nArgs:\n    size: Размер очереди.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 14,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "inc_tasks_processed",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, status)",
+                        "summary": "Увеличить счетчик обработанных задач.",
+                        "docstring": "Увеличить счетчик обработанных задач.\n\nArgs:\n    status: Статус обработки (completed, failed, retried).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 27,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "observe_execution_duration",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, duration_seconds, status)",
+                        "summary": "Записать время выполнения задачи.",
+                        "docstring": "Записать время выполнения задачи.\n\nArgs:\n    duration_seconds: Длительность выполнения в секундах.\n    status: Статус выполнения задачи.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 40,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "set_active_workers",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, active_count)",
+                        "summary": "Установить число активных воркеров.",
+                        "docstring": "Установить число активных воркеров.\n\nArgs:\n    active_count: Количество активных воркеров.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 54,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
                 "name": "models",
                 "path": "chutils/scraping/concurrency/models",
                 "type": "module",
@@ -26476,7 +26608,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 17,
+                    "line_number": 18,
                     "bases": [],
                     "children": [
                       {
@@ -26495,7 +26627,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 20,
+                        "line_number": 21,
                         "bases": [],
                         "children": []
                       },
@@ -26517,7 +26649,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 51,
+                        "line_number": 52,
                         "bases": [],
                         "children": []
                       },
@@ -26539,7 +26671,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 56,
+                        "line_number": 57,
                         "bases": [],
                         "children": []
                       },
@@ -26559,7 +26691,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 60,
+                        "line_number": 61,
                         "bases": [],
                         "children": []
                       },
@@ -26579,7 +26711,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 66,
+                        "line_number": 67,
                         "bases": [],
                         "children": []
                       },
@@ -26599,7 +26731,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 92,
+                        "line_number": 107,
                         "bases": [],
                         "children": []
                       },
@@ -26619,7 +26751,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 102,
+                        "line_number": 117,
                         "bases": [],
                         "children": []
                       },
@@ -26639,7 +26771,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 111,
+                        "line_number": 126,
                         "bases": [],
                         "children": []
                       }
@@ -26672,7 +26804,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 18,
+                    "line_number": 19,
                     "bases": [
                       ".base.BaseTaskQueue"
                     ],
@@ -26681,7 +26813,7 @@
                         "name": "__init__",
                         "type": "method",
                         "layer": "private",
-                        "signature": "(self)",
+                        "signature": "(self, name, enable_metrics)",
                         "summary": "",
                         "docstring": "",
                         "breadcrumbs": {
@@ -26693,7 +26825,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 21,
+                        "line_number": 22,
                         "bases": [],
                         "children": []
                       },
@@ -26713,7 +26845,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 27,
+                        "line_number": 29,
                         "bases": [],
                         "children": []
                       },
@@ -26733,7 +26865,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 44,
+                        "line_number": 47,
                         "bases": [],
                         "children": []
                       },
@@ -26753,7 +26885,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 55,
+                        "line_number": 60,
                         "bases": [],
                         "children": []
                       },
@@ -26773,7 +26905,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 63,
+                        "line_number": 68,
                         "bases": [],
                         "children": []
                       },
@@ -26793,7 +26925,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 79,
+                        "line_number": 84,
                         "bases": [],
                         "children": []
                       },
@@ -26813,7 +26945,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 88,
+                        "line_number": 93,
                         "bases": [],
                         "children": []
                       }
@@ -26835,7 +26967,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 96,
+                    "line_number": 101,
                     "bases": [
                       ".base.BaseTaskQueue"
                     ],
@@ -26844,7 +26976,7 @@
                         "name": "__init__",
                         "type": "method",
                         "layer": "private",
-                        "signature": "(self, db_path)",
+                        "signature": "(self, db_path, name, enable_metrics)",
                         "summary": "",
                         "docstring": "",
                         "breadcrumbs": {
@@ -26856,7 +26988,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 99,
+                        "line_number": 104,
                         "bases": [],
                         "children": []
                       },
@@ -26876,7 +27008,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 106,
+                        "line_number": 117,
                         "bases": [],
                         "children": []
                       },
@@ -26896,7 +27028,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 133,
+                        "line_number": 144,
                         "bases": [],
                         "children": []
                       },
@@ -26916,7 +27048,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 176,
+                        "line_number": 187,
                         "bases": [],
                         "children": []
                       },
@@ -26936,7 +27068,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 212,
+                        "line_number": 223,
                         "bases": [],
                         "children": []
                       },
@@ -26956,7 +27088,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 223,
+                        "line_number": 234,
                         "bases": [],
                         "children": []
                       },
@@ -26976,7 +27108,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 246,
+                        "line_number": 257,
                         "bases": [],
                         "children": []
                       },
@@ -26996,7 +27128,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 258,
+                        "line_number": 269,
                         "bases": [],
                         "children": []
                       },
@@ -27016,7 +27148,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 266,
+                        "line_number": 277,
                         "bases": [],
                         "children": []
                       }
@@ -27038,7 +27170,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 274,
+                    "line_number": 285,
                     "bases": [
                       ".base.BaseTaskQueue"
                     ],
@@ -27047,7 +27179,7 @@
                         "name": "__init__",
                         "type": "method",
                         "layer": "private",
-                        "signature": "(self, redis_url, queue_name)",
+                        "signature": "(self, redis_url, queue_name, enable_metrics)",
                         "summary": "",
                         "docstring": "",
                         "breadcrumbs": {
@@ -27059,7 +27191,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 277,
+                        "line_number": 288,
                         "bases": [],
                         "children": []
                       },
@@ -27079,7 +27211,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 290,
+                        "line_number": 307,
                         "bases": [],
                         "children": []
                       },
@@ -27099,7 +27231,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 322,
+                        "line_number": 339,
                         "bases": [],
                         "children": []
                       },
@@ -27119,7 +27251,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 342,
+                        "line_number": 359,
                         "bases": [],
                         "children": []
                       },
@@ -27139,7 +27271,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 351,
+                        "line_number": 368,
                         "bases": [],
                         "children": []
                       },
@@ -27159,7 +27291,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 378,
+                        "line_number": 395,
                         "bases": [],
                         "children": []
                       },
@@ -27179,7 +27311,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 387,
+                        "line_number": 404,
                         "bases": [],
                         "children": []
                       }
@@ -35404,6 +35536,11 @@
       "weight": 3
     },
     {
+      "source": "chutils/scraping/concurrency/metrics",
+      "target": "chutils/metrics",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/concurrency/queues",
       "target": "chutils/exceptions",
       "weight": 1
@@ -35411,6 +35548,11 @@
     {
       "source": "chutils/scraping/concurrency/queues",
       "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/concurrency/queues",
+      "target": "/metrics",
       "weight": 1
     },
     {
@@ -35833,8 +35975,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "5b86430447a7502931899a6ff270587131eb2410 (dirty)",
-    "generated_at": "2026-08-03T17:42:42.466373+00:00",
-    "project_hash": "badb18ebe1fbdbe91f7754c46918ac993adb13eacc453644a54d5b88e3033e9f"
+    "git_commit": "c2b27862cc95d0906bf8233405632ef9a218f676 (dirty)",
+    "generated_at": "2026-08-03T18:06:42.372724+00:00",
+    "project_hash": "1a25748f52706d32dbc38661e91da05a6291263a6562fc1152cf7c3aac55dea7"
   }
 }
