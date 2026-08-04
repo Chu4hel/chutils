@@ -78,6 +78,9 @@ class UpgradeCheckRule(Rule):
             context_file = Path(base_dir) / ".chutils" / "migration_context.md"
             ensure_dir(context_file.parent)
             atomic_write(context_file, markdown_content)
+
+            from ..version_detector import save_last_known_version
+            save_last_known_version(base_dir, new_version)
         except Exception as e:
             logger.error("Не удалось записать файл миграционного контекста для ИИ: %s", e)
             return results

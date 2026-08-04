@@ -11461,7 +11461,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 117,
+                "line_number": 120,
                 "bases": [],
                 "children": []
               },
@@ -11481,7 +11481,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 155,
+                "line_number": 158,
                 "bases": [],
                 "children": []
               }
@@ -16561,12 +16561,12 @@
                 "children": []
               },
               {
-                "name": "detect_version_upgrade",
+                "name": "get_last_known_version",
                 "type": "function",
                 "layer": "internal",
                 "signature": "(base_dir)",
-                "summary": "Проверяет, произошло ли обновление версии chutils в проекте.",
-                "docstring": "Проверяет, произошло ли обновление версии chutils в проекте.\n\nСравнивает текущую версию в рабочей директории с версией в Git HEAD.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Кортеж (old_version, new_version, is_upgraded).",
+                "summary": "Возвращает зафиксированную последнюю известную версию chutils из .chutils/last_known_version.json.",
+                "docstring": "Возвращает зафиксированную последнюю известную версию chutils из .chutils/last_known_version.json.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Строка версии или None.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -16577,6 +16577,46 @@
                   "custom_metadata": {}
                 },
                 "line_number": 270,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "save_last_known_version",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(base_dir, version)",
+                "summary": "Сохраняет текущую зафиксированную версию chutils в .chutils/last_known_version.json.",
+                "docstring": "Сохраняет текущую зафиксированную версию chutils в .chutils/last_known_version.json.\n\nArgs:\n    base_dir: Путь к корню проекта.\n    version: Строка версии.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 292,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "detect_version_upgrade",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(base_dir)",
+                "summary": "Проверяет, произошло ли обновление версии chutils в проекте.",
+                "docstring": "Проверяет, произошло ли обновление версии chutils в проекте.\n\nСравнивает текущую версию в рабочей директории с зафиксированной исторической\nверсией из .chutils/last_known_version.json и версии в Git HEAD.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Кортеж (old_version, new_version, is_upgraded).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 309,
                 "bases": [],
                 "children": []
               }
@@ -35975,8 +36015,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "c2b27862cc95d0906bf8233405632ef9a218f676 (dirty)",
-    "generated_at": "2026-08-03T18:06:42.372724+00:00",
-    "project_hash": "1a25748f52706d32dbc38661e91da05a6291263a6562fc1152cf7c3aac55dea7"
+    "git_commit": "c7f06b4795fa884bfbc2dd455c681eb3d780e12c (dirty)",
+    "generated_at": "2026-08-04T21:02:10.798733+00:00",
+    "project_hash": "b701cf636b9cd81f98ac73052714c8f88b716fbb2489bed10d0e230c5c7fe608"
   }
 }

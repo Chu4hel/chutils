@@ -85,11 +85,14 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
                 current_section = "deprecations"
                 is_header = True
 
-            # 3. Любые другие заголовки относим к категории new_api (общие изменения/улучшения)
+            # 3. Любые другие заголовки относим к категории new_api (общие изменения/улучшения),
+            # ЕСЛИ это не заголовок самого релиза с версией (например `# v3.4.0` или `## Релиз v3.4.0`)
             elif line_strip.startswith("#") or (
                     line_strip.startswith("**") and line_strip.endswith("**")
             ):
-                current_section = "new_api"
+                is_version_header = bool(re.search(r"v?\d+\.\d+\.\d+", clean_header)) or "релиз" in clean_header
+                if not is_version_header:
+                    current_section = "new_api"
                 is_header = True
 
         if is_header:
