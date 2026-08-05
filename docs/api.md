@@ -165,6 +165,17 @@ members:
 - atomic_write
 - get_temp_file
 
+## Модуль `crypto` (Шифрование данных и файлов)
+
+::: chutils.crypto
+options:
+members:
+
+- encrypt_portable
+- decrypt_portable
+- encrypt_file
+- decrypt_file
+
 ## Декораторы
 
 ::: chutils.decorators
