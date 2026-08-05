@@ -9909,7 +9909,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 30,
+            "line_number": 31,
             "bases": [],
             "children": []
           },
@@ -9929,7 +9929,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 43,
+            "line_number": 44,
             "bases": [],
             "children": []
           },
@@ -9949,7 +9949,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 68,
+            "line_number": 69,
             "bases": [],
             "children": []
           },
@@ -9969,7 +9969,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 105,
+            "line_number": 106,
             "bases": [],
             "children": []
           },
@@ -9989,7 +9989,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 106,
+            "line_number": 107,
             "bases": [],
             "children": []
           },
@@ -10009,7 +10009,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 109,
+            "line_number": 110,
             "bases": [],
             "children": []
           },
@@ -10017,7 +10017,7 @@
             "name": "_encrypt_stream_file",
             "type": "function",
             "layer": "private",
-            "signature": "(file_path, seed, output_path, chunk_size)",
+            "signature": "(file_path, seed, output_path, chunk_size, progress_callback)",
             "summary": "Шифрует файл в потоковом режиме с использованием AES-GCM и фиксированного объема RAM.",
             "docstring": "Шифрует файл в потоковом режиме с использованием AES-GCM и фиксированного объема RAM.",
             "breadcrumbs": {
@@ -10029,7 +10029,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 114,
+            "line_number": 115,
             "bases": [],
             "children": []
           },
@@ -10037,7 +10037,7 @@
             "name": "_decrypt_stream_file",
             "type": "function",
             "layer": "private",
-            "signature": "(file_path, seed, output_path, raise_on_error)",
+            "signature": "(file_path, seed, output_path, raise_on_error, progress_callback)",
             "summary": "Расшифровывает файл, зашифрованный в потоковом режиме.",
             "docstring": "Расшифровывает файл, зашифрованный в потоковом режиме.",
             "breadcrumbs": {
@@ -10049,7 +10049,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 166,
+            "line_number": 178,
             "bases": [],
             "children": []
           },
@@ -10057,9 +10057,9 @@
             "name": "encrypt_file",
             "type": "function",
             "layer": "public",
-            "signature": "(file_path, seed, output_path, stream, chunk_size)",
+            "signature": "(file_path, seed, output_path, stream, chunk_size, progress_callback)",
             "summary": "Шифрует содержимое файла и сохраняет результат.",
-            "docstring": "Шифрует содержимое файла и сохраняет результат.\n\nArgs:\n    file_path: Путь к исходному файлу.\n    seed: Строка-пароль для генерации ключа.\n    output_path: Путь для сохранения результата. Если не указан,\n        исходный файл перезаписывается.\n    stream: Если True, использовать потоковое чанковое шифрование (AES-GCM)\n        с фиксированным потреблением памяти (для гигантских файлов).\n    chunk_size: Размер чанка в байтах при потоковом шифровании (по умолчанию 64 МБ).\n\nReturns:\n    Путь к зашифрованному файлу.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.",
+            "docstring": "Шифрует содержимое файла и сохраняет результат.\n\nArgs:\n    file_path: Путь к исходному файлу.\n    seed: Строка-пароль для генерации ключа.\n    output_path: Путь для сохранения результата. Если не указан,\n        исходный файл перезаписывается.\n    stream: Если True, использовать потоковое чанковое шифрование (AES-GCM)\n        с фиксированным потреблением памяти (для гигантских файлов).\n    chunk_size: Размер чанка в байтах при потоковом шифровании (по умолчанию 64 МБ).\n    progress_callback: Необязательная функция обратной связи (callback(processed, total))\n        для отслеживания прогресса (например, для прогресс-бара).\n\nReturns:\n    Путь к зашифрованному файлу.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.",
             "breadcrumbs": {
               "is_async": false,
               "is_thread_safe": false,
@@ -10069,7 +10069,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 237,
+            "line_number": 263,
             "bases": [],
             "children": []
           },
@@ -10077,9 +10077,9 @@
             "name": "decrypt_file",
             "type": "function",
             "layer": "public",
-            "signature": "(file_path, seed, output_path, raise_on_error, stream)",
+            "signature": "(file_path, seed, output_path, raise_on_error, stream, progress_callback)",
             "summary": "Дешифрует содержимое файла и сохраняет результат.",
-            "docstring": "Дешифрует содержимое файла и сохраняет результат.\n\nArgs:\n    file_path: Путь к зашифрованному файлу.\n    seed: Строка-пароль для генерации ключа.\n    output_path: Путь для сохранения результата. Если не указан,\n        файл перезаписывается.\n    raise_on_error: Если True, выбрасывает ValueError при ошибке\n        дешифрования (неверный ключ или поврежденный файл).\n    stream: Если True или None, автоопределяет и расшифровывает потоковый файл.\n\nReturns:\n    True, если дешифрование прошло успешно, иначе False.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.\n    ValueError: Если raise_on_error равен True и произошла ошибка дешифрования.",
+            "docstring": "Дешифрует содержимое файла и сохраняет результат.\n\nArgs:\n    file_path: Путь к зашифрованному файлу.\n    seed: Строка-пароль для генерации ключа.\n    output_path: Путь для сохранения результата. Если не указан,\n        файл перезаписывается.\n    raise_on_error: Если True, выбрасывает ValueError при ошибке\n        дешифрования (неверный ключ или поврежденный файл).\n    stream: Если True или None, автоопределяет и расшифровывает потоковый файл.\n    progress_callback: Необязательная функция обратной связи (callback(processed, total))\n        для отслеживания прогресса (например, для прогресс-бара).\n\nReturns:\n    True, если дешифрование прошло успешно, иначе False.\n\nRaises:\n    OptionalDependencyError: Если библиотека cryptography не установлена.\n    ValueError: Если raise_on_error равен True и произошла ошибка дешифрования.",
             "breadcrumbs": {
               "is_async": false,
               "is_thread_safe": false,
@@ -10089,7 +10089,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 281,
+            "line_number": 318,
             "bases": [],
             "children": []
           }
@@ -36366,8 +36366,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "58faad6ae36b5869ffbf82cf542ccb653ee98ede (dirty)",
-    "generated_at": "2026-08-05T19:50:42.858487+00:00",
-    "project_hash": "f1f244be67360d87e025089bc56a533b9f0e9f0d88796369db7b3684891bc509"
+    "git_commit": "cc159aa18bf143807ccb19a3c8f7ebdec65db935 (dirty)",
+    "generated_at": "2026-08-05T19:53:39.620694+00:00",
+    "project_hash": "af4222cfd52ad6f710a0014eadeef9a2f3c6392e36054c45a9353b28c6f7cad2"
   }
 }

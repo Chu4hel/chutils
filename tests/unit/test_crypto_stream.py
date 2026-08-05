@@ -47,3 +47,31 @@ def test_stream_decryption_corrupted_chunk(tmp_path: Path):
 
     with pytest.raises(ValueError, match="Сбой аутентификации|Поврежден"):
         decrypt_file(enc_file, seed, dec_file, raise_on_error=True)
+
+
+@pytest.mark.skipif(not _HAS_CRYPTOGRAPHY, reason="Требуется библиотека cryptography")
+def test_stream_encryption_progress_callback(tmp_path: Path):
+    """Проверяет вызовы progress_callback во время потокового шифрования и расшифровки."""
+    input_file = tmp_path / "data_progress.txt"
+    input_file.write_bytes(b"B" * 5000)
+
+    enc_file = tmp_path / "enc_progress.bin"
+    dec_file = tmp_path / "dec_progress.txt"
+    seed = "pass123"
+
+    progress_history: list[tuple[int, int]] = []
+
+    def on_progress(processed: int, total: int) -> None:
+        progress_history.append((processed, total))
+
+    encrypt_file(input_file, seed, enc_file, stream=True, chunk_size=1024, progress_callback=on_progress)
+
+    assert len(progress_history) > 1
+    assert progress_history[0][0] == 0
+    assert progress_history[-1][0] == 5000
+
+    dec_history: list[tuple[int, int]] = []
+    decrypt_file(enc_file, seed, dec_file, stream=True, progress_callback=lambda p, t: dec_history.append((p, t)))
+
+    assert len(dec_history) > 1
+    assert dec_history[0][0] == 27  # Header (7B magic + 4B size + 16B salt)
