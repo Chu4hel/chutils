@@ -118,3 +118,41 @@ def test_discover_plugins_isolation(mock_entry_points):
     # Неисправный плагин не должен быть зарегистрирован, но исправный должен
     assert registry.get_plugin("valid_plugin") is not None
     assert isinstance(registry.get_plugin("valid_plugin"), ValidPlugin)
+
+
+def test_captcha_solver_plugin_registration():
+    """Проверяет регистрацию и получение плагина CaptchaSolverPlugin."""
+    from chutils.plugins import CaptchaSolverPlugin
+    from chutils.plugins.core import get_captcha_solver_plugin
+
+    class MyCaptchaSolver(CaptchaSolverPlugin):
+        name = "my_custom_captcha"
+
+        def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0, **kwargs) -> str:
+            return "mocked-g-recaptcha-response"
+
+    solver = MyCaptchaSolver()
+    register_plugin(solver)
+
+    found = get_captcha_solver_plugin("my_custom_captcha")
+    assert found is solver
+    assert found.solve_recaptcha("sitekey", "http://example.com") == "mocked-g-recaptcha-response"
+
+
+def test_task_queue_plugin_registration():
+    """Проверяет регистрацию и получение плагина TaskQueuePlugin."""
+    from chutils.plugins import TaskQueuePlugin
+    from chutils.plugins.core import get_task_queue_plugin
+
+    class MyRabbitMQTaskQueuePlugin(TaskQueuePlugin):
+        name = "rabbitmq_queue"
+
+        def create_queue(self, name: str, **kwargs):
+            return f"Queue({name})"
+
+    plugin = MyRabbitMQTaskQueuePlugin()
+    register_plugin(plugin)
+
+    found = get_task_queue_plugin("rabbitmq_queue")
+    assert found is plugin
+    assert found.create_queue("scrapes") == "Queue(scrapes)"

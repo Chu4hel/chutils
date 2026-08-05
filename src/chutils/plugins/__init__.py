@@ -9,6 +9,8 @@ from .interfaces import (
     LoggerHandlerPlugin,
     MetricsPlugin,
     SecretProviderPlugin,
+    CaptchaSolverPlugin,
+    TaskQueuePlugin,
 )
 
 __all__ = [
@@ -21,4 +23,6 @@ __all__ = [
     "ConfigProviderPlugin",
     "LoggerHandlerPlugin",
     "MetricsPlugin",
+    "CaptchaSolverPlugin",
+    "TaskQueuePlugin",
 ]

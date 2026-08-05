@@ -24314,6 +24314,46 @@
                 "line_number": 136,
                 "bases": [],
                 "children": []
+              },
+              {
+                "name": "get_captcha_solver_plugin",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(name)",
+                "summary": "Возвращает зарегистрированный плагин солвера капчи по имени.",
+                "docstring": "Возвращает зарегистрированный плагин солвера капчи по имени.\n\nВыполняет автообнаружение из группы `chutils.plugins.captcha`.\n\nArgs:\n    name: Имя плагина.\n\nReturns:\n    Экземпляр плагина или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 145,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "get_task_queue_plugin",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(name)",
+                "summary": "Возвращает зарегистрированный плагин очереди задач по имени.",
+                "docstring": "Возвращает зарегистрированный плагин очереди задач по имени.\n\nВыполняет автообнаружение из группы `chutils.plugins.scraping`.\n\nArgs:\n    name: Имя плагина.\n\nReturns:\n    Экземпляр плагина или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 166,
+                "bases": [],
+                "children": []
               }
             ]
           },
@@ -24529,6 +24569,116 @@
                   "chutils.metrics.base.MetricsProvider"
                 ],
                 "children": []
+              },
+              {
+                "name": "CaptchaSolverPlugin",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Интерфейс для плагина решения капч.",
+                "docstring": "Интерфейс для плагина решения капч.\nПозволяет подключать кастомные/сторонние сервисы и ML-модели для капч.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": true,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 91,
+                "bases": [
+                  "BasePlugin"
+                ],
+                "children": [
+                  {
+                    "name": "solve_recaptcha",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, sitekey, page_url, timeout, poll_interval)",
+                    "summary": "Решает reCAPTCHA и возвращает g-recaptcha-response токен.",
+                    "docstring": "Решает reCAPTCHA и возвращает g-recaptcha-response токен.\n\nArgs:\n    sitekey: Ключ сайта reCAPTCHA.\n    page_url: URL страницы.\n    timeout: Таймаут ожидания решения в секундах.\n    poll_interval: Интервал опроса статуса решения.\n    **kwargs: Дополнительные параметры.\n\nReturns:\n    Строка ответа (g-recaptcha-response).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 98,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "async_solve_recaptcha",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, sitekey, page_url, timeout, poll_interval)",
+                    "summary": "Асинхронно решает reCAPTCHA. По умолчанию вызывает синхронную версию.",
+                    "docstring": "Асинхронно решает reCAPTCHA. По умолчанию вызывает синхронную версию.\n\nArgs:\n    sitekey: Ключ сайта reCAPTCHA.\n    page_url: URL страницы.\n    timeout: Таймаут ожидания решения в секундах.\n    poll_interval: Интервал опроса статуса решения.\n    **kwargs: Дополнительные параметры.\n\nReturns:\n    Строка ответа.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 120,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "TaskQueuePlugin",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Интерфейс для плагина очереди задач скрапинга.",
+                "docstring": "Интерфейс для плагина очереди задач скрапинга.\nПозволяет подключать сторонние очереди (например, RabbitMQ, NATS, Kafka).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": true,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 148,
+                "bases": [
+                  "BasePlugin"
+                ],
+                "children": [
+                  {
+                    "name": "create_queue",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, name)",
+                    "summary": "Создает и возвращает экземпляр очереди задач.",
+                    "docstring": "Создает и возвращает экземпляр очереди задач.\n\nArgs:\n    name: Имя очереди задач.\n    **kwargs: Дополнительные параметры конфигурации очереди.\n\nReturns:\n    Экземпляр очереди задач.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 155,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
               }
             ]
           }
@@ -35534,7 +35684,7 @@
     {
       "source": "chutils/plugins",
       "target": "/interfaces",
-      "weight": 5
+      "weight": 7
     },
     {
       "source": "chutils/plugins/interfaces",
@@ -36116,8 +36266,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "19812a6bb9b308a6681a769265a767c9eb83fe9f (dirty)",
-    "generated_at": "2026-08-05T18:33:45.096135+00:00",
-    "project_hash": "b23d332ac6b40a4ff00a76f8b269d3bf909ef75506391f9ed4bf1d755b89e875"
+    "git_commit": "1752625c4fdcd11dcfe3633691a48da5aeabbddb (dirty)",
+    "generated_at": "2026-08-05T19:19:20.133295+00:00",
+    "project_hash": "968a83e10e0e27ee96ab1fbdc7b39243d78168d71e884f75c7822599d8e772bd"
   }
 }

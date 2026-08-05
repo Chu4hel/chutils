@@ -6,12 +6,14 @@
 
 ## Точки расширения (Extension Points)
 
-Библиотека предоставляет 4 абстрактных интерфейса для плагинов:
+Библиотека предоставляет 6 абстрактных интерфейсов для плагинов:
 
 1. **`SecretProviderPlugin`** — Внешние хранилища секретов (AWS Secrets Manager, HashiCorp Vault, Yandex Lockbox).
 2. **`ConfigProviderPlugin`** — Чтение/запись конфигурационных файлов нестандартных форматов (TOML, XML) или внешних распределенных хранилищ (Consul, Etcd).
 3. **`LoggerHandlerPlugin`** — Подключение кастомных обработчиков логов Python (`logging.Handler`), например, для отправки логов в Sentry, Datadog или Telegram.
 4. **`MetricsPlugin`** — Экспорт метрик в сторонние системы сбора телеметрии (Datadog, StatsD, OpenTelemetry).
+5. **`CaptchaSolverPlugin`** — Внешние и кастомные сервисы решения капчи (2Captcha, Capsolver, локальные ML-модели).
+6. **`TaskQueuePlugin`** — Распределенные бэкенды очередей задач скрапинга (RabbitMQ, NATS, Kafka).
 
 ---
 

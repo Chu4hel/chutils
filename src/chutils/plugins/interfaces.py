@@ -86,3 +86,80 @@ class MetricsPlugin(BasePlugin, MetricsProvider):
     Позволяет подключить стороннюю систему сбора метрик (например, Datadog, StatsD).
     """
     pass
+
+
+class CaptchaSolverPlugin(BasePlugin):
+    """
+    Интерфейс для плагина решения капч.
+    Позволяет подключать кастомные/сторонние сервисы и ML-модели для капч.
+    """
+
+    @abstractmethod
+    def solve_recaptcha(
+        self,
+        sitekey: str,
+        page_url: str,
+        timeout: float = 120.0,
+        poll_interval: float = 5.0,
+        **kwargs: Any,
+    ) -> str:
+        """Решает reCAPTCHA и возвращает g-recaptcha-response токен.
+
+        Args:
+            sitekey: Ключ сайта reCAPTCHA.
+            page_url: URL страницы.
+            timeout: Таймаут ожидания решения в секундах.
+            poll_interval: Интервал опроса статуса решения.
+            **kwargs: Дополнительные параметры.
+
+        Returns:
+            Строка ответа (g-recaptcha-response).
+        """
+        pass
+
+    async def async_solve_recaptcha(
+        self,
+        sitekey: str,
+        page_url: str,
+        timeout: float = 120.0,
+        poll_interval: float = 5.0,
+        **kwargs: Any,
+    ) -> str:
+        """Асинхронно решает reCAPTCHA. По умолчанию вызывает синхронную версию.
+
+        Args:
+            sitekey: Ключ сайта reCAPTCHA.
+            page_url: URL страницы.
+            timeout: Таймаут ожидания решения в секундах.
+            poll_interval: Интервал опроса статуса решения.
+            **kwargs: Дополнительные параметры.
+
+        Returns:
+            Строка ответа.
+        """
+        import asyncio
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(
+            None,
+            lambda: self.solve_recaptcha(sitekey, page_url, timeout, poll_interval, **kwargs)
+        )
+
+
+class TaskQueuePlugin(BasePlugin):
+    """
+    Интерфейс для плагина очереди задач скрапинга.
+    Позволяет подключать сторонние очереди (например, RabbitMQ, NATS, Kafka).
+    """
+
+    @abstractmethod
+    def create_queue(self, name: str, **kwargs: Any) -> Any:
+        """Создает и возвращает экземпляр очереди задач.
+
+        Args:
+            name: Имя очереди задач.
+            **kwargs: Дополнительные параметры конфигурации очереди.
+
+        Returns:
+            Экземпляр очереди задач.
+        """
+        pass
