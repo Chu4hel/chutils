@@ -164,7 +164,8 @@ chutils dev ai-lint --strict --ignore "build/,legacy_code.py" --rules "ManifestR
 
 ### 8. UpgradeCheckRule (severity: `warn`)
 
-Обнаруживает изменение версии пакета в `pyproject.toml` по сравнению с Git `HEAD`.
+Обнаруживает изменение версии пакета в `pyproject.toml` по сравнению с Git `HEAD` или зафиксированной версией в
+`.chutils/last_known_version.json`.
 
 * **Что проверяет**:
     * Наличие увеличения версии при коммите или проверке.
@@ -174,6 +175,32 @@ chutils dev ai-lint --strict --ignore "build/,legacy_code.py" --rules "ManifestR
       Changes, New API и Deprecations.
 * **Зачем**: Позволяет AI-ассистентам мгновенно получать информацию об изменениях API при повышении версии библиотеки,
   предотвращая использование устаревших методов.
+
+#### Настройка и отключение UpgradeCheckRule
+
+Вы можете гибко управлять работой правила и генерацией чейнджлога:
+
+1. **Через переменные окружения (`ENV`)**:
+    * `CHUTILS_DISABLE_UPGRADE_CHECK=1` — полностью отключает правило `UpgradeCheckRule` и сетевые запросы к GitHub.
+    * `CHUTILS_GENERATE_CHANGELOG=0` — отключает запись файла `.chutils/migration_context.md`, но сохраняет
+      информационное предупреждение линтера.
+
+2. **Через файл конфигурации (`ai-lint.toml` или `pyproject.toml`)**:
+   ```toml
+   # Отключение правила целиком
+   [ai-lint]
+   exclude_rules = ["UpgradeCheckRule"]
+
+   # Или точечная настройка поведения
+   [ai-lint.upgrade_check]
+   enabled = false  # Полное отключение правила
+   generate_changelog = false  # Отключение только создания файла migration_context.md
+   ```
+
+3. **Через параметры CLI**:
+   ```bash
+   chutils dev ai-lint --exclude-rules UpgradeCheckRule
+   ```
 
 ### 9. LinterCoverageRule (severity: `warn`)
 

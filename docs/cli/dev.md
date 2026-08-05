@@ -172,7 +172,8 @@ chutils dev ai-lint
    картой зависимостей.
 10. **`UpgradeCheckRule`** — Обнаруживает изменение версии пакета в `pyproject.toml` по сравнению с Git `HEAD`. При
     повышении версии автоматически генерирует миграционный файл контекста для ИИ `.chutils/migration_context.md` на
-    основе чейнджлогов релизов с GitHub API.
+    основе чейнджлогов релизов с GitHub API. Можно отключать через ENV (`CHUTILS_DISABLE_UPGRADE_CHECK=1`,
+    `CHUTILS_GENERATE_CHANGELOG=0`) или конфиг `ai-lint.toml`.
 
 ---
 
