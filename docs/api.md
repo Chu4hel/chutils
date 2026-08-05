@@ -94,6 +94,10 @@ members:
 - register_cleanup
 - setup_graceful_shutdown
 - run_cleanup
+- async_run_cleanup
+- lifecycle
+- async_lifecycle
+- AsyncLifecycleContext
 
 ## Модуль `cli_booster` (Быстрое создание CLI)
 

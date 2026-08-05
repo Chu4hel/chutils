@@ -175,6 +175,9 @@ _LAZY_MAPPING = {
     # lifecycle
     'register_cleanup': ('.lifecycle', 'register_cleanup'),
     'setup_graceful_shutdown': ('.lifecycle', 'setup_graceful_shutdown'),
+    'lifecycle': ('.lifecycle', 'lifecycle'),
+    'async_lifecycle': ('.lifecycle', 'async_lifecycle'),
+    'AsyncLifecycleContext': ('.lifecycle', 'AsyncLifecycleContext'),
 
     # cli_booster
     'cli_command': ('.cli_booster', 'cli_command'),

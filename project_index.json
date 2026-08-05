@@ -21686,7 +21686,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 41,
+                "line_number": 42,
                 "bases": [],
                 "children": []
               },
@@ -21706,7 +21706,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 60,
+                "line_number": 61,
                 "bases": [],
                 "children": []
               },
@@ -21726,7 +21726,27 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 68,
+                "line_number": 69,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "restore_signals",
+                "type": "method",
+                "layer": "internal",
+                "signature": "(self)",
+                "summary": "Восстанавливает исходные обработчики сигналов ОС.",
+                "docstring": "Восстанавливает исходные обработчики сигналов ОС.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 97,
                 "bases": [],
                 "children": []
               },
@@ -21746,7 +21766,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 95,
+                "line_number": 107,
                 "bases": [],
                 "children": []
               },
@@ -21766,7 +21786,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 113,
+                "line_number": 125,
                 "bases": [],
                 "children": []
               },
@@ -21786,7 +21806,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 141,
+                "line_number": 153,
                 "bases": [],
                 "children": []
               },
@@ -21806,7 +21826,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 157,
+                "line_number": 169,
                 "bases": [],
                 "children": []
               },
@@ -21826,7 +21846,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 181,
+                "line_number": 193,
                 "bases": [],
                 "children": []
               }
@@ -21848,7 +21868,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 190,
+            "line_number": 202,
             "bases": [],
             "children": []
           },
@@ -21868,7 +21888,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 194,
+            "line_number": 206,
             "bases": [],
             "children": []
           },
@@ -21888,7 +21908,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 222,
+            "line_number": 234,
             "bases": [],
             "children": []
           },
@@ -21908,7 +21928,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 231,
+            "line_number": 243,
             "bases": [],
             "children": []
           },
@@ -21928,7 +21948,88 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 238,
+            "line_number": 250,
+            "bases": [],
+            "children": []
+          },
+          {
+            "name": "AsyncLifecycleContext",
+            "type": "class",
+            "layer": "public",
+            "signature": "",
+            "summary": "Контекстный менеджер для управления жизненным циклом ресурсов приложения.",
+            "docstring": "Контекстный менеджер для управления жизненным циклом ресурсов приложения.\n\nПоддерживает протоколы ``async with`` и ``with``.",
+            "breadcrumbs": {
+              "is_async": false,
+              "is_thread_safe": false,
+              "is_heavy": false,
+              "is_abstract": false,
+              "decorators": [],
+              "tags": [],
+              "custom_metadata": {}
+            },
+            "line_number": 257,
+            "bases": [],
+            "children": [
+              {
+                "name": "__init__",
+                "type": "method",
+                "layer": "private",
+                "signature": "(self, setup_signals, auto_cleanup_subsystems, manager)",
+                "summary": "Инициализирует контекстный менеджер жизненного цикла.",
+                "docstring": "Инициализирует контекстный менеджер жизненного цикла.\n\nArgs:\n    setup_signals: Автоматически перехватывать сигналы завершения ОС (SIGINT, SIGTERM).\n    auto_cleanup_subsystems: Автоматически очищать подсистемы chutils (db, tasks, logger).\n    manager: Опциональный менеджер жизненного цикла (по умолчанию глобальный).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 264,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "lifecycle",
+            "type": "function",
+            "layer": "public",
+            "signature": "(setup_signals, auto_cleanup_subsystems)",
+            "summary": "Возвращает контекстный менеджер для управления жизненным циклом ресурсов.",
+            "docstring": "Возвращает контекстный менеджер для управления жизненным циклом ресурсов.\n\nArgs:\n    setup_signals: Перехватывать сигналы ОС (SIGINT, SIGTERM).\n    auto_cleanup_subsystems: Очищать подсистемы chutils при выходе.\n\nReturns:\n    Экземпляр AsyncLifecycleContext, поддерживающий `async with` и `with`.\n\nExample:\n    ```python\n    async with chutils.lifecycle(setup_signals=True):\n        await app.run()\n    ```",
+            "breadcrumbs": {
+              "is_async": false,
+              "is_thread_safe": false,
+              "is_heavy": false,
+              "is_abstract": false,
+              "decorators": [],
+              "tags": [],
+              "custom_metadata": {}
+            },
+            "line_number": 320,
+            "bases": [],
+            "children": []
+          },
+          {
+            "name": "async_lifecycle",
+            "type": "constant",
+            "layer": "public",
+            "signature": null,
+            "summary": "",
+            "docstring": null,
+            "breadcrumbs": {
+              "is_async": false,
+              "is_thread_safe": false,
+              "is_heavy": false,
+              "is_abstract": false,
+              "decorators": [],
+              "tags": [],
+              "custom_metadata": {}
+            },
+            "line_number": 345,
             "bases": [],
             "children": []
           }
@@ -34148,7 +34249,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 332,
+        "line_number": 335,
         "bases": [],
         "children": []
       },
@@ -34168,7 +34269,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 363,
+        "line_number": 366,
         "bases": [],
         "children": []
       },
@@ -34188,7 +34289,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 373,
+        "line_number": 376,
         "bases": [],
         "children": []
       }
@@ -36015,8 +36116,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "4fa3516337894a6f08bc4b4ddf17524c9e1f66af (dirty)",
-    "generated_at": "2026-08-05T18:25:50.055332+00:00",
-    "project_hash": "cc7487fa1b459a75025a60af6e5486f0b2cac394a8b5bf35697599978e6f651e"
+    "git_commit": "19812a6bb9b308a6681a769265a767c9eb83fe9f (dirty)",
+    "generated_at": "2026-08-05T18:33:45.096135+00:00",
+    "project_hash": "b23d332ac6b40a4ff00a76f8b269d3bf909ef75506391f9ed4bf1d755b89e875"
   }
 }

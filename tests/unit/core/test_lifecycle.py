@@ -157,3 +157,38 @@ async def test_async_run_cleanup():
     await async_run_cleanup()
     assert cleaned is True
 
+
+@pytest.mark.asyncio
+async def test_async_lifecycle_context():
+    """Тест работы асинхронного контекстного менеджера async with lifecycle()."""
+    cleaned = False
+
+    from chutils.lifecycle import lifecycle, register_cleanup
+
+    @register_cleanup
+    async def cleanup():
+        nonlocal cleaned
+        cleaned = True
+
+    async with lifecycle(setup_signals=True):
+        assert cleaned is False
+
+    assert cleaned is True
+
+
+def test_sync_lifecycle_context():
+    """Тест работы синхронного контекстного менеджера with lifecycle()."""
+    cleaned = False
+
+    from chutils.lifecycle import lifecycle, register_cleanup
+
+    @register_cleanup
+    def cleanup():
+        nonlocal cleaned
+        cleaned = True
+
+    with lifecycle(setup_signals=False):
+        assert cleaned is False
+
+    assert cleaned is True
+
