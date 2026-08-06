@@ -32940,7 +32940,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 43,
+                "line_number": 47,
                 "bases": [],
                 "children": []
               },
@@ -32960,7 +32960,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 94,
+                "line_number": 98,
                 "bases": [],
                 "children": []
               }
@@ -33019,6 +33019,49 @@
                 ]
               },
               {
+                "name": "SecretUserFilter",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Фильтр белых и черных списков пользователей для aiogram 3.x.",
+                "docstring": "Фильтр белых и черных списков пользователей для aiogram 3.x.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 59,
+                "bases": [
+                  "BaseFilter"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, manager, allowed_ids, allowed_usernames, blocked_ids, blocked_usernames)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 62,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "TelegramThrottlingMiddleware",
                 "type": "class",
                 "layer": "public",
@@ -33034,7 +33077,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 68,
+                "line_number": 104,
                 "bases": [
                   "BaseMiddleware"
                 ],
@@ -33055,7 +33098,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 71,
+                    "line_number": 107,
                     "bases": [],
                     "children": []
                   }
@@ -33190,6 +33233,238 @@
                   "custom_metadata": {}
                 },
                 "line_number": 71,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "whitelist",
+            "path": "chutils/telegram/whitelist",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "F",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 15,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "AccessListManager",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Менеджер белых и черных списков пользователей Telegram.",
+                "docstring": "Менеджер белых и черных списков пользователей Telegram.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 18,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, storage_path, allowed_ids, allowed_usernames, blocked_ids, blocked_usernames)",
+                    "summary": "Инициализирует AccessListManager.",
+                    "docstring": "Инициализирует AccessListManager.\n\nArgs:\n    storage_path: Опциональный путь к JSON-файлу для автосохранения списков.\n    allowed_ids: Начальный белый список Telegram ID.\n    allowed_usernames: Начальный белый список юзернеймов.\n    blocked_ids: Начальный черный список Telegram ID.\n    blocked_usernames: Начальный черный список юзернеймов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 21,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_load_from_config",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Считывает настройки списков из конфигурации chutils, если списки пусты.",
+                    "docstring": "Считывает настройки списков из конфигурации chutils, если списки пусты.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 50,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_user_allowed",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, user_id, username)",
+                    "summary": "Проверяет разрешения для пользователя.",
+                    "docstring": "Проверяет разрешения для пользователя.\n\nArgs:\n    user_id: Telegram ID пользователя.\n    username: Username пользователя.\n\nReturns:\n    True, если пользователь имеет доступ, иначе False.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 70,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "allow_user",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, user_id_or_username)",
+                    "summary": "Добавляет пользователя в белый список и убирает из черного.",
+                    "docstring": "Добавляет пользователя в белый список и убирает из черного.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 100,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "block_user",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, user_id_or_username)",
+                    "summary": "Добавляет пользователя в черный список и убирает из белого.",
+                    "docstring": "Добавляет пользователя в черный список и убирает из белого.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 114,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "remove_user",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, user_id_or_username)",
+                    "summary": "Удаляет пользователя из белого и черного списков.",
+                    "docstring": "Удаляет пользователя из белого и черного списков.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 128,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "save",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Атомарно сохраняет списки в JSON-файл.",
+                    "docstring": "Атомарно сохраняет списки в JSON-файл.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 142,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "load",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Загружает списки из JSON-файла.",
+                    "docstring": "Загружает списки из JSON-файла.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 155,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "allowed_only",
+                "type": "function",
+                "layer": "public",
+                "signature": "(manager, allowed_ids, allowed_usernames, blocked_ids, blocked_usernames, refusal_text, silent, raise_on_denied)",
+                "summary": "Декоратор ограничения доступа по белым и черным спискам.",
+                "docstring": "Декоратор ограничения доступа по белым и черным спискам.\n\nArgs:\n    manager: Готовый экземпляр AccessListManager.\n    allowed_ids: Белый список Telegram ID.\n    allowed_usernames: Белый список юзернеймов.\n    blocked_ids: Черный список Telegram ID.\n    blocked_usernames: Черный список юзернеймов.\n    refusal_text: Сообщение об отказе.\n    silent: Если True, отбрасывать запросы без вывода ответа.\n    raise_on_denied: Если True, выбрасывать TelegramAccessDeniedError.\n\nReturns:\n    Обернутая функция.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 170,
                 "bases": [],
                 "children": []
               }
@@ -35039,7 +35314,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 344,
+        "line_number": 347,
         "bases": [],
         "children": []
       },
@@ -35059,7 +35334,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 375,
+        "line_number": 378,
         "bases": [],
         "children": []
       },
@@ -35079,7 +35354,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 385,
+        "line_number": 388,
         "bases": [],
         "children": []
       }
@@ -36869,11 +37144,16 @@
     {
       "source": "chutils/telegram",
       "target": "/aiogram",
-      "weight": 2
+      "weight": 3
     },
     {
       "source": "chutils/telegram",
       "target": "/rate_limit",
+      "weight": 2
+    },
+    {
+      "source": "chutils/telegram",
+      "target": "/whitelist",
       "weight": 2
     },
     {
@@ -36903,6 +37183,26 @@
     },
     {
       "source": "chutils/telegram/rate_limit",
+      "target": "chutils/telegram/access",
+      "weight": 1
+    },
+    {
+      "source": "chutils/telegram/whitelist",
+      "target": "chutils/config",
+      "weight": 1
+    },
+    {
+      "source": "chutils/telegram/whitelist",
+      "target": "chutils/exceptions/telegram",
+      "weight": 1
+    },
+    {
+      "source": "chutils/telegram/whitelist",
+      "target": "chutils/fs",
+      "weight": 1
+    },
+    {
+      "source": "chutils/telegram/whitelist",
       "target": "chutils/telegram/access",
       "weight": 1
     },
@@ -36986,8 +37286,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "c8e11779a3cd75f5343a6611b9032fdfe20cd898 (dirty)",
-    "generated_at": "2026-08-06T18:11:29.682510+00:00",
-    "project_hash": "b69cfd5fd6dbaeb45c31863ee0bbb6b142a18888da12df8135c9c31655226619"
+    "git_commit": "2e6c36772c7bc98e2c55088d45b71de431b58385 (dirty)",
+    "generated_at": "2026-08-06T18:15:09.275181+00:00",
+    "project_hash": "d7fedfa260034dc654ee28bca03c01d2f7f329ea31b52ba29b3711700bbfd296"
   }
 }

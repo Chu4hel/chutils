@@ -111,3 +111,39 @@ dp = Dispatcher()
 # Подключение мидлваря для всех текстовых сообщений
 dp.message.middleware(TelegramThrottlingMiddleware(rate=1, per=2.0))
 ```
+
+---
+
+## 6. Белые и черные списки пользователей (`AccessListManager` и `@allowed_only`)
+
+Менеджер `AccessListManager` управляет списками разрешенных и заблокированных пользователей с поддержкой автосохранения
+в JSON-файл (`atomic_write`):
+
+```python
+from chutils.telegram import AccessListManager, allowed_only
+
+manager = AccessListManager(storage_path="allowed_users.json")
+
+# Динамическое управление пользователями
+manager.allow_user("trusted_user")
+manager.block_user(999888)
+
+
+# Использование в декораторе
+@allowed_only(manager=manager, refusal_text="⛔ У вас нет доступа")
+async def restricted_feature(event):
+    await event.answer("Доступ ограниченной группе предоставлен!")
+```
+
+---
+
+## 7. aiogram 3.x SecretUserFilter (`SecretUserFilter`)
+
+```python
+from aiogram import Router
+from chutils.telegram import SecretUserFilter
+
+router = Router()
+# Фильтрация только разрешенных юзеров по ID
+router.message.filter(SecretUserFilter(allowed_ids=[12345678, 87654321]))
+```

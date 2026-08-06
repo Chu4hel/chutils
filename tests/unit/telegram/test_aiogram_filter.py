@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock
 
-from chutils.telegram.aiogram import AdminFilter, _HAS_AIOGRAM
+from chutils.telegram.aiogram import AdminFilter, SecretUserFilter, _HAS_AIOGRAM
 
 
 @pytest.mark.asyncio
@@ -29,3 +29,18 @@ async def test_admin_filter_usernames():
     event.from_user.username = "Admin_User"
 
     assert await filter_obj(event) is True
+
+
+@pytest.mark.asyncio
+async def test_secret_user_filter():
+    """Проверяет работу SecretUserFilter с белыми списками."""
+    filter_obj = SecretUserFilter(allowed_ids=[777])
+
+    event_ok = AsyncMock()
+    event_ok.from_user.id = 777
+
+    event_bad = AsyncMock()
+    event_bad.from_user.id = 888
+
+    assert await filter_obj(event_ok) is True
+    assert await filter_obj(event_bad) is False

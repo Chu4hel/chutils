@@ -56,6 +56,42 @@ class AdminFilter(BaseFilter):  # type: ignore[misc]
         )
 
 
+class SecretUserFilter(BaseFilter):  # type: ignore[misc]
+    """Фильтр белых и черных списков пользователей для aiogram 3.x."""
+
+    def __init__(
+        self,
+        manager: Any | None = None,
+        allowed_ids: list[int] | None = None,
+        allowed_usernames: list[str] | None = None,
+        blocked_ids: list[int] | None = None,
+        blocked_usernames: list[str] | None = None,
+    ) -> None:
+        if _HAS_AIOGRAM:
+            super().__init__()
+        from chutils.telegram.whitelist import AccessListManager
+
+        self.manager = manager or AccessListManager(
+            allowed_ids=allowed_ids,
+            allowed_usernames=allowed_usernames,
+            blocked_ids=blocked_ids,
+            blocked_usernames=blocked_usernames,
+        )
+
+    async def __call__(self, event: Any, **kwargs: Any) -> bool:
+        """Проверяет разрешения пользователя на основе списков.
+
+        Args:
+            event: Входящее событие Telegram (Message, CallbackQuery).
+            **kwargs: Контекстные данные.
+
+        Returns:
+            True, если доступ разрешен.
+        """
+        uid, uname = _extract_user_info((event,), kwargs)
+        return self.manager.is_user_allowed(uid, uname)
+
+
 try:
     from aiogram import BaseMiddleware
 

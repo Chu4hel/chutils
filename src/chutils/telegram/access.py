@@ -23,19 +23,23 @@ def _extract_user_info(args: tuple[Any, ...], kwargs: dict[str, Any]) -> tuple[i
         user = kwargs["from_user"]
         return getattr(user, "id", None), getattr(user, "username", None)
 
+    def _clean_user(user: Any) -> tuple[int | None, str | None]:
+        uid = getattr(user, "id", None)
+        uname = getattr(user, "username", None)
+        valid_uid = uid if isinstance(uid, int) else None
+        valid_uname = uname if isinstance(uname, str) else None
+        return valid_uid, valid_uname
+
     # Ищем объективные сущности в позиционных аргументах (aiogram, telebot, python-telegram-bot)
     for arg in args:
         if hasattr(arg, "from_user") and getattr(arg, "from_user", None) is not None:
-            user = arg.from_user
-            return getattr(user, "id", None), getattr(user, "username", None)
+            return _clean_user(arg.from_user)
         if hasattr(arg, "user") and getattr(arg, "user", None) is not None:
-            user = arg.user
-            return getattr(user, "id", None), getattr(user, "username", None)
+            return _clean_user(arg.user)
         if hasattr(arg, "effective_user") and getattr(arg, "effective_user", None) is not None:
-            user = arg.effective_user
-            return getattr(user, "id", None), getattr(user, "username", None)
+            return _clean_user(arg.effective_user)
         if hasattr(arg, "id") and isinstance(arg.id, int) and (hasattr(arg, "is_bot") or hasattr(arg, "first_name")):
-            return arg.id, getattr(arg, "username", None)
+            return _clean_user(arg)
 
     return None, None
 
