@@ -295,6 +295,9 @@ _LAZY_MAPPING = {
     'escape_html': ('.telegram', 'escape_html'),
     'smart_truncate': ('.telegram', 'smart_truncate'),
     'split_message': ('.telegram', 'split_message'),
+    'TelegramLogHandler': ('.telegram', 'TelegramLogHandler'),
+    'HealthCheckAlertBridge': ('.telegram', 'HealthCheckAlertBridge'),
+    'send_alert': ('.telegram', 'send_alert'),
 
     # scraping
     'scraping': ('.scraping', None),

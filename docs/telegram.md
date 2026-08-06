@@ -209,3 +209,39 @@ chunks_lines = split_message(huge_log_report, max_length=4096, mode="line")
 for chunk in chunks_paragraphs:
     await message.answer(chunk)
 ```
+
+---
+
+## 12. Лог-хэндлер алертов в Telegram (`TelegramLogHandler`)
+
+Автоматическая отправка ошибок уровня `ERROR` / `CRITICAL` в Telegram с троттлингом:
+
+```python
+import logging
+from chutils.telegram import TelegramLogHandler
+
+logger = logging.getLogger("my_app")
+handler = TelegramLogHandler(bot_token="TOKEN", chat_id=12345678, rate_limit_per_min=10)
+logger.addHandler(handler)
+
+logger.error("Критический сбой базы данных!")
+```
+
+---
+
+## 13. Мост алертов диагностики (`HealthCheckAlertBridge` & `send_alert`)
+
+```python
+from chutils.telegram import send_alert, HealthCheckAlertBridge
+
+# Прямая отправка алерта
+send_alert(
+    title="High CPU Usage",
+    message="Загрузка процессора превысила 95%",
+    level="WARNING"
+)
+
+# Мост алертов диагностики
+bridge = HealthCheckAlertBridge()
+bridge.on_health_check("PostgreSQL", "UNHEALTHY", {"error": "Connection timeout"})
+```

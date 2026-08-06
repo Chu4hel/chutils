@@ -33433,6 +33433,201 @@
             ]
           },
           {
+            "name": "notifier",
+            "path": "chutils/telegram/notifier",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "TelegramLogHandler",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Handler стандартного модуля logging для отправки критических логов в Telegram.",
+                "docstring": "Handler стандартного модуля logging для отправки критических логов в Telegram.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 12,
+                "bases": [
+                  "logging.Handler"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, bot_token, chat_id, level, rate_limit_per_min)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 15,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_resolve_credentials",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 28,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_should_throttle",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 43,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "emit",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, record)",
+                    "summary": "Отправляет отформатированную запись лога в Telegram.",
+                    "docstring": "Отправляет отформатированную запись лога в Telegram.\n\nArgs:\n    record: Запись лога logging.LogRecord.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 52,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "send_alert",
+                "type": "function",
+                "layer": "public",
+                "signature": "(title, message, bot_token, chat_id, level)",
+                "summary": "Отправляет кастомное алерты-уведомление администраторам в Telegram.",
+                "docstring": "Отправляет кастомное алерты-уведомление администраторам в Telegram.\n\nArgs:\n    title: Заголовок алерта.\n    message: Текст сообщения.\n    bot_token: Опциональный токен бота.\n    chat_id: Опциональный ID чата администратора.\n    level: Уровень алерта (INFO, WARNING, ERROR, CRITICAL).\n\nReturns:\n    True при успешной отправке, иначе False.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 95,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "HealthCheckAlertBridge",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Мост отправки Telegram-уведомлений при изменении статусов здоровья chutils.diagnostics.",
+                "docstring": "Мост отправки Telegram-уведомлений при изменении статусов здоровья chutils.diagnostics.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 161,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, bot_token, chat_id, notify_on_degraded)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 164,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "on_health_check",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, service_name, status, details)",
+                    "summary": "Обрабатывает событие проверки здоровья и отправляет алерт при проблемах.",
+                    "docstring": "Обрабатывает событие проверки здоровья и отправляет алерт при проблемах.\n\nArgs:\n    service_name: Имя сервиса/компонента.\n    status: Статус (HEALTHY, DEGRADED, UNHEALTHY).\n    details: Подробности ошибки или метрики.\n\nReturns:\n    True, если алерт был отправлен, иначе False.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 174,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "rate_limit",
             "path": "chutils/telegram/rate_limit",
             "type": "module",
@@ -35640,7 +35835,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 353,
+        "line_number": 356,
         "bases": [],
         "children": []
       },
@@ -35660,7 +35855,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 384,
+        "line_number": 387,
         "bases": [],
         "children": []
       },
@@ -35680,7 +35875,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 394,
+        "line_number": 397,
         "bases": [],
         "children": []
       }
@@ -37484,6 +37679,11 @@
     },
     {
       "source": "chutils/telegram",
+      "target": "/notifier",
+      "weight": 3
+    },
+    {
+      "source": "chutils/telegram",
       "target": "/rate_limit",
       "weight": 2
     },
@@ -37521,6 +37721,11 @@
       "source": "chutils/telegram/logging",
       "target": "chutils/telegram/rate_limit",
       "weight": 1
+    },
+    {
+      "source": "chutils/telegram/notifier",
+      "target": "chutils/telegram/formatting",
+      "weight": 2
     },
     {
       "source": "chutils/telegram/rate_limit",
@@ -37632,8 +37837,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "05791c8f67edfc0cf7a0f24cebdabcdde09b1a38 (dirty)",
-    "generated_at": "2026-08-06T18:28:39.240040+00:00",
-    "project_hash": "bb63443cf6771545816dc6b3ab379cc4a99136ed0f25e04e2a80a879482fd4c2"
+    "git_commit": "1f1c2d6a7deb6e8005fa06775d349bbb8e4789bb (dirty)",
+    "generated_at": "2026-08-06T18:36:23.578246+00:00",
+    "project_hash": "491815bcbf4fb6bc440167af1f573d5966498f7c50083aaeb361fe3b25dd0eec"
   }
 }

@@ -197,6 +197,9 @@ members:
 - escape_html
 - smart_truncate
 - split_message
+- TelegramLogHandler
+- HealthCheckAlertBridge
+- send_alert
 
 ## Декораторы
 
