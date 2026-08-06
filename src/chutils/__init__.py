@@ -291,6 +291,10 @@ _LAZY_MAPPING = {
     'AccessListManager': ('.telegram', 'AccessListManager'),
     'allowed_only': ('.telegram', 'allowed_only'),
     'trace_telegram_update': ('.telegram', 'trace_telegram_update'),
+    'escape_markdown': ('.telegram', 'escape_markdown'),
+    'escape_html': ('.telegram', 'escape_html'),
+    'smart_truncate': ('.telegram', 'smart_truncate'),
+    'split_message': ('.telegram', 'split_message'),
 
     # scraping
     'scraping': ('.scraping', None),

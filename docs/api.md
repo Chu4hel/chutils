@@ -193,6 +193,10 @@ members:
 - AccessListManager
 - allowed_only
 - trace_telegram_update
+- escape_markdown
+- escape_html
+- smart_truncate
+- split_message
 
 ## Декораторы
 

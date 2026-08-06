@@ -33150,6 +33150,157 @@
             ]
           },
           {
+            "name": "formatting",
+            "path": "chutils/telegram/formatting",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_MARKDOWN_V2_ESCAPES",
+                "type": "constant",
+                "layer": "private",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 6,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_MARKDOWN_V1_ESCAPES",
+                "type": "constant",
+                "layer": "private",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 7,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_HTML_ESCAPES",
+                "type": "constant",
+                "layer": "private",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 9,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "escape_markdown",
+                "type": "function",
+                "layer": "public",
+                "signature": "(text, version)",
+                "summary": "Экранирует специальные символы в тексте для парс-режима Markdown в Telegram.",
+                "docstring": "Экранирует специальные символы в тексте для парс-режима Markdown в Telegram.\n\nArgs:\n    text: Исходный текст.\n    version: Версия синтаксиса Markdown (1 или 2, по умолчанию: 2).\n\nReturns:\n    Экранированный текст.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 17,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "escape_html",
+                "type": "function",
+                "layer": "public",
+                "signature": "(text)",
+                "summary": "Экранирует специальные символы в тексте для парс-режима HTML в Telegram.",
+                "docstring": "Экранирует специальные символы в тексте для парс-режима HTML в Telegram.\n\nArgs:\n    text: Исходный текст.\n\nReturns:\n    Экранированный HTML текст.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 38,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "smart_truncate",
+                "type": "function",
+                "layer": "public",
+                "signature": "(text, max_length, suffix)",
+                "summary": "Безопасно обрезает текст до max_length с закрытием кодовых блоков (```).",
+                "docstring": "Безопасно обрезает текст до max_length с закрытием кодовых блоков (```).\n\nArgs:\n    text: Исходный текст сообщения.\n    max_length: Максимальная допустимая длина (по умолчанию 4096).\n    suffix: Суффикс для обрезанного сообщения.\n\nReturns:\n    Обрезанный валидный текст.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 52,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "split_message",
+                "type": "function",
+                "layer": "public",
+                "signature": "(text, max_length)",
+                "summary": "Разбивает длинный текст на список валидных сообщений не превышающих max_length.",
+                "docstring": "Разбивает длинный текст на список валидных сообщений не превышающих max_length.\n\nArgs:\n    text: Исходный длинный текст.\n    max_length: Максимальный размер одного сообщения (по умолчанию: 4096).\n\nReturns:\n    Список чанков текста.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 77,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
             "name": "logging",
             "path": "chutils/telegram/logging",
             "type": "module",
@@ -35469,7 +35620,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 349,
+        "line_number": 353,
         "bases": [],
         "children": []
       },
@@ -35489,7 +35640,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 380,
+        "line_number": 384,
         "bases": [],
         "children": []
       },
@@ -35509,7 +35660,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 390,
+        "line_number": 394,
         "bases": [],
         "children": []
       }
@@ -37303,6 +37454,11 @@
     },
     {
       "source": "chutils/telegram",
+      "target": "/formatting",
+      "weight": 4
+    },
+    {
+      "source": "chutils/telegram",
       "target": "/logging",
       "weight": 1
     },
@@ -37456,8 +37612,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "0bc1ca1dde570a38b3035da901bea784ee70a81c (dirty)",
-    "generated_at": "2026-08-06T18:18:51.741850+00:00",
-    "project_hash": "ba933bb6ba4e9b336c1a6e7b5553365ba08bb86d7a7fa2b2764faef1a3d4b21d"
+    "git_commit": "8b3a057961b3125797a3ceed786913febed6e543 (dirty)",
+    "generated_at": "2026-08-06T18:23:40.087849+00:00",
+    "project_hash": "96864f6cc3ce97606df97bb5c9edb8de5f6b6846361d9f695fee0d18ee29b185"
   }
 }
