@@ -42,10 +42,23 @@ def test_smart_truncate():
     assert truncated.endswith("\n```...")
 
 
-def test_split_message():
-    """Проверяет разбиение длинного текста на список чанков."""
-    long_text = "Line 1\nLine 2\nLine 3\nLine 4\nLine 5"
-    chunks = split_message(long_text, max_length=15)
-    assert len(chunks) > 1
-    for chunk in chunks:
-        assert len(chunk) <= 15
+def test_split_message_modes():
+    """Проверяет стратегии разбиения сообщений: line, paragraph, word, char."""
+    text = "Paragraph 1 line 1\nParagraph 1 line 2\n\nParagraph 2 line 1\nParagraph 2 line 2"
+
+    # 1. Paragraph mode
+    chunks_p = split_message(text, max_length=45, mode="paragraph")
+    assert len(chunks_p) == 2
+    assert "Paragraph 1" in chunks_p[0]
+    assert "Paragraph 2" in chunks_p[1]
+
+    # 2. Word mode
+    short_words = "One two three four five six"
+    chunks_w = split_message(short_words, max_length=15, mode="word")
+    assert len(chunks_w) > 1
+    for c in chunks_w:
+        assert len(c) <= 15
+
+    # 3. Char mode
+    chunks_c = split_message("123456789012345", max_length=5, mode="char")
+    assert chunks_c == ["12345", "67890", "12345"]

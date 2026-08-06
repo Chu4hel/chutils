@@ -202,7 +202,10 @@ from chutils.telegram import smart_truncate, split_message
 # Безопасная обрезка с запечатыванием незавершенного кодового блока ```
 short_text = smart_truncate(long_code_str, max_length=1000)
 
-# Разбиение гигантских отчетов на массив валидных чанков <= 4096 символов
-for chunk in split_message(huge_log_report, max_length=4096):
+# Разбиение текста по различным стратегиям: 'line', 'paragraph', 'word', 'char'
+chunks_paragraphs = split_message(article_text, max_length=4096, mode="paragraph")
+chunks_lines = split_message(huge_log_report, max_length=4096, mode="line")
+
+for chunk in chunks_paragraphs:
     await message.answer(chunk)
 ```

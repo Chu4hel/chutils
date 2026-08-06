@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from typing import Literal
 
 # Спецсимволы MarkdownV2 по спецификации Telegram API
 _MARKDOWN_V2_ESCAPES = r"\_*[]()~`>#+-=|{}.!"
@@ -74,12 +75,21 @@ def smart_truncate(text: str, max_length: int = 4096, suffix: str = "...") -> st
     return truncated + suffix
 
 
-def split_message(text: str, max_length: int = 4096) -> list[str]:
+def split_message(
+    text: str,
+    max_length: int = 4096,
+    mode: Literal["paragraph", "line", "word", "char"] = "line",
+) -> list[str]:
     """Разбивает длинный текст на список валидных сообщений не превышающих max_length.
 
     Args:
         text: Исходный длинный текст.
         max_length: Максимальный размер одного сообщения (по умолчанию: 4096).
+        mode: Стратегия разбиения:
+            - 'paragraph': сплит по абзацам (\\n\\n)
+            - 'line': сплит по строкам (\\n, по умолчанию)
+            - 'word': сплит по словам (пробелам)
+            - 'char': жесткий сплит посимвольно
 
     Returns:
         Список чанков текста.
@@ -89,6 +99,48 @@ def split_message(text: str, max_length: int = 4096) -> list[str]:
     if len(text) <= max_length:
         return [text]
 
+    if mode == "char":
+        return [text[i : i + max_length] for i in range(0, len(text), max_length)]
+
+    if mode == "paragraph":
+        delimiter = "\n\n"
+        units = text.split("\n\n")
+    elif mode == "word":
+        delimiter = " "
+        units = text.split(" ")
+    else:  # line
+        return _split_by_lines(text, max_length)
+
+    chunks: list[str] = []
+    current_chunk = ""
+
+    for idx, unit in enumerate(units):
+        sep = delimiter if idx > 0 and current_chunk else ""
+        item = sep + unit
+
+        if len(current_chunk) + len(item) <= max_length:
+            current_chunk += item
+        else:
+            if current_chunk:
+                chunks.append(current_chunk)
+                current_chunk = ""
+            
+            # Если элемент сам по себе превышает max_length, используем fallback
+            if len(unit) > max_length:
+                sub_chunks = _split_by_lines(unit, max_length) if mode == "paragraph" else split_message(unit, max_length, mode="char")
+                chunks.extend(sub_chunks[:-1])
+                current_chunk = sub_chunks[-1]
+            else:
+                current_chunk = unit
+
+    if current_chunk:
+        chunks.append(current_chunk)
+
+    return chunks
+
+
+def _split_by_lines(text: str, max_length: int) -> list[str]:
+    """Вспомогательный сплиттер по строкам."""
     chunks: list[str] = []
     lines = text.splitlines(keepends=True)
     current_chunk = ""
@@ -100,7 +152,6 @@ def split_message(text: str, max_length: int = 4096) -> list[str]:
             if current_chunk:
                 chunks.append(current_chunk)
                 current_chunk = ""
-            # Если сама строка больше max_length, режем посимвольно
             while len(line) > max_length:
                 chunks.append(line[:max_length])
                 line = line[max_length:]
