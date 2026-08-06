@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from .access import is_admin, admin_only
-from .aiogram import AdminFilter, SecretUserFilter, TelegramThrottlingMiddleware
+from .aiogram import AdminFilter, SecretUserFilter, TelegramThrottlingMiddleware, TelegramLoggingMiddleware
+from .logging import trace_telegram_update
 from .rate_limit import TelegramRateLimiter, tg_rate_limit
 from .whitelist import AccessListManager, allowed_only
 
@@ -13,6 +14,8 @@ __all__ = [
     "TelegramRateLimiter",
     "tg_rate_limit",
     "TelegramThrottlingMiddleware",
+    "TelegramLoggingMiddleware",
     "AccessListManager",
     "allowed_only",
+    "trace_telegram_update",
 ]

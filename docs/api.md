@@ -189,8 +189,10 @@ members:
 - TelegramRateLimiter
 - tg_rate_limit
 - TelegramThrottlingMiddleware
+- TelegramLoggingMiddleware
 - AccessListManager
 - allowed_only
+- trace_telegram_update
 
 ## Декораторы
 

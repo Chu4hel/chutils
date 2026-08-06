@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock
 
-from chutils.telegram.aiogram import TelegramThrottlingMiddleware
+from chutils.telegram.aiogram import TelegramThrottlingMiddleware, TelegramLoggingMiddleware
 
 
 @pytest.mark.asyncio
@@ -25,3 +25,16 @@ async def test_telegram_throttling_middleware():
     assert res2 is None
     assert mock_handler.call_count == 1
     event.answer.assert_called_once_with("Wait!")
+
+
+@pytest.mark.asyncio
+async def test_telegram_logging_middleware():
+    """Проверяет логирование и трейсинг через TelegramLoggingMiddleware."""
+    middleware = TelegramLoggingMiddleware()
+    mock_handler = AsyncMock(return_value="LOGGED_OK")
+
+    event = AsyncMock()
+    event.from_user.id = 777
+
+    res = await middleware(mock_handler, event, {})
+    assert res == "LOGGED_OK"

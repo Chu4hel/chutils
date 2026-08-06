@@ -287,8 +287,10 @@ _LAZY_MAPPING = {
     'TelegramRateLimiter': ('.telegram', 'TelegramRateLimiter'),
     'tg_rate_limit': ('.telegram', 'tg_rate_limit'),
     'TelegramThrottlingMiddleware': ('.telegram', 'TelegramThrottlingMiddleware'),
+    'TelegramLoggingMiddleware': ('.telegram', 'TelegramLoggingMiddleware'),
     'AccessListManager': ('.telegram', 'AccessListManager'),
     'allowed_only': ('.telegram', 'allowed_only'),
+    'trace_telegram_update': ('.telegram', 'trace_telegram_update'),
 
     # scraping
     'scraping': ('.scraping', None),

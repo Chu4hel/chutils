@@ -150,3 +150,24 @@ class TelegramThrottlingMiddleware(BaseMiddleware):  # type: ignore[misc]
             return None
 
         return await handler(event, data)
+
+
+class TelegramLoggingMiddleware(BaseMiddleware):  # type: ignore[misc]
+    """Middleware контекстного логирования и измерений времени выполнения для aiogram 3.x."""
+
+    def __init__(self, logger_instance: Any = None) -> None:
+        if _HAS_AIOGRAM_MIDDLEWARE:
+            super().__init__()
+        self.logger_instance = logger_instance
+
+    async def __call__(
+        self,
+        handler: Callable[[Any, dict[str, Any]], Any],
+        event: Any,
+        data: dict[str, Any],
+    ) -> Any:
+        """Обрабатывает события и логирует контекст в цепочке Middleware."""
+        from chutils.telegram.logging import trace_telegram_update
+
+        async with trace_telegram_update(event=event, logger_instance=self.logger_instance):
+            return await handler(event, data)

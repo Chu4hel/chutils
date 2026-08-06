@@ -147,3 +147,34 @@ router = Router()
 # Фильтрация только разрешенных юзеров по ID
 router.message.filter(SecretUserFilter(allowed_ids=[12345678, 87654321]))
 ```
+
+---
+
+## 8. Трейсинг и логирование апдейтов (`trace_telegram_update`)
+
+Утилита `trace_telegram_update` замеряет точное время выполнения хэндлера (`execution_time_ms`) и автоматически логирует
+входящие события:
+
+```python
+from chutils.telegram import trace_telegram_update
+
+
+@trace_telegram_update()
+async def process_user_request(event):
+    # Код обработки запроса
+    return "SUCCESS"
+```
+
+---
+
+## 9. aiogram 3.x TelegramLoggingMiddleware (`TelegramLoggingMiddleware`)
+
+Прозрачное сквозное логирование всех входящих событий через Middleware:
+
+```python
+from aiogram import Dispatcher
+from chutils.telegram import TelegramLoggingMiddleware
+
+dp = Dispatcher()
+dp.update.outer_middleware(TelegramLoggingMiddleware())
+```
