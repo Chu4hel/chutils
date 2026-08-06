@@ -38,8 +38,10 @@ class GCPSecretManagerProvider(SecretProvider):
         if self._project_id is not None:
             return self._project_id
 
-        project = os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get(
-            "GCP_PROJECT")  # chutils: ignore[ChutilsIntegrationRule]
+        project = (
+            os.environ.get("GOOGLE_CLOUD_PROJECT")  # chutils: ignore[ChutilsIntegrationRule]
+            or os.environ.get("GCP_PROJECT")  # chutils: ignore[ChutilsIntegrationRule]
+        )
         if not project:
             raise ValueError(
                 "Идентификатор проекта Google Cloud (project_id) не задан. "

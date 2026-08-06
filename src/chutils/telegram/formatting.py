@@ -3,9 +3,11 @@ from __future__ import annotations
 import re
 from typing import Literal
 
-# Спецсимволы MarkdownV2 по спецификации Telegram API
 _MARKDOWN_V2_ESCAPES = r"\_*[]()~`>#+-=|{}.!"
+"""Спецсимволы MarkdownV2 по спецификации Telegram API."""
+
 _MARKDOWN_V1_ESCAPES = r"_*`["
+"""Спецсимволы MarkdownV1 по спецификации Telegram API."""
 
 _HTML_ESCAPES = {
     "&": "&amp;",

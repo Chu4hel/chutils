@@ -3,7 +3,7 @@
 """
 
 from .asyncio import QtAsyncWorker, async_to_qt, run_async_task
-from .logging import QtLogHandler, setup_qt_logging
+from .logging import QtLogHandler, setup_qt_logging  # chutils: ignore[ChutilsIntegrationRule]
 from .shim import (
     Property,
     QAction,

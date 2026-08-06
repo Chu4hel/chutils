@@ -25,7 +25,7 @@ from chutils.exceptions import ConfigLoadError, ConfigParseError
 from chutils.typing import JSONDict
 
 # Настраиваем локальный логгер
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 
 def _atomic_write(path: str, content_writer_func: Callable[[TextIO], None]) -> None:

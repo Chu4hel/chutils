@@ -34,9 +34,13 @@ HEAVY_LIBRARIES = {
     "boto3",
     "google.cloud.secretmanager",
     "httpx",
-    "playwright",
-    "selenium",
+    "requests",
+    "urllib3",
+    "psycopg2",
+    "asyncpg",
+    "sqlalchemy",
 }
+"""Список тяжелых библиотек."""
 
 
 class ImportNode:

@@ -1156,7 +1156,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 11,
+                "line_number": 12,
                 "bases": [],
                 "children": []
               },
@@ -1176,7 +1176,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 12,
+                "line_number": 13,
                 "bases": [],
                 "children": []
               },
@@ -1196,7 +1196,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 15,
+                "line_number": 16,
                 "bases": [],
                 "children": []
               }
@@ -1806,7 +1806,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 18,
+            "line_number": 17,
             "bases": [],
             "children": []
           },
@@ -3028,7 +3028,7 @@
                         "layer": "internal",
                         "signature": "(self, subparsers)",
                         "summary": "Регистрирует подкоманду в argparse (регистрация делается в DevCommand).",
-                        "docstring": "Регистрирует подкоманду в argparse (регистрация делается в DevCommand).",
+                        "docstring": "Регистрирует подкоманду в argparse (регистрация делается в DevCommand).\n\nArgs:\n    subparsers: Действие подпарсеров argparse.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -3058,7 +3058,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 22,
+                        "line_number": 26,
                         "bases": [],
                         "children": []
                       },
@@ -3078,7 +3078,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 87,
+                        "line_number": 91,
                         "bases": [],
                         "children": []
                       },
@@ -3098,7 +3098,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 95,
+                        "line_number": 99,
                         "bases": [],
                         "children": []
                       }
@@ -3353,7 +3353,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 18,
+                    "line_number": 17,
                     "bases": [
                       ".base.SubCommand"
                     ],
@@ -3374,7 +3374,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 23,
+                        "line_number": 22,
                         "bases": [],
                         "children": []
                       },
@@ -3394,7 +3394,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 110,
+                        "line_number": 109,
                         "bases": [],
                         "children": []
                       },
@@ -3414,7 +3414,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 336,
+                        "line_number": 335,
                         "bases": [],
                         "children": []
                       },
@@ -3436,7 +3436,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 370,
+                        "line_number": 369,
                         "bases": [],
                         "children": []
                       },
@@ -3456,7 +3456,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 403,
+                        "line_number": 402,
                         "bases": [],
                         "children": []
                       },
@@ -3476,7 +3476,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 429,
+                        "line_number": 428,
                         "bases": [],
                         "children": []
                       }
@@ -5406,7 +5406,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 27,
+                "line_number": 26,
                 "bases": [],
                 "children": []
               },
@@ -5446,7 +5446,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 32,
+                "line_number": 31,
                 "bases": [],
                 "children": []
               },
@@ -6155,7 +6155,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 12,
+                "line_number": 11,
                 "bases": [],
                 "children": []
               },
@@ -6723,7 +6723,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 18,
+                "line_number": 19,
                 "bases": [],
                 "children": []
               },
@@ -6743,7 +6743,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 21,
+                "line_number": 22,
                 "bases": [],
                 "children": [
                   {
@@ -6762,7 +6762,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 68,
+                    "line_number": 69,
                     "bases": [],
                     "children": []
                   },
@@ -6782,7 +6782,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 112,
+                    "line_number": 113,
                     "bases": [],
                     "children": []
                   },
@@ -6802,7 +6802,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 123,
+                    "line_number": 124,
                     "bases": [],
                     "children": []
                   },
@@ -6824,7 +6824,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 132,
+                    "line_number": 133,
                     "bases": [],
                     "children": []
                   },
@@ -6846,7 +6846,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 137,
+                    "line_number": 138,
                     "bases": [],
                     "children": []
                   },
@@ -6868,7 +6868,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 142,
+                    "line_number": 143,
                     "bases": [],
                     "children": []
                   },
@@ -6890,7 +6890,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 147,
+                    "line_number": 148,
                     "bases": [],
                     "children": []
                   },
@@ -6912,7 +6912,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 152,
+                    "line_number": 153,
                     "bases": [],
                     "children": []
                   },
@@ -6934,7 +6934,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 157,
+                    "line_number": 158,
                     "bases": [],
                     "children": []
                   },
@@ -6954,7 +6954,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 161,
+                    "line_number": 162,
                     "bases": [],
                     "children": []
                   },
@@ -6974,7 +6974,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 200,
+                    "line_number": 201,
                     "bases": [],
                     "children": []
                   },
@@ -6994,7 +6994,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 207,
+                    "line_number": 208,
                     "bases": [],
                     "children": []
                   },
@@ -7016,7 +7016,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 223,
+                    "line_number": 224,
                     "bases": [],
                     "children": []
                   },
@@ -7038,7 +7038,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 228,
+                    "line_number": 229,
                     "bases": [],
                     "children": []
                   },
@@ -7048,7 +7048,7 @@
                     "layer": "internal",
                     "signature": "(self, section, key, value, source)",
                     "summary": "Записывает историю изменения значения ключа.",
-                    "docstring": "Записывает историю изменения значения ключа.",
+                    "docstring": "Записывает историю изменения значения ключа.\n\nArgs:\n    section: Имя секции конфигурации.\n    key: Ключ внутри секции.\n    value: Устанавливаемое значение.\n    source: Источник изменения.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7058,7 +7058,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 234,
+                    "line_number": 235,
                     "bases": [],
                     "children": []
                   },
@@ -7068,7 +7068,7 @@
                     "layer": "internal",
                     "signature": "(self)",
                     "summary": "Возвращает собранные данные трассировки.",
-                    "docstring": "Возвращает собранные данные трассировки.",
+                    "docstring": "Возвращает собранные данные трассировки.\n\nReturns:\n    Словарь со всеми данными трассировки параметров.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7078,7 +7078,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 254,
+                    "line_number": 262,
                     "bases": [],
                     "children": []
                   },
@@ -7088,7 +7088,7 @@
                     "layer": "internal",
                     "signature": "(self, data, source)",
                     "summary": "Записывает все значения из словаря в трассировку.",
-                    "docstring": "Записывает все значения из словаря в трассировку.",
+                    "docstring": "Записывает все значения из словаря в трассировку.\n\nArgs:\n    data: Данные конфигурации в формате словаря.\n    source: Имя источника конфигурации.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7098,7 +7098,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 260,
+                    "line_number": 272,
                     "bases": [],
                     "children": []
                   },
@@ -7118,7 +7118,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 276,
+                    "line_number": 293,
                     "bases": [],
                     "children": []
                   },
@@ -7140,7 +7140,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 306,
+                    "line_number": 323,
                     "bases": [],
                     "children": []
                   },
@@ -7162,7 +7162,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 311,
+                    "line_number": 328,
                     "bases": [],
                     "children": []
                   },
@@ -7184,7 +7184,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 316,
+                    "line_number": 333,
                     "bases": [],
                     "children": []
                   },
@@ -7206,7 +7206,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 321,
+                    "line_number": 338,
                     "bases": [],
                     "children": []
                   },
@@ -7228,7 +7228,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 326,
+                    "line_number": 343,
                     "bases": [],
                     "children": []
                   },
@@ -7250,7 +7250,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 331,
+                    "line_number": 348,
                     "bases": [],
                     "children": []
                   },
@@ -7272,7 +7272,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 336,
+                    "line_number": 353,
                     "bases": [],
                     "children": []
                   },
@@ -7294,7 +7294,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 341,
+                    "line_number": 358,
                     "bases": [],
                     "children": []
                   },
@@ -7316,7 +7316,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 346,
+                    "line_number": 363,
                     "bases": [],
                     "children": []
                   },
@@ -7338,7 +7338,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 351,
+                    "line_number": 368,
                     "bases": [],
                     "children": []
                   },
@@ -7360,7 +7360,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 356,
+                    "line_number": 373,
                     "bases": [],
                     "children": []
                   },
@@ -7382,7 +7382,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 361,
+                    "line_number": 378,
                     "bases": [],
                     "children": []
                   },
@@ -7404,7 +7404,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 366,
+                    "line_number": 383,
                     "bases": [],
                     "children": []
                   },
@@ -7426,7 +7426,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 371,
+                    "line_number": 388,
                     "bases": [],
                     "children": []
                   },
@@ -7448,7 +7448,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 376,
+                    "line_number": 393,
                     "bases": [],
                     "children": []
                   },
@@ -7470,7 +7470,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 381,
+                    "line_number": 398,
                     "bases": [],
                     "children": []
                   },
@@ -7492,7 +7492,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 386,
+                    "line_number": 403,
                     "bases": [],
                     "children": []
                   },
@@ -7514,7 +7514,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 391,
+                    "line_number": 408,
                     "bases": [],
                     "children": []
                   },
@@ -7536,7 +7536,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 396,
+                    "line_number": 413,
                     "bases": [],
                     "children": []
                   },
@@ -7558,7 +7558,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 401,
+                    "line_number": 418,
                     "bases": [],
                     "children": []
                   },
@@ -7568,7 +7568,7 @@
                     "layer": "internal",
                     "signature": "(self, config_data)",
                     "summary": "Устанавливает новый объект конфигурации в кэш атомарно.",
-                    "docstring": "Устанавливает новый объект конфигурации в кэш атомарно.",
+                    "docstring": "Устанавливает новый объект конфигурации в кэш атомарно.\n\nArgs:\n    config_data: Словарь данных конфигурации.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7578,7 +7578,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 405,
+                    "line_number": 422,
                     "bases": [],
                     "children": []
                   },
@@ -7588,7 +7588,7 @@
                     "layer": "internal",
                     "signature": "(self, features_data)",
                     "summary": "Устанавливает новый объект фича-флагов в кэш атомарно.",
-                    "docstring": "Устанавливает новый объект фича-флагов в кэш атомарно.",
+                    "docstring": "Устанавливает новый объект фича-флагов в кэш атомарно.\n\nArgs:\n    features_data: Словарь фича-флагов.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7598,7 +7598,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 411,
+                    "line_number": 432,
                     "bases": [],
                     "children": []
                   },
@@ -7608,7 +7608,7 @@
                     "layer": "internal",
                     "signature": "(self, threshold)",
                     "summary": "Проверяет, было ли недавнее внутреннее сохранение, и сбрасывает флаг.",
-                    "docstring": "Проверяет, было ли недавнее внутреннее сохранение, и сбрасывает флаг.",
+                    "docstring": "Проверяет, было ли недавнее внутреннее сохранение, и сбрасывает флаг.\n\nArgs:\n    threshold: Порог времени в секундах.\n\nReturns:\n    True если недавнее сохранение было выполнено.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7618,7 +7618,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 417,
+                    "line_number": 442,
                     "bases": [],
                     "children": []
                   },
@@ -7638,7 +7638,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 426,
+                    "line_number": 458,
                     "bases": [],
                     "children": []
                   },
@@ -7648,7 +7648,7 @@
                     "layer": "internal",
                     "signature": "(self)",
                     "summary": "Возвращает копию списка коллбэков.",
-                    "docstring": "Возвращает копию списка коллбэков.",
+                    "docstring": "Возвращает копию списка коллбэков.\n\nReturns:\n    Список зарегистрированных callback-функций.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7658,7 +7658,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 431,
+                    "line_number": 463,
                     "bases": [],
                     "children": []
                   },
@@ -7668,7 +7668,7 @@
                     "layer": "internal",
                     "signature": "(self, callback)",
                     "summary": "Добавляет коллбэк, если его еще нет.",
-                    "docstring": "Добавляет коллбэк, если его еще нет.",
+                    "docstring": "Добавляет коллбэк, если его еще нет.\n\nArgs:\n    callback: Функция обратного вызова.\n\nReturns:\n    True если коллбэк был добавлен.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7678,7 +7678,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 436,
+                    "line_number": 472,
                     "bases": [],
                     "children": []
                   },
@@ -7688,7 +7688,7 @@
                     "layer": "internal",
                     "signature": "(self, find_root_func)",
                     "summary": "Инициализирует пути к корню проекта и основному файлу конфигурации.",
-                    "docstring": "Инициализирует пути к корню проекта и основному файлу конфигурации.\nИспользует loading_lock для предотвращения конкурентной инициализации.",
+                    "docstring": "Инициализирует пути к корню проекта и основному файлу конфигурации.\n\nИспользует loading_lock для предотвращения конкурентной инициализации.\n\nArgs:\n    find_root_func: Функция поиска корня проекта.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7698,7 +7698,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 444,
+                    "line_number": 487,
                     "bases": [],
                     "children": []
                   },
@@ -7708,7 +7708,7 @@
                     "layer": "public",
                     "signature": "(self, cfg_file)",
                     "summary": "Возвращает пути к основному и локальному файлам конфигурации (Legacy API).",
-                    "docstring": "Возвращает пути к основному и локальному файлам конфигурации (Legacy API).\n\nДля получения всех путей (включая env) используйте get_all_config_paths().",
+                    "docstring": "Возвращает пути к основному и локальному файлам конфигурации (Legacy API).\n\nДля получения всех путей (включая env) используйте get_all_config_paths().\n\nArgs:\n    cfg_file: Явно указанный путь к основному файлу конфигурации.\n\nReturns:\n    Кортеж путей (основной, локальный).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7718,7 +7718,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 485,
+                    "line_number": 531,
                     "bases": [],
                     "children": []
                   },
@@ -7728,7 +7728,7 @@
                     "layer": "public",
                     "signature": "(self, cfg_file)",
                     "summary": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.",
-                    "docstring": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.",
+                    "docstring": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.\n\nArgs:\n    cfg_file: Явно указанный путь к файлу конфигурации.\n\nReturns:\n    Кортеж (main_path, env_path, local_path).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7738,7 +7738,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 494,
+                    "line_number": 545,
                     "bases": [],
                     "children": []
                   },
@@ -7758,7 +7758,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 532,
+                    "line_number": 588,
                     "bases": [],
                     "children": []
                   },
@@ -7778,7 +7778,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 539,
+                    "line_number": 595,
                     "bases": [],
                     "children": []
                   },
@@ -7788,7 +7788,7 @@
                     "layer": "internal",
                     "signature": "(self, load_func)",
                     "summary": "Потокобезопасно загружает конфигурацию, если она еще не загружена.",
-                    "docstring": "Потокобезопасно загружает конфигурацию, если она еще не загружена.\nИспользует loading_lock для предотвращения конкурентной загрузки из файлов.",
+                    "docstring": "Потокобезопасно загружает конфигурацию, если она еще не загружена.\n\nИспользует loading_lock для предотвращения конкурентной загрузки из файлов.\n\nArgs:\n    load_func: Функция загрузки словаря конфигурации.\n\nReturns:\n    Словарь конфигурации.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7798,7 +7798,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 545,
+                    "line_number": 601,
                     "bases": [],
                     "children": []
                   },
@@ -7808,7 +7808,7 @@
                     "layer": "internal",
                     "signature": "(self, load_func)",
                     "summary": "Потокобезопасно загружает фича-флаги, если они еще не загружены.",
-                    "docstring": "Потокобезопасно загружает фича-флаги, если они еще не загружены.\nИспользует loading_lock для предотвращения конкурентной загрузки из файлов.",
+                    "docstring": "Потокобезопасно загружает фича-флаги, если они еще не загружены.\n\nИспользует loading_lock для предотвращения конкурентной загрузки из файлов.\n\nArgs:\n    load_func: Функция загрузки словаря фича-флагов.\n\nReturns:\n    Словарь фича-флагов.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7818,7 +7818,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 566,
+                    "line_number": 628,
                     "bases": [],
                     "children": []
                   },
@@ -7838,7 +7838,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 587,
+                    "line_number": 655,
                     "bases": [],
                     "children": []
                   },
@@ -7858,7 +7858,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 591,
+                    "line_number": 659,
                     "bases": [],
                     "children": []
                   }
@@ -7880,7 +7880,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 596,
+                "line_number": 664,
                 "bases": [],
                 "children": []
               }
@@ -8865,7 +8865,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 107,
+                "line_number": 106,
                 "bases": [],
                 "children": []
               },
@@ -9442,7 +9442,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 62,
+            "line_number": 61,
             "bases": [],
             "children": []
           },
@@ -9462,7 +9462,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 65,
+            "line_number": 64,
             "bases": [],
             "children": []
           },
@@ -9482,7 +9482,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 115,
+            "line_number": 113,
             "bases": [],
             "children": []
           },
@@ -9502,7 +9502,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 126,
+            "line_number": 124,
             "bases": [],
             "children": []
           },
@@ -9522,7 +9522,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 156,
+            "line_number": 154,
             "bases": [],
             "children": []
           },
@@ -9542,7 +9542,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 170,
+            "line_number": 168,
             "bases": [],
             "children": []
           },
@@ -9562,7 +9562,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 182,
+            "line_number": 180,
             "bases": [],
             "children": []
           },
@@ -9582,7 +9582,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 192,
+            "line_number": 190,
             "bases": [],
             "children": []
           },
@@ -9602,7 +9602,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 202,
+            "line_number": 200,
             "bases": [],
             "children": []
           },
@@ -9622,7 +9622,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 220,
+            "line_number": 218,
             "bases": [],
             "children": []
           },
@@ -9644,7 +9644,7 @@
               ],
               "custom_metadata": {}
             },
-            "line_number": 235,
+            "line_number": 233,
             "bases": [],
             "children": []
           },
@@ -9664,7 +9664,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 259,
+            "line_number": 257,
             "bases": [],
             "children": []
           },
@@ -9684,7 +9684,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 276,
+            "line_number": 274,
             "bases": [],
             "children": []
           },
@@ -9704,7 +9704,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 281,
+            "line_number": 279,
             "bases": [],
             "children": []
           },
@@ -9724,7 +9724,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 310,
+            "line_number": 308,
             "bases": [],
             "children": []
           }
@@ -9755,7 +9755,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 9,
+            "line_number": 8,
             "bases": [],
             "children": []
           },
@@ -10120,7 +10120,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 33,
+            "line_number": 30,
             "bases": [],
             "children": []
           },
@@ -10143,7 +10143,7 @@
               ],
               "custom_metadata": {}
             },
-            "line_number": 66,
+            "line_number": 64,
             "bases": [],
             "children": [
               {
@@ -10164,7 +10164,7 @@
                   ],
                   "custom_metadata": {}
                 },
-                "line_number": 108,
+                "line_number": 106,
                 "bases": [],
                 "children": []
               },
@@ -10186,7 +10186,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 154,
+                "line_number": 152,
                 "bases": [],
                 "children": []
               },
@@ -10211,7 +10211,7 @@
                   ],
                   "custom_metadata": {}
                 },
-                "line_number": 181,
+                "line_number": 179,
                 "bases": [],
                 "children": []
               },
@@ -10236,7 +10236,7 @@
                   ],
                   "custom_metadata": {}
                 },
-                "line_number": 199,
+                "line_number": 197,
                 "bases": [],
                 "children": []
               },
@@ -10256,7 +10256,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 225,
+                "line_number": 223,
                 "bases": [],
                 "children": []
               },
@@ -10278,7 +10278,7 @@
                   ],
                   "custom_metadata": {}
                 },
-                "line_number": 246,
+                "line_number": 244,
                 "bases": [],
                 "children": []
               }
@@ -10311,7 +10311,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 25,
+            "line_number": 24,
             "bases": [],
             "children": []
           },
@@ -14858,7 +14858,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 42,
+                "line_number": 46,
                 "bases": [],
                 "children": [
                   {
@@ -14877,7 +14877,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 45,
+                    "line_number": 49,
                     "bases": [],
                     "children": []
                   },
@@ -14897,7 +14897,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 66,
+                    "line_number": 70,
                     "bases": [],
                     "children": []
                   }
@@ -14919,7 +14919,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 81,
+                "line_number": 85,
                 "bases": [],
                 "children": []
               },
@@ -14939,7 +14939,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 118,
+                "line_number": 122,
                 "bases": [],
                 "children": []
               },
@@ -14959,7 +14959,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 149,
+                "line_number": 153,
                 "bases": [],
                 "children": []
               },
@@ -14979,7 +14979,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 263,
+                "line_number": 267,
                 "bases": [],
                 "children": []
               },
@@ -14999,7 +14999,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 311,
+                "line_number": 315,
                 "bases": [],
                 "children": []
               }
@@ -16326,7 +16326,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 10,
+                "line_number": 9,
                 "bases": [],
                 "children": []
               },
@@ -17884,7 +17884,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 200,
+                "line_number": 199,
                 "bases": [],
                 "children": []
               },
@@ -18323,7 +18323,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 26,
+                "line_number": 28,
                 "bases": [],
                 "children": []
               },
@@ -18343,7 +18343,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 28,
+                "line_number": 30,
                 "bases": [],
                 "children": []
               },
@@ -18363,7 +18363,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 44,
+                "line_number": 46,
                 "bases": [],
                 "children": []
               },
@@ -18383,7 +18383,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 59,
+                "line_number": 61,
                 "bases": [],
                 "children": []
               },
@@ -18403,7 +18403,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 65,
+                "line_number": 67,
                 "bases": [],
                 "children": []
               },
@@ -18423,7 +18423,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 73,
+                "line_number": 75,
                 "bases": [
                   "str",
                   "enum.Enum"
@@ -18446,7 +18446,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 80,
+                "line_number": 82,
                 "bases": [],
                 "children": [
                   {
@@ -18465,7 +18465,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 87,
+                    "line_number": 89,
                     "bases": [],
                     "children": []
                   },
@@ -18485,7 +18485,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 97,
+                    "line_number": 99,
                     "bases": [],
                     "children": []
                   },
@@ -18505,7 +18505,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 113,
+                    "line_number": 115,
                     "bases": [],
                     "children": []
                   },
@@ -18525,7 +18525,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 127,
+                    "line_number": 129,
                     "bases": [],
                     "children": []
                   },
@@ -18545,7 +18545,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 137,
+                    "line_number": 139,
                     "bases": [],
                     "children": []
                   },
@@ -18565,7 +18565,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 182,
+                    "line_number": 184,
                     "bases": [],
                     "children": []
                   }
@@ -18587,7 +18587,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 228,
+                "line_number": 230,
                 "bases": [],
                 "children": []
               },
@@ -18607,7 +18607,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 231,
+                "line_number": 233,
                 "bases": [],
                 "children": []
               },
@@ -18627,7 +18627,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 242,
+                "line_number": 244,
                 "bases": [],
                 "children": []
               },
@@ -18647,7 +18647,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 253,
+                "line_number": 255,
                 "bases": [],
                 "children": []
               }
@@ -21065,7 +21065,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 36,
+                "line_number": 35,
                 "bases": [],
                 "children": []
               },
@@ -21936,7 +21936,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 27,
+            "line_number": 26,
             "bases": [],
             "children": []
           },
@@ -22492,7 +22492,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 45,
+                "line_number": 51,
                 "bases": [
                   "_BaseFormatter"
                 ],
@@ -22513,7 +22513,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 51,
+                    "line_number": 57,
                     "bases": [],
                     "children": []
                   }
@@ -22723,7 +22723,7 @@
                         "layer": "internal",
                         "signature": "(self, log_level, force_reconfigure, use_async, json_format, log_file_name, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, custom_patterns, use_predefined_patterns)",
                         "summary": "Основной метод сборки и настройки логгера.",
-                        "docstring": "Основной метод сборки и настройки логгера.\n\nВыполняет все этапы конфигурации: определение уровня, настройку консоли,\nсоздание файловых обработчиков, применение асинхронности и маскирование.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
+                        "docstring": "Основной метод сборки и настройки логгера.\n\nВыполняет все этапы конфигурации: определение уровня, настройку консоли,\nсоздание файловых обработчиков, применение асинхронности и маскирование.\n\nArgs:\n    log_level: Уровень логирования.\n    force_reconfigure: Принудительная повторная конфигурация.\n    use_async: Использовать ли асинхронную запись.\n    json_format: Использовать ли JSON формат.\n    log_file_name: Имя файла лога.\n    rotation_type: Тип ротации файлов.\n    max_bytes: Максимальный размер файла в байтах.\n    compress: Сжимать ли ротированные файлы.\n    backup_count: Количество сохраняемых бэкапов.\n    encoding: Кодировка файла логов.\n    when: Интервал временной ротации.\n    interval: Шаг интервала ротации.\n    utc: Использовать ли UTC время.\n    at_time: Точное время ротации.\n    custom_patterns: Пользовательские паттерны маскирования.\n    use_predefined_patterns: Предопределенные паттерны маскирования.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -22753,7 +22753,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 151,
+                        "line_number": 168,
                         "bases": [],
                         "children": []
                       },
@@ -22773,7 +22773,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 170,
+                        "line_number": 187,
                         "bases": [],
                         "children": []
                       },
@@ -22793,7 +22793,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 181,
+                        "line_number": 198,
                         "bases": [],
                         "children": []
                       },
@@ -22813,7 +22813,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 191,
+                        "line_number": 208,
                         "bases": [],
                         "children": []
                       },
@@ -22833,7 +22833,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 200,
+                        "line_number": 217,
                         "bases": [],
                         "children": []
                       },
@@ -22853,7 +22853,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 238,
+                        "line_number": 255,
                         "bases": [],
                         "children": []
                       },
@@ -22873,7 +22873,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 253,
+                        "line_number": 270,
                         "bases": [],
                         "children": []
                       },
@@ -22893,7 +22893,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 263,
+                        "line_number": 280,
                         "bases": [],
                         "children": []
                       },
@@ -22913,7 +22913,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 289,
+                        "line_number": 306,
                         "bases": [],
                         "children": []
                       },
@@ -22933,7 +22933,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 323,
+                        "line_number": 340,
                         "bases": [],
                         "children": []
                       },
@@ -22953,7 +22953,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 375,
+                        "line_number": 392,
                         "bases": [],
                         "children": []
                       },
@@ -22973,7 +22973,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 386,
+                        "line_number": 403,
                         "bases": [],
                         "children": []
                       },
@@ -22993,7 +22993,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 420,
+                        "line_number": 437,
                         "bases": [],
                         "children": []
                       }
@@ -25433,7 +25433,7 @@
                     "layer": "internal",
                     "signature": "(self, slot)",
                     "summary": "Подключает слот к сигналу.",
-                    "docstring": "Подключает слот к сигналу.\n\nArgs:\n    slot: Функция-обработчик сигналов.",
+                    "docstring": "Подключает слот к сигналу.\n\nArgs:\n    slot: Функция-обработчик сигналов.\n\nReturns:\n    Результат выполнения вызова connect.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -25453,7 +25453,7 @@
                     "layer": "internal",
                     "signature": "(self, slot)",
                     "summary": "Отключает слот от сигнала.",
-                    "docstring": "Отключает слот от сигнала.\n\nArgs:\n    slot: Опциональная функция-обработчик.",
+                    "docstring": "Отключает слот от сигнала.\n\nArgs:\n    slot: Опциональная функция-обработчик.\n\nReturns:\n    Результат выполнения вызова disconnect.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -25463,7 +25463,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 38,
+                    "line_number": 41,
                     "bases": [],
                     "children": []
                   },
@@ -25483,7 +25483,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 50,
+                    "line_number": 56,
                     "bases": [],
                     "children": []
                   }
@@ -25505,7 +25505,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 61,
+                "line_number": 67,
                 "bases": [],
                 "children": [
                   {
@@ -25524,7 +25524,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 64,
+                    "line_number": 70,
                     "bases": [],
                     "children": []
                   }
@@ -25546,7 +25546,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 94,
+                "line_number": 100,
                 "bases": [],
                 "children": []
               },
@@ -25566,7 +25566,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 132,
+                "line_number": 138,
                 "bases": [],
                 "children": []
               },
@@ -25586,7 +25586,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 174,
+                "line_number": 180,
                 "bases": [],
                 "children": [
                   {
@@ -25605,7 +25605,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 177,
+                    "line_number": 183,
                     "bases": [],
                     "children": []
                   }
@@ -30439,7 +30439,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 50,
+                        "line_number": 52,
                         "bases": [],
                         "children": []
                       },
@@ -30459,7 +30459,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 70,
+                        "line_number": 72,
                         "bases": [],
                         "children": []
                       },
@@ -30479,7 +30479,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 99,
+                        "line_number": 101,
                         "bases": [],
                         "children": []
                       },
@@ -30499,7 +30499,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 150,
+                        "line_number": 152,
                         "bases": [],
                         "children": []
                       }
@@ -33120,7 +33120,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 155,
+                "line_number": 164,
                 "bases": [
                   "BaseMiddleware"
                 ],
@@ -33141,7 +33141,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 158,
+                    "line_number": 167,
                     "bases": [],
                     "children": []
                   }
@@ -33174,7 +33174,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 7,
+                "line_number": 6,
                 "bases": [],
                 "children": []
               },
@@ -33194,7 +33194,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 8,
+                "line_number": 9,
                 "bases": [],
                 "children": []
               },
@@ -33214,7 +33214,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 10,
+                "line_number": 12,
                 "bases": [],
                 "children": []
               },
@@ -33234,7 +33234,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 18,
+                "line_number": 20,
                 "bases": [],
                 "children": []
               },
@@ -33254,7 +33254,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 39,
+                "line_number": 41,
                 "bases": [],
                 "children": []
               },
@@ -33274,7 +33274,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 53,
+                "line_number": 55,
                 "bases": [],
                 "children": []
               },
@@ -33294,7 +33294,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 78,
+                "line_number": 80,
                 "bases": [],
                 "children": []
               },
@@ -33314,7 +33314,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 142,
+                "line_number": 144,
                 "bases": [],
                 "children": []
               }
@@ -34047,7 +34047,7 @@
                     "layer": "internal",
                     "signature": "(self, user_id_or_username)",
                     "summary": "Добавляет пользователя в белый список и убирает из черного.",
-                    "docstring": "Добавляет пользователя в белый список и убирает из черного.",
+                    "docstring": "Добавляет пользователя в белый список и убирает из черного.\n\nArgs:\n    user_id_or_username: ID пользователя Telegram или его юзернейм.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -34067,7 +34067,7 @@
                     "layer": "internal",
                     "signature": "(self, user_id_or_username)",
                     "summary": "Добавляет пользователя в черный список и убирает из белого.",
-                    "docstring": "Добавляет пользователя в черный список и убирает из белого.",
+                    "docstring": "Добавляет пользователя в черный список и убирает из белого.\n\nArgs:\n    user_id_or_username: ID пользователя Telegram или его юзернейм.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -34077,7 +34077,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 114,
+                    "line_number": 118,
                     "bases": [],
                     "children": []
                   },
@@ -34087,7 +34087,7 @@
                     "layer": "internal",
                     "signature": "(self, user_id_or_username)",
                     "summary": "Удаляет пользователя из белого и черного списков.",
-                    "docstring": "Удаляет пользователя из белого и черного списков.",
+                    "docstring": "Удаляет пользователя из белого и черного списков.\n\nArgs:\n    user_id_or_username: ID пользователя Telegram или его юзернейм.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -34097,7 +34097,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 128,
+                    "line_number": 136,
                     "bases": [],
                     "children": []
                   },
@@ -34117,7 +34117,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 142,
+                    "line_number": 154,
                     "bases": [],
                     "children": []
                   },
@@ -34137,7 +34137,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 155,
+                    "line_number": 167,
                     "bases": [],
                     "children": []
                   }
@@ -34159,7 +34159,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 170,
+                "line_number": 182,
                 "bases": [],
                 "children": []
               }
@@ -38016,8 +38016,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "d2d07aa94fc8994688860c3b297c6fc7679124df (dirty)",
-    "generated_at": "2026-08-06T18:47:39.649831+00:00",
-    "project_hash": "1f083a4db52a1ead09dbfa08eca3a10992413961c2139642eee6605f76ee9dfa"
+    "git_commit": "74b5e6d17db337d1d4868bae5199f9332767501f (dirty)",
+    "generated_at": "2026-08-06T19:02:07.737369+00:00",
+    "project_hash": "5a0654cf03e56ba95feba6ebd744efba0cc72f24d44ed863e02e48032fa996f5"
   }
 }

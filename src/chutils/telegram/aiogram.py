@@ -127,7 +127,16 @@ class TelegramThrottlingMiddleware(BaseMiddleware):  # type: ignore[misc]
         event: Any,
         data: dict[str, Any],
     ) -> Any:
-        """Обрабатывает входящее событие в цепочке Middleware."""
+        """Обрабатывает входящее событие в цепочке Middleware.
+
+        Args:
+            handler: Следующий хэндлер в цепочке.
+            event: Входящее событие Telegram.
+            data: Контекстные данные события.
+
+        Returns:
+            Результат выполнения хэндлера.
+        """
         uid, _ = _extract_user_info((event,), data)
         key = f"user_{uid}" if uid is not None else "unknown"
 
@@ -166,7 +175,16 @@ class TelegramLoggingMiddleware(BaseMiddleware):  # type: ignore[misc]
         event: Any,
         data: dict[str, Any],
     ) -> Any:
-        """Обрабатывает события и логирует контекст в цепочке Middleware."""
+        """Обрабатывает события и логирует контекст в цепочке Middleware.
+
+        Args:
+            handler: Следующий хэндлер в цепочке.
+            event: Входящее событие Telegram.
+            data: Контекстные данные события.
+
+        Returns:
+            Результат выполнения хэндлера.
+        """
         from chutils.telegram.logging import trace_telegram_update
 
         async with trace_telegram_update(event=event, logger_instance=self.logger_instance):

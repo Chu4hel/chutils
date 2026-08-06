@@ -10,9 +10,8 @@ from typing import Any
 import chutils
 from .base import SubCommand
 
-# Поля метаданных, которые меняются при каждой генерации, но не отражают
-# реальных изменений в API проекта. Используются для сравнения содержимого.
 _VOLATILE_FIELDS: tuple[str, ...] = ("git_commit", "generated_at", "project_hash")
+"""Поля метаданных, которые меняются при каждой генерации."""
 
 
 class GenerateContextSubCommand(SubCommand):

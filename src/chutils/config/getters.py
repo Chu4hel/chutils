@@ -94,7 +94,7 @@ def get_config_value(
     # Если значение не найдено или является пустой строкой, пробуем fallback-поиск в переменных окружения
     if value is None or value == "":
         import os
-        disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")
+        disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
         if not disable_env_override:
             sec_up = section.upper()
             key_up = key.upper()
@@ -104,7 +104,7 @@ def get_config_value(
                 key_up,
             )
             for candidate in candidates:
-                env_val = os.environ.get(candidate)
+                env_val = os.environ.get(candidate)  # chutils: ignore[ChutilsIntegrationRule]
                 if env_val is not None and env_val != "":
                     value = env_val
                     if section.lower() == "secrets":

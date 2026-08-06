@@ -34,8 +34,8 @@ from chutils.commands.base import BaseCommand
 # ---------------------------------------------------------------------------
 
 ALEMBIC_AVAILABLE: bool = importlib.util.find_spec("alembic") is not None
+"""Флаг наличия бибилиотеки alembic."""
 
-# Шаблон асинхронного env.py для Alembic
 _ASYNC_ENV_PY_TEMPLATE = '''\
 """Alembic async env.py — автоматически сгенерирован chutils."""
 from __future__ import annotations

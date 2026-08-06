@@ -16,7 +16,11 @@ class CleanSubCommand(SubCommand):
     """Подкоманда dev clean для удаления временных файлов и кэшей разработки."""
 
     def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
-        """Регистрирует подкоманду в argparse (регистрация делается в DevCommand)."""
+        """Регистрирует подкоманду в argparse (регистрация делается в DevCommand).
+
+        Args:
+            subparsers: Действие подпарсеров argparse.
+        """
         pass
 
     def handle(self, args: argparse.Namespace) -> None:

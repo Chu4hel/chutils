@@ -14,8 +14,8 @@ from functools import wraps
 from pathlib import Path
 from typing import Any, TypeVar
 
-# Тип для декорируемой функции
 F = TypeVar("F", bound=Callable[..., Any])
+"""Тип для декорируемой функции."""
 
 
 def cli_command(func: F) -> F:

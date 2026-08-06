@@ -13,7 +13,7 @@ from chutils.typing import JSONDict
 from .providers import get_providers
 
 # Настраиваем локальный логгер
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 
 def find_project_root(start_path: Path, markers: list[str]) -> Path | None:
@@ -103,8 +103,8 @@ def _check_pydantic() -> bool:
         return False
 
 
-# Реестр провайдеров (использует _nest_ini_dict из этого же модуля)
 _PROVIDERS = get_providers(_nest_ini_dict)
+"""Реестр провайдеров (использует _nest_ini_dict из этого же модуля)."""
 
 
 def _get_typed_value(

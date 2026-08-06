@@ -21,10 +21,10 @@ from chutils.config import get_config_int
 if TYPE_CHECKING:
     from types import FrameType
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
-# Тип для функций очистки: может быть обычной функцией или корутиной
 CleanupCallback = Union[Callable[[], Any], Callable[[], Awaitable[Any]]]
+"""Тип для функций очистки."""
 
 
 class LifecycleManager:

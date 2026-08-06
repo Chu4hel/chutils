@@ -297,11 +297,11 @@ def save_last_known_version(base_dir: str, version: str) -> None:
         version: Строка версии.
     """
     try:
-        from chutils.fs import ensure_dir
+        from chutils.fs import ensure_dir, atomic_write
 
         path = Path(base_dir) / ".chutils" / "last_known_version.json"
         ensure_dir(path.parent)
-        path.write_text(json.dumps({"installed_version": version}, indent=2), encoding="utf-8")
+        atomic_write(path, json.dumps({"installed_version": version}, indent=2))
     except Exception:
         pass
 

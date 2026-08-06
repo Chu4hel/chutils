@@ -36,8 +36,8 @@ if HTTPX_AVAILABLE:
 else:
     httpx = None  # type: ignore[assignment]
 
-# Флаг для единоразового предупреждения о fallback
 _FALLBACK_WARNING_EMITTED: bool = False
+"""Флаг для единоразового предупреждения о fallback."""
 
 # ─── Ленивый логгер ──────────────────────────────────────────────────────────
 

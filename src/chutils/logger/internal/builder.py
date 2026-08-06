@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import datetime
-import logging
-import logging.handlers
+import logging  # chutils: ignore[ChutilsIntegrationRule]
+import logging.handlers  # chutils: ignore[ChutilsIntegrationRule]
 import os
 import queue
 from pathlib import Path
@@ -87,11 +87,28 @@ class LoggerBuilder:
             custom_patterns: list[str] | None = None,
             use_predefined_patterns: list[str | list[str]] | None = None,
     ) -> ChutilsLogger:
-        """
-        Основной метод сборки и настройки логгера.
+        """Основной метод сборки и настройки логгера.
 
         Выполняет все этапы конфигурации: определение уровня, настройку консоли,
         создание файловых обработчиков, применение асинхронности и маскирование.
+
+        Args:
+            log_level: Уровень логирования.
+            force_reconfigure: Принудительная повторная конфигурация.
+            use_async: Использовать ли асинхронную запись.
+            json_format: Использовать ли JSON формат.
+            log_file_name: Имя файла лога.
+            rotation_type: Тип ротации файлов.
+            max_bytes: Максимальный размер файла в байтах.
+            compress: Сжимать ли ротированные файлы.
+            backup_count: Количество сохраняемых бэкапов.
+            encoding: Кодировка файла логов.
+            when: Интервал временной ротации.
+            interval: Шаг интервала ротации.
+            utc: Использовать ли UTC время.
+            at_time: Точное время ротации.
+            custom_patterns: Пользовательские паттерны маскирования.
+            use_predefined_patterns: Предопределенные паттерны маскирования.
 
         Returns:
             Настроенный экземпляр ChutilsLogger.
@@ -237,7 +254,7 @@ class LoggerBuilder:
 
     def _get_formatter(self, json_format: bool | None) -> logging.Formatter:
         """Создает и возвращает подходящий форматер (текстовый или JSON)."""
-        env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]
+        env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
         log_format = '%(name)s - %(levelname)s %(context)s- %(message)s' if env_no_time else \
             '%(asctime)s - %(name)s - %(levelname)s %(context)s- %(message)s'
 
@@ -252,7 +269,7 @@ class LoggerBuilder:
 
     def _should_use_json(self, explicit_json: bool | None) -> bool:
         """Определяет, нужно ли использовать JSON формат."""
-        env_json = os.getenv("CH_LOG_JSON", "").lower()
+        env_json = os.getenv("CH_LOG_JSON", "").lower()  # chutils: ignore[ChutilsIntegrationRule]
         if env_json:
             return env_json in ["true", "1", "yes", "y"]
         if explicit_json is not None:
@@ -263,7 +280,7 @@ class LoggerBuilder:
     def _create_console_handler(self, level_int: int, formatter: logging.Formatter,
                                 json_format: bool | None) -> logging.Handler:
         """Создает обработчик для вывода в консоль (Rich или стандартный)."""
-        env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]
+        env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
 
         handler: logging.Handler
         if env_api.is_rich_enabled() and not self._should_use_json(json_format):
@@ -292,7 +309,7 @@ class LoggerBuilder:
         # Используем импорт внутри функции, чтобы избежать циклической зависимости и иметь доступ к переменным
         import chutils.logger.core as core
 
-        env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in ["true", "1", "yes", "y"]
+        env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
         log_dir = get_log_dir()
 
         filename = params.get('log_file_name') or self.settings.get('log_file_name', 'app.log')

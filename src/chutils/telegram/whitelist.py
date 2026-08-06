@@ -98,7 +98,11 @@ class AccessListManager:
         return False
 
     def allow_user(self, user_id_or_username: int | str) -> None:
-        """Добавляет пользователя в белый список и убирает из черного."""
+        """Добавляет пользователя в белый список и убирает из черного.
+
+        Args:
+            user_id_or_username: ID пользователя Telegram или его юзернейм.
+        """
         if isinstance(user_id_or_username, int) or str(user_id_or_username).isdigit():
             uid = int(user_id_or_username)
             self.allowed_ids.add(uid)
@@ -112,7 +116,11 @@ class AccessListManager:
             self.save()
 
     def block_user(self, user_id_or_username: int | str) -> None:
-        """Добавляет пользователя в черный список и убирает из белого."""
+        """Добавляет пользователя в черный список и убирает из белого.
+
+        Args:
+            user_id_or_username: ID пользователя Telegram или его юзернейм.
+        """
         if isinstance(user_id_or_username, int) or str(user_id_or_username).isdigit():
             uid = int(user_id_or_username)
             self.blocked_ids.add(uid)
@@ -126,7 +134,11 @@ class AccessListManager:
             self.save()
 
     def remove_user(self, user_id_or_username: int | str) -> None:
-        """Удаляет пользователя из белого и черного списков."""
+        """Удаляет пользователя из белого и черного списков.
+
+        Args:
+            user_id_or_username: ID пользователя Telegram или его юзернейм.
+        """
         if isinstance(user_id_or_username, int) or str(user_id_or_username).isdigit():
             uid = int(user_id_or_username)
             self.allowed_ids.discard(uid)

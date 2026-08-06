@@ -32,8 +32,8 @@ def _get_log() -> "ChutilsLogger":
         raise RuntimeError("Не удалось инициализировать логгер chutils.http.resilience")
     return _module_logger
 
-# Значение-маркер: статус-код ещё не извлечён
 _UNSET = object()
+"""Значение-маркер: статус-код ещё не извлечён."""
 
 
 # ─── Исключения resilience ────────────────────────────────────────────────────

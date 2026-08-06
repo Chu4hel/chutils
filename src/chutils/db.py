@@ -27,13 +27,11 @@ import importlib.util
 
 from chutils.exceptions import ConfigError, OptionalDependencyError
 
-# ---------------------------------------------------------------------------
-# Проверка наличия sqlalchemy (опциональная зависимость)
-# ---------------------------------------------------------------------------
 _HAS_SQLALCHEMY = (
         importlib.util.find_spec("sqlalchemy") is not None
         and importlib.util.find_spec("sqlalchemy.ext.asyncio") is not None
 )
+"""Флаг наличия библиотеки SQLAlchemy."""
 
 if not _HAS_SQLALCHEMY:
     raise OptionalDependencyError(

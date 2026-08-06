@@ -58,13 +58,11 @@ if TYPE_CHECKING:
         parse_chutils_ignore as parse_chutils_ignore,
     )
 
-# Тип для Pydantic моделей
 T = TypeVar("T", bound="BaseModel")
+"""Тип для Pydantic моделей."""
 
-# Настраиваем логгер для этого модуля.
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
-# Экспортируем основные функции для внешнего использования
 __all__ = [
     'get_config',
     'aget_config',

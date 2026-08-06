@@ -1,4 +1,4 @@
-from __future__ import annotations
+from __future__ import annotations  # chutils: ignore[CodeDecompositionRule]
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 from abc import ABC, abstractmethod

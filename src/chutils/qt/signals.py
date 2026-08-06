@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import functools
-import logging
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from typing import Any, Callable, Generic, TypeVar, ParamSpec
 
 from .shim import Signal, require_qt
@@ -30,6 +30,9 @@ class BoundTypedSignal(Generic[P]):
 
         Args:
             slot: Функция-обработчик сигналов.
+
+        Returns:
+            Результат выполнения вызова connect.
         """
         if hasattr(self._raw_signal, "connect"):
             return self._raw_signal.connect(slot)
@@ -40,6 +43,9 @@ class BoundTypedSignal(Generic[P]):
 
         Args:
             slot: Опциональная функция-обработчик.
+
+        Returns:
+            Результат выполнения вызова disconnect.
         """
         if hasattr(self._raw_signal, "disconnect"):
             if slot is not None:
