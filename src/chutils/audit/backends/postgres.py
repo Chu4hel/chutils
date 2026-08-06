@@ -19,7 +19,15 @@ if TYPE_CHECKING:
 
     class _DBAPICursor(Protocol):
         def execute(self, query: str, params: tuple[Any, ...] | dict[str, Any] | None = None) -> Any:
-            """Выполняет SQL-запрос."""
+            """Выполняет SQL-запрос.
+
+            Args:
+                query: Строка SQL-запроса.
+                params: Опциональные параметры запроса.
+
+            Returns:
+                Результат выполнения запроса.
+            """
             ...
 
         def fetchone(self) -> Any:
