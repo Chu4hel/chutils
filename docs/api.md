@@ -185,6 +185,9 @@ members:
 - is_admin
 - admin_only
 - AdminFilter
+- TelegramRateLimiter
+- tg_rate_limit
+- TelegramThrottlingMiddleware
 
 ## Декораторы
 

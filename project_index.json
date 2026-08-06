@@ -33017,6 +33017,181 @@
                     "children": []
                   }
                 ]
+              },
+              {
+                "name": "TelegramThrottlingMiddleware",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Middleware отслеживания и предотвращения спама (Throttling) для aiogram 3.x.",
+                "docstring": "Middleware отслеживания и предотвращения спама (Throttling) для aiogram 3.x.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 68,
+                "bases": [
+                  "BaseMiddleware"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, rate, per, scope, warning_text, silent)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 71,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "rate_limit",
+            "path": "chutils/telegram/rate_limit",
+            "type": "module",
+            "layer": "public",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "F",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 12,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_extract_chat_id",
+                "type": "function",
+                "layer": "private",
+                "signature": "(args, kwargs)",
+                "summary": "Извлекает chat_id из аргументов вызова функции.",
+                "docstring": "Извлекает chat_id из аргументов вызова функции.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 15,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "TelegramRateLimiter",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Движок ограничений вызовов (Rate Limiter) для Telegram-ботов.",
+                "docstring": "Движок ограничений вызовов (Rate Limiter) для Telegram-ботов.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 33,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, rate, per)",
+                    "summary": "Инициализирует TelegramRateLimiter.",
+                    "docstring": "Инициализирует TelegramRateLimiter.\n\nArgs:\n    rate: Максимальное количество допустимых вызовов.\n    per: Период времени в секундах.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 36,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "check_rate_limit",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, key)",
+                    "summary": "Проверяет превышение лимита вызовов для ключа.",
+                    "docstring": "Проверяет превышение лимита вызовов для ключа.\n\nArgs:\n    key: Уникальный идентификатор сущности (user_id / chat_id).\n\nReturns:\n    Кортеж (is_limited, wait_sec), где is_limited - флаг превышения, wait_sec - секунд до разблокировки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 47,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "tg_rate_limit",
+                "type": "function",
+                "layer": "public",
+                "signature": "(rate, per, scope, warning_text, silent, raise_on_limit)",
+                "summary": "Декоратор ограничения частоты запросов для Telegram-ботов.",
+                "docstring": "Декоратор ограничения частоты запросов для Telegram-ботов.\n\nArgs:\n    rate: Количество разрешенных запросов.\n    per: Временное окно в секундах.\n    scope: Область ограничения: 'user_id', 'chat_id' или 'user_and_chat'.\n    warning_text: Шаблон предупреждения. Поддерживает форматирование {wait_sec}.\n    silent: Если True, отбрасывать запросы без вывода предупреждения.\n    raise_on_limit: Если True, выбрасывать RateLimitExceededError при флуде.\n\nReturns:\n    Обернутая функция-хэндлер.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 71,
+                "bases": [],
+                "children": []
               }
             ]
           }
@@ -34864,7 +35039,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 341,
+        "line_number": 344,
         "bases": [],
         "children": []
       },
@@ -34884,7 +35059,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 372,
+        "line_number": 375,
         "bases": [],
         "children": []
       },
@@ -34904,7 +35079,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 382,
+        "line_number": 385,
         "bases": [],
         "children": []
       }
@@ -36694,7 +36869,12 @@
     {
       "source": "chutils/telegram",
       "target": "/aiogram",
-      "weight": 1
+      "weight": 2
+    },
+    {
+      "source": "chutils/telegram",
+      "target": "/rate_limit",
+      "weight": 2
     },
     {
       "source": "chutils/telegram/access",
@@ -36715,6 +36895,16 @@
       "source": "chutils/telegram/aiogram",
       "target": "chutils/telegram/access",
       "weight": 2
+    },
+    {
+      "source": "chutils/telegram/rate_limit",
+      "target": "chutils/exceptions/resilience",
+      "weight": 1
+    },
+    {
+      "source": "chutils/telegram/rate_limit",
+      "target": "chutils/telegram/access",
+      "weight": 1
     },
     {
       "source": "chutils/testing",
@@ -36796,8 +36986,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "ab076183c012ba5ab5da0cde3c4d538b77cdb80f (dirty)",
-    "generated_at": "2026-08-06T18:04:23.023942+00:00",
-    "project_hash": "381a41f803af4bd11a6dbb6289718dc4bfbf80683919331d4f55b7871eb3bc7c"
+    "git_commit": "c8e11779a3cd75f5343a6611b9032fdfe20cd898 (dirty)",
+    "generated_at": "2026-08-06T18:11:29.682510+00:00",
+    "project_hash": "b69cfd5fd6dbaeb45c31863ee0bbb6b142a18888da12df8135c9c31655226619"
   }
 }

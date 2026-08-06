@@ -283,6 +283,9 @@ _LAZY_MAPPING = {
     'is_admin': ('.telegram', 'is_admin'),
     'admin_only': ('.telegram', 'admin_only'),
     'AdminFilter': ('.telegram', 'AdminFilter'),
+    'TelegramRateLimiter': ('.telegram', 'TelegramRateLimiter'),
+    'tg_rate_limit': ('.telegram', 'tg_rate_limit'),
+    'TelegramThrottlingMiddleware': ('.telegram', 'TelegramThrottlingMiddleware'),
 
     # scraping
     'scraping': ('.scraping', None),

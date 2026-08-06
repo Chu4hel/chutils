@@ -54,3 +54,63 @@ class AdminFilter(BaseFilter):  # type: ignore[misc]
             admin_usernames=self.admin_usernames,
             is_admin_func=self.is_admin_func,
         )
+
+
+try:
+    from aiogram import BaseMiddleware
+
+    _HAS_AIOGRAM_MIDDLEWARE = True
+except ImportError:  # pragma: no cover
+    BaseMiddleware = object
+    _HAS_AIOGRAM_MIDDLEWARE = False
+
+
+class TelegramThrottlingMiddleware(BaseMiddleware):  # type: ignore[misc]
+    """Middleware отслеживания и предотвращения спама (Throttling) для aiogram 3.x."""
+
+    def __init__(
+        self,
+        rate: int = 1,
+        per: float = 1.0,
+        scope: str = "user_id",
+        warning_text: str | None = "⏱ Пожалуйста, подождите {wait_sec} сек. перед повторной отправкой.",
+        silent: bool = False,
+    ) -> None:
+        if _HAS_AIOGRAM_MIDDLEWARE:
+            super().__init__()
+        from chutils.telegram.rate_limit import TelegramRateLimiter
+
+        self.limiter = TelegramRateLimiter(rate=rate, per=per)
+        self.scope = scope
+        self.warning_text = warning_text
+        self.silent = silent
+
+    async def __call__(
+        self,
+        handler: Callable[[Any, dict[str, Any]], Any],
+        event: Any,
+        data: dict[str, Any],
+    ) -> Any:
+        """Обрабатывает входящее событие в цепочке Middleware."""
+        uid, _ = _extract_user_info((event,), data)
+        key = f"user_{uid}" if uid is not None else "unknown"
+
+        is_limited, wait_sec = self.limiter.check_rate_limit(key)
+        if is_limited:
+            if self.silent:
+                return None
+            if self.warning_text:
+                msg = self.warning_text.format(wait_sec=wait_sec)
+                if hasattr(event, "answer") and callable(event.answer):
+                    try:
+                        await event.answer(msg)
+                    except Exception:
+                        pass
+                elif hasattr(event, "reply") and callable(event.reply):
+                    try:
+                        await event.reply(msg)
+                    except Exception:
+                        pass
+            return None
+
+        return await handler(event, data)

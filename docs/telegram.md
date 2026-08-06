@@ -79,3 +79,35 @@ router = Router()
 async def admin_panel(message: types.Message):
     await message.answer("Добро пожаловать в админ-панель!")
 ```
+
+---
+
+## 4. Защита от спама и флуда (`@tg_rate_limit`)
+
+Декоратор `@tg_rate_limit` ограничивает частоту вызова команд с динамическим расчетом оставшегося времени ожидания
+`{wait_sec}`.
+
+```python
+from chutils.telegram import tg_rate_limit
+
+
+# Разрешить не более 2 вызовов в 10 секунд
+@tg_rate_limit(rate=2, per=10.0, warning_text="⏱ Замедлитесь! Подождите {wait_sec} сек.")
+async def heavy_command(event):
+    await event.answer("Тяжелый запрос выполнен!")
+```
+
+---
+
+## 5. aiogram 3.x Middleware (`TelegramThrottlingMiddleware`)
+
+Глобальное предотвращение спама на уровне роутеров/диспетчеров `aiogram`:
+
+```python
+from aiogram import Dispatcher
+from chutils.telegram import TelegramThrottlingMiddleware
+
+dp = Dispatcher()
+# Подключение мидлваря для всех текстовых сообщений
+dp.message.middleware(TelegramThrottlingMiddleware(rate=1, per=2.0))
+```
