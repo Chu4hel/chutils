@@ -23,11 +23,19 @@ if TYPE_CHECKING:
             ...
 
         def fetchone(self) -> Any:
-            """Возвращает одну строку результата."""
+            """Возвращает одну строку результата.
+
+            Returns:
+                Одна строка из результата запроса.
+            """
             ...
 
         def fetchall(self) -> list[tuple[Any, ...]]:
-            """Возвращает все строки результата."""
+            """Возвращает все строки результата.
+
+            Returns:
+                Список строк с результатами запроса.
+            """
             ...
 
         def __enter__(self) -> _DBAPICursor:
@@ -39,7 +47,11 @@ if TYPE_CHECKING:
 
     class _DBAPIConnection(Protocol):
         def cursor(self) -> _DBAPICursor:
-            """Возвращает объект курсора БД."""
+            """Возвращает объект курсора БД.
+
+            Returns:
+                Экземпляр курсора БД.
+            """
             ...
 
         def commit(self) -> None:

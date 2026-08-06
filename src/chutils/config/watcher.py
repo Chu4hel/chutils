@@ -14,8 +14,8 @@ from .. import env
 if TYPE_CHECKING:
     from watchdog.events import FileSystemEvent
 
-# Настраиваем логгер
 logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
+"""Локальный логгер модуля."""
 
 _DEBOUNCE_SECONDS = 1.0
 "Константа для debounce (секунды)"

@@ -12,8 +12,8 @@ from typing import Any
 from chutils.typing import JSONDict
 from .providers import get_providers
 
-# Настраиваем локальный логгер
 logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
+"""Локальный логгер модуля."""
 
 
 def find_project_root(start_path: Path, markers: list[str]) -> Path | None:

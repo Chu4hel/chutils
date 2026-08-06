@@ -417,7 +417,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 49,
+                    "line_number": 61,
                     "bases": [],
                     "children": []
                   },
@@ -437,7 +437,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 93,
+                    "line_number": 105,
                     "bases": [],
                     "children": []
                   },
@@ -457,7 +457,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 99,
+                    "line_number": 111,
                     "bases": [],
                     "children": []
                   },
@@ -477,7 +477,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 101,
+                    "line_number": 113,
                     "bases": [],
                     "children": []
                   },
@@ -497,7 +497,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 107,
+                    "line_number": 119,
                     "bases": [
                       "chutils.audit.backends.base.BaseAuditBackend"
                     ],
@@ -518,7 +518,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 119,
+                        "line_number": 131,
                         "bases": [],
                         "children": []
                       },
@@ -538,7 +538,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 129,
+                        "line_number": 141,
                         "bases": [],
                         "children": []
                       },
@@ -558,7 +558,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 133,
+                        "line_number": 145,
                         "bases": [],
                         "children": []
                       },
@@ -578,7 +578,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 139,
+                        "line_number": 151,
                         "bases": [],
                         "children": []
                       },
@@ -598,7 +598,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 191,
+                        "line_number": 203,
                         "bases": [],
                         "children": []
                       }
@@ -5637,7 +5637,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 23,
+                "line_number": 22,
                 "bases": [],
                 "children": []
               },
@@ -7911,7 +7911,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 28,
+                "line_number": 27,
                 "bases": [],
                 "children": []
               },
@@ -8765,7 +8765,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 16,
+                "line_number": 15,
                 "bases": [],
                 "children": []
               },
@@ -8996,7 +8996,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 18,
+                "line_number": 17,
                 "bases": [],
                 "children": []
               },
@@ -13888,7 +13888,7 @@
                         "layer": "internal",
                         "signature": "(self, msg)",
                         "summary": "Печатает сообщение в консоль.",
-                        "docstring": "Печатает сообщение в консоль.",
+                        "docstring": "Печатает сообщение в консоль.\n\nArgs:\n    msg: Выводимое сообщение.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -13920,7 +13920,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 24,
+                    "line_number": 28,
                     "bases": [],
                     "children": [
                       {
@@ -13939,7 +13939,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 32,
+                        "line_number": 36,
                         "bases": [],
                         "children": []
                       },
@@ -13959,7 +13959,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 42,
+                        "line_number": 46,
                         "bases": [],
                         "children": []
                       },
@@ -13979,7 +13979,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 79,
+                        "line_number": 83,
                         "bases": [],
                         "children": []
                       },
@@ -14001,7 +14001,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 100,
+                        "line_number": 104,
                         "bases": [],
                         "children": []
                       }
@@ -14023,7 +14023,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 118,
+                    "line_number": 122,
                     "bases": [],
                     "children": []
                   },
@@ -14043,7 +14043,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 142,
+                    "line_number": 146,
                     "bases": [],
                     "children": []
                   },
@@ -14063,7 +14063,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 162,
+                    "line_number": 166,
                     "bases": [],
                     "children": []
                   },
@@ -14083,7 +14083,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 190,
+                    "line_number": 194,
                     "bases": [],
                     "children": []
                   },
@@ -14103,7 +14103,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 235,
+                    "line_number": 239,
                     "bases": [],
                     "children": []
                   }
@@ -38016,8 +38016,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "74b5e6d17db337d1d4868bae5199f9332767501f (dirty)",
-    "generated_at": "2026-08-06T19:02:07.737369+00:00",
-    "project_hash": "5a0654cf03e56ba95feba6ebd744efba0cc72f24d44ed863e02e48032fa996f5"
+    "git_commit": "e35b13b0b898c9ec4552f50b41f4359bcb767acf (dirty)",
+    "generated_at": "2026-08-06T19:05:08.472491+00:00",
+    "project_hash": "3d704e15d05da15cc7ce2e9b157c92b3f9951ac641ea5caf2aa991f1fce73e88"
   }
 }
