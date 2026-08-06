@@ -41,7 +41,7 @@ chutils dev [-h] {generate-context,ai-lint,chat-context,scaffold,mock,install-ho
 ### Синтаксис подкоманды:
 
 ```bash
-chutils dev generate-context [-h] [-f {markdown,json}] [-o OUTPUT] [--tree] [--no-weights] [--include-examples] [--project [PROJECT]]
+chutils dev generate-context [-h] [-f {markdown,json}] [-o OUTPUT] [--tree] [--no-weights] [--include-examples] [--project [PROJECT]] [--gitignore] [--no-gitignore] [-i]
 ```
 
 ### Параметры и флаги:
@@ -55,6 +55,8 @@ chutils dev generate-context [-h] [-f {markdown,json}] [-o OUTPUT] [--tree] [--n
 | **`--include-examples`** | Включить few-shot примеры из папки `docs/ai_examples/` в итоговый отчет.                                                                                   | Нет          |
 | **`--project`**          | Путь к сканируемому проекту. Если флаг опущен, сканируется сама библиотека `chutils`. Если флаг передан без аргументов, сканируется текущий каталог (`.`). | Нет          |
 | **`--ignore`**           | Дополнительные паттерны путей/файлов для игнорирования (например, `--ignore "tests/*"`). Можно передавать несколько раз или через запятую.                 | Нет          |
+| **`--gitignore`**        | Учитывать правила `.gitignore` файла при сканировании проекта (по умолчанию `True`).                                                                       | Нет          |
+| **`-i, --incremental`**  | Инкрементальное обновление контекста AST только для изменившихся в Git файлов без полного сканирования кодовой базы.                                       | Нет          |
 | **`--force`**            | Принудительно перезаписать файл отчета, даже если API проекта не изменилось.                                                                               | Нет          |
 
 ### Фильтрация путей и файл `.chutilsignore`

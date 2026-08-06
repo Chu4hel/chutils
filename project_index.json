@@ -3394,7 +3394,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 92,
+                        "line_number": 110,
                         "bases": [],
                         "children": []
                       },
@@ -3414,7 +3414,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 314,
+                        "line_number": 336,
                         "bases": [],
                         "children": []
                       },
@@ -3436,7 +3436,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 348,
+                        "line_number": 370,
                         "bases": [],
                         "children": []
                       },
@@ -3456,7 +3456,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 381,
+                        "line_number": 403,
                         "bases": [],
                         "children": []
                       },
@@ -3476,7 +3476,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 407,
+                        "line_number": 429,
                         "bases": [],
                         "children": []
                       }
@@ -4121,7 +4121,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 581,
+                    "line_number": 599,
                     "bases": [],
                     "children": []
                   },
@@ -4141,7 +4141,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 591,
+                    "line_number": 609,
                     "bases": [],
                     "children": []
                   },
@@ -4161,7 +4161,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 600,
+                    "line_number": 618,
                     "bases": [],
                     "children": []
                   },
@@ -4181,7 +4181,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 609,
+                    "line_number": 627,
                     "bases": [],
                     "children": []
                   },
@@ -4201,7 +4201,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 618,
+                    "line_number": 636,
                     "bases": [],
                     "children": []
                   },
@@ -4221,7 +4221,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 627,
+                    "line_number": 645,
                     "bases": [],
                     "children": []
                   },
@@ -4241,7 +4241,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 636,
+                    "line_number": 654,
                     "bases": [],
                     "children": []
                   },
@@ -4261,7 +4261,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 645,
+                    "line_number": 663,
                     "bases": [],
                     "children": []
                   },
@@ -4281,7 +4281,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 654,
+                    "line_number": 672,
                     "bases": [],
                     "children": []
                   },
@@ -4301,7 +4301,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 663,
+                    "line_number": 681,
                     "bases": [],
                     "children": []
                   },
@@ -4321,7 +4321,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 672,
+                    "line_number": 690,
                     "bases": [],
                     "children": []
                   },
@@ -4341,7 +4341,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 681,
+                    "line_number": 699,
                     "bases": [],
                     "children": []
                   },
@@ -4361,7 +4361,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 690,
+                    "line_number": 708,
                     "bases": [],
                     "children": []
                   },
@@ -4381,7 +4381,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 699,
+                    "line_number": 717,
                     "bases": [],
                     "children": []
                   },
@@ -4401,7 +4401,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 708,
+                    "line_number": 726,
                     "bases": [],
                     "children": []
                   }
@@ -11091,107 +11091,6 @@
             "children": [],
             "symbols": [
               {
-                "name": "GitIgnoreMatcher",
-                "type": "class",
-                "layer": "internal",
-                "signature": "",
-                "summary": "Проверяет соответствие путей правилам .gitignore, .chutilsignore и пользовательским флагам.",
-                "docstring": "Проверяет соответствие путей правилам .gitignore, .chutilsignore и пользовательским флагам.",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 15,
-                "bases": [],
-                "children": [
-                  {
-                    "name": "__init__",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self, root_path, custom_ignore)",
-                    "summary": "Инициализирует GitIgnoreMatcher.",
-                    "docstring": "Инициализирует GitIgnoreMatcher.\n\nArgs:\n    root_path: Корневой путь проекта.\n    custom_ignore: Дополнительные паттерны для игнорирования.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 18,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "_load_file_rules",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self, file_path)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 42,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "_rule_to_regex",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self, rule)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 64,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "matches",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, rel_path)",
-                    "summary": "Возвращает True, если путь должен быть проигнорирован.",
-                    "docstring": "Возвращает True, если путь должен быть проигнорирован.\n\nArgs:\n    rel_path: Относительный путь для проверки.\n\nReturns:\n    True, если путь игнорируется, иначе False.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 117,
-                    "bases": [],
-                    "children": []
-                  }
-                ]
-              },
-              {
                 "name": "Indexer",
                 "type": "class",
                 "layer": "internal",
@@ -11207,16 +11106,16 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 137,
+                "line_number": 16,
                 "bases": [],
                 "children": [
                   {
                     "name": "__init__",
                     "type": "method",
                     "layer": "private",
-                    "signature": "(self, root_path, custom_ignore)",
+                    "signature": "(self, root_path, custom_ignore, use_gitignore)",
                     "summary": "Инициализирует Indexer.",
-                    "docstring": "Инициализирует Indexer.\n\nArgs:\n    root_path: Корневой путь к исходному коду проекта.\n    custom_ignore: Список дополнительных паттернов для игнорирования.",
+                    "docstring": "Инициализирует Indexer.\n\nArgs:\n    root_path: Корневой путь к исходному коду проекта.\n    custom_ignore: Список дополнительных паттернов для игнорирования.\n    use_gitignore: Флаг необходимости использования .gitignore.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -11226,7 +11125,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 140,
+                    "line_number": 19,
                     "bases": [],
                     "children": []
                   },
@@ -11248,7 +11147,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 161,
+                    "line_number": 46,
                     "bases": [],
                     "children": []
                   },
@@ -11268,7 +11167,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 169,
+                    "line_number": 54,
                     "bases": [],
                     "children": []
                   },
@@ -11288,7 +11187,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 188,
+                    "line_number": 73,
                     "bases": [],
                     "children": []
                   },
@@ -11308,7 +11207,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 210,
+                    "line_number": 95,
                     "bases": [],
                     "children": []
                   },
@@ -11328,7 +11227,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 238,
+                    "line_number": 123,
                     "bases": [],
                     "children": []
                   },
@@ -11348,7 +11247,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 270,
+                    "line_number": 155,
                     "bases": [],
                     "children": []
                   },
@@ -11368,7 +11267,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 290,
+                    "line_number": 175,
                     "bases": [],
                     "children": []
                   },
@@ -11388,7 +11287,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 308,
+                    "line_number": 193,
                     "bases": [],
                     "children": []
                   },
@@ -11408,7 +11307,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 402,
+                    "line_number": 287,
                     "bases": [],
                     "children": []
                   },
@@ -11428,7 +11327,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 425,
+                    "line_number": 310,
                     "bases": [],
                     "children": []
                   },
@@ -11448,7 +11347,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 429,
+                    "line_number": 314,
                     "bases": [],
                     "children": []
                   }
@@ -11982,6 +11881,240 @@
             "summary": "Константы для инструментов разработки.",
             "docstring": "Константы для инструментов разработки.",
             "children": [],
+            "symbols": []
+          },
+          {
+            "name": "context",
+            "path": "chutils/dev/context",
+            "type": "package",
+            "layer": "public",
+            "summary": "",
+            "docstring": "",
+            "children": [
+              {
+                "name": "gitignore",
+                "path": "chutils/dev/context/gitignore",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "GitIgnoreMatcher",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Проверяет соответствие путей правилам .gitignore, .chutilsignore и пользовательским флагам.",
+                    "docstring": "Проверяет соответствие путей правилам .gitignore, .chutilsignore и пользовательским флагам.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 7,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, root_path, custom_ignore, use_gitignore)",
+                        "summary": "Инициализирует GitIgnoreMatcher.",
+                        "docstring": "Инициализирует GitIgnoreMatcher.\n\nArgs:\n    root_path: Корневой путь проекта.\n    custom_ignore: Дополнительные паттерны для игнорирования.\n    use_gitignore: Флаг необходимости чтения .gitignore файлов.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 10,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_load_all_gitignore_files",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, base_dir)",
+                        "summary": "Рекурсивно загружает правила из всех файлов .gitignore в проекте.",
+                        "docstring": "Рекурсивно загружает правила из всех файлов .gitignore в проекте.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 36,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_load_file_rules",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, file_path, base_dir)",
+                        "summary": "Загружает правила из указанного файла правил.",
+                        "docstring": "Загружает правила из указанного файла правил.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 48,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_add_rule",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, rule_str, base_dir)",
+                        "summary": "Добавляет одно правило игнорирования.",
+                        "docstring": "Добавляет одно правило игнорирования.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 63,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_rule_to_regex",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, rule)",
+                        "summary": "Преобразует паттерн gitignore в регулярное выражение Python.",
+                        "docstring": "Преобразует паттерн gitignore в регулярное выражение Python.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 74,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "matches",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, rel_path)",
+                        "summary": "Возвращает True, если путь должен быть проигнорирован.",
+                        "docstring": "Возвращает True, если путь должен быть проигнорирован.\n\nArgs:\n    rel_path: Относительный путь от корня проекта.\n\nReturns:\n    True, если путь игнорируется, иначе False.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 126,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "incremental",
+                "path": "chutils/dev/context/incremental",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "get_changed_files",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(project_root)",
+                    "summary": "Возвращает список измененных или новых Python файлов относительно Git.",
+                    "docstring": "Возвращает список измененных или новых Python файлов относительно Git.\n\nArgs:\n    project_root: Корень целевого проекта.\n\nReturns:\n    Список путей к изменившимся или созданным .py файлам.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 11,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "update_tree_incrementally",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(old_index_data, changed_files, indexer_class, project_root, use_gitignore, custom_ignore)",
+                    "summary": "Обновляет иерархический индекс проекта частичной переиндексацией изменившихся файлов.",
+                    "docstring": "Обновляет иерархический индекс проекта частичной переиндексацией изменившихся файлов.\n\nArgs:\n    old_index_data: Старый словарь Pydantic модели ProjectIndex.\n    changed_files: Список путей к изменившимся .py файлам.\n    indexer_class: Класс Indexer из ast_indexer.\n    project_root: Корневой путь проекта.\n    use_gitignore: Флаг учета .gitignore.\n    custom_ignore: Список кастомных игноров.\n\nReturns:\n    Обновленный словарь метаданных ProjectIndex.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 55,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_find_node_by_path",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(node, target_path)",
+                    "summary": "Ищет узел в дереве по его относительному пути.",
+                    "docstring": "Ищет узел в дереве по его относительному пути.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 118,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ],
             "symbols": []
           },
           {
@@ -35153,6 +35286,11 @@
     },
     {
       "source": "chutils/dev/ast_indexer",
+      "target": "/context",
+      "weight": 1
+    },
+    {
+      "source": "chutils/dev/ast_indexer",
       "target": "/models",
       "weight": 6
     },
@@ -35179,6 +35317,26 @@
     {
       "source": "chutils/dev/cleaner",
       "target": "chutils/fs",
+      "weight": 1
+    },
+    {
+      "source": "chutils/dev/context",
+      "target": "/gitignore",
+      "weight": 1
+    },
+    {
+      "source": "chutils/dev/context",
+      "target": "/incremental",
+      "weight": 2
+    },
+    {
+      "source": "chutils/dev/context/incremental",
+      "target": "chutils/dev/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/dev/context/incremental",
+      "target": "chutils/dev/models/Node",
       "weight": 1
     },
     {
@@ -36366,8 +36524,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "cc159aa18bf143807ccb19a3c8f7ebdec65db935 (dirty)",
-    "generated_at": "2026-08-05T19:53:39.620694+00:00",
-    "project_hash": "af4222cfd52ad6f710a0014eadeef9a2f3c6392e36054c45a9353b28c6f7cad2"
+    "git_commit": "7fdb57a868877c3444d0ae0c6d61969fdd681293 (dirty)",
+    "generated_at": "2026-08-06T17:58:05.282870+00:00",
+    "project_hash": "075ddd49cfbaaa765bcb7dbdcb80de27eeb6e70e9f48774e94d51715ca8ae79c"
   }
 }

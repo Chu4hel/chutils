@@ -116,6 +116,24 @@ class DevCommand(BaseCommand):
             help="Путь к целевому проекту для сканирования (если не указан, сканируется сама библиотека chutils)",
         )
         gen_parser.add_argument(
+            "--gitignore",
+            action="store_true",
+            default=True,
+            help="Учитывать правила .gitignore при сканировании файлов проекта (по умолчанию включено)",
+        )
+        gen_parser.add_argument(
+            "--no-gitignore",
+            action="store_false",
+            dest="gitignore",
+            help="Не учитывать правила .gitignore при сканировании",
+        )
+        gen_parser.add_argument(
+            "-i",
+            "--incremental",
+            action="store_true",
+            help="Инкрементальное обновление контекста (перестраивает индексы только для измененных в Git файлов)",
+        )
+        gen_parser.add_argument(
             "--force",
             action="store_true",
             help=(

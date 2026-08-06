@@ -80,6 +80,24 @@ class GenerateContextSubCommand(SubCommand):
             ),
         )
         gen_parser.add_argument(
+            "--gitignore",
+            action="store_true",
+            default=True,
+            help="Учитывать правила .gitignore при сканировании файлов проекта (по умолчанию включено)",
+        )
+        gen_parser.add_argument(
+            "--no-gitignore",
+            action="store_false",
+            dest="gitignore",
+            help="Не учитывать правила .gitignore при сканировании",
+        )
+        gen_parser.add_argument(
+            "-i",
+            "--incremental",
+            action="store_true",
+            help="Инкрементальное обновление контекста (перестраивает индексы только для измененных в Git файлов)",
+        )
+        gen_parser.add_argument(
             "--force",
             action="store_true",
             help=(
@@ -123,7 +141,11 @@ class GenerateContextSubCommand(SubCommand):
             try:
                 from chutils.dev.ast_indexer import Indexer
 
-                indexer = Indexer(str(project_path), custom_ignore=custom_ignore)
+                indexer = Indexer(
+                    str(project_path),
+                    custom_ignore=custom_ignore,
+                    use_gitignore=bool(getattr(args, "gitignore", True)),
+                )
                 index = indexer.index(include_examples=bool(args.include_examples))
 
                 api_data = self._collect_symbols_recursive(index.root)
@@ -436,16 +458,47 @@ class GenerateContextSubCommand(SubCommand):
             else:
                 project_path = Path(chutils.__file__).parent
 
-            indexer = Indexer(str(project_path), custom_ignore=custom_ignore)
-            index = indexer.index(include_examples=bool(args.include_examples))
+            use_gitignore = bool(getattr(args, "gitignore", True))
+            indexer = Indexer(str(project_path), custom_ignore=custom_ignore, use_gitignore=use_gitignore)
+
+            if getattr(args, "incremental", False) and args.output and Path(args.output).exists():
+                from chutils.dev.context.incremental import get_changed_files, update_tree_incrementally
+
+                changed = get_changed_files(project_path)
+                if changed:
+                    self.err_console.print(
+                        f"[dim cyan] [INCREMENTAL] [/dim cyan] Найдено {len(changed)} измененных файлов. Инкрементальное обновление..."
+                    )
+                    old_tree_data = json.loads(Path(args.output).read_text(encoding="utf-8"))
+                    updated_dict = update_tree_incrementally(
+                        old_tree_data,
+                        changed,
+                        Indexer,
+                        project_path,
+                        use_gitignore=use_gitignore,
+                        custom_ignore=custom_ignore,
+                    )
+                    output_content = json.dumps(updated_dict, indent=2, ensure_ascii=False)
+                else:
+                    index = indexer.index(include_examples=bool(args.include_examples))
+                    output_content = index.model_dump_json(indent=2)
+            else:
+                index = indexer.index(include_examples=bool(args.include_examples))
+                output_content = index.model_dump_json(indent=2)
 
             if args.no_weights:
-                for edge in index.dependency_graph:
-                    edge.weight = 1
-
-            output_content = index.model_dump_json(indent=2)
+                try:
+                    tree_dict = json.loads(output_content)
+                    for edge in tree_dict.get("dependency_graph", []):
+                        edge["weight"] = 1
+                    output_content = json.dumps(tree_dict, indent=2, ensure_ascii=False)
+                except Exception:
+                    pass
 
             if args.output:
+                tree_dict = json.loads(output_content)
+                proj_hash = tree_dict.get("metadata", {}).get("project_hash", "") if isinstance(tree_dict, dict) else ""
+
                 force: bool = getattr(args, "force", False)
                 if not force and self._is_content_effectively_unchanged(output_content, args.output, "tree"):
                     self.err_console.print(
@@ -457,7 +510,7 @@ class GenerateContextSubCommand(SubCommand):
                     # "устаревший" файл, который на самом деле актуален по содержимому
                     from chutils.dev.ast_indexer import save_context_metadata_cache
                     save_context_metadata_cache(
-                        Path(".").resolve(), args.output, "tree", index.metadata.get("project_hash", "")
+                        Path(".").resolve(), args.output, "tree", proj_hash
                     )
                     return
                 with open(args.output, "w", encoding="utf-8") as f:
@@ -466,8 +519,7 @@ class GenerateContextSubCommand(SubCommand):
                     f"[bold green] [OK] [/bold green] Иерархический индекс успешно сохранен в: [cyan]{args.output}[/cyan]"
                 )
                 from chutils.dev.ast_indexer import save_context_metadata_cache
-                save_context_metadata_cache(Path(".").resolve(), args.output, "tree",
-                                            index.metadata.get("project_hash", ""))
+                save_context_metadata_cache(Path(".").resolve(), args.output, "tree", proj_hash)
             else:
                 print(output_content)
 
