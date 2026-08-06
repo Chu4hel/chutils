@@ -245,3 +245,42 @@ send_alert(
 bridge = HealthCheckAlertBridge()
 bridge.on_health_check("PostgreSQL", "UNHEALTHY", {"error": "Connection timeout"})
 ```
+
+---
+
+## 14. Динамические Inline-клавиатуры (`build_inline_keyboard`)
+
+Построение сетки кнопок из списков кортежей или словарей:
+
+```python
+from chutils.telegram import build_inline_keyboard
+
+buttons = [
+    ("Купить", "buy_item_1"),
+    ("Подробнее", "info_item_1"),
+    {"text": "Сайт", "url": "https://example.com"}
+]
+
+# Возвращает структуру {'inline_keyboard': [...]} или aiogram InlineKeyboardMarkup (при as_aiogram=True)
+keyboard = build_inline_keyboard(buttons, buttons_per_row=2, as_aiogram=True)
+```
+
+---
+
+## 15. Пагинатор списков и каталогов (`PaginatorKeyboard`)
+
+Автоматическая генерация панели навигации (`«`, `1/5`, `»`) с прикреплением футеров:
+
+```python
+from chutils.telegram import PaginatorKeyboard
+
+catalog_items = [f"Товар #{i}" for i in range(1, 50)]
+paginator = PaginatorKeyboard(catalog_items, per_page=5, callback_prefix="catalog")
+
+# Построение 2-й страницы с дополнительной кнопкой 'Закрыть'
+kb = paginator.build_keyboard(
+    page=2,
+    footer_buttons=[("Закрыть", "close_catalog")],
+    as_aiogram=True
+)
+```

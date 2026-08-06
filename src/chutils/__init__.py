@@ -298,6 +298,8 @@ _LAZY_MAPPING = {
     'TelegramLogHandler': ('.telegram', 'TelegramLogHandler'),
     'HealthCheckAlertBridge': ('.telegram', 'HealthCheckAlertBridge'),
     'send_alert': ('.telegram', 'send_alert'),
+    'build_inline_keyboard': ('.telegram', 'build_inline_keyboard'),
+    'PaginatorKeyboard': ('.telegram', 'PaginatorKeyboard'),
 
     # scraping
     'scraping': ('.scraping', None),

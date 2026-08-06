@@ -200,6 +200,8 @@ members:
 - TelegramLogHandler
 - HealthCheckAlertBridge
 - send_alert
+- build_inline_keyboard
+- PaginatorKeyboard
 
 ## Декораторы
 

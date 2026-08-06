@@ -33321,6 +33321,180 @@
             ]
           },
           {
+            "name": "keyboard",
+            "path": "chutils/telegram/keyboard",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "ButtonSpec",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 6,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_format_button",
+                "type": "function",
+                "layer": "private",
+                "signature": "(button)",
+                "summary": "Приводит спецификацию кнопки к единому словарю Telegram API InlineKeyboardButton.",
+                "docstring": "Приводит спецификацию кнопки к единому словарю Telegram API InlineKeyboardButton.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 9,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "build_inline_keyboard",
+                "type": "function",
+                "layer": "public",
+                "signature": "(buttons, buttons_per_row, as_aiogram)",
+                "summary": "Создает сетку Inline-клавиатуры Telegram из списка кнопок.",
+                "docstring": "Создает сетку Inline-клавиатуры Telegram из списка кнопок.\n\nArgs:\n    buttons: Список спецификаций кнопок (кортежи или словари).\n    buttons_per_row: Количество кнопок в одном ряду (по умолчанию 2).\n    as_aiogram: Если True, возвращает aiogram InlineKeyboardMarkup (при наличии aiogram).\n\nReturns:\n    Словарь вида {'inline_keyboard': [...]} или aiogram InlineKeyboardMarkup.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 30,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "PaginatorKeyboard",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Управляющий класс пагинации динамических Inline-клавиатур.",
+                "docstring": "Управляющий класс пагинации динамических Inline-клавиатур.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 74,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, items, per_page, callback_prefix)",
+                    "summary": "Инициализирует PaginatorKeyboard.",
+                    "docstring": "Инициализирует PaginatorKeyboard.\n\nArgs:\n    items: Полный список элементов.\n    per_page: Количество элементов на странице (по умолчанию 5).\n    callback_prefix: Префикс callback_data для навигации.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 77,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "total_pages",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает общее количество страниц.",
+                    "docstring": "Возвращает общее количество страниц.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 95,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_page_items",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, page)",
+                    "summary": "Возвращает срез элементов для указанной страницы (1-indexed).",
+                    "docstring": "Возвращает срез элементов для указанной страницы (1-indexed).\n\nArgs:\n    page: Номер страницы (1..total_pages).\n\nReturns:\n    Список элементов текущей страницы.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 101,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "build_keyboard",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, page, item_button_factory, footer_buttons, buttons_per_row, as_aiogram)",
+                    "summary": "Строит готовую клавиатуру со срезом элементов и пагинационной панелью.",
+                    "docstring": "Строит готовую клавиатуру со срезом элементов и пагинационной панелью.\n\nArgs:\n    page: Номер запрашиваемой страницы.\n    item_button_factory: Опциональная функция приведения элемента к ButtonSpec.\n    footer_buttons: Дополнительные кнопки под панелью пагинации.\n    buttons_per_row: Ряды элементов страницы.\n    as_aiogram: Возвращать ли aiogram InlineKeyboardMarkup.\n\nReturns:\n    Готовая клавиатура.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 115,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "logging",
             "path": "chutils/telegram/logging",
             "type": "module",
@@ -35835,7 +36009,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 356,
+        "line_number": 358,
         "bases": [],
         "children": []
       },
@@ -35855,7 +36029,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 387,
+        "line_number": 389,
         "bases": [],
         "children": []
       },
@@ -35875,7 +36049,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 397,
+        "line_number": 399,
         "bases": [],
         "children": []
       }
@@ -37674,6 +37848,11 @@
     },
     {
       "source": "chutils/telegram",
+      "target": "/keyboard",
+      "weight": 2
+    },
+    {
+      "source": "chutils/telegram",
       "target": "/logging",
       "weight": 1
     },
@@ -37837,8 +38016,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "1f1c2d6a7deb6e8005fa06775d349bbb8e4789bb (dirty)",
-    "generated_at": "2026-08-06T18:36:23.578246+00:00",
-    "project_hash": "491815bcbf4fb6bc440167af1f573d5966498f7c50083aaeb361fe3b25dd0eec"
+    "git_commit": "472d42326652a6fd03aedf3b726e97bcfb593993 (dirty)",
+    "generated_at": "2026-08-06T18:40:32.915019+00:00",
+    "project_hash": "99bca35a1b7796315da66ce4603b250edebecd9289b7bfc406dbdc26b0dedbf1"
   }
 }
