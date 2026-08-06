@@ -278,6 +278,12 @@ _LAZY_MAPPING = {
     'WebClient': ('.web', 'WebClient'),
     'AsyncWebClient': ('.web', 'AsyncWebClient'),
 
+    # telegram
+    'telegram': ('.telegram', None),
+    'is_admin': ('.telegram', 'is_admin'),
+    'admin_only': ('.telegram', 'admin_only'),
+    'AdminFilter': ('.telegram', 'AdminFilter'),
+
     # scraping
     'scraping': ('.scraping', None),
     'BrowserProfile': ('.scraping.profiles', 'BrowserProfile'),

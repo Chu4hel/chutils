@@ -176,6 +176,16 @@ members:
 - encrypt_file
 - decrypt_file
 
+## Модуль `telegram` (Интеграция и контроль доступа Telegram-ботов)
+
+::: chutils.telegram
+options:
+members:
+
+- is_admin
+- admin_only
+- AdminFilter
+
 ## Декораторы
 
 ::: chutils.decorators

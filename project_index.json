@@ -19477,6 +19477,82 @@
             ]
           },
           {
+            "name": "telegram",
+            "path": "chutils/exceptions/telegram",
+            "type": "module",
+            "layer": "public",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "TelegramError",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Базовое исключение для подсистемы Telegram.",
+                "docstring": "Базовое исключение для подсистемы Telegram.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 6,
+                "bases": [
+                  "chutils.exceptions.base.ChutilsException"
+                ],
+                "children": []
+              },
+              {
+                "name": "TelegramAccessDeniedError",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Выбрасывается при отказе в доступе к командам или действиям Telegram-бота.",
+                "docstring": "Выбрасывается при отказе в доступе к командам или действиям Telegram-бота.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 12,
+                "bases": [
+                  "TelegramError"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, message, user_id)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 15,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "validation",
             "path": "chutils/exceptions/validation",
             "type": "module",
@@ -32792,6 +32868,162 @@
         "symbols": []
       },
       {
+        "name": "telegram",
+        "path": "chutils/telegram",
+        "type": "package",
+        "layer": "public",
+        "summary": "",
+        "docstring": "",
+        "children": [
+          {
+            "name": "access",
+            "path": "chutils/telegram/access",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "F",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 11,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_extract_user_info",
+                "type": "function",
+                "layer": "private",
+                "signature": "(args, kwargs)",
+                "summary": "Извлекает user_id и username из аргументов вызова функции.",
+                "docstring": "Извлекает user_id и username из аргументов вызова функции.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 14,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "is_admin",
+                "type": "function",
+                "layer": "public",
+                "signature": "(user_id, username, admin_ids, admin_usernames, is_admin_func)",
+                "summary": "Проверяет, является ли пользователь администратором.",
+                "docstring": "Проверяет, является ли пользователь администратором.\n\nЕсли явные списки `admin_ids` / `admin_usernames` не заданы, считывает\nих из конфигурации `chutils` (секция 'Telegram', ключи 'admin_ids' / 'admin_usernames').\n\nArgs:\n    user_id: Telegram ID пользователя.\n    username: Telegram username пользователя.\n    admin_ids: Список разрешенных Telegram ID администраторов.\n    admin_usernames: Список разрешенных username администраторов.\n    is_admin_func: Кастомный предикат проверки.\n\nReturns:\n    True, если пользователь является администратором, иначе False.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 43,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "admin_only",
+                "type": "function",
+                "layer": "public",
+                "signature": "(admin_ids, admin_usernames, is_admin_func, refusal_text, silent, raise_on_denied)",
+                "summary": "Декоратор для ограничения доступа к синхронным и асинхронным хэндлерам Telegram-ботов.",
+                "docstring": "Декоратор для ограничения доступа к синхронным и асинхронным хэндлерам Telegram-ботов.\n\nArgs:\n    admin_ids: Разрешенные Telegram ID.\n    admin_usernames: Разрешенные юзернеймы.\n    is_admin_func: Кастомный предикат проверки.\n    refusal_text: Текст сообщения при отказе в доступе.\n    silent: Если True, тихо игнорировать неавторизованные запросы.\n    raise_on_denied: Если True, выбрасывать TelegramAccessDeniedError.\n\nReturns:\n    Обернутый хэндлер.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 94,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "aiogram",
+            "path": "chutils/telegram/aiogram",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "AdminFilter",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Фильтр проверки прав администратора для aiogram 3.x.",
+                "docstring": "Фильтр проверки прав администратора для aiogram 3.x.\n\nПример использования:\n    @router.message(AdminFilter(admin_ids=[12345678]))\n    async def admin_cmd(message: Message):\n        await message.answer(\"Привет, админ!\")",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 18,
+                "bases": [
+                  "BaseFilter"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, admin_ids, admin_usernames, is_admin_func)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 27,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "symbols": []
+      },
+      {
         "name": "testing",
         "path": "chutils/testing",
         "type": "package",
@@ -34632,7 +34864,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 335,
+        "line_number": 341,
         "bases": [],
         "children": []
       },
@@ -34652,7 +34884,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 366,
+        "line_number": 372,
         "bases": [],
         "children": []
       },
@@ -34672,7 +34904,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 376,
+        "line_number": 382,
         "bases": [],
         "children": []
       }
@@ -35686,6 +35918,11 @@
     },
     {
       "source": "chutils/exceptions",
+      "target": "/telegram",
+      "weight": 2
+    },
+    {
+      "source": "chutils/exceptions",
       "target": "/validation",
       "weight": 3
     },
@@ -35737,6 +35974,11 @@
     {
       "source": "chutils/exceptions/system",
       "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/exceptions/telegram",
+      "target": "chutils/exceptions/base",
       "weight": 1
     },
     {
@@ -36445,6 +36687,36 @@
       "weight": 1
     },
     {
+      "source": "chutils/telegram",
+      "target": "/access",
+      "weight": 2
+    },
+    {
+      "source": "chutils/telegram",
+      "target": "/aiogram",
+      "weight": 1
+    },
+    {
+      "source": "chutils/telegram/access",
+      "target": "chutils/config",
+      "weight": 1
+    },
+    {
+      "source": "chutils/telegram/access",
+      "target": "chutils/exceptions/telegram",
+      "weight": 1
+    },
+    {
+      "source": "chutils/telegram/aiogram",
+      "target": "chutils/exceptions/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/telegram/aiogram",
+      "target": "chutils/telegram/access",
+      "weight": 2
+    },
+    {
       "source": "chutils/testing",
       "target": "/fixtures",
       "weight": 3
@@ -36524,8 +36796,8 @@
   "metadata": {
     "chutils_version": "3.4.2",
     "project_version": "3.4.2",
-    "git_commit": "7fdb57a868877c3444d0ae0c6d61969fdd681293 (dirty)",
-    "generated_at": "2026-08-06T17:58:05.282870+00:00",
-    "project_hash": "075ddd49cfbaaa765bcb7dbdcb80de27eeb6e70e9f48774e94d51715ca8ae79c"
+    "git_commit": "ab076183c012ba5ab5da0cde3c4d538b77cdb80f (dirty)",
+    "generated_at": "2026-08-06T18:04:23.023942+00:00",
+    "project_hash": "381a41f803af4bd11a6dbb6289718dc4bfbf80683919331d4f55b7871eb3bc7c"
   }
 }

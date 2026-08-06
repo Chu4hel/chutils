@@ -38,6 +38,7 @@ from .system import (
     FileSystemError,
     PathTraversalError,
 )
+from .telegram import TelegramError, TelegramAccessDeniedError
 from .validation import (
     ChutilsConfigurationError,
     ChutilsValidationError,
@@ -77,4 +78,6 @@ __all__ = [
     "EnvValidationError",
     "AuditError",
     "AuditIntegrityError",
+    "TelegramError",
+    "TelegramAccessDeniedError",
 ]
