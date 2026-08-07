@@ -58,6 +58,7 @@ _LAZY_MAPPING = {
     'vkma': ('.vkma', None),
     'VKCallbackRouter': ('.vk.callback', 'VKCallbackRouter'),
     'download_user_file': ('.telegram.media', 'download_user_file'),
+    'send_telegram_file': ('.telegram.media', 'send_telegram_file'),
     'Scaffolder': ('.dev.scaffold', 'Scaffolder'),
     'MockServerRunner': ('.dev.mock_server', 'MockServerRunner'),
     'generate_few_shot': ('.dev.few_shot', None),

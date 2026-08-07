@@ -14,11 +14,29 @@ saved_path = await download_user_file(
     max_size_bytes=10 * 1024 * 1024,  # 10 MB лимит
 )
 
-# Скачивание напрямую через bot_token (без aiogram)
-saved_path = await download_user_file(
+```
+
+### 0.1 Безопасная отправка файлов и папок (`send_telegram_file`)
+
+Функция `send_telegram_file` отправляет локальные файлы или директории в Telegram с автоматической архивацией папок в ZIP, проверкой лимита 50 МБ и обрезкой длинных подписей (`caption` до 1024 символов).
+
+```python
+from chutils.telegram import send_telegram_file
+
+# Отправка одиночного файла
+await send_telegram_file(
+    bot=bot,
+    chat_id=12345678,
+    file_path="./reports/summary.pdf",
+    caption="Ежемесячный отчёт",
+)
+
+# Отправка всей директории (автоматически запакуется в ZIP)
+await send_telegram_file(
     bot="BOT_TOKEN_12345",
-    file_id="FILE_ID",
-    target_dir="./downloads",
+    chat_id=12345678,
+    file_path="./logs_folder",
+    caption="Архив логов сервера",
 )
 ```
 
