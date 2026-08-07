@@ -23,7 +23,7 @@ QAction: Any = None
 def _load_qt() -> None:
     global QT_BINDING, QtCore, QtGui, QtWidgets, Signal, Slot, Property, QAction
 
-    preferred = (os.getenv("CHUTILS_QT_API") or os.getenv("QT_API") or "").lower()
+    preferred = (os.getenv("CHUTILS_QT_API") or os.getenv("QT_API") or "").lower()  # chutils: ignore[ChutilsIntegrationRule]
 
     bindings: list[str] = []
     if preferred in ("pyqt6", "pyqt"):

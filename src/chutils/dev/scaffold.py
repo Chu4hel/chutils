@@ -6,8 +6,8 @@ from pathlib import Path
 
 from chutils.exceptions import CommandError
 
-# Регулярное выражение для валидации имени модуля (PEP 8)
 MODULE_NAME_REGEX = re.compile(r"^[a-z_][a-z0-9_]*$")
+"""Регулярное выражение для валидации имени модуля (PEP 8)."""
 
 
 def to_camel_case(s: str) -> str:

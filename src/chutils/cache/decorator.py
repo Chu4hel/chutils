@@ -6,8 +6,9 @@ from typing import Any
 from .in_memory import InMemoryCacheBackend
 from .utils import generate_cache_key, LockManager, AsyncLockManager
 
-# Экземпляры по умолчанию
 _default_backend: InMemoryCacheBackend[Any] = InMemoryCacheBackend()
+"""Бэкенд кэширования в памяти по умолчанию."""
+
 _sync_lock_manager = LockManager()
 _async_lock_manager = AsyncLockManager()
 

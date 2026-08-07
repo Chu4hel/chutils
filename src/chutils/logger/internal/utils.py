@@ -5,11 +5,11 @@ from pathlib import Path
 from ... import config
 from ...fs import ensure_dir
 
-# --- Глобальное состояние для "ленивой" инициализации ---
 _LOG_DIR: str | None = None
+"""Глобальное состояние директории логов."""
 
-# --- Глобальное состояние для асинхронного логирования ---
 _async_listeners: list[logging.handlers.QueueListener] = []
+"""Глобальный список слушателей очереди асинхронного логирования."""
 
 
 def get_log_dir() -> str | None:

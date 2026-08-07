@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
+import os
 from pathlib import Path
 
 from ..ai_lint import Rule, LintResult
@@ -38,6 +39,32 @@ class UpgradeCheckRule(Rule):
         """
         results: list[LintResult] = []
 
+        # Проверяем отключение правила через ENV или конфигурационные файлы
+        disable_env = os.getenv("CHUTILS_DISABLE_UPGRADE_CHECK", "").lower() in ("1", "true", "yes", "on")  # chutils: ignore[ChutilsIntegrationRule]
+        if disable_env:
+            return results
+
+        generate_changelog = os.getenv("CHUTILS_GENERATE_CHANGELOG", "1").lower() not in ("0", "false", "no", "off")  # chutils: ignore[ChutilsIntegrationRule]
+
+        try:
+            from chutils.config.dev import load_ai_lint_config
+            lint_cfg = load_ai_lint_config()
+
+            # Проверка exclude_rules
+            exclude_rules = lint_cfg.get("exclude_rules", [])
+            if isinstance(exclude_rules, list) and self.name in exclude_rules:
+                return results
+
+            # Проверка индивидуальной секции [ai-lint.upgrade_check]
+            upgrade_cfg = lint_cfg.get("upgrade_check")
+            if isinstance(upgrade_cfg, dict):
+                if upgrade_cfg.get("enabled") is False:
+                    return results
+                if upgrade_cfg.get("generate_changelog") is False:
+                    generate_changelog = False
+        except Exception:
+            pass
+
         # 1. Проверяем, изменилась ли версия пакета
         old_version, new_version, is_upgraded = detect_version_upgrade(base_dir)
         if not is_upgraded or not old_version or not new_version:
@@ -68,19 +95,23 @@ class UpgradeCheckRule(Rule):
             aggregated_changes["new_api"].extend(parsed["new_api"])
             aggregated_changes["deprecations"].extend(parsed["deprecations"])
 
-        # 5. Генерируем Markdown и пишем в файл .chutils/migration_context.md
-        markdown_content = generate_migration_context_markdown(
-            aggregated_changes, old_version, new_version
-        )
+        # 5. Генерируем Markdown и пишем в файл .chutils/migration_context.md (если не отключено)
+        if generate_changelog:
+            markdown_content = generate_migration_context_markdown(
+                aggregated_changes, old_version, new_version
+            )
 
-        try:
-            from chutils.fs import ensure_dir, atomic_write
-            context_file = Path(base_dir) / ".chutils" / "migration_context.md"
-            ensure_dir(context_file.parent)
-            atomic_write(context_file, markdown_content)
-        except Exception as e:
-            logger.error("Не удалось записать файл миграционного контекста для ИИ: %s", e)
-            return results
+            try:
+                from chutils.fs import ensure_dir, atomic_write
+                context_file = Path(base_dir) / ".chutils" / "migration_context.md"
+                ensure_dir(context_file.parent)
+                atomic_write(context_file, markdown_content)
+
+                from ..version_detector import save_last_known_version
+                save_last_known_version(base_dir, new_version)
+            except Exception as e:
+                logger.error("Не удалось записать файл миграционного контекста для ИИ: %s", e)
+                return results
 
         # 6. Формируем красивое предупреждение в линтер
         breaking_count = len(aggregated_changes["breaking_changes"])
@@ -89,9 +120,10 @@ class UpgradeCheckRule(Rule):
 
         msg_parts = [
             f"Обнаружено обновление версии chutils: v{old_version} -> v{new_version}.",
-            "Файл AI-миграции сохранен в .chutils/migration_context.md.",
-            "Краткая сводка изменений:",
         ]
+        if generate_changelog:
+            msg_parts.append("Файл AI-миграции сохранен в .chutils/migration_context.md.")
+        msg_parts.append("Краткая сводка изменений:")
 
         if breaking_count > 0:
             msg_parts.append(f"  - Breaking Changes: {breaking_count} шт.")

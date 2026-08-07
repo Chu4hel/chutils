@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - VK_CLIENT_SECRET=${VK_CLIENT_SECRET}
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"

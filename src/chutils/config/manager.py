@@ -15,7 +15,8 @@ from typing import Any
 from chutils.typing import JSONDict
 
 # Настраиваем локальный логгер
-logger = logging.getLogger(__name__)
+
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 
 class _ConfigManager:
@@ -232,7 +233,14 @@ class _ConfigManager:
                 self._trace_data = {}
 
     def record_trace(self, section: str, key: str, value: Any, source: str) -> None:
-        """Записывает историю изменения значения ключа."""
+        """Записывает историю изменения значения ключа.
+
+        Args:
+            section: Имя секции конфигурации.
+            key: Ключ внутри секции.
+            value: Устанавливаемое значение.
+            source: Источник изменения.
+        """
         with self._lock:
             if not self._tracing_enabled:
                 return
@@ -252,13 +260,22 @@ class _ConfigManager:
             })
 
     def get_trace(self) -> dict[str, dict[str, list[dict[str, Any]]]]:
-        """Возвращает собранные данные трассировки."""
+        """Возвращает собранные данные трассировки.
+
+        Returns:
+            Словарь со всеми данными трассировки параметров.
+        """
         with self._lock:
             import copy
             return copy.deepcopy(self._trace_data)
 
     def record_trace_dict(self, data: JSONDict, source: str) -> None:
-        """Записывает все значения из словаря в трассировку."""
+        """Записывает все значения из словаря в трассировку.
+
+        Args:
+            data: Данные конфигурации в формате словаря.
+            source: Имя источника конфигурации.
+        """
         with self._lock:
             if not self._tracing_enabled:
                 return
@@ -403,19 +420,34 @@ class _ConfigManager:
             self._features_loaded = value
 
     def set_config(self, config_data: JSONDict) -> None:
-        """Устанавливает новый объект конфигурации в кэш атомарно."""
+        """Устанавливает новый объект конфигурации в кэш атомарно.
+
+        Args:
+            config_data: Словарь данных конфигурации.
+        """
         with self._lock:
             self._config_object = config_data
             self._config_loaded = True
 
     def set_features(self, features_data: JSONDict) -> None:
-        """Устанавливает новый объект фича-флагов в кэш атомарно."""
+        """Устанавливает новый объект фича-флагов в кэш атомарно.
+
+        Args:
+            features_data: Словарь фича-флагов.
+        """
         with self._lock:
             self._features_object = features_data
             self._features_loaded = True
 
     def check_internal_save(self, threshold: float = 0.5) -> bool:
-        """Проверяет, было ли недавнее внутреннее сохранение, и сбрасывает флаг."""
+        """Проверяет, было ли недавнее внутреннее сохранение, и сбрасывает флаг.
+
+        Args:
+            threshold: Порог времени в секундах.
+
+        Returns:
+            True если недавнее сохранение было выполнено.
+        """
         with self._lock:
             current_time = time.monotonic()
             if current_time - self._last_internal_save_time < threshold:
@@ -429,12 +461,23 @@ class _ConfigManager:
             self._last_internal_save_time = time.monotonic()
 
     def get_callbacks(self) -> list[Callable[[], Any]]:
-        """Возвращает копию списка коллбэков."""
+        """Возвращает копию списка коллбэков.
+
+        Returns:
+            Список зарегистрированных callback-функций.
+        """
         with self._lock:
             return list(self._callbacks)
 
     def add_callback(self, callback: Callable[[], Any]) -> bool:
-        """Добавляет коллбэк, если его еще нет."""
+        """Добавляет коллбэк, если его еще нет.
+
+        Args:
+            callback: Функция обратного вызова.
+
+        Returns:
+            True если коллбэк был добавлен.
+        """
         with self._lock:
             if callback not in self._callbacks:
                 self._callbacks.append(callback)
@@ -442,9 +485,12 @@ class _ConfigManager:
             return False
 
     def initialize_paths(self, find_root_func: Callable[[Path, list[str]], Path | None]) -> None:
-        """
-        Инициализирует пути к корню проекта и основному файлу конфигурации.
+        """Инициализирует пути к корню проекта и основному файлу конфигурации.
+
         Использует loading_lock для предотвращения конкурентной инициализации.
+
+        Args:
+            find_root_func: Функция поиска корня проекта.
         """
         if self.paths_initialized:
             return
@@ -483,18 +529,28 @@ class _ConfigManager:
             self.paths_initialized = True
 
     def get_config_paths(self, cfg_file: str | None = None) -> tuple[str | None, str | None]:
-        """
-        Возвращает пути к основному и локальному файлам конфигурации (Legacy API).
-        
+        """Возвращает пути к основному и локальному файлам конфигурации (Legacy API).
+
         Для получения всех путей (включая env) используйте get_all_config_paths().
+
+        Args:
+            cfg_file: Явно указанный путь к основному файлу конфигурации.
+
+        Returns:
+            Кортеж путей (основной, локальный).
         """
         main, _, local = self.get_all_config_paths(cfg_file)
         return main, local
 
     def get_all_config_paths(self, cfg_file: str | None = None) -> tuple[
         str | None, str | None, str | None]:
-        """
-        Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
+        """Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
+
+        Args:
+            cfg_file: Явно указанный путь к файлу конфигурации.
+
+        Returns:
+            Кортеж (main_path, env_path, local_path).
         """
         with self._lock:
             main_config_path: str | None = None
@@ -543,9 +599,15 @@ class _ConfigManager:
             self._features_loaded = False
 
     def load_config_safe(self, load_func: Callable[[], JSONDict]) -> JSONDict:
-        """
-        Потокобезопасно загружает конфигурацию, если она еще не загружена.
+        """Потокобезопасно загружает конфигурацию, если она еще не загружена.
+
         Использует loading_lock для предотвращения конкурентной загрузки из файлов.
+
+        Args:
+            load_func: Функция загрузки словаря конфигурации.
+
+        Returns:
+            Словарь конфигурации.
         """
         # Атомарная проверка состояния кэша под основной блокировкой
         with self._lock:
@@ -564,9 +626,15 @@ class _ConfigManager:
             return data
 
     def load_features_safe(self, load_func: Callable[[], JSONDict]) -> JSONDict:
-        """
-        Потокобезопасно загружает фича-флаги, если они еще не загружены.
+        """Потокобезопасно загружает фича-флаги, если они еще не загружены.
+
         Использует loading_lock для предотвращения конкурентной загрузки из файлов.
+
+        Args:
+            load_func: Функция загрузки словаря фича-флагов.
+
+        Returns:
+            Словарь фича-флагов.
         """
         # Атомарная проверка состояния кэша под основной блокировкой
         with self._lock:
@@ -594,4 +662,4 @@ class _ConfigManager:
 
 
 _cm = _ConfigManager()
-"Глобальный экземпляр менеджера"
+"""Глобальный экземпляр менеджера."""

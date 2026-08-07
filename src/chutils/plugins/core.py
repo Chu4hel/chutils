@@ -140,3 +140,45 @@ def register_plugin(plugin: Any) -> None:
         plugin: Объект или класс регистрируемого плагина.
     """
     registry.register(plugin)
+
+
+def get_captcha_solver_plugin(name: str) -> Any | None:
+    """Возвращает зарегистрированный плагин солвера капчи по имени.
+
+    Выполняет автообнаружение из группы `chutils.plugins.captcha`.
+
+    Args:
+        name: Имя плагина.
+
+    Returns:
+        Экземпляр плагина или None.
+    """
+    registry.discover_plugins(group="chutils.plugins.captcha")
+    registry.discover_plugins(group="chutils.plugins")
+    plugin = registry.get_plugin(name)
+    if plugin is not None:
+        from .interfaces import CaptchaSolverPlugin
+        if isinstance(plugin, (CaptchaSolverPlugin, type)) or hasattr(plugin, "solve_recaptcha"):
+            return plugin
+    return None
+
+
+def get_task_queue_plugin(name: str) -> Any | None:
+    """Возвращает зарегистрированный плагин очереди задач по имени.
+
+    Выполняет автообнаружение из группы `chutils.plugins.scraping`.
+
+    Args:
+        name: Имя плагина.
+
+    Returns:
+        Экземпляр плагина или None.
+    """
+    registry.discover_plugins(group="chutils.plugins.scraping")
+    registry.discover_plugins(group="chutils.plugins")
+    plugin = registry.get_plugin(name)
+    if plugin is not None:
+        from .interfaces import TaskQueuePlugin
+        if isinstance(plugin, (TaskQueuePlugin, type)) or hasattr(plugin, "create_queue"):
+            return plugin
+    return None

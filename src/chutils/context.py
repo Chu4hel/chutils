@@ -5,8 +5,8 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 import sys
 from typing import Any
 
-# Предотвращаем раздвоение контекста при двойном импорте (например, chutils.context и src.chutils.context)
 _chutils_context_var = getattr(sys, "_chutils_context_var", None)
+"""Глобальная переменная контекста."""
 if _chutils_context_var is None:
     _chutils_context_var = contextvars.ContextVar("_chutils_context", default={})
     setattr(sys, "_chutils_context_var", _chutils_context_var)

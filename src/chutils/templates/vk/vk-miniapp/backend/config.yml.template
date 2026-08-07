@@ -1,0 +1,9 @@
+# Configuration for {{ project_name }}
+App:
+  name: "{{ project_name }}"
+  version: "0.1.0"
+  env: "development"
+
+VK:
+  app_id: 0
+  client_secret: "YOUR_VK_CLIENT_SECRET"

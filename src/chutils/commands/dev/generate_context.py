@@ -10,9 +10,8 @@ from typing import Any
 import chutils
 from .base import SubCommand
 
-# Поля метаданных, которые меняются при каждой генерации, но не отражают
-# реальных изменений в API проекта. Используются для сравнения содержимого.
 _VOLATILE_FIELDS: tuple[str, ...] = ("git_commit", "generated_at", "project_hash")
+"""Поля метаданных, которые меняются при каждой генерации."""
 
 
 class GenerateContextSubCommand(SubCommand):
@@ -80,12 +79,37 @@ class GenerateContextSubCommand(SubCommand):
             ),
         )
         gen_parser.add_argument(
+            "--gitignore",
+            action="store_true",
+            default=True,
+            help="Учитывать правила .gitignore при сканировании файлов проекта (по умолчанию включено)",
+        )
+        gen_parser.add_argument(
+            "--no-gitignore",
+            action="store_false",
+            dest="gitignore",
+            help="Не учитывать правила .gitignore при сканировании",
+        )
+        gen_parser.add_argument(
+            "-i",
+            "--incremental",
+            action="store_true",
+            help="Инкрементальное обновление контекста (перестраивает индексы только для измененных в Git файлов)",
+        )
+        gen_parser.add_argument(
             "--force",
             action="store_true",
             help=(
                 "Принудительно перезаписать файл, даже если содержимое не изменилось "
                 "(игнорирует проверку volatile-полей: git_commit, generated_at, project_hash)"
             ),
+        )
+        gen_parser.add_argument(
+            "--no-track",
+            "--untracked",
+            action="store_true",
+            dest="untracked",
+            help="Не сохранять запись об этом сгенерированном файле в .chutils/context_metadata.json",
         )
         gen_parser.set_defaults(handler=self.handle)
 
@@ -123,7 +147,11 @@ class GenerateContextSubCommand(SubCommand):
             try:
                 from chutils.dev.ast_indexer import Indexer
 
-                indexer = Indexer(str(project_path), custom_ignore=custom_ignore)
+                indexer = Indexer(
+                    str(project_path),
+                    custom_ignore=custom_ignore,
+                    use_gitignore=bool(getattr(args, "gitignore", True)),
+                )
                 index = indexer.index(include_examples=bool(args.include_examples))
 
                 api_data = self._collect_symbols_recursive(index.root)
@@ -285,7 +313,10 @@ class GenerateContextSubCommand(SubCommand):
                     if ex.bad_pattern:
                         output_content += f"\n#### Как не надо (bad_pattern.py)\n```python\n{ex.bad_pattern}\n```\n"
 
-        if args.output:
+        untracked = bool(getattr(args, "untracked", False))
+        target_type = "project" if args.project else "chutils"
+
+        if args.output and not untracked:
             force: bool = getattr(args, "force", False)
             if not force and self._is_content_effectively_unchanged(output_content, args.output, args.format):
                 self.err_console.print(
@@ -293,10 +324,18 @@ class GenerateContextSubCommand(SubCommand):
                     f"(кроме volatile-полей). Запись пропущена: [cyan]{args.output}[/cyan]. "
                     "Используйте [bold]--force[/bold] для принудительной перегенерации."
                 )
-                # Обновляем хэш в реестре, чтобы AIMapHashRule не ругался на
-                # "устаревший" файл, который на самом деле актуален по содержимому
                 from chutils.dev.ast_indexer import save_context_metadata_cache
-                save_context_metadata_cache(project_path, args.output, args.format, metadata["project_hash"])
+                save_context_metadata_cache(
+                    project_path,
+                    args.output,
+                    args.format,
+                    metadata["project_hash"],
+                    target=target_type,
+                    tree=bool(args.tree),
+                    include_examples=bool(args.include_examples),
+                    ignore=custom_ignore if custom_ignore else None,
+                    project_arg=args.project,
+                )
                 return
             with open(args.output, "w", encoding="utf-8") as f:
                 f.write(output_content)
@@ -304,7 +343,17 @@ class GenerateContextSubCommand(SubCommand):
                 f"[bold green] [OK] [/bold green] Контекст успешно сохранен в: [cyan]{args.output}[/cyan]"
             )
             from chutils.dev.ast_indexer import save_context_metadata_cache
-            save_context_metadata_cache(project_path, args.output, args.format, metadata["project_hash"])
+            save_context_metadata_cache(
+                project_path,
+                args.output,
+                args.format,
+                metadata["project_hash"],
+                target=target_type,
+                tree=bool(args.tree),
+                include_examples=bool(args.include_examples),
+                ignore=custom_ignore if custom_ignore else None,
+                project_arg=args.project,
+            )
         else:
             if args.format == "json":
                 print(output_content)
@@ -436,16 +485,50 @@ class GenerateContextSubCommand(SubCommand):
             else:
                 project_path = Path(chutils.__file__).parent
 
-            indexer = Indexer(str(project_path), custom_ignore=custom_ignore)
-            index = indexer.index(include_examples=bool(args.include_examples))
+            use_gitignore = bool(getattr(args, "gitignore", True))
+            indexer = Indexer(str(project_path), custom_ignore=custom_ignore, use_gitignore=use_gitignore)
+
+            if getattr(args, "incremental", False) and args.output and Path(args.output).exists():
+                from chutils.dev.context.incremental import get_changed_files, update_tree_incrementally
+
+                changed = get_changed_files(project_path)
+                if changed:
+                    self.err_console.print(
+                        f"[dim cyan] [INCREMENTAL] [/dim cyan] Найдено {len(changed)} измененных файлов. Инкрементальное обновление..."
+                    )
+                    old_tree_data = json.loads(Path(args.output).read_text(encoding="utf-8"))
+                    updated_dict = update_tree_incrementally(
+                        old_tree_data,
+                        changed,
+                        Indexer,
+                        project_path,
+                        use_gitignore=use_gitignore,
+                        custom_ignore=custom_ignore,
+                    )
+                    output_content = json.dumps(updated_dict, indent=2, ensure_ascii=False)
+                else:
+                    index = indexer.index(include_examples=bool(args.include_examples))
+                    output_content = index.model_dump_json(indent=2)
+            else:
+                index = indexer.index(include_examples=bool(args.include_examples))
+                output_content = index.model_dump_json(indent=2)
 
             if args.no_weights:
-                for edge in index.dependency_graph:
-                    edge.weight = 1
+                try:
+                    tree_dict = json.loads(output_content)
+                    for edge in tree_dict.get("dependency_graph", []):
+                        edge["weight"] = 1
+                    output_content = json.dumps(tree_dict, indent=2, ensure_ascii=False)
+                except Exception:
+                    pass
 
-            output_content = index.model_dump_json(indent=2)
+            untracked = bool(getattr(args, "untracked", False))
+            target_type = "project" if args.project else "chutils"
 
-            if args.output:
+            if args.output and not untracked:
+                tree_dict = json.loads(output_content)
+                proj_hash = tree_dict.get("metadata", {}).get("project_hash", "") if isinstance(tree_dict, dict) else ""
+
                 force: bool = getattr(args, "force", False)
                 if not force and self._is_content_effectively_unchanged(output_content, args.output, "tree"):
                     self.err_console.print(
@@ -453,11 +536,17 @@ class GenerateContextSubCommand(SubCommand):
                         f"(кроме volatile-полей). Запись пропущена: [cyan]{args.output}[/cyan]. "
                         "Используйте [bold]--force[/bold] для принудительной перегенерации."
                     )
-                    # Обновляем хэш в реестре, чтобы AIMapHashRule не ругался на
-                    # "устаревший" файл, который на самом деле актуален по содержимому
                     from chutils.dev.ast_indexer import save_context_metadata_cache
                     save_context_metadata_cache(
-                        Path(".").resolve(), args.output, "tree", index.metadata.get("project_hash", "")
+                        Path(".").resolve(),
+                        args.output,
+                        "tree",
+                        proj_hash,
+                        target=target_type,
+                        tree=True,
+                        include_examples=bool(args.include_examples),
+                        ignore=custom_ignore if custom_ignore else None,
+                        project_arg=args.project,
                     )
                     return
                 with open(args.output, "w", encoding="utf-8") as f:
@@ -466,8 +555,17 @@ class GenerateContextSubCommand(SubCommand):
                     f"[bold green] [OK] [/bold green] Иерархический индекс успешно сохранен в: [cyan]{args.output}[/cyan]"
                 )
                 from chutils.dev.ast_indexer import save_context_metadata_cache
-                save_context_metadata_cache(Path(".").resolve(), args.output, "tree",
-                                            index.metadata.get("project_hash", ""))
+                save_context_metadata_cache(
+                    Path(".").resolve(),
+                    args.output,
+                    "tree",
+                    proj_hash,
+                    target=target_type,
+                    tree=True,
+                    include_examples=bool(args.include_examples),
+                    ignore=custom_ignore if custom_ignore else None,
+                    project_arg=args.project,
+                )
             else:
                 print(output_content)
 

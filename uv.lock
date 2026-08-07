@@ -434,7 +434,7 @@ wheels = [
 
 [[package]]
 name = "chutils"
-version = "3.4.2"
+version = "3.5.0"
 source = { editable = "." }
 dependencies = [
     { name = "exceptiongroup", marker = "python_full_version < '3.11'" },
@@ -525,6 +525,12 @@ testing = [
 text = [
     { name = "rapidfuzz" },
 ]
+vk = [
+    { name = "pydantic" },
+]
+vkma = [
+    { name = "pydantic" },
+]
 watch = [
     { name = "watchdog" },
 ]
@@ -583,6 +589,8 @@ requires-dist = [
     { name = "prometheus-client", marker = "extra == 'metrics'", specifier = ">=0.20.0,<1.0.0" },
     { name = "pydantic", marker = "extra == 'full'", specifier = ">=2.13.4" },
     { name = "pydantic", marker = "extra == 'pydantic'", specifier = ">=2.13.4,<3.0.0" },
+    { name = "pydantic", marker = "extra == 'vk'", specifier = ">=2.13.4,<3.0.0" },
+    { name = "pydantic", marker = "extra == 'vkma'", specifier = ">=2.13.4,<3.0.0" },
     { name = "pyqt6", marker = "extra == 'qt'", specifier = ">=6.6.0" },
     { name = "pyside6", marker = "extra == 'qt-pyside'", specifier = ">=6.6.0" },
     { name = "pytest", marker = "extra == 'full'", specifier = ">=9.0.3" },
@@ -606,7 +614,7 @@ requires-dist = [
     { name = "websockets", marker = "extra == 'full'", specifier = ">=14.0.0" },
     { name = "websockets", marker = "extra == 'websockets'", specifier = ">=14.0.0" },
 ]
-provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "websockets", "db", "captcha", "scraping", "redis", "qt", "qt-pyside", "testing", "otel", "full"]
+provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "websockets", "db", "captcha", "scraping", "redis", "qt", "qt-pyside", "vk", "vkma", "testing", "otel", "full"]
 
 [package.metadata.requires-dev]
 dev = [

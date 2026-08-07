@@ -20,9 +20,11 @@ try:
 except ImportError:
     BaseModel = None  # type: ignore[assignment,misc]
 
-# Фоновый event loop для асинхронных задач, запускаемых из синхронного контекста
 _background_loop: asyncio.AbstractEventLoop | None = None
+"""Фоновый event loop для асинхронных задач."""
+
 _background_thread: threading.Thread | None = None
+"""Поток фонового event loop."""
 _loop_lock = threading.Lock()
 
 def _start_background_loop() -> asyncio.AbstractEventLoop:

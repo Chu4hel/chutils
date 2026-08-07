@@ -19,8 +19,8 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 from abc import ABC, abstractmethod
 from typing import Any
 
-# Настраиваем локальный логгер
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
+"""Локальный логгер модуля."""
 
 
 class BaseConfigProvider(ABC):

@@ -23,13 +23,13 @@ from .providers import get_providers, HttpConfigProvider
 if TYPE_CHECKING:
     from pydantic import BaseModel
 
-# Тип для Pydantic моделей
 T = TypeVar("T", bound="BaseModel")
+"""Тип для Pydantic моделей."""
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
-# Реестр провайдеров (использует _nest_ini_dict из utils)
 _PROVIDERS = get_providers(utils._nest_ini_dict)
+"""Реестр провайдеров (использует _nest_ini_dict из utils)."""
 
 _config_plugins_loaded = False
 
@@ -79,7 +79,7 @@ def _enrich_config_data_with_pydantic_aliases(
     import os
     from typing import get_args, get_origin
 
-    disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")
+    disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
 
     fields = getattr(model, "model_fields", None)
     if fields is None:
@@ -149,8 +149,8 @@ def _enrich_config_data_with_pydantic_aliases(
 
                 env_val = None
                 for cand in candidates:
-                    if cand in os.environ and os.environ[cand] != "":
-                        env_val = os.environ[cand]
+                    if cand in os.environ and os.environ[cand] != "":  # chutils: ignore[ChutilsIntegrationRule]
+                        env_val = os.environ[cand]  # chutils: ignore[ChutilsIntegrationRule]
                         break
 
                 if env_val is not None:

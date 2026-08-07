@@ -21,10 +21,10 @@ from chutils.config import get_config_int
 if TYPE_CHECKING:
     from types import FrameType
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
-# Тип для функций очистки: может быть обычной функцией или корутиной
 CleanupCallback = Union[Callable[[], Any], Callable[[], Awaitable[Any]]]
+"""Тип для функций очистки."""
 
 
 class LifecycleManager:
@@ -37,6 +37,7 @@ class LifecycleManager:
         self._cleanup_callbacks: list[CleanupCallback] = []
         self._is_shutting_down = False
         self._setup_done = False
+        self._old_signal_handlers: dict[int, Any] = {}
 
     def register_cleanup(self, func: CleanupCallback) -> CleanupCallback:
         """
@@ -85,12 +86,23 @@ class LifecycleManager:
 
         for sig in target_signals:
             try:
-                signal.signal(sig, self._handle_signal)
+                old_handler = signal.signal(sig, self._handle_signal)
+                self._old_signal_handlers[sig] = old_handler
             except (ValueError, RuntimeError) as e:
                 logger.warning("Не удалось установить обработчик для сигнала %s: %s", sig, e)
 
         self._setup_done = True
         logger.debug("Настроен Graceful Shutdown для сигналов: %s", target_signals)
+
+    def restore_signals(self) -> None:
+        """Восстанавливает исходные обработчики сигналов ОС."""
+        for sig, handler in self._old_signal_handlers.items():
+            try:
+                signal.signal(sig, handler)
+            except (ValueError, RuntimeError):
+                pass
+        self._old_signal_handlers.clear()
+        self._setup_done = False
 
     def _handle_signal(self, signum: int, frame: FrameType | None) -> None:
         """
@@ -240,4 +252,95 @@ async def async_run_cleanup() -> None:
     Асинхронно выполняет все зарегистрированные функции очистки LIFO.
     """
     await _manager._async_run_cleanup()
+
+
+class AsyncLifecycleContext:
+    """
+    Контекстный менеджер для управления жизненным циклом ресурсов приложения.
+
+    Поддерживает протоколы ``async with`` и ``with``.
+    """
+
+    def __init__(
+        self,
+        setup_signals: bool = True,
+        auto_cleanup_subsystems: bool = True,
+        manager: LifecycleManager | None = None,
+    ) -> None:
+        """Инициализирует контекстный менеджер жизненного цикла.
+
+        Args:
+            setup_signals: Автоматически перехватывать сигналы завершения ОС (SIGINT, SIGTERM).
+            auto_cleanup_subsystems: Автоматически очищать подсистемы chutils (db, tasks, logger).
+            manager: Опциональный менеджер жизненного цикла (по умолчанию глобальный).
+        """
+        self.setup_signals = setup_signals
+        self.auto_cleanup_subsystems = auto_cleanup_subsystems
+        self._mgr = manager or _manager
+
+    def __enter__(self) -> AsyncLifecycleContext:
+        """Вход в синхронный контекстный менеджер."""
+        if self.setup_signals:
+            self._mgr.setup_graceful_shutdown()
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: Any | None,
+    ) -> None:
+        """Выход из синхронного контекстного менеджера."""
+        try:
+            self._mgr._run_cleanup()
+        finally:
+            if self.setup_signals:
+                self._mgr.restore_signals()
+
+    async def __aenter__(self) -> AsyncLifecycleContext:
+        """Вход в асинхронный контекстный менеджер."""
+        if self.setup_signals:
+            self._mgr.setup_graceful_shutdown()
+        return self
+
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: Any | None,
+    ) -> None:
+        """Выход из асинхронного контекстного менеджера."""
+        try:
+            await self._mgr._async_run_cleanup()
+        finally:
+            if self.setup_signals:
+                self._mgr.restore_signals()
+
+
+def lifecycle(
+    setup_signals: bool = True,
+    auto_cleanup_subsystems: bool = True,
+) -> AsyncLifecycleContext:
+    """Возвращает контекстный менеджер для управления жизненным циклом ресурсов.
+
+    Args:
+        setup_signals: Перехватывать сигналы ОС (SIGINT, SIGTERM).
+        auto_cleanup_subsystems: Очищать подсистемы chutils при выходе.
+
+    Returns:
+        Экземпляр AsyncLifecycleContext, поддерживающий `async with` и `with`.
+
+    Example:
+        ```python
+        async with chutils.lifecycle(setup_signals=True):
+            await app.run()
+        ```
+    """
+    return AsyncLifecycleContext(
+        setup_signals=setup_signals,
+        auto_cleanup_subsystems=auto_cleanup_subsystems,
+    )
+
+
+async_lifecycle = lifecycle
 

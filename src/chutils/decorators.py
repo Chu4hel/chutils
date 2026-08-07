@@ -21,11 +21,11 @@ from .typing import P, R
 if TYPE_CHECKING:
     from .logger import ChutilsLogger
 
-# Уникальный маркер для определения, был ли передан fallback (позволяет передавать None)
 _NO_FALLBACK = object()
+"""Уникальный маркер для определения, был ли передан fallback."""
 
-# Ленивая инициализация логгера
 _module_logger: Optional["ChutilsLogger"] = None
+"""Ленивая инициализация логгера."""
 
 
 def _get_logger() -> "ChutilsLogger":

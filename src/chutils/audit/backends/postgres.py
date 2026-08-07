@@ -18,21 +18,53 @@ if TYPE_CHECKING:
 
 
     class _DBAPICursor(Protocol):
-        def execute(self, query: str, params: tuple[Any, ...] | dict[str, Any] | None = None) -> Any: ...
+        def execute(self, query: str, params: tuple[Any, ...] | dict[str, Any] | None = None) -> Any:
+            """Выполняет SQL-запрос.
 
-        def fetchone(self) -> Any: ...
+            Args:
+                query: Строка SQL-запроса.
+                params: Опциональные параметры запроса.
 
-        def fetchall(self) -> list[tuple[Any, ...]]: ...
+            Returns:
+                Результат выполнения запроса.
+            """
+            ...
 
-        def __enter__(self) -> _DBAPICursor: ...
+        def fetchone(self) -> Any:
+            """Возвращает одну строку результата.
 
-        def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> object: ...
+            Returns:
+                Одна строка из результата запроса.
+            """
+            ...
+
+        def fetchall(self) -> list[tuple[Any, ...]]:
+            """Возвращает все строки результата.
+
+            Returns:
+                Список строк с результатами запроса.
+            """
+            ...
+
+        def __enter__(self) -> _DBAPICursor:
+            ...
+
+        def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> object:
+            ...
 
 
     class _DBAPIConnection(Protocol):
-        def cursor(self) -> _DBAPICursor: ...
+        def cursor(self) -> _DBAPICursor:
+            """Возвращает объект курсора БД.
 
-        def commit(self) -> None: ...
+            Returns:
+                Экземпляр курсора БД.
+            """
+            ...
+
+        def commit(self) -> None:
+            """Фиксирует транзакцию в БД."""
+            ...
 
 _CREATE_TABLE = """
                 CREATE TABLE IF NOT EXISTS audit_log

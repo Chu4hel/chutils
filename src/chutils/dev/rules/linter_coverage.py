@@ -125,8 +125,8 @@ class LinterCoverageRule(Rule):
             if not is_file_ignored(p):
                 py_files.append(p)
 
-        # Проверяем каждый файл на покрытие хотя бы одним глоб-шаблоном из dependencies
-        # Ключи могут быть обычными глоб-шаблонами или начинаться с "new:"
+        # Проверяем каждый файл на покрытие хотя бы одним глоб-шаблоном из dependencies.
+        # Ключи могут быть обычными глоб-шаблонами или начинаться с "new:".
         patterns: list[str] = []
         for key in dependencies.keys():
             pattern = key[4:] if key.startswith("new:") else key
@@ -134,9 +134,20 @@ class LinterCoverageRule(Rule):
 
         uncovered_files: list[Path] = []
         for py_file in py_files:
+            # Вычисляем относительный путь от src/chutils/
+            try:
+                rel_to_pkg = py_file.relative_to(src_path)
+                is_nested_submodule = len(rel_to_pkg.parts) > 1
+            except ValueError:
+                is_nested_submodule = False
+
             # Проверяем, покрыт ли файл хотя бы одним шаблоном
             covered = False
             for pattern in patterns:
+                # Глобальный шаблон "src/chutils/**/*.py" не считается специализированным покрытием для файлов в поддиректориях
+                if is_nested_submodule and pattern in ("src/chutils/**/*.py", "**/*.py"):
+                    continue
+
                 if match_glob(py_file, pattern, base_path):
                     covered = True
                     break

@@ -9,140 +9,25 @@ import ast
 import re
 from pathlib import Path
 
+from .context import GitIgnoreMatcher
 from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge, ProjectExample
-
-
-class GitIgnoreMatcher:
-    """Проверяет соответствие путей правилам .gitignore, .chutilsignore и пользовательским флагам."""
-
-    def __init__(self, root_path: Path, custom_ignore: list[str] | None = None) -> None:
-        """Инициализирует GitIgnoreMatcher.
-
-        Args:
-            root_path: Корневой путь проекта.
-            custom_ignore: Дополнительные паттерны для игнорирования.
-        """
-        self.root_path = root_path
-        self.patterns: list[tuple[re.Pattern[str], bool]] = []
-        self._load_file_rules(self.root_path / ".gitignore")
-        self._load_file_rules(self.root_path / ".chutilsignore")
-        if custom_ignore:
-            for rule in custom_ignore:
-                rule_str = rule.strip()
-                if not rule_str or rule_str.startswith("#"):
-                    continue
-                is_negative = False
-                if rule_str.startswith("!"):
-                    is_negative = True
-                    rule_str = rule_str[1:]
-                regex = self._rule_to_regex(rule_str)
-                if regex:
-                    self.patterns.append((regex, is_negative))
-
-    def _load_file_rules(self, file_path: Path) -> None:
-        if not file_path.exists():
-            return
-
-        try:
-            lines = file_path.read_text(encoding="utf-8").splitlines()
-            for line in lines:
-                line = line.strip()
-                if not line or line.startswith("#"):
-                    continue
-
-                is_negative = False
-                if line.startswith("!"):
-                    is_negative = True
-                    line = line[1:]
-
-                regex = self._rule_to_regex(line)
-                if regex:
-                    self.patterns.append((regex, is_negative))
-        except Exception:
-            pass
-
-    def _rule_to_regex(self, rule: str) -> re.Pattern[str] | None:
-        rule = rule.replace("\\", "/")
-        if not rule:
-            return None
-
-        # Определяем, привязано ли правило к корню
-        stripped_rule = rule[:-1] if rule.endswith("/") else rule
-        anchored = "/" in stripped_rule or rule.startswith("/")
-
-        if rule.startswith("/"):
-            rule = rule[1:]
-
-        parts = []
-        i = 0
-        n = len(rule)
-        while i < n:
-            c = rule[i]
-            if c == '*':
-                if i + 1 < n and rule[i + 1] == '*':
-                    parts.append('__DOUBLE_STAR__')
-                    i += 2
-                else:
-                    parts.append('__STAR__')
-                    i += 1
-            elif c == '?':
-                parts.append('[^/]')
-                i += 1
-            elif c in ('.', '+', '^', '$', '(', ')', '{', '}', '|', '\\'):
-                parts.append('\\' + c)
-                i += 1
-            else:
-                parts.append(c)
-                i += 1
-
-        regex_str = "".join(parts)
-        regex_str = regex_str.replace('__DOUBLE_STAR__', '.*')
-        regex_str = regex_str.replace('__STAR__', '[^/]*')
-
-        if rule.endswith("/"):
-            regex_str += '?.*'
-        else:
-            regex_str += '(/.*)?$'
-
-        if anchored:
-            regex_str = '^' + regex_str
-        else:
-            regex_str = '(^|.*/)' + regex_str
-
-        try:
-            return re.compile(regex_str)
-        except re.error:
-            return None
-
-    def matches(self, rel_path: str) -> bool:
-        """Возвращает True, если путь должен быть проигнорирован.
-
-        Args:
-            rel_path: Относительный путь для проверки.
-
-        Returns:
-            True, если путь игнорируется, иначе False.
-        """
-        rel_path = rel_path.replace("\\", "/").lstrip("/")
-        if not rel_path:
-            return False
-
-        is_ignored = False
-        for pattern, is_negative in self.patterns:
-            if pattern.search(rel_path):
-                is_ignored = not is_negative
-        return is_ignored
 
 
 class Indexer:
     """Оркестратор индексации проекта."""
 
-    def __init__(self, root_path: str, custom_ignore: list[str] | None = None) -> None:
+    def __init__(
+        self,
+        root_path: str,
+        custom_ignore: list[str] | None = None,
+        use_gitignore: bool = True,
+    ) -> None:
         """Инициализирует Indexer.
 
         Args:
             root_path: Корневой путь к исходному коду проекта.
             custom_ignore: Список дополнительных паттернов для игнорирования.
+            use_gitignore: Флаг необходимости использования .gitignore.
         """
         self.root_path = Path(root_path).resolve()
         # Если это пакет (есть __init__), то база для путей - родитель (например, 'src' или корень проекта)
@@ -155,7 +40,7 @@ class Indexer:
         self._current_imports: dict[str, str] = {}
         """Карта импортов текущего модуля {asname: full_path}"""
         self._public_symbols = self._discover_public_api()
-        self.gitignore = GitIgnoreMatcher(self.project_root, custom_ignore=custom_ignore)
+        self.gitignore = GitIgnoreMatcher(self.project_root, custom_ignore=custom_ignore, use_gitignore=use_gitignore)
 
     @property
     def _graph(self) -> list[GraphEdge]:

@@ -32,7 +32,15 @@ else:
 if TYPE_CHECKING:
     class _BaseFormatter(logging.Formatter):
         def add_fields(self, log_record: dict[str, Any], record: logging.LogRecord,
-                       message_dict: dict[str, Any]) -> None: ...
+                       message_dict: dict[str, Any]) -> None:
+            """Добавляет поля в словарь записи лога.
+
+            Args:
+                log_record: Словарь записи лога.
+                record: Экземпляр LogRecord.
+                message_dict: Словарь сообщений.
+            """
+            ...
 else:
     if JSON_LOGGER_AVAILABLE and _jsonlogger is not None:
         _BaseFormatter = _jsonlogger.JsonFormatter

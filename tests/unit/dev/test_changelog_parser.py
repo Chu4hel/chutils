@@ -97,6 +97,19 @@ def test_filter_releases_by_version_range():
     assert tags == ["v3.1.0", "v3.2.0-rc1", "v3.2.0"]
 
 
+def test_filter_releases_multiple_versions_range():
+    """Проверяет фильтрацию при скачке с 3.3.1 до 3.4.2 с захватом 3.4.0 и 3.4.1."""
+    releases = [
+        {"tag_name": "v3.3.1", "body": "Fix 3.3.1"},
+        {"tag_name": "v3.4.0", "body": "## New API\n- Feature 3.4.0"},
+        {"tag_name": "v3.4.1", "body": "## New API\n- Fix 3.4.1"},
+        {"tag_name": "v3.4.2", "body": "## New API\n- Feature 3.4.2"},
+    ]
+    filtered = filter_releases_by_version_range(releases, "3.3.1", "3.4.2")
+    tags = [r["tag_name"] for r in filtered]
+    assert tags == ["v3.4.0", "v3.4.1", "v3.4.2"]
+
+
 def test_generate_migration_context_markdown():
     """Проверяет генерацию Markdown контекста."""
     parsed = {

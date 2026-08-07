@@ -16,7 +16,13 @@ GEMINI_BLOCK_END = "<!-- chutils:few-shot-end -->"
 class _ConsoleProtocol(Protocol):
     """Минимальный интерфейс Rich Console для вывода сообщений."""
 
-    def print(self, msg: str) -> None: ...
+    def print(self, msg: str) -> None:
+        """Печатает сообщение в консоль.
+
+        Args:
+            msg: Выводимое сообщение.
+        """
+        ...
 
 
 class FewShotBankWriter:

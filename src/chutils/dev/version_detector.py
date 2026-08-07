@@ -267,10 +267,50 @@ def get_git_head_version(base_dir: str) -> str | None:
     return None
 
 
+def get_last_known_version(base_dir: str) -> str | None:
+    """Возвращает зафиксированную последнюю известную версию chutils из .chutils/last_known_version.json.
+
+    Args:
+        base_dir: Путь к корню проекта.
+
+    Returns:
+        Строка версии или None.
+    """
+    path = Path(base_dir) / ".chutils" / "last_known_version.json"
+    if path.exists():
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(data, dict):
+                val = data.get("installed_version")
+                if isinstance(val, str):
+                    return val
+        except Exception:
+            pass
+    return None
+
+
+def save_last_known_version(base_dir: str, version: str) -> None:
+    """Сохраняет текущую зафиксированную версию chutils в .chutils/last_known_version.json.
+
+    Args:
+        base_dir: Путь к корню проекта.
+        version: Строка версии.
+    """
+    try:
+        from chutils.fs import ensure_dir, atomic_write
+
+        path = Path(base_dir) / ".chutils" / "last_known_version.json"
+        ensure_dir(path.parent)
+        atomic_write(path, json.dumps({"installed_version": version}, indent=2))
+    except Exception:
+        pass
+
+
 def detect_version_upgrade(base_dir: str) -> tuple[str | None, str | None, bool]:
     """Проверяет, произошло ли обновление версии chutils в проекте.
 
-    Сравнивает текущую версию в рабочей директории с версией в Git HEAD.
+    Сравнивает текущую версию в рабочей директории с зафиксированной исторической
+    версией из .chutils/last_known_version.json и версии в Git HEAD.
 
     Args:
         base_dir: Путь к корню проекта.
@@ -278,8 +318,24 @@ def detect_version_upgrade(base_dir: str) -> tuple[str | None, str | None, bool]
     Returns:
         Кортеж (old_version, new_version, is_upgraded).
     """
-    old_version = get_git_head_version(base_dir)
+    head_version = get_git_head_version(base_dir)
+    stored_version = get_last_known_version(base_dir)
     new_version = get_current_version(base_dir)
+
+    old_version = stored_version or head_version
+
+    # Если есть и зафиксированная версия, и HEAD, выберем наименьшую (наиболее раннюю),
+    # чтобы не упустить релизы при множественных коммитах во время обновления
+    if stored_version and head_version:
+        try:
+            st_t = parse_version_tuple(stored_version)
+            hd_t = parse_version_tuple(head_version)
+            if st_t < hd_t:
+                old_version = stored_version
+            else:
+                old_version = head_version
+        except Exception:
+            pass
 
     if not old_version or not new_version:
         return old_version, new_version, False

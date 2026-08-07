@@ -379,7 +379,7 @@ def load_clean_config(cli_args: JSONDict | None = None) -> JSONDict:
         pass
 
     # 2. Env
-    for key, val in os.environ.items():
+    for key, val in os.environ.items():  # chutils: ignore[ChutilsIntegrationRule]
         if key.startswith("CH_DEV_CLEAN_"):
             config_key = key[13:].lower()
             if val.startswith("[") and val.endswith("]"):

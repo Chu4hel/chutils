@@ -196,8 +196,8 @@ class DiagnosticsManager:
             return asyncio.run(self.run_checks())
 
 
-# Создаем глобальный экземпляр менеджера по умолчанию
 default_manager = DiagnosticsManager()
+"""Глобальный экземпляр менеджера по умолчанию."""
 
 
 @default_manager.register("keyring", critical=False, timeout=2.0)

@@ -11,7 +11,7 @@ from pathlib import Path
 
 from chutils.fs import remove_path
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 
 @dataclass

@@ -94,6 +94,10 @@ members:
 - register_cleanup
 - setup_graceful_shutdown
 - run_cleanup
+- async_run_cleanup
+- lifecycle
+- async_lifecycle
+- AsyncLifecycleContext
 
 ## Модуль `cli_booster` (Быстрое создание CLI)
 
@@ -160,6 +164,44 @@ members:
 - ensure_dir
 - atomic_write
 - get_temp_file
+
+## Модуль `crypto` (Шифрование данных и файлов)
+
+::: chutils.crypto
+options:
+members:
+
+- encrypt_portable
+- decrypt_portable
+- encrypt_file
+- decrypt_file
+
+## Модуль `telegram` (Интеграция и контроль доступа Telegram-ботов)
+
+::: chutils.telegram
+options:
+members:
+
+- is_admin
+- admin_only
+- AdminFilter
+- SecretUserFilter
+- TelegramRateLimiter
+- tg_rate_limit
+- TelegramThrottlingMiddleware
+- TelegramLoggingMiddleware
+- AccessListManager
+- allowed_only
+- trace_telegram_update
+- escape_markdown
+- escape_html
+- smart_truncate
+- split_message
+- TelegramLogHandler
+- HealthCheckAlertBridge
+- send_alert
+- build_inline_keyboard
+- PaginatorKeyboard
 
 ## Декораторы
 

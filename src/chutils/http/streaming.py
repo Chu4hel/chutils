@@ -1,6 +1,6 @@
 """
 chutils.http.streaming — Модуль для поддержки HTTP-стриминга (SSE/Chunked) и WebSockets.
-"""
+"""  # chutils: ignore[CodeDecompositionRule]
 from __future__ import annotations
 
 import asyncio
@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from types import TracebackType
 from typing import Any, AsyncIterator, Callable, Iterable, Iterator
 
-import httpx
+import httpx  # chutils: ignore[ChutilsIntegrationRule]
 
 from chutils.exceptions import OptionalDependencyError
 

@@ -8,10 +8,10 @@ from typing import Any
 from chutils.cli_utils import get_console
 from chutils.env import is_rich_enabled
 
-# Список ключевых слов, значения которых должны маскироваться по умолчанию
 SECRET_KEYWORDS = {
     "password", "secret", "api_key", "token", "auth", "key", "pwd", "credential"
 }
+"""Список ключевых слов, значения которых должны маскироваться по умолчанию."""
 
 
 def mask_value(key: str, value: Any, show_secrets: bool = False) -> str:
