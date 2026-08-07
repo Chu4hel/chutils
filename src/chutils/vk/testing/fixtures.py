@@ -77,7 +77,8 @@ if HAS_PYTEST:
         def _factory(
             user_id: int = 123456,
             app_id: int = 77777,
-            secret_key: str = "test_secret_key",
+            client_secret: str | None = None,
+            secret_key: str | None = None,
             expired: bool = False,
             tampered: bool = False,
             extra_params: dict[str, Any] | None = None,
@@ -85,6 +86,7 @@ if HAS_PYTEST:
             return generate_fake_launch_params(
                 user_id=user_id,
                 app_id=app_id,
+                client_secret=client_secret,
                 secret_key=secret_key,
                 expired=expired,
                 tampered=tampered,

@@ -26,7 +26,8 @@ def _compute_vk_sign(vk_params: dict[str, str], secret_key: str) -> str:
 def generate_fake_launch_params(
     user_id: int = 123456,
     app_id: int = 77777,
-    secret_key: str = "test_secret_key",
+    client_secret: str | None = None,
+    secret_key: str | None = None,
     expired: bool = False,
     tampered: bool = False,
     extra_params: dict[str, Any] | None = None,
@@ -36,7 +37,8 @@ def generate_fake_launch_params(
     Args:
         user_id: ID фейкового пользователя VK.
         app_id: ID фейкового приложения VK Mini App.
-        secret_key: Ключ приложения для подписи HMAC-SHA256.
+        client_secret: Ключ приложения для подписи HMAC-SHA256 (основное имя параметра).
+        secret_key: Псевдоним для client_secret (для обратной совместимости).
         expired: Если True, генерирует устаревший timestamp (vk_ts назад на 24 часа).
         tampered: Если True, подделывает подпись (делает ее недействительной).
         extra_params: Дополнительные параметры (например, vk_platform, vk_language).
@@ -44,6 +46,7 @@ def generate_fake_launch_params(
     Returns:
         Строка URL query-параметров с ключом `sign`.
     """
+    secret = client_secret or secret_key or "test_secret_key"
     ts = int(time.time()) - (86400 if expired else 0)
 
     params: dict[str, str] = {
@@ -61,7 +64,7 @@ def generate_fake_launch_params(
             key = k if k.startswith("vk_") else f"vk_{k}"
             params[key] = str(v)
 
-    sign = _compute_vk_sign(params, secret_key)
+    sign = _compute_vk_sign(params, secret)
     if tampered:
         sign = "tampered_invalid_signature_hash"
 

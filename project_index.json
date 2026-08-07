@@ -36193,9 +36193,9 @@
                     "name": "generate_fake_launch_params",
                     "type": "function",
                     "layer": "internal",
-                    "signature": "(user_id, app_id, secret_key, expired, tampered, extra_params)",
+                    "signature": "(user_id, app_id, client_secret, secret_key, expired, tampered, extra_params)",
                     "summary": "Генерирует query-строку launchParams VK Mini App с валидной (или поврежденной) HMAC-SHA256 подписью.",
-                    "docstring": "Генерирует query-строку launchParams VK Mini App с валидной (или поврежденной) HMAC-SHA256 подписью.\n\nArgs:\n    user_id: ID фейкового пользователя VK.\n    app_id: ID фейкового приложения VK Mini App.\n    secret_key: Ключ приложения для подписи HMAC-SHA256.\n    expired: Если True, генерирует устаревший timestamp (vk_ts назад на 24 часа).\n    tampered: Если True, подделывает подпись (делает ее недействительной).\n    extra_params: Дополнительные параметры (например, vk_platform, vk_language).\n\nReturns:\n    Строка URL query-параметров с ключом `sign`.",
+                    "docstring": "Генерирует query-строку launchParams VK Mini App с валидной (или поврежденной) HMAC-SHA256 подписью.\n\nArgs:\n    user_id: ID фейкового пользователя VK.\n    app_id: ID фейкового приложения VK Mini App.\n    client_secret: Ключ приложения для подписи HMAC-SHA256 (основное имя параметра).\n    secret_key: Псевдоним для client_secret (для обратной совместимости).\n    expired: Если True, генерирует устаревший timestamp (vk_ts назад на 24 часа).\n    tampered: Если True, подделывает подпись (делает ее недействительной).\n    extra_params: Дополнительные параметры (например, vk_platform, vk_language).\n\nReturns:\n    Строка URL query-параметров с ключом `sign`.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -36225,7 +36225,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 72,
+                    "line_number": 75,
                     "bases": [],
                     "children": []
                   },
@@ -36245,7 +36245,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 103,
+                    "line_number": 106,
                     "bases": [],
                     "children": []
                   }
@@ -39372,8 +39372,8 @@
   "metadata": {
     "chutils_version": "3.5.0",
     "project_version": "3.5.0",
-    "git_commit": "3d3540665d5e3d4caab97060a11a529cadb71b46 (dirty)",
-    "generated_at": "2026-08-07T17:19:39.329572+00:00",
-    "project_hash": "cf833ca4e240be239e4839b37c67855f4da769df58a82ac6749e7feb3622a3b1"
+    "git_commit": "80e007464804f9a2a75f0566060b84c064612136 (dirty)",
+    "generated_at": "2026-08-07T17:22:16.629104+00:00",
+    "project_hash": "a2d428b8dc484b4cf63dc434594547368032652b1b2d4c9d713a083e354c9ac9"
   }
 }
