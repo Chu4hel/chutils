@@ -38,6 +38,12 @@ class InitCommand(BaseCommand):
             "-m", "--model",
             help="Путь к Pydantic модели для генерации детального конфига (например, 'myapp.config:Settings')"
         )
+        init_parser.add_argument(
+            "-t", "--template",
+            choices=["default", "vk-miniapp", "vk-bot", "vk-bot-miniapp"],
+            default="default",
+            help="Выбор готового шаблона проекта (default, vk-miniapp, vk-bot, vk-bot-miniapp)"
+        )
         init_parser.set_defaults(handler=self.handle)
 
     def _ask_yes_no(self, prompt: str, default: bool) -> bool:
@@ -89,9 +95,13 @@ class InitCommand(BaseCommand):
             else:
                 print(f"[INFO] Перезапись {config_path}...")
 
-        # Интерактивные флаги для новых возможностей
-        setup_db = False
-        setup_alembic = False
+        # Обработка выбора шаблона проекта
+        if hasattr(args, "template") and args.template != "default":
+            from chutils.scaffold import unpack_template
+            print(f"[INFO] Создание проекта по шаблону '{args.template}'...")
+            unpack_template(args.template, os.getcwd(), context={"project_name": project_name})
+            print(f"[OK] Проект по шаблону '{args.template}' успешно инициализирован!")
+            return
         setup_audit = False
         setup_cloud_secrets = False
         setup_env = False

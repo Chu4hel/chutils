@@ -30,6 +30,13 @@ pip install "chutils[vkma]"
 uv add "chutils[vkma]"
 ```
 
+### Развертывание готового шаблона VK Mini App через CLI
+
+```bash
+# Развернуть готовый каркас (FastAPI + React VKUI + VKMAAuthMiddleware)
+chutils init --template vk-miniapp
+```
+
 ---
 
 ## 💻 Быстрый старт

@@ -1,0 +1,42 @@
+"""FastAPI backend template for VK Mini Apps."""
+
+import os
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from chutils.vkma import VKMALaunchParams
+from chutils.vkma.integrations.fastapi import VKMAAuthMiddleware, get_current_vkma_params
+
+app = FastAPI(title="{{ project_name }} Backend", version="0.1.0")
+
+# CORS настройки для работы с VK Mini App frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Проверка подписи launchParams / initData VKMA
+CLIENT_SECRET = os.getenv("VK_CLIENT_SECRET", "your_vk_app_secret")
+app.add_middleware(
+    VKMAAuthMiddleware,
+    client_secret=CLIENT_SECRET,
+    exclude_paths=["/docs", "/openapi.json", "/api/health"],
+)
+
+
+@app.get("/api/health")
+def health_check():
+    return {"status": "ok", "service": "{{ project_name }}"}
+
+
+@app.get("/api/user-info")
+def get_user_info(vkma_params: VKMALaunchParams = Depends(get_current_vkma_params)):
+    return {
+        "user_id": vkma_params.user_id,
+        "app_id": vkma_params.app_id,
+        "is_app_user": vkma_params.is_app_user,
+        "language": vkma_params.language,
+        "platform": vkma_params.platform,
+    }

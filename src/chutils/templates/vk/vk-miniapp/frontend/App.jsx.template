@@ -1,0 +1,56 @@
+import React, { useEffect, useState } from 'react';
+import bridge from '@vkontakte/vk-bridge';
+import { View, Panel, PanelHeader, Header, Group, Cell, Div, Spinner } from '@vkontakte/vkui';
+import '@vkontakte/vkui/dist/vkui.css';
+
+export const App = () => {
+  const [userInfo, setUserInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      // Инициализация VK Mini App Bridge
+      await bridge.send('VKWebAppInit');
+
+      // Извлекаем launchParams / initData из URL
+      const searchData = window.location.search;
+
+      try {
+        const response = await fetch(`/api/user-info${searchData}`, {
+          headers: {
+            'Authorization': `Bearer ${searchData.replace('?', '')}`
+          }
+        });
+        const data = await response.json();
+        setUserInfo(data);
+      } catch (e) {
+        console.error('Ошибка загрузки данных:', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  return (
+    <View activePanel="main">
+      <Panel id="main">
+        <PanelHeader>{{ project_name }}</PanelHeader>
+        <Group header={<Header mode="secondary">Информация о пользователе</Header>}>
+          {loading ? (
+            <Div><Spinner size="medium" /></Div>
+          ) : userInfo ? (
+            <>
+              <Cell subtitle="ID пользователя VK">{userInfo.user_id}</Cell>
+              <Cell subtitle="ID приложения">{userInfo.app_id}</Cell>
+              <Cell subtitle="Платформа">{userInfo.platform || 'web'}</Cell>
+            </>
+          ) : (
+            <Div>Не удалось загрузить данные пользователя</Div>
+          )}
+        </Group>
+      </Panel>
+    </View>
+  );
+};
+export default App;
