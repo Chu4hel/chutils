@@ -88,7 +88,7 @@ class LockSubCommand(SubCommand):
         )
 
         gen_subcommand = GenerateContextSubCommand()
-        force_flag = getattr(args, "force", True)  # dev lock по умолчанию обновляет контекст
+        force_flag = bool(getattr(args, "force", False))
 
         for file_path, meta in files_registry.items():
             format_str = meta.get("format", "markdown")

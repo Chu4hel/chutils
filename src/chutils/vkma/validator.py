@@ -116,8 +116,6 @@ def validate_vkma_launch_params(
     # 3. Посчитать HMAC-SHA256 хеш от полученной строки с ключом client_secret.
     # 4. Кодировать в base64 urlsafe, обрезать `=` и проверить с sign.
     ordered_keys = sorted(vk_params.keys())
-    query_string = "&".join(f"{k}={urllib.parse.quote(vk_params[k], safe='')}" for k in ordered_keys)
-    # Альтернативно в VK стандартную строки формируют через urllib.parse.urlencode от отсортированных пар:
     ordered_pairs = [(k, vk_params[k]) for k in ordered_keys]
     query_string = urllib.parse.urlencode(ordered_pairs)
 
