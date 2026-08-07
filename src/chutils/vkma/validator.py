@@ -88,7 +88,8 @@ def validate_vkma_launch_params(
         True, если подпись валидна и время жизни не истекло.
 
     Raises:
-        VKMAValidationError: Если подпись неверна, истек срок действия или не хватает параметров.
+        VKMAValidationError: Выбрасывается при любой ошибке (подделана или неверна подпись, истек срок действия vk_ts
+            или не хватает параметров). Всегда оборачивайте вызов в except VKMAValidationError.
     """
     secret = _get_client_secret(client_secret)
     vk_params, sign = _extract_vk_params_and_sign(raw_query)

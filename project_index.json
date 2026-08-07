@@ -36610,7 +36610,7 @@
                 "layer": "internal",
                 "signature": "(raw_query, client_secret, max_age_seconds)",
                 "summary": "Проверяет HMAC-SHA256 подпись VK Mini App launchParams.",
-                "docstring": "Проверяет HMAC-SHA256 подпись VK Mini App launchParams.\n\nArgs:\n    raw_query: Строка параметров URL / initData или словарь параметров.\n    client_secret: Защищенный ключ приложения VK. Если None, ищется автоматически.\n    max_age_seconds: Максимальное время жизни подписи в секундах (по vk_ts).\n\nReturns:\n    True, если подпись валидна и время жизни не истекло.\n\nRaises:\n    VKMAValidationError: Если подпись неверна, истек срок действия или не хватает параметров.",
+                "docstring": "Проверяет HMAC-SHA256 подпись VK Mini App launchParams.\n\nArgs:\n    raw_query: Строка параметров URL / initData или словарь параметров.\n    client_secret: Защищенный ключ приложения VK. Если None, ищется автоматически.\n    max_age_seconds: Максимальное время жизни подписи в секундах (по vk_ts).\n\nReturns:\n    True, если подпись валидна и время жизни не истекло.\n\nRaises:\n    VKMAValidationError: Выбрасывается при любой ошибке (подделана или неверна подпись, истек срок действия vk_ts\n        или не хватает параметров). Всегда оборачивайте вызов в except VKMAValidationError.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -36640,7 +36640,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 139,
+                "line_number": 140,
                 "bases": [],
                 "children": []
               }
@@ -39372,8 +39372,8 @@
   "metadata": {
     "chutils_version": "3.5.0",
     "project_version": "3.5.0",
-    "git_commit": "1c87144d236dcfcb390390fbe921514503e7956c (dirty)",
-    "generated_at": "2026-08-07T16:55:41.471684+00:00",
-    "project_hash": "b09b4066b90772c4d92b1864d4f07fa1bc34c75ad69786255a83e81e018575d0"
+    "git_commit": "3d3540665d5e3d4caab97060a11a529cadb71b46 (dirty)",
+    "generated_at": "2026-08-07T17:19:39.329572+00:00",
+    "project_hash": "cf833ca4e240be239e4839b37c67855f4da769df58a82ac6749e7feb3622a3b1"
   }
 }

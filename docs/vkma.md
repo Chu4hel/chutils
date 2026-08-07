@@ -48,12 +48,13 @@ from chutils.vkma import validate_vkma_launch_params, parse_vkma_launch_params
 
 raw_init_data = "vk_user_id=123456&vk_app_id=7890&vk_is_app_user=1&vk_ts=1750000000&sign=..."
 
-# Валидация подписи (возвращает True или выбрасывает VKMAValidationError)
+# Валидация подписи (возвращает True; при невалидной подписи или подделке выбрасывает VKMAValidationError)
 try:
     validate_vkma_launch_params(raw_init_data, client_secret="your_vk_app_secret", max_age_seconds=86400)
     print("Подпись валидна!")
 except VKMAValidationError as e:
-    print(f"Ошибка валидации: {e}")
+    # Функция не возвращает False при подделке, а выбрасывает исключение с детальным hint
+    print(f"Ошибка валидации / недействительная подпись: {e.message} (совет: {e.hint})")
 
 # Парсинг в Pydantic-модель
 params = parse_vkma_launch_params(raw_init_data, client_secret="your_vk_app_secret")
