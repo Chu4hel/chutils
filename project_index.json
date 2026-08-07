@@ -3394,7 +3394,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 109,
+                        "line_number": 116,
                         "bases": [],
                         "children": []
                       },
@@ -3414,7 +3414,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 335,
+                        "line_number": 363,
                         "bases": [],
                         "children": []
                       },
@@ -3436,7 +3436,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 369,
+                        "line_number": 397,
                         "bases": [],
                         "children": []
                       },
@@ -3456,7 +3456,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 402,
+                        "line_number": 430,
                         "bases": [],
                         "children": []
                       },
@@ -3476,7 +3476,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 428,
+                        "line_number": 456,
                         "bases": [],
                         "children": []
                       }
@@ -3541,6 +3541,80 @@
                         "signature": "(self, args)",
                         "summary": "Установка pre-commit хука.",
                         "docstring": "Установка pre-commit хука.\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 45,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "lock",
+                "path": "chutils/commands/dev/lock",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Подкоманда CLI chutils dev lock для принудительной автоматической перегенерации всего ранее созданного контекста.",
+                "docstring": "Подкоманда CLI chutils dev lock для принудительной автоматической перегенерации всего ранее созданного контекста.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "LockSubCommand",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Подкоманда dev lock для повторной перегенерации контекста на основе реестра .chutils/context_metadata.json.",
+                    "docstring": "Подкоманда dev lock для повторной перегенерации контекста на основе реестра .chutils/context_metadata.json.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [
+                      ".base.SubCommand"
+                    ],
+                    "children": [
+                      {
+                        "name": "register",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, subparsers)",
+                        "summary": "Регистрирует подкоманду lock в argparse.",
+                        "docstring": "Регистрирует подкоманду lock в argparse.\n\nArgs:\n    subparsers: Объект subparsers для добавления подкоманд.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 19,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "handle",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, args)",
+                        "summary": "Обработчик выполнения подкоманды dev lock.",
+                        "docstring": "Обработчик выполнения подкоманды dev lock.\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -4080,7 +4154,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 49,
+                "line_number": 51,
                 "bases": [
                   "BaseCommand"
                 ],
@@ -4101,7 +4175,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 56,
+                    "line_number": 58,
                     "bases": [],
                     "children": []
                   },
@@ -4121,7 +4195,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 599,
+                    "line_number": 622,
                     "bases": [],
                     "children": []
                   },
@@ -4141,7 +4215,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 609,
+                    "line_number": 632,
                     "bases": [],
                     "children": []
                   },
@@ -4161,7 +4235,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 618,
+                    "line_number": 641,
                     "bases": [],
                     "children": []
                   },
@@ -4181,7 +4255,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 627,
+                    "line_number": 650,
                     "bases": [],
                     "children": []
                   },
@@ -4201,7 +4275,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 636,
+                    "line_number": 659,
                     "bases": [],
                     "children": []
                   },
@@ -4221,7 +4295,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 645,
+                    "line_number": 668,
                     "bases": [],
                     "children": []
                   },
@@ -4241,7 +4315,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 654,
+                    "line_number": 677,
                     "bases": [],
                     "children": []
                   },
@@ -4261,7 +4335,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 663,
+                    "line_number": 686,
                     "bases": [],
                     "children": []
                   },
@@ -4281,7 +4355,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 672,
+                    "line_number": 695,
                     "bases": [],
                     "children": []
                   },
@@ -4301,7 +4375,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 681,
+                    "line_number": 704,
                     "bases": [],
                     "children": []
                   },
@@ -4321,7 +4395,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 690,
+                    "line_number": 713,
                     "bases": [],
                     "children": []
                   },
@@ -4341,7 +4415,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 699,
+                    "line_number": 722,
                     "bases": [],
                     "children": []
                   },
@@ -4361,7 +4435,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 708,
+                    "line_number": 731,
                     "bases": [],
                     "children": []
                   },
@@ -4381,7 +4455,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 717,
+                    "line_number": 740,
                     "bases": [],
                     "children": []
                   },
@@ -4401,7 +4475,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 726,
+                    "line_number": 749,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "handle_lock",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, args)",
+                    "summary": "Обработчик автоматической перегенерации файлов контекста (chutils dev lock).",
+                    "docstring": "Обработчик автоматической перегенерации файлов контекста (chutils dev lock).\n\nArgs:\n    args: Объект Namespace с аргументами командной строки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 758,
                     "bases": [],
                     "children": []
                   }
@@ -15058,9 +15152,9 @@
                 "name": "save_context_metadata_cache",
                 "type": "function",
                 "layer": "internal",
-                "signature": "(project_path, output_file, format_str, project_hash)",
+                "signature": "(project_path, output_file, format_str, project_hash, target, tree, include_examples, ignore, project_arg)",
                 "summary": "Сохраняет кэш метаданных сгенерированного контекста в .chutils/context_metadata.json.",
-                "docstring": "Сохраняет кэш метаданных сгенерированного контекста в .chutils/context_metadata.json.\n\nФайл хранит реестр ВСЕХ сгенерированных файлов контекста проекта.\nПри каждом вызове обновляется только запись для конкретного output_file —\nостальные записи сохраняются.\n\nФормат файла::\n\n    {\n      \"files\": {\n        \"api_map.md\":         {\"format\": \"markdown\", \"project_hash\": \"...\"},\n        \"project_index.json\": {\"format\": \"tree\",     \"project_hash\": \"...\"},\n        \"docs/context.json\":  {\"format\": \"json\",     \"project_hash\": \"...\"}\n      }\n    }\n\nСтарый однофайловый формат автоматически мигрируется при первом обращении.\n\nArgs:\n    project_path: Корневой путь проекта.\n    output_file: Выходной путь файла контекста.\n    format_str: Формат вывода ('markdown', 'json' или 'tree').\n    project_hash: Сгенерированный хэш проекта.",
+                "docstring": "Сохраняет кэш метаданных сгенерированного контекста в .chutils/context_metadata.json.\n\nФайл хранит реестр ВСЕХ сгенерированных файлов контекста проекта.\nПри каждом вызове обновляется только запись для конкретного output_file —\nостальные записи сохраняются.\n\nФормат файла::\n\n    {\n      \"files\": {\n        \"api_map.md\":         {\"format\": \"markdown\", \"target\": \"chutils\", \"project_hash\": \"...\"},\n        \"project_index.json\": {\"format\": \"tree\",     \"target\": \"project\", \"project_hash\": \"...\"}\n      }\n    }\n\nArgs:\n    project_path: Корневой путь проекта.\n    output_file: Выходной путь файла контекста.\n    format_str: Формат вывода ('markdown', 'json' или 'tree').\n    project_hash: Сгенерированный хэш проекта.\n    target: Целевой объект контекста ('chutils' или 'project').\n    tree: Флаг генерации древовидного индекса.\n    include_examples: Флаг включения примеров.\n    ignore: Список игнорируемых шаблонов.\n    project_arg: Переданное значение параметра --project.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -37389,6 +37483,16 @@
       "weight": 1
     },
     {
+      "source": "chutils/commands/dev/lock",
+      "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/commands/dev/lock",
+      "target": "/generate_context",
+      "weight": 1
+    },
+    {
       "source": "chutils/commands/dev/mock",
       "target": "/base",
       "weight": 1
@@ -39261,10 +39365,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.4.2",
+    "chutils_version": "3.5.0",
     "project_version": "3.5.0",
-    "git_commit": "5278939ee2ac644f574e7088cbb6678f61677259 (dirty)",
-    "generated_at": "2026-08-07T16:15:31.028229+00:00",
-    "project_hash": "ddb01bfac2798751b4d8551a27434e5c4e19e2de6e13a3691d3083b14a6d7caf"
+    "git_commit": "d47cf872c8848e34f0f7835f584102785a227aab (dirty)",
+    "generated_at": "2026-08-07T16:23:28.474210+00:00",
+    "project_hash": "00b980844082e363531aa5ba6e6c8b6b663a055f74e0da92bac5a9a75381e3c4"
   }
 }

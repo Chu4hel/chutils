@@ -104,6 +104,13 @@ class GenerateContextSubCommand(SubCommand):
                 "(игнорирует проверку volatile-полей: git_commit, generated_at, project_hash)"
             ),
         )
+        gen_parser.add_argument(
+            "--no-track",
+            "--untracked",
+            action="store_true",
+            dest="untracked",
+            help="Не сохранять запись об этом сгенерированном файле в .chutils/context_metadata.json",
+        )
         gen_parser.set_defaults(handler=self.handle)
 
     def handle(self, args: argparse.Namespace) -> None:
@@ -306,7 +313,10 @@ class GenerateContextSubCommand(SubCommand):
                     if ex.bad_pattern:
                         output_content += f"\n#### Как не надо (bad_pattern.py)\n```python\n{ex.bad_pattern}\n```\n"
 
-        if args.output:
+        untracked = bool(getattr(args, "untracked", False))
+        target_type = "project" if args.project else "chutils"
+
+        if args.output and not untracked:
             force: bool = getattr(args, "force", False)
             if not force and self._is_content_effectively_unchanged(output_content, args.output, args.format):
                 self.err_console.print(
@@ -314,10 +324,18 @@ class GenerateContextSubCommand(SubCommand):
                     f"(кроме volatile-полей). Запись пропущена: [cyan]{args.output}[/cyan]. "
                     "Используйте [bold]--force[/bold] для принудительной перегенерации."
                 )
-                # Обновляем хэш в реестре, чтобы AIMapHashRule не ругался на
-                # "устаревший" файл, который на самом деле актуален по содержимому
                 from chutils.dev.ast_indexer import save_context_metadata_cache
-                save_context_metadata_cache(project_path, args.output, args.format, metadata["project_hash"])
+                save_context_metadata_cache(
+                    project_path,
+                    args.output,
+                    args.format,
+                    metadata["project_hash"],
+                    target=target_type,
+                    tree=bool(args.tree),
+                    include_examples=bool(args.include_examples),
+                    ignore=custom_ignore if custom_ignore else None,
+                    project_arg=args.project,
+                )
                 return
             with open(args.output, "w", encoding="utf-8") as f:
                 f.write(output_content)
@@ -325,7 +343,17 @@ class GenerateContextSubCommand(SubCommand):
                 f"[bold green] [OK] [/bold green] Контекст успешно сохранен в: [cyan]{args.output}[/cyan]"
             )
             from chutils.dev.ast_indexer import save_context_metadata_cache
-            save_context_metadata_cache(project_path, args.output, args.format, metadata["project_hash"])
+            save_context_metadata_cache(
+                project_path,
+                args.output,
+                args.format,
+                metadata["project_hash"],
+                target=target_type,
+                tree=bool(args.tree),
+                include_examples=bool(args.include_examples),
+                ignore=custom_ignore if custom_ignore else None,
+                project_arg=args.project,
+            )
         else:
             if args.format == "json":
                 print(output_content)
@@ -494,7 +522,10 @@ class GenerateContextSubCommand(SubCommand):
                 except Exception:
                     pass
 
-            if args.output:
+            untracked = bool(getattr(args, "untracked", False))
+            target_type = "project" if args.project else "chutils"
+
+            if args.output and not untracked:
                 tree_dict = json.loads(output_content)
                 proj_hash = tree_dict.get("metadata", {}).get("project_hash", "") if isinstance(tree_dict, dict) else ""
 
@@ -505,11 +536,17 @@ class GenerateContextSubCommand(SubCommand):
                         f"(кроме volatile-полей). Запись пропущена: [cyan]{args.output}[/cyan]. "
                         "Используйте [bold]--force[/bold] для принудительной перегенерации."
                     )
-                    # Обновляем хэш в реестре, чтобы AIMapHashRule не ругался на
-                    # "устаревший" файл, который на самом деле актуален по содержимому
                     from chutils.dev.ast_indexer import save_context_metadata_cache
                     save_context_metadata_cache(
-                        Path(".").resolve(), args.output, "tree", proj_hash
+                        Path(".").resolve(),
+                        args.output,
+                        "tree",
+                        proj_hash,
+                        target=target_type,
+                        tree=True,
+                        include_examples=bool(args.include_examples),
+                        ignore=custom_ignore if custom_ignore else None,
+                        project_arg=args.project,
                     )
                     return
                 with open(args.output, "w", encoding="utf-8") as f:
@@ -518,7 +555,17 @@ class GenerateContextSubCommand(SubCommand):
                     f"[bold green] [OK] [/bold green] Иерархический индекс успешно сохранен в: [cyan]{args.output}[/cyan]"
                 )
                 from chutils.dev.ast_indexer import save_context_metadata_cache
-                save_context_metadata_cache(Path(".").resolve(), args.output, "tree", proj_hash)
+                save_context_metadata_cache(
+                    Path(".").resolve(),
+                    args.output,
+                    "tree",
+                    proj_hash,
+                    target=target_type,
+                    tree=True,
+                    include_examples=bool(args.include_examples),
+                    ignore=custom_ignore if custom_ignore else None,
+                    project_arg=args.project,
+                )
             else:
                 print(output_content)
 

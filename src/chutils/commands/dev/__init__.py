@@ -27,6 +27,7 @@ def get_subcommands() -> list[type[SubCommand]]:
     from .setup_github_actions import SetupGithubActionsSubCommand
     from .clean import CleanSubCommand
     from .watch import WatchSubCommand
+    from .lock import LockSubCommand
 
     return [
         GenerateContextSubCommand,
@@ -43,6 +44,7 @@ def get_subcommands() -> list[type[SubCommand]]:
         SetupGithubActionsSubCommand,
         CleanSubCommand,
         WatchSubCommand,
+        LockSubCommand,
     ]
 
 
@@ -596,6 +598,27 @@ class DevCommand(BaseCommand):
         )
         watch_parser.set_defaults(handler=self.handle_watch)
 
+        # dev lock
+        lock_parser = dev_subparsers.add_parser(
+            "lock",
+            help="Перегенерировать весь контекст проекта из реестра",
+            description=(
+                "Читает реестр .chutils/context_metadata.json и автоматически перегенерирует "
+                "все зарегистрированные ранее файлы контекста."
+            ),
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""Примеры использования:
+  chutils dev lock
+  chutils dev lock --force
+""",
+        )
+        lock_parser.add_argument(
+            "--force",
+            action="store_true",
+            help="Принудительно перезаписать все файлы, даже если содержимое не изменилось",
+        )
+        lock_parser.set_defaults(handler=self.handle_lock)
+
     def handle(self, args: argparse.Namespace) -> None:
         """Вызывается, если подкоманда не указана.
 
@@ -731,3 +754,12 @@ class DevCommand(BaseCommand):
         """
         from .watch import WatchSubCommand
         WatchSubCommand().handle(args)
+
+    def handle_lock(self, args: argparse.Namespace) -> None:
+        """Обработчик автоматической перегенерации файлов контекста (chutils dev lock).
+
+        Args:
+            args: Объект Namespace с аргументами командной строки.
+        """
+        from .lock import LockSubCommand
+        LockSubCommand().handle(args)

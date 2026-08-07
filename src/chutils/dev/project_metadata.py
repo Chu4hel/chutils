@@ -160,7 +160,17 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
     }
 
 
-def save_context_metadata_cache(project_path: Path, output_file: str, format_str: str, project_hash: str) -> None:
+def save_context_metadata_cache(
+    project_path: Path,
+    output_file: str,
+    format_str: str,
+    project_hash: str,
+    target: str = "chutils",
+    tree: bool = False,
+    include_examples: bool = False,
+    ignore: list[str] | None = None,
+    project_arg: str | None = None,
+) -> None:
     """Сохраняет кэш метаданных сгенерированного контекста в .chutils/context_metadata.json.
 
     Файл хранит реестр ВСЕХ сгенерированных файлов контекста проекта.
@@ -171,19 +181,21 @@ def save_context_metadata_cache(project_path: Path, output_file: str, format_str
 
         {
           "files": {
-            "api_map.md":         {"format": "markdown", "project_hash": "..."},
-            "project_index.json": {"format": "tree",     "project_hash": "..."},
-            "docs/context.json":  {"format": "json",     "project_hash": "..."}
+            "api_map.md":         {"format": "markdown", "target": "chutils", "project_hash": "..."},
+            "project_index.json": {"format": "tree",     "target": "project", "project_hash": "..."}
           }
         }
-
-    Старый однофайловый формат автоматически мигрируется при первом обращении.
 
     Args:
         project_path: Корневой путь проекта.
         output_file: Выходной путь файла контекста.
         format_str: Формат вывода ('markdown', 'json' или 'tree').
         project_hash: Сгенерированный хэш проекта.
+        target: Целевой объект контекста ('chutils' или 'project').
+        tree: Флаг генерации древовидного индекса.
+        include_examples: Флаг включения примеров.
+        ignore: Список игнорируемых шаблонов.
+        project_arg: Переданное значение параметра --project.
     """
     import json
     import sys
@@ -207,7 +219,7 @@ def save_context_metadata_cache(project_path: Path, output_file: str, format_str
             file_path_str = output_file
 
         # Читаем существующий реестр (с автоматической миграцией старого формата)
-        files_registry: dict[str, dict[str, str]] = {}
+        files_registry: dict[str, dict[str, Any]] = {}
         if cache_path.exists():
             try:
                 with open(cache_path, encoding="utf-8") as f:
@@ -222,16 +234,26 @@ def save_context_metadata_cache(project_path: Path, output_file: str, format_str
                         if old_fp:
                             files_registry[old_fp] = {
                                 "format": str(existing.get("format", "markdown")),
+                                "target": "chutils",
                                 "project_hash": str(existing.get("project_hash", "")),
                             }
             except Exception:
                 pass
 
-        # Обновляем только запись для текущего файла, остальные не трогаем
-        files_registry[file_path_str] = {
+        # Обновляем только запись для текущего файла
+        entry: dict[str, Any] = {
             "format": format_str,
+            "target": target,
             "project_hash": project_hash,
+            "tree": tree,
+            "include_examples": include_examples,
         }
+        if ignore:
+            entry["ignore"] = ignore
+        if project_arg is not None:
+            entry["project_arg"] = project_arg
+
+        files_registry[file_path_str] = entry
 
         with open(cache_path, "w", encoding="utf-8") as f:
             json.dump({"files": files_registry}, f, indent=2, ensure_ascii=False)  # chutils: ignore[ChutilsIntegrationRule]
