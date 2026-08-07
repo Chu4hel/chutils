@@ -39,6 +39,7 @@ from .system import (
     PathTraversalError,
 )
 from .telegram import TelegramError, TelegramAccessDeniedError
+from .vkma import VKMAValidationError
 from .validation import (
     ChutilsConfigurationError,
     ChutilsValidationError,
@@ -80,4 +81,5 @@ __all__ = [
     "AuditIntegrityError",
     "TelegramError",
     "TelegramAccessDeniedError",
+    "VKMAValidationError",
 ]

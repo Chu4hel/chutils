@@ -46,6 +46,12 @@ qt = [
 qt-pyside = [
     "PySide6 (>=6.6.0)"
 ]
+vk = [
+    "pydantic (>=2.13.4,<3.0.0)"
+]
+vkma = [
+    "pydantic (>=2.13.4,<3.0.0)"
+]
 testing = [
     "pytest (>=9.0.3)"
 ]
