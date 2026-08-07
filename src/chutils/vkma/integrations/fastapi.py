@@ -59,7 +59,15 @@ if HAS_FASTAPI:
             self.exclude_paths = set(exclude_paths or [])
 
         async def dispatch(self, request: Request, call_next: Callable[[Request], Any]) -> Any:
-            """Перехватывает HTTP-запрос и проверяет подпись VKMA launchParams."""
+            """Перехватывает HTTP-запрос и проверяет подпись VKMA launchParams.
+
+            Args:
+                request: Входящий HTTP запрос FastAPI.
+                call_next: Функция передачи контроля следующему обработчику.
+
+            Returns:
+                Ответ сервера (JSONResponse с 401 или результат вызова call_next).
+            """
             if request.url.path in self.exclude_paths:
                 return await call_next(request)
 
@@ -86,7 +94,14 @@ if HAS_FASTAPI:
             return await call_next(request)
 
     async def get_current_vkma_params(request: Request) -> VKMALaunchParams:
-        """FastAPI Depends() хелпер для внедрения VKMALaunchParams в обработчик роута."""
+        """FastAPI Depends() хелпер для внедрения VKMALaunchParams в обработчик роута.
+
+        Args:
+            request: Входящий HTTP запрос FastAPI.
+
+        Returns:
+            Спарсенная и валидированная модель VKMALaunchParams.
+        """
         if hasattr(request.state, "vkma_params") and isinstance(request.state.vkma_params, VKMALaunchParams):
             return request.state.vkma_params
 

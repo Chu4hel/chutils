@@ -21,11 +21,24 @@ class MockVKApi:
         self.calls: list[tuple[str, dict[str, Any]]] = []
 
     def register_response(self, method: str, response_data: Any) -> None:
-        """Регистрирует ответы для вызова метода VK API."""
+        """Регистрирует ответы для вызова метода VK API.
+
+        Args:
+            method: Имя метода VK API.
+            response_data: Данные ответа для возврата.
+        """
         self.responses[method] = response_data
 
     def call(self, method: str, **kwargs: Any) -> Any:
-        """Имитирует вызов метода VK API."""
+        """Имитирует вызов метода VK API.
+
+        Args:
+            method: Имя вызываемого метода.
+            **kwargs: Произвольные параметры вызова.
+
+        Returns:
+            Ответ метода VK API.
+        """
         self.calls.append((method, kwargs))
         if method in self.responses:
             return self.responses[method]
@@ -44,7 +57,11 @@ class MockVKApi:
 
 @contextmanager
 def mock_vk_api_context() -> Generator[MockVKApi, None, None]:
-    """Контекстный менеджер для мокирования вызовов VK API."""
+    """Контекстный менеджер для мокирования вызовов VK API.
+
+    Returns:
+        Генератор с объектом MockVKApi.
+    """
     mock = MockVKApi()
     yield mock
 
@@ -52,7 +69,11 @@ def mock_vk_api_context() -> Generator[MockVKApi, None, None]:
 if HAS_PYTEST:
     @pytest.fixture
     def vk_launch_params_factory() -> Callable[..., str]:
-        """Pytest фикстура-фабрика для генерации поддельных launchParams VKMA."""
+        """Pytest фикстура-фабрика для генерации поддельных launchParams VKMA.
+
+        Returns:
+            Фабричная функция генерации launchParams.
+        """
         def _factory(
             user_id: int = 123456,
             app_id: int = 77777,
@@ -74,7 +95,11 @@ if HAS_PYTEST:
 
     @pytest.fixture
     def mock_vk_api() -> Generator[MockVKApi, None, None]:
-        """Pytest фикстура для перехвата вызовов VK API."""
+        """Pytest фикстура для перехвата вызовов VK API.
+
+        Returns:
+            Генератор мока VK API.
+        """
         with mock_vk_api_context() as mock:
             yield mock
 else:

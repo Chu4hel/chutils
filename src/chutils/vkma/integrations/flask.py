@@ -17,7 +17,15 @@ def require_vkma_auth(
     client_secret: str | None = None,
     max_age_seconds: int | None = None,
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    """Декоратор Flask для авторизации вызовов из VK Mini App."""
+    """Декоратор Flask для авторизации вызовов из VK Mini App.
+
+    Args:
+        client_secret: Ключ приложения VK.
+        max_age_seconds: Максимальный допустимый возраст подписи.
+
+    Returns:
+        Декоратор функции-обработчика Flask.
+    """
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:

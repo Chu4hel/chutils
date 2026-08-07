@@ -98,15 +98,36 @@ class VKCallbackRouter:
         return decorator
 
     def on_message_new(self, func: Callable[..., Any]) -> Callable[..., Any]:
-        """Алиас декоратора для события 'message_new'."""
+        """Алиас декоратора для события 'message_new'.
+
+        Args:
+            func: Функция-обработчик события.
+
+        Returns:
+            Переданная функция-обработчик.
+        """
         return self.on_event("message_new")(func)
 
     def on_wall_post_new(self, func: Callable[..., Any]) -> Callable[..., Any]:
-        """Алиас декоратора для события 'wall_post_new'."""
+        """Алиас декоратора для события 'wall_post_new'.
+
+        Args:
+            func: Функция-обработчик события.
+
+        Returns:
+            Переданная функция-обработчик.
+        """
         return self.on_event("wall_post_new")(func)
 
     def on_unhandled_event(self, func: Callable[..., Any]) -> Callable[..., Any]:
-        """Декоратор для обработки незарегистрированных типов событий."""
+        """Декоратор для обработки незарегистрированных типов событий.
+
+        Args:
+            func: Функция-обработчик несопоставленных событий.
+
+        Returns:
+            Переданная функция-обработчик.
+        """
         self._unhandled_handler = func
         return func
 
@@ -154,8 +175,8 @@ class VKCallbackRouter:
                     handler(event_data)
             except Exception as exc:
                 # Логируем ошибку, но не заваливаем ответ "ok" для VK
-                import logging
-                logging.getLogger("chutils.vk.callback").error(
+                from chutils.logger import setup_logger
+                setup_logger("chutils.vk.callback").error(
                     f"Ошибка при выполнении хэндлера {handler.__name__} для события {event_type}: {exc}"
                 )
 

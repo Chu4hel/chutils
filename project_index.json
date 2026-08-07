@@ -36640,7 +36640,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 141,
+                "line_number": 139,
                 "bases": [],
                 "children": []
               }
@@ -37200,7 +37200,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 363,
+        "line_number": 362,
         "bases": [],
         "children": []
       },
@@ -37220,7 +37220,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 394,
+        "line_number": 393,
         "bases": [],
         "children": []
       },
@@ -37240,7 +37240,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 404,
+        "line_number": 403,
         "bases": [],
         "children": []
       }
@@ -39367,8 +39367,8 @@
   "metadata": {
     "chutils_version": "3.5.0",
     "project_version": "3.5.0",
-    "git_commit": "d47cf872c8848e34f0f7835f584102785a227aab (dirty)",
-    "generated_at": "2026-08-07T16:23:28.474210+00:00",
-    "project_hash": "00b980844082e363531aa5ba6e6c8b6b663a055f74e0da92bac5a9a75381e3c4"
+    "git_commit": "1397dbfed6a67e88aafec52dd0b527ea49e0daf7 (dirty)",
+    "generated_at": "2026-08-07T16:50:58.758980+00:00",
+    "project_hash": "acd7d07c620d91e23d70772c9617620256a5d8418040bfa60e54dcba33d825a1"
   }
 }

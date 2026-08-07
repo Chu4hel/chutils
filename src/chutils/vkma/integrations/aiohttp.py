@@ -17,7 +17,16 @@ def vkma_auth_middleware(
     max_age_seconds: int | None = None,
     exclude_paths: set[str] | None = None,
 ) -> Any:
-    """Фабрика Aiohttp `@web.middleware` для защиты роутов VK Mini Apps."""
+    """Фабрика Aiohttp `@web.middleware` для защиты роутов VK Mini Apps.
+
+    Args:
+        client_secret: Ключ приложения VK.
+        max_age_seconds: Максимальное время жизни подписи.
+        exclude_paths: Пути-исключения без проверки подписи.
+
+    Returns:
+        Объект Aiohttp middleware или None, если aiohttp не установлен.
+    """
     if not HAS_AIOHTTP:
         return None
 

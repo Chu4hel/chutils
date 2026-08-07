@@ -24,15 +24,17 @@ def unpack_template(template_name: str, target_dir: str | Path, context: dict[st
 
     created_files: list[str] = []
 
+    from chutils.fs import atomic_write, ensure_dir
+
     if not base_templates_dir.exists():
         # Если шаблон пустой или не существует, создаем базовую структуру
-        target.mkdir(parents=True, exist_ok=True)
+        ensure_dir(target)
         return created_files
 
     for root, _, files in os.walk(base_templates_dir):
         rel_root = Path(root).relative_to(base_templates_dir)
         dest_dir = target / rel_root
-        dest_dir.mkdir(parents=True, exist_ok=True)
+        ensure_dir(dest_dir)
 
         for file_name in files:
             src_file = Path(root) / file_name
@@ -44,7 +46,8 @@ def unpack_template(template_name: str, target_dir: str | Path, context: dict[st
                 content = content.replace(f"{{{{ {key} }}}}", str(val))
                 content = content.replace(f"{{{{{key}}}}}", str(val))
 
-            dest_file.write_text(content, encoding="utf-8")
+            atomic_write(dest_file, content)
+            created_files.append(str(dest_file))
             created_files.append(str(dest_file))
 
     return created_files

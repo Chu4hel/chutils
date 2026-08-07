@@ -8,10 +8,11 @@ from pathlib import Path
 from typing import Any
 
 from chutils.exceptions import ChutilsException, PathTraversalError
-from chutils.fs import resolve_safe_path, safe_filename, ensure_dir, zip_folder, get_temp_file
-from chutils.telegram.formatting import smart_truncate, escape_html, escape_markdown
+from chutils.fs import atomic_write, ensure_dir, get_temp_file, resolve_safe_path, safe_filename, zip_folder
+from chutils.logger import setup_logger
+from chutils.telegram.formatting import escape_html, escape_markdown, smart_truncate
 
-logger = logging.getLogger("chutils.telegram.media")
+logger = setup_logger("chutils.telegram.media")
 
 MAX_TELEGRAM_BOT_FILE_SIZE = 50 * 1024 * 1024  # 50 MB limit for standard bot API
 
@@ -92,7 +93,7 @@ async def download_user_file(
             content = res.content
             if max_size_bytes is not None and len(content) > max_size_bytes:
                 raise ChutilsException(f"Размер скачанного содержимого превысил лимит ({max_size_bytes} байт).")
-            destination_path.write_bytes(content)
+            atomic_write(destination_path, content)
     elif hasattr(bot, "download_file"):
         if file_path_on_server:
             await bot.download_file(file_path_on_server, destination=destination_path)
