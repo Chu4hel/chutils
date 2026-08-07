@@ -33810,7 +33810,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 14,
+                "line_number": 15,
                 "bases": [],
                 "children": []
               },
@@ -33830,7 +33830,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 16,
+                "line_number": 17,
                 "bases": [],
                 "children": []
               },
@@ -33850,7 +33850,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 19,
+                "line_number": 20,
                 "bases": [],
                 "children": []
               },
@@ -33870,7 +33870,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 105,
+                "line_number": 106,
                 "bases": [],
                 "children": []
               }
@@ -35937,7 +35937,7 @@
                         "layer": "internal",
                         "signature": "(self, func)",
                         "summary": "Алиас декоратора для события 'message_new'.",
-                        "docstring": "Алиас декоратора для события 'message_new'.",
+                        "docstring": "Алиас декоратора для события 'message_new'.\n\nArgs:\n    func: Функция-обработчик события.\n\nReturns:\n    Переданная функция-обработчик.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -35957,7 +35957,7 @@
                         "layer": "internal",
                         "signature": "(self, func)",
                         "summary": "Алиас декоратора для события 'wall_post_new'.",
-                        "docstring": "Алиас декоратора для события 'wall_post_new'.",
+                        "docstring": "Алиас декоратора для события 'wall_post_new'.\n\nArgs:\n    func: Функция-обработчик события.\n\nReturns:\n    Переданная функция-обработчик.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -35967,7 +35967,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 104,
+                        "line_number": 111,
                         "bases": [],
                         "children": []
                       },
@@ -35977,7 +35977,7 @@
                         "layer": "internal",
                         "signature": "(self, func)",
                         "summary": "Декоратор для обработки незарегистрированных типов событий.",
-                        "docstring": "Декоратор для обработки незарегистрированных типов событий.",
+                        "docstring": "Декоратор для обработки незарегистрированных типов событий.\n\nArgs:\n    func: Функция-обработчик несопоставленных событий.\n\nReturns:\n    Переданная функция-обработчик.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -35987,7 +35987,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 108,
+                        "line_number": 122,
                         "bases": [],
                         "children": []
                       },
@@ -36007,7 +36007,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 113,
+                        "line_number": 134,
                         "bases": [],
                         "children": []
                       },
@@ -36027,7 +36027,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 164,
+                        "line_number": 185,
                         "bases": [],
                         "children": []
                       }
@@ -36100,7 +36100,7 @@
                         "layer": "internal",
                         "signature": "(self, method, response_data)",
                         "summary": "Регистрирует ответы для вызова метода VK API.",
-                        "docstring": "Регистрирует ответы для вызова метода VK API.",
+                        "docstring": "Регистрирует ответы для вызова метода VK API.\n\nArgs:\n    method: Имя метода VK API.\n    response_data: Данные ответа для возврата.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -36120,7 +36120,7 @@
                         "layer": "internal",
                         "signature": "(self, method)",
                         "summary": "Имитирует вызов метода VK API.",
-                        "docstring": "Имитирует вызов метода VK API.",
+                        "docstring": "Имитирует вызов метода VK API.\n\nArgs:\n    method: Имя вызываемого метода.\n    **kwargs: Произвольные параметры вызова.\n\nReturns:\n    Ответ метода VK API.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -36130,7 +36130,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 27,
+                        "line_number": 32,
                         "bases": [],
                         "children": []
                       }
@@ -36142,7 +36142,7 @@
                     "layer": "internal",
                     "signature": "()",
                     "summary": "Контекстный менеджер для мокирования вызовов VK API.",
-                    "docstring": "Контекстный менеджер для мокирования вызовов VK API.",
+                    "docstring": "Контекстный менеджер для мокирования вызовов VK API.\n\nReturns:\n    Генератор с объектом MockVKApi.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -36154,7 +36154,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 46,
+                    "line_number": 59,
                     "bases": [],
                     "children": []
                   }
@@ -36298,7 +36298,7 @@
                     "layer": "internal",
                     "signature": "(client_secret, max_age_seconds, exclude_paths)",
                     "summary": "Фабрика Aiohttp `@web.middleware` для защиты роутов VK Mini Apps.",
-                    "docstring": "Фабрика Aiohttp `@web.middleware` для защиты роутов VK Mini Apps.",
+                    "docstring": "Фабрика Aiohttp `@web.middleware` для защиты роутов VK Mini Apps.\n\nArgs:\n    client_secret: Ключ приложения VK.\n    max_age_seconds: Максимальное время жизни подписи.\n    exclude_paths: Пути-исключения без проверки подписи.\n\nReturns:\n    Объект Aiohttp middleware или None, если aiohttp не установлен.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -36360,7 +36360,7 @@
                     "layer": "internal",
                     "signature": "(client_secret, max_age_seconds)",
                     "summary": "Декоратор Flask для авторизации вызовов из VK Mini App.",
-                    "docstring": "Декоратор Flask для авторизации вызовов из VK Mini App.",
+                    "docstring": "Декоратор Flask для авторизации вызовов из VK Mini App.\n\nArgs:\n    client_secret: Ключ приложения VK.\n    max_age_seconds: Максимальный допустимый возраст подписи.\n\nReturns:\n    Декоратор функции-обработчика Flask.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -39125,7 +39125,12 @@
     {
       "source": "chutils/telegram/media",
       "target": "chutils/fs",
-      "weight": 5
+      "weight": 6
+    },
+    {
+      "source": "chutils/telegram/media",
+      "target": "chutils/logger",
+      "weight": 1
     },
     {
       "source": "chutils/telegram/media",
@@ -39367,8 +39372,8 @@
   "metadata": {
     "chutils_version": "3.5.0",
     "project_version": "3.5.0",
-    "git_commit": "1397dbfed6a67e88aafec52dd0b527ea49e0daf7 (dirty)",
-    "generated_at": "2026-08-07T16:50:58.758980+00:00",
-    "project_hash": "acd7d07c620d91e23d70772c9617620256a5d8418040bfa60e54dcba33d825a1"
+    "git_commit": "6a7370d70de0531d1aa9edc4e5cd37cd8df98508 (dirty)",
+    "generated_at": "2026-08-07T16:53:36.909288+00:00",
+    "project_hash": "7f419472340a5a1687186800ad4a3bb97bc1b38a55edc8c7385610f0021e7c56"
   }
 }
