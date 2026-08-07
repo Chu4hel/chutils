@@ -27,7 +27,7 @@ def _extract_vk_raw_params_from_request(request: Any) -> str | dict[str, Any] | 
     if auth_header and auth_header.startswith("Bearer "):
         bearer_token = auth_header[7:].strip()
         if "vk_user_id=" in bearer_token:
-            return bearer_token
+            return str(bearer_token)
 
     # Пробуем извлечь из Query string
     query_string = str(request.query_params)
@@ -37,13 +37,13 @@ def _extract_vk_raw_params_from_request(request: Any) -> str | dict[str, Any] | 
     # Пробуем извлечь из X-VKMA-Init-Data
     custom_header = request.headers.get("X-VKMA-Init-Data")
     if custom_header:
-        return custom_header
+        return str(custom_header)
 
     return None
 
 
 if HAS_FASTAPI:
-    class VKMAAuthMiddleware(BaseHTTPMiddleware):  # type: ignore[misc]
+    class VKMAAuthMiddleware(BaseHTTPMiddleware):
         """FastAPI / Starlette Middleware для автоматической валидации параметров VKMA."""
 
         def __init__(
@@ -58,7 +58,8 @@ if HAS_FASTAPI:
             self.max_age_seconds = max_age_seconds
             self.exclude_paths = set(exclude_paths or [])
 
-        async def dispatch(self, request: Request, call_next: Callable[[Request], Any]) -> Response:
+        async def dispatch(self, request: Request, call_next: Callable[[Request], Any]) -> Any:
+            """Перехватывает HTTP-запрос и проверяет подпись VKMA launchParams."""
             if request.url.path in self.exclude_paths:
                 return await call_next(request)
 
@@ -105,4 +106,4 @@ if HAS_FASTAPI:
             ) from exc
 else:
     VKMAAuthMiddleware = None  # type: ignore[misc, assignment]
-    get_current_vkma_params = None  # type: ignore[misc, assignment]
+    get_current_vkma_params = None  # type: ignore[assignment]

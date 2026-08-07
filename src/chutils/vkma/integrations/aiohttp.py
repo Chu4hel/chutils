@@ -23,7 +23,7 @@ def vkma_auth_middleware(
 
     excluded = exclude_paths or set()
 
-    @web.middleware
+    @web.middleware  # type: ignore[untyped-decorator]
     async def middleware(request: web.Request, handler: Callable[[web.Request], Any]) -> web.Response:
         if request.path in excluded:
             return await handler(request)

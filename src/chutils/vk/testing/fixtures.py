@@ -78,5 +78,5 @@ if HAS_PYTEST:
         with mock_vk_api_context() as mock:
             yield mock
 else:
-    vk_launch_params_factory = None  # type: ignore[misc, assignment]
-    mock_vk_api = None  # type: ignore[misc, assignment]
+    vk_launch_params_factory = None  # type: ignore[assignment]
+    mock_vk_api = None  # type: ignore[assignment]

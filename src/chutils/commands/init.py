@@ -102,6 +102,8 @@ class InitCommand(BaseCommand):
             unpack_template(args.template, os.getcwd(), context={"project_name": project_name})
             print(f"[OK] Проект по шаблону '{args.template}' успешно инициализирован!")
             return
+        setup_db = False
+        setup_alembic = False
         setup_audit = False
         setup_cloud_secrets = False
         setup_env = False
