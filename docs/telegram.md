@@ -1,7 +1,26 @@
-# Telegram Bot Access Control & Helpers (`chutils.telegram`)
+## 0. Безопасное выкачивание файлов из Telegram (`download_user_file`)
 
-Модуль `chutils.telegram` предоставляет универсальные механизмы разграничения прав доступа, проверки администраторских
-привилегий и фильтрации для Telegram-ботов на Python (`aiogram 3.x`, `python-telegram-bot`, `telebot`).
+Функция `download_user_file` защищает ваш бот от атак класса **Path Traversal** при скачивании файлов пользователя. Имя
+файла автоматизировано через `chutils.fs.safe_filename` и гарантированно не сможет выйти за рамки целевой директории.
+
+```python
+from chutils.telegram import download_user_file
+
+# Скачивание через aiogram bot
+saved_path = await download_user_file(
+    bot=bot,
+    file_id=message.document.file_id,
+    target_dir="./downloads",
+    max_size_bytes=10 * 1024 * 1024,  # 10 MB лимит
+)
+
+# Скачивание напрямую через bot_token (без aiogram)
+saved_path = await download_user_file(
+    bot="BOT_TOKEN_12345",
+    file_id="FILE_ID",
+    target_dir="./downloads",
+)
+```
 
 ---
 

@@ -9,7 +9,10 @@ from .notifier import TelegramLogHandler, HealthCheckAlertBridge, send_alert
 from .rate_limit import TelegramRateLimiter, tg_rate_limit
 from .whitelist import AccessListManager, allowed_only
 
+from .media import download_user_file
+
 __all__ = [
+    "download_user_file",
     "is_admin",
     "admin_only",
     "AdminFilter",
