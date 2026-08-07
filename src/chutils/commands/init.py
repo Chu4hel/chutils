@@ -264,14 +264,15 @@ class InitCommand(BaseCommand):
                 health_file = Path("health.py")
                 if not health_file.exists():
                     with open(health_file, "w", encoding="utf-8") as f:
-                        f.write("""# health.py
+                        f.write('''"""Эндпоинт диагностики здоровья системы (health check)."""
+
 from fastapi import FastAPI
 from chutils.diagnostics import get_fastapi_health_handler
 from chutils.diagnostics.manager import default_manager
 
 app = FastAPI()
 app.add_api_route("/health", get_fastapi_health_handler(default_manager), methods=["GET"])
-""")
+''')
                     print("[OK] Файл health.py создан.")
             except Exception as e:
                 print(f"[WARN] Не удалось создать эндпоинт диагностики: {e}")

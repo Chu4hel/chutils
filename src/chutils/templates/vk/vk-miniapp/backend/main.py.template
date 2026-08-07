@@ -1,8 +1,11 @@
 """FastAPI backend template for VK Mini Apps."""
 
-import os
-from fastapi import FastAPI, Depends, HTTPException
+from typing import Any
+
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from chutils.config import get_config_value
 from chutils.vkma import VKMALaunchParams
 from chutils.vkma.integrations.fastapi import VKMAAuthMiddleware, get_current_vkma_params
 
@@ -18,7 +21,7 @@ app.add_middleware(
 )
 
 # Проверка подписи launchParams / initData VKMA
-CLIENT_SECRET = os.getenv("VK_CLIENT_SECRET", "your_vk_app_secret")
+CLIENT_SECRET = get_config_value("VK_CLIENT_SECRET", "your_vk_app_secret")
 app.add_middleware(
     VKMAAuthMiddleware,
     client_secret=CLIENT_SECRET,
@@ -27,12 +30,25 @@ app.add_middleware(
 
 
 @app.get("/api/health")
-def health_check():
+def health_check() -> dict[str, str]:
+    """Проверка доступности сервиса.
+
+    Returns:
+        Словарь со статусом и именем сервиса.
+    """
     return {"status": "ok", "service": "{{ project_name }}"}
 
 
 @app.get("/api/user-info")
-def get_user_info(vkma_params: VKMALaunchParams = Depends(get_current_vkma_params)):
+def get_user_info(vkma_params: VKMALaunchParams = Depends(get_current_vkma_params)) -> dict[str, Any]:
+    """Возвращает информацию об авторизованном пользователе VK Mini App.
+
+    Args:
+        vkma_params: Спарсенные параметры запуска VKMA из middleware.
+
+    Returns:
+        Словарь с данными пользователя и платформы.
+    """
     return {
         "user_id": vkma_params.user_id,
         "app_id": vkma_params.app_id,

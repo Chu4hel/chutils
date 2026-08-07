@@ -4743,7 +4743,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 316,
+                    "line_number": 317,
                     "bases": [],
                     "children": []
                   }
@@ -39372,8 +39372,8 @@
   "metadata": {
     "chutils_version": "3.5.0",
     "project_version": "3.5.0",
-    "git_commit": "80e007464804f9a2a75f0566060b84c064612136 (dirty)",
-    "generated_at": "2026-08-07T17:22:16.629104+00:00",
-    "project_hash": "a2d428b8dc484b4cf63dc434594547368032652b1b2d4c9d713a083e354c9ac9"
+    "git_commit": "16f17241eabe77fc1fed26243d21b318c9b63bdb (dirty)",
+    "generated_at": "2026-08-07T19:05:42.448335+00:00",
+    "project_hash": "3405497d589c412fa2a48853842cbbf4649ededb23c2c326d2a0c1f368596d05"
   }
 }
