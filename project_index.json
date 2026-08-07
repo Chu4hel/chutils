@@ -4589,7 +4589,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 43,
+                    "line_number": 49,
                     "bases": [],
                     "children": []
                   },
@@ -4609,7 +4609,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 54,
+                    "line_number": 60,
                     "bases": [],
                     "children": []
                   },
@@ -4629,7 +4629,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 62,
+                    "line_number": 68,
                     "bases": [],
                     "children": []
                   },
@@ -4649,7 +4649,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 304,
+                    "line_number": 316,
                     "bases": [],
                     "children": []
                   }
@@ -19672,6 +19672,60 @@
             ]
           },
           {
+            "name": "vkma",
+            "path": "chutils/exceptions/vkma",
+            "type": "module",
+            "layer": "public",
+            "summary": "VKMA (VK Mini Apps) exceptions.",
+            "docstring": "VKMA (VK Mini Apps) exceptions.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "VKMAValidationError",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Выбрасывается при ошибке валидации параметров запуска (launchParams) или подписи VKMA.",
+                "docstring": "Выбрасывается при ошибке валидации параметров запуска (launchParams) или подписи VKMA.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 6,
+                "bases": [
+                  "chutils.exceptions.base.ChutilsException"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, message, hint)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 9,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "watcher",
             "path": "chutils/exceptions/watcher",
             "type": "module",
@@ -25828,6 +25882,37 @@
           }
         ],
         "symbols": []
+      },
+      {
+        "name": "scaffold",
+        "path": "chutils/scaffold",
+        "type": "module",
+        "layer": "internal",
+        "summary": "Распаковщик шаблонов приложений (VK Mini App, VK Bot, etc.).",
+        "docstring": "Распаковщик шаблонов приложений (VK Mini App, VK Bot, etc.).",
+        "children": [],
+        "symbols": [
+          {
+            "name": "unpack_template",
+            "type": "function",
+            "layer": "internal",
+            "signature": "(template_name, target_dir, context)",
+            "summary": "Распаковывает выбранный шаблон проекта из `chutils.templates` в целевую директорию.",
+            "docstring": "Распаковывает выбранный шаблон проекта из `chutils.templates` в целевую директорию.\n\nArgs:\n    template_name: Имя шаблона ('vk-miniapp', 'vk-bot', 'vk-bot-miniapp').\n    target_dir: Путь назначения.\n    context: Словарь переменных для подстановки в .template файлах.\n\nReturns:\n    Список созданных файлов.",
+            "breadcrumbs": {
+              "is_async": false,
+              "is_thread_safe": false,
+              "is_heavy": false,
+              "is_abstract": false,
+              "decorators": [],
+              "tags": [],
+              "custom_metadata": {}
+            },
+            "line_number": 8,
+            "bases": [],
+            "children": []
+          }
+        ]
       },
       {
         "name": "scraping",
@@ -33607,6 +33692,97 @@
             ]
           },
           {
+            "name": "media",
+            "path": "chutils/telegram/media",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Безопасное выкачивание и отправка медиа-файлов/документов в Telegram.",
+            "docstring": "Безопасное выкачивание и отправка медиа-файлов/документов в Telegram.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "logger",
+                "type": "constant",
+                "layer": "public",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 14,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "MAX_TELEGRAM_BOT_FILE_SIZE",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 16,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "download_user_file",
+                "type": "function",
+                "layer": "public",
+                "signature": "(bot, file_id, target_dir, custom_filename, allow_unsafe_path, max_size_bytes)",
+                "summary": "Безопасно выкачивает файл из Telegram по `file_id` в указанную директорию `target_dir`.",
+                "docstring": "Безопасно выкачивает файл из Telegram по `file_id` в указанную директорию `target_dir`.\n\nArgs:\n    bot: Экземпляр бота (aiogram.Bot или аналогичный с методом get_file/download_file) или bot_token (str).\n    file_id: Уникальный идентификатор файла в Telegram API.\n    target_dir: Целевая папка для сохранения.\n    custom_filename: Желаемое имя файла. Если не указано, используется имя из Telegram или file_id.\n    allow_unsafe_path: Если True, отключает строгую проверку Path Traversal (записывается предупреждение).\n    max_size_bytes: Максимальный допустимый размер файла в байтах.\n\nReturns:\n    Абсолютный путь (Path) к сохраненному файлу.\n\nRaises:\n    PathTraversalError: При попытке выхода за границы target_dir (когда allow_unsafe_path=False).\n    ChutilsException: При превышении max_size_bytes или ошибке загрузки.",
+                "breadcrumbs": {
+                  "is_async": true,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 19,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "send_telegram_file",
+                "type": "function",
+                "layer": "public",
+                "signature": "(bot, chat_id, file_path, caption, parse_mode, allow_unsafe_path, base_dir)",
+                "summary": "Безопасно отправляет файл или папку (с авто-упаковкой в ZIP) в Telegram.",
+                "docstring": "Безопасно отправляет файл или папку (с авто-упаковкой в ZIP) в Telegram.\n\nArgs:\n    bot: Экземпляр бота (aiogram.Bot) или raw bot_token (str).\n    chat_id: Идентификатор чата или получателя.\n    file_path: Путь к отправляемому файлу или директории.\n    caption: Опциональная подпись к файлу (автоматически обрезается под 1024 символа).\n    parse_mode: Режим разметки подписи ('HTML', 'MarkdownV2', etc.).\n    allow_unsafe_path: Если True, отключает проверку Path Traversal.\n    base_dir: Базовая директория для проверки выхода за границы.\n\nReturns:\n    Объект отправленного сообщения Telegram API.\n\nRaises:\n    PathTraversalError: Если файл находится за пределами base_dir.\n    ChutilsException: При превышении лимита 50 МБ или ошибках отправки.",
+                "breadcrumbs": {
+                  "is_async": true,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 105,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
             "name": "notifier",
             "path": "chutils/telegram/notifier",
             "type": "module",
@@ -34164,6 +34340,59 @@
                 "children": []
               }
             ]
+          }
+        ],
+        "symbols": []
+      },
+      {
+        "name": "templates",
+        "path": "chutils/templates",
+        "type": "package",
+        "layer": "internal",
+        "summary": "",
+        "docstring": "",
+        "children": [
+          {
+            "name": "vk",
+            "path": "chutils/templates/vk",
+            "type": "package",
+            "layer": "public",
+            "summary": "",
+            "docstring": "",
+            "children": [
+              {
+                "name": "vk-miniapp",
+                "path": "chutils/templates/vk/vk-miniapp",
+                "type": "package",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [
+                  {
+                    "name": "backend",
+                    "path": "chutils/templates/vk/vk-miniapp/backend",
+                    "type": "package",
+                    "layer": "internal",
+                    "summary": "",
+                    "docstring": "",
+                    "children": [],
+                    "symbols": []
+                  },
+                  {
+                    "name": "frontend",
+                    "path": "chutils/templates/vk/vk-miniapp/frontend",
+                    "type": "package",
+                    "layer": "internal",
+                    "summary": "",
+                    "docstring": "",
+                    "children": [],
+                    "symbols": []
+                  }
+                ],
+                "symbols": []
+              }
+            ],
+            "symbols": []
           }
         ],
         "symbols": []
@@ -35459,6 +35688,874 @@
         ]
       },
       {
+        "name": "vk",
+        "path": "chutils/vk",
+        "type": "package",
+        "layer": "public",
+        "summary": "Экспорт основного модуля chutils.vk.",
+        "docstring": "Экспорт основного модуля chutils.vk.",
+        "children": [
+          {
+            "name": "callback",
+            "path": "chutils/vk/callback",
+            "type": "package",
+            "layer": "internal",
+            "summary": "Экспорт модуля chutils.vk.callback.",
+            "docstring": "Экспорт модуля chutils.vk.callback.",
+            "children": [
+              {
+                "name": "router",
+                "path": "chutils/vk/callback/router",
+                "type": "module",
+                "layer": "internal",
+                "summary": "VKCallbackRouter — легковесный обработчик Callback API (Webhook) VK Ботов.",
+                "docstring": "VKCallbackRouter — легковесный обработчик Callback API (Webhook) VK Ботов.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "VKCallbackError",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Исключение при обработке VK Callback API события.",
+                    "docstring": "Исключение при обработке VK Callback API события.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 10,
+                    "bases": [
+                      "chutils.exceptions.base.ChutilsException"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "VKCallbackRouter",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Маршрутизатор событий VK Callback API.",
+                    "docstring": "Маршрутизатор событий VK Callback API.\n\nАвтоматически подтверждает сервер (confirmation_code), проверяет секретный ключ (secret_key)\nи диспатчит входящие события по зарегистрированным хэндлерам.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, confirmation_code, secret_key, path)",
+                        "summary": "Инициализирует VKCallbackRouter.",
+                        "docstring": "Инициализирует VKCallbackRouter.\n\nArgs:\n    confirmation_code: Строка подтверждения сервера ВКонтакте.\n    secret_key: Секретный ключ группы для проверки authenticity.\n    path: HTTP путь вебхука в приложениях FastAPI / Starlette.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 23,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_resolve_confirmation_code",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "()",
+                        "summary": "Поиск confirmation_code через secret_manager / config / env.",
+                        "docstring": "Поиск confirmation_code через secret_manager / config / env.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 44,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_resolve_secret_key",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "()",
+                        "summary": "Поиск secret_key группы через secret_manager / config / env.",
+                        "docstring": "Поиск secret_key группы через secret_manager / config / env.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 64,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "on_event",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, event_type)",
+                        "summary": "Декоратор подписки на тип события VK Callback API (например, 'message_new').",
+                        "docstring": "Декоратор подписки на тип события VK Callback API (например, 'message_new').\n\nArgs:\n    event_type: Строковое имя типа события VK API.\n\nReturns:\n    Декоратор функции-обработчика.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 83,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "on_message_new",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, func)",
+                        "summary": "Алиас декоратора для события 'message_new'.",
+                        "docstring": "Алиас декоратора для события 'message_new'.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 100,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "on_wall_post_new",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, func)",
+                        "summary": "Алиас декоратора для события 'wall_post_new'.",
+                        "docstring": "Алиас декоратора для события 'wall_post_new'.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 104,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "on_unhandled_event",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, func)",
+                        "summary": "Декоратор для обработки незарегистрированных типов событий.",
+                        "docstring": "Декоратор для обработки незарегистрированных типов событий.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 108,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "handle_event",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, event_data)",
+                        "summary": "Обрабатывает входящее событие VK Callback API.",
+                        "docstring": "Обрабатывает входящее событие VK Callback API.\n\nArgs:\n    event_data: Словарь запроса VK Callback API.\n\nReturns:\n    Текст ответа (confirmation_code или \"ok\").\n\nRaises:\n    VKCallbackError: Если проверка secret_key не пройдена.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 113,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_fastapi_router",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Создает и возвращает настроенный FastAPI APIRouter.",
+                        "docstring": "Создает и возвращает настроенный FastAPI APIRouter.\n\nReturns:\n    Экземпляр fastapi.APIRouter.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 164,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "symbols": []
+          },
+          {
+            "name": "testing",
+            "path": "chutils/vk/testing",
+            "type": "package",
+            "layer": "public",
+            "summary": "Экспорт утилит тестирования VK / VKMA.",
+            "docstring": "Экспорт утилит тестирования VK / VKMA.",
+            "children": [
+              {
+                "name": "fixtures",
+                "path": "chutils/vk/testing/fixtures",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Pytest fixtures и моки для тестирования приложений VK и VKMA.",
+                "docstring": "Pytest fixtures и моки для тестирования приложений VK и VKMA.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "MockVKApi",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Мок для имитации вызовов VK API (например, users.get, messages.send).",
+                    "docstring": "Мок для имитации вызовов VK API (например, users.get, messages.send).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 19,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "register_response",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, method, response_data)",
+                        "summary": "Регистрирует ответы для вызова метода VK API.",
+                        "docstring": "Регистрирует ответы для вызова метода VK API.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 23,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "call",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, method)",
+                        "summary": "Имитирует вызов метода VK API.",
+                        "docstring": "Имитирует вызов метода VK API.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 27,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "mock_vk_api_context",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "()",
+                    "summary": "Контекстный менеджер для мокирования вызовов VK API.",
+                    "docstring": "Контекстный менеджер для мокирования вызовов VK API.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "contextmanager"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 46,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "generators",
+                "path": "chutils/vk/testing/generators",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Генераторы поддельных подписей, initData и launchParams VK/VKMA для тестов.",
+                "docstring": "Генераторы поддельных подписей, initData и launchParams VK/VKMA для тестов.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "_compute_vk_sign",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(vk_params, secret_key)",
+                    "summary": "Вычисляет валидную HMAC-SHA256 подпись VK по алгоритму VK Mini Apps.",
+                    "docstring": "Вычисляет валидную HMAC-SHA256 подпись VK по алгоритму VK Mini Apps.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 11,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "generate_fake_launch_params",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(user_id, app_id, secret_key, expired, tampered, extra_params)",
+                    "summary": "Генерирует query-строку launchParams VK Mini App с валидной (или поврежденной) HMAC-SHA256 подписью.",
+                    "docstring": "Генерирует query-строку launchParams VK Mini App с валидной (или поврежденной) HMAC-SHA256 подписью.\n\nArgs:\n    user_id: ID фейкового пользователя VK.\n    app_id: ID фейкового приложения VK Mini App.\n    secret_key: Ключ приложения для подписи HMAC-SHA256.\n    expired: Если True, генерирует устаревший timestamp (vk_ts назад на 24 часа).\n    tampered: Если True, подделывает подпись (делает ее недействительной).\n    extra_params: Дополнительные параметры (например, vk_platform, vk_language).\n\nReturns:\n    Строка URL query-параметров с ключом `sign`.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 26,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "generate_fake_init_data",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(user_id, app_id, secret_key, expired, tampered, extra_params)",
+                    "summary": "Генерирует фейковую подпись и формат initData для использования в заголовке `Authorization: Bearer <initData>`.",
+                    "docstring": "Генерирует фейковую подпись и формат initData для использования в заголовке `Authorization: Bearer <initData>`.\n\nArgs:\n    user_id: ID фейкового пользователя VK.\n    app_id: ID фейкового приложения.\n    secret_key: Ключ приложения для подписи.\n    expired: Если True, просроченный timestamp.\n    tampered: Если True, поврежденная подпись.\n    extra_params: Дополнительные параметры.\n\nReturns:\n    Query-строка initData.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 72,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "generate_fake_user",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(user_id, first_name, last_name)",
+                    "summary": "Возвращает Pydantic-совместимый словарь с данными пользователя VK API.",
+                    "docstring": "Возвращает Pydantic-совместимый словарь с данными пользователя VK API.\n\nArgs:\n    user_id: ID пользователя VK.\n    first_name: Имя пользователя.\n    last_name: Фамилия пользователя.\n\nReturns:\n    Словарь с атрибутами пользователя VK.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 103,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "symbols": []
+          }
+        ],
+        "symbols": []
+      },
+      {
+        "name": "vkma",
+        "path": "chutils/vkma",
+        "type": "package",
+        "layer": "public",
+        "summary": "Экспорт основного функционала chutils.vkma.",
+        "docstring": "Экспорт основного функционала chutils.vkma.",
+        "children": [
+          {
+            "name": "exceptions",
+            "path": "chutils/vkma/exceptions",
+            "type": "module",
+            "layer": "public",
+            "summary": "Исключения для подмодуля VKMA (VK Mini Apps).",
+            "docstring": "Исключения для подмодуля VKMA (VK Mini Apps).",
+            "children": [],
+            "symbols": []
+          },
+          {
+            "name": "integrations",
+            "path": "chutils/vkma/integrations",
+            "type": "package",
+            "layer": "internal",
+            "summary": "Экспорт интеграций web-фреймворков для VKMA.",
+            "docstring": "Экспорт интеграций web-фреймворков для VKMA.",
+            "children": [
+              {
+                "name": "aiohttp",
+                "path": "chutils/vkma/integrations/aiohttp",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Aiohttp интеграция для валидации VKMA launchParams.",
+                "docstring": "Aiohttp интеграция для валидации VKMA launchParams.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "vkma_auth_middleware",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(client_secret, max_age_seconds, exclude_paths)",
+                    "summary": "Фабрика Aiohttp `@web.middleware` для защиты роутов VK Mini Apps.",
+                    "docstring": "Фабрика Aiohttp `@web.middleware` для защиты роутов VK Mini Apps.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 15,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "fastapi",
+                "path": "chutils/vkma/integrations/fastapi",
+                "type": "module",
+                "layer": "internal",
+                "summary": "FastAPI / Starlette интеграция для валидации VKMA launchParams / initData.",
+                "docstring": "FastAPI / Starlette интеграция для валидации VKMA launchParams / initData.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "_extract_vk_raw_params_from_request",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(request)",
+                    "summary": "Извлекает launchParams из Authorization header, Query параметров или URL.",
+                    "docstring": "Извлекает launchParams из Authorization header, Query параметров или URL.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 24,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "flask",
+                "path": "chutils/vkma/integrations/flask",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Flask интеграция для валидации VKMA launchParams.",
+                "docstring": "Flask интеграция для валидации VKMA launchParams.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "require_vkma_auth",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(client_secret, max_age_seconds)",
+                    "summary": "Декоратор Flask для авторизации вызовов из VK Mini App.",
+                    "docstring": "Декоратор Flask для авторизации вызовов из VK Mini App.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "symbols": []
+          },
+          {
+            "name": "models",
+            "path": "chutils/vkma/models",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Pydantic-модели для параметров запуска VK Mini Apps (launchParams / initData).",
+            "docstring": "Pydantic-модели для параметров запуска VK Mini Apps (launchParams / initData).",
+            "children": [],
+            "symbols": [
+              {
+                "name": "VKMALaunchParams",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Строго типизированная Pydantic-модель параметров запуска VK Mini App.",
+                "docstring": "Строго типизированная Pydantic-модель параметров запуска VK Mini App.\n\nОфициальная документация VK Mini Apps parameters:\nhttps://dev.vk.com/ru/mini-apps/development/launch-params",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 6,
+                "bases": [
+                  "pydantic.BaseModel"
+                ],
+                "children": [
+                  {
+                    "name": "user_id",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Alias для `vk_user_id`.",
+                    "docstring": "Alias для `vk_user_id`.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 33,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "app_id",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Alias для `vk_app_id`.",
+                    "docstring": "Alias для `vk_app_id`.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 38,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_app_user",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Установлено ли приложение пользователем (True/False).",
+                    "docstring": "Установлено ли приложение пользователем (True/False).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 43,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "language",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Alias для `vk_language`.",
+                    "docstring": "Alias для `vk_language`.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 48,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "platform",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Alias для `vk_platform`.",
+                    "docstring": "Alias для `vk_platform`.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 53,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "ts",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Alias для `vk_ts`.",
+                    "docstring": "Alias для `vk_ts`.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 58,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "testing",
+            "path": "chutils/vkma/testing",
+            "type": "module",
+            "layer": "public",
+            "summary": "Алиас модуля тестирования VK / VKMA: chutils.vkma.testing.",
+            "docstring": "Алиас модуля тестирования VK / VKMA: chutils.vkma.testing.",
+            "children": [],
+            "symbols": []
+          },
+          {
+            "name": "validator",
+            "path": "chutils/vkma/validator",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Логика проверки подписи и парсинга параметров запуска VK Mini Apps.",
+            "docstring": "Логика проверки подписи и парсинга параметров запуска VK Mini Apps.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_get_client_secret",
+                "type": "function",
+                "layer": "private",
+                "signature": "(provided_secret)",
+                "summary": "Извлекает client_secret VK из переданного аргумента, secret_manager или переменных окружения.",
+                "docstring": "Извлекает client_secret VK из переданного аргумента, secret_manager или переменных окружения.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 14,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_extract_vk_params_and_sign",
+                "type": "function",
+                "layer": "private",
+                "signature": "(raw_query)",
+                "summary": "Извлекает отсортированные параметры vk_* и подпись sign из query-строки или словаря.",
+                "docstring": "Извлекает отсортированные параметры vk_* и подпись sign из query-строки или словаря.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 42,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "validate_vkma_launch_params",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(raw_query, client_secret, max_age_seconds)",
+                "summary": "Проверяет HMAC-SHA256 подпись VK Mini App launchParams.",
+                "docstring": "Проверяет HMAC-SHA256 подпись VK Mini App launchParams.\n\nArgs:\n    raw_query: Строка параметров URL / initData или словарь параметров.\n    client_secret: Защищенный ключ приложения VK. Если None, ищется автоматически.\n    max_age_seconds: Максимальное время жизни подписи в секундах (по vk_ts).\n\nReturns:\n    True, если подпись валидна и время жизни не истекло.\n\nRaises:\n    VKMAValidationError: Если подпись неверна, истек срок действия или не хватает параметров.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 75,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "parse_vkma_launch_params",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(raw_query, client_secret, max_age_seconds)",
+                "summary": "Валидирует подпись и парсит query-строку/словарь в модель VKMALaunchParams.",
+                "docstring": "Валидирует подпись и парсит query-строку/словарь в модель VKMALaunchParams.\n\nArgs:\n    raw_query: Строка URL/initData или словарь с параметрами.\n    client_secret: Защищенный ключ приложения VK.\n    max_age_seconds: Максимальный допустимый возраст подписи.\n\nReturns:\n    Экземпляр VKMALaunchParams.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 141,
+                "bases": [],
+                "children": []
+              }
+            ]
+          }
+        ],
+        "symbols": []
+      },
+      {
         "name": "web",
         "path": "chutils/web",
         "type": "package",
@@ -36009,7 +37106,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 358,
+        "line_number": 363,
         "bases": [],
         "children": []
       },
@@ -36029,7 +37126,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 389,
+        "line_number": 394,
         "bases": [],
         "children": []
       },
@@ -36049,7 +37146,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 399,
+        "line_number": 404,
         "bases": [],
         "children": []
       }
@@ -37068,6 +38165,11 @@
     },
     {
       "source": "chutils/exceptions",
+      "target": "/vkma",
+      "weight": 1
+    },
+    {
+      "source": "chutils/exceptions",
       "target": "/validation",
       "weight": 3
     },
@@ -37129,6 +38231,11 @@
     {
       "source": "chutils/exceptions/validation",
       "target": "/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/exceptions/vkma",
+      "target": "chutils/exceptions/base",
       "weight": 1
     },
     {
@@ -37872,6 +38979,11 @@
       "weight": 2
     },
     {
+      "source": "chutils/telegram",
+      "target": "/media",
+      "weight": 2
+    },
+    {
       "source": "chutils/telegram/access",
       "target": "chutils/config",
       "weight": 1
@@ -37900,6 +39012,21 @@
       "source": "chutils/telegram/logging",
       "target": "chutils/telegram/rate_limit",
       "weight": 1
+    },
+    {
+      "source": "chutils/telegram/media",
+      "target": "chutils/exceptions",
+      "weight": 2
+    },
+    {
+      "source": "chutils/telegram/media",
+      "target": "chutils/fs",
+      "weight": 5
+    },
+    {
+      "source": "chutils/telegram/media",
+      "target": "chutils/telegram/formatting",
+      "weight": 3
     },
     {
       "source": "chutils/telegram/notifier",
@@ -37977,6 +39104,126 @@
       "weight": 1
     },
     {
+      "source": "chutils/vk",
+      "target": "chutils/vk/callback",
+      "weight": 2
+    },
+    {
+      "source": "chutils/vk/callback",
+      "target": "chutils/vk/callback/router",
+      "weight": 2
+    },
+    {
+      "source": "chutils/vk/callback/router",
+      "target": "chutils/exceptions/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vk/testing",
+      "target": "chutils/vk/testing/fixtures",
+      "weight": 2
+    },
+    {
+      "source": "chutils/vk/testing",
+      "target": "chutils/vk/testing/generators",
+      "weight": 3
+    },
+    {
+      "source": "chutils/vk/testing/fixtures",
+      "target": "chutils/vk/testing/generators",
+      "weight": 2
+    },
+    {
+      "source": "chutils/vkma",
+      "target": "chutils/vkma/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma",
+      "target": "chutils/vkma/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma",
+      "target": "chutils/vkma/validator",
+      "weight": 2
+    },
+    {
+      "source": "chutils/vkma",
+      "target": "chutils/vkma/testing",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/exceptions",
+      "target": "chutils/exceptions/vkma",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/integrations",
+      "target": "chutils/vkma/integrations/aiohttp",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/integrations",
+      "target": "chutils/vkma/integrations/fastapi",
+      "weight": 2
+    },
+    {
+      "source": "chutils/vkma/integrations",
+      "target": "chutils/vkma/integrations/flask",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/integrations/aiohttp",
+      "target": "chutils/vkma/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/integrations/aiohttp",
+      "target": "chutils/vkma/validator",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/integrations/fastapi",
+      "target": "chutils/vkma/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/integrations/fastapi",
+      "target": "chutils/vkma/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/integrations/fastapi",
+      "target": "chutils/vkma/validator",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/integrations/flask",
+      "target": "chutils/vkma/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/integrations/flask",
+      "target": "chutils/vkma/validator",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/testing",
+      "target": "chutils/vk/testing",
+      "weight": 5
+    },
+    {
+      "source": "chutils/vkma/validator",
+      "target": "chutils/vkma/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/vkma/validator",
+      "target": "chutils/vkma/models",
+      "weight": 1
+    },
+    {
       "source": "chutils/web",
       "target": "chutils/exceptions",
       "weight": 1
@@ -38015,9 +39262,9 @@
   "examples": [],
   "metadata": {
     "chutils_version": "3.4.2",
-    "project_version": "3.4.2",
-    "git_commit": "dcf316bca5b67b82b86430687655e2dd51b9cc09 (dirty)",
-    "generated_at": "2026-08-07T15:08:27.754433+00:00",
-    "project_hash": "9e217a061d4647fe156fc50dd7b7f22e1e8229e564c48195c9f650683290b682"
+    "project_version": "3.5.0",
+    "git_commit": "5278939ee2ac644f574e7088cbb6678f61677259 (dirty)",
+    "generated_at": "2026-08-07T16:15:31.028229+00:00",
+    "project_hash": "ddb01bfac2798751b4d8551a27434e5c4e19e2de6e13a3691d3083b14a6d7caf"
   }
 }
