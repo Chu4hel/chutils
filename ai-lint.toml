@@ -153,6 +153,7 @@
 # ---------------------------------------------------------------------------
 
 "src/chutils/telegram/**/*.py" = ["docs/telegram.md", "docs/api.md"]
+"src/chutils/vk/**/*.py" = ["docs/vk_testing.md", "docs/api.md"]
 "src/chutils/vkma/**/*.py" = ["docs/vkma.md", "docs/api.md"]
 "src/chutils/qt/**/*.py" = ["docs/api.md"]
 

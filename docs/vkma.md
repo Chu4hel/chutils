@@ -93,6 +93,29 @@ def profile():
 
 ---
 
+## 🧪 Тестирование (`chutils.vkma.testing` / `chutils.vk.testing`)
+
+Модуль предоставляет готовые генераторы поддельных данных и `pytest` фикстуры для тестирования без вызова реального VK
+API.
+
+```python
+from chutils.vkma.testing import generate_fake_launch_params, MockVKApi
+from chutils.vkma import validate_vkma_launch_params
+
+# Генерация валидной подписи для тестов
+fake_query = generate_fake_launch_params(user_id=12345, secret_key="test_secret")
+assert validate_vkma_launch_params(fake_query, client_secret="test_secret") is True
+
+
+# Использование Pytest фикстур (vk_launch_params_factory, mock_vk_api)
+def test_my_endpoint(test_client, vk_launch_params_factory):
+    query = vk_launch_params_factory(user_id=999, secret_key="test_secret")
+    response = test_client.get("/api/me", headers={"Authorization": f"Bearer {query}"})
+    assert response.status_code == 200
+```
+
+---
+
 ## 🛠️ Ошибки и исключения
 
 При любых ошибках проверки (невалидная подпись, истекший `vk_ts`, отсутствие `sign` или `client_secret`) выбрасывается
