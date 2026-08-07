@@ -29,7 +29,7 @@ def _get_client_secret(provided_secret: str | None) -> str:
 
     import os
     for env_name in ("VK_CLIENT_SECRET", "VK_SECRET_KEY", "CH_VK_CLIENT_SECRET"):
-        env_val = os.getenv(env_name)
+        env_val = os.getenv(env_name)  # chutils: ignore[ChutilsIntegrationRule]
         if env_val:
             return env_val
 

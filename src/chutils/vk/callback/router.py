@@ -54,7 +54,7 @@ class VKCallbackRouter:
             pass
 
         for env_key in ("VK_CONFIRMATION_CODE", "CH_VK_CONFIRMATION_CODE"):
-            val = os.getenv(env_key)
+            val = os.getenv(env_key)  # chutils: ignore[ChutilsIntegrationRule]
             if val:
                 return val
 
@@ -74,7 +74,7 @@ class VKCallbackRouter:
             pass
 
         for env_key in ("VK_SECRET_KEY", "CH_VK_SECRET_KEY"):
-            val = os.getenv(env_key)
+            val = os.getenv(env_key)  # chutils: ignore[ChutilsIntegrationRule]
             if val:
                 return val
 

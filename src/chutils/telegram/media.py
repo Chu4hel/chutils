@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import logging
 from pathlib import Path
 from typing import Any
 
@@ -50,7 +49,7 @@ async def download_user_file(
     file_size: int | None = None
 
     if isinstance(bot, str):
-        import httpx
+        import httpx  # chutils: ignore[ChutilsIntegrationRule]
         async with httpx.AsyncClient() as client:
             resp = await client.get(f"https://api.telegram.org/bot{bot}/getFile", params={"file_id": file_id})
             data = resp.json()
@@ -86,7 +85,7 @@ async def download_user_file(
 
     # 3. Скачивание содержимого файла
     if isinstance(bot, str):
-        import httpx
+        import httpx  # chutils: ignore[ChutilsIntegrationRule]
         url = f"https://api.telegram.org/file/bot{bot}/{file_path_on_server}"
         async with httpx.AsyncClient() as client:
             res = await client.get(url)
@@ -170,7 +169,7 @@ async def send_telegram_file(
     try:
         if isinstance(bot, str):
             # Direct HTTP POST via httpx
-            import httpx
+            import httpx  # chutils: ignore[ChutilsIntegrationRule]
             url = f"https://api.telegram.org/bot{bot}/sendDocument"
             data = {"chat_id": str(chat_id)}
             if formatted_caption:
