@@ -1,0 +1,2492 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Простые утилиты для конфигурации, логирования и секретов в Python.">
+      
+      
+        <meta name="author" content="Chu4hel">
+      
+      
+        <link rel="canonical" href="https://Chu4hel.github.io/chutils/ai_lint/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../recipes/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Проверка AI-готовности - chutils</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ai-ai-lint" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href=".." title="chutils" class="md-header__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            chutils
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Проверка AI-готовности
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Проверка AI-готовности
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../recipes/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Рецепты
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../plugins/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Система плагинов
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../web/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Умный HTTP-клиент (web)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../scraping/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Имитация поведения (scraping)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../captcha/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Решение капчи (captcha)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Справочник API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../testing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Тестирование
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../migration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Миграция: v2 -> v3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../dependencies/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Опциональные зависимости
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../cli/" class="md-tabs__link">
+          
+  
+  
+  CLI Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_RU/" class="md-tabs__link">
+          
+  
+  
+  Проект
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="chutils" class="md-nav__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    chutils
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка AI-готовности
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка AI-готовности
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ai-lint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Зачем нужен ai-lint?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование существующих правил
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Использование существующих правил">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Базовый запуск
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры командной строки
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Встроенные правила
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Встроенные правила">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-manifestrule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ManifestRule (severity: warn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-docstringqualityrule-severity-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. DocstringQualityRule (severity: error)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-securityhardcoderule-severity-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SecurityHardcodeRule (severity: error)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-chutilsintegrationrule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. ChutilsIntegrationRule (severity: warn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-apimaprule-severity-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. APIMapRule (severity: error)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-envsyncrule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. EnvSyncRule (severity: warn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-filedependencysyncrule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. FileDependencySyncRule (severity: warn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-upgradecheckrule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. UpgradeCheckRule (severity: warn)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. UpgradeCheckRule (severity: warn)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upgradecheckrule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка и отключение UpgradeCheckRule
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-lintercoveragerule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. LinterCoverageRule (severity: warn)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. LinterCoverageRule (severity: warn)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Исключение файлов из проверки покрытия
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка конфигурации
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Настройка конфигурации">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pyprojecttoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка в pyproject.toml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-dependency-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка зависимостей файлов (File Dependency Sync)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chutilsignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Механизм фильтрации и файл .chutilsignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Создание собственных правил (Custom Rules)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Создание собственных правил (Custom Rules)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Базовые классы
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Шаг 1. Написание правила
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Шаг 2. Подключение правила
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cicd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Интеграция в CI/CD
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Интеграция в CI/CD">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Система плагинов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Умный HTTP-клиент (web)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scraping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Имитация поведения (scraping)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../captcha/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Решение капчи (captcha)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Тестирование
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Миграция: v2 -> v3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Опциональные зависимости
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/init/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инициализация (init)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Управление секретами (secrets)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Валидация (validate)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/show_paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Пути поиска (show-paths)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Генерация шаблонов (template)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Настройки и отладка (config)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/dev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инструменты разработчика (dev)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/pypi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка зеркал (pypi)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проект
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Проект
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор (RU)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CODE_OF_CONDUCT_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Кодекс поведения
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CONTRIBUTING_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Правила участия
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ai-lint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Зачем нужен ai-lint?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование существующих правил
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Использование существующих правил">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Базовый запуск
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры командной строки
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Встроенные правила
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Встроенные правила">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-manifestrule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ManifestRule (severity: warn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-docstringqualityrule-severity-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. DocstringQualityRule (severity: error)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-securityhardcoderule-severity-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. SecurityHardcodeRule (severity: error)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-chutilsintegrationrule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. ChutilsIntegrationRule (severity: warn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-apimaprule-severity-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. APIMapRule (severity: error)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-envsyncrule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. EnvSyncRule (severity: warn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-filedependencysyncrule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. FileDependencySyncRule (severity: warn)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-upgradecheckrule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. UpgradeCheckRule (severity: warn)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. UpgradeCheckRule (severity: warn)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#upgradecheckrule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка и отключение UpgradeCheckRule
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-lintercoveragerule-severity-warn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. LinterCoverageRule (severity: warn)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. LinterCoverageRule (severity: warn)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Исключение файлов из проверки покрытия
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка конфигурации
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Настройка конфигурации">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pyprojecttoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка в pyproject.toml
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-dependency-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка зависимостей файлов (File Dependency Sync)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chutilsignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Механизм фильтрации и файл .chutilsignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Создание собственных правил (Custom Rules)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Создание собственных правил (Custom Rules)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Базовые классы
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Шаг 1. Написание правила
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Шаг 2. Подключение правила
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cicd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Интеграция в CI/CD
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Интеграция в CI/CD">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="ai-ai-lint">Руководство по проверке AI-готовности (ai-lint)</h1>
+<p><code>chutils dev ai-lint</code> — это специализированный инструмент статического анализа (линтер), разработанный для оценки *
+<em>AI-готовности</em>* вашей кодовой базы.</p>
+<p>Современные AI-ассистенты и автономные кодинг-агенты (такие как Antigravity, Gemini CLI, Claude, GitHub Copilot)
+работают значительно эффективнее, если кодовая база хорошо структурирована, снабжена подробными манифестами, строгой
+типизацией и стандартизированными docstrings. Инструмент <code>ai-lint</code> помогает автоматически проверять кодовую базу на
+соответствие этим стандартам.</p>
+<hr />
+<h2 id="ai-lint">Зачем нужен ai-lint?</h2>
+<p>При работе искусственного интеллекта с вашей кодовой базой возникают следующие проблемы:</p>
+<ol>
+<li><strong>Отсутствие контекста</strong>: ИИ не знает архитектурных ограничений проекта, принятых соглашений или используемых
+   технологий, если они нигде не описаны.</li>
+<li><strong>Плохая типизация</strong>: Без аннотаций типов (<code>type hints</code>) ИИ часто делает ошибочные предположения о структурах данных,
+   что ведет к багам.</li>
+<li><strong>Неполная документация</strong>: Если публичные методы не документированы по стандарту (например, Google Style), ИИ сложнее
+   понять их контракты, параметры и возвращаемые типы.</li>
+<li><strong>Утечка секретов</strong>: AI-ассистенты отправляют части кода на внешние сервера. Наличие захардкоженных токенов и паролей
+   в коде создает серьезную угрозу безопасности.</li>
+<li><strong>Изобретение велосипедов</strong>: Если в проекте уже есть готовые утилиты (например, логгер или менеджер секретов из
+   <code>chutils</code>), ИИ может этого не знать и начать писать собственные аналоги.</li>
+</ol>
+<p><code>ai-lint</code> решает эти проблемы, выполняя статический аудит проекта по ряду специализированных правил.</p>
+<hr />
+<h2 id="_1">Использование существующих правил</h2>
+<h3 id="_2">Базовый запуск</h3>
+<p>Для запуска проверки в текущей директории выполните:</p>
+<pre><code class="language-bash">poetry run python -m chutils dev ai-lint
+</code></pre>
+<p>или после установки библиотеки:</p>
+<pre><code class="language-bash">chutils dev ai-lint
+</code></pre>
+<h3 id="_3">Параметры командной строки</h3>
+<p>Вы можете тонко настраивать поведение линтера с помощью флагов:</p>
+<ul>
+<li><code>--strict</code> — строгий режим. Любые предупреждения (<code>warn</code>) будут трактоваться как ошибки (<code>error</code>), и линтер вернет
+  ненулевой код выхода (1).</li>
+<li><code>--soft-mode</code> — мягкий режим. Линтер выведет список всех найденных проблем, но всегда будет завершаться с успешным
+  кодом выхода (0). Это полезно при первой интеграции в CI.</li>
+<li><code>--ignore "&lt;path1&gt;,&lt;path2&gt;"</code> — дополнительные шаблоны путей для игнорирования (разделяются запятой). Эти шаблоны
+  дополняют настройки из файлов конфигурации.</li>
+<li><code>--rules "&lt;Rule1&gt;,&lt;Rule2&gt;"</code> — запуск только указанных правил (по умолчанию запускаются все встроенные и кастомные
+  правила).</li>
+<li><code>--custom-rules-path "&lt;path_to_file&gt;"</code> — путь к файлу с вашими собственными правилами.</li>
+</ul>
+<p>Пример расширенного запуска:</p>
+<pre><code class="language-bash">chutils dev ai-lint --strict --ignore &quot;build/,legacy_code.py&quot; --rules &quot;ManifestRule,SecurityHardcodeRule&quot;
+</code></pre>
+<hr />
+<h2 id="_4">Встроенные правила</h2>
+<p>В <code>ai-lint</code> встроен ряд правил:</p>
+<h3 id="1-manifestrule-severity-warn">1. ManifestRule (severity: <code>warn</code>)</h3>
+<p>Проверяет наличие файлов манифестов ИИ в корневом каталоге проекта и в основных пакетах (подкаталогах <code>src/</code>).</p>
+<ul>
+<li><strong>Используемые имена файлов</strong>: <code>antigravity.md</code>, <code>agents.md</code>, <code>GEMINI.md</code> (в любом регистре), <code>.cursorrules</code>,
+  <code>.windsurfrules</code>.</li>
+<li><strong>Зачем</strong>: Файлы манифестов служат инструкцией для ИИ-агентов. В них описывается структура проекта, используемые
+  библиотеки и глобальные правила кодирования.</li>
+</ul>
+<h3 id="2-docstringqualityrule-severity-error">2. DocstringQualityRule (severity: <code>error</code>)</h3>
+<p>Выполняет AST-анализ всех публичных классов, функций и методов (исключая тесты).</p>
+<ul>
+<li><strong>Что проверяет</strong>:<ul>
+<li>Наличие docstring у публичных классов и функций.</li>
+<li>Соответствие структуры docstring формату <strong>Google Style</strong> (наличие обязательных разделов <code>Args:</code> и <code>Returns:</code> при
+  наличии параметров и возвращаемого значения).</li>
+<li>Документированность каждого аргумента функции в разделе <code>Args:</code>.</li>
+<li>Наличие аннотаций типов (<code>type hints</code>) у всех аргументов функции (кроме <code>self</code> и <code>cls</code>).</li>
+<li>Наличие аннотации возвращаемого значения (кроме метода <code>__init__</code>).</li>
+</ul>
+</li>
+<li><strong>Зачем</strong>: Строгая типизация и структурированные docstrings критичны для генерации точного кода ИИ.</li>
+</ul>
+<h3 id="3-securityhardcoderule-severity-error">3. SecurityHardcodeRule (severity: <code>error</code>)</h3>
+<p>Сканирует текстовое содержимое файлов и строит AST-дерево для поиска секретов.</p>
+<ul>
+<li><strong>Что проверяет</strong>:<ul>
+<li>Приватные ключи (заголовки <code>-----BEGIN PRIVATE KEY-----</code>).</li>
+<li>Токены облачных провайдеров (AWS Access Key, Slack Token и др.).</li>
+<li>Жестко заданные присвоения строк переменным, содержащим в имени <code>key</code>, <code>secret</code>, <code>password</code>, <code>token</code>, <code>pwd</code> (
+  длиной более 8 символов, если они не похожи на плейсхолдеры).</li>
+</ul>
+</li>
+<li><strong>Зачем</strong>: Защита от случайной утечки учетных данных в контекст больших языковых моделей (LLM).</li>
+</ul>
+<h3 id="4-chutilsintegrationrule-severity-warn">4. ChutilsIntegrationRule (severity: <code>warn</code>)</h3>
+<p>Проверяет интеграцию с экосистемой <code>chutils</code> в проекте.</p>
+<ul>
+<li><strong>Что проверяет</strong>:<ul>
+<li>Использование стандартного модуля <code>logging</code> (рекомендует перейти на <code>chutils.setup_logger</code>).</li>
+<li>Использование библиотеки <code>keyring</code> напрямую (рекомендует <code>chutils.SecretManager</code>).</li>
+<li>Прямые обращения к <code>os.getenv</code> или <code>os.environ</code> (рекомендует использовать встроенные инструменты управления
+  конфигурацией <code>chutils</code>).</li>
+<li>Ручные вызовы метода <code>.mkdir(parents=True, exist_ok=True)</code> (рекомендует использовать <code>chutils.fs.ensure_dir</code>).</li>
+<li>Ручные вызовы <code>.write_text()</code> / <code>.write_bytes()</code>, прямой вызов сериализаторов <code>json.dump</code> / <code>yaml.dump</code> или
+  использование временных файлов <code>tempfile</code> с последующим перемещением/переименованием для записи файлов (
+  рекомендует использовать безопасную атомарную запись <code>chutils.fs.atomic_write</code>).</li>
+<li>Ручные вызовы получения текущего UTC-времени с использованием <code>datetime.utcnow()</code> или
+  <code>datetime.now(timezone.utc)</code> (рекомендует использовать <code>chutils.time.utc_now()</code>).</li>
+</ul>
+</li>
+<li><strong>Зачем</strong>: Обеспечивает единообразие архитектуры проекта и направляет ИИ на переиспользование уже готовых библиотечных
+  решений.</li>
+</ul>
+<h3 id="5-apimaprule-severity-error">5. APIMapRule (severity: <code>error</code>)</h3>
+<p>Проверяет актуальность карты публичного API (<code>api_map.md</code>).</p>
+<ul>
+<li><strong>Что проверяет</strong>:<ul>
+<li>Наличие файла <code>api_map.md</code> в корне.</li>
+<li>Полное соответствие содержимого <code>api_map.md</code> реально экспортируемым публичным функциям, классам и константам
+  библиотеки.</li>
+</ul>
+</li>
+<li><strong>Зачем</strong>: Карта API позволяет ИИ быстро ориентироваться в возможностях библиотеки без необходимости сканирования всех
+  исходных файлов.</li>
+</ul>
+<h3 id="6-envsyncrule-severity-warn">6. EnvSyncRule (severity: <code>warn</code>)</h3>
+<p>Проверяет соответствие состава ключей переменных окружения в файлах <code>.env</code> и <code>.env.example</code>.</p>
+<ul>
+<li><strong>Что проверяет</strong>:<ul>
+<li>Одновременное существование файлов <code>.env</code> и <code>.env.example</code> (если один есть, а другого нет — выдает
+  предупреждение).</li>
+<li>Совпадение наборов ключей в обоих файлах.</li>
+</ul>
+</li>
+<li><strong>Зачем</strong>: Предотвращает ошибки запуска приложения из-за отсутствующих локальных переменных или забытых обновлений в
+  файле-шаблоне.</li>
+</ul>
+<h3 id="7-filedependencysyncrule-severity-warn">7. FileDependencySyncRule (severity: <code>warn</code>)</h3>
+<p>Проверяет синхронность обновления связанных файлов и документации в соответствии с картой зависимостей. Данное правило
+гарантирует актуальность руководств при модификации исходного кода.</p>
+<ul>
+<li><strong>Что проверяет</strong>:<ul>
+<li>Наличие измененных файлов по глоб-шаблонам источников (например, <code>"src/chutils/**/*.py"</code>).</li>
+<li>Если ключ-источник начинается с префикса <code>new:</code> (например, <code>"new:src/chutils/dev/rules/*.py"</code>), проверка
+  срабатывает <strong>только при создании новых (добавленных или неотслеживаемых) файлов</strong> в указанном каталоге, полностью
+  игнорируя редактирование уже существующих файлов.</li>
+<li>Если файлы-источники изменены (или созданы новые в режиме <code>new:</code>), проверяет, что хотя бы один из связанных
+  зависимых файлов (например, <code>"docs/api_map.md"</code>) также был обновлен в том же коммите/наборе изменений.</li>
+<li><strong>Обход глобальных списков игнорирования</strong>: Данное правило проверяет Git-изменения <strong>напрямую</strong>, не подавляясь
+  записями из <code>.gitignore</code>, <code>.chutilsignore</code> или секцией <code>ignore</code> в <code>pyproject.toml</code>. Это гарантирует, что даже если
+  файлы документации (например, <code>docs/*.md</code>) или индекса находятся в глобальном списке игнорирования линтера,
+  правило все равно заставит их обновить. Подавить проверку можно только точечной инлайн-директивой в файле:
+  <code># chutils: ignore[FileDependencySyncRule]</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="8-upgradecheckrule-severity-warn">8. UpgradeCheckRule (severity: <code>warn</code>)</h3>
+<p>Обнаруживает изменение версии пакета в <code>pyproject.toml</code> по сравнению с Git <code>HEAD</code> или зафиксированной версией в
+<code>.chutils/last_known_version.json</code>.</p>
+<ul>
+<li><strong>Что проверяет</strong>:<ul>
+<li>Наличие увеличения версии при коммите или проверке.</li>
+<li>При обнаружении обновления автоматически скачивает описания изменений релизов из GitHub API (с кэшированием
+  запросов во избежание лимитов).</li>
+<li>Генерирует файл AI-контекста миграции <code>.chutils/migration_context.md</code> с группировкой по категориям: Breaking
+  Changes, New API и Deprecations.</li>
+</ul>
+</li>
+<li><strong>Зачем</strong>: Позволяет AI-ассистентам мгновенно получать информацию об изменениях API при повышении версии библиотеки,
+  предотвращая использование устаревших методов.</li>
+</ul>
+<h4 id="upgradecheckrule">Настройка и отключение UpgradeCheckRule</h4>
+<p>Вы можете гибко управлять работой правила и генерацией чейнджлога:</p>
+<ol>
+<li>
+<p><strong>Через переменные окружения (<code>ENV</code>)</strong>:</p>
+<ul>
+<li><code>CHUTILS_DISABLE_UPGRADE_CHECK=1</code> — полностью отключает правило <code>UpgradeCheckRule</code> и сетевые запросы к GitHub.</li>
+<li><code>CHUTILS_GENERATE_CHANGELOG=0</code> — отключает запись файла <code>.chutils/migration_context.md</code>, но сохраняет
+  информационное предупреждение линтера.</li>
+</ul>
+</li>
+<li>
+<p><strong>Через файл конфигурации (<code>ai-lint.toml</code> или <code>pyproject.toml</code>)</strong>:
+   ```toml
+   # Отключение правила целиком
+   [ai-lint]
+   exclude_rules = ["UpgradeCheckRule"]</p>
+</li>
+</ol>
+<p># Или точечная настройка поведения
+   [ai-lint.upgrade_check]
+   enabled = false  # Полное отключение правила
+   generate_changelog = false  # Отключение только создания файла migration_context.md
+   ```</p>
+<ol>
+<li><strong>Через параметры CLI</strong>:
+   <code>bash
+   chutils dev ai-lint --exclude-rules UpgradeCheckRule</code></li>
+</ol>
+<h3 id="9-lintercoveragerule-severity-warn">9. LinterCoverageRule (severity: <code>warn</code>)</h3>
+<p>Проверяет степень покрытия исходного кода правилами отслеживания зависимостей в <code>ai-lint.toml</code>.</p>
+<ul>
+<li><strong>Что проверяет</strong>:<ul>
+<li>Проверяет, что каждый <code>.py</code> файл в директории <code>src/chutils/</code> соответствует хотя бы одному глоб-шаблону в секции
+  <code>[dependencies]</code> файла <code>ai-lint.toml</code>.</li>
+<li>Правило автоматически отключается, если секция <code>[dependencies]</code> отсутствует или пуста, либо если само правило
+  <code>FileDependencySyncRule</code> отключено в списке активных правил.</li>
+</ul>
+</li>
+<li><strong>Зачем</strong>: Гарантирует, что при добавлении новых модулей разработчики или ИИ-агенты не забудут прописать для них
+  правила отслеживания документации, сохраняя её актуальность.</li>
+</ul>
+<h4 id="_5">Исключение файлов из проверки покрытия</h4>
+<p>Если вам необходимо исключить определённые исходные файлы или папки из проверки покрытия правил зависимостей, вы можете
+использовать три способа:</p>
+<ol>
+<li>
+<p><strong>Файл <code>.chutilsignore</code> в корне проекта</strong> (Рекомендуется для постоянных исключений):
+   Добавьте глоб-шаблоны файлов в <code>.chutilsignore</code>. Правило <code>LinterCoverageRule</code> автоматически пропустит их.
+   <code>text
+   # .chutilsignore
+   **/testing/**/*.py
+   **/dev/scaffold.py</code></p>
+</li>
+<li>
+<p><strong>Секция <code>ignore</code> в <code>ai-lint.toml</code></strong>:
+   Укажите пути в глобальном списке игнорирования линтера:
+   <code>toml
+   [ai-lint]
+   ignore = ["**/temp_*.py", "src/chutils/debug_helpers.py"]</code></p>
+</li>
+<li>
+<p><strong>Инлайн-директивы в коде</strong> (Рекомендуется для точечного скрытия файлов):
+   Добавьте специальный комментарий в начале (первые 10 строк) исходного файла:
+   <code>python
+   # chutils: ignore[LinterCoverageRule]
+   # или универсальный игнор всех правил:
+   # chutils: ignore[all]</code></p>
+</li>
+</ol>
+<blockquote>
+<p>[!NOTE]<br />
+Обратите внимание, что файл <code>.gitignore</code> <strong>не используется</strong> правилом <code>LinterCoverageRule</code> для исключения файлов. Это
+сделано для того, чтобы исходные файлы кодовой базы, находящиеся во временном или локальном Git-игноре на этапе
+разработки, всё равно были должным образом задокументированы.</p>
+</blockquote>
+<hr />
+<h2 id="_6">Настройка конфигурации</h2>
+<p>Вы можете настроить параметры <code>ai-lint</code> через стандартные файлы конфигурации проекта. Настройки объединяются в следующем
+приоритете (от высшего к низшему):</p>
+<ol>
+<li>Флаги CLI</li>
+<li>Переменные окружения (<code>CH_DEV_AILINT_STRICT</code>, <code>CH_DEV_AILINT_IGNORE</code>, <code>CH_DEV_AILINT_RULES</code>,
+   <code>CH_DEV_AILINT_CUSTOM_RULES_PATH</code>, <code>CH_DEV_AILINT_SOFT_MODE</code>)</li>
+<li>Файл <code>config.yml</code> (секция <code>Dev.AI-Lint</code>)</li>
+<li>Файл <code>pyproject.toml</code> (секция <code>[tool.chutils.ai-lint]</code>)</li>
+<li>Значения по умолчанию</li>
+</ol>
+<h3 id="pyprojecttoml">Настройка в pyproject.toml</h3>
+<p>Рекомендуемый способ настройки проекта — добавление секции в <code>pyproject.toml</code>:</p>
+<pre><code class="language-toml">[tool.chutils.ai-lint]
+strict = false
+soft_mode = false
+ignore = [
+    &quot;.git&quot;,
+    &quot;.venv&quot;,
+    &quot;__pycache__&quot;,
+    &quot;build&quot;,
+    &quot;dist&quot;,
+    &quot;tests&quot;,
+    &quot;docs&quot;,
+    &quot;src/chutils/testing&quot;
+]
+rules = [&quot;ManifestRule&quot;, &quot;DocstringQualityRule&quot;, &quot;SecurityHardcodeRule&quot;]
+custom_rules_path = &quot;.chutils/custom_rules.py&quot;
+env_path = &quot;.env&quot;
+example_path = &quot;.env.example&quot;
+</code></pre>
+<h3 id="file-dependency-sync">Настройка зависимостей файлов (File Dependency Sync)</h3>
+<p>Для правила <code>FileDependencySyncRule</code> вы можете задать сопоставление вложенной секцией
+<code>[tool.chutils.ai-lint.dependencies]</code> в <code>pyproject.toml</code> или в корневой секции <code>[dependencies]</code> во внешних файлах
+<code>ai-lint.toml</code>/<code>ai-lint.json</code>:</p>
+<pre><code class="language-toml">[tool.chutils.ai-lint.dependencies]
+&quot;src/chutils/**/*.py&quot; = [&quot;README.md&quot;, &quot;docs/api_map.md&quot;]
+&quot;schema.json&quot; = [&quot;docs/schema_guide.md&quot;]
+# Проверка сработает только при добавлении новых правил (файлов) в указанную директорию
+&quot;new:src/chutils/dev/rules/*.py&quot; = [&quot;docs/ai_lint.md&quot;]
+</code></pre>
+<h3 id="chutilsignore">Механизм фильтрации и файл <code>.chutilsignore</code></h3>
+<p>При выполнении аудита <code>ai-lint</code> объединяет правила скрытия путей из нескольких источников в следующем порядке
+приоритета:</p>
+<ol>
+<li><strong>Флаги CLI (<code>--ignore "&lt;pattern&gt;"</code>)</strong>: высший приоритет, перекрывают любые глобальные настройки.</li>
+<li><strong>Секция <code>ignore</code> в <code>pyproject.toml</code> (<code>[tool.chutils.ai-lint]</code>) / <code>ai-lint.toml</code></strong>.</li>
+<li><strong>Файл <code>.chutilsignore</code> в корне проекта</strong>: специализированный маскировочный файл формата <code>gitignore</code>, позволяющий
+   отсечь файлы от ИИ без их скрытия от Git.</li>
+<li><strong>Файл <code>.gitignore</code> в корне проекта</strong>: базовые правила игнорирования Git.</li>
+</ol>
+<blockquote>
+<p>[!NOTE]<br />
+<strong>Особенность правила <code>LinterCoverageRule</code></strong>: Данное правило намерено <strong>игнорирует <code>.gitignore</code></strong>, но учитывает
+<code>.chutilsignore</code> и секцию <code>ignore</code> в <code>pyproject.toml</code>. Это гарантирует, что локально неотслеживаемые исходные <code>.py</code>
+файлы проекта всё равно будут проверены на наличие документации и правил связей.</p>
+</blockquote>
+<p><strong>Пример <code>.chutilsignore</code>:</strong></p>
+<pre><code class="language-gitignore"># Игнорировать автогенерированные файлы и временные отчерки для AI
+src/chutils/dev/ast_indexer.py
+*.tmp
+temp/
+tests/fixtures/*
+</code></pre>
+<hr />
+<h2 id="custom-rules">Создание собственных правил (Custom Rules)</h2>
+<p>Если вам необходимо внедрить специфичные для вашего проекта архитектурные правила, вы можете написать свои собственные
+правила на Python.</p>
+<h3 id="_7">Базовые классы</h3>
+<p>Пользовательское правило должно быть классом, унаследованным от <code>chutils.dev.ai_lint.Rule</code>.
+Интерфейс правила выглядит следующим образом:</p>
+<pre><code class="language-python">from typing import Optional
+
+
+class LintResult:
+    rule_name: str  # Имя правила, создавшего результат
+    message: str  # Сообщение об ошибке/предупреждении
+    severity: str  # Уровень критичности: &quot;error&quot; или &quot;warn&quot;
+    file_path: Optional[str]  # Абсолютный путь к файлу с проблемой (опционально)
+    line_number: Optional[int]  # Номер строки с проблемой (1-индексированный, опционально)
+    fix_suggestion: Optional[str]  # Совет по исправлению проблемы (опционально)
+
+
+class Rule:
+    name: str = &quot;&quot;  # Уникальное имя правила
+    description: str = &quot;&quot;  # Краткое описание правила
+    severity: str = &quot;error&quot;  # Уровень критичности по умолчанию (&quot;error&quot; или &quot;warn&quot;)
+
+    def check(self, base_dir: str, files: list[str]) -&gt; list[LintResult]:
+        &quot;&quot;&quot;
+        Выполняет проверку. Должен возвращать список LintResult.
+
+        Args:
+            base_dir: Абсолютный путь к корню проекта.
+            files: Список абсолютных путей ко всем неигнорируемым файлам проекта.
+        &quot;&quot;&quot;
+        raise NotImplementedError
+</code></pre>
+<h3 id="1">Шаг 1. Написание правила</h3>
+<p>Создайте файл <code>.chutils/custom_rules.py</code> в вашем проекте.
+Например, напишем правило <code>NoAnyTypeRule</code>, которое запрещает использовать <code>Any</code> в аннотациях типов (согласно Zero-Any
+Strategy):</p>
+<pre><code class="language-python">import ast
+from pathlib import Path
+from chutils.dev.ai_lint import Rule, LintResult
+
+
+class AnyTypeVisitor(ast.NodeVisitor):
+    def __init__(self, file_path: str, rule_name: str) -&gt; None:
+        self.file_path = file_path
+        self.rule_name = rule_name
+        self.issues: list[LintResult] = []
+
+    def visit_Name(self, node: ast.Name) -&gt; None:
+        # Проверяем использование имени Any
+        if node.id == &quot;Any&quot;:
+            self.issues.append(
+                LintResult(
+                    rule_name=self.rule_name,
+                    message=&quot;Обнаружено использование типа 'Any' в аннотации.&quot;,
+                    severity=&quot;error&quot;,
+                    file_path=self.file_path,
+                    line_number=node.lineno,
+                    fix_suggestion=&quot;Используйте более конкретный тип или Union/Generic вместо Any.&quot;
+                )
+            )
+        self.generic_visit(node)
+
+
+class NoAnyTypeRule(Rule):
+    name = &quot;NoAnyTypeRule&quot;
+    description = &quot;Запрещает использование типа 'Any' в кодовой базе для соблюдения строгой типизации.&quot;
+    severity = &quot;error&quot;
+
+    def check(self, base_dir: str, files: list[str]) -&gt; list[LintResult]:
+        results: list[LintResult] = []
+        for file_path in files:
+            # Проверяем только Python-файлы и исключаем тесты
+            if not file_path.endswith(&quot;.py&quot;):
+                continue
+            if &quot;tests&quot; in Path(file_path).parts:
+                continue
+
+            try:
+                with open(file_path, &quot;r&quot;, encoding=&quot;utf-8&quot;) as f:
+                    content = f.read()
+
+                # Парсим файл в AST и обходим его
+                tree = ast.parse(content)
+                visitor = AnyTypeVisitor(file_path, self.name)
+                visitor.visit(tree)
+                results.extend(visitor.issues)
+            except Exception as e:
+                # В случае синтаксических ошибок пропускаем файл
+                pass
+        return results
+</code></pre>
+<h3 id="2">Шаг 2. Подключение правила</h3>
+<p>Чтобы подключить созданное правило, укажите путь к нему в вашем <code>pyproject.toml</code>:</p>
+<pre><code class="language-toml">[tool.chutils.ai-lint]
+custom_rules_path = &quot;.chutils/custom_rules.py&quot;
+</code></pre>
+<p>Или передайте путь при запуске команды:</p>
+<pre><code class="language-bash">chutils dev ai-lint --custom-rules-path &quot;.chutils/custom_rules.py&quot;
+</code></pre>
+<p>При запуске линтер динамически импортирует ваш файл, найдет все классы, унаследованные от <code>Rule</code>, создаст их экземпляры
+и выполнит проверку наряду со встроенными правилами.</p>
+<hr />
+<h2 id="cicd">Интеграция в CI/CD</h2>
+<p>Автоматическая проверка AI-готовности кодовой базы при каждом коммите или Pull Request помогает поддерживать проект в
+идеальном состоянии для работы AI-агентов.</p>
+<h3 id="github-actions">GitHub Actions</h3>
+<p>Создайте файл <code>.github/workflows/ai-lint.yml</code>:</p>
+<pre><code class="language-yaml">name: AI Readiness Lint
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Run AI Linter
+        run: |
+          poetry run python -m chutils dev ai-lint --strict
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2050 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Простые утилиты для конфигурации, логирования и секретов в Python.">
+      
+      
+        <meta name="author" content="Chu4hel">
+      
+      
+        <link rel="canonical" href="https://Chu4hel.github.io/chutils/scraping/">
+      
+      
+        <link rel="prev" href="../web/">
+      
+      
+        <link rel="next" href="../captcha/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Имитация поведения (scraping) - chutils</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#-chutilsscrapinghumanize" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href=".." title="chutils" class="md-header__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            chutils
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Имитация поведения (scraping)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../ai_lint/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Проверка AI-готовности
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../recipes/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Рецепты
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../plugins/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Система плагинов
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../web/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Умный HTTP-клиент (web)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Имитация поведения (scraping)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../captcha/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Решение капчи (captcha)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Справочник API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../testing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Тестирование
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../migration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Миграция: v2 -> v3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../dependencies/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Опциональные зависимости
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../cli/" class="md-tabs__link">
+          
+  
+  
+  CLI Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_RU/" class="md-tabs__link">
+          
+  
+  
+  Проект
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="chutils" class="md-nav__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    chutils
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai_lint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка AI-готовности
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Система плагинов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Умный HTTP-клиент (web)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Имитация поведения (scraping)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Имитация поведения (scraping)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Установка
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Математические генераторы
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Математические генераторы">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#beziercurvegenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор траекторий Безье (BezierCurveGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jitterdelaygenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор задержек с джиттером (JitterDelayGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyboardtypogenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор опечаток клавиатуры (KeyboardTypoGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Имитация мыши, скролла и клавиатуры
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Имитация мыши, скролла и клавиатуры">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#playwright" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для Playwright (асинхронные)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodriver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для nodriver (асинхронные)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selenium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для Selenium (синхронные)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Анти-детект и маскировка браузеров
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Анти-детект и маскировка браузеров">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#js-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JS-инъекции анти-детекта
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_browser_launch_args" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Флаги запуска браузера (get_browser_launch_args)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-profilewarmer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Прогрев профилей (ProfileWarmer)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Прогрев профилей (ProfileWarmer)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#playwright-nodriver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронный прогрев (Playwright и nodriver)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selenium_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синхронный прогрев (Selenium)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-chutilsscrapingconcurrency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Параллельный скрапинг (chutils.scraping.concurrency)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-profilemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Перенос профилей и сессий браузеров (ProfileManager)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../captcha/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Решение капчи (captcha)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Тестирование
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Миграция: v2 -> v3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Опциональные зависимости
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/init/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инициализация (init)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Управление секретами (secrets)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Валидация (validate)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/show_paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Пути поиска (show-paths)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Генерация шаблонов (template)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Настройки и отладка (config)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/dev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инструменты разработчика (dev)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/pypi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка зеркал (pypi)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проект
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Проект
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор (RU)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CODE_OF_CONDUCT_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Кодекс поведения
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CONTRIBUTING_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Правила участия
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Установка
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Математические генераторы
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Математические генераторы">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#beziercurvegenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор траекторий Безье (BezierCurveGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jitterdelaygenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор задержек с джиттером (JitterDelayGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyboardtypogenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор опечаток клавиатуры (KeyboardTypoGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Имитация мыши, скролла и клавиатуры
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Имитация мыши, скролла и клавиатуры">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#playwright" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для Playwright (асинхронные)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodriver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для nodriver (асинхронные)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selenium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для Selenium (синхронные)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Анти-детект и маскировка браузеров
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Анти-детект и маскировка браузеров">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#js-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JS-инъекции анти-детекта
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_browser_launch_args" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Флаги запуска браузера (get_browser_launch_args)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-profilewarmer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Прогрев профилей (ProfileWarmer)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Прогрев профилей (ProfileWarmer)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#playwright-nodriver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронный прогрев (Playwright и nodriver)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selenium_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синхронный прогрев (Selenium)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-chutilsscrapingconcurrency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Параллельный скрапинг (chutils.scraping.concurrency)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-profilemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Перенос профилей и сессий браузеров (ProfileManager)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="-chutilsscrapinghumanize">Имитация поведения человека и анти-детект (chutils.scraping.humanize)</h1>
+<p>Модуль <code>chutils.scraping.humanize</code> разработан для имитации естественного человеческого поведения при автоматизации
+браузеров и обхода систем защиты от ботов. Он предоставляет математические алгоритмы генерации человекоподобных
+траекторий мыши, неравномерного ввода текста, случайных пауз, а также средства настройки анти-детект профилей для
+Playwright и Selenium.</p>
+<p>Данный модуль поставляется как опциональный экстра-пакет <code>chutils[scraping]</code>.</p>
+<hr />
+<h2 id="_1">Установка</h2>
+<p>Для работы с интеграциями для Playwright и Selenium установите пакет с поддержкой экстра-зависимостей:</p>
+<pre><code class="language-bash">pip install &quot;chutils[scraping]&quot;
+</code></pre>
+<p><em>Примечание: Если вам нужны только математические генераторы (траектории, задержки, опечатки), вы можете использовать их
+без установки дополнительных библиотек автоматизации.</em></p>
+<hr />
+<h2 id="1">1. Математические генераторы</h2>
+<p>Математический модуль работает автономно и не требует внешних зависимостей.</p>
+<h3 id="beziercurvegenerator">Генератор траекторий Безье (<code>BezierCurveGenerator</code>)</h3>
+<p>Позволяет рассчитывать плавные кривые перемещения мыши с естественным ускорением в начале и замедлением в конце
+движения (ease-in-out).</p>
+<pre><code class="language-python">from chutils.scraping.humanize import BezierCurveGenerator
+
+generator = BezierCurveGenerator()
+start_point = (100, 150)
+end_point = (500, 450)
+
+# Генерирует список из 30 координат (x, y)
+points = generator.generate(start_point, end_point, steps=30)
+</code></pre>
+<h3 id="jitterdelaygenerator">Генератор задержек с джиттером (<code>JitterDelayGenerator</code>)</h3>
+<p>Рассчитывает задержки на основе логнормального или нормального распределения. Большинство задержек будут короткими, но
+изредка будут возникать естественные длинные паузы.</p>
+<pre><code class="language-python">from chutils.scraping.humanize import JitterDelayGenerator
+
+delay_gen = JitterDelayGenerator(strategy=&quot;lognormal&quot;, jitter=0.15)
+base_delay = 2.0
+
+# Возвращает случайное число вокруг 2.0
+delay = delay_gen.generate(base_delay)
+</code></pre>
+<h3 id="keyboardtypogenerator">Генератор опечаток клавиатуры (<code>KeyboardTypoGenerator</code>)</h3>
+<p>Генерирует последовательности нажатий клавиш, включая случайные опечатки на близкорасположенных QWERTY-клавишах, с
+последующим стиранием опечаток через Backspace и вводом правильных букв.</p>
+<pre><code class="language-python">from chutils.scraping.humanize import KeyboardTypoGenerator
+
+typo_gen = KeyboardTypoGenerator()
+sequence = typo_gen.generate_sequence(&quot;Hello!&quot;, error_rate=0.1)
+
+# Возвращает список объектов TypoAction (action='type'|'backspace', char='...')
+</code></pre>
+<hr />
+<h2 id="2">2. Имитация мыши, скролла и клавиатуры</h2>
+<p>Модуль предоставляет обертки для Playwright (асинхронные) и Selenium (синхронные).</p>
+<h3 id="playwright">Обертки для Playwright (асинхронные)</h3>
+<pre><code class="language-python">from chutils.scraping.humanize import (
+    async_move_mouse,
+    async_scroll_to,
+    async_type_text,
+    async_human_sleep
+)
+
+# Плавное движение мыши
+await async_move_mouse(page, x=400, y=300, start=(0, 0))
+
+# Плавный скролл страницы по оси Y
+await async_scroll_to(page, x=0, y=800)
+
+# Ввод текста со скоростью 40 WPM и вероятностью опечаток 5%
+await async_type_text(page, selector=&quot;#username&quot;, text=&quot;my_user_login&quot;, error_rate=0.05, speed_wpm=40.0)
+
+# Асинхронная пауза &quot;на чтение&quot; от 1 до 3 секунд
+await async_human_sleep(1.0, 3.0)
+</code></pre>
+<h3 id="nodriver">Обертки для nodriver (асинхронные)</h3>
+<p>Те же асинхронные функции поддерживают автоматизацию на базе <code>nodriver</code> (все действия транслируются напрямую через CDP протокол):</p>
+<pre><code class="language-python">from chutils.scraping.humanize import (
+    async_move_mouse,
+    async_scroll_to,
+    async_type_text,
+)
+
+# Плавное движение мыши (транслируется в CDP dispatchMouseEvent)
+await async_move_mouse(tab, x=400, y=300, start=(0, 0))
+
+# Плавный скролл страницы через JS evaluate
+await async_scroll_to(tab, x=0, y=800)
+
+# Ввод текста с опечатками (через CDP dispatchKeyEvent)
+await async_type_text(tab, selector=&quot;#username&quot;, text=&quot;my_user_login&quot;, error_rate=0.05, speed_wpm=40.0)
+</code></pre>
+<h3 id="selenium">Обертки для Selenium (синхронные)</h3>
+<pre><code class="language-python">from chutils.scraping.humanize import (
+    move_mouse,
+    scroll_to,
+    type_text,
+    human_sleep
+)
+
+# Плавное движение мыши
+move_mouse(driver, x=400, y=300, start=(0, 0))
+
+# Плавный скролл
+scroll_to(driver, x=0, y=800)
+
+# Ввод текста
+type_text(driver, selector=&quot;#username&quot;, text=&quot;my_user_login&quot;, error_rate=0.05, speed_wpm=40.0)
+
+# Синхронная пауза
+human_sleep(1.0, 3.0)
+</code></pre>
+<hr />
+<h2 id="3-">3. Анти-детект и маскировка браузеров</h2>
+<p>Для минимизации вероятности обнаружения бот-детектором (например, Cloudflare, Akamai, Imperva) модуль предоставляет
+JS-инъекции и флаги запуска.</p>
+<h3 id="js-">JS-инъекции анти-детекта</h3>
+<p>Инъекция скрывает автоматизацию на низком уровне JavaScript до загрузки веб-страницы:</p>
+<ul>
+<li>Удаляет и переопределяет свойство <code>navigator.webdriver</code>.</li>
+<li>Добавляет минимальный псевдослучайный шум к пикселям Canvas (<code>getImageData</code>), искажая статический Canvas-отпечаток.</li>
+<li>Маскирует WebGL параметры видеокарты (переопределяет рендерер и вендор на стандартный <code>Google Inc. (NVIDIA)</code>).</li>
+<li>Эмулирует список установленных системных плагинов и количество ядер процессора.</li>
+</ul>
+<pre><code class="language-python">from chutils.scraping.humanize import (
+    apply_antidetect_playwright,
+    apply_antidetect_selenium,
+    apply_antidetect_nodriver,
+)
+
+# Для Playwright (применяется к BrowserContext)
+# Все параметры ниже опциональны (по умолчанию эмулируется NVIDIA RTX 3060, 8 ядер CPU и 8 ГБ RAM):
+await apply_antidetect_playwright(
+    context,
+    webgl_vendor=&quot;AMD Inc.&quot;,
+    webgl_renderer=&quot;Radeon RX 6800&quot;,
+    hardware_concurrency=12,
+    device_memory=16
+)
+
+# Для Selenium (применяется к WebDriver через CDP)
+apply_antidetect_selenium(
+    driver,
+    webgl_vendor=&quot;Intel&quot;,
+    webgl_renderer=&quot;Intel UHD Graphics&quot;,
+    hardware_concurrency=4,
+    device_memory=8
+)
+
+# Для nodriver (применяется к вкладке Tab через CDP протокол)
+await apply_antidetect_nodriver(
+    tab,
+    webgl_vendor=&quot;NVIDIA Corporation&quot;,
+    webgl_renderer=&quot;NVIDIA GeForce RTX 4090&quot;,
+    hardware_concurrency=24,
+    device_memory=64
+)
+</code></pre>
+<h3 id="get_browser_launch_args">Флаги запуска браузера (<code>get_browser_launch_args</code>)</h3>
+<p>Возвращает оптимизированный список аргументов для запуска Chromium:</p>
+<pre><code class="language-python">from chutils.scraping.humanize import get_browser_launch_args
+
+# Возвращает список флагов запуска, таких как:
+# '--disable-blink-features=AutomationControlled', '--disable-infobars' и т.д.
+launch_flags = get_browser_launch_args()
+</code></pre>
+<hr />
+<h2 id="4-profilewarmer">4. Прогрев профилей (ProfileWarmer)</h2>
+<p>Инструмент <code>ProfileWarmer</code> (асинхронный для Playwright/nodriver) и <code>SyncProfileWarmer</code> (синхронный для Selenium) предназначены для прогрева браузерных профилей (сохраняемых в директории <code>user_data_dir</code>) путем посещения трастовых веб-ресурсов и симуляции действий реального пользователя (скроллинг, движения курсора по траектории Безье, паузы, клики по внутренним ссылкам).</p>
+<p>Это позволяет сформировать историю посещений, нагулять cookies и заполнить localStorage/sessionStorage, повышая Trust Score сессии браузера.</p>
+<h3 id="playwright-nodriver">Асинхронный прогрев (Playwright и nodriver)</h3>
+<pre><code class="language-python">from chutils.scraping.humanize import ProfileWarmer
+
+# Для Playwright (принимает объект Page)
+# или для nodriver (принимает объект Tab)
+warmer = ProfileWarmer(page_or_tab)
+
+# Прогрев: посетит 3 случайных сайта из встроенного списка
+# На каждом сайте проведет от 10 до 20 секунд, имитируя скроллинг, мышь и переходы по ссылкам
+await warmer.warm_up(
+    sites_count=3,
+    duration_per_site=(10.0, 20.0),
+    click_random_links=True
+)
+</code></pre>
+<h3 id="selenium_1">Синхронный прогрев (Selenium)</h3>
+<pre><code class="language-python">from chutils.scraping.humanize import SyncProfileWarmer
+
+# Принимает экземпляр Selenium WebDriver
+warmer = SyncProfileWarmer(driver)
+
+warmer.warm_up(
+    sites_count=3,
+    duration_per_site=(10.0, 20.0),
+    click_random_links=True
+)
+</code></pre>
+<hr />
+<h2 id="5-chutilsscrapingconcurrency">5. Параллельный скрапинг (chutils.scraping.concurrency)</h2>
+<p>Модуль <code>chutils.scraping.concurrency</code> предоставляет инструменты для параллельного скрапинга с дедупликацией, приоритизацией, доменными лимитами (<code>DomainRateLimiter</code>), пулом воркеров (<code>WorkerPool</code>) и автоматическим экспортом Prometheus-метрических показателей (<code>chutils_queue_pending_size</code>, <code>chutils_tasks_processed_total</code>, <code>chutils_task_execution_duration_seconds</code>, <code>chutils_worker_pool_active_workers</code>).</p>
+<pre><code class="language-python">import asyncio
+from chutils.scraping.concurrency import (
+    DomainRateLimiter,
+    InMemoryTaskQueue,
+    ScrapingTask,
+    WorkerPool,
+)
+
+async def main():
+    # Очередь с включенным трекингом Prometheus-метрических показателей
+    queue = InMemoryTaskQueue(name=&quot;wiki_queue&quot;, enable_metrics=True)
+    await queue.push(ScrapingTask(url=&quot;https://ru.wikipedia.org/wiki/Python&quot;, priority=5))
+
+    limiter = DomainRateLimiter(default_delay=0.5, domain_rules={&quot;*.wikipedia.org&quot;: 1.0})
+
+    async def process(task):
+        print(f&quot;Обработка: {task.url}&quot;)
+
+    pool = WorkerPool(queue=queue, handler=process, limiter=limiter, max_workers=2)
+    await pool.run_until_complete()
+</code></pre>
+<hr />
+<h2 id="6-profilemanager">6. Перенос профилей и сессий браузеров (<code>ProfileManager</code>)</h2>
+<p>Класс <code>ProfileManager</code> (<code>chutils.scraping.ProfileManager</code>) позволяет легко экспортировать, сохранять, конвертировать и импортировать авторизованные сессии и профили между <code>Playwright</code>, <code>nodriver</code> и <code>Selenium</code>.</p>
+<pre><code class="language-python">from chutils.scraping import ProfileManager
+
+# 1. Экспорт сессии из Playwright
+profile = await ProfileManager.export_from_playwright(browser_context)
+
+# 2. Сохранение в защищенный .chprofile файл
+ProfileManager.save(profile, &quot;my_session.chprofile&quot;, password=&quot;secret_password&quot;)
+
+# 3. Загрузка и импорт сессии в nodriver
+loaded_profile = ProfileManager.load(&quot;my_session.chprofile&quot;, password=&quot;secret_password&quot;)
+await ProfileManager.import_to_nodriver(nodriver_tab, loaded_profile)
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

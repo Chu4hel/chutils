@@ -1,0 +1,4027 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Простые утилиты для конфигурации, логирования и секретов в Python.">
+      
+      
+        <meta name="author" content="Chu4hel">
+      
+      
+        <link rel="canonical" href="https://Chu4hel.github.io/chutils/cli/dev/">
+      
+      
+        <link rel="prev" href="../config/">
+      
+      
+        <link rel="next" href="../pypi/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Инструменты разработчика (dev) - chutils</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ai-chutils-dev" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href="../.." title="chutils" class="md-header__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            chutils
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Инструменты разработчика (dev)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../ai_lint/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Проверка AI-готовности
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../recipes/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Рецепты
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../plugins/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Система плагинов
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../web/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Умный HTTP-клиент (web)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../scraping/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Имитация поведения (scraping)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../captcha/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Решение капчи (captcha)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Справочник API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../testing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Тестирование
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../migration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Миграция: v2 -> v3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../dependencies/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Опциональные зависимости
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  CLI Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../README_RU/" class="md-tabs__link">
+          
+  
+  
+  Проект
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="chutils" class="md-nav__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    chutils
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ai_lint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка AI-готовности
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Система плагинов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Умный HTTP-клиент (web)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scraping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Имитация поведения (scraping)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../captcha/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Решение капчи (captcha)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Тестирование
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Миграция: v2 -> v3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Опциональные зависимости
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../init/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инициализация (init)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Управление секретами (secrets)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Валидация (validate)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../show_paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Пути поиска (show-paths)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Генерация шаблонов (template)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Настройки и отладка (config)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инструменты разработчика (dev)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инструменты разработчика (dev)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Синтаксис">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-generate-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev generate-context
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev generate-context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chutilsignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Фильтрация путей и файл .chutilsignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-hashes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сбор метаданных и хэширование (Metadata &amp; Hashes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-ai-lint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev ai-lint
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev ai-lint">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Встроенные правила линтинга:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-chat-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev chat-context
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev chat-context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-scaffold" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev scaffold
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev scaffold">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Создаваемая структура:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-mock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev mock
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev mock">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dev-mock-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev mock init
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev mock init">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Пример вызова:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Формат файла конфигурации (YAML)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-install-hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev install-hooks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev install-hooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-generate-few-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev generate-few-shot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev generate-few-shot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Что генерируется:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-profile-imports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev profile-imports
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev profile-imports">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Предупреждения и Аналитика:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-setup-github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev setup-github-actions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev setup-github-actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev dashboard
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev dashboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Возможности:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-clean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev clean
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev clean">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyprojecttoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка через pyproject.toml:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-watch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev watch
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev watch">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev diagnostics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev diagnostics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exit-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Применение и статус ответа (Exit Codes):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-healthcheck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование в Docker Healthcheck:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-sync-env" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev sync-env
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev sync-env">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_46" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_47" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_48" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pypi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка зеркал (pypi)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проект
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Проект
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../README_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор (RU)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CODE_OF_CONDUCT_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Кодекс поведения
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CONTRIBUTING_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Правила участия
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Синтаксис">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-generate-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev generate-context
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev generate-context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chutilsignore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Фильтрация путей и файл .chutilsignore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-hashes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сбор метаданных и хэширование (Metadata &amp; Hashes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-ai-lint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev ai-lint
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev ai-lint">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Встроенные правила линтинга:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-chat-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev chat-context
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev chat-context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-scaffold" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev scaffold
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev scaffold">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Создаваемая структура:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-mock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev mock
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev mock">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dev-mock-init" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev mock init
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev mock init">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Пример вызова:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#yaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Формат файла конфигурации (YAML)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-install-hooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev install-hooks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev install-hooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-generate-few-shot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev generate-few-shot
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev generate-few-shot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Что генерируется:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-profile-imports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev profile-imports
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev profile-imports">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Предупреждения и Аналитика:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-setup-github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev setup-github-actions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev setup-github-actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev dashboard
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev dashboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Возможности:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-clean" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev clean
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev clean">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyprojecttoml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка через pyproject.toml:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_39" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-watch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev watch
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev watch">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_40" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_41" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_42" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev diagnostics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev diagnostics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_43" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_44" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exit-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Применение и статус ответа (Exit Codes):
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-healthcheck" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование в Docker Healthcheck:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_45" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dev-sync-env" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dev sync-env
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="dev sync-env">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_46" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтаксис подкоманды:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_47" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Параметры и флаги:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_48" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="ai-chutils-dev">Инструменты разработчика и AI-контекст (<code>chutils dev</code>)</h1>
+<p>Команда <code>chutils dev</code> предоставляет набор утилит для анализа кодовой базы, построения семантического индекса и аудита
+AI-готовности проекта. Эти инструменты помогают оптимизировать разработку и интеграцию с LLM-ассистентами (например,
+Gemini, Cursor).</p>
+<hr />
+<h2 id="_1">Синтаксис</h2>
+<pre><code class="language-bash">chutils dev [-h] {generate-context,ai-lint,chat-context,scaffold,mock,install-hooks,generate-few-shot,profile-imports,setup-github-actions,dashboard} ...
+</code></pre>
+<h3 id="_2">Подкоманды:</h3>
+<ol>
+<li><a href="#dev-generate-context"><strong><code>generate-context</code></strong></a> — Построение карты API и семантического дерева зависимостей.</li>
+<li><a href="#dev-ai-lint"><strong><code>ai-lint</code></strong></a> — Статический анализ AI-готовности кодовой базы.</li>
+<li><a href="#dev-chat-context"><strong><code>chat-context</code></strong></a> — Интерактивная генерация компактного контекста для ИИ.</li>
+<li><a href="#dev-scaffold"><strong><code>scaffold</code></strong></a> — Инициализация нового модуля Чистой Архитектуры.</li>
+<li><a href="#dev-mock"><strong><code>mock</code></strong></a> — Локальный декларативный HTTP мок-сервер.</li>
+<li><a href="#dev-install-hooks"><strong><code>install-hooks</code></strong></a> — Установка Git-хуков для автоматических проверок.</li>
+<li><a href="#dev-generate-few-shot"><strong><code>generate-few-shot</code></strong></a> — Автогенерация few-shot банка примеров для ИИ-ассистентов.</li>
+<li><a href="#dev-profile-imports"><strong><code>profile-imports</code></strong></a> — Профилирование времени холодного старта и импорта модулей.</li>
+<li><a href="#dev-setup-github-actions"><strong><code>setup-github-actions</code></strong></a> — Интерактивная настройка и генерация GitHub Actions
+   workflows.</li>
+<li><a href="#dev-dashboard"><strong><code>dashboard</code></strong></a> — Запуск интерактивного TUI-дашборда CLI команд.</li>
+<li><a href="#dev-clean"><strong><code>clean</code></strong></a> — Безопасная очистка проекта от кэшей и артефактов разработки.</li>
+<li><a href="#dev-watch"><strong><code>watch</code></strong></a> — Live Dev отслеживание изменений файлов и автоперезапуск приложения.</li>
+<li><a href="#dev-diagnostics"><strong><code>diagnostics</code></strong></a> — Запуск экспресс-диагностики работоспособности среды (Health Check).</li>
+<li><a href="#dev-sync-env"><strong><code>sync-env</code></strong></a> — Синхронизация переменных окружения между <code>.env</code> и <code>.env.example</code> (с поддержкой
+    <code>--dry-run</code>).</li>
+</ol>
+<hr />
+<h2 id="dev-generate-context">dev generate-context</h2>
+<p>Сканирует модули проекта и генерирует отчет обо всем публичном API (классы, методы, функции, декораторы, docstrings)
+либо строит иерархический граф связей между компонентами на основе статического анализа AST.</p>
+<h3 id="_3">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev generate-context [-h] [-f {markdown,json}] [-o OUTPUT] [--tree] [--no-weights] [--include-examples] [--project [PROJECT]] [--gitignore] [--no-gitignore] [-i]
+</code></pre>
+<h3 id="_4">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>-f, --format</code></strong></td>
+<td style="text-align: left;">Формат вывода: <code>markdown</code> или <code>json</code> (по умолчанию: <code>markdown</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-o, --output</code></strong></td>
+<td style="text-align: left;">Путь к файлу для сохранения результата. Если не указан, выводит в консоль.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--tree</code></strong></td>
+<td style="text-align: left;">Генерировать иерархический семантический индекс (структурированное JSON-дерево проекта) вместо плоского списка.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--no-weights</code></strong></td>
+<td style="text-align: left;">Не вычислять веса связей (сложность импортов) в графе зависимостей (актуально только для <code>--tree</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--include-examples</code></strong></td>
+<td style="text-align: left;">Включить few-shot примеры из папки <code>docs/ai_examples/</code> в итоговый отчет.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--project</code></strong></td>
+<td style="text-align: left;">Путь к сканируемому проекту. Если флаг опущен, сканируется сама библиотека <code>chutils</code>. Если флаг передан без аргументов, сканируется текущий каталог (<code>.</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--ignore</code></strong></td>
+<td style="text-align: left;">Дополнительные паттерны путей/файлов для игнорирования (например, <code>--ignore "tests/*"</code>). Можно передавать несколько раз или через запятую.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--gitignore</code></strong></td>
+<td style="text-align: left;">Учитывать правила <code>.gitignore</code> файла при сканировании проекта (по умолчанию <code>True</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-i, --incremental</code></strong></td>
+<td style="text-align: left;">Инкрементальное обновление контекста AST только для изменившихся в Git файлов без полного сканирования кодовой базы.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--force</code></strong></td>
+<td style="text-align: left;">Принудительно перезаписать файл отчета, даже если API проекта не изменилось.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="chutilsignore">Фильтрация путей и файл <code>.chutilsignore</code></h3>
+<p>При сканировании проекта <code>generate-context</code> и <code>ai-lint</code> объединяют правила фильтрации из трех источников со следующим
+порядком приоритета:</p>
+<ol>
+<li><strong>Флаги CLI (<code>--ignore</code>)</strong>: имеют высший приоритет.</li>
+<li><strong>Файл <code>.chutilsignore</code> в корне проекта</strong>: специализированный файл масок для настройки скрытия файлов от AI-сканеров
+   без засорения <code>.gitignore</code>.</li>
+<li><strong>Файл <code>.gitignore</code> в корне проекта</strong>: базовые правила игнорирования Git.</li>
+</ol>
+<p><strong>Пример файла <code>.chutilsignore</code>:</strong></p>
+<pre><code class="language-gitignore"># Исключить тестовые фикстуры и временные данные из контекста ИИ
+tests/fixtures/*
+*.scratch.py
+legacy/
+</code></pre>
+<h3 id="_5">Примеры использования:</h3>
+<p><strong>1. Генерация плоской карты публичного API проекта:</strong></p>
+<pre><code class="language-bash">chutils dev generate-context --project . -o api_map.md
+</code></pre>
+<p><strong>2. Построение глубокого семантического JSON-индекса для AI-агентов:</strong></p>
+<pre><code class="language-bash">chutils dev generate-context --project . --tree -o project_tree.json
+</code></pre>
+<h3 id="metadata-hashes">Сбор метаданных и хэширование (Metadata &amp; Hashes)</h3>
+<p>При каждом вызове <code>generate-context</code> утилита автоматически собирает и сохраняет следующие метаданные:</p>
+<ul>
+<li><strong><code>chutils_version</code></strong> — версия библиотеки <code>chutils</code>.</li>
+<li><strong><code>project_version</code></strong> — версия целевого проекта, извлеченная из <code>pyproject.toml</code>.</li>
+<li><strong><code>git_commit</code></strong> — SHA-1 хэш текущего git-коммита (и пометка <code>(dirty)</code>, если есть незакоммиченные изменения).</li>
+<li><strong><code>generated_at</code></strong> — дата и время генерации в формате ISO 8601 UTC.</li>
+<li><strong><code>project_hash</code></strong> — детерминированный SHA-256 хэш проекта, вычисленный на основе путей и содержимого всех
+  Python-файлов (с учетом фильтрации <code>.gitignore</code> и <code>.chutilsignore</code>).</li>
+</ul>
+<p><strong>Формат хранения:</strong></p>
+<ul>
+<li>Для <strong>Markdown</strong> (<code>-f markdown</code>): метаданные сохраняются в самом начале файла в виде блока YAML Frontmatter (между
+  <code>---</code>).</li>
+<li>Для <strong>JSON</strong> (<code>-f json</code> или <code>--tree</code>): метаданные сохраняются в словаре верхнего уровня под ключом <code>"metadata"</code>.</li>
+</ul>
+<hr />
+<h2 id="dev-ai-lint">dev ai-lint</h2>
+<p>Проводит аудит проекта на соответствие лучшим практикам интеграции с ИИ. Проверяет качество типизации, полноту
+docstrings, размер файлов (LOC) и количество классов (<code>CodeDecompositionRule</code>), наличие файлов манифестов (
+<code>antigravity.md</code>, <code>agents.md</code>, <code>gemini.md</code>), отсутствие захардкоженных секретов, а также синхронность связанных
+файлов и документации (<code>FileDependencySyncRule</code>).</p>
+<h3 id="_6">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev ai-lint [-h] [--strict] [--soft-mode] [--ignore IGNORE] [--rules RULES] [--custom-rules-path CUSTOM_RULES_PATH] [--staged]
+</code></pre>
+<h3 id="_7">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>--strict</code></strong></td>
+<td style="text-align: left;">Строгий режим: предупреждения трактуются как ошибки (возвращается ненулевой код выхода).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--soft-mode</code></strong></td>
+<td style="text-align: left;">Мягкий режим: всегда завершаться со статусом <code>0</code> даже при наличии серьезных ошибок.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--ignore</code></strong></td>
+<td style="text-align: left;">Исключаемые пути через запятую (например, <code>tests/,venv/,build/</code>). Также учитывает настройки из файлов <code>.gitignore</code> и <code>.chutilsignore</code>.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--rules</code></strong></td>
+<td style="text-align: left;">Список запускаемых правил через запятую (по умолчанию запускаются все правила).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--custom-rules-path</code></strong></td>
+<td style="text-align: left;">Путь к YAML/JSON файлу с пользовательскими правилами проверки.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--staged</code></strong></td>
+<td style="text-align: left;">Проверять только файлы, подготовленные к коммиту (staged) в Git. Позволяет значительно ускорить проверку в Git-хуках.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_8">Примеры использования:</h3>
+<p><strong>Запуск стандартного аудита:</strong></p>
+<pre><code class="language-bash">chutils dev ai-lint
+</code></pre>
+<p><em>Вывод в консоли:</em></p>
+<pre><code class="language-text">=== AI-Readiness Audit ===
+[WARN] Файл 'gemini.md' не найден в корне проекта. Рекомендуется создать для улучшения инструкций ИИ.
+[OK] Секреты в открытом виде не обнаружены.
+[OK] Полнота аннотаций типов: 94%.
+Аудит завершен. Найдено 1 предупреждение.
+</code></pre>
+<h3 id="_9">Встроенные правила линтинга:</h3>
+<p>Утилита включает в себя несколько встроенных правил проверки:</p>
+<ol>
+<li><strong><code>ManifestRule</code></strong> — Проверяет наличие ИИ-манифестов (<code>antigravity.md</code>, <code>agents.md</code>, <code>gemini.md</code>).</li>
+<li><strong><code>DocstringQualityRule</code></strong> — Оценивает полноту документации и аннотаций типов в кодовой базе.</li>
+<li><strong><code>SecurityHardcodeRule</code></strong> — Ищет случайно захардкоженные пароли, токены и приватные ключи.</li>
+<li><strong><code>ChutilsIntegrationRule</code></strong> — Проверяет корректность использования ленивого импорта и Rich-утилит библиотеки
+   <code>chutils</code>.</li>
+<li><strong><code>APIMapRule</code></strong> — Требует наличия сгенерированного файла <code>api_map.md</code> (карты публичного API).</li>
+<li><strong><code>EnvSyncRule</code></strong> — Проверяет синхронность переменных в файлах <code>.env</code> и <code>.env.example</code>.</li>
+<li><strong><code>CodeDecompositionRule</code></strong> — Контролирует размер файлов (максимум 700 строк) и количество классов в файле (максимум
+   5).</li>
+<li><strong><code>APIMapHashRule</code></strong> — Вычисляет SHA-256 хэш проекта и сверяет его со значением, записанным в метаданных
+   <code>api_map.md</code>. При обнаружении несовпадения выводит предупреждение о необходимости обновить карту API с помощью
+   <code>chutils dev generate-context -o api_map.md</code>. Данное предупреждение <strong>не блокирует коммит/сборку</strong> (не приводит к
+   ненулевому коду выхода даже в режиме <code>--strict</code>).</li>
+<li><strong><code>FileDependencySyncRule</code></strong> — Проверяет синхронность обновления связанных файлов и документации в соответствии с
+   картой зависимостей.</li>
+<li><strong><code>UpgradeCheckRule</code></strong> — Обнаруживает изменение версии пакета в <code>pyproject.toml</code> по сравнению с Git <code>HEAD</code>. При
+    повышении версии автоматически генерирует миграционный файл контекста для ИИ <code>.chutils/migration_context.md</code> на
+    основе чейнджлогов релизов с GitHub API. Можно отключать через ENV (<code>CHUTILS_DISABLE_UPGRADE_CHECK=1</code>,
+    <code>CHUTILS_GENERATE_CHANGELOG=0</code>) или конфиг <code>ai-lint.toml</code>.</li>
+</ol>
+<hr />
+<h2 id="dev-chat-context">dev chat-context</h2>
+<p>Генерирует компактный и сфокусированный контекстный срез по конкретным подсистемам или описанию задачи, чтобы
+минимизировать размер контекста (число токенов) для LLM/AI-агентов. Если вызван без аргументов, запускается в
+интерактивном режиме с выводом меню выбора.</p>
+<h3 id="_10">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev chat-context [-h] [-m MODULES] [-t TASK] [-l {public,internal,infrastructure,private,all}] [-o OUTPUT]
+</code></pre>
+<h3 id="_11">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>-m, --modules</code></strong></td>
+<td style="text-align: left;">Список модулей через запятую для сбора контекста (например: <code>logger,config</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-t, --task</code></strong></td>
+<td style="text-align: left;">Описание задачи или темы для автоматического подбора релевантных модулей (поиск по docstrings и именам символов).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-l, --layer</code></strong></td>
+<td style="text-align: left;">Фильтр по слоям абстракции: <code>public</code>, <code>internal</code>, <code>infrastructure</code>, <code>private</code>, <code>all</code> (по умолчанию: <code>public</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-o, --output</code></strong></td>
+<td style="text-align: left;">Путь к файлу для сохранения результата. Если опущен, результат выводится в stdout.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_12">Примеры использования:</h3>
+<p><strong>1. Интерактивный режим выборки модулей:</strong></p>
+<pre><code class="language-bash">chutils dev chat-context
+</code></pre>
+<p><strong>2. Сбор публичного API и примеров для конкретной задачи:</strong></p>
+<pre><code class="language-bash">chutils dev chat-context -t &quot;logging and database connection setup&quot; -o ai_context.md
+</code></pre>
+<p><strong>3. Экспорт детального внутреннего контекста для выбранных модулей:</strong></p>
+<pre><code class="language-bash">chutils dev chat-context -m logger,secret_manager -l internal -o logger_context.md
+</code></pre>
+<hr />
+<h2 id="dev-scaffold">dev scaffold</h2>
+<p>Генерирует готовую структуру папок и шаблоны базовых файлов для нового функционального модуля по правилам Чистой
+Архитектуры (Clean Architecture) с соблюдением принципа инверсии зависимостей (Dependency Inversion) и строгой
+типизации.</p>
+<h3 id="_13">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev scaffold [-h] [-o OUTPUT_DIR] [-f] module_name
+</code></pre>
+<h3 id="_14">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Аргумент / Флаг</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>module_name</code></strong></td>
+<td style="text-align: left;">Имя создаваемого модуля (валидный Python-идентификатор в snake_case, например: <code>user_profile</code>).</td>
+<td style="text-align: left;">Да</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-o, --output-dir</code></strong></td>
+<td style="text-align: left;">Базовый путь для создания каталога модуля. По умолчанию создается в текущей директории с именем <code>module_name</code>.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-f, --force</code></strong></td>
+<td style="text-align: left;">Принудительно перезаписать файлы, если целевая папка уже существует и не пуста.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_15">Создаваемая структура:</h3>
+<p>Сгенерированный модуль содержит следующие слои:</p>
+<ul>
+<li><strong><code>domain/</code></strong> (Домен): Бизнес-сущности (<code>entities.py</code>), объекты-значения (<code>value_objects.py</code>) и абстрактные интерфейсы
+  репозиториев (<code>repositories.py</code>). Не зависит от внешних библиотек и других слоев.</li>
+<li><strong><code>application/</code></strong> (Прикладной слой): Сценарии использования (Use Cases в <code>use_cases.py</code>), которые оперируют
+  интерфейсами домена.</li>
+<li><strong><code>infrastructure/</code></strong> (Инфраструктура): Адаптеры баз данных/внешних API (<code>db_adapters.py</code>) и реализации репозиториев
+  из домена (<code>repositories.py</code>).</li>
+<li><strong><code>presentation/</code></strong> (Слой представления): Контроллеры для внешнего взаимодействия (<code>cli.py</code> и <code>api.py</code>).</li>
+<li><strong><code>container.py</code></strong> (DI): Контейнер зависимостей, связывающий все слои вместе.</li>
+</ul>
+<h3 id="_16">Примеры использования:</h3>
+<p><strong>1. Простая инициализация модуля в текущей директории:</strong></p>
+<pre><code class="language-bash">chutils dev scaffold order_processing
+</code></pre>
+<p><strong>2. Инициализация модуля с указанием пути вывода и перезаписью:</strong></p>
+<pre><code class="language-bash">chutils dev scaffold user_auth -o ./src/user_auth -f
+</code></pre>
+<hr />
+<h2 id="dev-mock">dev mock</h2>
+<p>Запускает локальный декларативный HTTP-сервер заглушек (мок-сервер) на базе YAML/JSON конфигурации. Поддерживает
+динамический роутинг (включая регулярные выражения с заменой групп в ответах), симуляцию задержек (<code>delay</code>), кастомные
+HTTP статус-коды, проксирование на реальный бэкенд (<code>--proxy-fallback</code>) и автоматическое обновление конфигурации "на
+лету" (Hot-Reload).</p>
+<h3 id="_17">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev mock [-h] [-p PORT] [-r ROUTES] [--proxy-fallback PROXY_FALLBACK] {init} ...
+</code></pre>
+<h3 id="_18">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг / Подкоманда</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>-p, --port</code></strong></td>
+<td style="text-align: left;">Порт для запуска сервера (по умолчанию: <code>8888</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-r, --routes</code></strong></td>
+<td style="text-align: left;">Путь к файлу конфигурации YAML или JSON (по умолчанию: <code>mocks.yml</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--proxy-fallback</code></strong></td>
+<td style="text-align: left;">URL реального бэкенда для перенаправления запросов, если локальный роут заглушки не найден (например: <code>http://localhost:8000</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>init [path]</code></strong></td>
+<td style="text-align: left;">Подкоманда для инициализации шаблонного файла конфигурации <code>mocks.yml</code> (или по указанному пути).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="dev-mock-init">dev mock init</h3>
+<p>Создает шаблонный файл конфигурации роутов <code>mocks.yml</code> (или по указанному пути) с примерами различных видов роутов,
+задержек и RegExp подстановок.</p>
+<h4 id="_19">Пример вызова:</h4>
+<pre><code class="language-bash">chutils dev mock init custom_mocks.yml
+</code></pre>
+<hr />
+<h3 id="yaml">Формат файла конфигурации (YAML)</h3>
+<p>Пример сгенерированного <code>mocks.yml</code> файла:</p>
+<pre><code class="language-yaml"># Декларативная конфигурация роутов для мок-сервера
+# Поддерживаемые методы: GET, POST, PUT, DELETE, PATCH
+# Поддерживается задержка (delay в секундах) и кастомные статусы (status)
+# Поддерживается regex сопоставление путей при установке флага is_regex: true
+
+- path: /api/users
+  method: GET
+  status: 200
+  response:
+    - id: 1
+      name: &quot;Иван Иванов&quot;
+    - id: 2
+      name: &quot;Петр Петров&quot;
+
+- path: /api/users/(\d+)
+  method: GET
+  is_regex: true
+  status: 200
+  response:
+    id: &quot;$1&quot;
+    name: &quot;Пользователь $1&quot;
+    role: &quot;user&quot;
+
+- path: /api/submit
+  method: POST
+  status: 201
+  response:
+    status: &quot;success&quot;
+    message: &quot;Данные успешно приняты&quot;
+
+- path: /api/slow-endpoint
+  method: GET
+  delay: 2.5
+  status: 200
+  response:
+    message: &quot;Этот ответ вернулся с задержкой 2.5 секунды&quot;
+</code></pre>
+<h3 id="_20">Примеры использования:</h3>
+<p><strong>1. Инициализация файла конфигурации по умолчанию:</strong></p>
+<pre><code class="language-bash">chutils dev mock init
+</code></pre>
+<p><strong>2. Запуск мок-сервера на порту 9000 с файлом <code>custom_mocks.json</code>:</strong></p>
+<pre><code class="language-bash">chutils dev mock -p 9000 -r custom_mocks.json
+</code></pre>
+<p><strong>3. Запуск с проксированием на рабочий бэкенд:</strong></p>
+<pre><code class="language-bash">chutils dev mock --proxy-fallback http://localhost:8000
+</code></pre>
+<p><em>(При обращении к роуту, которого нет в <code>mocks.yml</code>, сервер прозрачно проксирует запрос на <code>http://localhost:8000</code>,
+сохраняя тело, заголовки и HTTP-метод).</em></p>
+<hr />
+<h2 id="dev-install-hooks">dev install-hooks</h2>
+<p>Создает или обновляет pre-commit Git-хук в каталоге <code>.git/hooks</code> для автоматического запуска проверок перед фиксацией
+изменений.</p>
+<p>Хук автоматически детектирует окружение (например, <code>uv</code>, <code>poetry</code>, <code>pipenv</code>, локальные <code>.venv</code>/<code>venv</code> директории или
+глобальный запуск) для правильного запуска команд.</p>
+<h3 id="_21">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev install-hooks [-h] [-f] [--ruff] [--flake8]
+</code></pre>
+<h3 id="_22">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг / Аргумент</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>-f, --force</code></strong></td>
+<td style="text-align: left;">Принудительно перезаписать существующий файл <code>pre-commit</code> (без этого флага chutils допишет свой блок в конец существующего хука).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--ruff</code></strong></td>
+<td style="text-align: left;">Добавить автоматический вызов <code>ruff check --fix</code> и <code>ruff format</code> перед проверкой AI-готовности (<code>ai-lint</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--flake8</code></strong></td>
+<td style="text-align: left;">Добавить автоматический вызов статического анализатора <code>flake8 .</code> в хук.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_23">Примеры использования:</h3>
+<p><strong>1. Стандартная установка хука только с проверкой <code>ai-lint</code>:</strong></p>
+<pre><code class="language-bash">chutils dev install-hooks
+</code></pre>
+<p><strong>2. Установка с форматированием кода и исправлением ошибок через Ruff:</strong></p>
+<pre><code class="language-bash">chutils dev install-hooks --ruff
+</code></pre>
+<p><strong>3. Принудительная перезапись существующего хука со всеми проверками (Ruff, Flake8, AI-ready linter):</strong></p>
+<pre><code class="language-bash">chutils dev install-hooks -f --ruff --flake8
+</code></pre>
+<blockquote>
+<p><strong>Примечание:</strong> Хуки устанавливаются с правами на выполнение (<code>chmod +x</code>). Убедитесь, что команда запускается из
+корня Git-репозитория.</p>
+</blockquote>
+<hr />
+<h2 id="dev-generate-few-shot">dev generate-few-shot</h2>
+<p>Анализирует архитектуру целевого проекта с помощью AST-анализа и автоматически создаёт структурированный <strong>банк
+few-shot примеров</strong> в каталоге <code>docs/ai_examples/</code>. Примеры служат контекстом (few-shot prompting) для ИИ-ассистентов
+(Antigravity, Gemini CLI и др.), обучая их применять правильные архитектурные паттерны конкретного проекта.</p>
+<h3 id="_24">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev generate-few-shot [-h] -p PROJECT [-f]
+</code></pre>
+<h3 id="_25">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг / Аргумент</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>-p, --project</code></strong></td>
+<td style="text-align: left;">Путь к корневой директории целевого проекта.</td>
+<td style="text-align: left;">Да</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-f, --force</code></strong></td>
+<td style="text-align: left;">Принудительно перезаписать существующие файлы при совпадении имён категорий (иначе они пропускаются).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_26">Что генерируется:</h3>
+<p>Команда детектирует 5 архитектурных категорий и создаёт для каждой найденной папку в <code>docs/ai_examples/&lt;category&gt;/</code>
+с тремя файлами:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Категория</th>
+<th style="text-align: left;">Что детектируется</th>
+<th style="text-align: left;">Файлы</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>use_cases</code></td>
+<td style="text-align: left;">Классы с суффиксом <code>UseCase</code> или <code>Interactor</code></td>
+<td style="text-align: left;"><code>good_pattern.py</code>, <code>bad_pattern.py</code>, <code>README.md</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>repositories</code></td>
+<td style="text-align: left;">Классы с суффиксом <code>Repository</code> (абстрактные и конкретные)</td>
+<td style="text-align: left;"><code>good_pattern.py</code>, <code>bad_pattern.py</code>, <code>README.md</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>logging</code></td>
+<td style="text-align: left;">Переменные-логгеры (<code>logging.getLogger</code>)</td>
+<td style="text-align: left;"><code>good_pattern.py</code>, <code>bad_pattern.py</code>, <code>README.md</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>errors</code></td>
+<td style="text-align: left;">Пользовательские исключения (наследники <code>Exception</code>)</td>
+<td style="text-align: left;"><code>good_pattern.py</code>, <code>bad_pattern.py</code>, <code>README.md</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>di</code></td>
+<td style="text-align: left;">DI-контейнеры (по имени файла или импорту DI-библиотеки)</td>
+<td style="text-align: left;"><code>good_pattern.py</code>, <code>bad_pattern.py</code>, <code>README.md</code></td>
+</tr>
+</tbody>
+</table>
+<p>После генерации файлов команда создаёт или обновляет <code>GEMINI.md</code> в корне целевого проекта, добавляя блок со ссылками
+на банк примеров для ИИ-агентов.</p>
+<h3 id="_27">Примеры использования:</h3>
+<p><strong>1. Анализ и генерация банка примеров для текущего проекта:</strong></p>
+<pre><code class="language-bash">chutils dev generate-few-shot -p ./my_project
+</code></pre>
+<p><em>Вывод в консоли:</em></p>
+<pre><code class="language-text">🔍 Анализ проекта: ./my_project
+✅ Категория 'use_cases': good_pattern.py, bad_pattern.py, README.md
+✅ Категория 'repositories': good_pattern.py, bad_pattern.py, README.md
+✅ Категория 'errors': good_pattern.py, bad_pattern.py, README.md
+📝 GEMINI.md обновлён: ./my_project/GEMINI.md
+Генерация завершена. Создано: 3 категории.
+</code></pre>
+<p><strong>2. Повторная генерация с принудительной перезаписью (после изменений в коде проекта):</strong></p>
+<pre><code class="language-bash">chutils dev generate-few-shot -p ./my_project --force
+</code></pre>
+<p><strong>3. Генерация банка примеров для внешнего репозитория:</strong></p>
+<pre><code class="language-bash">chutils dev generate-few-shot -p /path/to/another/repo
+</code></pre>
+<blockquote>
+<p><strong>Примечание о слиянии:</strong> Без флага <code>--force</code> команда работает в режиме слияния — существующие папки категорий
+пропускаются, что позволяет добавлять новые категории без перезаписи пользовательских правок.</p>
+</blockquote>
+<hr />
+<h2 id="dev-profile-imports">dev profile-imports</h2>
+<p>Профилирует время холодного старта и импорта модулей для выявления не-ленивых (тяжелых) зависимостей. Утилита запускает
+целевой импорт в изолированном подпроцессе с флагом <code>-X importtime</code>, парсит его вывод и визуализирует иерархическое
+дерево импортов, плоскую таблицу тяжелых импортов или экспортирует данные в формате JSON.</p>
+<h3 id="_28">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev profile-imports [-h] [-t THRESHOLD] [--table] [--json] [target]
+</code></pre>
+<h3 id="_29">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг / Аргумент</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>target</code></strong></td>
+<td style="text-align: left;">Имя целевого модуля или путь к файлу для импорта (по умолчанию: <code>chutils</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-t, --threshold</code></strong></td>
+<td style="text-align: left;">Порог времени в миллисекундах (float) для скрытия мелких веток импорта (по умолчанию: <code>1.0</code> мс).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--table</code></strong></td>
+<td style="text-align: left;">Вывести плоскую таблицу импортов, отсортированную по собственному времени (self time) по убыванию.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--json</code></strong></td>
+<td style="text-align: left;">Вывести распарсенные данные профилирования в формате JSON для машинного разбора.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_30">Предупреждения и Аналитика:</h3>
+<p>В процессе работы утилита автоматически анализирует импорты и выводит предупреждения о потенциальных проблемах:</p>
+<ol>
+<li><strong>Дублирующиеся импорты (утечки)</strong> — модули, которые импортируются и инициализируются повторно.</li>
+<li><strong>Тяжелые не-ленивые импорты на верхнем уровне</strong> — обнаружение импорта тяжелых сторонних библиотек (таких как
+   <code>pydantic</code>, <code>watchdog</code>, <code>rich</code>, <code>keyring</code>, <code>yaml</code>, <code>dotenv</code> и др.) на верхних уровнях иерархии (глубина 1 или 2).
+   Рекомендуется переносить их импорт внутрь функций/методов (Lazy Import).</li>
+</ol>
+<h3 id="_31">Примеры использования:</h3>
+<p><strong>1. Отображение дерева импортов для chutils с порогом более 0.5 мс:</strong></p>
+<pre><code class="language-bash">chutils dev profile-imports chutils -t 0.5
+</code></pre>
+<p><strong>2. Отображение плоской таблицы тяжелых импортов:</strong></p>
+<pre><code class="language-bash">chutils dev profile-imports --table
+</code></pre>
+<p><strong>3. Экспорт дерева импортов в JSON для внешнего парсинга:</strong></p>
+<pre><code class="language-bash">chutils dev profile-imports --json &gt; import_tree.json
+</code></pre>
+<hr />
+<h2 id="dev-setup-github-actions">dev setup-github-actions</h2>
+<p>Настраивает и генерирует workflow-файл для GitHub Actions CI на основе Astral <code>setup-uv</code>.
+Поддерживает интерактивный режим (по умолчанию) и автоматический режим через CLI-параметры.</p>
+<h3 id="_32">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev setup-github-actions [-h] [--interactive | --no-interactive] [--python-versions PYTHON_VERSIONS] [--with-pytest | --without-pytest] [--with-mypy | --without-mypy] [--with-ruff | --without-ruff] [--with-ai-lint | --without-ai-lint] [--output-file OUTPUT_FILE]
+</code></pre>
+<h3 id="_33">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>--interactive</code></strong></td>
+<td style="text-align: left;">Запустить интерактивную настройку в консоли (по умолчанию).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--no-interactive</code></strong></td>
+<td style="text-align: left;">Использовать значения по умолчанию или явно переданные флаги.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--python-versions</code></strong></td>
+<td style="text-align: left;">Список версий Python через запятую (по умолчанию: <code>3.10,3.11,3.12,3.13</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--with-pytest / --without-pytest</code></strong></td>
+<td style="text-align: left;">Включить/выключить запуск тестов с pytest.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--with-mypy / --without-mypy</code></strong></td>
+<td style="text-align: left;">Включить/выключить запуск статического анализа mypy.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--with-ruff / --without-ruff</code></strong></td>
+<td style="text-align: left;">Включить/выключить запуск линтера ruff.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--with-ai-lint / --without-ai-lint</code></strong></td>
+<td style="text-align: left;">Включить/выключить запуск ai-lint.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--output-file</code></strong></td>
+<td style="text-align: left;">Путь для сохранения workflow (по умолчанию: <code>.github/workflows/ci.yml</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_34">Примеры использования:</h3>
+<p><strong>1. Интерактивная настройка:</strong></p>
+<pre><code class="language-bash">chutils dev setup-github-actions
+</code></pre>
+<p><strong>2. Быстрая генерация с дефолтными настройками без вопросов:</strong></p>
+<pre><code class="language-bash">chutils dev setup-github-actions --no-interactive
+</code></pre>
+<p><strong>3. Генерация с кастомными версиями Python без тестов:</strong></p>
+<pre><code class="language-bash">chutils dev setup-github-actions --no-interactive --python-versions &quot;3.11,3.12&quot; --without-pytest --output-file &quot;.github/workflows/main_ci.yml&quot;
+</code></pre>
+<hr />
+<h2 id="dev-dashboard">dev dashboard</h2>
+<p>Отображает интерактивный TUI-дашборд в терминале для просмотра, интерактивного ввода аргументов и запуска CLI-команд
+проекта (функций, декорированных <code>@cli_command</code>).</p>
+<h3 id="_35">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev dashboard [-h]
+</code></pre>
+<h3 id="_36">Возможности:</h3>
+<ol>
+<li><strong>Автоматический поиск команд</strong> — сканирует исходный код проекта с помощью статического AST-анализа для поиска
+   функций с декоратором <code>@cli_command</code>.</li>
+<li><strong>Трехпанельный макет</strong> — список команд слева, подробное описание и форма аргументов справа сверху, лог выполнения в
+   реальном времени справа снизу.</li>
+<li><strong>Интерактивный ввод</strong> — поддержка ввода строковых, числовых аргументов и bool-переключателей.</li>
+<li><strong>История параметров</strong> — сохраняет последние введенные параметры в <code>.chutils_dashboard_history.json</code>.</li>
+<li><strong>Изолированный запуск</strong> — выполняет выбранную команду в подпроцессе фонового потока, сохраняя отзывчивость
+   интерфейса. Прерывание процесса клавишей <code>Esc</code> или <code>Ctrl+C</code>.</li>
+</ol>
+<hr />
+<h2 id="dev-clean">dev clean</h2>
+<p>Рекурсивно сканирует кодовую базу, находит стандартные артефакты сборки и кэши (<code>__pycache__</code>, <code>.pytest_cache</code>,
+<code>.mypy_cache</code>, <code>.ruff_cache</code>, <code>.coverage</code>, <code>build/</code>, <code>dist/</code>, <code>*.egg-info</code> и др.) и безопасно удаляет их.</p>
+<h3 id="_37">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev clean [-h] [--dry-run] [-y | --yes | --force] [-e EXCLUDE] [-i INCLUDE]
+</code></pre>
+<h3 id="_38">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>--dry-run</code></strong></td>
+<td style="text-align: left;">Вывести список найденных элементов и потенциально освобождаемый объем без физического удаления.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-y, --yes, --force</code></strong></td>
+<td style="text-align: left;">Удалить файлы сразу без интерактивного подтверждения.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-e, --exclude</code></strong></td>
+<td style="text-align: left;">Список исключаемых папок или шаблонов через запятую (например: <code>.venv,node_modules</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-i, --include</code></strong></td>
+<td style="text-align: left;">Список дополнительных путей или шаблонов для удаления через запятую (например: <code>temp/,*.log</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pyprojecttoml">Настройка через <code>pyproject.toml</code>:</h3>
+<p>Вы можете переопределить стандартные списки исключений и добавить собственные шаблоны для очистки в секции
+<code>[tool.chutils.clean]</code>:</p>
+<pre><code class="language-toml">[tool.chutils.clean]
+default_excludes = [&quot;.git&quot;, &quot;.venv&quot;, &quot;venv&quot;, &quot;.idea&quot;, &quot;site&quot;]
+extra_clean_targets = [&quot;*.log&quot;, &quot;tmp_data/&quot;]
+</code></pre>
+<h3 id="_39">Примеры использования:</h3>
+<p><strong>1. Просмотр списка мусорных файлов и объема диска без удаления:</strong></p>
+<pre><code class="language-bash">chutils dev clean --dry-run
+</code></pre>
+<p><strong>2. Быстрая очистка без вопросов:</strong></p>
+<pre><code class="language-bash">chutils dev clean --yes
+</code></pre>
+<hr />
+<h2 id="dev-watch">dev watch</h2>
+<p>Запускает отслеживание изменений файлов проекта в режиме реального времени (Live Dev) и автоматически перезапускает
+внешний дочерний процесс или выбранную Python-функцию.</p>
+<h3 id="_40">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev watch [-h] [-p PATHS] [-e EXTENSIONS] [--ignore IGNORE] [-d DEBOUNCE] [-m MODULE] [-- COMMAND ...]
+</code></pre>
+<h3 id="_41">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>-p, --path</code></strong></td>
+<td style="text-align: left;">Директория или файл для отслеживания (можно указывать несколько раз, по умолчанию: <code>.</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-e, --extensions</code></strong></td>
+<td style="text-align: left;">Список расширений файлов через запятую (по умолчанию: <code>py,yaml,yml,json,toml,ini</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--ignore</code></strong></td>
+<td style="text-align: left;">Дополнительные шаблоны путей для игнорирования через запятую.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-d, --debounce</code></strong></td>
+<td style="text-align: left;">Интервал пакетирования событий (дебаунс) в секундах (по умолчанию: <code>0.5</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-m, --module</code></strong></td>
+<td style="text-align: left;">Указание целевой функции для внутрипроцессного перезапуска в формате <code>module.path:func_name</code>.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-- COMMAND</code></strong></td>
+<td style="text-align: left;">Команда внешнего процесса для выполнения (передается после сепаратора <code>--</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_42">Примеры использования:</h3>
+<p><strong>1. Отслеживание изменений и перезапуск стороннего скрипта:</strong></p>
+<pre><code class="language-bash">chutils dev watch -- python main.py
+</code></pre>
+<p><strong>2. Внутрипроцессный перезапуск функции с очисткой жизненного цикла:</strong></p>
+<pre><code class="language-bash">chutils dev watch -m myapp.main:start
+</code></pre>
+<p><strong>3. Отслеживание конкретной директории с настраиваемыми расширениями:</strong></p>
+<pre><code class="language-bash">chutils dev watch -p src -p config -e py,json,yaml -- python app.py
+</code></pre>
+<hr />
+<h2 id="dev-diagnostics">dev diagnostics</h2>
+<p>Выполняет встроенную и пользовательскую диагностику среды приложения (Health Check). Сканирует статус загрузки
+конфигурационного файла (<code>config.yml</code> / <code>config.yaml</code>), доступность системного хранилища секретов (<code>keyring</code>) и
+зарегистрированные кастомные проверки.</p>
+<h3 id="_43">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev diagnostics [-h] [--json]
+</code></pre>
+<h3 id="_44">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>--json</code></strong></td>
+<td style="text-align: left;">Вывести структурированный отчет диагностики в формате JSON (подходит для Docker Healthcheck и CI/CD).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="exit-codes">Применение и статус ответа (Exit Codes):</h3>
+<ul>
+<li>Статус <strong><code>HEALTHY</code></strong> или <strong><code>DEGRADED</code></strong>: завершается с успешным кодом выхода (<code>0</code>).</li>
+<li>Статус <strong><code>UNHEALTHY</code></strong>: завершается с ошибкой (<code>1</code>).</li>
+</ul>
+<h3 id="docker-healthcheck">Использование в Docker Healthcheck:</h3>
+<p>Команду удобно применять в <code>Dockerfile</code> или <code>docker-compose.yml</code> для автоматического отслеживания состояния контейнера:</p>
+<pre><code class="language-yaml">healthcheck:
+  test: [ &quot;CMD&quot;, &quot;chutils&quot;, &quot;dev&quot;, &quot;diagnostics&quot;, &quot;--json&quot; ]
+  interval: 30s
+  timeout: 5s
+  retries: 3
+</code></pre>
+<h3 id="_45">Примеры использования:</h3>
+<p><strong>1. Интерактивный запуск проверки с выводом таблицы Rich в консоль:</strong></p>
+<pre><code class="language-bash">chutils dev diagnostics
+</code></pre>
+<p><strong>2. Получение машиночитаемого отчета в формате JSON:</strong></p>
+<pre><code class="language-bash">chutils dev diagnostics --json
+</code></pre>
+<hr />
+<h2 id="dev-sync-env">dev sync-env</h2>
+<p>Сравнивает переменные окружения в локальном файле <code>.env</code> и файле-шаблоне <code>.env.example</code>. Находит пропущенные ключи и
+синхронизирует их.</p>
+<h3 id="_46">Синтаксис подкоманды:</h3>
+<pre><code class="language-bash">chutils dev sync-env [-h] [--dry-run] [-y | --yes | --force] [--env-path ENV_PATH] [--example-path EXAMPLE_PATH]
+</code></pre>
+<h3 id="_47">Параметры и флаги:</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Флаг</th>
+<th style="text-align: left;">Описание</th>
+<th style="text-align: left;">Обязательный</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>--dry-run</code></strong></td>
+<td style="text-align: left;">Показать обнаруженные расхождения и список планируемых действий в Rich-таблице без модификации файлов.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>-y, --yes, --force</code></strong></td>
+<td style="text-align: left;">Автоматически применить изменения (добавить недостающие ключи) без интерактивных вопросов.</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--env-path</code></strong></td>
+<td style="text-align: left;">Путь к файлу локального окружения <code>.env</code> (по умолчанию: <code>.env</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>--example-path</code></strong></td>
+<td style="text-align: left;">Путь к файлу-шаблону <code>.env.example</code> (по умолчанию: <code>.env.example</code>).</td>
+<td style="text-align: left;">Нет</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_48">Примеры использования:</h3>
+<p><strong>1. Просмотр расхождений между <code>.env</code> и <code>.env.example</code> в режиме <code>--dry-run</code> (безопасно):</strong></p>
+<pre><code class="language-bash">chutils dev sync-env --dry-run
+</code></pre>
+<p><strong>2. Автоматическая принудительная синхронизация без интерактивных вопросов:</strong></p>
+<pre><code class="language-bash">chutils dev sync-env --yes
+</code></pre>
+<p><strong>3. Синхронизация кастомных env-файлов (например, для dev-окружения):</strong></p>
+<pre><code class="language-bash">chutils dev sync-env --env-path .env.dev --example-path .env.dev.example
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.tabs", "navigation.top"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

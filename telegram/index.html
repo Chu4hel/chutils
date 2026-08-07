@@ -1,0 +1,1792 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Простые утилиты для конфигурации, логирования и секретов в Python.">
+      
+      
+        <meta name="author" content="Chu4hel">
+      
+      
+        <link rel="canonical" href="https://Chu4hel.github.io/chutils/telegram/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Telegram - chutils</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#0-telegram-download_user_file" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href=".." title="chutils" class="md-header__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            chutils
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Telegram
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../ai_lint/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Проверка AI-готовности
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../recipes/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Рецепты
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../plugins/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Система плагинов
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../web/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Умный HTTP-клиент (web)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../scraping/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Имитация поведения (scraping)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../captcha/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Решение капчи (captcha)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Справочник API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../testing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Тестирование
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../migration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Миграция: v2 -> v3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../dependencies/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Опциональные зависимости
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../cli/" class="md-tabs__link">
+          
+  
+  
+  CLI Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_RU/" class="md-tabs__link">
+          
+  
+  
+  Проект
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="chutils" class="md-nav__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    chutils
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai_lint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка AI-готовности
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Система плагинов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Умный HTTP-клиент (web)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scraping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Имитация поведения (scraping)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../captcha/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Решение капчи (captcha)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Тестирование
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Миграция: v2 -> v3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Опциональные зависимости
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/init/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инициализация (init)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Управление секретами (secrets)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Валидация (validate)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/show_paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Пути поиска (show-paths)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Генерация шаблонов (template)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Настройки и отладка (config)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/dev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инструменты разработчика (dev)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/pypi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка зеркал (pypi)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проект
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Проект
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор (RU)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CODE_OF_CONDUCT_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Кодекс поведения
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CONTRIBUTING_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Правила участия
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-telegram-download_user_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0. Безопасное выкачивание файлов из Telegram (download_user_file)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="0. Безопасное выкачивание файлов из Telegram (download_user_file)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#01-send_telegram_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0.1 Безопасная отправка файлов и папок (send_telegram_file)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-is_admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Проверка прав администратора (is_admin)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Проверка прав администратора (is_admin)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fallback-chutils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматический Fallback на конфигурацию chutils
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-admin_only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Декоратор @admin_only
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-aiogram-3x-adminfilter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Интеграция с aiogram 3.x (AdminFilter)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-tg_rate_limit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Защита от спама и флуда (@tg_rate_limit)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-aiogram-3x-middleware-telegramthrottlingmiddleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. aiogram 3.x Middleware (TelegramThrottlingMiddleware)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-accesslistmanager-allowed_only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Белые и черные списки пользователей (AccessListManager и @allowed_only)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-aiogram-3x-secretuserfilter-secretuserfilter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. aiogram 3.x SecretUserFilter (SecretUserFilter)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-trace_telegram_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Трейсинг и логирование апдейтов (trace_telegram_update)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-aiogram-3x-telegramloggingmiddleware-telegramloggingmiddleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. aiogram 3.x TelegramLoggingMiddleware (TelegramLoggingMiddleware)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-escape_markdown-escape_html" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Безопасное экранирование (escape_markdown и escape_html)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-smart_truncate-split_message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Обрезка и разбиение длинных сообщений (smart_truncate и split_message)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-telegram-telegramloghandler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Лог-хэндлер алертов в Telegram (TelegramLogHandler)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-healthcheckalertbridge-send_alert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Мост алертов диагностики (HealthCheckAlertBridge &amp; send_alert)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-inline-build_inline_keyboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Динамические Inline-клавиатуры (build_inline_keyboard)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-paginatorkeyboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15. Пагинатор списков и каталогов (PaginatorKeyboard)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Telegram</h1>
+
+<h2 id="0-telegram-download_user_file">0. Безопасное выкачивание файлов из Telegram (<code>download_user_file</code>)</h2>
+<p>Функция <code>download_user_file</code> защищает ваш бот от атак класса <strong>Path Traversal</strong> при скачивании файлов пользователя. Имя
+файла автоматизировано через <code>chutils.fs.safe_filename</code> и гарантированно не сможет выйти за рамки целевой директории.</p>
+<pre><code class="language-python">from chutils.telegram import download_user_file
+
+# Скачивание через aiogram bot
+saved_path = await download_user_file(
+    bot=bot,
+    file_id=message.document.file_id,
+    target_dir=&quot;./downloads&quot;,
+    max_size_bytes=10 * 1024 * 1024,  # 10 MB лимит
+)
+
+</code></pre>
+<h3 id="01-send_telegram_file">0.1 Безопасная отправка файлов и папок (<code>send_telegram_file</code>)</h3>
+<p>Функция <code>send_telegram_file</code> отправляет локальные файлы или директории в Telegram с автоматической архивацией папок в ZIP, проверкой лимита 50 МБ и обрезкой длинных подписей (<code>caption</code> до 1024 символов).</p>
+<pre><code class="language-python">from chutils.telegram import send_telegram_file
+
+# Отправка одиночного файла
+await send_telegram_file(
+    bot=bot,
+    chat_id=12345678,
+    file_path=&quot;./reports/summary.pdf&quot;,
+    caption=&quot;Ежемесячный отчёт&quot;,
+)
+
+# Отправка всей директории (автоматически запакуется в ZIP)
+await send_telegram_file(
+    bot=&quot;BOT_TOKEN_12345&quot;,
+    chat_id=12345678,
+    file_path=&quot;./logs_folder&quot;,
+    caption=&quot;Архив логов сервера&quot;,
+)
+</code></pre>
+<hr />
+<h2 id="1-is_admin">1. Проверка прав администратора (<code>is_admin</code>)</h2>
+<p>Функция <code>is_admin</code> проверяет, является ли пользователь администратором по Telegram ID или username.</p>
+<pre><code class="language-python">from chutils.telegram import is_admin
+
+# Проверка по явным спискам
+if is_admin(user_id=12345678, admin_ids=[12345678, 87654321]):
+    print(&quot;Доступ разрешен&quot;)
+
+# Проверка по username (регистронезависимо, подгружает значки @)
+if is_admin(username=&quot;alice&quot;, admin_usernames=[&quot;@alice&quot;, &quot;bob&quot;]):
+    print(&quot;Привет, Алиса!&quot;)
+</code></pre>
+<h3 id="fallback-chutils">Автоматический Fallback на конфигурацию <code>chutils</code></h3>
+<p>Если явные списки <code>admin_ids</code> / <code>admin_usernames</code> не переданы, <code>is_admin</code> автоматически считывает разрешенные ID и
+юзернеймы из секции <code>[Telegram]</code> вашего конфигурационного файла (<code>pyproject.toml</code> / <code>ai-lint.toml</code> / <code>.env</code>):</p>
+<pre><code class="language-toml">[Telegram]
+admin_ids = [12345678, 87654321]
+admin_usernames = [&quot;@admin&quot;, &quot;owner&quot;]
+</code></pre>
+<hr />
+<h2 id="2-admin_only">2. Декоратор <code>@admin_only</code></h2>
+<p>Декоратор <code>@admin_only</code> поддерживает как синхронные, так и асинхронные функции-хэндлеры.</p>
+<pre><code class="language-python">from chutils.telegram import admin_only
+from chutils.exceptions import TelegramAccessDeniedError
+
+
+# Асинхронный хэндлер с кастомным сообщением об отказе
+@admin_only(admin_ids=[12345678], refusal_text=&quot;⛔ Функция доступна только администраторам&quot;)
+async def secret_command(event):
+    await event.answer(&quot;Секретные данные&quot;)
+
+
+# Тихий режим (запросы игнорируются без вывода ответа)
+@admin_only(admin_usernames=[&quot;admin&quot;], silent=True)
+async def quiet_handler(event):
+    await event.answer(&quot;Тихая команда&quot;)
+
+
+# Режим генерации исключения для централизованной обработки в Middleware
+@admin_only(raise_on_denied=True)
+def sync_handler(user_id: int):
+    return &quot;OK&quot;
+</code></pre>
+<hr />
+<h2 id="3-aiogram-3x-adminfilter">3. Интеграция с aiogram 3.x (<code>AdminFilter</code>)</h2>
+<p><code>AdminFilter</code> наследуется от <code>aiogram.filters.BaseFilter</code> и позволяет использовать проверку прав непосредственно в
+роутерах и диспетчерах <code>aiogram</code>.</p>
+<pre><code class="language-python">from aiogram import Router, types
+from chutils.telegram import AdminFilter
+
+router = Router()
+
+
+@router.message(AdminFilter(admin_ids=[12345678]))
+async def admin_panel(message: types.Message):
+    await message.answer(&quot;Добро пожаловать в админ-панель!&quot;)
+</code></pre>
+<hr />
+<h2 id="4-tg_rate_limit">4. Защита от спама и флуда (<code>@tg_rate_limit</code>)</h2>
+<p>Декоратор <code>@tg_rate_limit</code> ограничивает частоту вызова команд с динамическим расчетом оставшегося времени ожидания
+<code>{wait_sec}</code>.</p>
+<pre><code class="language-python">from chutils.telegram import tg_rate_limit
+
+
+# Разрешить не более 2 вызовов в 10 секунд
+@tg_rate_limit(rate=2, per=10.0, warning_text=&quot;⏱ Замедлитесь! Подождите {wait_sec} сек.&quot;)
+async def heavy_command(event):
+    await event.answer(&quot;Тяжелый запрос выполнен!&quot;)
+</code></pre>
+<hr />
+<h2 id="5-aiogram-3x-middleware-telegramthrottlingmiddleware">5. aiogram 3.x Middleware (<code>TelegramThrottlingMiddleware</code>)</h2>
+<p>Глобальное предотвращение спама на уровне роутеров/диспетчеров <code>aiogram</code>:</p>
+<pre><code class="language-python">from aiogram import Dispatcher
+from chutils.telegram import TelegramThrottlingMiddleware
+
+dp = Dispatcher()
+# Подключение мидлваря для всех текстовых сообщений
+dp.message.middleware(TelegramThrottlingMiddleware(rate=1, per=2.0))
+</code></pre>
+<hr />
+<h2 id="6-accesslistmanager-allowed_only">6. Белые и черные списки пользователей (<code>AccessListManager</code> и <code>@allowed_only</code>)</h2>
+<p>Менеджер <code>AccessListManager</code> управляет списками разрешенных и заблокированных пользователей с поддержкой автосохранения
+в JSON-файл (<code>atomic_write</code>):</p>
+<pre><code class="language-python">from chutils.telegram import AccessListManager, allowed_only
+
+manager = AccessListManager(storage_path=&quot;allowed_users.json&quot;)
+
+# Динамическое управление пользователями
+manager.allow_user(&quot;trusted_user&quot;)
+manager.block_user(999888)
+
+
+# Использование в декораторе
+@allowed_only(manager=manager, refusal_text=&quot;⛔ У вас нет доступа&quot;)
+async def restricted_feature(event):
+    await event.answer(&quot;Доступ ограниченной группе предоставлен!&quot;)
+</code></pre>
+<hr />
+<h2 id="7-aiogram-3x-secretuserfilter-secretuserfilter">7. aiogram 3.x SecretUserFilter (<code>SecretUserFilter</code>)</h2>
+<pre><code class="language-python">from aiogram import Router
+from chutils.telegram import SecretUserFilter
+
+router = Router()
+# Фильтрация только разрешенных юзеров по ID
+router.message.filter(SecretUserFilter(allowed_ids=[12345678, 87654321]))
+</code></pre>
+<hr />
+<h2 id="8-trace_telegram_update">8. Трейсинг и логирование апдейтов (<code>trace_telegram_update</code>)</h2>
+<p>Утилита <code>trace_telegram_update</code> замеряет точное время выполнения хэндлера (<code>execution_time_ms</code>) и автоматически логирует
+входящие события:</p>
+<pre><code class="language-python">from chutils.telegram import trace_telegram_update
+
+
+@trace_telegram_update()
+async def process_user_request(event):
+    # Код обработки запроса
+    return &quot;SUCCESS&quot;
+</code></pre>
+<hr />
+<h2 id="9-aiogram-3x-telegramloggingmiddleware-telegramloggingmiddleware">9. aiogram 3.x TelegramLoggingMiddleware (<code>TelegramLoggingMiddleware</code>)</h2>
+<p>Прозрачное сквозное логирование всех входящих событий через Middleware:</p>
+<pre><code class="language-python">from aiogram import Dispatcher
+from chutils.telegram import TelegramLoggingMiddleware
+
+dp = Dispatcher()
+dp.update.outer_middleware(TelegramLoggingMiddleware())
+</code></pre>
+<hr />
+<h2 id="10-escape_markdown-escape_html">10. Безопасное экранирование (<code>escape_markdown</code> и <code>escape_html</code>)</h2>
+<p>Защищает от ошибок парсинга <code>BadRequest: Can't parse entities</code>:</p>
+<pre><code class="language-python">from chutils.telegram import escape_markdown, escape_html
+
+safe_mdv2 = escape_markdown(&quot;Цена: 100.00$ [link]&quot;, version=2)
+safe_html = escape_html(&quot;&lt;b&gt;1 &lt; 2 &amp; 3 &gt; 0&lt;/b&gt;&quot;)
+</code></pre>
+<hr />
+<h2 id="11-smart_truncate-split_message">11. Обрезка и разбиение длинных сообщений (<code>smart_truncate</code> и <code>split_message</code>)</h2>
+<pre><code class="language-python">from chutils.telegram import smart_truncate, split_message
+
+# Безопасная обрезка с запечатыванием незавершенного кодового блока ```
+short_text = smart_truncate(long_code_str, max_length=1000)
+
+# Разбиение текста по различным стратегиям: 'line', 'paragraph', 'word', 'char'
+chunks_paragraphs = split_message(article_text, max_length=4096, mode=&quot;paragraph&quot;)
+chunks_lines = split_message(huge_log_report, max_length=4096, mode=&quot;line&quot;)
+
+for chunk in chunks_paragraphs:
+    await message.answer(chunk)
+</code></pre>
+<hr />
+<h2 id="12-telegram-telegramloghandler">12. Лог-хэндлер алертов в Telegram (<code>TelegramLogHandler</code>)</h2>
+<p>Автоматическая отправка ошибок уровня <code>ERROR</code> / <code>CRITICAL</code> в Telegram с троттлингом:</p>
+<pre><code class="language-python">import logging
+from chutils.telegram import TelegramLogHandler
+
+logger = logging.getLogger(&quot;my_app&quot;)
+handler = TelegramLogHandler(bot_token=&quot;TOKEN&quot;, chat_id=12345678, rate_limit_per_min=10)
+logger.addHandler(handler)
+
+logger.error(&quot;Критический сбой базы данных!&quot;)
+</code></pre>
+<hr />
+<h2 id="13-healthcheckalertbridge-send_alert">13. Мост алертов диагностики (<code>HealthCheckAlertBridge</code> &amp; <code>send_alert</code>)</h2>
+<pre><code class="language-python">from chutils.telegram import send_alert, HealthCheckAlertBridge
+
+# Прямая отправка алерта
+send_alert(
+    title=&quot;High CPU Usage&quot;,
+    message=&quot;Загрузка процессора превысила 95%&quot;,
+    level=&quot;WARNING&quot;
+)
+
+# Мост алертов диагностики
+bridge = HealthCheckAlertBridge()
+bridge.on_health_check(&quot;PostgreSQL&quot;, &quot;UNHEALTHY&quot;, {&quot;error&quot;: &quot;Connection timeout&quot;})
+</code></pre>
+<hr />
+<h2 id="14-inline-build_inline_keyboard">14. Динамические Inline-клавиатуры (<code>build_inline_keyboard</code>)</h2>
+<p>Построение сетки кнопок из списков кортежей или словарей:</p>
+<pre><code class="language-python">from chutils.telegram import build_inline_keyboard
+
+buttons = [
+    (&quot;Купить&quot;, &quot;buy_item_1&quot;),
+    (&quot;Подробнее&quot;, &quot;info_item_1&quot;),
+    {&quot;text&quot;: &quot;Сайт&quot;, &quot;url&quot;: &quot;https://example.com&quot;}
+]
+
+# Возвращает структуру {'inline_keyboard': [...]} или aiogram InlineKeyboardMarkup (при as_aiogram=True)
+keyboard = build_inline_keyboard(buttons, buttons_per_row=2, as_aiogram=True)
+</code></pre>
+<hr />
+<h2 id="15-paginatorkeyboard">15. Пагинатор списков и каталогов (<code>PaginatorKeyboard</code>)</h2>
+<p>Автоматическая генерация панели навигации (<code>«</code>, <code>1/5</code>, <code>»</code>) с прикреплением футеров:</p>
+<pre><code class="language-python">from chutils.telegram import PaginatorKeyboard
+
+catalog_items = [f&quot;Товар #{i}&quot; for i in range(1, 50)]
+paginator = PaginatorKeyboard(catalog_items, per_page=5, callback_prefix=&quot;catalog&quot;)
+
+# Построение 2-й страницы с дополнительной кнопкой 'Закрыть'
+kb = paginator.build_keyboard(
+    page=2,
+    footer_buttons=[(&quot;Закрыть&quot;, &quot;close_catalog&quot;)],
+    as_aiogram=True
+)
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

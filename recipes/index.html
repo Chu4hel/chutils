@@ -1,0 +1,5238 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Простые утилиты для конфигурации, логирования и секретов в Python.">
+      
+      
+        <meta name="author" content="Chu4hel">
+      
+      
+        <link rel="canonical" href="https://Chu4hel.github.io/chutils/recipes/">
+      
+      
+        <link rel="prev" href="../ai_lint/">
+      
+      
+        <link rel="next" href="../plugins/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Рецепты - chutils</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href=".." title="chutils" class="md-header__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            chutils
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Рецепты
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../ai_lint/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Проверка AI-готовности
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Рецепты
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../plugins/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Система плагинов
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../web/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Умный HTTP-клиент (web)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../scraping/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Имитация поведения (scraping)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../captcha/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Решение капчи (captcha)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Справочник API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../testing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Тестирование
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../migration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Миграция: v2 -> v3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../dependencies/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Опциональные зависимости
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../cli/" class="md-tabs__link">
+          
+  
+  
+  CLI Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_RU/" class="md-tabs__link">
+          
+  
+  
+  Проект
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="chutils" class="md-nav__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    chutils
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai_lint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка AI-готовности
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Логирование
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Логирование">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронное логирование (Performance)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Расширенное маскирование PII
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Несколько логгеров для разных модулей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка через конфигурационный файл
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pydantic-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Предотвращение конфликтов конфигурации логов (pydantic-settings)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Предотвращение конфликтов конфигурации логов (pydantic-settings)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chutils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Вариант А. Единый источник правды через chutils (Рекомендуется)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pydantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Вариант Б. Явный мост (Экспорт из Pydantic)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastapi-asyncio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Контекстное логирование в FastAPI / asyncio
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-smart-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Кэширование (Smart Caching)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Кэширование (Smart Caching)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Как это работает
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Инвалидация и тегирование кэша
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Инвалидация и тегирование кэша">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Точечная инвалидация по аргументам
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Очистка всего кэша функции
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-cache-tagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Инвалидация по тегам (Cache Tagging)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Работа с конфигурацией
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Работа с конфигурацией">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование относительных путей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальные переопределения
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Специфичные для окружения конфигурации
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Управление секретами
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Управление секретами">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-ci-cd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование в Docker / CI-CD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-hot-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Hot-Reload конфигурации
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Hot-Reload конфигурации">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматическое обновление состояния приложения
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pydantic_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование с Pydantic моделями
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Декораторы
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Декораторы">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Отладка производительности
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-pydantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Валидация через Pydantic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Валидация через Pydantic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Строгая типизация всей конфигурации
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация отдельной секции
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Групповая валидация обязательных ключей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ide-vscode-pycharm-json-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Интеграция с IDE (VSCode, PyCharm) через JSON Schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Утилита командной строки (CLI)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Утилита командной строки (CLI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Управление секретами без кода
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Работа с файловой системой
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Работа с файловой системой">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Безопасная запись данных
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Временные файлы с авто-удалением
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-graceful-shutdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Graceful Shutdown (Управление жизненным циклом)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Graceful Shutdown (Управление жизненным циклом)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Регистрация функций очистки
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка таймаута
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Особенности работы
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-painless-datetime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Работа со временем (Painless Datetime)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Работа со временем (Painless Datetime)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#utc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Получение текущего времени в UTC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Умный парсинг дат
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Человекочитаемая разница во времени
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-cli-cli-booster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Быстрое создание CLI (CLI Booster)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Быстрое создание CLI (CLI Booster)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Простой скрипт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронные команды и списки
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-config-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Отладка и диагностика конфигурации (Config Diagnostics)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Отладка и диагностика конфигурации (Config Diagnostics)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование через CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование через API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-opentelemetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Распределенное трассирование (OpenTelemetry)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Распределенное трассирование (OpenTelemetry)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Установка
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Особенности
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-remote-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15. Дистанционная конфигурация (Remote Config)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="15. Дистанционная конфигурация (Remote Config)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Периодический опрос (Polling)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Динамический интервал
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Авторизация и безопасность
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Отказоустойчивость (Fallback)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-ai-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16. Инструменты разработчика и AI-контекст
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="16. Инструменты разработчика и AI-контекст">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генерация карты API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генерация семантического индекса для AI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#17-in-memory-event-bus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17. Внутренняя шина событий (In-Memory Event Bus)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="17. Внутренняя шина событий (In-Memory Event Bus)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Подписка и публикация
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Стратегии обработки ошибок
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pydantic-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Передача Pydantic-моделей
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#18-lightweight-task-scheduler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18. Планировщик фоновых задач (Lightweight Task Scheduler)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="18. Планировщик фоновых задач (Lightweight Task Scheduler)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Простой пример
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overlapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Контроль перекрытия задач (Overlapping)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#errorstrategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Стратегии обработки ошибок (ErrorStrategy)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dynamic-intervals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Динамические интервалы (Dynamic Intervals)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Динамические интервалы (Dynamic Intervals)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Важные особенности:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#19-rate-limiting-throttling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        19. Ограничение частоты вызовов (Rate Limiting / Throttling)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="19. Ограничение частоты вызовов (Rate Limiting / Throttling)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fail-fast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Базовое использование (Fail Fast)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сглаживание и ожидание (Wait)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key_func" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Раздельные лимиты по ключам (key_func)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Алгоритмы лимитирования (strategy)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#20-dependency-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20. Внедрение зависимостей (Dependency Injection)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="20. Внедрение зависимостей (Dependency Injection)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#provide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Декларативная регистрация (@provide)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inject" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматическое внедрение (@inject)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Рекурсивный резолв зависимостей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Тестирование и переопределение зависимостей
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#21-unified-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        21. Сбор метрик (Unified Metrics)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="21. Сбор метрик (Unified Metrics)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counters-gauges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт (Counters &amp; Gauges)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#circuit-breaker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматические метрики Circuit Breaker (Предохранителя)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматический замер времени (@timer)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastapi-flask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Экспорт метрик в FastAPI / Flask
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-client-graceful-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Безопасность при отсутствии prometheus-client (Graceful Fallback)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-chutilsvalidation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22. Универсальная валидация данных (chutils.validation)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="22. Универсальная валидация данных (chutils.validation)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#json-validate_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация словарей и JSON-строк (validate_data)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validate_call" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматическая валидация аргументов функций (@validate_call)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rich" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Красивый вывод ошибок через Rich
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-diagnostics-api-chutilsdiagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        23. Мониторинг работоспособности и Diagnostics API (chutils.diagnostics)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="23. Мониторинг работоспособности и Diagnostics API (chutils.diagnostics)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diagnosticsmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование DiagnosticsManager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Встроенные проверки
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastapi-flask_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Интеграция с FastAPI и Flask
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Проверка через CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-chutilsenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        24. Декларативный манифест переменных окружения (chutils.env)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="24. Декларативный манифест переменных окружения (chutils.env)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Создание манифеста
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Загрузка и валидация в коде
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация окружения через CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Система плагинов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Умный HTTP-клиент (web)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scraping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Имитация поведения (scraping)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../captcha/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Решение капчи (captcha)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Тестирование
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Миграция: v2 -> v3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Опциональные зависимости
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/init/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инициализация (init)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Управление секретами (secrets)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Валидация (validate)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/show_paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Пути поиска (show-paths)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Генерация шаблонов (template)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Настройки и отладка (config)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/dev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инструменты разработчика (dev)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/pypi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка зеркал (pypi)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проект
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Проект
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор (RU)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CODE_OF_CONDUCT_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Кодекс поведения
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CONTRIBUTING_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Правила участия
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Логирование
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Логирование">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#performance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронное логирование (Performance)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pii" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Расширенное маскирование PII
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Несколько логгеров для разных модулей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка через конфигурационный файл
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pydantic-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Предотвращение конфликтов конфигурации логов (pydantic-settings)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Предотвращение конфликтов конфигурации логов (pydantic-settings)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#chutils" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Вариант А. Единый источник правды через chutils (Рекомендуется)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pydantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Вариант Б. Явный мост (Экспорт из Pydantic)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastapi-asyncio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Контекстное логирование в FastAPI / asyncio
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-smart-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Кэширование (Smart Caching)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Кэширование (Smart Caching)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Как это работает
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Инвалидация и тегирование кэша
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Инвалидация и тегирование кэша">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Точечная инвалидация по аргументам
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Очистка всего кэша функции
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-cache-tagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Инвалидация по тегам (Cache Tagging)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Работа с конфигурацией
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Работа с конфигурацией">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование относительных путей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальные переопределения
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Специфичные для окружения конфигурации
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Управление секретами
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Управление секретами">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-ci-cd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование в Docker / CI-CD
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-hot-reload" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Hot-Reload конфигурации
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Hot-Reload конфигурации">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматическое обновление состояния приложения
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pydantic_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование с Pydantic моделями
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Декораторы
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Декораторы">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Отладка производительности
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-pydantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Валидация через Pydantic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Валидация через Pydantic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Строгая типизация всей конфигурации
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация отдельной секции
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Групповая валидация обязательных ключей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ide-vscode-pycharm-json-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Интеграция с IDE (VSCode, PyCharm) через JSON Schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Утилита командной строки (CLI)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Утилита командной строки (CLI)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Управление секретами без кода
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Работа с файловой системой
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Работа с файловой системой">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Безопасная запись данных
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Временные файлы с авто-удалением
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-graceful-shutdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Graceful Shutdown (Управление жизненным циклом)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Graceful Shutdown (Управление жизненным циклом)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Регистрация функций очистки
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Настройка таймаута
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Особенности работы
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-painless-datetime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Работа со временем (Painless Datetime)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Работа со временем (Painless Datetime)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#utc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Получение текущего времени в UTC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Умный парсинг дат
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Человекочитаемая разница во времени
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-cli-cli-booster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Быстрое создание CLI (CLI Booster)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Быстрое создание CLI (CLI Booster)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Простой скрипт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронные команды и списки
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-config-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Отладка и диагностика конфигурации (Config Diagnostics)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Отладка и диагностика конфигурации (Config Diagnostics)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование через CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование через API
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-opentelemetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Распределенное трассирование (OpenTelemetry)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Распределенное трассирование (OpenTelemetry)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Установка
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Особенности
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-remote-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        15. Дистанционная конфигурация (Remote Config)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="15. Дистанционная конфигурация (Remote Config)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Периодический опрос (Polling)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Динамический интервал
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Авторизация и безопасность
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Отказоустойчивость (Fallback)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-ai-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        16. Инструменты разработчика и AI-контекст
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="16. Инструменты разработчика и AI-контекст">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генерация карты API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генерация семантического индекса для AI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#17-in-memory-event-bus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        17. Внутренняя шина событий (In-Memory Event Bus)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="17. Внутренняя шина событий (In-Memory Event Bus)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Подписка и публикация
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Стратегии обработки ошибок
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pydantic-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Передача Pydantic-моделей
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#18-lightweight-task-scheduler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        18. Планировщик фоновых задач (Lightweight Task Scheduler)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="18. Планировщик фоновых задач (Lightweight Task Scheduler)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Простой пример
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overlapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Контроль перекрытия задач (Overlapping)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#errorstrategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Стратегии обработки ошибок (ErrorStrategy)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dynamic-intervals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Динамические интервалы (Dynamic Intervals)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Динамические интервалы (Dynamic Intervals)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Важные особенности:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#19-rate-limiting-throttling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        19. Ограничение частоты вызовов (Rate Limiting / Throttling)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="19. Ограничение частоты вызовов (Rate Limiting / Throttling)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fail-fast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Базовое использование (Fail Fast)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сглаживание и ожидание (Wait)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key_func" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Раздельные лимиты по ключам (key_func)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Алгоритмы лимитирования (strategy)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#20-dependency-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        20. Внедрение зависимостей (Dependency Injection)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="20. Внедрение зависимостей (Dependency Injection)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#provide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Декларативная регистрация (@provide)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inject" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматическое внедрение (@inject)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Рекурсивный резолв зависимостей
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_35" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Тестирование и переопределение зависимостей
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#21-unified-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        21. Сбор метрик (Unified Metrics)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="21. Сбор метрик (Unified Metrics)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#counters-gauges" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт (Counters &amp; Gauges)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#circuit-breaker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматические метрики Circuit Breaker (Предохранителя)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматический замер времени (@timer)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastapi-flask" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Экспорт метрик в FastAPI / Flask
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-client-graceful-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Безопасность при отсутствии prometheus-client (Graceful Fallback)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-chutilsvalidation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        22. Универсальная валидация данных (chutils.validation)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="22. Универсальная валидация данных (chutils.validation)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#json-validate_data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация словарей и JSON-строк (validate_data)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validate_call" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматическая валидация аргументов функций (@validate_call)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rich" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Красивый вывод ошибок через Rich
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-diagnostics-api-chutilsdiagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        23. Мониторинг работоспособности и Diagnostics API (chutils.diagnostics)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="23. Мониторинг работоспособности и Diagnostics API (chutils.diagnostics)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diagnosticsmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование DiagnosticsManager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_36" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Встроенные проверки
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fastapi-flask_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Интеграция с FastAPI и Flask
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Проверка через CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-chutilsenv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        24. Декларативный манифест переменных окружения (chutils.env)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="24. Декларативный манифест переменных окружения (chutils.env)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_37" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Создание манифеста
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_38" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Загрузка и валидация в коде
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация окружения через CLI
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="_1">Рецепты и полезные советы</h1>
+<p>В этом разделе собраны практические примеры решения типичных задач с помощью <strong>chutils</strong>.</p>
+<h2 id="1">1. Логирование</h2>
+<h3 id="performance">Асинхронное логирование (Performance)</h3>
+<p>Для высоконагруженных приложений запись логов в файл или консоль может стать «бутылочным горлышком». Включите
+асинхронный режим, чтобы вынести запись в фоновый поток.</p>
+<pre><code class="language-python">from chutils import setup_logger
+
+# Включение асинхронного режима
+logger = setup_logger(use_async=True)
+
+# Теперь основной поток не будет ждать завершения записи на диск
+logger.info(&quot;Это сообщение будет обработано в фоновом потоке&quot;)
+</code></pre>
+<h3 id="pii">Расширенное маскирование PII</h3>
+<p><code>chutils</code> может автоматически скрывать чувствительные данные (email, карты) не только по конкретным значениям, но и по
+паттернам.</p>
+<pre><code class="language-python">from chutils import setup_logger
+
+# Настройка автоматического маскирования email и телефонов
+logger = setup_logger(
+    use_predefined_patterns=[&quot;email&quot;, &quot;phone&quot;],
+    custom_patterns=[r&quot;ID-\d{4}&quot;]  # Свои регулярные выражения
+)
+
+# Выведет: &quot;Contact user [MASKED] at [MASKED]&quot;
+logger.info(&quot;Contact user ID-1234 at test@example.com&quot;)
+</code></pre>
+<h3 id="_2">Несколько логгеров для разных модулей</h3>
+<p>Если ваше приложение состоит из нескольких крупных компонентов, удобно разделять их логи.</p>
+<pre><code class="language-python">from chutils import setup_logger
+
+# Логгер для сетевого модуля (только ошибки в файл network.log)
+net_logger = setup_logger(&quot;network&quot;, log_level=&quot;ERROR&quot;, log_file_name=&quot;network.log&quot;)
+
+# Логгер для ядра (детальная отладка в консоль и core.log)
+core_logger = setup_logger(&quot;core&quot;, log_level=&quot;DEVDEBUG&quot;, log_file_name=&quot;core.log&quot;)
+
+net_logger.error(&quot;Ошибка соединения!&quot;)
+core_logger.devdebug(&quot;Состояние объекта: %s&quot;, obj_data)
+</code></pre>
+<h3 id="_3">Настройка через конфигурационный файл</h3>
+<p>Вы можете централизованно управлять всеми логгерами в <code>config.yml</code>:</p>
+<pre><code class="language-yaml"># config.yml
+Logging:
+  log_level: INFO
+  rotation_type: time
+
+AuditLogger:
+  log_level: DEBUG
+  log_file_name: &quot;audit.log&quot;
+</code></pre>
+<p>В коде:</p>
+<pre><code class="language-python"># Использует секцию AuditLogger
+audit_logger = setup_logger(&quot;audit&quot;, config_section_name=&quot;AuditLogger&quot;)
+</code></pre>
+<h3 id="pydantic-settings">Предотвращение конфликтов конфигурации логов (pydantic-settings)</h3>
+<blockquote>
+<p>[!WARNING]
+Если ваше приложение одновременно использует <code>chutils</code> (для логирования и чтения <code>config.yml</code>) и <code>pydantic-settings</code> (
+для загрузки настроек, таких как <code>LOG_LEVEL</code> из <code>.env</code> / системного окружения), у вас работают две независимые системы
+конфигурации.</p>
+<p><code>setup_logger_from_config()</code> читает уровень логирования из секции <code>Logging.log_level</code> в <code>config.yml</code>, тогда как
+<code>pydantic-settings</code> считывает <code>LOG_LEVEL</code> из <code>.env</code>. Они никак не связаны по умолчанию. Изменение уровня логов в <code>.env</code>
+не повлияет на логгер <code>chutils</code>.</p>
+</blockquote>
+<p>Для решения этого конфликта рекомендуется выбрать один из двух подходов:</p>
+<h4 id="chutils">Вариант А. Единый источник правды через chutils (Рекомендуется)</h4>
+<p>Полностью доверьтесь механизму конфигурации <code>chutils</code> (<code>config.yml</code> и <code>config.local.yml</code>). Удалите <code>log_level</code> из вашей
+Pydantic-модели и <code>.env</code> файла.
+Управляйте уровнем логирования в <code>config.yml</code>, а для локальной разработки переопределяйте его в <code>config.local.yml</code> (или
+используйте переменные окружения <code>CH_LOGGING_LOG_LEVEL</code>).</p>
+<p>В этом случае вы просто вызываете логгер без аргументов:</p>
+<pre><code class="language-python">from chutils import setup_logger_from_config
+
+# Настройки уровня берутся из config.yml (секция Logging)
+logger = setup_logger_from_config()
+</code></pre>
+<h4 id="pydantic">Вариант Б. Явный мост (Экспорт из Pydantic)</h4>
+<p>Если вы хотите продолжать хранить <code>LOG_LEVEL</code> в <code>.env</code> и управлять им через Pydantic-модель, явно передавайте это
+значение при настройке логгера:</p>
+<pre><code class="language-python">from pydantic_settings import BaseSettings
+from chutils import setup_logger
+
+
+class AppSettings(BaseSettings):
+    log_level: str = &quot;INFO&quot;
+
+    class Config:
+        env_file = &quot;.env&quot;
+
+
+# Инициализируем настройки приложения (читает .env и системное окружение)
+settings = AppSettings()
+
+# Явно связываем настройки Pydantic и логгер chutils
+logger = setup_logger(log_level=settings.log_level)
+</code></pre>
+<h3 id="fastapi-asyncio">Контекстное логирование в FastAPI / asyncio</h3>
+<p>Если вы хотите автоматически добавлять ID запроса во все логи без передачи его через аргументы функций.</p>
+<pre><code class="language-python">from chutils import setup_logger, bind_context
+import asyncio
+
+logger = setup_logger()
+
+
+async def deep_nested_function():
+    # Нам не нужно передавать request_id сюда, он подхватится сам!
+    logger.info(&quot;Лог из глубины приложения&quot;)
+
+
+async def handle_request(request_id: str):
+    bind_context(request_id=request_id)
+    logger.info(&quot;Начало обработки&quot;)
+    await deep_nested_function()
+
+
+# В асинхронном цикле контексты изолированы
+asyncio.gather(
+    handle_request(&quot;REQ-1&quot;),
+    handle_request(&quot;REQ-2&quot;)
+)
+</code></pre>
+<h2 id="2-smart-caching">2. Кэширование (Smart Caching)</h2>
+<p>Используйте декоратор <code>@cache_with_ttl</code> для автоматического сохранения результатов тяжелых функций. Он поддерживает как
+обычные функции, так и асинхронные корутины.</p>
+<h3 id="_4">Как это работает</h3>
+<p>Кэширование <strong>строго привязано к аргументам функции</strong>. При каждом вызове декоратор генерирует уникальный ключ на основе:</p>
+<ol>
+<li>Полного имени функции (включая модуль).</li>
+<li>Всех позиционных аргументов (<code>args</code>).</li>
+<li>Всех именованных аргументов (<code>kwargs</code>).</li>
+</ol>
+<p>Это значит, что вызовы с разными данными будут кэшироваться независимо:</p>
+<pre><code class="language-python">@cache_with_ttl(ttl=60)
+def calculate_price(item_id: int, discount: float = 0.0):
+    # Вычисления...
+    return final_price
+
+
+# Разные аргументы = разные записи в кэше
+calculate_price(1)  # Вычислится и сохранится для key_1
+calculate_price(2)  # Вычислится и сохранится для key_2
+calculate_price(1, 0.1)  # Вычислится и сохранится для key_3
+calculate_price(1)  # Вернется из кэша (мгновенно)
+</code></pre>
+<h3 id="_5">Примеры использования</h3>
+<pre><code class="language-python">import asyncio
+
+from chutils.cache import cache_with_ttl
+
+
+# Кэшируем результат на 60 секунд
+@cache_with_ttl(ttl=60)
+def get_heavy_data(user_id: int):
+    print(f&quot;Вычисляем данные для {user_id}...&quot;)
+    return {&quot;id&quot;: user_id, &quot;data&quot;: &quot;...&quot;}
+
+
+# Асинхронный кэш с префиксом ключа
+@cache_with_ttl(ttl=300, key_prefix=&quot;api_response&quot;)
+async def fetch_remote_api(url: str):
+    await asyncio.sleep(1)  # Имитация задержки
+    return {&quot;url&quot;: url, &quot;status&quot;: &quot;ok&quot;}
+</code></pre>
+<h3 id="_6">Инвалидация и тегирование кэша</h3>
+<p>Если данные во внешнем источнике изменились, вы можете принудительно сбросить закэшированные значения:</p>
+<h4 id="1_1">1. Точечная инвалидация по аргументам</h4>
+<p>Удаляет запись только для конкретного набора аргументов, с которыми вызывалась функция:</p>
+<pre><code class="language-python">@cache_with_ttl(ttl=300)
+def get_user_profile(user_id: int):
+    return {&quot;id&quot;: user_id, &quot;name&quot;: &quot;Alice&quot;}
+
+
+# Сбросит кэш только для вызова get_user_profile(42)
+get_user_profile.invalidate(42)
+
+# Для асинхронных функций:
+# await get_user_profile.ainvalidate(42)
+</code></pre>
+<h4 id="2">2. Очистка всего кэша функции</h4>
+<p>Сбрасывает все сохраненные записи кэша, сгенерированные данной функцией:</p>
+<pre><code class="language-python">get_user_profile.invalidate_all()
+
+# Для асинхронных функций:
+# await get_user_profile.ainvalidate_all()
+</code></pre>
+<h4 id="3-cache-tagging">3. Инвалидация по тегам (Cache Tagging)</h4>
+<p>Вы можете группировать кэш-записи с помощью тегов. Теги могут быть как статическими (список строк), так и
+динамическими (callable, принимающий те же аргументы, что и функция):</p>
+<pre><code class="language-python"># Использование динамического тега
+@cache_with_ttl(ttl=300, tags=lambda user_id: [f&quot;user_{user_id}&quot;, &quot;all_users&quot;])
+def get_user_permissions(user_id: int):
+    return [&quot;read&quot;, &quot;write&quot;]
+
+
+# Сбросит кэш разрешений только для пользователя 42
+get_user_permissions.invalidate_tag(&quot;user_42&quot;)
+
+# Сбросит кэш разрешений для всех пользователей
+get_user_permissions.invalidate_tag(&quot;all_users&quot;)
+
+# Для асинхронных функций:
+# await get_user_permissions.ainvalidate_tag(&quot;all_users&quot;)
+</code></pre>
+<h2 id="3">3. Работа с конфигурацией</h2>
+<h3 id="_7">Использование относительных путей</h3>
+<p><code>chutils</code> умеет автоматически делать пути абсолютными относительно корня проекта.</p>
+<pre><code class="language-yaml"># config.yml
+Paths:
+  upload_dir: &quot;data/uploads&quot;
+</code></pre>
+<p>В коде:</p>
+<pre><code class="language-python">from chutils import get_config_path
+
+# Если корень /home/user/project, вернет /home/user/project/data/uploads
+upload_path = get_config_path(&quot;Paths&quot;, &quot;upload_dir&quot;)
+</code></pre>
+<h3 id="_8">Локальные переопределения</h3>
+<p>Создайте <code>config.local.yml</code> (и добавьте его в <code>.gitignore</code>), чтобы переопределить настройки для разработки:</p>
+<pre><code class="language-yaml"># config.local.yml
+Database:
+  host: &quot;localhost&quot; # На сервере будет production.db.com
+</code></pre>
+<h3 id="_9">Специфичные для окружения конфигурации</h3>
+<p>Вы можете создавать отдельные файлы настроек для разных сред развертывания (например, <code>staging</code>, <code>production</code>).
+Библиотека автоматически подхватит нужный файл на основе переменной окружения <code>CH_ENV</code>.</p>
+<ol>
+<li>Создайте файл <code>config.production.yml</code>.</li>
+<li>Установите <code>CH_ENV=production</code> в вашей среде.</li>
+</ol>
+<p><strong>Приоритет загрузки (от высшего к низшему):</strong></p>
+<ol>
+<li>Переменные окружения (<code>CH_SECTION_KEY</code>).</li>
+<li>Локальный файл (<code>config.local.yml</code>).</li>
+<li>Файл окружения (<code>config.{CH_ENV}.yml</code>).</li>
+<li>Основной файл (<code>config.yml</code>).</li>
+</ol>
+<h2 id="4">4. Управление секретами</h2>
+<h3 id="docker-ci-cd">Использование в Docker / CI-CD</h3>
+<p>В изолированных средах системное хранилище (Keyring) часто недоступно. Чтобы избежать лишних предупреждений и ошибок:</p>
+<ol>
+<li>Установите переменную окружения <code>CH_DISABLE_KEYRING_WARNING=true</code>.</li>
+<li>Используйте <code>.env</code> файл для хранения секретов.</li>
+</ol>
+<pre><code class="language-dotenv"># .env
+DB_PASSWORD=&quot;my-safe-password&quot;
+</code></pre>
+<p><code>SecretManager</code> автоматически подхватит это значение.</p>
+<h2 id="5-hot-reload">5. Hot-Reload конфигурации</h2>
+<h3 id="_10">Автоматическое обновление состояния приложения</h3>
+<p>Если ваше приложение должно менять свое поведение (например, уровень логирования или лимиты) без перезагрузки.</p>
+<pre><code class="language-python">from chutils import (
+    setup_logger,
+    start_config_watcher,
+    on_config_change,
+    get_config_value
+)
+
+logger = setup_logger()
+
+
+def update_app_state():
+    # Читаем новые значения
+    new_limit = get_config_value(&quot;App&quot;, &quot;rate_limit&quot;, 100)
+    logger.info(f&quot;Лимит обновлен: {new_limit}&quot;)
+
+    # Здесь можно обновить объект приложения или глобальное состояние
+    # app.rate_limiter.set_limit(new_limit)
+
+
+# 1. Подписываемся на изменения
+on_config_change(update_app_state)
+
+# 2. Запускаем мониторинг
+start_config_watcher()
+</code></pre>
+<h3 id="pydantic_1">Использование с Pydantic моделями</h3>
+<p>При каждом изменении файла кэш <code>get_config()</code> сбрасывается, поэтому вы всегда будете получать свежую провалидированную
+модель.</p>
+<pre><code class="language-python">def on_reload():
+    # При вызове заново будет создана новая модель с актуальными данными
+    cfg = get_config(model=AppConfig)
+    print(f&quot;Новое имя приложения: {cfg.name}&quot;)
+</code></pre>
+<h2 id="6">6. Декораторы</h2>
+<h3 id="_11">Отладка производительности</h3>
+<p>Используйте декоратор <code>@log_function_details</code> для быстрого анализа работы функций без изменения их кода.</p>
+<pre><code class="language-python">from chutils import log_function_details, setup_logger
+
+# Важно: установите уровень DEVDEBUG, чтобы увидеть вывод декоратора
+setup_logger(log_level=&quot;DEVDEBUG&quot;)
+
+
+@log_function_details
+def process_heavy_task(data):
+    # Какая-то логика...
+    return True
+
+
+process_heavy_task([1, 2, 3])
+</code></pre>
+<p>В логах появится время выполнения с точностью до миллисекунд и переданные аргументы.</p>
+<h2 id="7-pydantic">7. Валидация через Pydantic</h2>
+<h3 id="_12">Строгая типизация всей конфигурации</h3>
+<p>Вы можете описать ожидаемую структуру вашего <code>config.yml</code> в виде Pydantic моделей для автоматической валидации при
+загрузке.</p>
+<pre><code class="language-python">from pydantic import BaseModel, Field
+from chutils import get_config
+
+
+class DbConfig(BaseModel):
+    host: str
+    port: int
+
+
+class AppConfig(BaseModel):
+    name: str
+    version: str
+    db: DbConfig = Field(alias=&quot;Database&quot;)
+
+
+# Валидация и автодополнение
+cfg = get_config(model=AppConfig)
+print(f&quot;Подключение к {cfg.db.host}:{cfg.db.port}&quot;)
+</code></pre>
+<h3 id="_13">Валидация отдельной секции</h3>
+<p>Если вам нужна только часть настроек:</p>
+<pre><code class="language-python">from chutils import get_config_section
+
+db_cfg = get_config_section(&quot;Database&quot;, model=DbConfig)
+</code></pre>
+<h3 id="_14">Групповая валидация обязательных ключей</h3>
+<p>Если вам нужно проверить наличие нескольких обязательных переменных конфигурации (например, при запуске сервиса) без
+использования тяжелых Pydantic моделей, используйте <code>validate_required_keys</code>. В случае отсутствия одного или нескольких
+ключей функция сгенерирует агрегированную ошибку <code>ConfigValidationGroupError</code>.</p>
+<pre><code class="language-python">from chutils.config import validate_required_keys
+from chutils.exceptions import ConfigValidationGroupError
+
+try:
+    validate_required_keys(
+        section=&quot;Secrets&quot;,
+        keys=[&quot;telegram_bot_token&quot;, &quot;database_url&quot;, &quot;api_key&quot;]
+    )
+except ConfigValidationGroupError as e:
+    # Выведет структурированный список всех недостающих настроек за один проход
+    print(f&quot;Ошибка инициализации сервиса: {e}&quot;)
+</code></pre>
+<h3 id="ide-vscode-pycharm-json-schema">Интеграция с IDE (VSCode, PyCharm) через JSON Schema</h3>
+<p>Чтобы получить автодополнение и проверку типов прямо в YAML файле, вы можете сгенерировать JSON Schema для вашей
+Pydantic модели и подключить её.</p>
+<ol>
+<li>
+<p><strong>Генерация схемы:</strong>
+   <code>bash
+   chutils config generate-schema --model my_app.models:Settings -o .config.schema.json</code></p>
+</li>
+<li>
+<p><strong>Подключение в VSCode:</strong>
+   Добавьте "магический комментарий" в начало вашего <code>config.yml</code>:
+   ```yaml
+   # yaml-language-server: $schema=./.config.schema.json</p>
+</li>
+</ol>
+<p>Database:
+     host: localhost
+     port: 5432
+   ```
+   <em>Требуется расширение "YAML" от Red Hat.</em></p>
+<ol>
+<li><strong>Подключение в PyCharm:</strong><ul>
+<li>Перейдите в <code>Settings</code> -&gt; <code>Languages &amp; Frameworks</code> -&gt; <code>Schemas and DTDs</code> -&gt; <code>JSON Schema Mappings</code>.</li>
+<li>Добавьте новую схему, укажите путь к <code>.config.schema.json</code> и выберите ваш файл <code>config.yml</code>.</li>
+</ul>
+</li>
+</ol>
+<h2 id="8-cli">8. Утилита командной строки (CLI)</h2>
+<h3 id="_15">Управление секретами без кода</h3>
+<p>Используйте команду <code>chutils</code>, чтобы быстро настроить секреты в окружении разработки или на сервере.</p>
+<pre><code class="language-bash"># Сохранить API ключ
+chutils secrets set STRIPE_KEY &quot;sk_test_...&quot;
+
+# Удалить секрет
+chutils secrets delete STRIPE_KEY
+
+# Указать конкретный сервис (по умолчанию - имя текущей папки)
+chutils secrets set AWS_SECRET &quot;...&quot; --service my-production-app
+</code></pre>
+<h2 id="9">9. Работа с файловой системой</h2>
+<h3 id="_16">Безопасная запись данных</h3>
+<p>Используйте <code>atomic_write</code>, чтобы гарантировать, что файл не будет поврежден при сбое питания или внезапной остановке
+процесса. Данные сначала записываются во временный файл, который затем атомарно заменяет целевой.</p>
+<pre><code class="language-python">from chutils.fs import atomic_write
+
+config_data = {&quot;version&quot;: 1, &quot;settings&quot;: {&quot;theme&quot;: &quot;dark&quot;}}
+
+# Автоматически сериализует в JSON, так как расширение .json
+atomic_write(&quot;settings.json&quot;, config_data)
+
+# Автоматически сериализует в YAML, так как расширение .yaml
+atomic_write(&quot;settings.yaml&quot;, config_data)
+
+# Запись обычного текста
+atomic_write(&quot;hello.txt&quot;, &quot;Hello world&quot;)
+</code></pre>
+<h3 id="-">Временные файлы с авто-удалением</h3>
+<p>Контекстный менеджер <code>get_temp_file</code> создает временный файл и гарантированно удаляет его при выходе из блока <code>with</code>.</p>
+<pre><code class="language-python">from chutils.fs import get_temp_file
+
+with get_temp_file(suffix=&quot;.tmp&quot;) as temp_path:
+    # Делаем что-то с временным файлом
+    temp_path.write_text(&quot;temporary content&quot;)
+    print(f&quot;Путь к файлу: {temp_path}&quot;)
+
+# Здесь файл уже удален
+</code></pre>
+<h2 id="10-graceful-shutdown">10. Graceful Shutdown (Управление жизненным циклом)</h2>
+<p>Механизм корректного завершения работы приложения позволяет выполнить необходимые действия по очистке ресурсов (закрытие
+соединений с БД, логов, сокетов) при получении сигналов от ОС (например, <code>Ctrl+C</code>).</p>
+<h3 id="_17">Регистрация функций очистки</h3>
+<p>Используйте декоратор <code>@register_cleanup</code> для регистрации как синхронных, так и асинхронных функций.</p>
+<pre><code class="language-python">import asyncio
+from chutils import register_cleanup, setup_graceful_shutdown
+
+
+@register_cleanup
+async def close_db():
+    print(&quot;Closing database connections...&quot;)
+    await asyncio.sleep(0.1)  # Имитация работы
+    print(&quot;DB connections closed.&quot;)
+
+
+@register_cleanup
+def cleanup_temp_files():
+    print(&quot;Deleting temporary files...&quot;)
+
+
+# В начале работы приложения активируйте перехват сигналов
+setup_graceful_shutdown()
+
+
+# Пример работы асинхронного цикла
+async def main():
+    print(&quot;App is running... Press Ctrl+C to stop.&quot;)
+    while True:
+        await asyncio.sleep(1)
+
+
+if __name__ == &quot;__main__&quot;:
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass
+</code></pre>
+<h3 id="_18">Настройка таймаута</h3>
+<p>По умолчанию на выполнение всех функций очистки дается 10 секунд. Вы можете изменить это значение в <code>config.yml</code>:</p>
+<pre><code class="language-yaml"># config.yml
+shutdown:
+  timeout: 5 # Таймаут в секундах
+</code></pre>
+<h3 id="_19">Особенности работы</h3>
+<ol>
+<li><strong>LIFO (Last-In-First-Out):</strong> Функции выполняются в обратном порядке их регистрации. Это удобно, если ресурсы зависят
+   друг от друга (например, сначала закрыть логгер, потом БД).</li>
+<li><strong>Log and Continue:</strong> Если одна из функций выбросит исключение, <code>chutils</code> залогирует ошибку и продолжит выполнение
+   остальных функций.</li>
+<li><strong>Кроссплатформенность:</strong> На Windows перехватываются <code>SIGINT</code> и <code>SIGTERM</code>, на Linux/Unix дополнительно <code>SIGHUP</code>.</li>
+</ol>
+<h2 id="11-painless-datetime">11. Работа со временем (Painless Datetime)</h2>
+<p>Модуль <code>chutils.time</code> обеспечивает "UTC-first" подход, гарантируя, что вы всегда работаете с осведомленными (timezone
+aware) объектами времени.</p>
+<h3 id="utc">Получение текущего времени в UTC</h3>
+<pre><code class="language-python">from chutils import utc_now
+
+# Возвращает datetime с tzinfo=timezone.utc
+now = utc_now()
+print(f&quot;Текущее время: {now}&quot;)
+</code></pre>
+<h3 id="_20">Умный парсинг дат</h3>
+<p>Функция <code>parse_datetime</code> поддерживает ISO строки, UNIX-таймстампы (в секундах и миллисекундах) и автоматически приводит
+их к UTC.</p>
+<pre><code class="language-python">from chutils import parse_datetime
+
+# ISO 8601
+dt1 = parse_datetime(&quot;2023-10-27T12:00:00&quot;)
+
+# UNIX Timestamp (секунды)
+dt2 = parse_datetime(1698400000)
+
+# UNIX Timestamp (миллисекунды)
+dt3 = parse_datetime(1698400000000)
+
+# Если установлена библиотека chutils[date], поддерживается любой формат:
+# dt4 = parse_datetime(&quot;27 Oct 2023 12:00&quot;)
+</code></pre>
+<h3 id="_21">Человекочитаемая разница во времени</h3>
+<p>Превращает разницу между датами в понятные строки на русском или английском языке.</p>
+<pre><code class="language-python">from datetime import timedelta
+from chutils import utc_now, humanize_timedelta
+
+now = utc_now()
+past_date = now - timedelta(minutes=5)
+future_date = now + timedelta(days=1)
+
+print(humanize_timedelta(past_date))  # &quot;5 минут назад&quot;
+print(humanize_timedelta(future_date))  # &quot;завтра&quot;
+print(humanize_timedelta(past_date, locale='en'))  # &quot;5 minutes ago&quot;
+</code></pre>
+<h2 id="12-cli-cli-booster">12. Быстрое создание CLI (CLI Booster)</h2>
+<p>Декоратор <code>@cli_command</code> позволяет превратить любую функцию в полноценный CLI-инструмент за одну секунду. Он
+автоматически создает парсер аргументов на основе сигнатуры функции.</p>
+<h3 id="_22">Простой скрипт</h3>
+<pre><code class="language-python"># my_tool.py
+from pathlib import Path
+
+from chutils import cli_command
+
+
+@cli_command
+def copy_files(source: Path, dest: Path, verbose: bool = False):
+    &quot;&quot;&quot;
+    Утилита для копирования файлов.
+
+    Args:
+        source (Path): Путь к исходному файлу.
+        dest (Path): Путь назначения.
+        verbose (bool): Выводить подробную информацию.
+    &quot;&quot;&quot;
+    if verbose:
+        print(f&quot;Копируем из {source} в {dest}&quot;)
+    # Логика...
+
+
+if __name__ == &quot;__main__&quot;:
+    copy_files()
+</code></pre>
+<p>Теперь вы можете запустить его из терминала:</p>
+<pre><code class="language-bash">python my_tool.py /tmp/src /tmp/dst --verbose
+python my_tool.py --help
+</code></pre>
+<h3 id="_23">Асинхронные команды и списки</h3>
+<p><code>CLI Booster</code> отлично справляется с асинхронностью и списками аргументов.</p>
+<pre><code class="language-python">import asyncio
+from chutils import cli_command
+
+
+@cli_command
+async def process_batch(ids: list[int], retry: int = 3):
+    &quot;&quot;&quot;Обработка списка ID с повторами.&quot;&quot;&quot;
+    for item_id in ids:
+        print(f&quot;Processing {item_id} (retries: {retry})&quot;)
+        await asyncio.sleep(0.1)
+
+
+if __name__ == &quot;__main__&quot;:
+    process_batch()
+</code></pre>
+<h2 id="13-config-diagnostics">13. Отладка и диагностика конфигурации (Config Diagnostics)</h2>
+<p>Если вы не понимаете, почему значение ключа в приложении отличается от того, что написано в <code>config.yml</code>, используйте
+интерактивный отладчик.</p>
+<h3 id="cli">Использование через CLI</h3>
+<p>Команда <code>config debug</code> покажет всю историю изменений для каждого ключа: откуда он был загружен изначально и чем перекрыт
+позже.</p>
+<pre><code class="language-bash"># Показать дерево конфигурации (по умолчанию)
+chutils config debug
+
+# Вывод в виде таблицы
+chutils config debug --format table
+
+# Показать секретные значения (по умолчанию они маскируются)
+chutils config debug --show-secrets
+
+# Экспорт в JSON для анализа
+chutils config debug --format json &gt; config_trace.json
+</code></pre>
+<h3 id="api">Использование через API</h3>
+<p>Вы можете включить трассировку и получить данные программно:</p>
+<pre><code class="language-python">from chutils.config.manager import _cm
+from chutils.config import get_config
+from chutils.config.diagnostics import format_trace
+
+# 1. Включаем сбор метаданных
+_cm.tracing_enabled = True
+
+# 2. Сбрасываем кэш и загружаем конфиг
+_cm.clear_cache()
+get_config()
+
+# 3. Получаем и форматируем отчет
+trace = _cm.get_trace()
+print(format_trace(trace, format_type='tree'))
+</code></pre>
+<h2 id="14-opentelemetry">14. Распределенное трассирование (OpenTelemetry)</h2>
+<p><code>chutils</code> предоставляет легковесную интеграцию с OpenTelemetry для отслеживания пути выполнения запросов и связи логов с
+трассами.</p>
+<h3 id="_24">Установка</h3>
+<p>Функционал трассировки является опциональным:</p>
+<pre><code class="language-bash">pip install chutils[otel]
+</code></pre>
+<h3 id="_25">Быстрый старт</h3>
+<ol>
+<li>Настройте сбор трасс в начале вашего приложения:</li>
+</ol>
+<pre><code class="language-python">from chutils import setup_tracing
+
+# Настройка вывода трасс в консоль (для локальной разработки)
+setup_tracing(service_name=&quot;my_service&quot;, exporter_type=&quot;console&quot;)
+</code></pre>
+<ol>
+<li>Используйте декоратор <code>@trace</code> для функций, которые хотите отслеживать:</li>
+</ol>
+<pre><code class="language-python">from chutils import trace, setup_logger
+
+logger = setup_logger()
+
+
+@trace(capture_kwargs=True)
+def process_order(order_id: int):
+    logger.info(&quot;Начинаем обработку заказа&quot;)
+    # ... логика ...
+    return True
+</code></pre>
+<h3 id="_26">Особенности</h3>
+<ul>
+<li><strong>Связь с логами:</strong> В текстовых логах автоматически появятся <code>[trace_id=... span_id=...]</code>. В JSON логах эти поля будут
+  вынесены на верхний уровень.</li>
+<li><strong>Async:</strong> Декоратор <code>@trace</code> полностью поддерживает асинхронные функции.</li>
+<li><strong>OTLP:</strong> Для промышленного использования (Jaeger, Grafana Tempo) используйте <code>exporter_type="otlp"</code>.</li>
+<li><strong>Zero Overhead:</strong> Если пакеты <code>opentelemetry</code> не установлены, декоратор <code>@trace</code> не создает никаких накладных
+  расходов.</li>
+</ul>
+<h2 id="15-remote-config">15. Дистанционная конфигурация (Remote Config)</h2>
+<p><code>chutils</code> позволяет загружать настройки из удаленных HTTP/HTTPS источников. Это полезно для централизованного управления
+конфигурациями в микросервисной архитектуре.</p>
+<h3 id="_27">Быстрый старт</h3>
+<p>Просто укажите URL при получении конфигурации:</p>
+<pre><code class="language-python">from chutils import get_config
+
+# Загрузка и объединение с локальными файлами
+config = get_config(remote_url=&quot;https://api.example.com/config.json&quot;)
+</code></pre>
+<h3 id="polling">Периодический опрос (Polling)</h3>
+<p>Вы можете настроить автоматическое фоновое обновление конфигурации:</p>
+<pre><code class="language-python"># Опрос каждые 60 секунд
+config = get_config(
+    remote_url=&quot;https://api.example.com/config.json&quot;,
+    polling_interval=60
+)
+</code></pre>
+<h3 id="_28">Динамический интервал</h3>
+<p>Вы можете управлять интервалом опроса прямо из удаленного конфига. Если в загруженных данных есть секция
+<code>RemoteConfig</code> (или <code>polling</code>) с ключом <code>interval</code>, <code>chutils</code> автоматически переключится на этот интервал.</p>
+<pre><code class="language-json">{
+  &quot;RemoteConfig&quot;: {
+    &quot;interval&quot;: 300
+  },
+  &quot;Database&quot;: {
+    &quot;host&quot;: &quot;remote-db&quot;
+  }
+}
+</code></pre>
+<h3 id="_29">Авторизация и безопасность</h3>
+<p>Для доступа к защищенным эндпоинтам используйте <code>remote_auth</code>:</p>
+<pre><code class="language-python">config = get_config(
+    remote_url=&quot;https://secure-config.local/app.yml&quot;,
+    remote_auth=(&quot;admin&quot;, &quot;secret-token&quot;)
+)
+</code></pre>
+<h3 id="fallback">Отказоустойчивость (Fallback)</h3>
+<p>Если удаленный сервер временно недоступен, <code>chutils</code> автоматически вернет последнюю успешно загруженную версию из
+памяти (кэша), чтобы приложение продолжало работать.</p>
+<h2 id="16-ai-">16. Инструменты разработчика и AI-контекст</h2>
+<p>Если вы хотите быстро создать документацию по API вашего проекта или подготовить глубокий индекс для AI-агента.</p>
+<h3 id="api_1">Генерация карты API</h3>
+<p>Создает Markdown-файл со списком всех публичных функций, классов и их описаний.</p>
+<pre><code class="language-bash">chutils dev generate-context -o api_map.md
+</code></pre>
+<h3 id="ai">Генерация семантического индекса для AI</h3>
+<p>Генерирует JSON-дерево проекта (через AST), которое включает связи между модулями, веса зависимостей и метаданные
+символов. Это "золотой стандарт" контекста для современных LLM.</p>
+<pre><code class="language-bash">chutils dev generate-context --tree -o project_index.json
+</code></pre>
+<h2 id="17-in-memory-event-bus">17. Внутренняя шина событий (In-Memory Event Bus)</h2>
+<p>Шина событий (<code>chutils.events</code>) позволяет развязать компоненты вашего приложения (loose coupling) через паттерн Pub/Sub.</p>
+<h3 id="_30">Подписка и публикация</h3>
+<p>Используйте декоратор <code>@subscribe</code> для регистрации обработчиков и <code>publish</code> (или <code>publish_async</code>) для отправки событий.</p>
+<pre><code class="language-python">from chutils.events import subscribe, publish, publish_async
+import asyncio
+
+
+# 1. Синхронный обработчик
+@subscribe(&quot;user_created&quot;)
+def send_email(user_id: int, username: str):
+    print(f&quot;Отправка письма для {username}...&quot;)
+
+
+# 2. Асинхронный обработчик
+@subscribe(&quot;user_created&quot;)
+async def setup_profile(user_id: int, username: str):
+    await asyncio.sleep(0.1)
+    print(f&quot;Профиль {username} настроен.&quot;)
+
+
+# Публикация событий:
+# Синхронная (запускает асинхронных подписчиков в фоновом режиме):
+publish(&quot;user_created&quot;, user_id=1, username=&quot;Дмитрий&quot;)
+
+# Асинхронная (ждет завершения всех подписчиков):
+# await publish_async(&quot;user_created&quot;, user_id=2, username=&quot;Анна&quot;)
+</code></pre>
+<h3 id="_31">Стратегии обработки ошибок</h3>
+<p>При возникновении исключений в обработчиках вы можете выбрать одну из трех стратегий:</p>
+<ol>
+<li><code>IGNORE</code> (по умолчанию) — логирует ошибки через <code>chutils.logger</code> и продолжает работу остальных обработчиков.</li>
+<li><code>FAIL_FAST</code> — немедленно прерывает выполнение и пробрасывает ошибку.</li>
+<li><code>COLLECT</code> — выполняет все задачи, собирает ошибки и выбрасывает объединенное исключение <code>EventBusExceptionGroup</code>.</li>
+</ol>
+<pre><code class="language-python">from chutils.events import EventBus, ErrorStrategy
+from chutils.exceptions import EventBusExceptionGroup
+
+bus = EventBus(error_strategy=ErrorStrategy.COLLECT)
+
+
+@bus.subscribe(&quot;data_sync&quot;)
+def step_1():
+    raise ValueError(&quot;Сбой шага 1&quot;)
+
+
+@bus.subscribe(&quot;data_sync&quot;)
+def step_2():
+    raise IOError(&quot;Сбой шага 2&quot;)
+
+
+try:
+    bus.publish(&quot;data_sync&quot;)
+except EventBusExceptionGroup as e:
+    # Классический перехват (совместим со всеми версиями Python &gt;= 3.10)
+    print(f&quot;Возникли ошибки: {e.exceptions}&quot;)
+
+# На Python &gt;= 3.11 вы также можете использовать стандартный синтаксис except*:
+# try:
+#     bus.publish(&quot;data_sync&quot;)
+# except* ValueError as eg:
+#     print(f&quot;Обработка ValueError из группы: {eg.exceptions}&quot;)
+# except* IOError as eg:
+#     print(f&quot;Обработка IOError из группы: {eg.exceptions}&quot;)
+</code></pre>
+<h3 id="pydantic-">Передача Pydantic-моделей</h3>
+<p>Если установлен пакет <code>pydantic</code> (<code>chutils[pydantic]</code>), шина поддерживает прямую передачу экземпляров Pydantic-моделей в
+качестве payload:</p>
+<pre><code class="language-python">from pydantic import BaseModel
+from chutils.events import subscribe, publish
+
+
+class UserEvent(BaseModel):
+    user_id: int
+    role: str
+
+
+@subscribe(&quot;user_updated&quot;)
+def handle_user_update(event: UserEvent):
+    print(f&quot;Роль пользователя {event.user_id} обновлена на {event.role}&quot;)
+
+
+# Публикация Pydantic-модели
+publish(&quot;user_updated&quot;, UserEvent(user_id=10, role=&quot;admin&quot;))
+</code></pre>
+<h2 id="18-lightweight-task-scheduler">18. Планировщик фоновых задач (Lightweight Task Scheduler)</h2>
+<p>Модуль <code>chutils.tasks</code> предоставляет планировщик для выполнения периодических фоновых задач. Он поддерживает как
+синхронные, так и асинхронные обработчики, отслеживает перекрытия (overlapping), предоставляет стратегии обработки
+ошибок и автоматически интегрируется с Graceful Shutdown (<code>chutils.lifecycle</code>).</p>
+<h3 id="_32">Простой пример</h3>
+<p>Используйте декоратор <code>@periodic_task</code> для регистрации задач и функцию <code>start_scheduler()</code> для их запуска в Event Loop.</p>
+<pre><code class="language-python">import asyncio
+import time
+from chutils import periodic_task, start_scheduler, setup_graceful_shutdown
+from chutils.tasks import ErrorStrategy
+
+
+# 1. Асинхронная задача запускается сразу при старте планировщика
+@periodic_task(interval_seconds=5, run_immediately=True, name=&quot;async_logger&quot;)
+async def log_status():
+    print(&quot;Статус приложения в норме... (асинхронно)&quot;)
+
+
+# 2. Синхронная задача выполняется в пуле потоков каждые 10 секунд
+@periodic_task(interval_seconds=10, run_immediately=False, name=&quot;sync_cleaner&quot;)
+def cleanup_temp_files():
+    print(&quot;Очистка временных файлов... (синхронно)&quot;)
+    time.sleep(1.0)
+
+
+async def main():
+    # Настраиваем graceful shutdown для остановки планировщика при Ctrl+C
+    setup_graceful_shutdown()
+
+    # Запускаем планировщик фоновых задач
+    start_scheduler()
+
+    # Имитируем работу приложения
+    await asyncio.sleep(30.0)
+
+
+if __name__ == &quot;__main__&quot;:
+    asyncio.run(main())
+</code></pre>
+<h3 id="overlapping">Контроль перекрытия задач (Overlapping)</h3>
+<ul>
+<li><strong>По умолчанию (<code>overlap=False</code>)</strong>: Если предыдущий запуск задачи еще не завершился к моменту наступления следующего
+  интервала, запуск пропускается (откладывается до следующего тика).</li>
+<li><strong>Параллельный запуск (<code>overlap=True</code>)</strong>: Задача запускается строго по интервалу, независимо от того, завершились ли
+  предыдущие запуски.</li>
+</ul>
+<pre><code class="language-python"># Эта задача будет запускаться каждые 2 секунды параллельно, не дожидаясь окончания
+@periodic_task(interval_seconds=2, overlap=True)
+async def parallel_task():
+    await asyncio.sleep(5.0)
+</code></pre>
+<h3 id="errorstrategy">Стратегии обработки ошибок (ErrorStrategy)</h3>
+<p>В случае сбоя задачи вы можете выбрать одну из трех стратегий:</p>
+<ol>
+<li><code>IGNORE</code> (по умолчанию) — залогировать ошибку в <code>chutils.logger</code> и продолжить выполнение по расписанию.</li>
+<li><code>STOP_TASK</code> — исключить сбойную задачу из расписания планировщика.</li>
+<li><code>STOP_SCHEDULER</code> — остановить весь планировщик.</li>
+</ol>
+<pre><code class="language-python">@periodic_task(interval_seconds=5, error_strategy=ErrorStrategy.STOP_TASK)
+def fragile_task():
+    raise RuntimeError(&quot;Неустранимая ошибка в задаче&quot;)
+</code></pre>
+<h3 id="dynamic-intervals">Динамические интервалы (Dynamic Intervals)</h3>
+<p>Интервал запуска <code>interval_seconds</code> может быть динамическим:</p>
+<ol>
+<li><strong>Callable-функция</strong>: Передайте функцию, возвращающую <code>int</code>. Планировщик будет вычислять интервал заново перед каждым
+   циклом ожидания.</li>
+<li><strong>Конфигурация <code>chutils.config</code></strong>: Передайте строку вида <code>section.key</code> (или просто <code>key</code> для поиска в секции
+   <code>default</code>). Значение будет считываться из конфигурации на лету перед каждым циклом ожидания.</li>
+</ol>
+<h4 id="_33">Важные особенности:</h4>
+<ul>
+<li><strong>Горячая перезагрузка (Hot-Reload) "на лету"</strong>: Планировщик повторно вычисляет интервал (через вызов функции или
+  чтение конфигурации) перед каждым циклом ожидания (<code>asyncio.sleep</code>). Это позволяет менять расписание фоновых задач в
+  реальном времени без необходимости перезапуска самого планировщика или всего приложения.</li>
+<li><strong>Отказоустойчивость</strong>: Если при считывании интервала возникла ошибка (например, передан неверный тип данных вроде
+  строки вместо числа, ключ отсутствует в конфигурации, или функция выбросила исключение), планировщик логирует
+  предупреждение (<code>logger.warning</code> / <code>logger.error</code>), автоматически переключается на безопасный резервный интервал в <strong>1
+  секунду</strong> и продолжает работу. Вся служба планировщика при этом не падает.</li>
+</ul>
+<pre><code class="language-python"># А. Динамический интервал через функцию
+current_interval = 5
+
+
+def get_interval():
+    return current_interval  # Может меняться динамически во время работы
+
+
+@periodic_task(interval_seconds=get_interval)
+async def dynamic_job():
+    print(&quot;Выполнение с динамическим интервалом...&quot;)
+
+
+# Б. Динамический интервал из chutils.config (ключ 'scheduler.cleanup_delay')
+@periodic_task(interval_seconds=&quot;scheduler.cleanup_delay&quot;)
+async def config_bound_job():
+    print(&quot;Интервал берется и динамически обновляется из конфигурации...&quot;)
+</code></pre>
+<h2 id="19-rate-limiting-throttling">19. Ограничение частоты вызовов (Rate Limiting / Throttling)</h2>
+<p>Декоратор <code>@rate_limit</code> из модуля <code>chutils.decorators</code> позволяет ограничить частоту выполнения синхронных и асинхронных
+функций, обеспечивая защиту от перегрузки и соблюдение лимитов внешних API.</p>
+<h3 id="fail-fast">Базовое использование (Fail Fast)</h3>
+<p>По умолчанию декоратор работает в режиме <code>wait=False</code> (Fail Fast) с использованием алгоритма Token Bucket. При
+превышении лимита мгновенно выбрасывается исключение <code>RateLimitExceededError</code>.</p>
+<pre><code class="language-python">from chutils import rate_limit, RateLimitExceededError
+
+
+# Разрешено максимум 3 вызова за 5 секунд
+@rate_limit(max_calls=3, period=5.0)
+def call_api():
+    print(&quot;API вызван успешно&quot;)
+
+
+for _ in range(3):
+    call_api()
+
+try:
+    call_api()  # Четвертый вызов упадет
+except RateLimitExceededError:
+    print(&quot;Превышен лимит запросов!&quot;)
+</code></pre>
+<h3 id="wait">Сглаживание и ожидание (Wait)</h3>
+<p>Если передан флаг <code>wait=True</code>, выполнение функции блокируется на время, необходимое для восстановления лимита (для
+синхронных функций используется <code>time.sleep</code>, для асинхронных — <code>asyncio.sleep</code>).</p>
+<pre><code class="language-python">import asyncio
+from chutils import rate_limit
+
+
+# Разрешено максимум 2 вызова в секунду. Лишние вызовы будут ожидать очереди
+@rate_limit(max_calls=2, period=1.0, wait=True)
+async def process_item(item_id: int):
+    print(f&quot;Обработка элемента {item_id}&quot;)
+
+
+async def main():
+    # Запустим 5 задач параллельно. Они будут выполняться пачками по 2 штуки в секунду
+    tasks = [process_item(i) for i in range(5)]
+    await asyncio.gather(*tasks)
+</code></pre>
+<h3 id="key_func">Раздельные лимиты по ключам (key_func)</h3>
+<p>По умолчанию лимит действует глобально на всю функцию. Вы можете настроить индивидуальные лимиты (например, на каждого
+пользователя или IP) с помощью функции <code>key_func</code>.</p>
+<pre><code class="language-python">from chutils import rate_limit
+
+
+# Лимит: 1 вызов в секунду на каждого конкретного пользователя
+@rate_limit(
+    max_calls=1,
+    period=1.0,
+    key_func=lambda user_id, *args, **kwargs: f&quot;user_{user_id}&quot;
+)
+def send_notification(user_id: int, message: str):
+    print(f&quot;Уведомление отправлено пользователю {user_id}&quot;)
+
+
+send_notification(1, &quot;Привет!&quot;)  # OK
+send_notification(2, &quot;Привет!&quot;)  # OK для другого пользователя
+# send_notification(1, &quot;Еще раз привет&quot;)  # Упадет, превышен лимит для user_1
+</code></pre>
+<h3 id="strategy">Алгоритмы лимитирования (strategy)</h3>
+<p>Поддерживаются две стратегии:</p>
+<ol>
+<li><code>token_bucket</code> (по умолчанию) — алгоритм маркерной корзины. Разрешает кратковременные всплески нагрузки (до
+   <code>max_calls</code> одновременно), после чего скорость ограничивается.</li>
+<li><code>leaky_bucket</code> — алгоритм дырявого ведра. Обеспечивает строгое сглаживание нагрузки с равномерной задержкой между
+   вызовами.</li>
+</ol>
+<pre><code class="language-python"># Строгий Leaky Bucket: вызовы будут распределены равномерно
+@rate_limit(max_calls=60, period=60.0, strategy=&quot;leaky_bucket&quot;, wait=True)
+def send_email():
+    pass
+</code></pre>
+<h2 id="20-dependency-injection">20. Внедрение зависимостей (Dependency Injection)</h2>
+<p>Встроенный IoC/DI контейнер (<code>chutils.di</code>) позволяет связать независимые компоненты приложения без ручной передачи
+аргументов через всю цепочку вызовов (prop drilling) и без привязки к жестким глобальным зависимостям.</p>
+<h3 id="provide">Декларативная регистрация (@provide)</h3>
+<p>Используйте декоратор <code>@provide</code> для регистрации классов или функций-фабрик. По умолчанию используется время жизни
+<code>singleton</code> (объект создается один раз при первом обращении и кэшируется).</p>
+<pre><code class="language-python">from chutils import provide
+
+
+# 1. Регистрация класса (singleton)
+@provide()
+class DatabaseConnection:
+    def __init__(self) -&gt; None:
+        self.connected = True
+        print(&quot;Подключение к БД создано&quot;)
+
+
+# 2. Регистрация функции-фабрики (transient - новый объект при каждом запросе)
+@provide(scope=&quot;transient&quot;)
+def get_current_time() -&gt; float:
+    import time
+    return time.time()
+</code></pre>
+<h3 id="inject">Автоматическое внедрение (@inject)</h3>
+<p>Декоратор <code>@inject</code> автоматически подставляет зарегистрированные зависимости из контейнера в аргументы функции. Для
+этого аргумент должен иметь тип зарегистрированной зависимости и значение по умолчанию <code>Inject()</code>.</p>
+<pre><code class="language-python">from chutils import inject, Inject
+
+
+# Автоматически внедряем DatabaseConnection
+@inject()
+def get_user_profile(user_id: int, db: DatabaseConnection = Inject()):
+    if db.connected:
+        return f&quot;User profile {user_id}&quot;
+</code></pre>
+<h3 id="_34">Рекурсивный резолв зависимостей</h3>
+<p>Если одна зависимость требует другую зависимость в своем конструкторе <code>__init__</code>, контейнер автоматически разрешит весь
+граф при обращении (Auto-wiring).</p>
+<pre><code class="language-python">from chutils import provide, inject, Inject
+
+
+@provide()
+class CacheService:
+    pass
+
+
+@provide()
+class UserService:
+    # Контейнер автоматически создаст CacheService и передаст его сюда
+    def __init__(self, cache: CacheService) -&gt; None:
+        self.cache = cache
+
+
+@inject()
+def process(user_service: UserService = Inject()):
+    # user_service уже имеет внутри инициализированный cache
+    pass
+</code></pre>
+<h3 id="_35">Тестирование и переопределение зависимостей</h3>
+<p>Для написания unit-тестов вы можете легко переопределить любую зависимость в контейнере (mocking) напрямую через метод
+<code>register()</code> глобального контейнера:</p>
+<pre><code class="language-python">from chutils import container
+
+
+class MockDatabaseConnection:
+    def __init__(self) -&gt; None:
+        self.connected = True
+        print(&quot;Mock подключение к БД создано!&quot;)
+
+
+def test_my_service():
+    # Переопределяем реальное подключение на мок
+    container.register(DatabaseConnection, provider=MockDatabaseConnection)
+
+    # Теперь все вызовы @inject внедрят MockDatabaseConnection вместо реального
+    profile = get_user_profile(42)
+    assert &quot;User profile 42&quot; in profile
+</code></pre>
+<h2 id="21-unified-metrics">21. Сбор метрик (Unified Metrics)</h2>
+<p>Модуль <code>chutils.metrics</code> предоставляет унифицированный API для сбора многомерных метрик (Counters, Gauges, Histograms) с
+полной поддержкой меток (labels).</p>
+<h3 id="counters-gauges">Быстрый старт (Counters &amp; Gauges)</h3>
+<p>По умолчанию метрики сохраняются во встроенное in-memory хранилище. При установке библиотеки <code>prometheus-client</code> они
+автоматически транслируются в формат Prometheus.</p>
+<pre><code class="language-python">from chutils.metrics import increment, set_gauge, observe
+
+# 1. Увеличить счетчик (Counter)
+increment(&quot;http_requests_total&quot;, 1.0, {&quot;method&quot;: &quot;GET&quot;, &quot;endpoint&quot;: &quot;/users&quot;})
+
+# 2. Установить значение датчика (Gauge)
+set_gauge(&quot;cpu_usage_percent&quot;, 45.2, {&quot;node&quot;: &quot;worker-1&quot;})
+
+# 3. Записать значение в гистограмму (Histogram)
+observe(&quot;request_size_bytes&quot;, 1024.0, {&quot;client&quot;: &quot;ios&quot;})
+</code></pre>
+<h3 id="circuit-breaker">Автоматические метрики Circuit Breaker (Предохранителя)</h3>
+<p>Декоратор <code>@circuit_breaker</code> автоматически экспортирует метрику состояния цепи типа Gauge под именем
+<code>circuit_breaker_state</code> с меткой <code>name</code> (имя декорируемой функции).</p>
+<p>Метрика состояния кодируется числовыми значениями:</p>
+<ul>
+<li><code>0.0</code> — <code>CLOSED</code> (цепь замкнута, всё работает нормально).</li>
+<li><code>1.0</code> — <code>OPEN</code> (цепь разомкнута из-за сбоев, вызовы заблокированы).</li>
+<li><code>2.0</code> — <code>HALF_OPEN</code> (период восстановления, пробные вызовы).</li>
+</ul>
+<p>Это позволяет визуализировать аварийные режимы и работоспособность интеграций в реальном времени (например, на дашборде
+Grafana).</p>
+<h3 id="timer">Автоматический замер времени (@timer)</h3>
+<p>Используйте <code>@timer</code> в качестве декоратора (для синхронных и асинхронных функций) или в качестве контекстного менеджера.</p>
+<pre><code class="language-python">from chutils.metrics import timer
+import asyncio
+
+
+# A. Декоратор (асинхронный)
+@timer(&quot;http_request_duration_seconds&quot;, labels={&quot;handler&quot;: &quot;get_users&quot;})
+async def handle_request():
+    await asyncio.sleep(0.05)
+
+
+# B. Контекстный менеджер
+def run_db_query():
+    with timer(&quot;db_query_duration_seconds&quot;, labels={&quot;query&quot;: &quot;select_orders&quot;}):
+        # тяжелая операция
+        pass
+</code></pre>
+<h3 id="fastapi-flask">Экспорт метрик в FastAPI / Flask</h3>
+<p>Чтобы отдавать собранные метрики в систему мониторинга Prometheus, просто добавьте эндпоинт <code>/metrics</code>, вызывающий
+<code>generate_latest()</code>:</p>
+<pre><code class="language-python">from fastapi import FastAPI, Response
+from chutils.metrics import generate_latest
+
+app = FastAPI()
+
+
+@app.get(&quot;/metrics&quot;)
+def metrics_endpoint():
+    # generate_latest возвращает валидный Prometheus-текст
+    return Response(content=generate_latest(), media_type=&quot;text/plain&quot;)
+</code></pre>
+<h3 id="prometheus-client-graceful-fallback">Безопасность при отсутствии prometheus-client (Graceful Fallback)</h3>
+<p>Модуль <code>chutils.metrics</code> спроектирован так, что отсутствие внешней библиотеки <code>prometheus-client</code> не вызывает ошибок. В
+этом случае все метрики собираются во внутренний in-memory пул и форматируются функцией <code>generate_latest()</code> в полностью
+Prometheus-совместимый текстовый формат.</p>
+<p>Таким образом, ваше приложение гарантированно продолжит работу без внешних зависимостей.</p>
+<h2 id="22-chutilsvalidation">22. Универсальная валидация данных (chutils.validation)</h2>
+<p>Модуль <code>chutils.validation</code> предоставляет удобный инструмент для валидации структурированных данных (JSON, dict) с
+использованием Pydantic, а также автоматическую валидацию аргументов функций с генерацией детальных, структурированных
+ошибок <code>ChutilsValidationError</code>.</p>
+<h3 id="json-validate_data">Валидация словарей и JSON-строк (<code>validate_data</code>)</h3>
+<p>Функция <code>validate_data</code> принимает Pydantic модель и данные (словарь или JSON-строку), возвращая валидный объект модели.
+В случае ошибки выбрасывается <code>ChutilsValidationError</code>.</p>
+<pre><code class="language-python">from pydantic import BaseModel, Field
+from chutils import validate_data
+from chutils.exceptions import ChutilsValidationError
+
+
+class User(BaseModel):
+    name: str
+    age: int = Field(gt=0)
+
+
+try:
+    # 1. Валидация словаря
+    user1 = validate_data(User, {&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: 30})
+
+    # 2. Валидация JSON-строки
+    user2 = validate_data(User, '{&quot;name&quot;: &quot;Bob&quot;, &quot;age&quot;: 25}')
+except ChutilsValidationError as e:
+    print(f&quot;Ошибка: {e}&quot;)
+</code></pre>
+<h3 id="validate_call">Автоматическая валидация аргументов функций (<code>@validate_call</code>)</h3>
+<p>Декоратор <code>@validate_call</code> автоматически проверяет типы и значения аргументов при вызове функции. Поддерживает как
+синхронные, так и асинхронные функции.</p>
+<pre><code class="language-python">from chutils import validate_call
+from chutils.exceptions import ChutilsValidationError
+
+
+@validate_call
+def send_message(user_id: int, message: str) -&gt; None:
+    print(f&quot;Отправка пользователю {user_id}: {message}&quot;)
+
+
+try:
+    # Вызовет ошибку валидации, так как передан неверный тип
+    send_message(&quot;not_an_int&quot;, &quot;Привет&quot;)
+except ChutilsValidationError as e:
+    print(f&quot;Неверные аргументы вызова:\n{e}&quot;)
+</code></pre>
+<h3 id="rich">Красивый вывод ошибок через Rich</h3>
+<p>Исключение <code>ChutilsValidationError</code> бесшовно интегрировано с библиотекой <code>rich</code>. Если <code>rich</code> установлен, при печати
+исключения в консоль автоматически выводится красивая структурированная таблица ошибок с указанием пути к полю, причины
+ошибки и полученного невалидного значения.</p>
+<pre><code class="language-python">from chutils import get_console
+from chutils.exceptions import ChutilsValidationError
+
+console = get_console()
+
+try:
+    validate_data(User, {&quot;name&quot;: &quot;Alice&quot;, &quot;age&quot;: -5})
+except ChutilsValidationError as e:
+    # Автоматически отрендерит красивую таблицу ошибок в консоль
+    console.print(e)
+</code></pre>
+<h2 id="23-diagnostics-api-chutilsdiagnostics">23. Мониторинг работоспособности и Diagnostics API (chutils.diagnostics)</h2>
+<p>Модуль <code>chutils.diagnostics</code> предназначен для проверки жизнедеятельности (health check) компонентов системы с контролем
+таймаутов, встроенными проверками и готовыми хелперами для веб-фреймворков.</p>
+<h3 id="diagnosticsmanager">Использование DiagnosticsManager</h3>
+<p>Вы можете зарегистрировать кастомные функции проверок (как синхронные, так и асинхронные) с указанием таймаутов
+выполнения.</p>
+<pre><code class="language-python">import asyncio
+from chutils.diagnostics import DiagnosticsManager
+
+manager = DiagnosticsManager()
+
+
+# Регистрация асинхронной проверки с таймаутом 2 секунды
+@manager.register(name=&quot;database&quot;, critical=True, timeout=2.0)
+async def check_db() -&gt; str:
+    await asyncio.sleep(0.1)  # Симуляция пинга БД
+    return &quot;Соединение с БД успешно установлено.&quot;
+
+
+# Запуск проверок асинхронно
+async def main():
+    report = await manager.run_checks()
+    print(f&quot;Статус системы: {report.status}&quot;)  # HEALTHY, DEGRADED, UNHEALTHY
+    for name, result in report.results.items():
+        print(f&quot;[{name}] {result.status} - {result.message}&quot;)
+
+
+asyncio.run(main())
+</code></pre>
+<h3 id="_36">Встроенные проверки</h3>
+<p>Модуль предоставляет встроенные проверки из коробки:</p>
+<ul>
+<li><code>check_keyring</code> — проверяет доступность системного хранилища секретов (<code>keyring</code>) путём пробной записи и удаления
+  тестового секрета.</li>
+<li><code>check_config</code> — проверяет валидность и физическое наличие конфигурационного файла на диске.</li>
+</ul>
+<p>Встроенные проверки зарегистрированы в <code>DiagnosticsManager</code> по умолчанию.</p>
+<h3 id="fastapi-flask_1">Интеграция с FastAPI и Flask</h3>
+<p>Модуль содержит готовые хелперы для быстрой отдачи статуса здоровья системы по HTTP-эндпоинтам.</p>
+<p><strong>FastAPI:</strong></p>
+<pre><code class="language-python">from fastapi import FastAPI
+from chutils.diagnostics import DiagnosticsManager
+from chutils.diagnostics.web import get_fastapi_health_handler
+
+app = FastAPI()
+manager = DiagnosticsManager()
+
+# Регистрируем роут /health
+app.add_api_route(&quot;/health&quot;, get_fastapi_health_handler(manager), methods=[&quot;GET&quot;])
+</code></pre>
+<p>При возникновении критических сбоев (<code>UNHEALTHY</code>) обработчик автоматически возвращает HTTP-код
+<code>503 Service Unavailable</code>, а при успешной или частично деградировавшей работе (<code>HEALTHY</code>, <code>DEGRADED</code>) — <code>200 OK</code>.</p>
+<h3 id="cli_1">Проверка через CLI</h3>
+<p>Вы можете запустить диагностику системы напрямую из терминала:</p>
+<pre><code class="language-bash"># Красивая таблица результатов в rich
+chutils dev diagnostics
+
+# Вывод в формате структурированного JSON для систем мониторинга
+chutils dev diagnostics --json
+</code></pre>
+<h2 id="24-chutilsenv">24. Декларативный манифест переменных окружения (chutils.env)</h2>
+<p>Модуль <code>chutils.env</code> предоставляет механизм для декларативного описания, загрузки и валидации переменных окружения с
+использованием Pydantic моделей, поддержкой автоматического маскирования секретов и интеграцией с <code>SecretManager</code>.</p>
+<h3 id="_37">Создание манифеста</h3>
+<p>Опишите ожидаемые переменные окружения как поля класса, наследующегося от <code>BaseEnvManifest</code>:</p>
+<pre><code class="language-python">from pydantic import Field
+
+from chutils.env import BaseEnvManifest
+
+
+class AppEnv(BaseEnvManifest):
+    DATABASE_URL: str = Field(description=&quot;URL подключения к базе данных&quot;)
+    API_KEY: str = Field(json_schema_extra={&quot;secret&quot;: True}, description=&quot;Секретный API-ключ&quot;)
+    PORT: int = Field(default=8080, description=&quot;Порт веб-сервера&quot;)
+</code></pre>
+<h3 id="_38">Загрузка и валидация в коде</h3>
+<p>Метод <code>load()</code> автоматически считывает значения из <code>os.environ</code> и выполняет приведение типов:</p>
+<pre><code class="language-python">import os
+from chutils.exceptions import EnvValidationError
+
+# Устанавливаем переменные для теста
+os.environ[&quot;DATABASE_URL&quot;] = &quot;postgresql://localhost:5432/db&quot;
+os.environ[&quot;API_KEY&quot;] = &quot;super-secret-token&quot;
+
+try:
+    env = AppEnv.load()
+    print(f&quot;Server will run on port {env.PORT}&quot;)
+except EnvValidationError as e:
+    # Все секретные поля (API_KEY) будут автоматически замаскированы (показано как ***)
+    print(f&quot;Ошибка валидации окружения: {e}&quot;)
+</code></pre>
+<p>Если переменная отсутствует в <code>os.environ</code>, но помечена как <code>secret=True</code>, метод <code>load()</code> автоматически попытается
+получить её значение через <code>SecretManager</code> (если он доступен).</p>
+<h3 id="cli_2">Валидация окружения через CLI</h3>
+<p>Вы можете автоматически валидировать переменные окружения при развертывании приложения (например, в Docker/K8s
+init-контейнерах) с помощью CLI-команды <code>chutils env validate</code>.</p>
+<ol>
+<li><strong>Явный запуск с указанием манифеста:</strong></li>
+</ol>
+<pre><code class="language-bash">chutils env validate --manifest myapp.env:AppEnv
+</code></pre>
+<ol>
+<li><strong>Запуск через конфигурацию проекта (<code>pyproject.toml</code>):</strong></li>
+</ol>
+<p>Добавьте секцию в ваш <code>pyproject.toml</code>:</p>
+<pre><code class="language-toml">[tool.chutils.env]
+manifest = &quot;myapp.env:AppEnv&quot;
+</code></pre>
+<p>После этого вы можете запускать проверку без параметров:</p>
+<pre><code class="language-bash">chutils env validate
+</code></pre>
+<p>При успешной валидации команда вернет код <code>0</code>, при сбое — выведет подробную таблицу ошибок и вернет код <code>1</code>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

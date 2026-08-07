@@ -1,0 +1,2048 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Простые утилиты для конфигурации, логирования и секретов в Python.">
+      
+      
+        <meta name="author" content="Chu4hel">
+      
+      
+        <link rel="canonical" href="https://Chu4hel.github.io/chutils/migration/">
+      
+      
+        <link rel="prev" href="../testing/">
+      
+      
+        <link rel="next" href="../dependencies/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Миграция: v2 -> v3 - chutils</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#v2-v3" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href=".." title="chutils" class="md-header__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            chutils
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Миграция: v2 -> v3
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../ai_lint/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Проверка AI-готовности
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../recipes/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Рецепты
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../plugins/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Система плагинов
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../web/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Умный HTTP-клиент (web)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../scraping/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Имитация поведения (scraping)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../captcha/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Решение капчи (captcha)
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Справочник API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../testing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Тестирование
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Миграция: v2 -> v3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../dependencies/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Опциональные зависимости
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../cli/" class="md-tabs__link">
+          
+  
+  
+  CLI Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_RU/" class="md-tabs__link">
+          
+  
+  
+  Проект
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="chutils" class="md-nav__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    chutils
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai_lint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка AI-готовности
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Система плагинов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Умный HTTP-клиент (web)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scraping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Имитация поведения (scraping)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../captcha/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Решение капчи (captcha)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Тестирование
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Миграция: v2 -> v3
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Миграция: v2 -> v3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Повышение требований к версии Python и типизации
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Повышение требований к версии Python и типизации">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typing_extensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Отказ от typing_extensions:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Унификация ошибок отсутствия зависимостей
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Унификация ошибок отсутствия зависимостей">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Затронутые модули и функции:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Что нужно изменить:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-deprecated-chutilsconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Удаление устаревших (Deprecated) переменных и функций в chutils.config
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Удаление устаревших (Deprecated) переменных и функций в chutils.config">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Удаленные приватные переменные модуля config:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Удаленные функции:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-_cm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Ограничение прямого доступа к внутреннему менеджеру _cm
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-keyring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Перевод системного хранилища keyring в разряд опциональных зависимостей
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Перевод системного хранилища keyring в разряд опциональных зависимостей">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Что изменилось:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-config-api-secretmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Строгий режим и унификация в Config API и SecretManager
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Строгий режим и унификация в Config API и SecretManager">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Что изменилось:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-exception-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Переход на стандартные Exception Groups
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Переход на стандартные Exception Groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Что изменилось:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Опциональные зависимости
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/init/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инициализация (init)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Управление секретами (secrets)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Валидация (validate)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/show_paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Пути поиска (show-paths)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Генерация шаблонов (template)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Настройки и отладка (config)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/dev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инструменты разработчика (dev)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/pypi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка зеркал (pypi)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проект
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Проект
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор (RU)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CODE_OF_CONDUCT_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Кодекс поведения
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CONTRIBUTING_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Правила участия
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Повышение требований к версии Python и типизации
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Повышение требований к версии Python и типизации">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typing_extensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Отказ от typing_extensions:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Унификация ошибок отсутствия зависимостей
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Унификация ошибок отсутствия зависимостей">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Затронутые модули и функции:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Что нужно изменить:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-deprecated-chutilsconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Удаление устаревших (Deprecated) переменных и функций в chutils.config
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Удаление устаревших (Deprecated) переменных и функций в chutils.config">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Удаленные приватные переменные модуля config:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Удаленные функции:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-_cm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Ограничение прямого доступа к внутреннему менеджеру _cm
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-keyring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Перевод системного хранилища keyring в разряд опциональных зависимостей
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Перевод системного хранилища keyring в разряд опциональных зависимостей">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Что изменилось:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-config-api-secretmanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Строгий режим и унификация в Config API и SecretManager
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Строгий режим и унификация в Config API и SecretManager">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Что изменилось:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-exception-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Переход на стандартные Exception Groups
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Переход на стандартные Exception Groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Что изменилось:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Примеры использования:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="v2-v3">Руководство по миграции: с версии v2 на v3</h1>
+<p>Это руководство содержит описание ключевых ломающих изменений (breaking changes) при переходе с версии <code>2.x</code> на версию
+<code>3.0.0</code> библиотеки <code>chutils</code>, а также инструкции по обновлению вашего кода.</p>
+<hr />
+<h2 id="1-python">1. Повышение требований к версии Python и типизации</h2>
+<p>Минимальная поддерживаемая версия Python повышена:</p>
+<ul>
+<li><strong>Было:</strong> <code>Python &gt;= 3.9</code></li>
+<li><strong>Стало:</strong> <code>Python &gt;= 3.10</code></li>
+</ul>
+<p>Если ваш проект использует Python 3.9, вам необходимо обновить среду выполнения до версии <strong>3.10</strong> или выше. В кодовой
+базе библиотеки теперь активно используются новые синтаксические возможности Python 3.10 (например, объединенные типы
+<code>int | str</code> вместо <code>Union[int, str]</code>).</p>
+<h3 id="typing_extensions">Отказ от <code>typing_extensions</code>:</h3>
+<ul>
+<li>Пакет <code>typing-extensions</code> полностью удален из зависимостей <code>chutils</code>.</li>
+<li>Все импорты из <code>typing_extensions</code> (например, <code>TypeAlias</code>, <code>ParamSpec</code> и др.) в клиентском коде следует заменить на
+  стандартные импорты из модуля <code>typing</code> стандартной библиотеки Python.</li>
+</ul>
+<hr />
+<h2 id="2">2. Унификация ошибок отсутствия зависимостей</h2>
+<p>При обращении к модулям, требующим неустановленные опциональные зависимости (extra-пакеты), тип выбрасываемого
+исключения был изменен для повышения единообразия обработки ошибок.</p>
+<ul>
+<li><strong>Было:</strong> Выбрасывалось стандартное исключение <code>RuntimeError</code> с сообщением о необходимости установки пакета.</li>
+<li><strong>Стало:</strong> Выбрасывается специализированное исключение <code>OptionalDependencyError</code> (наследуемое от <code>ChutilsException</code>).</li>
+</ul>
+<h3 id="_1">Затронутые модули и функции:</h3>
+<ul>
+<li><strong><code>chutils.crypto</code></strong>: функции <code>encrypt_portable</code>, <code>decrypt_portable</code>, <code>encrypt_file</code>, <code>decrypt_file</code> (требуют
+  <code>chutils[crypto]</code>).</li>
+<li><strong><code>chutils.text</code></strong>: функция <code>is_significant_difference</code> (требует <code>chutils[text]</code>).</li>
+<li><strong><code>chutils.config</code></strong>: функция <code>start_config_watcher</code> (требует <code>chutils[watch]</code>) и использование Pydantic-моделей в
+  геттерах (требует <code>chutils[pydantic]</code>).</li>
+<li><strong><code>chutils.secret_manager</code></strong>: провайдер <code>KeyringProvider</code> (требует <code>chutils[secrets]</code>).</li>
+</ul>
+<h3 id="_2">Что нужно изменить:</h3>
+<p>Если в вашем коде перехватывалось исключение <code>RuntimeError</code> для обработки отсутствующих библиотек, обновите его на
+перехват <code>OptionalDependencyError</code> или базового <code>ChutilsException</code>:</p>
+<pre><code class="language-python"># Было (v2):
+try:
+    from chutils.crypto import encrypt_portable
+
+    encrypt_portable(&quot;data&quot;, &quot;seed&quot;)
+except RuntimeError as e:
+    print(&quot;Установите chutils[crypto]!&quot;)
+
+# Стало (v3):
+from chutils.exceptions import OptionalDependencyError
+
+try:
+    from chutils.crypto import encrypt_portable
+
+    encrypt_portable(&quot;data&quot;, &quot;seed&quot;)
+except OptionalDependencyError as e:
+    print(f&quot;Ошибка: {e.message}&quot;)
+    print(f&quot;Совет: {e.hint}&quot;)
+</code></pre>
+<hr />
+<h2 id="3-deprecated-chutilsconfig">3. Удаление устаревших (Deprecated) переменных и функций в <code>chutils.config</code></h2>
+<p>В рамках очистки публичного API перед релизом <code>3.0.0</code> были полностью удалены приватные глобальные переменные и функции
+обратной совместимости, которые временно поддерживались с выдачей предупреждений <code>DeprecationWarning</code>.</p>
+<h3 id="config">Удаленные приватные переменные модуля <code>config</code>:</h3>
+<ul>
+<li><code>config._BASE_DIR</code> — используйте публичную функцию <code>config.get_base_dir()</code>.</li>
+<li><code>config._CONFIG_FILE_PATH</code> — используйте публичную функцию <code>config.get_config_file_path()</code>.</li>
+<li><code>config._paths_initialized</code> — используйте публичную функцию <code>config.are_paths_initialized()</code>.</li>
+<li><code>config._config_object</code> — используйте публичную функцию <code>config.get_config()</code>.</li>
+<li><code>config._config_loaded</code> — используйте публичную функцию <code>config.is_config_loaded()</code>.</li>
+<li><code>config._get_config_paths</code> — используйте публичные функции <code>config.get_config_paths()</code> или
+  <code>config.get_all_config_paths()</code>.</li>
+</ul>
+<h3 id="_3">Удаленные функции:</h3>
+<ul>
+<li><code>config._initialize_paths()</code> — пути теперь инициализируются автоматически при первом вызове любого публичного геттера.
+  Если в тестах или инфраструктурном коде вам необходимо вручную инициализировать пути, импортируйте внутренний менеджер
+  конфигурации <code>_cm</code> и функцию поиска корня:
+  <code>python
+  from chutils.config import _cm, find_project_root
+  _cm.initialize_paths(find_project_root)</code></li>
+<li><code>config._sync_legacy_state()</code> — синхронизация устаревшего глобального состояния больше не поддерживается.</li>
+</ul>
+<p>При обращении к любым из этих удаленных атрибутов теперь будет выбрасываться стандартное исключение <code>AttributeError</code>.</p>
+<hr />
+<h2 id="4-_cm">4. Ограничение прямого доступа к внутреннему менеджеру <code>_cm</code></h2>
+<p>Прямой импорт или доступ к менеджеру конфигурации <code>_cm</code> через <code>chutils.config._cm</code> теперь считается деталью внутренней
+реализации.</p>
+<ul>
+<li>По возможности используйте только стабильный публичный API модуля <code>chutils.config</code> (<code>get_config_value</code>, <code>get_base_dir</code>
+  и т.д.).</li>
+<li>Доступ к <code>_cm</code> сохранен для написания тестов и расширения возможностей библиотеки, однако при прямом использовании в
+  бизнес-логике приложений рекомендуется мигрировать на официальный публичный интерфейс.</li>
+</ul>
+<hr />
+<h2 id="5-keyring">5. Перевод системного хранилища keyring в разряд опциональных зависимостей</h2>
+<p>Для предотвращения проблем сборки в изолированных окружениях (например, в Docker-контейнерах на Linux), библиотека
+<code>keyring</code> была переведена в категорию дополнительных зависимостей.</p>
+<h3 id="_4">Что изменилось:</h3>
+<ul>
+<li>Установка по умолчанию больше не включает пакет <code>keyring</code>. Для использования системного хранилища необходимо явно
+  установить:
+  <code>pip install chutils[secrets]</code> (или <code>pip install chutils[full]</code>).</li>
+<li><strong>Изящная деградация <code>SecretManager</code>:</strong> Если пакет <code>keyring</code> отсутствует, класс <code>SecretManager</code> не падает с ошибкой, а
+  автоматически отключает <code>KeyringProvider</code> и использует только Env и DotEnv провайдеры (переменные окружения и <code>.env</code>
+  файлы).</li>
+<li><strong>Логирование и предупреждения:</strong> При отсутствии <code>keyring</code> в логах будет выведено однократное предупреждение уровня
+  <code>warning</code>. Его можно заглушить, если задать переменную окружения <code>CH_DISABLE_KEYRING_WARNING=true</code> или настроить
+  соответствующее значение в конфигурации.</li>
+<li><strong>Изменение в CLI:</strong> При отсутствии установленной зависимости <code>secrets</code> CLI-команды для управления секретами (
+  <code>chutils secrets ...</code>) автоматически скрываются из справки <code>--help</code>. При попытке вызвать скрытую команду напрямую, CLI
+  выбросит <code>CommandError</code> с сообщением о необходимости установки <code>chutils[keyring]</code>.</li>
+</ul>
+<hr />
+<h2 id="6-config-api-secretmanager">6. Строгий режим и унификация в Config API и SecretManager</h2>
+<p>В версии <code>3.0.0</code> оба API доступа к настройкам и секретам были унифицированы для поддержки строгого режима работы (
+паттерн Fail-Fast).</p>
+<h3 id="_5">Что изменилось:</h3>
+<ol>
+<li>
+<p><strong>Строгий режим в Config API</strong>:</p>
+<ul>
+<li>Во все геттеры конфигурации (<code>get_config_value</code>, <code>get_config_int</code>, <code>get_config_float</code>, <code>get_config_boolean</code>,
+  <code>get_config_list</code>, <code>get_config_path</code>, <code>get_config_section</code>) добавлен необязательный параметр
+  <code>required: bool = False</code>.</li>
+<li>Если задан <code>required=True</code> и запрашиваемый ключ или секция отсутствуют в конфигурации (или равны <code>None</code>/пустой
+  строке <code>""</code>), выбрасывается исключение <code>ConfigKeyNotFoundError</code> (наследуется от <code>ConfigError</code>).</li>
+</ul>
+</li>
+<li>
+<p><strong>Строгий режим и унификация в SecretManager</strong>:</p>
+<ul>
+<li>В методы <code>get_secret</code> и <code>aget_secret</code> класса <code>SecretManager</code> добавлены параметры <code>fallback: Optional[str] = None</code>
+  и <code>required: bool = False</code>.</li>
+<li>Если задан <code>required=True</code> и секрет отсутствует в провайдерах, выбрасывается исключение <code>SecretNotFoundError</code> (
+  наследуется от <code>SecretError</code>).</li>
+<li>Добавлена новая CLI-подкоманда <code>chutils secrets get &lt;key&gt; [--service &lt;name&gt;] [--fallback &lt;val&gt;] [--required]</code>.</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>[!NOTE]
+Все изменения полностью обратно совместимы. По умолчанию <code>required=False</code>, и при отсутствии данных геттеры тихо
+возвращают значение <code>fallback</code>.</p>
+</blockquote>
+<h3 id="_6">Примеры использования:</h3>
+<p><strong>Работа с Config API:</strong></p>
+<pre><code class="language-python">from chutils import get_config_value, get_config_int
+from chutils.exceptions import ConfigKeyNotFoundError
+
+# 1. Обычный режим (v2-совместимый)
+port = get_config_int(&quot;Database&quot;, &quot;missing_port&quot;, fallback=5432)  # 5432
+
+# 2. Строгий режим (fail-fast)
+try:
+    host = get_config_value(&quot;Database&quot;, &quot;host&quot;, required=True)
+except ConfigKeyNotFoundError:
+    print(&quot;Ошибка: хост базы данных не задан в конфигурации!&quot;)
+</code></pre>
+<p><strong>Работа с SecretManager:</strong></p>
+<pre><code class="language-python">from chutils.secret_manager import SecretManager
+from chutils.exceptions import SecretNotFoundError
+
+sm = SecretManager(&quot;my_app&quot;)
+
+# 1. Использование fallback (как в Config API)
+key = sm.get_secret(&quot;STRIPE_KEY&quot;, fallback=&quot;default_val&quot;)  # &quot;default_val&quot;
+
+# 2. Строгий режим
+try:
+    key = sm.get_secret(&quot;STRIPE_KEY&quot;, required=True)
+except SecretNotFoundError:
+    print(&quot;Ошибка: обязательный ключ STRIPE_KEY не найден в хранилище!&quot;)
+</code></pre>
+<hr />
+<h2 id="7-exception-groups">7. Переход на стандартные Exception Groups</h2>
+<p>В версии <code>3.0.0</code> класс группы исключений шины событий <code>EventBusExceptionGroup</code> был переведен на наследование от
+стандартного класса <code>ExceptionGroup</code> (появившегося в Python 3.11).</p>
+<h3 id="_7">Что изменилось:</h3>
+<ul>
+<li><strong>Базовый класс</strong>: <code>EventBusExceptionGroup</code> теперь наследуется от <code>ExceptionGroup</code> (встроенного в Python 3.11+ или
+  бэкпорта из пакета <code>exceptiongroup</code> для Python 3.10) и <code>EventBusError</code>.</li>
+<li><strong>Перехват через <code>except*</code></strong>: На Python &gt;= 3.11 появилась возможность перехватывать отдельные типы ошибок из группы с
+  помощью встроенного синтаксиса <code>except*</code>.</li>
+<li><strong>Полная обратная совместимость</strong>: Традиционный перехват <code>except EventBusExceptionGroup as e:</code> и доступ к списку
+  ошибок через <code>.exceptions</code> (в виде кортежа/списка) полностью сохранены для всех версий Python (&gt;= 3.10).</li>
+</ul>
+<h3 id="_8">Примеры использования:</h3>
+<pre><code class="language-python">from chutils.events import EventBus, ErrorStrategy
+from chutils.exceptions import EventBusExceptionGroup
+
+bus = EventBus(error_strategy=ErrorStrategy.COLLECT)
+
+# При наличии ошибок публикации выбрасывается EventBusExceptionGroup
+
+# Вариант 1. Традиционный перехват (совместим с Python 3.10)
+try:
+    bus.publish(&quot;my_event&quot;)
+except EventBusExceptionGroup as e:
+    for err in e.exceptions:
+        print(f&quot;Ошибка: {err}&quot;)
+
+# Вариант 2. Использование except* (только на Python &gt;= 3.11)
+# try:
+#     bus.publish(&quot;my_event&quot;)
+# except* ValueError as eg:
+#     print(f&quot;Обработаны ошибки ValueError: {eg.exceptions}&quot;)
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
