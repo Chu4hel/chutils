@@ -31,15 +31,21 @@ def find_project_root(start_path: Path, markers: list[str]) -> Path | None:
         Объект Path, представляющий корневую директорию проекта, или None, если корень не найден.
     """
     current_path = start_path.resolve()
-    # Идем вверх до тех пор, пока не достигнем корня файловой системы
-    while current_path != current_path.parent:
+    while True:
         for marker in markers:
-            if (current_path / marker).exists():
-                logger.debug(
-                    "Найден маркер '%s' в директории: %s", marker, current_path
-                )
-                return current_path
+            try:
+                if (current_path / marker).exists():
+                    logger.debug(
+                        "Найден маркер '%s' в директории: %s", marker, current_path
+                    )
+                    return current_path
+            except (OSError, PermissionError):
+                continue
+
+        if current_path == current_path.parent:
+            break
         current_path = current_path.parent
+
     logger.debug("Корень проекта не найден.")
     return None
 

@@ -49,12 +49,19 @@ class _ConfigManager:
     _webhook_server: Any | None
     _custom_providers_registry: Any | None
 
-    # Список маркеров, по которым ищется корень проекта и конфигурационные файлы.
+    # Список основных маркеров, по которым ищется корень проекта.
     # Порядок в списке определяет приоритет при поиске.
     CONFIG_MARKERS: list[str] = [
         'config.yml', 'config.yaml', 'config.ini', 'config.json',
         'config.local.yml', 'config.local.yaml', 'config.local.ini', 'config.local.json',
-        'pyproject.toml'
+        'pyproject.toml', '.git'
+    ]
+
+    # Вторичные (fallback) маркеры корня проекта (AI-манифесты и конфигурации редакторов).
+    # Используются только если ни один первичный маркер не был найден при обходе вверх.
+    FALLBACK_MARKERS: list[str] = [
+        'antigravity.md', 'gemini.md', 'GEMINI.md', 'agents.md', 'AGENTS.md',
+        '.cursorrules', '.windsurfrules'
     ]
 
     def __new__(cls) -> _ConfigManager:
@@ -507,6 +514,8 @@ class _ConfigManager:
                 current_dir = Path('.')
 
             project_root = find_root_func(current_dir, self.CONFIG_MARKERS)
+            if not project_root:
+                project_root = find_root_func(current_dir, self.FALLBACK_MARKERS)
 
             if project_root:
                 self.base_dir = str(project_root)
