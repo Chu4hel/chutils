@@ -118,3 +118,68 @@ def test_setup_logger_from_config(project_with_marker, reset_chutils_state):
     logger = setup_logger_from_config("logger_from_config", force_reconfigure=True)
     assert logger.name == "logger_from_config"
     assert logger.level == logging.WARNING
+
+
+def test_disable_file_logging_via_config(project_with_marker, reset_chutils_state):
+    """Тест: отключение файлового логирования через file_logging: false в config.yml."""
+    fs, project_root = project_with_marker
+    config_content = """
+Logging:
+  file_logging: false
+"""
+    fs.create_file(project_root / "config.yml", contents=config_content)
+
+    with patch('chutils.logger.internal.builder.SafeTimedRotatingFileHandler') as mock_safe_handler:
+        logger = setup_logger("test_disable_file_config", force_reconfigure=True)
+        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+        mock_safe_handler.assert_not_called()
+
+
+def test_disable_file_logging_via_config_no_file(project_with_marker, reset_chutils_state):
+    """Тест: отключение файлового логирования через no_file: true в config.yml."""
+    fs, project_root = project_with_marker
+    config_content = """
+Logging:
+  no_file: true
+"""
+    fs.create_file(project_root / "config.yml", contents=config_content)
+
+    with patch('chutils.logger.internal.builder.SafeTimedRotatingFileHandler') as mock_safe_handler:
+        logger = setup_logger("test_disable_no_file_config", force_reconfigure=True)
+        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+        mock_safe_handler.assert_not_called()
+
+
+def test_disable_file_logging_via_argument(project_with_marker, reset_chutils_state):
+    """Тест: отключение файлового логирования через аргумент file_logging=False."""
+    fs, project_root = project_with_marker
+
+    with patch('chutils.logger.internal.builder.SafeTimedRotatingFileHandler') as mock_safe_handler:
+        logger = setup_logger("test_disable_file_arg", file_logging=False, force_reconfigure=True)
+        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+        mock_safe_handler.assert_not_called()
+
+
+def test_disable_file_logging_via_no_file_argument(project_with_marker, reset_chutils_state):
+    """Тест: отключение файлового логирования через аргумент no_file=True."""
+    fs, project_root = project_with_marker
+
+    with patch('chutils.logger.internal.builder.SafeTimedRotatingFileHandler') as mock_safe_handler:
+        logger = setup_logger("test_disable_no_file_arg", no_file=True, force_reconfigure=True)
+        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+        mock_safe_handler.assert_not_called()
+
+
+def test_null_log_file_name_disables_file_handler(project_with_marker, reset_chutils_state):
+    """Тест: указание log_file_name: null отключает файловый обработчик."""
+    fs, project_root = project_with_marker
+    config_content = """
+Logging:
+  log_file_name: null
+"""
+    fs.create_file(project_root / "config.yml", contents=config_content)
+
+    with patch('chutils.logger.internal.builder.SafeTimedRotatingFileHandler') as mock_safe_handler:
+        logger = setup_logger("test_null_filename", force_reconfigure=True)
+        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+        mock_safe_handler.assert_not_called()

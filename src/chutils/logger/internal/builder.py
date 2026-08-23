@@ -75,6 +75,8 @@ class LoggerBuilder:
             use_async: bool | None = None,
             json_format: bool | None = None,
             log_file_name: str | None = None,
+            file_logging: bool | None = None,
+            no_file: bool | None = None,
             rotation_type: str | None = None,
             max_bytes: int | None = None,
             compress: bool | None = None,
@@ -98,6 +100,8 @@ class LoggerBuilder:
             use_async: Использовать ли асинхронную запись.
             json_format: Использовать ли JSON формат.
             log_file_name: Имя файла лога.
+            file_logging: Включить или отключить запись в файл.
+            no_file: Отключить запись в файл (эквивалент file_logging=False).
             rotation_type: Тип ротации файлов.
             max_bytes: Максимальный размер файла в байтах.
             compress: Сжимать ли ротированные файлы.
@@ -116,6 +120,8 @@ class LoggerBuilder:
         # Слияние настроек из конфига и переданных аргументов (overrides)
         overrides: dict[str, Any] = {
             'log_file_name': log_file_name,
+            'file_logging': file_logging,
+            'no_file': no_file,
             'rotation_type': rotation_type,
             'max_bytes': max_bytes,
             'compress': compress,
@@ -309,12 +315,34 @@ class LoggerBuilder:
         # Используем импорт внутри функции, чтобы избежать циклической зависимости и иметь доступ к переменным
         import chutils.logger.core as core
 
+        # 1. Переменная окружения (высший приоритет)
         env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
+        if env_no_file:
+            return None
+
+        # 2. Проверка явного отключения файлового логирования
+        file_logging = params.get('file_logging')
+        if file_logging is None:
+            file_logging = params.get('enable_file_logging')
+        if file_logging is None:
+            no_file = params.get('no_file')
+            if no_file is not None:
+                no_file_val = no_file.lower() in ["true", "1", "yes", "y"] if isinstance(no_file, str) else bool(no_file)
+                file_logging = not no_file_val
+
+        if file_logging is not None:
+            file_logging_val = file_logging.lower() in ["true", "1", "yes", "y"] if isinstance(file_logging, str) else bool(file_logging)
+            if not file_logging_val:
+                return None
+
+        # 3. Имя файла лога
+        filename = params.get('log_file_name') if params.get('log_file_name') is not None else self.settings.get('log_file_name', 'app.log')
+        if not filename:
+            return None
+
+        # 4. Директория логов
         log_dir = get_log_dir()
-
-        filename = params.get('log_file_name') or self.settings.get('log_file_name', 'app.log')
-
-        if env_no_file or not log_dir or not filename:
+        if not log_dir:
             # Предотвращаем спам варнингом
             if not core._initialization_message_shown:
                 self.logger.warning("Директория для логов не настроена. Файловое логирование отключено.")

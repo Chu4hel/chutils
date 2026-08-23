@@ -88,6 +88,8 @@ def setup_logger(
         config_section_name: str | None = None,
         log_level: LogLevel | None = None,
         log_file_name: str | None = None,
+        file_logging: bool | None = None,
+        no_file: bool | None = None,
         force_reconfigure: bool = False,
         rotation_type: str | None = None,
         max_bytes: int | None = None,
@@ -143,6 +145,8 @@ def setup_logger(
             Если не указана, используется только общая секция `[Logging]`.
         log_level: Уровень логирования (строка или LogLevel). Поддерживается псевдоним `level`.
         log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.
+        file_logging: Включить или отключить запись в файл (True/False). По умолчанию True.
+        no_file: Псевдоним для отключения файлового логирования (no_file=True эквивалентно file_logging=False).
         force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).
         rotation_type: Тип ротации ('time' или 'size').
         max_bytes: Макс. размер файла (для 'size'). По умолчанию 5 МБ.
@@ -181,6 +185,8 @@ def setup_logger(
         use_async=use_async,
         json_format=json_format,
         log_file_name=log_file_name,
+        file_logging=file_logging,
+        no_file=no_file,
         rotation_type=rotation_type,
         max_bytes=max_bytes,
         compress=compress,
