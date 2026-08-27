@@ -2,6 +2,7 @@ from chutils.scraping.humanize.math_utils import (
     BezierCurveGenerator,
     JitterDelayGenerator,
     KeyboardTypoGenerator,
+    WindMouseGenerator,
 )
 
 
@@ -76,3 +77,32 @@ def test_keyboard_typo_generator() -> None:
     for i, action in enumerate(clean_sequence):
         assert action.action == "type"
         assert action.char == text[i]
+
+
+def test_wind_mouse_generator() -> None:
+    """Тестирует генератор траекторий WindMouse."""
+    generator = WindMouseGenerator()
+
+    start = (100, 100)
+    end = (500, 400)
+
+    points = generator.generate(start, end)
+
+    # Должен сгенерировать последовательность точек с задержками
+    assert len(points) > 5
+    # Последняя точка должна совпадать с целью
+    assert points[-1][0] == end[0]
+    assert points[-1][1] == end[1]
+
+    # Все задержки должны быть положительными
+    for px, py, delay in points:
+        assert isinstance(px, int)
+        assert isinstance(py, int)
+        assert delay > 0.0
+
+    # Проверка граничного случая: start == end
+    same_points = generator.generate(start, start)
+    assert len(same_points) == 1
+    assert same_points[0][0] == start[0]
+    assert same_points[0][1] == start[1]
+

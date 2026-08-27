@@ -627,6 +627,30 @@ class BezierCurveGenerator:
     ) -> list[tuple[int, int]]: ...
 
 
+class WindMouseGenerator:
+    def __init__(
+            self,
+            gravity: float = 9.0,
+            wind: float = 3.0,
+            min_wait: float = 0.002,
+            max_wait: float = 0.005,
+            max_step: float = 15.0,
+            target_area: float = 8.0,
+    ) -> None: ...
+
+    def generate(
+            self,
+            start: tuple[int, int],
+            end: tuple[int, int],
+            gravity: float | None = None,
+            wind: float | None = None,
+            min_wait: float | None = None,
+            max_wait: float | None = None,
+            max_step: float | None = None,
+            target_area: float | None = None,
+    ) -> list[tuple[int, int, float]]: ...
+
+
 class JitterDelayGenerator:
     def __init__(self, strategy: str = "lognormal", jitter: float = 0.15) -> None: ...
 
@@ -650,6 +674,18 @@ async def async_move_mouse(
         start: tuple[int, int] | None = None,
         steps: int = 30,
         delay_between_steps: float = 0.01,
+        algorithm: str = "bezier",
+) -> None: ...
+
+
+async def async_click(
+        page: Any,
+        selector: str | None = None,
+        x: int | None = None,
+        y: int | None = None,
+        start: tuple[int, int] | None = None,
+        algorithm: str = "windmouse",
+        button: str = "left",
 ) -> None: ...
 
 
@@ -675,6 +711,17 @@ def move_mouse(
         start: tuple[int, int] | None = None,
         steps: int = 30,
         delay_between_steps: float = 0.01,
+        algorithm: str = "bezier",
+) -> None: ...
+
+
+def click(
+        driver: Any,
+        selector: str | None = None,
+        x: int | None = None,
+        y: int | None = None,
+        start: tuple[int, int] | None = None,
+        algorithm: str = "windmouse",
 ) -> None: ...
 
 

@@ -26,6 +26,21 @@ pip install "chutils[scraping]"
 
 Математический модуль работает автономно и не требует внешних зависимостей.
 
+### Физический генератор траекторий WindMouse (`WindMouseGenerator`)
+
+Имитирует движение руки человека на основе физической модели (гравитация, случайный ветер/дрейф, инерция и микродоводка у цели). Обеспечивает наилучший обход поведенческого антифрода (Cloudflare, DataDome, reCAPTCHA).
+
+```python
+from chutils.scraping.humanize import WindMouseGenerator
+
+generator = WindMouseGenerator(gravity=9.0, wind=3.0)
+start_point = (100, 150)
+end_point = (500, 450)
+
+# Генерирует список кортежей (x, y, delay) с реалистичными таймингами
+points = generator.generate(start_point, end_point)
+```
+
 ### Генератор траекторий Безье (`BezierCurveGenerator`)
 
 Позволяет рассчитывать плавные кривые перемещения мыши с естественным ускорением в начале и замедлением в конце
@@ -82,13 +97,17 @@ sequence = typo_gen.generate_sequence("Hello!", error_rate=0.1)
 ```python
 from chutils.scraping.humanize import (
     async_move_mouse,
+    async_click,
     async_scroll_to,
     async_type_text,
     async_human_sleep
 )
 
-# Плавное движение мыши
-await async_move_mouse(page, x=400, y=300, start=(0, 0))
+# Плавное движение мыши (по умолчанию используется WindMouse или Bezier)
+await async_move_mouse(page, x=400, y=300, start=(0, 0), algorithm="windmouse")
+
+# Реалистичный клик по селектору или координатам (с наведением, микропаузами и удержанием)
+await async_click(page, selector="#submit-btn")
 
 # Плавный скролл страницы по оси Y
 await async_scroll_to(page, x=0, y=800)
@@ -107,12 +126,16 @@ await async_human_sleep(1.0, 3.0)
 ```python
 from chutils.scraping.humanize import (
     async_move_mouse,
+    async_click,
     async_scroll_to,
     async_type_text,
 )
 
 # Плавное движение мыши (транслируется в CDP dispatchMouseEvent)
-await async_move_mouse(tab, x=400, y=300, start=(0, 0))
+await async_move_mouse(tab, x=400, y=300, start=(0, 0), algorithm="windmouse")
+
+# Реалистичный клик через CDP с паузой фокусировки
+await async_click(tab, x=400, y=300)
 
 # Плавный скролл страницы через JS evaluate
 await async_scroll_to(tab, x=0, y=800)
@@ -126,13 +149,17 @@ await async_type_text(tab, selector="#username", text="my_user_login", error_rat
 ```python
 from chutils.scraping.humanize import (
     move_mouse,
+    click,
     scroll_to,
     type_text,
     human_sleep
 )
 
-# Плавное движение мыши
-move_mouse(driver, x=400, y=300, start=(0, 0))
+# Плавное движение мыши с физической моделью WindMouse
+move_mouse(driver, x=400, y=300, start=(0, 0), algorithm="windmouse")
+
+# Реалистичный клик
+click(driver, selector="#submit-btn")
 
 # Плавный скролл
 scroll_to(driver, x=0, y=800)

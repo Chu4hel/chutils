@@ -33,6 +33,133 @@ _QWERTY_NEIGHBORS = {
 """Карта соседних клавиш для QWERTY-раскладки, используемая для имитации опечаток."""
 
 
+
+class WindMouseGenerator:
+    """Генератор траекторий перемещения мыши на основе физической модели WindMouse (гравитация, ветер, инерция)."""
+
+    def __init__(
+            self,
+            gravity: float = 9.0,
+            wind: float = 3.0,
+            min_wait: float = 0.002,
+            max_wait: float = 0.005,
+            max_step: float = 15.0,
+            target_area: float = 8.0,
+    ) -> None:
+        """Инициализирует генератор WindMouse.
+
+        Args:
+            gravity: Сила притяжения курсора к целевой точке.
+            wind: Величина случайного отклонения (ветра/дрейфа).
+            min_wait: Минимальная пауза между смещениями (в секундах).
+            max_wait: Максимальная пауза между смещениями (в секундах).
+            max_step: Максимальное расстояние одного шага.
+            target_area: Радиус целевой зоны, при входе в которую уменьшается влияние ветра.
+        """
+        self.gravity = gravity
+        self.wind = wind
+        self.min_wait = min_wait
+        self.max_wait = max_wait
+        self.max_step = max_step
+        self.target_area = target_area
+
+    def generate(
+            self,
+            start: tuple[int, int],
+            end: tuple[int, int],
+            gravity: float | None = None,
+            wind: float | None = None,
+            min_wait: float | None = None,
+            max_wait: float | None = None,
+            max_step: float | None = None,
+            target_area: float | None = None,
+    ) -> list[tuple[int, int, float]]:
+        """Генерирует последовательность точек (x, y, delay) от start к end.
+
+        Args:
+            start: Начальные координаты (x, y).
+            end: Конечные координаты (x, y).
+            gravity: Переопределение силы гравитации.
+            wind: Переопределение силы ветра.
+            min_wait: Переопределение минимальной задержки шага.
+            max_wait: Переопределение максимальной задержки шага.
+            max_step: Переопределение максимального размера шага.
+            target_area: Переопределение радиуса целевой зоны.
+
+        Returns:
+            Список кортежей (x, y, step_delay), описывающих перемещение курсора с таймингами.
+        """
+        g = self.gravity if gravity is None else gravity
+        w = self.wind if wind is None else wind
+        min_w = self.min_wait if min_wait is None else min_wait
+        max_w = self.max_wait if max_wait is None else max_wait
+        max_s = self.max_step if max_step is None else max_step
+        t_area = self.target_area if target_area is None else target_area
+
+        start_x, start_y = start
+        dest_x, dest_y = end
+
+        if start_x == dest_x and start_y == dest_y:
+            return [(dest_x, dest_y, random.uniform(min_w, max_w))]
+
+        current_x, current_y = float(start_x), float(start_y)
+        v_x, v_y = 0.0, 0.0
+        w_x, w_y = 0.0, 0.0
+
+        points: list[tuple[int, int, float]] = []
+        max_iterations = 2000
+        iteration = 0
+
+        sqrt3 = math.sqrt(3)
+        sqrt5 = math.sqrt(5)
+
+        while iteration < max_iterations:
+            iteration += 1
+            dist = math.hypot(dest_x - current_x, dest_y - current_y)
+            if dist < 1.0:
+                break
+
+            # В целевой зоне снижаем воздействие случайного ветра для точной доводки к цели
+            cur_wind = w
+            if dist < t_area:
+                cur_wind = w * (dist / max(1.0, t_area))
+
+            # Вектор случайного ветра (дрейф)
+            w_x = w_x / sqrt3 + (random.random() * (cur_wind * 2 + 1) - cur_wind) / sqrt5
+            w_y = w_y / sqrt5 + (random.random() * (cur_wind * 2 + 1) - cur_wind) / sqrt5
+
+            # Сила притяжения к цели
+            mag = max(dist, 1.0)
+            g_x = (dest_x - current_x) * (g / mag)
+            g_y = (dest_y - current_y) * (g / mag)
+
+            v_x += w_x + g_x
+            v_y += w_y + g_y
+
+            # Ограничение максимальной скорости с динамическим затуханием
+            v_mag = math.hypot(v_x, v_y)
+            if v_mag > max_s:
+                v_clip = max_s / 2.0 + random.random() * (max_s / 2.0)
+                v_x = (v_x / v_mag) * v_clip
+                v_y = (v_y / v_mag) * v_clip
+
+            current_x += v_x
+            current_y += v_y
+
+            step_delay = random.uniform(min_w, max_w)
+            points.append((round(current_x), round(current_y), step_delay))
+
+        # Гарантируем попадание в конечную точку с небольшой паузой перед кликом/остановкой
+        post_delay = random.uniform(0.04, 0.12)
+        if not points or points[-1][0] != dest_x or points[-1][1] != dest_y:
+            points.append((dest_x, dest_y, post_delay))
+        else:
+            last_x, last_y, _ = points[-1]
+            points[-1] = (last_x, last_y, post_delay)
+
+        return points
+
+
 class BezierCurveGenerator:
     """Генератор траекторий перемещения на основе кривых Безье."""
 

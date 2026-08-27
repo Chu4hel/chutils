@@ -22577,9 +22577,9 @@
                 "name": "setup_logger",
                 "type": "function",
                 "layer": "public",
-                "signature": "(name, config_section_name, log_level, log_file_name, force_reconfigure, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, json_format, use_async, custom_patterns, use_predefined_patterns)",
+                "signature": "(name, config_section_name, log_level, log_file_name, file_logging, no_file, force_reconfigure, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, json_format, use_async, custom_patterns, use_predefined_patterns)",
                 "summary": "Настраивает и возвращает экземпляр логгера.",
-                "docstring": "Настраивает и возвращает экземпляр логгера.\n\nФункция предлагает гибкую настройку, включая управление уровнями, ротацией и сжатием.\nПри каждом вызове для существующего логгера его уровень **всегда обновляется**.\n\n### Приоритет настроек:\n0. Переменные окружения `CH_LOG_NO_TIME` и `CH_LOG_NO_FILE` (высший приоритет).\n1. Явные аргументы, переданные в эту функцию (например, `log_level=...`).\n2. Секция, указанная в `config_section_name` (например, `[AuditLogger]`).\n3. Общая секция `[Logging]` в `config.yml`.\n4. Значения по умолчанию, зашитые в коде.\n\n### Ротация и сжатие:\n- **По времени (`rotation_type='time'`)**: Ротация ежедневно или по интервалу (параметры `when`, `interval`).\n- **По размеру (`rotation_type='size'`)**: Ротация при достижении `max_bytes`.\n- **Сжатие**: Если `compress=True`, старые логи сжимаются в `.gz`.\n\n### Асинхронность:\n- Если `use_async=True`, логи записываются в очередь и обрабатываются в отдельном потоке.\n- Очередь блокирующая, что предотвращает потерю сообщений при переполнении.\n\n### Маскирование:\n- Автоматическая замена секретов и паттернов на `[MASKED]`.\n- Поддержка предустановленных паттернов PII (`email`, `phone`, `credit_card`, `ssn`).\n\nWarning:\n    Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings`\n    для чтения конфигурации из внешних источников (например, `.env` или переменных окружения),\n    рекомендуется явно передавать уровень логирования через параметр `log_level` для исключения\n    рассинхронизации настроек с файлом `config.yml`.\n\nArgs:\n    name: Имя логгера. `app_logger` по умолчанию.\n    config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').\n        Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.\n        Если не указана, используется только общая секция `[Logging]`.\n    log_level: Уровень логирования (строка или LogLevel). Поддерживается псевдоним `level`.\n    log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.\n    force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).\n    rotation_type: Тип ротации ('time' или 'size').\n    max_bytes: Макс. размер файла (для 'size'). По умолчанию 5 МБ.\n    compress: Сжимать ли старые логи в `.gz`. По умолчанию False.\n    backup_count: Количество хранимых ротированных файлов. По умолчанию 3.\n    encoding: Кодировка файла. По умолчанию 'utf-8'.\n    when: Интервал ротации для 'time' (например, 'S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').\n    interval: Для 'time'. Кратность интервала.\n    utc: Для 'time'. Использовать ли UTC время для имен файлов.\n    at_time: Для 'time'. Время ротации (для when='midnight').\n    json_format: Использовать ли JSON формат для логов.\n    use_async: Использовать ли асинхронное логирование.\n    custom_patterns: Список регулярных выражений для маскирования.\n    use_predefined_patterns: Список имен предустановленных паттернов для маскирования.\n\n    **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`). Также поддерживает `level` как псевдоним `log_level`.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
+                "docstring": "Настраивает и возвращает экземпляр логгера.\n\nФункция предлагает гибкую настройку, включая управление уровнями, ротацией и сжатием.\nПри каждом вызове для существующего логгера его уровень **всегда обновляется**.\n\n### Приоритет настроек:\n0. Переменные окружения `CH_LOG_NO_TIME` и `CH_LOG_NO_FILE` (высший приоритет).\n1. Явные аргументы, переданные в эту функцию (например, `log_level=...`).\n2. Секция, указанная в `config_section_name` (например, `[AuditLogger]`).\n3. Общая секция `[Logging]` в `config.yml`.\n4. Значения по умолчанию, зашитые в коде.\n\n### Ротация и сжатие:\n- **По времени (`rotation_type='time'`)**: Ротация ежедневно или по интервалу (параметры `when`, `interval`).\n- **По размеру (`rotation_type='size'`)**: Ротация при достижении `max_bytes`.\n- **Сжатие**: Если `compress=True`, старые логи сжимаются в `.gz`.\n\n### Асинхронность:\n- Если `use_async=True`, логи записываются в очередь и обрабатываются в отдельном потоке.\n- Очередь блокирующая, что предотвращает потерю сообщений при переполнении.\n\n### Маскирование:\n- Автоматическая замена секретов и паттернов на `[MASKED]`.\n- Поддержка предустановленных паттернов PII (`email`, `phone`, `credit_card`, `ssn`).\n\nWarning:\n    Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings`\n    для чтения конфигурации из внешних источников (например, `.env` или переменных окружения),\n    рекомендуется явно передавать уровень логирования через параметр `log_level` для исключения\n    рассинхронизации настроек с файлом `config.yml`.\n\nArgs:\n    name: Имя логгера. `app_logger` по умолчанию.\n    config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').\n        Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.\n        Если не указана, используется только общая секция `[Logging]`.\n    log_level: Уровень логирования (строка или LogLevel). Поддерживается псевдоним `level`.\n    log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.\n    file_logging: Включить или отключить запись в файл (True/False). По умолчанию True.\n    no_file: Псевдоним для отключения файлового логирования (no_file=True эквивалентно file_logging=False).\n    force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).\n    rotation_type: Тип ротации ('time' или 'size').\n    max_bytes: Макс. размер файла (для 'size'). По умолчанию 5 МБ.\n    compress: Сжимать ли старые логи в `.gz`. По умолчанию False.\n    backup_count: Количество хранимых ротированных файлов. По умолчанию 3.\n    encoding: Кодировка файла. По умолчанию 'utf-8'.\n    when: Интервал ротации для 'time' (например, 'S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').\n    interval: Для 'time'. Кратность интервала.\n    utc: Для 'time'. Использовать ли UTC время для имен файлов.\n    at_time: Для 'time'. Время ротации (для when='midnight').\n    json_format: Использовать ли JSON формат для логов.\n    use_async: Использовать ли асинхронное логирование.\n    custom_patterns: Список регулярных выражений для маскирования.\n    use_predefined_patterns: Список имен предустановленных паттернов для маскирования.\n\n    **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`). Также поддерживает `level` как псевдоним `log_level`.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -22609,7 +22609,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 198,
+                "line_number": 204,
                 "bases": [],
                 "children": []
               }
@@ -22869,9 +22869,9 @@
                         "name": "build",
                         "type": "method",
                         "layer": "internal",
-                        "signature": "(self, log_level, force_reconfigure, use_async, json_format, log_file_name, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, custom_patterns, use_predefined_patterns)",
+                        "signature": "(self, log_level, force_reconfigure, use_async, json_format, log_file_name, file_logging, no_file, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, custom_patterns, use_predefined_patterns)",
                         "summary": "Основной метод сборки и настройки логгера.",
-                        "docstring": "Основной метод сборки и настройки логгера.\n\nВыполняет все этапы конфигурации: определение уровня, настройку консоли,\nсоздание файловых обработчиков, применение асинхронности и маскирование.\n\nArgs:\n    log_level: Уровень логирования.\n    force_reconfigure: Принудительная повторная конфигурация.\n    use_async: Использовать ли асинхронную запись.\n    json_format: Использовать ли JSON формат.\n    log_file_name: Имя файла лога.\n    rotation_type: Тип ротации файлов.\n    max_bytes: Максимальный размер файла в байтах.\n    compress: Сжимать ли ротированные файлы.\n    backup_count: Количество сохраняемых бэкапов.\n    encoding: Кодировка файла логов.\n    when: Интервал временной ротации.\n    interval: Шаг интервала ротации.\n    utc: Использовать ли UTC время.\n    at_time: Точное время ротации.\n    custom_patterns: Пользовательские паттерны маскирования.\n    use_predefined_patterns: Предопределенные паттерны маскирования.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
+                        "docstring": "Основной метод сборки и настройки логгера.\n\nВыполняет все этапы конфигурации: определение уровня, настройку консоли,\nсоздание файловых обработчиков, применение асинхронности и маскирование.\n\nArgs:\n    log_level: Уровень логирования.\n    force_reconfigure: Принудительная повторная конфигурация.\n    use_async: Использовать ли асинхронную запись.\n    json_format: Использовать ли JSON формат.\n    log_file_name: Имя файла лога.\n    file_logging: Включить или отключить запись в файл.\n    no_file: Отключить запись в файл (эквивалент file_logging=False).\n    rotation_type: Тип ротации файлов.\n    max_bytes: Максимальный размер файла в байтах.\n    compress: Сжимать ли ротированные файлы.\n    backup_count: Количество сохраняемых бэкапов.\n    encoding: Кодировка файла логов.\n    when: Интервал временной ротации.\n    interval: Шаг интервала ротации.\n    utc: Использовать ли UTC время.\n    at_time: Точное время ротации.\n    custom_patterns: Пользовательские паттерны маскирования.\n    use_predefined_patterns: Предопределенные паттерны маскирования.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -22901,7 +22901,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 168,
+                        "line_number": 174,
                         "bases": [],
                         "children": []
                       },
@@ -22921,7 +22921,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 187,
+                        "line_number": 193,
                         "bases": [],
                         "children": []
                       },
@@ -22941,7 +22941,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 198,
+                        "line_number": 204,
                         "bases": [],
                         "children": []
                       },
@@ -22961,7 +22961,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 208,
+                        "line_number": 214,
                         "bases": [],
                         "children": []
                       },
@@ -22981,7 +22981,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 217,
+                        "line_number": 223,
                         "bases": [],
                         "children": []
                       },
@@ -23001,7 +23001,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 255,
+                        "line_number": 261,
                         "bases": [],
                         "children": []
                       },
@@ -23021,7 +23021,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 270,
+                        "line_number": 276,
                         "bases": [],
                         "children": []
                       },
@@ -23041,7 +23041,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 280,
+                        "line_number": 286,
                         "bases": [],
                         "children": []
                       },
@@ -23061,7 +23061,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 306,
+                        "line_number": 312,
                         "bases": [],
                         "children": []
                       },
@@ -23081,7 +23081,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 340,
+                        "line_number": 368,
                         "bases": [],
                         "children": []
                       },
@@ -23101,7 +23101,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 392,
+                        "line_number": 420,
                         "bases": [],
                         "children": []
                       },
@@ -23121,7 +23121,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 403,
+                        "line_number": 431,
                         "bases": [],
                         "children": []
                       },
@@ -23141,7 +23141,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 437,
+                        "line_number": 465,
                         "bases": [],
                         "children": []
                       }
@@ -28134,7 +28134,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 13,
+                    "line_number": 18,
                     "bases": [],
                     "children": []
                   },
@@ -28154,7 +28154,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 28,
+                    "line_number": 33,
                     "bases": [],
                     "children": []
                   },
@@ -28174,7 +28174,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 43,
+                    "line_number": 48,
                     "bases": [],
                     "children": []
                   },
@@ -28194,7 +28194,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 64,
+                    "line_number": 69,
                     "bases": [],
                     "children": []
                   },
@@ -28214,7 +28214,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 77,
+                    "line_number": 82,
                     "bases": [],
                     "children": []
                   },
@@ -28234,7 +28234,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 89,
+                    "line_number": 94,
                     "bases": [],
                     "children": []
                   },
@@ -28254,7 +28254,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 102,
+                    "line_number": 107,
                     "bases": [],
                     "children": []
                   },
@@ -28274,7 +28274,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 113,
+                    "line_number": 118,
                     "bases": [],
                     "children": []
                   },
@@ -28282,9 +28282,9 @@
                     "name": "async_move_mouse",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(page, x, y, start, steps, delay_between_steps)",
+                    "signature": "(page, x, y, start, steps, delay_between_steps, algorithm)",
                     "summary": "Имитирует плавное перемещение мыши Playwright или nodriver.",
-                    "docstring": "Имитирует плавное перемещение мыши Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты X, Y. Если не задано, используется (0, 0).\n    steps: Количество промежуточных шагов движения.\n    delay_between_steps: Задержка между шагами в секундах.",
+                    "docstring": "Имитирует плавное перемещение мыши Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты X, Y. Если не задано, используется (0, 0).\n    steps: Количество промежуточных шагов движения (для алгоритма 'bezier').\n    delay_between_steps: Задержка между шагами в секундах (для алгоритма 'bezier').\n    algorithm: Алгоритм генерации траектории ('bezier' или 'windmouse').",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -28294,7 +28294,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 124,
+                    "line_number": 129,
                     "bases": [],
                     "children": []
                   },
@@ -28314,7 +28314,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 178,
+                    "line_number": 217,
                     "bases": [],
                     "children": []
                   },
@@ -28334,7 +28334,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 247,
+                    "line_number": 286,
                     "bases": [],
                     "children": []
                   },
@@ -28342,9 +28342,9 @@
                     "name": "move_mouse",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(driver, x, y, start, steps, delay_between_steps)",
+                    "signature": "(driver, x, y, start, steps, delay_between_steps, algorithm)",
                     "summary": "Имитирует плавное перемещение мыши Selenium.",
-                    "docstring": "Имитирует плавное перемещение мыши Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты X, Y. Если не задано, используется (0, 0).\n    steps: Количество промежуточных шагов.\n    delay_between_steps: Задержка между шагами в секундах.",
+                    "docstring": "Имитирует плавное перемещение мыши Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты X, Y. Если не задано, используется (0, 0).\n    steps: Количество промежуточных шагов (для алгоритма 'bezier').\n    delay_between_steps: Задержка между шагами в секундах (для алгоритма 'bezier').\n    algorithm: Алгоритм генерации траектории ('bezier' или 'windmouse').",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -28354,7 +28354,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 335,
+                    "line_number": 374,
                     "bases": [],
                     "children": []
                   },
@@ -28374,7 +28374,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 370,
+                    "line_number": 426,
                     "bases": [],
                     "children": []
                   },
@@ -28394,7 +28394,47 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 406,
+                    "line_number": 462,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "async_click",
+                    "type": "function",
+                    "layer": "public",
+                    "signature": "(page, selector, x, y, start, algorithm, button)",
+                    "summary": "Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).",
+                    "docstring": "Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор целевого элемента (если x, y не заданы).\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты курсора.\n    algorithm: Алгоритм движения ('windmouse' или 'bezier').\n    button: Кнопка мыши ('left', 'right', 'middle').",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 497,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "click",
+                    "type": "function",
+                    "layer": "public",
+                    "signature": "(driver, selector, x, y, start, algorithm)",
+                    "summary": "Имитирует реалистичный клик мышью Selenium.",
+                    "docstring": "Имитирует реалистичный клик мышью Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор целевого элемента (если x, y не заданы).\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты курсора.\n    algorithm: Алгоритм движения ('windmouse' или 'bezier').",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 590,
                     "bases": [],
                     "children": []
                   }
@@ -28701,6 +28741,67 @@
                     "children": []
                   },
                   {
+                    "name": "WindMouseGenerator",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Генератор траекторий перемещения мыши на основе физической модели WindMouse (гравитация, ветер, инерция).",
+                    "docstring": "Генератор траекторий перемещения мыши на основе физической модели WindMouse (гравитация, ветер, инерция).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 37,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, gravity, wind, min_wait, max_wait, max_step, target_area)",
+                        "summary": "Инициализирует генератор WindMouse.",
+                        "docstring": "Инициализирует генератор WindMouse.\n\nArgs:\n    gravity: Сила притяжения курсора к целевой точке.\n    wind: Величина случайного отклонения (ветра/дрейфа).\n    min_wait: Минимальная пауза между смещениями (в секундах).\n    max_wait: Максимальная пауза между смещениями (в секундах).\n    max_step: Максимальное расстояние одного шага.\n    target_area: Радиус целевой зоны, при входе в которую уменьшается влияние ветра.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 40,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, start, end, gravity, wind, min_wait, max_wait, max_step, target_area)",
+                        "summary": "Генерирует последовательность точек (x, y, delay) от start к end.",
+                        "docstring": "Генерирует последовательность точек (x, y, delay) от start к end.\n\nArgs:\n    start: Начальные координаты (x, y).\n    end: Конечные координаты (x, y).\n    gravity: Переопределение силы гравитации.\n    wind: Переопределение силы ветра.\n    min_wait: Переопределение минимальной задержки шага.\n    max_wait: Переопределение максимальной задержки шага.\n    max_step: Переопределение максимального размера шага.\n    target_area: Переопределение радиуса целевой зоны.\n\nReturns:\n    Список кортежей (x, y, step_delay), описывающих перемещение курсора с таймингами.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 66,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
                     "name": "BezierCurveGenerator",
                     "type": "class",
                     "layer": "public",
@@ -28716,7 +28817,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 36,
+                    "line_number": 163,
                     "bases": [],
                     "children": [
                       {
@@ -28735,7 +28836,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 39,
+                        "line_number": 166,
                         "bases": [],
                         "children": []
                       }
@@ -28757,7 +28858,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 123,
+                    "line_number": 250,
                     "bases": [],
                     "children": [
                       {
@@ -28776,7 +28877,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 126,
+                        "line_number": 253,
                         "bases": [],
                         "children": []
                       },
@@ -28796,7 +28897,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 136,
+                        "line_number": 263,
                         "bases": [],
                         "children": []
                       }
@@ -28818,7 +28919,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 161,
+                    "line_number": 288,
                     "bases": [
                       "typing.NamedTuple"
                     ],
@@ -28840,7 +28941,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 167,
+                    "line_number": 294,
                     "bases": [],
                     "children": [
                       {
@@ -28859,7 +28960,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 170,
+                        "line_number": 297,
                         "bases": [],
                         "children": []
                       }
@@ -37200,7 +37301,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 362,
+        "line_number": 365,
         "bases": [],
         "children": []
       },
@@ -37220,7 +37321,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 393,
+        "line_number": 396,
         "bases": [],
         "children": []
       },
@@ -37240,7 +37341,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 403,
+        "line_number": 406,
         "bases": [],
         "children": []
       }
@@ -38710,7 +38811,7 @@
     {
       "source": "chutils/scraping/humanize",
       "target": "/actions",
-      "weight": 8
+      "weight": 10
     },
     {
       "source": "chutils/scraping/humanize",
@@ -38720,7 +38821,7 @@
     {
       "source": "chutils/scraping/humanize",
       "target": "/math_utils",
-      "weight": 3
+      "weight": 4
     },
     {
       "source": "chutils/scraping/humanize",
@@ -38735,7 +38836,7 @@
     {
       "source": "chutils/scraping/humanize/actions",
       "target": "/math_utils",
-      "weight": 3
+      "weight": 4
     },
     {
       "source": "chutils/scraping/humanize/antidetect",
@@ -39372,8 +39473,8 @@
   "metadata": {
     "chutils_version": "3.5.0",
     "project_version": "3.5.0",
-    "git_commit": "07df9150bee3a9f2787ad3fed8c13fc8fd8e61ea (dirty)",
-    "generated_at": "2026-08-09T12:47:10.221511+00:00",
-    "project_hash": "6938cce59ac011d5cb5b508ba023c9ff5b4106d4d1aee825064fc926893ebe16"
+    "git_commit": "ef52d4457ba71f4c8d68319855ac316002d693e1 (dirty)",
+    "generated_at": "2026-08-23T20:10:24.989588+00:00",
+    "project_hash": "4c9de942973ec7d7cbb61ad4972a65bd717ea38a5c9339f88be5b5fde83632b4"
   }
 }

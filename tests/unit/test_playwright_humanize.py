@@ -6,6 +6,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 from chutils.scraping.humanize.actions import (
+    async_click,
     async_move_mouse,
     async_scroll_to,
     async_type_text,
@@ -69,3 +70,34 @@ async def test_async_type_text() -> None:
     page.focus.assert_called_once_with("#input")
     assert page.keyboard.type.call_count == 4
     assert page.keyboard.press.call_count == 0
+
+
+@pytest.mark.asyncio
+async def test_async_move_mouse_windmouse() -> None:
+    """Проверяет перемещение мыши Playwright с алгоритмом WindMouse."""
+    page = MagicMock()
+    page.mouse = MagicMock()
+    page.mouse.move = AsyncMock()
+
+    await async_move_mouse(page, x=250, y=350, start=(0, 0), algorithm="windmouse")
+
+    assert page.mouse.move.call_count > 5
+    last_call_args = page.mouse.move.call_args_list[-1][0]
+    assert last_call_args == (250, 350)
+
+
+@pytest.mark.asyncio
+async def test_async_click() -> None:
+    """Проверяет имитацию клика мыши Playwright."""
+    page = MagicMock()
+    page.mouse = MagicMock()
+    page.mouse.move = AsyncMock()
+    page.mouse.down = AsyncMock()
+    page.mouse.up = AsyncMock()
+
+    await async_click(page, x=150, y=250)
+
+    assert page.mouse.move.call_count > 0
+    page.mouse.down.assert_called_once_with(button="left")
+    page.mouse.up.assert_called_once_with(button="left")
+
