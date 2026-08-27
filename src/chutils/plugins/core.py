@@ -182,3 +182,41 @@ def get_task_queue_plugin(name: str) -> Any | None:
         if isinstance(plugin, (TaskQueuePlugin, type)) or hasattr(plugin, "create_queue"):
             return plugin
     return None
+
+
+def get_browser_stealth_plugins() -> list[Any]:
+    """Возвращает список всех зарегистрированных плагинов глубокой маскировки браузера (BrowserStealthPlugin).
+
+    Выполняет автообнаружение из групп `chutils.plugins.stealth` и `chutils.plugins`.
+
+    Returns:
+        Список экземпляров плагинов маскировки браузера.
+    """
+    registry.discover_plugins(group="chutils.plugins.stealth")
+    registry.discover_plugins(group="chutils.plugins")
+    from .interfaces import BrowserStealthPlugin
+    return registry.get_plugins_by_type(BrowserStealthPlugin)
+
+
+def get_http_backend_plugin(name: str) -> Any | None:
+    """Возвращает зарегистрированный плагин HTTP-бэкенда по имени.
+
+    Выполняет автообнаружение из групп `chutils.plugins.http` и `chutils.plugins`.
+
+    Args:
+        name: Имя бэкенда (например, 'curl_cffi', 'tls_client').
+
+    Returns:
+        Экземпляр плагина или None.
+    """
+    registry.discover_plugins(group="chutils.plugins.http")
+    registry.discover_plugins(group="chutils.plugins")
+    plugin = registry.get_plugin(name)
+    if plugin is not None:
+        from .interfaces import HttpBackendPlugin
+        if isinstance(plugin, (HttpBackendPlugin, type)) or (
+            hasattr(plugin, "create_client") or hasattr(plugin, "create_async_client")
+        ):
+            return plugin
+    return None
+

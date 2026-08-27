@@ -163,3 +163,73 @@ class TaskQueuePlugin(BasePlugin):
             Экземпляр очереди задач.
         """
         pass
+
+
+class BrowserStealthPlugin(BasePlugin):
+    """
+    Интерфейс для плагина глубокой маскировки и анонимизации браузера (Anti-Detect Stealth).
+    Позволяет сторонним аддонам (например, chutils-stealth) подключать расширенную защиту
+    от фингерпринтинга (AudioContext, WebRTC, Canvas, Client Hints, Fonts).
+    """
+
+    @abstractmethod
+    def apply_playwright(self, context: Any, **kwargs: Any) -> None:
+        """Применяет расширенные стелс-патчи к Playwright BrowserContext или Page.
+
+        Args:
+            context: Объект контекста браузера или страницы Playwright.
+            **kwargs: Дополнительные параметры конфигурации маскировки.
+        """
+        pass
+
+    @abstractmethod
+    def apply_selenium(self, driver: Any, **kwargs: Any) -> None:
+        """Применяет расширенные стелс-патчи к Selenium WebDriver.
+
+        Args:
+            driver: Экземпляр драйвера Selenium.
+            **kwargs: Дополнительные параметры конфигурации маскировки.
+        """
+        pass
+
+    @abstractmethod
+    def apply_nodriver(self, tab: Any, **kwargs: Any) -> None:
+        """Применяет расширенные стелс-патчи к nodriver Tab.
+
+        Args:
+            tab: Объект вкладки браузера nodriver.
+            **kwargs: Дополнительные параметры конфигурации маскировки.
+        """
+        pass
+
+
+class HttpBackendPlugin(BasePlugin):
+    """
+    Интерфейс для плагина кастомного сетевого бэкенда HTTP-клиента.
+    Позволяет подключать альтернативные сетевые движки (например, curl_cffi с TLS/JA3/JA4 impersonation).
+    """
+
+    @abstractmethod
+    def create_client(self, **kwargs: Any) -> Any:
+        """Создает и возвращает синхронный HTTP-клиент или сессию.
+
+        Args:
+            **kwargs: Параметры конфигурации (базовый URL, заголовки, таймауты, impersonate и др.).
+
+        Returns:
+            Экземпляр HTTP-клиента.
+        """
+        pass
+
+    @abstractmethod
+    def create_async_client(self, **kwargs: Any) -> Any:
+        """Создает и возвращает асинхронный HTTP-клиент или сессию.
+
+        Args:
+            **kwargs: Параметры конфигурации (базовый URL, заголовки, таймауты, impersonate и др.).
+
+        Returns:
+            Экземпляр асинхронного HTTP-клиента.
+        """
+        pass
+

@@ -24811,6 +24811,46 @@
                 "line_number": 166,
                 "bases": [],
                 "children": []
+              },
+              {
+                "name": "get_browser_stealth_plugins",
+                "type": "function",
+                "layer": "internal",
+                "signature": "()",
+                "summary": "Возвращает список всех зарегистрированных плагинов глубокой маскировки браузера (BrowserStealthPlugin).",
+                "docstring": "Возвращает список всех зарегистрированных плагинов глубокой маскировки браузера (BrowserStealthPlugin).\n\nВыполняет автообнаружение из групп `chutils.plugins.stealth` и `chutils.plugins`.\n\nReturns:\n    Список экземпляров плагинов маскировки браузера.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 187,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "get_http_backend_plugin",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(name)",
+                "summary": "Возвращает зарегистрированный плагин HTTP-бэкенда по имени.",
+                "docstring": "Возвращает зарегистрированный плагин HTTP-бэкенда по имени.\n\nВыполняет автообнаружение из групп `chutils.plugins.http` и `chutils.plugins`.\n\nArgs:\n    name: Имя бэкенда (например, 'curl_cffi', 'tls_client').\n\nReturns:\n    Экземпляр плагина или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 201,
+                "bases": [],
+                "children": []
               }
             ]
           },
@@ -25132,6 +25172,162 @@
                       "custom_metadata": {}
                     },
                     "line_number": 155,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "BrowserStealthPlugin",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Интерфейс для плагина глубокой маскировки и анонимизации браузера (Anti-Detect Stealth).",
+                "docstring": "Интерфейс для плагина глубокой маскировки и анонимизации браузера (Anti-Detect Stealth).\nПозволяет сторонним аддонам (например, chutils-stealth) подключать расширенную защиту\nот фингерпринтинга (AudioContext, WebRTC, Canvas, Client Hints, Fonts).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": true,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 168,
+                "bases": [
+                  "BasePlugin"
+                ],
+                "children": [
+                  {
+                    "name": "apply_playwright",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, context)",
+                    "summary": "Применяет расширенные стелс-патчи к Playwright BrowserContext или Page.",
+                    "docstring": "Применяет расширенные стелс-патчи к Playwright BrowserContext или Page.\n\nArgs:\n    context: Объект контекста браузера или страницы Playwright.\n    **kwargs: Дополнительные параметры конфигурации маскировки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 176,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "apply_selenium",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, driver)",
+                    "summary": "Применяет расширенные стелс-патчи к Selenium WebDriver.",
+                    "docstring": "Применяет расширенные стелс-патчи к Selenium WebDriver.\n\nArgs:\n    driver: Экземпляр драйвера Selenium.\n    **kwargs: Дополнительные параметры конфигурации маскировки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 186,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "apply_nodriver",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, tab)",
+                    "summary": "Применяет расширенные стелс-патчи к nodriver Tab.",
+                    "docstring": "Применяет расширенные стелс-патчи к nodriver Tab.\n\nArgs:\n    tab: Объект вкладки браузера nodriver.\n    **kwargs: Дополнительные параметры конфигурации маскировки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 196,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "HttpBackendPlugin",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Интерфейс для плагина кастомного сетевого бэкенда HTTP-клиента.",
+                "docstring": "Интерфейс для плагина кастомного сетевого бэкенда HTTP-клиента.\nПозволяет подключать альтернативные сетевые движки (например, curl_cffi с TLS/JA3/JA4 impersonation).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": true,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 206,
+                "bases": [
+                  "BasePlugin"
+                ],
+                "children": [
+                  {
+                    "name": "create_client",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Создает и возвращает синхронный HTTP-клиент или сессию.",
+                    "docstring": "Создает и возвращает синхронный HTTP-клиент или сессию.\n\nArgs:\n    **kwargs: Параметры конфигурации (базовый URL, заголовки, таймауты, impersonate и др.).\n\nReturns:\n    Экземпляр HTTP-клиента.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 213,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "create_async_client",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Создает и возвращает асинхронный HTTP-клиент или сессию.",
+                    "docstring": "Создает и возвращает асинхронный HTTP-клиент или сессию.\n\nArgs:\n    **kwargs: Параметры конфигурации (базовый URL, заголовки, таймауты, impersonate и др.).\n\nReturns:\n    Экземпляр асинхронного HTTP-клиента.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": true,
+                      "decorators": [
+                        "abstractmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 225,
                     "bases": [],
                     "children": []
                   }
@@ -38636,12 +38832,12 @@
     {
       "source": "chutils/plugins",
       "target": "/core",
-      "weight": 4
+      "weight": 8
     },
     {
       "source": "chutils/plugins",
       "target": "/interfaces",
-      "weight": 7
+      "weight": 9
     },
     {
       "source": "chutils/plugins/interfaces",
@@ -39473,8 +39669,8 @@
   "metadata": {
     "chutils_version": "3.5.0",
     "project_version": "3.5.0",
-    "git_commit": "ef52d4457ba71f4c8d68319855ac316002d693e1 (dirty)",
-    "generated_at": "2026-08-23T20:10:24.989588+00:00",
-    "project_hash": "4c9de942973ec7d7cbb61ad4972a65bd717ea38a5c9339f88be5b5fde83632b4"
+    "git_commit": "c15526928809b3500a214b544067d36a7117e33f (dirty)",
+    "generated_at": "2026-08-27T18:37:03.266598+00:00",
+    "project_hash": "9a50442c93c2079ad433717fb412fc8b2676fe5142dd89e41f279a5474ea94ef"
   }
 }

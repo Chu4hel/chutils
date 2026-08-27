@@ -188,4 +188,57 @@ class DatadogMetricsPlugin(MetricsPlugin):
 
     def clear(self) -> None:
         pass
+
+
+### 5. Плагин глубокой маскировки браузера (`BrowserStealthPlugin`)
+
+Позволяет подключать внешние пакеты продвинутой анонимизации браузеров (`playwright-stealth`, `camoufox`, аудио/WebRTC спуфинг).
+
+```python
+from typing import Any
+from chutils.plugins import BrowserStealthPlugin
+
+class AdvancedStealthPlugin(BrowserStealthPlugin):
+    @property
+    def name(self) -> str:
+        return "stealth_pro"
+
+    def apply_playwright(self, context: Any, **kwargs: Any) -> None:
+        # Применение расширенных JS-инъекций к контексту Playwright
+        pass
+
+    def apply_selenium(self, driver: Any, **kwargs: Any) -> None:
+        # Применение патчей к WebDriver
+        pass
+
+    def apply_nodriver(self, tab: Any, **kwargs: Any) -> None:
+        # Применение патчей к CDP-вкладке nodriver
+        pass
+```
+
+
+### 6. Плагин кастомного HTTP-бэкенда (`HttpBackendPlugin`)
+
+Позволяет использовать альтернативные сетевые движки (например, `curl_cffi` с TLS/JA3/JA4 impersonation и HTTP/2 фингерпринтами).
+
+```python
+from typing import Any
+from chutils.plugins import HttpBackendPlugin
+
+class CurlCffiHttpPlugin(HttpBackendPlugin):
+    @property
+    def name(self) -> str:
+        return "curl_cffi"
+
+    def create_client(self, **kwargs: Any) -> Any:
+        # Инициализация синхронной сессии curl_cffi.requests.Session
+        from curl_cffi import requests
+        return requests.Session(**kwargs)
+
+    def create_async_client(self, **kwargs: Any) -> Any:
+        # Инициализация асинхронной сессии curl_cffi.requests.AsyncSession
+        from curl_cffi import requests
+        return requests.AsyncSession(**kwargs)
+```
+
 ```
