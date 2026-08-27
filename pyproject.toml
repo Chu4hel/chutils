@@ -5,8 +5,9 @@ description = "Набор простых и удобных утилит для P
 authors = [{ name = "Chu4hel", email = "sergeiivanov636@gmail.com" }]
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.10,<3.15"
+requires-python = ">=3.10,<3.16"
 dependencies = [
+
     "pyyaml (>=6.0.3)",
     "python-dotenv (>=1.2.2)",
     "exceptiongroup (>=1.2.2) ; python_version < '3.11'"
