@@ -524,9 +524,10 @@ class LinterEngine:
 
                 for file_rel, file_results in sorted(by_file.items()):
                     # Выводим путь к файлу как заголовок группы
-                    console.print(f"\n[bold cyan]Файл: {file_rel}[/bold cyan]")
+                    file_link = f"[link={file_rel}]{file_rel}[/link]" if file_rel != "Глобальные проверки" else file_rel
+                    console.print(f"\n[bold cyan]Файл: {file_link}[/bold cyan]")
                     table = Table(box=None, show_header=True, collapse_padding=True)
-                    table.add_column("Строка", style="magenta", width=8, justify="right")
+                    table.add_column("Строка", style="magenta", width=12, justify="right")
                     table.add_column("Важность", width=12)
                     table.add_column("Правило", style="blue", width=25)
                     table.add_column("Описание / Рекомендация")
@@ -534,7 +535,14 @@ class LinterEngine:
                     for r in sorted(file_results, key=lambda x: (x.line_number or 0, x.rule_name)):
                         color = "red" if r.severity == "error" else "yellow"
                         sev_str = f"[{color}]{r.severity.upper()}[/{color}]"
-                        line_str = str(r.line_number) if r.line_number is not None else "-"
+                        if r.line_number is not None and file_rel != "Глобальные проверки":
+                            target_loc = f"{file_rel}:{r.line_number}"
+                            line_str = f"[link={target_loc}]{r.line_number}[/link]"
+                        elif r.line_number is not None:
+                            line_str = str(r.line_number)
+                        else:
+                            line_str = "-"
+
                         msg = r.message
                         if r.fix_suggestion:
                             msg += f"\n[dim italic]Рекомендация: {r.fix_suggestion}[/dim italic]"
