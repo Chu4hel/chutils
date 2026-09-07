@@ -39667,10 +39667,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.5.0",
-    "project_version": "3.5.0",
-    "git_commit": "c15526928809b3500a214b544067d36a7117e33f (dirty)",
-    "generated_at": "2026-08-27T18:37:03.266598+00:00",
-    "project_hash": "9a50442c93c2079ad433717fb412fc8b2676fe5142dd89e41f279a5474ea94ef"
+    "chutils_version": "3.6.0",
+    "project_version": "3.6.0",
+    "git_commit": "c5e8f2142b274b19afcde3a82a67f57e4d65c3e2",
+    "generated_at": "2026-09-07T12:03:27.880218+00:00",
+    "project_hash": "2cae29d4322ae1cfd87a8a9964a7a27cf2d4524cf31a6639487880fee33a7c94"
   }
 }
