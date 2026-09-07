@@ -41,10 +41,6 @@ def test_ai_lint_edge_cases() -> None:
     """Проверка крайних случаев (отсутствие файлов, некорректные строки)."""
     engine = LinterEngine({"base_dir": "."})
 
-    # 1. Результат без file_path и line_number (должен остаться без изменений)
-    r1 = LintResult(rule_name="RuleX", message="Msg X", severity="warn")
-    results = [r1]
-
     # Мокаем правила
     engine.rules = []
     # Фильтруем пустой/фиктивный список

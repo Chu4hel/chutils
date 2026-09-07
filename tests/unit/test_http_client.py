@@ -112,7 +112,7 @@ def test_http_client_get_falls_back_to_urllib_when_httpx_missing() -> None:
         client = HttpClient()
         with patch.object(
             client._get_fallback_client(), "request", return_value=mock_resp
-        ) as mock_req:
+        ):
             resp = client.get("http://example.com/data")
 
     # Клиент должен вернуть HttpResponse

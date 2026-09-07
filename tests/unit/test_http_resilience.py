@@ -174,8 +174,6 @@ def test_apply_sync_backoff_between_retries() -> None:
     )
     sleep_calls: list[float] = []
 
-    original_sleep = time.sleep
-
     def mock_sleep(seconds: float) -> None:
         sleep_calls.append(seconds)
         # Не спим по-настоящему в тесте

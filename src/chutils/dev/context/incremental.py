@@ -34,7 +34,7 @@ def get_changed_files(project_root: Path) -> list[Path]:
             parts = line.split(maxsplit=1)
             if len(parts) < 2:
                 continue
-            status, path_str = parts[0], parts[1]
+            _status, path_str = parts[0], parts[1]
 
             if "->" in path_str:
                 path_str = path_str.split("->")[-1].strip()

@@ -222,7 +222,7 @@ def test_cli_env_validate_failure(mocker: Any) -> None:
     class DummyManifest(BaseEnvManifest):
         pass
 
-    mock_load = mocker.patch.object(
+    mocker.patch.object(
         DummyManifest, "load", side_effect=EnvValidationError("Validation failed")
     )
     mocker.patch("chutils.commands.env._import_string", return_value=DummyManifest)

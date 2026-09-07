@@ -46,7 +46,7 @@ class TestFrameworkIntegrations:
                 secret_token="secret",
                 on_reload=on_reload,
             )
-            response = await handler(mock_request)
+            _response = await handler(mock_request)
             on_reload.assert_called_once()
 
     def test_flask_webhook_success(self) -> None:

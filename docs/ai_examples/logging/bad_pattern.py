@@ -21,7 +21,7 @@ def process_transaction(user_id, token, amount):
 
     try:
         # Эмуляция логики
-        result = amount / 0
+        _ = amount / 0
     except Exception as e:
         # Плохо: Вывод только сообщения об ошибке без трассировки стека (stack trace).
         logger.error(f"Произошла ошибка при транзакции: {e}")

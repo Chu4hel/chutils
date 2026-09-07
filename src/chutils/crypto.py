@@ -201,7 +201,7 @@ def _decrypt_stream_file(
             chunk_size_bytes = fin.read(4)
             if len(chunk_size_bytes) < 4:
                 raise ValueError("Поврежден заголовок файла (размер чанка)")
-            chunk_size = struct.unpack(">I", chunk_size_bytes)[0]
+            _chunk_size = struct.unpack(">I", chunk_size_bytes)[0]
             processed_size += 4
 
             salt = fin.read(16)

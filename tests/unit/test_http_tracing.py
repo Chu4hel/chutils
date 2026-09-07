@@ -174,7 +174,6 @@ def test_record_span_status_2xx_ok() -> None:
 
     mock_span.set_attribute.assert_called_once_with("http.status_code", 200)
     # Проверяем что set_status был вызван с OK
-    call_args = mock_span.set_status.call_args[0][0]
     assert mock_status_cls.call_args[0][0] == "OK"
 
 

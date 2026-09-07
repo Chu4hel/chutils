@@ -217,7 +217,7 @@ def test_post_with_json_data() -> None:
             mock_req_cls.return_value = MagicMock()
 
             client = UrllibFallbackClient()
-            resp = client.post("http://example.com/items", json_data={"name": "test"})
+            _resp = client.post("http://example.com/items", json_data={"name": "test"})
 
     call_kwargs = mock_req_cls.call_args.kwargs
     body: bytes = call_kwargs.get("data", b"")
