@@ -267,19 +267,19 @@ class ResiliencePolicy:
                 "Circuit Breaker открыт. Запросы временно заблокированы."
             )
 
+        sem = self._semaphore
         last_exc: Exception | None = None
 
         for attempt in range(self.retries + 1):
-            sem = self._semaphore
 
-            def _call() -> object:
-                if sem is not None:
-                    sem.acquire()
+            def _call(current_sem: threading.Semaphore | None = sem) -> object:
+                if current_sem is not None:
+                    current_sem.acquire()
                 try:
                     return func(*args, **kwargs)
                 finally:
-                    if sem is not None:
-                        sem.release()
+                    if current_sem is not None:
+                        current_sem.release()
 
             try:
                 if self.timeout is not None:

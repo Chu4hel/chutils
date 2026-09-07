@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import os
 from pathlib import Path
 from typing import Any
@@ -204,16 +205,16 @@ async def send_telegram_file(
             if parse_mode:
                 data["parse_mode"] = parse_mode
 
+            file_bytes = await asyncio.to_thread(file_to_send.read_bytes)
             async with httpx.AsyncClient() as client:
-                with open(file_to_send, "rb") as f:
-                    files = {"document": (file_to_send.name, f)}
-                    resp = await client.post(url, data=data, files=files)
-                    res_json = resp.json()
-                    if not res_json.get("ok"):
-                        raise ChutilsException(
-                            f"Ошибка Telegram sendDocument API: {res_json.get('description')}"
-                        )
-                    return res_json.get("result")
+                files = {"document": (file_to_send.name, file_bytes)}
+                resp = await client.post(url, data=data, files=files)
+                res_json = resp.json()
+                if not res_json.get("ok"):
+                    raise ChutilsException(
+                        f"Ошибка Telegram sendDocument API: {res_json.get('description')}"
+                    )
+                return res_json.get("result")
         elif hasattr(bot, "send_document"):
             # aiogram / python-telegram-bot
             try:
@@ -227,13 +228,17 @@ async def send_telegram_file(
                     parse_mode=parse_mode,
                 )
             except ImportError:
-                with open(file_to_send, "rb") as f:
-                    return await bot.send_document(
-                        chat_id=chat_id,
-                        document=f,
-                        caption=formatted_caption,
-                        parse_mode=parse_mode,
-                    )
+                from io import BytesIO
+
+                file_bytes = await asyncio.to_thread(file_to_send.read_bytes)
+                buf = BytesIO(file_bytes)
+                buf.name = file_to_send.name
+                return await bot.send_document(
+                    chat_id=chat_id,
+                    document=buf,
+                    caption=formatted_caption,
+                    parse_mode=parse_mode,
+                )
         else:
             raise ChutilsException(
                 f"Неподдерживаемый тип объекта bot: {type(bot).__name__}"
