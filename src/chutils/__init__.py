@@ -32,10 +32,19 @@
 
 """
 
-import concurrent.futures.thread  # noqa: F401
+import concurrent.futures
 import importlib
 import os
+from concurrent.futures.process import ProcessPoolExecutor as _ProcessPoolExecutor
+from concurrent.futures.thread import ThreadPoolExecutor as _ThreadPoolExecutor
 from typing import Any
+
+# Патч совместимости для Python 3.15 (PEP 690 lazy_import proxy в standard library concurrent.futures)
+if getattr(concurrent.futures, "ThreadPoolExecutor", None) is not _ThreadPoolExecutor:
+    concurrent.futures.ThreadPoolExecutor = _ThreadPoolExecutor  # type: ignore[misc]
+if getattr(concurrent.futures, "ProcessPoolExecutor", None) is not _ProcessPoolExecutor:
+    concurrent.futures.ProcessPoolExecutor = _ProcessPoolExecutor  # type: ignore[misc]
+
 
 # Словарь соответствия имен атрибутов их модулям и именам внутри этих модулей.
 # Формат: 'имя_атрибута': ('относительный_путь_к_модулю', 'имя_в_модуле' или None для самого модуля)
