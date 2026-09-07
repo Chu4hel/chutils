@@ -3,13 +3,16 @@ import sys
 from unittest.mock import patch
 
 import pytest
-from chutils.cli import main
+
 # Модель для тестов
 from pydantic import BaseModel, Field
+
+from chutils.cli import main
 
 
 class CliSchemaModel(BaseModel):
     """Модель для тестирования CLI генерации схемы."""
+
     cli_field: str = Field(description="CLI Test")
 
 
@@ -19,8 +22,14 @@ def test_cli_config_generate_schema_stdout(mock_import, mocker, capsys):
     """Тест вывода схемы в stdout."""
     mock_import.return_value = CliSchemaModel
 
-    test_args = ["chutils", "config", "generate-schema", "--model", "some.module:CliSchemaModel"]
-    mocker.patch.object(sys, 'argv', test_args)
+    test_args = [
+        "chutils",
+        "config",
+        "generate-schema",
+        "--model",
+        "some.module:CliSchemaModel",
+    ]
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -42,11 +51,15 @@ def test_cli_config_generate_schema_output_file(mock_import, mocker, tmp_path, c
     output_file = tmp_path / "schema.json"
 
     test_args = [
-        "chutils", "config", "generate-schema",
-        "--model", "some.module:CliSchemaModel",
-        "--output", str(output_file)
+        "chutils",
+        "config",
+        "generate-schema",
+        "--model",
+        "some.module:CliSchemaModel",
+        "--output",
+        str(output_file),
     ]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -66,7 +79,7 @@ def test_cli_config_generate_schema_error(mock_import, mocker, capsys):
     mock_import.side_effect = ImportError("Module not found")
 
     test_args = ["chutils", "config", "generate-schema", "--model", "invalid:Model"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()

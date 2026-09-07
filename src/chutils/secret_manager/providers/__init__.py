@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-# ruff: noqa: E402
-
 if TYPE_CHECKING:
     from chutils.logger import ChutilsLogger
 
@@ -15,6 +13,7 @@ def _get_logger() -> ChutilsLogger:
     global _module_logger
     if _module_logger is None:
         from ... import logger as chutils_logger
+
         _module_logger = chutils_logger.setup_logger("chutils.secret_manager.providers")
     return _module_logger
 
@@ -36,12 +35,12 @@ except ImportError:
     KEYRING_AVAILABLE = False
 
 __all__ = [
+    "KEYRING_AVAILABLE",
     "AWSSecretManagerProvider",
-    "SecretProvider",
-    "KeyringProvider",
     "DotEnvProvider",
     "EnvProvider",
-    "KEYRING_AVAILABLE",
     "GCPSecretManagerProvider",
+    "KeyringProvider",
+    "SecretProvider",
     "keyring",
 ]

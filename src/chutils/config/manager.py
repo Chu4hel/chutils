@@ -24,6 +24,7 @@ class _ConfigManager:
     Менеджер состояния конфигурации (Синглтон).
     Управляет путями к файлам и кэшированием загруженного объекта конфигурации.
     """
+
     _instance: _ConfigManager | None = None
 
     # Объявление типов для статического анализатора (strict mode)
@@ -52,16 +53,28 @@ class _ConfigManager:
     # Список основных маркеров, по которым ищется корень проекта.
     # Порядок в списке определяет приоритет при поиске.
     CONFIG_MARKERS: list[str] = [
-        'config.yml', 'config.yaml', 'config.ini', 'config.json',
-        'config.local.yml', 'config.local.yaml', 'config.local.ini', 'config.local.json',
-        'pyproject.toml', '.git'
+        "config.yml",
+        "config.yaml",
+        "config.ini",
+        "config.json",
+        "config.local.yml",
+        "config.local.yaml",
+        "config.local.ini",
+        "config.local.json",
+        "pyproject.toml",
+        ".git",
     ]
 
     # Вторичные (fallback) маркеры корня проекта (AI-манифесты и конфигурации редакторов).
     # Используются только если ни один первичный маркер не был найден при обходе вверх.
     FALLBACK_MARKERS: list[str] = [
-        'antigravity.md', 'gemini.md', 'GEMINI.md', 'agents.md', 'AGENTS.md',
-        '.cursorrules', '.windsurfrules'
+        "antigravity.md",
+        "gemini.md",
+        "GEMINI.md",
+        "agents.md",
+        "AGENTS.md",
+        ".cursorrules",
+        ".windsurfrules",
     ]
 
     def __new__(cls) -> _ConfigManager:
@@ -90,29 +103,32 @@ class _ConfigManager:
             self._last_internal_save_time = 0.0
             self._tracing_enabled = False
             self._trace_data = {}
-            if hasattr(self, '_remote_provider') and self._remote_provider is not None:
-                if hasattr(self._remote_provider, 'stop_polling'):
+            if hasattr(self, "_remote_provider") and self._remote_provider is not None:
+                if hasattr(self._remote_provider, "stop_polling"):
                     self._remote_provider.stop_polling()
                 self._remote_provider = None
             else:
                 self._remote_provider = None
 
-            if hasattr(self, '_sse_client') and self._sse_client is not None:
-                if hasattr(self._sse_client, 'stop'):
+            if hasattr(self, "_sse_client") and self._sse_client is not None:
+                if hasattr(self._sse_client, "stop"):
                     self._sse_client.stop()
                 self._sse_client = None
             else:
                 self._sse_client = None
 
-            if hasattr(self, '_webhook_server') and self._webhook_server is not None:
-                if hasattr(self._webhook_server, 'stop'):
+            if hasattr(self, "_webhook_server") and self._webhook_server is not None:
+                if hasattr(self._webhook_server, "stop"):
                     self._webhook_server.stop()
                 self._webhook_server = None
             else:
                 self._webhook_server = None
 
             # Сбрасываем реестр кастомных провайдеров (если уже инициализирован)
-            if hasattr(self, '_custom_providers_registry') and self._custom_providers_registry is not None:
+            if (
+                hasattr(self, "_custom_providers_registry")
+                and self._custom_providers_registry is not None
+            ):
                 self._custom_providers_registry.reset()
             else:
                 self._custom_providers_registry = None
@@ -125,6 +141,7 @@ class _ConfigManager:
             priority: Числовой приоритет (меньше → выше). По умолчанию: 100.
         """
         from .custom_providers import get_registry
+
         registry = get_registry()
         registry.register(provider, priority)
 
@@ -134,6 +151,7 @@ class _ConfigManager:
         Используется в тестах для сброса состояния между тест-кейсами.
         """
         from .custom_providers import get_registry
+
         get_registry().reset()
 
     @property
@@ -261,10 +279,7 @@ class _ConfigManager:
                 self._trace_data[s_key][k_key] = []
 
             # Добавляем в историю
-            self._trace_data[s_key][k_key].append({
-                "source": source,
-                "value": value
-            })
+            self._trace_data[s_key][k_key].append({"source": source, "value": value})
 
     def get_trace(self) -> dict[str, dict[str, list[dict[str, Any]]]]:
         """Возвращает собранные данные трассировки.
@@ -274,6 +289,7 @@ class _ConfigManager:
         """
         with self._lock:
             import copy
+
             return copy.deepcopy(self._trace_data)
 
     def record_trace_dict(self, data: JSONDict, source: str) -> None:
@@ -300,29 +316,45 @@ class _ConfigManager:
     def trace_env_vars(self) -> None:
         """Сканирует переменные окружения и записывает их в трассировку."""
         import os
+
         with self._lock:
             if not self._tracing_enabled:
                 return
 
-            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
+            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in (
+                "true",
+                "1",
+                "yes",
+                "y",
+            )  # chutils: ignore[ChutilsIntegrationRule]
             if disable_env_override:
                 return
 
-            for env_key, env_value in os.environ.items():  # chutils: ignore[ChutilsIntegrationRule]
-                if env_key.startswith("CH_") and env_key not in ("CH_ENV", "CH_DISABLE_ENV_OVERRIDE",
-                                                                 "CH_DISABLE_KEYRING_WARNING"):
+            for (
+                env_key,
+                env_value,
+            ) in os.environ.items():  # chutils: ignore[ChutilsIntegrationRule]
+                if env_key.startswith("CH_") and env_key not in (
+                    "CH_ENV",
+                    "CH_DISABLE_ENV_OVERRIDE",
+                    "CH_DISABLE_KEYRING_WARNING",
+                ):
                     # Шаблон: CH_[SECTION]_[KEY]
                     # Пытаемся разбить по первому нижнему подчеркиванию после CH_
                     # Это упрощенный парсинг, так как секция или ключ сами могут содержать _
                     # Но согласно спецификации, мы берем CH_SECTION_KEY.
-                    parts = env_key[3:].split('_', 1)
+                    parts = env_key[3:].split("_", 1)
                     if len(parts) == 2:
                         section, key = parts
                         # Мы сохраняем в нижнем регистре для консистентности с ключами из файлов
-                        self.record_trace(section.lower(), key.lower(), env_value, "env")
+                        self.record_trace(
+                            section.lower(), key.lower(), env_value, "env"
+                        )
 
             # Специфический ключ для secrets
-            secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")  # chutils: ignore[ChutilsIntegrationRule]
+            secrets_env = os.getenv(
+                "CH_DISABLE_KEYRING_WARNING"
+            )  # chutils: ignore[ChutilsIntegrationRule]
             if secrets_env is not None:
                 self.record_trace("secrets", "disable_keyring", secrets_env, "env")
 
@@ -491,7 +523,9 @@ class _ConfigManager:
                 return True
             return False
 
-    def initialize_paths(self, find_root_func: Callable[[Path, list[str]], Path | None]) -> None:
+    def initialize_paths(
+        self, find_root_func: Callable[[Path, list[str]], Path | None]
+    ) -> None:
         """Инициализирует пути к корню проекта и основному файлу конфигурации.
 
         Использует loading_lock для предотвращения конкурентной инициализации.
@@ -511,7 +545,7 @@ class _ConfigManager:
             try:
                 current_dir = Path.cwd()
             except OSError:
-                current_dir = Path('.')
+                current_dir = Path(".")
 
             project_root = find_root_func(current_dir, self.CONFIG_MARKERS)
             if not project_root:
@@ -521,23 +555,29 @@ class _ConfigManager:
                 self.base_dir = str(project_root)
                 # Находим, какой именно конфигурационный файл был найден
                 for marker in self.CONFIG_MARKERS:
-                    if (project_root / marker).is_file() and marker.startswith('config'):
+                    if (project_root / marker).is_file() and marker.startswith(
+                        "config"
+                    ):
                         self.config_file_path = str(project_root / marker)
                         break
 
                 # Находим features.yml (фича-флаги)
-                for marker in ['features.yml', 'features.yaml']:
+                for marker in ["features.yml", "features.yaml"]:
                     if (project_root / marker).is_file():
                         self.features_file_path = str(project_root / marker)
                         break
 
-                logger.debug("Корень проекта автоматически определен: %s", self.base_dir)
+                logger.debug(
+                    "Корень проекта автоматически определен: %s", self.base_dir
+                )
             else:
                 logger.warning("Не удалось автоматически найти корень проекта.")
 
             self.paths_initialized = True
 
-    def get_config_paths(self, cfg_file: str | None = None) -> tuple[str | None, str | None]:
+    def get_config_paths(
+        self, cfg_file: str | None = None
+    ) -> tuple[str | None, str | None]:
         """Возвращает пути к основному и локальному файлам конфигурации (Legacy API).
 
         Для получения всех путей (включая env) используйте get_all_config_paths().
@@ -551,8 +591,9 @@ class _ConfigManager:
         main, _, local = self.get_all_config_paths(cfg_file)
         return main, local
 
-    def get_all_config_paths(self, cfg_file: str | None = None) -> tuple[
-        str | None, str | None, str | None]:
+    def get_all_config_paths(
+        self, cfg_file: str | None = None
+    ) -> tuple[str | None, str | None, str | None]:
         """Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
 
         Args:
@@ -578,19 +619,28 @@ class _ConfigManager:
 
                 # 1. Специфичный для окружения (например, config.production.yml)
                 import os
-                ch_env = os.getenv("CH_ENV", "development")  # chutils: ignore[ChutilsIntegrationRule]
+
+                ch_env = os.getenv(
+                    "CH_ENV", "development"
+                )  # chutils: ignore[ChutilsIntegrationRule]
                 env_file_name = f"{main_path_obj.stem}.{ch_env}{file_ext}"
                 potential_env_path = main_path_obj.parent / env_file_name
                 if potential_env_path.exists():
                     env_config_path = str(potential_env_path)
-                    logger.debug("Найден конфигурационный файл окружения (%s): %s", ch_env, env_config_path)
+                    logger.debug(
+                        "Найден конфигурационный файл окружения (%s): %s",
+                        ch_env,
+                        env_config_path,
+                    )
 
                 # 2. Локальное (config.local.yml)
                 local_file_name = f"{main_path_obj.stem}.local{file_ext}"
                 potential_local_path = main_path_obj.parent / local_file_name
                 if potential_local_path.exists():
                     local_config_path = str(potential_local_path)
-                    logger.debug("Найден локальный файл конфигурации: %s", local_config_path)
+                    logger.debug(
+                        "Найден локальный файл конфигурации: %s", local_config_path
+                    )
 
             return main_config_path, env_config_path, local_config_path
 

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import argparse
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from chutils import config
 from chutils.config.diagnostics import format_trace
 from chutils.config.manager import _cm
+
 from .base import BaseCommand
 
 if TYPE_CHECKING:
@@ -26,10 +27,12 @@ class ConfigCommand(BaseCommand):
         config_parser = subparsers.add_parser(
             "config",
             help="Управление и диагностика конфигурации",
-            description="Группа команд для работы с настройками приложения, их проверки и отладки."
+            description="Группа команд для работы с настройками приложения, их проверки и отладки.",
         )
         config_parser.set_defaults(handler=self.handle)
-        config_subparsers = config_parser.add_subparsers(dest="subcommand", help="Доступные действия")
+        config_subparsers = config_parser.add_subparsers(
+            dest="subcommand", help="Доступные действия"
+        )
 
         # config debug
         debug_parser = config_subparsers.add_parser(
@@ -43,32 +46,35 @@ class ConfigCommand(BaseCommand):
   chutils config debug --include-fallbacks
   chutils config debug --format table
   chutils config debug --show-secrets --format json
-"""
+""",
         )
         debug_parser.add_argument(
-            "-m", "--model",
-            help="Путь к Pydantic модели в формате 'module.path:ClassName' для отображения дефолтов"
+            "-m",
+            "--model",
+            help="Путь к Pydantic модели в формате 'module.path:ClassName' для отображения дефолтов",
         )
         debug_parser.add_argument(
-            "-d", "--defaults",
+            "-d",
+            "--defaults",
             action="store_true",
-            help="Показывать значения по умолчанию из модели"
+            help="Показывать значения по умолчанию из модели",
         )
         debug_parser.add_argument(
             "--include-fallbacks",
             action="store_true",
-            help="Показывать значения fallback по умолчанию, заданные в коде через get_config_*"
+            help="Показывать значения fallback по умолчанию, заданные в коде через get_config_*",
         )
         debug_parser.add_argument(
-            "-f", "--format",
+            "-f",
+            "--format",
             choices=["tree", "table", "json"],
             default="tree",
-            help="Формат вывода данных (по умолчанию: tree)"
+            help="Формат вывода данных (по умолчанию: tree)",
         )
         debug_parser.add_argument(
             "--show-secrets",
             action="store_true",
-            help="Показывать реальные значения секретов вместо [MASKED]"
+            help="Показывать реальные значения секретов вместо [MASKED]",
         )
         debug_parser.set_defaults(handler=self.handle_debug)
 
@@ -81,21 +87,22 @@ class ConfigCommand(BaseCommand):
             epilog="""Примеры использования:
   chutils config generate-schema --model my_app.models:Settings -o config.schema.json
   chutils config generate-schema --model chutils.config.schema:TestModel --stdout
-"""
+""",
         )
         schema_parser.add_argument(
             "--model",
             required=True,
-            help="Путь к Pydantic модели в формате 'module.path:ClassName'"
+            help="Путь к Pydantic модели в формате 'module.path:ClassName'",
         )
         schema_parser.add_argument(
-            "-o", "--output",
-            help="Путь к файлу для сохранения схемы (например, config.schema.json)"
+            "-o",
+            "--output",
+            help="Путь к файлу для сохранения схемы (например, config.schema.json)",
         )
         schema_parser.add_argument(
             "--stdout",
             action="store_true",
-            help="Вывести схему в консоль (игнорируется, если не указан --output)"
+            help="Вывести схему в консоль (игнорируется, если не указан --output)",
         )
         schema_parser.set_defaults(handler=self.handle_generate_schema)
 
@@ -117,10 +124,13 @@ class ConfigCommand(BaseCommand):
         model_class = None
         if args.model:
             from chutils.config.schema import import_model_class
+
             try:
                 model_class = import_model_class(args.model)
             except Exception as e:
-                self.console.print(f"[bold red]Ошибка при импорте модели:[/bold red] {e}")
+                self.console.print(
+                    f"[bold red]Ошибка при импорте модели:[/bold red] {e}"
+                )
                 raise SystemExit(1)
 
         # 2. Включаем трассировку
@@ -137,9 +147,11 @@ class ConfigCommand(BaseCommand):
         # 4.5 Если запрошен сбор fallback значений из кода
         if getattr(args, "include_fallbacks", False):
             from chutils.config.ast_fallback_parser import parse_fallbacks_from_project
+
             # Мы собираем все fallbacks из base_dir
             if not _cm.paths_initialized:
                 from chutils.config import utils
+
                 _cm.initialize_paths(utils.find_project_root)
 
             if _cm.base_dir:
@@ -158,13 +170,11 @@ class ConfigCommand(BaseCommand):
 
         # 7. Форматируем и выводим
         output = format_trace(
-            trace_data,
-            format_type=args.format,
-            show_secrets=args.show_secrets
+            trace_data, format_type=args.format, show_secrets=args.show_secrets
         )
 
         # Для JSON выводим напрямую, для остальных используем console.print
-        if args.format == 'json':
+        if args.format == "json":
             print(output)
         else:
             # Отключаем markup, так как в текстовом режиме [section] воспринимается как тег и удаляется
@@ -207,14 +217,13 @@ class ConfigCommand(BaseCommand):
         from chutils.config import export_schema
 
         try:
-            schema_json = export_schema(
-                model=args.model,
-                output_path=args.output
-            )
+            schema_json = export_schema(model=args.model, output_path=args.output)
 
             if args.output:
                 if not args.stdout:
-                    self.console.print(f"[green]JSON Schema успешно сохранена в: [bold]{args.output}[/bold][/green]")
+                    self.console.print(
+                        f"[green]JSON Schema успешно сохранена в: [bold]{args.output}[/bold][/green]"
+                    )
                 else:
                     # Если указан и --output и --stdout, выводим и туда и туда
                     print(schema_json)

@@ -17,7 +17,7 @@ def test_cli_config_debug_json(mocker, config_fs, capsys):
 
     # Эмулируем аргументы
     test_args = ["chutils", "config", "debug", "--format", "json"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     # ACT
     with pytest.raises(SystemExit) as e:
@@ -40,7 +40,7 @@ def test_cli_config_debug_tree(mocker, config_fs, capsys):
     fs.create_file(project_root / "config.yml", contents="App:\n  name: Test")
 
     test_args = ["chutils", "config", "debug"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -56,11 +56,13 @@ def test_cli_config_debug_tree(mocker, config_fs, capsys):
 def test_cli_config_debug_masking(mocker, config_fs, capsys):
     """Проверяет маскирование в CLI."""
     fs, project_root = config_fs
-    fs.create_file(project_root / "config.yml", contents="Secrets:\n  api_key: secret123")
+    fs.create_file(
+        project_root / "config.yml", contents="Secrets:\n  api_key: secret123"
+    )
 
     # Без флага --show-secrets
     test_args = ["chutils", "config", "debug", "--format", "json"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit):
         main()
@@ -70,8 +72,15 @@ def test_cli_config_debug_masking(mocker, config_fs, capsys):
     assert "secret123" not in captured.out
 
     # С флагом --show-secrets
-    test_args_show = ["chutils", "config", "debug", "--format", "json", "--show-secrets"]
-    mocker.patch.object(sys, 'argv', test_args_show)
+    test_args_show = [
+        "chutils",
+        "config",
+        "debug",
+        "--format",
+        "json",
+        "--show-secrets",
+    ]
+    mocker.patch.object(sys, "argv", test_args_show)
 
     with pytest.raises(SystemExit):
         main()

@@ -27,16 +27,16 @@ app = FastAPI()
 
 # Инициализируем роутер (confirmation_code и secret_key подтягиваются автоматически из env / secret_manager)
 vk_router = VKCallbackRouter(
-    confirmation_code="a1b2c3d4",
-    secret_key="my_secret_group_key",
-    path="/vk-webhook"
+    confirmation_code="a1b2c3d4", secret_key="my_secret_group_key", path="/vk-webhook"
 )
+
 
 @vk_router.on_message_new
 async def handle_new_message(event: dict):
     user_id = event["object"]["message"]["from_id"]
     text = event["object"]["message"]["text"]
     print(f"Новое сообщение от {user_id}: {text}")
+
 
 # Подключаем вебхук в FastAPI
 app.include_router(vk_router.get_fastapi_router())

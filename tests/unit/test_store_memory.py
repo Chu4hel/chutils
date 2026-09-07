@@ -1,6 +1,7 @@
 """
 Юнит-тесты для BaseStoreBackend и MemoryStore.
 """
+
 from __future__ import annotations
 
 import time

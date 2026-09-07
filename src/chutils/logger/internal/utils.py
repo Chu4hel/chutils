@@ -13,7 +13,7 @@ _async_listeners: list[logging.handlers.QueueListener] = []
 
 
 def get_log_dir() -> str | None:
-    """"Лениво" получает и кэширует путь к директории логов.
+    """ "Лениво" получает и кэширует путь к директории логов.
     Создает директорию 'logs' в корне проекта при первом обращении.
 
     Returns:
@@ -25,10 +25,12 @@ def get_log_dir() -> str | None:
 
     base_dir = config.get_base_dir()
     if not base_dir:
-        logging.warning("Не удалось определить корень проекта, файловое логирование отключено.")
+        logging.warning(
+            "Не удалось определить корень проекта, файловое логирование отключено."
+        )
         return None
 
-    log_path = Path(base_dir) / 'logs'
+    log_path = Path(base_dir) / "logs"
     if not log_path.exists():
         try:
             ensure_dir(log_path)

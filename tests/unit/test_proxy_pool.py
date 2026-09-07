@@ -45,7 +45,9 @@ def test_proxy_pool_env_proxies(mock_getproxies: MagicMock) -> None:
 def test_proxy_pool_url_load(mock_urlopen: MagicMock) -> None:
     """Проверяет загрузку списка прокси по URL."""
     mock_response = MagicMock()
-    mock_response.read.return_value = b"http://proxy-url-1:8080\nhttp://proxy-url-2:8080\n# comment\n"
+    mock_response.read.return_value = (
+        b"http://proxy-url-1:8080\nhttp://proxy-url-2:8080\n# comment\n"
+    )
     mock_urlopen.return_value.__enter__.return_value = mock_response
 
     pool = ProxyPool(url="http://example.com/proxies.txt")

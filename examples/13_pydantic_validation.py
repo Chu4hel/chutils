@@ -15,6 +15,7 @@ from chutils import config, get_config, get_config_section
 
 class DbConfig(BaseModel):
     """Модель для секции базы данных."""
+
     host: str
     port: int
     pool_size: int = 10
@@ -22,6 +23,7 @@ class DbConfig(BaseModel):
 
 class AppConfig(BaseModel):
     """Основная модель конфигурации."""
+
     app_name: str = Field(alias="name")
     version: str
     allowed_hosts: list[str]

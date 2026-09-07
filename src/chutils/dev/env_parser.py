@@ -2,6 +2,7 @@
 Модуль для парсинга, сохранения и слияния файлов конфигурации окружения (.env и .env.example).
 Сохраняет форматирование, пустые строки и комментарии.
 """
+
 from __future__ import annotations
 
 import re
@@ -12,6 +13,7 @@ from pathlib import Path
 @dataclass
 class EnvEntry:
     """Представляет отдельную строку в env-файле."""
+
     raw_line: str
     key: str | None = None
     value: str | None = None
@@ -113,7 +115,8 @@ def write_env_file(path: str | Path, entries: list[EnvEntry]) -> None:
         path: Путь для сохранения файла.
         entries: Список сохраняемых записей EnvEntry.
     """
-    from chutils.fs import ensure_dir, atomic_write
+    from chutils.fs import atomic_write, ensure_dir
+
     p = Path(path)
     ensure_dir(p.parent)
 
@@ -128,9 +131,9 @@ def write_env_file(path: str | Path, entries: list[EnvEntry]) -> None:
             # в те же самые значения, выводим её без изменений для сохранения кавычек.
             parsed_raw = parse_env_line(entry.raw_line)
             if (
-                    parsed_raw.key == entry.key
-                    and parsed_raw.value == entry.value
-                    and parsed_raw.comment == entry.comment
+                parsed_raw.key == entry.key
+                and parsed_raw.value == entry.value
+                and parsed_raw.comment == entry.comment
             ):
                 lines.append(entry.raw_line)
             else:
@@ -150,9 +153,9 @@ def write_env_file(path: str | Path, entries: list[EnvEntry]) -> None:
 
 
 def merge_env_structures(
-        source_entries: list[EnvEntry],
-        target_entries: list[EnvEntry],
-        empty_values: bool = False,
+    source_entries: list[EnvEntry],
+    target_entries: list[EnvEntry],
+    empty_values: bool = False,
 ) -> list[EnvEntry]:
     """Сливает две структуры env-файлов.
 
@@ -207,7 +210,9 @@ def merge_env_structures(
         # Вставляем собранные комментарии
         for c in comments_before:
             raw_c = c.raw_line if c.raw_line.endswith("\n") else c.raw_line + "\n"
-            new_entries.append(EnvEntry(raw_line=raw_c, is_comment=True, comment=c.comment))
+            new_entries.append(
+                EnvEntry(raw_line=raw_c, is_comment=True, comment=c.comment)
+            )
 
         # Создаем новую запись для ключа
         val = "" if empty_values else (entry.value if entry.value is not None else "")
@@ -217,11 +222,13 @@ def merge_env_structures(
             raw_key_line += f" # {entry.comment}"
         raw_key_line += "\n"
 
-        new_entries.append(EnvEntry(
-            raw_line=raw_key_line,
-            key=key,
-            value=val,
-            comment=entry.comment,
-        ))
+        new_entries.append(
+            EnvEntry(
+                raw_line=raw_key_line,
+                key=key,
+                value=val,
+                comment=entry.comment,
+            )
+        )
 
     return new_entries

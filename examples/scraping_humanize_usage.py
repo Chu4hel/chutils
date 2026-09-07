@@ -28,7 +28,9 @@ def run_math_example() -> None:
     delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.15)
     base_delay = 1.5
     randomized_delay = delay_gen.generate(base_delay)
-    print(f"Базовая задержка: {base_delay} сек -> Случайная задержка: {randomized_delay:.3f} сек")
+    print(
+        f"Базовая задержка: {base_delay} сек -> Случайная задержка: {randomized_delay:.3f} сек"
+    )
 
     # Генерация клавиатурного ввода с опечатками
     typo_gen = KeyboardTypoGenerator()

@@ -24,6 +24,7 @@ def use_encryption_safe(data: str) -> str:
     """
     try:
         from chutils.crypto import encrypt_portable
+
         return encrypt_portable(data, seed="project_seed")
     except OptionalDependencyError as e:
         # Хорошо: OptionalDependencyError содержит e.hint с командой установки.
@@ -47,6 +48,7 @@ def use_text_similarity_strict(a: str, b: str) -> bool:
         OptionalDependencyError: Если rapidfuzz не установлен.
     """
     from chutils.text import is_significant_difference
+
     # Хорошо: Если rapidfuzz не установлен — OptionalDependencyError с подсказкой.
     # Не перехватываем — пусть вызывающий код решает, как обработать.
     return not is_significant_difference(a, b)
@@ -59,6 +61,7 @@ def setup_tracing_optional() -> None:
     """
     try:
         from chutils.tracing import setup_tracing
+
         setup_tracing(service_name="my_app")
     except OptionalDependencyError as e:
         # Хорошо: Трассировка некритична — деградируем с подсказкой.

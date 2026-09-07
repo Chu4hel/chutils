@@ -1,12 +1,14 @@
 """
 Провайдер секретов для AWS Secrets Manager.
 """
+
 from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 from typing import Any, cast
 
 from chutils.exceptions import OptionalDependencyError
+
 from .base import SecretProvider
 
 logger = logging.getLogger("chutils.secret_manager.providers.aws")
@@ -46,7 +48,9 @@ class AWSSecretManagerProvider(SecretProvider):
                 "Установите её через 'pip install boto3' или 'pip install chutils[aws]'."
             )
 
-        self._client = boto3.client("secretsmanager", region_name=self.region_name, **self.kwargs)
+        self._client = boto3.client(
+            "secretsmanager", region_name=self.region_name, **self.kwargs
+        )
         return self._client
 
     def get(self, key: str, service_name: str) -> str | None:
@@ -67,15 +71,27 @@ class AWSSecretManagerProvider(SecretProvider):
         except Exception as e:
             try:
                 from botocore.exceptions import ClientError
+
                 if isinstance(e, ClientError):
                     error_code = e.response.get("Error", {}).get("Code")
-                    if error_code in ("ResourceNotFoundException", "AccessDeniedException"):
-                        logger.debug("Секрет %s не найден в AWS Secrets Manager: %s", secret_name, e)
+                    if error_code in (
+                        "ResourceNotFoundException",
+                        "AccessDeniedException",
+                    ):
+                        logger.debug(
+                            "Секрет %s не найден в AWS Secrets Manager: %s",
+                            secret_name,
+                            e,
+                        )
                         return None
             except ImportError:
                 pass
 
-            logger.warning("Ошибка при получении секрета %s из AWS Secrets Manager: %s", secret_name, e)
+            logger.warning(
+                "Ошибка при получении секрета %s из AWS Secrets Manager: %s",
+                secret_name,
+                e,
+            )
             return None
 
     def set(self, key: str, value: str, service_name: str) -> bool:
@@ -97,21 +113,28 @@ class AWSSecretManagerProvider(SecretProvider):
         except Exception as e:
             try:
                 from botocore.exceptions import ClientError
+
                 if isinstance(e, ClientError):
                     error_code = e.response.get("Error", {}).get("Code")
                     if error_code == "ResourceExistsException":
                         try:
-                            client.put_secret_value(SecretId=secret_name, SecretString=value)
+                            client.put_secret_value(
+                                SecretId=secret_name, SecretString=value
+                            )
                             return True
                         except Exception as ex:
                             logger.error(
-                                "Не удалось обновить значение секрета %s в AWS Secrets Manager: %s", secret_name, ex
+                                "Не удалось обновить значение секрета %s в AWS Secrets Manager: %s",
+                                secret_name,
+                                ex,
                             )
                             return False
             except ImportError:
                 pass
 
-            logger.error("Не удалось создать секрет %s в AWS Secrets Manager: %s", secret_name, e)
+            logger.error(
+                "Не удалось создать секрет %s в AWS Secrets Manager: %s", secret_name, e
+            )
             return False
 
     def delete(self, key: str, service_name: str) -> bool:
@@ -130,5 +153,9 @@ class AWSSecretManagerProvider(SecretProvider):
             client.delete_secret(SecretId=secret_name, ForceDeleteWithoutRecovery=True)
             return True
         except Exception as e:
-            logger.error("Не удалось удалить секрет %s из AWS Secrets Manager: %s", secret_name, e)
+            logger.error(
+                "Не удалось удалить секрет %s из AWS Secrets Manager: %s",
+                secret_name,
+                e,
+            )
             return False

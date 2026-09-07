@@ -2,31 +2,42 @@
 
 import time
 import urllib.parse
+
 import pytest
+from test_vkma_core import SECRET, generate_vk_sign
 
 from chutils.vkma import VKMALaunchParams
-from test_vkma_core import SECRET, generate_vk_sign
 
 # Проверяем наличие веб-фреймворков
 try:
-    from fastapi import FastAPI, Depends
+    from fastapi import Depends, FastAPI
     from fastapi.testclient import TestClient
-    from chutils.vkma.integrations.fastapi import VKMAAuthMiddleware, get_current_vkma_params
+
+    from chutils.vkma.integrations.fastapi import (
+        VKMAAuthMiddleware,
+        get_current_vkma_params,
+    )
+
     HAS_FASTAPI = True
 except ImportError:
     HAS_FASTAPI = False
 
 try:
-    from flask import Flask, jsonify, g
+    from flask import Flask, g, jsonify
+
     from chutils.vkma.integrations.flask import require_vkma_auth
+
     HAS_FLASK = True
 except ImportError:
     HAS_FLASK = False
 
 try:
     from aiohttp import web
-    from aiohttp.test_utils import TestClient as AioTestClient, TestServer
+    from aiohttp.test_utils import TestClient as AioTestClient
+    from aiohttp.test_utils import TestServer
+
     from chutils.vkma.integrations.aiohttp import vkma_auth_middleware
+
     HAS_AIOHTTP = True
 except ImportError:
     HAS_AIOHTTP = False
@@ -49,7 +60,9 @@ def vk_valid_query_str() -> str:
 @pytest.mark.skipif(not HAS_FASTAPI, reason="FastAPI не установлен")
 def test_fastapi_vkma_middleware_and_dependency(vk_valid_query_str):
     app = FastAPI()
-    app.add_middleware(VKMAAuthMiddleware, client_secret=SECRET, exclude_paths=["/public"])
+    app.add_middleware(
+        VKMAAuthMiddleware, client_secret=SECRET, exclude_paths=["/public"]
+    )
 
     @app.get("/public")
     def public_route():
@@ -70,7 +83,9 @@ def test_fastapi_vkma_middleware_and_dependency(vk_valid_query_str):
     assert r_unauth.status_code == 401
 
     # Protected с валидным Bearer initData
-    r_auth = client.get("/protected", headers={"Authorization": f"Bearer {vk_valid_query_str}"})
+    r_auth = client.get(
+        "/protected", headers={"Authorization": f"Bearer {vk_valid_query_str}"}
+    )
     assert r_auth.status_code == 200
     assert r_auth.json() == {"user_id": 777, "app_id": 888}
 

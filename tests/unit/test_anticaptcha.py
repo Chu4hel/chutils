@@ -7,6 +7,7 @@ import pytest
 @pytest.fixture(autouse=True)
 def mock_httpx_installed(mocker) -> None:
     import importlib.util
+
     orig_find_spec = importlib.util.find_spec
 
     def custom_find_spec(name: str, package: str | None = None) -> Any:
@@ -49,7 +50,7 @@ def test_anticaptcha_solve_image_success(mock_httpx_client) -> None:
     response_res.json.return_value = {
         "errorId": 0,
         "status": "ready",
-        "solution": {"text": "abcd"}
+        "solution": {"text": "abcd"},
     }
 
     mock_httpx_client.post.side_effect = [response_in, response_res]
@@ -62,7 +63,9 @@ def test_anticaptcha_solve_image_success(mock_httpx_client) -> None:
 
 
 @pytest.mark.asyncio
-async def test_async_anticaptcha_solve_recaptcha_success(mock_httpx_async_client) -> None:
+async def test_async_anticaptcha_solve_recaptcha_success(
+    mock_httpx_async_client,
+) -> None:
     """Проверяет успешное асинхронное решение ReCaptcha."""
     from chutils.scraping.captcha.anticaptcha import AsyncAntiCaptchaSolver
 
@@ -73,7 +76,7 @@ async def test_async_anticaptcha_solve_recaptcha_success(mock_httpx_async_client
     response_res.json.return_value = {
         "errorId": 0,
         "status": "ready",
-        "solution": {"gRecaptchaResponse": "token_xyz"}
+        "solution": {"gRecaptchaResponse": "token_xyz"},
     }
 
     mock_httpx_async_client.post.side_effect = [response_in, response_res]
@@ -96,7 +99,7 @@ def test_anticaptcha_raises_balance_error(mock_httpx_client) -> None:
     response_in.json.return_value = {
         "errorId": 10,
         "errorCode": "ERROR_ZERO_BALANCE",
-        "errorDescription": "Zero balance"
+        "errorDescription": "Zero balance",
     }
     mock_httpx_client.post.return_value = response_in
 
@@ -116,7 +119,7 @@ def test_anticaptcha_raises_service_error(mock_httpx_client) -> None:
     response_in.json.return_value = {
         "errorId": 1,
         "errorCode": "ERROR_KEY_DOES_NOT_EXIST",
-        "errorDescription": "Key does not exist"
+        "errorDescription": "Key does not exist",
     }
     mock_httpx_client.post.return_value = response_in
 

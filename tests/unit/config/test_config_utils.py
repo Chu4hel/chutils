@@ -41,8 +41,8 @@ def test_deep_merge_empty():
 
 
 def test_find_project_root_pyproject_and_git(tmp_path):
-    from chutils.config.utils import find_project_root
     from chutils.config.manager import _ConfigManager
+    from chutils.config.utils import find_project_root
 
     # Создаем структуру: root/.git, root/sub/nested
     root_dir = tmp_path / "project_root"
@@ -57,8 +57,8 @@ def test_find_project_root_pyproject_and_git(tmp_path):
 
 
 def test_find_project_root_ai_manifest(tmp_path):
-    from chutils.config.utils import find_project_root
     from chutils.config.manager import _ConfigManager
+    from chutils.config.utils import find_project_root
 
     root_dir = tmp_path / "manifest_root"
     nested_dir = root_dir / "src" / "pkg"
@@ -72,8 +72,8 @@ def test_find_project_root_ai_manifest(tmp_path):
 
 
 def test_primary_markers_take_priority_over_fallback(tmp_path):
-    from chutils.config.utils import find_project_root
     from chutils.config.manager import _ConfigManager
+    from chutils.config.utils import find_project_root
 
     # Корень проекта имеет pyproject.toml
     root_dir = tmp_path / "root"
@@ -86,5 +86,3 @@ def test_primary_markers_take_priority_over_fallback(tmp_path):
     # Первичный поиск по CONFIG_MARKERS должен найти root_dir (pyproject.toml), а не остановиться на sub_dir (GEMINI.md)
     found_primary = find_project_root(sub_dir, _ConfigManager.CONFIG_MARKERS)
     assert found_primary == root_dir
-
-

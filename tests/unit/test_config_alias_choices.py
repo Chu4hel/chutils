@@ -2,24 +2,29 @@
 Тесты для поддержки Pydantic AliasChoices в get_config.
 """
 
-import sys
 from unittest.mock import patch
 
 import pytest
 from pydantic import AliasChoices, BaseModel, Field
 
-from chutils.config import get_config, get_config_value
+from chutils.config import get_config
 from chutils.exceptions import OptionalDependencyError
 
 
 class DBConfig(BaseModel):
     url: str = Field(validation_alias=AliasChoices("DB_URL", "DATABASE_URL", "url"))
-    max_connections: int = Field(default=10, validation_alias=AliasChoices("MAX_CONN", "max_conn"))
+    max_connections: int = Field(
+        default=10, validation_alias=AliasChoices("MAX_CONN", "max_conn")
+    )
 
 
 class AppConfig(BaseModel):
-    app_name: str = Field(default="My App", validation_alias=AliasChoices("APP_NAME", "NAME"))
-    port: int = Field(default=8080, validation_alias=AliasChoices("PORT", "SERVER_PORT"))
+    app_name: str = Field(
+        default="My App", validation_alias=AliasChoices("APP_NAME", "NAME")
+    )
+    port: int = Field(
+        default=8080, validation_alias=AliasChoices("PORT", "SERVER_PORT")
+    )
     db: DBConfig
 
 

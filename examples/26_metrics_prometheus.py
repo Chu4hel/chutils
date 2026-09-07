@@ -2,7 +2,14 @@ import asyncio
 import time
 
 from chutils import setup_logger
-from chutils.metrics import increment, set_gauge, observe, timer, generate_latest, get_provider
+from chutils.metrics import (
+    generate_latest,
+    get_provider,
+    increment,
+    observe,
+    set_gauge,
+    timer,
+)
 
 logger = setup_logger(name="metrics_example")
 
@@ -32,9 +39,21 @@ async def main() -> None:
 
     # 3. Использование счетчиков (Counters)
     logger.info("Увеличиваем счетчик обработанных запросов...")
-    increment("http_requests_total", 1.0, {"method": "GET", "endpoint": "/api/v1/users", "status": "200"})
-    increment("http_requests_total", 1.0, {"method": "POST", "endpoint": "/api/v1/login", "status": "201"})
-    increment("http_requests_total", 1.0, {"method": "GET", "endpoint": "/api/v1/users", "status": "200"})
+    increment(
+        "http_requests_total",
+        1.0,
+        {"method": "GET", "endpoint": "/api/v1/users", "status": "200"},
+    )
+    increment(
+        "http_requests_total",
+        1.0,
+        {"method": "POST", "endpoint": "/api/v1/login", "status": "201"},
+    )
+    increment(
+        "http_requests_total",
+        1.0,
+        {"method": "GET", "endpoint": "/api/v1/users", "status": "200"},
+    )
 
     # 4. Использование датчиков (Gauges)
     logger.info("Устанавливаем значение датчика активных сессий...")

@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Awaitable
+from collections.abc import Awaitable, Callable
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from fastapi.responses import JSONResponse
     from flask import Response
+
     from .manager import DiagnosticsManager
 
 
 def get_fastapi_health_handler(
-        manager: DiagnosticsManager
+    manager: DiagnosticsManager,
 ) -> Callable[[], Awaitable[JSONResponse]]:
     """Создает асинхронный обработчик здоровья для FastAPI.
 
@@ -44,9 +45,7 @@ def get_fastapi_health_handler(
     return health_handler
 
 
-def get_flask_health_handler(
-        manager: DiagnosticsManager
-) -> Callable[[], Response]:
+def get_flask_health_handler(manager: DiagnosticsManager) -> Callable[[], Response]:
     """Создает синхронный обработчик здоровья для Flask.
 
     Args:

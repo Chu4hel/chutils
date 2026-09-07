@@ -3,10 +3,8 @@
 Используется для обеспечения строгой типизации (Zero-Any Strategy).
 """
 
-from typing import TypeVar, Protocol, runtime_checkable, Any
-
 # Поддержка ParamSpec и TypeAlias для Python < 3.10
-from typing import ParamSpec, TypeAlias
+from typing import Any, ParamSpec, Protocol, TypeAlias, TypeVar, runtime_checkable
 
 # Общие переменные типов
 T = TypeVar("T")
@@ -22,25 +20,20 @@ JSONValue: TypeAlias = str | int | float | bool | None | list[Any] | dict[str, A
 class ConfigProviderProtocol(Protocol):
     """Протокол для провайдеров конфигурации."""
 
-    def load(self, path: str) -> JSONDict:
-        ...
+    def load(self, path: str) -> JSONDict: ...
 
-    def save(self, path: str, section: str, key: str, value: Any) -> bool:
-        ...
+    def save(self, path: str, section: str, key: str, value: Any) -> bool: ...
 
 
 @runtime_checkable
 class SecretProviderProtocol(Protocol):
     """Протокол для провайдеров секретов."""
 
-    def get_secret(self, name: str) -> str | None:
-        ...
+    def get_secret(self, name: str) -> str | None: ...
 
-    def set_secret(self, name: str, value: str) -> bool:
-        ...
+    def set_secret(self, name: str, value: str) -> bool: ...
 
-    def delete_secret(self, name: str) -> bool:
-        ...
+    def delete_secret(self, name: str) -> bool: ...
 
 
 @runtime_checkable

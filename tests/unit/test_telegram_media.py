@@ -2,9 +2,10 @@
 
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
+
 import pytest
 
-from chutils.exceptions import ChutilsException, PathTraversalError
+from chutils.exceptions import ChutilsException
 from chutils.telegram.media import download_user_file
 
 

@@ -16,7 +16,7 @@ class UserAgentRotator:
     """
 
     def __init__(
-            self, user_agents: list[str] | None = None, fallback: str | None = None
+        self, user_agents: list[str] | None = None, fallback: str | None = None
     ) -> None:
         """Инициализирует ротатор User-Agent.
 
@@ -25,9 +25,7 @@ class UserAgentRotator:
             fallback: Резервный User-Agent, если список пуст.
         """
         self.user_agents: list[str] = (
-            user_agents
-            if user_agents is not None
-            else list(DEFAULT_USER_AGENTS)
+            user_agents if user_agents is not None else list(DEFAULT_USER_AGENTS)
         )
         self.fallback: str = fallback or (
             DEFAULT_USER_AGENTS[0] if DEFAULT_USER_AGENTS else ""

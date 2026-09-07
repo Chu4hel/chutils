@@ -17,6 +17,7 @@ logger = setup_logger("retry_example")
 
 # --- 1. Синхронный пример ---
 
+
 @retry(retries=3, delay=1.0, backoff=2.0, jitter=True)
 def unstable_sync_operation() -> str:
     """Синхронная функция, которая иногда падает."""
@@ -27,6 +28,7 @@ def unstable_sync_operation() -> str:
 
 
 # --- 2. Асинхронный пример ---
+
 
 @retry(retries=5, delay=0.5, backoff=1.5, exceptions=(ValueError,))
 async def unstable_async_operation() -> str:

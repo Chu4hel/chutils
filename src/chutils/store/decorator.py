@@ -1,9 +1,9 @@
 """
 Декоратор кэширования на базе StoreManager (chutils.store.decorator).
 """
+
 from __future__ import annotations
 
-import asyncio
 import functools
 import inspect
 from collections.abc import Callable
@@ -14,7 +14,9 @@ from .manager import StoreManager
 _default_store = StoreManager()
 
 
-def _make_key(prefix: str, func: Callable[..., Any], args: tuple[Any, ...], kwargs: dict[str, Any]) -> str:
+def _make_key(
+    prefix: str, func: Callable[..., Any], args: tuple[Any, ...], kwargs: dict[str, Any]
+) -> str:
     func_name = getattr(func, "__qualname__", func.__name__)
     raw_args = f"{args}:{sorted(kwargs.items())}"
     return f"{prefix}{func_name}:{raw_args}"
@@ -22,7 +24,7 @@ def _make_key(prefix: str, func: Callable[..., Any], args: tuple[Any, ...], kwar
 
 def store_cache(
     store: StoreManager | None = None,
-    ttl: int | float = 60,
+    ttl: float = 60,
     key_prefix: str = "cache:",
 ) -> Callable[..., Any]:
     """Декоратор для кэширования результатов вызова функций через StoreManager.

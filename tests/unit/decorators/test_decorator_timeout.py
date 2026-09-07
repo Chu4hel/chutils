@@ -3,11 +3,11 @@ import time
 
 import pytest
 
-from chutils.decorators import timeout, retry
+from chutils.decorators import retry, timeout
 from chutils.exceptions import ChutilsTimeoutError
 
-
 # --- Combined Tests ---
+
 
 def test_timeout_with_retry_sync():
     """Проверяет совместную работу @timeout и @retry для синхронной функции."""
@@ -47,6 +47,7 @@ async def test_timeout_with_retry_async():
 
 
 # --- Sync Tests ---
+
 
 def test_timeout_sync_success():
     """Проверяет успешное выполнение быстрой синхронной функции."""
@@ -93,6 +94,7 @@ def test_timeout_sync_fallback_none():
 
 
 # --- Async Tests ---
+
 
 @pytest.mark.asyncio
 async def test_timeout_async_success():

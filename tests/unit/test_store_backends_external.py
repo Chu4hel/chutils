@@ -1,6 +1,7 @@
 """
 Юнит-тесты для внешних бэкендов RedisStore и MemcachedStore.
 """
+
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -14,15 +15,13 @@ from chutils.store.backends.redis import RedisStore
 
 def test_redis_store_missing_dependency() -> None:
     """Проверяет выброс OptionalDependencyError при отсутствии модуля redis."""
-    with patch.dict("sys.modules", {"redis": None}), patch(
-        "chutils.store.backends.redis.is_redis_available", return_value=False
+    with (
+        patch.dict("sys.modules", {"redis": None}),
+        patch("chutils.store.backends.redis.is_redis_available", return_value=False),
     ):
         store = RedisStore()
         with pytest.raises(OptionalDependencyError):
             store.get("key")
-
-
-
 
 
 def test_redis_store_sync_operations() -> None:
@@ -37,8 +36,9 @@ def test_redis_store_sync_operations() -> None:
     mock_redis_module = MagicMock()
     mock_redis_module.Redis.from_url.return_value = mock_redis_client
 
-    with patch.dict("sys.modules", {"redis": mock_redis_module}), patch(
-        "chutils.store.backends.redis.is_redis_available", return_value=True
+    with (
+        patch.dict("sys.modules", {"redis": mock_redis_module}),
+        patch("chutils.store.backends.redis.is_redis_available", return_value=True),
     ):
         store = RedisStore(url="redis://localhost:6379/0")
 
@@ -71,8 +71,11 @@ async def test_redis_store_async_operations() -> None:
     mock_redis = MagicMock()
     mock_redis.asyncio.Redis.from_url.return_value = mock_async_redis
 
-    with patch.dict("sys.modules", {"redis": mock_redis, "redis.asyncio": mock_redis.asyncio}), patch(
-        "chutils.store.backends.redis.is_redis_available", return_value=True
+    with (
+        patch.dict(
+            "sys.modules", {"redis": mock_redis, "redis.asyncio": mock_redis.asyncio}
+        ),
+        patch("chutils.store.backends.redis.is_redis_available", return_value=True),
     ):
         store = RedisStore(url="redis://localhost:6379/0")
 
@@ -85,7 +88,9 @@ async def test_redis_store_async_operations() -> None:
 
 def test_memcached_store_missing_dependency() -> None:
     """Проверяет выброс OptionalDependencyError при отсутствии pymemcache."""
-    with patch("chutils.store.backends.memcached.is_pymemcache_available", return_value=False):
+    with patch(
+        "chutils.store.backends.memcached.is_pymemcache_available", return_value=False
+    ):
         store = MemcachedStore()
         with pytest.raises(OptionalDependencyError):
             store.get("key")
@@ -102,10 +107,19 @@ def test_memcached_store_sync_operations() -> None:
     mock_pymemcache = MagicMock()
     mock_pymemcache.client.base.Client.return_value = mock_client
 
-    with patch.dict(
-        "sys.modules",
-        {"pymemcache": mock_pymemcache, "pymemcache.client.base": mock_pymemcache.client.base},
-    ), patch("chutils.store.backends.memcached.is_pymemcache_available", return_value=True):
+    with (
+        patch.dict(
+            "sys.modules",
+            {
+                "pymemcache": mock_pymemcache,
+                "pymemcache.client.base": mock_pymemcache.client.base,
+            },
+        ),
+        patch(
+            "chutils.store.backends.memcached.is_pymemcache_available",
+            return_value=True,
+        ),
+    ):
         store = MemcachedStore(host="127.0.0.1", port=11211)
 
         assert store.get("mk") == b"mem_val"

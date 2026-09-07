@@ -16,7 +16,7 @@ def test_json_format_parameter(capsys, monkeypatch):
     captured = capsys.readouterr()
     # Проверяем, что вывод - это валидный JSON
     try:
-        log_json = json.loads(captured.err.strip().split('\n')[-1])
+        log_json = json.loads(captured.err.strip().split("\n")[-1])
         assert log_json["message"] == "Test JSON message"
         assert "levelname" in log_json
         assert "name" in log_json
@@ -30,12 +30,14 @@ def test_json_format_env_priority(capsys, monkeypatch):
     monkeypatch.setenv("CH_LOG_JSON", "true")
 
     # Даже если в коде False, ENV должен победить
-    logger = setup_logger(name="json_env_test", json_format=False, force_reconfigure=True)
+    logger = setup_logger(
+        name="json_env_test", json_format=False, force_reconfigure=True
+    )
     logger.info("Env wins")
 
     captured = capsys.readouterr()
     try:
-        json.loads(captured.err.strip().split('\n')[-1])
+        json.loads(captured.err.strip().split("\n")[-1])
     except json.JSONDecodeError:
         pytest.fail("ENV переменная CH_LOG_JSON=true не включила JSON формат")
 
@@ -44,6 +46,7 @@ def test_json_format_graceful_degradation(capsys, monkeypatch):
     """Проверяет откат к обычному тексту, если пакет не установлен."""
     # Эмулируем отсутствие пакета через флаг
     from chutils.logger.internal import builder as logger_builder
+
     monkeypatch.setattr(logger_builder, "JSON_LOGGER_AVAILABLE", False)
 
     logger_name = "json_missing_test"
@@ -58,14 +61,16 @@ def test_json_format_masking_integration(capsys, monkeypatch):
     """Проверяет, что маскирование секретов работает в JSON формате."""
 
     # Регистрируем секрет для маскирования через логгер
-    logger = setup_logger(name="json_mask_test", json_format=True, force_reconfigure=True)
+    logger = setup_logger(
+        name="json_mask_test", json_format=True, force_reconfigure=True
+    )
     logger.add_mask("supersecret123")
 
     logger.info("The password is supersecret123")
 
     captured = capsys.readouterr()
     # Ищем JSON в выводе (может быть несколько строк, берем последнюю)
-    lines = captured.err.strip().split('\n')
+    lines = captured.err.strip().split("\n")
     log_json = None
     for line in reversed(lines):
         try:
@@ -91,6 +96,7 @@ Logging:
     fs.create_file(project_root / "config.yml", contents=yaml_content)
     # Сбрасываем кэш, чтобы подхватить новый файл
     from chutils import config as chutils_config
+
     chutils_config._cm._reset()
 
     logger = setup_logger(name="json_config_test", force_reconfigure=True)
@@ -98,7 +104,7 @@ Logging:
 
     captured = capsys.readouterr()
     try:
-        json.loads(captured.err.strip().split('\n')[-1])
+        json.loads(captured.err.strip().split("\n")[-1])
     except json.JSONDecodeError:
         pytest.fail("JSON формат из конфигурации не применился")
 
@@ -114,6 +120,7 @@ Logging:
 """
     fs.create_file(project_root / "config.yml", contents=yaml_content)
     from chutils import config as chutils_config
+
     chutils_config._cm._reset()
 
     setup_logger(name="invalid_time_test", force_reconfigure=True)

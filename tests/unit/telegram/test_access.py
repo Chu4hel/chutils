@@ -1,8 +1,9 @@
-import pytest
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import AsyncMock
 
-from chutils.telegram.access import is_admin, admin_only
+import pytest
+
 from chutils.exceptions.telegram import TelegramAccessDeniedError
+from chutils.telegram.access import admin_only, is_admin
 
 
 def test_is_admin_explicit_ids():
@@ -28,6 +29,7 @@ def test_is_admin_custom_func():
 
 def test_admin_only_decorator_sync_success():
     """Проверяет синхронный декоратор при успешном доступе."""
+
     @admin_only(admin_ids=[100])
     def sync_handler(user_id: int):
         return f"OK-{user_id}"
@@ -37,6 +39,7 @@ def test_admin_only_decorator_sync_success():
 
 def test_admin_only_decorator_sync_denied_raise():
     """Проверяет выбрасывание ошибки TelegramAccessDeniedError в синхронном режиме."""
+
     @admin_only(admin_ids=[100], raise_on_denied=True)
     def sync_handler(user_id: int):
         return "OK"
@@ -48,6 +51,7 @@ def test_admin_only_decorator_sync_denied_raise():
 @pytest.mark.asyncio
 async def test_admin_only_decorator_async_success():
     """Проверяет асинхронный декоратор при успешном доступе."""
+
     @admin_only(admin_usernames=["admin"])
     async def async_handler(username: str):
         return f"OK-{username}"

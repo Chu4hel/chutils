@@ -4,8 +4,9 @@ import asyncio
 from typing import TYPE_CHECKING
 
 from chutils.exceptions import SecretError
-from .providers import SecretProvider, KeyringProvider, DotEnvProvider, EnvProvider
+
 from .. import config
+from .providers import DotEnvProvider, EnvProvider, KeyringProvider, SecretProvider
 
 if TYPE_CHECKING:
     from ..logger import ChutilsLogger
@@ -43,7 +44,12 @@ def _warn_about_missing_keyring() -> None:
 
     import os
 
-    if os.environ.get("CH_DISABLE_KEYRING_WARNING", "").lower() in ("true", "1", "yes"):  # chutils: ignore[ChutilsIntegrationRule]
+    val = os.environ.get("CH_DISABLE_KEYRING_WARNING", "")  # chutils: ignore[ChutilsIntegrationRule]
+    if val.lower() in (
+        "true",
+        "1",
+        "yes",
+    ):
         _keyring_missing_warned = True
         return
 
@@ -56,7 +62,7 @@ def _warn_about_missing_keyring() -> None:
     _keyring_missing_warned = True
 
 
-def _get_logger() -> "ChutilsLogger":
+def _get_logger() -> ChutilsLogger:
     """
     Получает лениво инициализированный логгер модуля.
     """
@@ -80,11 +86,11 @@ class SecretManager:
     prefix: str = "Chutils_"
 
     def __init__(
-            self,
-            service_name: str | None = None,
-            prefix: str | None = None,
-            auto_mask_logs: bool = True,
-            providers: list[SecretProvider] | None = None,
+        self,
+        service_name: str | None = None,
+        prefix: str | None = None,
+        auto_mask_logs: bool = True,
+        providers: list[SecretProvider] | None = None,
     ) -> None:
         """
         Инициализирует менеджер секретов.
@@ -166,7 +172,7 @@ class SecretManager:
         if not hasattr(self, "_plugins_loaded"):
             self._plugins_loaded = True
             try:
-                from ..plugins import registry, SecretProviderPlugin
+                from ..plugins import SecretProviderPlugin, registry
 
                 registry.discover_plugins("chutils.plugins.secret")
                 external_providers = registry.get_plugins_by_type(SecretProviderPlugin)
@@ -177,7 +183,7 @@ class SecretManager:
                 _get_logger().error("Ошибка при загрузке плагинов секретов: %s", str(e))
 
     def get_secret(
-            self, key: str, fallback: str | None = None, required: bool = False
+        self, key: str, fallback: str | None = None, required: bool = False
     ) -> str | None:
         """Получает секрет, опрашивая провайдеры по порядку.
 
@@ -252,7 +258,7 @@ class SecretManager:
 
     # Асинхронные обертки
     async def aget_secret(
-            self, key: str, fallback: str | None = None, required: bool = False
+        self, key: str, fallback: str | None = None, required: bool = False
     ) -> str | None:
         """Асинхронно получает секрет.
 

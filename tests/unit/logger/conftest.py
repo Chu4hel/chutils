@@ -4,7 +4,7 @@ import time
 
 import pytest
 
-from chutils.logger import SafeTimedRotatingFileHandler, ChutilsLogger
+from chutils.logger import ChutilsLogger, SafeTimedRotatingFileHandler
 
 
 @pytest.fixture
@@ -28,7 +28,7 @@ def time_machine(monkeypatch):
     tm = TimeMachine()
 
     # 1. Патчим time.time
-    monkeypatch.setattr(time, 'time', tm.time)
+    monkeypatch.setattr(time, "time", tm.time)
 
     # 2. Патчим os.stat (нужно для RotatingFileHandler, чтобы он видел "старое" время изменения файла)
     original_os_stat = os.stat
@@ -38,7 +38,7 @@ def time_machine(monkeypatch):
             self._original = original_stat_result
 
         def __getattr__(self, name):
-            if name == 'st_mtime':
+            if name == "st_mtime":
                 return tm.time()
             return getattr(self._original, name)
 
@@ -65,7 +65,7 @@ def time_machine(monkeypatch):
             # Если файла нет, пробрасываем ошибку дальше
             raise
 
-    monkeypatch.setattr(os, 'stat', mock_stat)
+    monkeypatch.setattr(os, "stat", mock_stat)
 
     return tm
 
@@ -77,14 +77,28 @@ def fast_rotation(monkeypatch):
     работала как 'S' (секунды). Это ускоряет тесты.
     """
 
-    def new_init(self, filename, when='D', interval=1, backupCount=0, encoding=None, delay=False, utc=False):
+    def new_init(
+        self,
+        filename,
+        when="D",
+        interval=1,
+        backupCount=0,
+        encoding=None,
+        delay=False,
+        utc=False,
+    ):
         # Подменяем 'D' на 'S'
         super(SafeTimedRotatingFileHandler, self).__init__(
-            filename, when='S', interval=1, backupCount=backupCount,
-            encoding=encoding, delay=delay, utc=utc
+            filename,
+            when="S",
+            interval=1,
+            backupCount=backupCount,
+            encoding=encoding,
+            delay=delay,
+            utc=utc,
         )
 
-    monkeypatch.setattr(SafeTimedRotatingFileHandler, '__init__', new_init)
+    monkeypatch.setattr(SafeTimedRotatingFileHandler, "__init__", new_init)
 
 
 @pytest.fixture(autouse=True)
@@ -93,17 +107,18 @@ def reset_chutils_state(monkeypatch):
     Сбрасывает глобальное состояние модулей config и logger.
     Позволяет тестам инициализировать пути "с чистого листа".
     """
-    from chutils.logger import core as chutils_logger_core
     from chutils import config as chutils_config
+    from chutils.logger import core as chutils_logger_core
 
     # Сбрасываем состояние через менеджер напрямую
     chutils_config._cm._reset()
 
     # Сбрасываем logger
     from chutils.logger.internal import utils as logger_utils
-    monkeypatch.setattr(logger_utils, '_LOG_DIR', None)
-    monkeypatch.setattr(chutils_logger_core, '_initialization_message_shown', False)
-    monkeypatch.setattr(chutils_logger_core, '_file_handler_cache', {})
+
+    monkeypatch.setattr(logger_utils, "_LOG_DIR", None)
+    monkeypatch.setattr(chutils_logger_core, "_initialization_message_shown", False)
+    monkeypatch.setattr(chutils_logger_core, "_file_handler_cache", {})
 
 
 @pytest.fixture

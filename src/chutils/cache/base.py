@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -7,7 +7,7 @@ T = TypeVar("T")
 class BaseCacheBackend(ABC, Generic[T]):
     """
     Базовый абстрактный класс для всех бэкендов кэширования.
-    
+
     Определяет единый интерфейс для синхронных и асинхронных операций.
     """
 
@@ -15,14 +15,13 @@ class BaseCacheBackend(ABC, Generic[T]):
     def get(self, key: str) -> T | None:
         """
         Получить значение из кэша.
-        
+
         Args:
             key (str): Ключ кэша.
-            
+
         Returns:
             Значение или None, если ключ не найден или просрочен.
         """
-        pass
 
     @abstractmethod
     def set(
@@ -41,7 +40,6 @@ class BaseCacheBackend(ABC, Generic[T]):
             ttl (Optional[int]): Время жизни в секундах. Если None, используется вечное хранение.
             tags (Optional[list[str]]): Список тегов для связывания с ключом.
         """
-        pass
 
     @abstractmethod
     def delete(self, key: str) -> None:
@@ -51,7 +49,6 @@ class BaseCacheBackend(ABC, Generic[T]):
         Args:
             key (str): Ключ кэша.
         """
-        pass
 
     @abstractmethod
     def exists(self, key: str) -> bool:
@@ -64,12 +61,10 @@ class BaseCacheBackend(ABC, Generic[T]):
         Returns:
             bool: True, если ключ существует и не просрочен.
         """
-        pass
 
     @abstractmethod
     def clear(self) -> None:
         """Очистить весь кэш."""
-        pass
 
     @abstractmethod
     def invalidate_tag(self, tag: str) -> None:
@@ -79,7 +74,6 @@ class BaseCacheBackend(ABC, Generic[T]):
         Args:
             tag (str): Тег для инвалидации.
         """
-        pass
 
     # --- Асинхронные методы (по умолчанию вызывают синхронные) ---
 

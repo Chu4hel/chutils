@@ -35,7 +35,9 @@ async def test_async_move_mouse() -> None:
     page.mouse = MagicMock()
     page.mouse.move = AsyncMock()
 
-    await async_move_mouse(page, x=200, y=300, start=(0, 0), steps=10, delay_between_steps=0.001)
+    await async_move_mouse(
+        page, x=200, y=300, start=(0, 0), steps=10, delay_between_steps=0.001
+    )
 
     assert page.mouse.move.call_count == 10
     last_call_args = page.mouse.move.call_args_list[-1][0]
@@ -65,7 +67,9 @@ async def test_async_type_text() -> None:
     page.keyboard.type = AsyncMock()
     page.keyboard.press = AsyncMock()
 
-    await async_type_text(page, selector="#input", text="test", error_rate=0.0, speed_wpm=300.0)
+    await async_type_text(
+        page, selector="#input", text="test", error_rate=0.0, speed_wpm=300.0
+    )
 
     page.focus.assert_called_once_with("#input")
     assert page.keyboard.type.call_count == 4
@@ -100,4 +104,3 @@ async def test_async_click() -> None:
     assert page.mouse.move.call_count > 0
     page.mouse.down.assert_called_once_with(button="left")
     page.mouse.up.assert_called_once_with(button="left")
-

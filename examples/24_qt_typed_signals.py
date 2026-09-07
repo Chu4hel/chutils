@@ -12,9 +12,9 @@ from chutils.qt import (
     BaseMainWindow,
     QApplication,
     QPushButton,
-    TypedSignal,
     QVBoxLayout,
     QWidget,
+    TypedSignal,
     qt_slot,
     require_qt,
 )
@@ -25,7 +25,7 @@ class MyTypedWindow(BaseMainWindow, AutoBindMixin):
 
     # Определяем типизированные сигналы
     user_logged_in = TypedSignal[str, int](str, int)
-    action_triggered = TypedSignal[](void=None) if False else TypedSignal()
+    action_triggered = TypedSignal()
 
     def __init__(self) -> None:
         super().__init__()
@@ -47,7 +47,9 @@ class MyTypedWindow(BaseMainWindow, AutoBindMixin):
     # Автоматически связывается с сигналом user_logged_in благодаря AutoBindMixin
     @qt_slot(str, int)
     def on_user_logged_in(self, username: str, user_id: int) -> None:
-        self.logger.info("Слот перехватил вход пользователя: %s (ID: %d)", username, user_id)
+        self.logger.info(
+            "Слот перехватил вход пользователя: %s (ID: %d)", username, user_id
+        )
 
     @qt_slot(catch_exceptions=True)
     def on_error_slot(self) -> None:

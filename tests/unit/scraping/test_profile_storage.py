@@ -1,6 +1,7 @@
 """Тесты хранения и шифрования моделей профилей браузеров."""
 
 import pytest
+
 from chutils.scraping.profiles.models import (
     BrowserProfile,
     CookieData,
@@ -17,11 +18,11 @@ def test_browser_profile_serialization():
     profile = BrowserProfile(
         engine_origin="nodriver",
         cookies=[
-            CookieData(name="session_id", value="xyz123", domain="example.com", secure=True)
+            CookieData(
+                name="session_id", value="xyz123", domain="example.com", secure=True
+            )
         ],
-        storage=StorageData(
-            local_storage={"https://example.com": {"theme": "dark"}}
-        ),
+        storage=StorageData(local_storage={"https://example.com": {"theme": "dark"}}),
         headers=HeaderData(user_agent="Mozilla/5.0 CustomUA"),
     )
 

@@ -1,10 +1,11 @@
 """
 Юнит-тесты для профилировщика импортов chutils dev profile-imports.
 """
+
 from __future__ import annotations
 
-from typing import Any
 import json
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -68,7 +69,9 @@ def test_profile_imports_success(mocker: Any, capsys: Any) -> None:
     mock_run.return_value = mock_proc
 
     console = get_console()
-    profile_imports("chutils", threshold_ms=0.0, as_table=False, as_json=False, console=console)
+    profile_imports(
+        "chutils", threshold_ms=0.0, as_table=False, as_json=False, console=console
+    )
 
     captured = capsys.readouterr()
     assert "chutils" in captured.out or "chutils" in captured.err
@@ -88,7 +91,9 @@ def test_profile_imports_table(mocker: Any, capsys: Any) -> None:
     mock_run.return_value = mock_proc
 
     console = get_console()
-    profile_imports("chutils", threshold_ms=0.0, as_table=True, as_json=False, console=console)
+    profile_imports(
+        "chutils", threshold_ms=0.0, as_table=True, as_json=False, console=console
+    )
 
     captured = capsys.readouterr()
     assert "chutils" in captured.out
@@ -107,7 +112,9 @@ def test_profile_imports_json(mocker: Any, capsys: Any) -> None:
     mock_run.return_value = mock_proc
 
     console = get_console()
-    profile_imports("chutils", threshold_ms=0.0, as_table=False, as_json=True, console=console)
+    profile_imports(
+        "chutils", threshold_ms=0.0, as_table=False, as_json=True, console=console
+    )
 
     captured = capsys.readouterr()
     data = json.loads(captured.out.strip())
@@ -126,7 +133,11 @@ def test_profile_imports_failure(mocker: Any) -> None:
     console = get_console()
     with pytest.raises(RuntimeError, match="Не удалось импортировать модуль"):
         profile_imports(
-            "invalid_target", threshold_ms=0.0, as_table=False, as_json=False, console=console
+            "invalid_target",
+            threshold_ms=0.0,
+            as_table=False,
+            as_json=False,
+            console=console,
         )
 
 
@@ -140,7 +151,9 @@ def test_profile_imports_empty_output(mocker: Any) -> None:
 
     console = get_console()
     with pytest.raises(RuntimeError, match="Не удалось распарсить вывод importtime"):
-        profile_imports("chutils", threshold_ms=0.0, as_table=False, as_json=False, console=console)
+        profile_imports(
+            "chutils", threshold_ms=0.0, as_table=False, as_json=False, console=console
+        )
 
 
 def test_parse_importtime_value_error() -> None:
@@ -173,14 +186,18 @@ def test_profile_imports_many_duplicates(mocker: Any, capsys: Any) -> None:
     mock_run.return_value = mock_proc
 
     console = get_console()
-    profile_imports("chutils", threshold_ms=0.0, as_table=False, as_json=False, console=console)
+    profile_imports(
+        "chutils", threshold_ms=0.0, as_table=False, as_json=False, console=console
+    )
 
     captured = capsys.readouterr()
     assert "Обнаружены дублирующиеся импорты" in captured.out
     assert "и еще 1 дубликатов" in captured.out
 
 
-def test_profile_imports_fallback_no_rich(mocker: Any, monkeypatch: Any, capsys: Any) -> None:
+def test_profile_imports_fallback_no_rich(
+    mocker: Any, monkeypatch: Any, capsys: Any
+) -> None:
     """Проверяет текстовый fallback-рендеринг дерева и таблицы при отсутствии rich."""
     # Патчим globals непосредственно у тестируемой функции, чтобы обойти дублирование модулей
     globals_dict = profile_imports.__globals__
@@ -200,14 +217,18 @@ def test_profile_imports_fallback_no_rich(mocker: Any, monkeypatch: Any, capsys:
     console = get_console()
 
     # 1. Проверяем текстовое дерево
-    profile_imports("chutils", threshold_ms=0.0, as_table=False, as_json=False, console=console)
+    profile_imports(
+        "chutils", threshold_ms=0.0, as_table=False, as_json=False, console=console
+    )
     captured = capsys.readouterr()
     assert "Дерево импортов модулей:" in captured.out
     assert "• typing" in captured.out
     assert "• chutils" in captured.out
 
     # 2. Проверяем текстовую таблицу
-    profile_imports("chutils", threshold_ms=0.0, as_table=True, as_json=False, console=console)
+    profile_imports(
+        "chutils", threshold_ms=0.0, as_table=True, as_json=False, console=console
+    )
     captured = capsys.readouterr()
     assert "Тяжелые импорты (сортировка по собственному времени):" in captured.out
     assert "typing" in captured.out

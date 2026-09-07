@@ -1,6 +1,7 @@
 """
 Модуль для кроссплатформенного неблокирующего чтения ввода с клавиатуры.
 """
+
 from __future__ import annotations
 
 import sys
@@ -12,18 +13,21 @@ class RawTerminalUnix:
     def __init__(self) -> None:
         """Инициализирует контекстный менеджер."""
         import termios
+
         self.fd = sys.stdin.fileno()
         self.old_settings = getattr(termios, "tcgetattr")(self.fd)
 
     def __enter__(self) -> RawTerminalUnix:
         """Включает raw режим для терминала."""
         import tty
+
         getattr(tty, "setraw")(self.fd)
         return self
 
     def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None:
         """Восстанавливает исходные настройки терминала."""
         import termios
+
         tcsetattr = getattr(termios, "tcsetattr")
         tcsadrain = getattr(termios, "TCSADRAIN")
         tcsetattr(self.fd, tcsadrain, self.old_settings)
@@ -34,7 +38,7 @@ class InputReader:
 
     def __init__(self) -> None:
         """Инициализирует InputReader."""
-        self.is_win = (sys.platform == "win32")
+        self.is_win = sys.platform == "win32"
         self.raw_term: RawTerminalUnix | None = None
 
     def __enter__(self) -> InputReader:
@@ -57,7 +61,7 @@ class InputReader:
             Строка с кодом нажатой клавиши или None, если ничего не нажато.
         """
         # Динамически перевычисляем is_win на случай смены платформы в тестах
-        self.is_win = (sys.platform == "win32")
+        self.is_win = sys.platform == "win32"
 
         if self.is_win:
             return self._get_key_win()
@@ -67,6 +71,7 @@ class InputReader:
     def _get_key_win(self) -> str | None:
         """Читает клавишу на Windows."""
         import msvcrt
+
         kbhit = getattr(msvcrt, "kbhit")
         getch = getattr(msvcrt, "getch")
 
@@ -100,6 +105,7 @@ class InputReader:
 
             try:
                 from typing import cast
+
                 return cast(str, ch.decode("utf-8"))
             except Exception:
                 return None
@@ -108,6 +114,7 @@ class InputReader:
     def _get_key_unix(self) -> str | None:
         """Читает клавишу на Unix."""
         import select
+
         rlist, _, _ = select.select([sys.stdin], [], [], 0.0)
         if rlist:
             ch = sys.stdin.read(1)

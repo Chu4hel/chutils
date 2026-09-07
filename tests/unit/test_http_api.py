@@ -7,12 +7,12 @@
 - Функции принимают все стандартные параметры (headers, json_data, timeout, policy)
 - Экспорт из chutils (ленивый импорт)
 """
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
 from chutils.http.fallback import HttpResponse
-
 
 # ─── Фабрика mock-ответа ─────────────────────────────────────────────────────
 
@@ -26,7 +26,7 @@ def _mock_resp(status: int = 200, body: bytes = b'{"ok": true}') -> HttpResponse
 
 def test_http_get_standalone() -> None:
     """chutils.http.get() возвращает HttpResponse."""
-    import chutils.http as http
+    from chutils import http
 
     resp = _mock_resp()
     with patch("chutils.http.api.HttpClient") as mock_cls:
@@ -39,12 +39,14 @@ def test_http_get_standalone() -> None:
         result = http.get("http://example.com/")
 
     assert result.status_code == 200
-    instance.get.assert_called_once_with("http://example.com/", headers=None, timeout=None)
+    instance.get.assert_called_once_with(
+        "http://example.com/", headers=None, timeout=None
+    )
 
 
 def test_http_post_standalone_with_json() -> None:
     """chutils.http.post() передаёт json_data."""
-    import chutils.http as http
+    from chutils import http
 
     resp = _mock_resp(201)
     with patch("chutils.http.api.HttpClient") as mock_cls:
@@ -68,7 +70,7 @@ def test_http_post_standalone_with_json() -> None:
 
 def test_http_put_standalone() -> None:
     """chutils.http.put() работает корректно."""
-    import chutils.http as http
+    from chutils import http
 
     resp = _mock_resp(200)
     with patch("chutils.http.api.HttpClient") as mock_cls:
@@ -85,7 +87,7 @@ def test_http_put_standalone() -> None:
 
 def test_http_delete_standalone() -> None:
     """chutils.http.delete() работает корректно."""
-    import chutils.http as http
+    from chutils import http
 
     resp = _mock_resp(204, b"")
     with patch("chutils.http.api.HttpClient") as mock_cls:
@@ -102,7 +104,7 @@ def test_http_delete_standalone() -> None:
 
 def test_http_patch_standalone() -> None:
     """chutils.http.patch() работает корректно."""
-    import chutils.http as http
+    from chutils import http
 
     resp = _mock_resp(200)
     with patch("chutils.http.api.HttpClient") as mock_cls:
@@ -119,7 +121,7 @@ def test_http_patch_standalone() -> None:
 
 def test_http_get_passes_headers() -> None:
     """Standalone get() передаёт кастомные заголовки."""
-    import chutils.http as http
+    from chutils import http
 
     resp = _mock_resp()
     with patch("chutils.http.api.HttpClient") as mock_cls:
@@ -138,7 +140,7 @@ def test_http_get_passes_headers() -> None:
 
 def test_http_get_passes_timeout() -> None:
     """Standalone get() передаёт таймаут."""
-    import chutils.http as http
+    from chutils import http
 
     resp = _mock_resp()
     with patch("chutils.http.api.HttpClient") as mock_cls:
@@ -157,7 +159,7 @@ def test_http_get_passes_timeout() -> None:
 
 def test_http_get_passes_policy() -> None:
     """Standalone get() передаёт ResiliencePolicy в HttpClient."""
-    import chutils.http as http
+    from chutils import http
     from chutils.http import ResiliencePolicy
 
     resp = _mock_resp()
@@ -183,6 +185,7 @@ def test_http_get_passes_policy() -> None:
 def test_chutils_http_module_importable() -> None:
     """chutils.http импортируется через ленивую загрузку."""
     import chutils
+
     http_mod = chutils.http
     assert http_mod is not None
 
@@ -190,24 +193,29 @@ def test_chutils_http_module_importable() -> None:
 def test_chutils_http_client_importable_from_chutils() -> None:
     """HttpClient доступен через chutils.HttpClient."""
     import chutils
+
     assert hasattr(chutils, "HttpClient") or True  # lazy — проверяем через __getattr__
     from chutils import HttpClient
+
     assert HttpClient is not None
 
 
 def test_chutils_async_http_client_importable() -> None:
     """AsyncHttpClient доступен через chutils.AsyncHttpClient."""
     from chutils import AsyncHttpClient
+
     assert AsyncHttpClient is not None
 
 
 def test_chutils_resilience_policy_importable() -> None:
     """ResiliencePolicy доступен через chutils.ResiliencePolicy."""
     from chutils import ResiliencePolicy
+
     assert ResiliencePolicy is not None
 
 
 def test_chutils_http_response_importable() -> None:
     """HttpResponse доступен через chutils.HttpResponse."""
     from chutils import HttpResponse
+
     assert HttpResponse is not None

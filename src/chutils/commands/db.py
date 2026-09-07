@@ -18,6 +18,7 @@
     chutils db upgrade
     chutils db downgrade -1
 """
+
 from __future__ import annotations
 
 import argparse
@@ -136,7 +137,7 @@ def _init_migrations_dir(migrations_path: Path) -> None:
     console = get_console()
 
     if not migrations_path.exists():
-        from chutils.fs import ensure_dir, atomic_write
+        from chutils.fs import atomic_write, ensure_dir
 
         ensure_dir(migrations_path)
         ensure_dir(migrations_path / "versions")
@@ -146,14 +147,14 @@ def _init_migrations_dir(migrations_path: Path) -> None:
 
         mako_content = (
             '{"""${message}\n\nRevision ID: ${up_revision}\n'
-            'Revises: ${down_revision | comma,n}\n'
+            "Revises: ${down_revision | comma,n}\n"
             'Create Date: ${create_date}\n\n"""}\n'
-            'from alembic import op\nimport sqlalchemy as sa\n'
+            "from alembic import op\nimport sqlalchemy as sa\n"
             '${imports if imports else ""}\n\n'
-            'revision = ${repr(up_revision)}\n'
-            'down_revision = ${repr(down_revision)}\n'
-            'branch_labels = ${repr(branch_labels)}\n'
-            'depends_on = ${repr(depends_on)}\n\n\n'
+            "revision = ${repr(up_revision)}\n"
+            "down_revision = ${repr(down_revision)}\n"
+            "branch_labels = ${repr(branch_labels)}\n"
+            "depends_on = ${repr(depends_on)}\n\n\n"
             'def upgrade() -> None:\n    ${upgrades if upgrades else "pass"}\n\n\n'
             'def downgrade() -> None:\n    ${downgrades if downgrades else "pass"}\n'
         )
@@ -209,9 +210,9 @@ def _resolve_config(args: argparse.Namespace) -> tuple[str, Path, Any | None]:
 
     # database_url
     db_url = (
-            get_config_value("Database", "url")
-            or get_config_value("Database", "database_url")
-            or get_config_value("Secrets", "database_url")
+        get_config_value("Database", "url")
+        or get_config_value("Database", "database_url")
+        or get_config_value("Secrets", "database_url")
     )
     if not db_url:
         raise ConfigError(
@@ -386,9 +387,7 @@ class DbCommand(BaseCommand):
         }
         handler = dispatch.get(subcommand)
         if handler is None:
-            self.err_console.print(
-                f"[red]Неизвестная подкоманда: {subcommand}[/red]"
-            )
+            self.err_console.print(f"[red]Неизвестная подкоманда: {subcommand}[/red]")
             return
         handler(args)
 
@@ -412,9 +411,7 @@ class DbCommand(BaseCommand):
             cfg.attributes["target_metadata"] = metadata_obj
 
         message: str = getattr(args, "message", None) or "auto_migration"
-        self.console.print(
-            f"[cyan]Генерация миграции:[/cyan] {message}"
-        )
+        self.console.print(f"[cyan]Генерация миграции:[/cyan] {message}")
         command.revision(cfg, message=message, autogenerate=True)
         self.console.print("[green]✓[/green] Миграция создана.")
 
@@ -486,9 +483,7 @@ class DbCommand(BaseCommand):
         db_url, migrations_path, _metadata_obj = _resolve_config(args)
 
         if not migrations_path.exists():
-            self.console.print(
-                "[yellow]Директория миграций не найдена.[/yellow]"
-            )
+            self.console.print("[yellow]Директория миграций не найдена.[/yellow]")
             return
 
         cfg = _build_alembic_config(db_url, migrations_path)

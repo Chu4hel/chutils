@@ -4,13 +4,13 @@ import threading
 import pytest
 
 from chutils.events.core import (
-    EventBus,
     ErrorStrategy,
-    subscribe,
+    EventBus,
+    _run_and_log_errors,
+    is_async_callable,
     publish,
     publish_async,
-    is_async_callable,
-    _run_and_log_errors
+    subscribe,
 )
 from chutils.exceptions import EventBusExceptionGroup
 
@@ -19,7 +19,6 @@ try:
     import pydantic
 
     HAS_PYDANTIC = True
-
 
     class DummyModel(pydantic.BaseModel):
         value: str
@@ -79,7 +78,8 @@ def test_thread_safety_registry():
         for i in range(num_events):
             event_name = f"event_{i}"
 
-            def h(): pass
+            def h():
+                pass
 
             bus.subscribe(event_name)(h)
             bus.unsubscribe(event_name, h)
@@ -176,7 +176,10 @@ def test_error_strategy_ignore(caplog):
     bus.publish("error_event")
 
     assert calls == [1]
-    assert any("Ошибка в синхронном обработчике события" in record.message for record in caplog.records)
+    assert any(
+        "Ошибка в синхронном обработчике события" in record.message
+        for record in caplog.records
+    )
 
 
 def test_error_strategy_fail_fast():
@@ -262,7 +265,9 @@ async def test_error_strategy_ignore_async(caplog):
     await bus.publish_async("error_event")
 
     assert calls == [1]
-    assert any("Ошибка в обработчике события" in record.message for record in caplog.records)
+    assert any(
+        "Ошибка в обработчике события" in record.message for record in caplog.records
+    )
 
 
 @pytest.mark.skipif(not HAS_PYDANTIC, reason="Pydantic is not installed")
@@ -312,4 +317,6 @@ async def test_run_and_log_errors_helper(caplog):
     await _run_and_log_errors(bad_coro(), "test_event")
 
     assert any(
-        "Ошибка в асинхронном фоновом обработчике события test_event" in record.message for record in caplog.records)
+        "Ошибка в асинхронном фоновом обработчике события test_event" in record.message
+        for record in caplog.records
+    )

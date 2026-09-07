@@ -58,8 +58,10 @@ def test_watch_subcommand_handle_subprocess() -> None:
         command=["--", "python", "app.py"],
     )
 
-    with patch("chutils.commands.dev.watch.SubprocessRunner") as mock_runner_cls, \
-         patch("chutils.commands.dev.watch.get_watcher") as mock_get_watcher:
+    with (
+        patch("chutils.commands.dev.watch.SubprocessRunner") as mock_runner_cls,
+        patch("chutils.commands.dev.watch.get_watcher") as mock_get_watcher,
+    ):
         mock_runner = MagicMock()
         mock_runner_cls.return_value = mock_runner
         mock_watcher = MagicMock()
@@ -87,8 +89,10 @@ def test_watch_subcommand_handle_module() -> None:
         command=None,
     )
 
-    with patch("chutils.commands.dev.watch.InProcessReloader") as mock_reloader_cls, \
-         patch("chutils.commands.dev.watch.get_watcher") as mock_get_watcher:
+    with (
+        patch("chutils.commands.dev.watch.InProcessReloader") as mock_reloader_cls,
+        patch("chutils.commands.dev.watch.get_watcher") as mock_get_watcher,
+    ):
         mock_reloader = MagicMock()
         mock_reloader_cls.return_value = mock_reloader
         mock_watcher = MagicMock()

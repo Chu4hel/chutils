@@ -1,4 +1,4 @@
-from chutils.config import get_config_value, get_config_int
+from chutils.config import get_config_int, get_config_value
 from chutils.context import bind_context, clear_context
 from chutils.logger import setup_logger
 from chutils.secret_manager.core import SecretManager
@@ -17,7 +17,7 @@ def test_mock_chutils_config_load(mock_chutils_config):
     """Проверка загрузки всей конфигурации из словаря."""
     data = {
         "database": {"host": "localhost", "user": "admin"},
-        "logging": {"level": "DEBUG"}
+        "logging": {"level": "DEBUG"},
     }
     mock_chutils_config.load(data)
 

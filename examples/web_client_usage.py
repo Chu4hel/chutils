@@ -20,7 +20,9 @@ def run_sync_example() -> None:
     print("=== Синхронный пример (WebClient) ===")
 
     # 1. Настройка ротатора User-Agent и пула прокси
-    ua_rotator = UserAgentRotator(user_agents=["MyCustomBrowser/1.0", "MyCustomBrowser/2.0"])
+    ua_rotator = UserAgentRotator(
+        user_agents=["MyCustomBrowser/1.0", "MyCustomBrowser/2.0"]
+    )
     proxy_pool = ProxyPool(
         proxies=["http://1.2.3.4:8080", "http://5.6.7.8:8080"],
         strategy="round_robin",
@@ -28,14 +30,14 @@ def run_sync_example() -> None:
 
     # 2. Инициализация WebClient с ретраями, кэшированием и лимитами
     with WebClient(
-            user_agent_rotator=ua_rotator,
-            proxy_pool=proxy_pool,
-            retries=2,
-            retry_delay=0.5,
-            cache_ttl=10,  # Кэшировать GET-запросы на 10 секунд
-            rate_limit_calls=2,  # Максимум 2 запроса
-            rate_limit_period=5.0,  # за 5 секунд
-            rate_limit_wait=False,
+        user_agent_rotator=ua_rotator,
+        proxy_pool=proxy_pool,
+        retries=2,
+        retry_delay=0.5,
+        cache_ttl=10,  # Кэшировать GET-запросы на 10 секунд
+        rate_limit_calls=2,  # Максимум 2 запроса
+        rate_limit_period=5.0,  # за 5 секунд
+        rate_limit_wait=False,
     ) as client:
         # Выполняем GET-запрос
         try:
@@ -45,7 +47,9 @@ def run_sync_example() -> None:
             print(f"Статус: {response.status_code}")
             print(f"Заголовки ответа: {response.json().get('headers', {})}")
         except Exception as e:
-            print(f"Запрос завершился с ожидаемой ошибкой (так как прокси фейковые): {e}")
+            print(
+                f"Запрос завершился с ожидаемой ошибкой (так как прокси фейковые): {e}"
+            )
 
         # Демонстрация кэширования (если бы первый запрос прошел успешно,
         # второй вернулся бы моментально из кэша без выполнения сетевого вызова)
@@ -60,10 +64,10 @@ async def run_async_example() -> None:
     print("\n=== Асинхронный пример (AsyncWebClient) ===")
 
     with AsyncWebClient(
-            retries=1,
-            rate_limit_calls=1,
-            rate_limit_period=5.0,
-            rate_limit_wait=False,
+        retries=1,
+        rate_limit_calls=1,
+        rate_limit_period=5.0,
+        rate_limit_wait=False,
     ) as client:
         # Первый запрос проходит успешно (лимит 1 запрос в 5 секунд)
         print("Выполнение первого асинхронного запроса...")

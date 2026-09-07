@@ -10,7 +10,9 @@ def test_hooks_integration_git_repo(tmp_path, monkeypatch) -> None:
     """Интеграционный тест: инициализация репозитория Git и успешная установка хука через CLI."""
     # 1. Инициализируем временный Git-репозиторий
     try:
-        subprocess.run(["git", "init"], cwd=str(tmp_path), capture_output=True, check=True)
+        subprocess.run(
+            ["git", "init"], cwd=str(tmp_path), capture_output=True, check=True
+        )
     except Exception:
         pytest.skip("Git не установлен в системе, пропускаем интеграционный тест")
 

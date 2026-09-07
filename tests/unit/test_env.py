@@ -20,8 +20,18 @@ def test_env_validation_error_str_and_rich() -> None:
     from rich.table import Table
 
     errors: list[dict[str, Any]] = [
-        {"loc": ("DATABASE_URL",), "msg": "Field required", "type": "missing", "input": None},
-        {"loc": ("API_KEY",), "msg": "Input should be a valid string", "type": "string_type", "input": 123}
+        {
+            "loc": ("DATABASE_URL",),
+            "msg": "Field required",
+            "type": "missing",
+            "input": None,
+        },
+        {
+            "loc": ("API_KEY",),
+            "msg": "Input should be a valid string",
+            "type": "string_type",
+            "input": 123,
+        },
     ]
 
     err = EnvValidationError("Validation failed", errors=errors)
@@ -35,12 +45,17 @@ def test_env_validation_error_str_and_rich() -> None:
     table = err.__rich__()
     assert isinstance(table, Table)
     assert table.title == "Validation failed"
-    assert [col.header for col in table.columns] == ["Переменная окружения", "Причина ошибки", "Полученное значение"]
+    assert [col.header for col in table.columns] == [
+        "Переменная окружения",
+        "Причина ошибки",
+        "Полученное значение",
+    ]
 
 
 def test_base_env_manifest_success(mocker: Any) -> None:
     """Проверяет успешную загрузку и валидацию манифеста из окружения."""
     from pydantic import Field
+
     from chutils.env import BaseEnvManifest
 
     class ConfigEnv(BaseEnvManifest):
@@ -48,7 +63,9 @@ def test_base_env_manifest_success(mocker: Any) -> None:
         PORT: int = Field(default=8080)
         DEBUG: bool = Field(default=False)
 
-    mocker.patch.dict(os.environ, {"APP_NAME": "MyApp", "PORT": "3000", "DEBUG": "True"})
+    mocker.patch.dict(
+        os.environ, {"APP_NAME": "MyApp", "PORT": "3000", "DEBUG": "True"}
+    )
 
     cfg = ConfigEnv.load()
     assert cfg.APP_NAME == "MyApp"
@@ -59,6 +76,7 @@ def test_base_env_manifest_success(mocker: Any) -> None:
 def test_base_env_manifest_validation_failure(mocker: Any) -> None:
     """Проверяет выброс EnvValidationError при невалидных данных окружения."""
     from pydantic import Field
+
     from chutils.env import BaseEnvManifest
 
     class ConfigEnv(BaseEnvManifest):
@@ -79,6 +97,7 @@ def test_base_env_manifest_validation_failure(mocker: Any) -> None:
 def test_base_env_manifest_secret_masking(mocker: Any) -> None:
     """Проверяет маскирование секретных полей в сообщениях об ошибках."""
     from pydantic import Field
+
     from chutils.env import BaseEnvManifest
 
     class SecureEnv(BaseEnvManifest):
@@ -98,11 +117,11 @@ def test_base_env_manifest_secret_masking(mocker: Any) -> None:
 
 def test_base_env_manifest_without_pydantic(mocker: Any) -> None:
     """Проверяет выброс OptionalDependencyError при отсутствии Pydantic."""
-    import sys
     import importlib.util
+    import sys
 
     # Делаем бэкап модулей chutils
-    chutils_backup = {k: v for k, v in sys.modules.items() if k.startswith('chutils')}
+    chutils_backup = {k: v for k, v in sys.modules.items() if k.startswith("chutils")}
     for m in chutils_backup:
         del sys.modules[m]
 
@@ -128,7 +147,7 @@ def test_base_env_manifest_without_pydantic(mocker: Any) -> None:
         assert "pydantic" in str(exc.value.context.get("dependency"))
     finally:
         # Восстанавливаем исходные модули из бэкапа
-        to_delete_post = [m for m in sys.modules if m.startswith('chutils')]
+        to_delete_post = [m for m in sys.modules if m.startswith("chutils")]
         for m in to_delete_post:
             del sys.modules[m]
         for k, v in chutils_backup.items():
@@ -137,10 +156,10 @@ def test_base_env_manifest_without_pydantic(mocker: Any) -> None:
 
 def test_chutils_root_exports_without_pydantic(mocker: Any) -> None:
     """Проверяет возможность импортировать BaseEnvManifest из корня даже при отсутствии Pydantic."""
-    import sys
     import importlib.util
+    import sys
 
-    chutils_backup = {k: v for k, v in sys.modules.items() if k.startswith('chutils')}
+    chutils_backup = {k: v for k, v in sys.modules.items() if k.startswith("chutils")}
     for m in chutils_backup:
         del sys.modules[m]
 
@@ -155,6 +174,7 @@ def test_chutils_root_exports_without_pydantic(mocker: Any) -> None:
         mocker.patch("importlib.util.find_spec", side_effect=mock_find_spec)
 
         import chutils
+
         assert chutils.BaseEnvManifest is not None
         assert chutils.EnvValidationError is not None
 
@@ -163,7 +183,7 @@ def test_chutils_root_exports_without_pydantic(mocker: Any) -> None:
         assert "Pydantic не установлен" in str(exc.value)
 
     finally:
-        to_delete_post = [m for m in sys.modules if m.startswith('chutils')]
+        to_delete_post = [m for m in sys.modules if m.startswith("chutils")]
         for m in to_delete_post:
             del sys.modules[m]
         for k, v in chutils_backup.items():
@@ -173,6 +193,7 @@ def test_chutils_root_exports_without_pydantic(mocker: Any) -> None:
 def test_cli_env_validate_success(mocker: Any) -> None:
     """Проверяет успешное выполнение chutils env validate."""
     import argparse
+
     from chutils.commands.env import EnvCommand
     from chutils.env import BaseEnvManifest
 
@@ -193,14 +214,17 @@ def test_cli_env_validate_success(mocker: Any) -> None:
 def test_cli_env_validate_failure(mocker: Any) -> None:
     """Проверяет завершение с кодом 1 при ошибке валидации."""
     import argparse
+
     from chutils.commands.env import EnvCommand
-    from chutils.exceptions import EnvValidationError
     from chutils.env import BaseEnvManifest
+    from chutils.exceptions import EnvValidationError
 
     class DummyManifest(BaseEnvManifest):
         pass
 
-    mock_load = mocker.patch.object(DummyManifest, "load", side_effect=EnvValidationError("Validation failed"))
+    mock_load = mocker.patch.object(
+        DummyManifest, "load", side_effect=EnvValidationError("Validation failed")
+    )
     mocker.patch("chutils.commands.env._import_string", return_value=DummyManifest)
 
     cmd = EnvCommand()
@@ -244,6 +268,7 @@ def test_cli_env_validate_find_manifest_config(mocker: Any) -> None:
 def test_cli_env_validate_invalid_subclass(mocker: Any) -> None:
     """Проверяет выброс CommandError, если класс не является подклассом BaseEnvManifest."""
     import argparse
+
     from chutils.commands.env import EnvCommand
     from chutils.exceptions import CommandError
 

@@ -2,6 +2,7 @@ import sys
 import typing as t
 
 if t.TYPE_CHECKING:
+
     class _BaseExceptionGroup(BaseException):
         exceptions: list[Exception]
 else:
@@ -57,10 +58,6 @@ class ChutilsException(Exception):
 class OptionalDependencyError(ChutilsException):
     """Ошибка: отсутствует опциональная зависимость (например, watchdog)."""
 
-    pass
-
 
 class ChutilsTimeoutError(ChutilsException):
     """Ошибка: превышено время ожидания выполнения операции."""
-
-    pass

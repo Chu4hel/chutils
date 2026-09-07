@@ -4,6 +4,7 @@ PostgresBackend — хранение журнала аудита в PostgreSQL.
 Использует переданное соединение (psycopg2/psycopg/asyncpg или любой
 DBAPI-совместимый объект). Импорт бэкенда безопасен при отсутствии драйверов.
 """
+
 from __future__ import annotations
 
 import json
@@ -14,11 +15,12 @@ from chutils.audit._hash import compute_record_hash
 from chutils.audit.backends.base import BaseAuditBackend
 
 if TYPE_CHECKING:
-    from typing import Protocol, Any
-
+    from typing import Any, Protocol
 
     class _DBAPICursor(Protocol):
-        def execute(self, query: str, params: tuple[Any, ...] | dict[str, Any] | None = None) -> Any:
+        def execute(
+            self, query: str, params: tuple[Any, ...] | dict[str, Any] | None = None
+        ) -> Any:
             """Выполняет SQL-запрос.
 
             Args:
@@ -46,12 +48,11 @@ if TYPE_CHECKING:
             """
             ...
 
-        def __enter__(self) -> _DBAPICursor:
-            ...
+        def __enter__(self) -> _DBAPICursor: ...
 
-        def __exit__(self, exc_type: object, exc_val: object, exc_tb: object) -> object:
-            ...
-
+        def __exit__(
+            self, exc_type: object, exc_val: object, exc_tb: object
+        ) -> object: ...
 
     class _DBAPIConnection(Protocol):
         def cursor(self) -> _DBAPICursor:
@@ -65,6 +66,7 @@ if TYPE_CHECKING:
         def commit(self) -> None:
             """Фиксирует транзакцию в БД."""
             ...
+
 
 _CREATE_TABLE = """
                 CREATE TABLE IF NOT EXISTS audit_log
@@ -134,6 +136,7 @@ class PostgresBackend(BaseAuditBackend):
     Args:
         connection: Открытое DBAPI2-соединение с PostgreSQL.
     """
+
     _conn: _DBAPIConnection
 
     def __init__(self, connection: _DBAPIConnection) -> None:
@@ -157,13 +160,13 @@ class PostgresBackend(BaseAuditBackend):
         return row[0] if row else ""
 
     def log(
-            self,
-            action: str,
-            actor: str,
-            *,
-            target: str | None = None,
-            status: str = "success",
-            details: dict[str, object] | None = None,
+        self,
+        action: str,
+        actor: str,
+        *,
+        target: str | None = None,
+        status: str = "success",
+        details: dict[str, object] | None = None,
     ) -> str:
         """Добавляет событие в таблицу audit_log PostgreSQL.
 
@@ -225,8 +228,18 @@ class PostgresBackend(BaseAuditBackend):
 
         prev_hash = ""
         for row in rows:
-            (rid, actor, action, target, status, details_str,
-             env_str, timestamp, stored_prev_hash, stored_hash) = row
+            (
+                rid,
+                actor,
+                action,
+                target,
+                status,
+                details_str,
+                env_str,
+                timestamp,
+                stored_prev_hash,
+                stored_hash,
+            ) = row
 
             data: dict[str, object] = {
                 "id": rid,

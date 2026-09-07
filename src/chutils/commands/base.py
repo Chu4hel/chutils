@@ -10,7 +10,7 @@ from chutils.cli_utils import get_console
 class BaseCommand(ABC):
     """
     Абстрактный базовый класс для всех команд CLI chutils.
-    
+
     Определяет единый интерфейс для регистрации подкоманд в argparse
     и выполнения связанной с ними бизнес-логики.
     """
@@ -24,20 +24,18 @@ class BaseCommand(ABC):
     def register(self, subparsers: argparse._SubParsersAction[Any]) -> None:
         """
         Регистрирует подкоманду, её описание и аргументы в основном парсере.
-        
+
         Args:
             subparsers: Объект subparsers, полученный из ArgumentParser.add_subparsers().
         """
-        pass
 
     @abstractmethod
     def handle(self, args: argparse.Namespace) -> None:
         """
         Основной метод выполнения команды.
-        
+
         Вызывается диспетчером CLI после успешного парсинга аргументов.
-        
+
         Args:
             args: Объект Namespace с распарсенными аргументами командной строки.
         """
-        pass

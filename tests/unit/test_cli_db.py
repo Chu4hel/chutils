@@ -7,13 +7,13 @@
 - Аргументы каждой подкоманды парсятся корректно.
 - При отсутствии alembic выбрасывается OptionalDependencyError.
 """
+
 import argparse
 import sys
 from typing import Any
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
-
 
 # ---------------------------------------------------------------------------
 # Вспомогательная функция — создать парсер с командой db
@@ -99,9 +99,9 @@ class TestDbCommandRegistration:
     def test_metadata_flag_available(self) -> None:
         """Проверяет, что флаг --metadata доступен в make-migration."""
         parser, _ = _make_parser()
-        args = parser.parse_args([
-            "db", "make-migration", "--metadata", "app.db:Base.metadata"
-        ])
+        args = parser.parse_args(
+            ["db", "make-migration", "--metadata", "app.db:Base.metadata"]
+        )
         assert args.metadata == "app.db:Base.metadata"
 
 
@@ -194,6 +194,7 @@ class TestDbCommandOptionalDependency:
         """Проверяет, что import chutils не ломается при отсутствии alembic."""
         # Если этот тест выполнился — импорт chutils успешен
         import chutils
+
         assert chutils is not None
 
 
@@ -303,7 +304,9 @@ class TestHistoryNoDirBranch:
         from chutils.commands.db import DbCommand
 
         missing_dir = tmp_path / "no_migrations"  # type: ignore[operator]
-        mock_cfg = MagicMock(return_value=("sqlite+aiosqlite:///x.db", missing_dir, None))
+        mock_cfg = MagicMock(
+            return_value=("sqlite+aiosqlite:///x.db", missing_dir, None)
+        )
 
         cmd = DbCommand()
         args = argparse.Namespace(subcommand="history", metadata=None)
@@ -312,7 +315,8 @@ class TestHistoryNoDirBranch:
         orig_print = cmd.console.print
         try:
             cmd.console.print = lambda *args, **kw: messages.append(
-                " ".join(str(a) for a in args))  # type: ignore[method-assign]
+                " ".join(str(a) for a in args)
+            )  # type: ignore[method-assign]
             with patch("chutils.commands.db._resolve_config", mock_cfg):
                 cmd.handle(args)
         finally:

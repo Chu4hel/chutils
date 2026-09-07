@@ -105,4 +105,3 @@ def test_wind_mouse_generator() -> None:
     assert len(same_points) == 1
     assert same_points[0][0] == start[0]
     assert same_points[0][1] == start[1]
-

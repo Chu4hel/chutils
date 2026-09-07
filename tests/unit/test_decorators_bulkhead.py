@@ -1,6 +1,7 @@
 """
 Тесты для исключения BulkheadLimitExceeded и декораторов resilience.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -9,7 +10,7 @@ import time
 
 import pytest
 
-from chutils.decorators import semaphore, bulkhead
+from chutils.decorators import bulkhead, semaphore
 from chutils.exceptions import BulkheadLimitExceeded
 
 
@@ -17,7 +18,9 @@ def test_bulkhead_limit_exceeded_inheritance() -> None:
     """Проверяет корректность наследования и инициализации исключения BulkheadLimitExceeded."""
     from chutils.exceptions import ChutilsException
 
-    exc = BulkheadLimitExceeded("Limit exceeded", hint="Try again later", resource="database")
+    exc = BulkheadLimitExceeded(
+        "Limit exceeded", hint="Try again later", resource="database"
+    )
     assert isinstance(exc, ChutilsException)
     assert exc.message == "Limit exceeded"
     assert exc.hint == "Try again later"
@@ -37,8 +40,7 @@ def test_sync_semaphore() -> None:
         nonlocal active_calls, max_active
         with lock:
             active_calls += 1
-            if active_calls > max_active:
-                max_active = active_calls
+            max_active = max(max_active, active_calls)
         time.sleep(0.05)
         with lock:
             active_calls -= 1
@@ -65,8 +67,7 @@ def test_sync_semaphore_with_key() -> None:
         nonlocal active_calls, max_active
         with lock:
             active_calls[category] += 1
-            if active_calls[category] > max_active[category]:
-                max_active[category] = active_calls[category]
+            max_active[category] = max(max_active[category], active_calls[category])
         time.sleep(0.05)
         with lock:
             active_calls[category] -= 1
@@ -99,8 +100,7 @@ async def test_async_semaphore() -> None:
     async def worker() -> None:
         nonlocal active_calls, max_active
         active_calls += 1
-        if active_calls > max_active:
-            max_active = active_calls
+        max_active = max(max_active, active_calls)
         await asyncio.sleep(0.05)
         active_calls -= 1
 
@@ -120,8 +120,7 @@ async def test_async_semaphore_with_key() -> None:
     async def worker(category: str) -> None:
         nonlocal active_calls, max_active
         active_calls[category] += 1
-        if active_calls[category] > max_active[category]:
-            max_active[category] = active_calls[category]
+        max_active[category] = max(max_active[category], active_calls[category])
         await asyncio.sleep(0.05)
         active_calls[category] -= 1
 
@@ -259,11 +258,11 @@ async def test_async_bulkhead_timeout_and_fallback() -> None:
 def test_chutils_root_imports() -> None:
     """Проверяет импорт декораторов и исключений напрямую из корня библиотеки chutils."""
     import chutils
-    
+
     assert hasattr(chutils, "semaphore")
     assert hasattr(chutils, "bulkhead")
     assert hasattr(chutils, "BulkheadLimitExceeded")
-    
+
     assert chutils.semaphore is semaphore
     assert chutils.bulkhead is bulkhead
     assert chutils.BulkheadLimitExceeded is BulkheadLimitExceeded

@@ -49,6 +49,7 @@ class HooksSubCommand(SubCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         import os
+
         from chutils.exceptions import ChutilsException
 
         current = Path(os.getcwd()).resolve()
@@ -63,11 +64,12 @@ class HooksSubCommand(SubCommand):
             raise ChutilsException(
                 "Директория '.git' не найдена. Убедитесь, что проект является Git-репозиторием "
                 "и вы находитесь внутри него.",
-                hint="Выполните 'git init', чтобы инициализировать репозиторий."
+                hint="Выполните 'git init', чтобы инициализировать репозиторий.",
             )
 
         hooks_dir = git_dir / "hooks"
         from chutils.fs import ensure_dir
+
         ensure_dir(hooks_dir)
         hook_path = hooks_dir / "pre-commit"
 
@@ -88,19 +90,19 @@ class HooksSubCommand(SubCommand):
         if use_ruff:
             extra_checks += (
                 "# Запуск ruff check & format (только staged .py файлы)\n"
-                "if [ -n \"$CHUTILS_STAGED_PY\" ]; then\n"
+                'if [ -n "$CHUTILS_STAGED_PY" ]; then\n'
                 "    if [ -f uv.lock ] && command -v uv >/dev/null 2>&1; then\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs uv run ruff check --fix\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs uv run ruff format\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs git add\n"
+                '        echo "$CHUTILS_STAGED_PY" | xargs uv run ruff check --fix\n'
+                '        echo "$CHUTILS_STAGED_PY" | xargs uv run ruff format\n'
+                '        echo "$CHUTILS_STAGED_PY" | xargs git add\n'
                 "    elif [ -f poetry.lock ] && command -v poetry >/dev/null 2>&1; then\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs poetry run ruff check --fix\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs poetry run ruff format\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs git add\n"
+                '        echo "$CHUTILS_STAGED_PY" | xargs poetry run ruff check --fix\n'
+                '        echo "$CHUTILS_STAGED_PY" | xargs poetry run ruff format\n'
+                '        echo "$CHUTILS_STAGED_PY" | xargs git add\n'
                 "    elif command -v ruff >/dev/null 2>&1; then\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs ruff check --fix\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs ruff format\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs git add\n"
+                '        echo "$CHUTILS_STAGED_PY" | xargs ruff check --fix\n'
+                '        echo "$CHUTILS_STAGED_PY" | xargs ruff format\n'
+                '        echo "$CHUTILS_STAGED_PY" | xargs git add\n'
                 "    fi\n"
                 "fi\n\n"
             )
@@ -108,17 +110,16 @@ class HooksSubCommand(SubCommand):
         if use_flake8:
             extra_checks += (
                 "# Запуск flake8 (только staged .py файлы)\n"
-                "if [ -n \"$CHUTILS_STAGED_PY\" ]; then\n"
+                'if [ -n "$CHUTILS_STAGED_PY" ]; then\n'
                 "    if [ -f uv.lock ] && command -v uv >/dev/null 2>&1; then\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs uv run flake8\n"
+                '        echo "$CHUTILS_STAGED_PY" | xargs uv run flake8\n'
                 "    elif [ -f poetry.lock ] && command -v poetry >/dev/null 2>&1; then\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs poetry run flake8\n"
+                '        echo "$CHUTILS_STAGED_PY" | xargs poetry run flake8\n'
                 "    elif command -v flake8 >/dev/null 2>&1; then\n"
-                "        echo \"$CHUTILS_STAGED_PY\" | xargs flake8\n"
+                '        echo "$CHUTILS_STAGED_PY" | xargs flake8\n'
                 "    fi\n"
                 "fi\n\n"
             )
-
 
         hook_template = (
             "#!/bin/sh\n"
@@ -154,16 +155,22 @@ class HooksSubCommand(SubCommand):
                     f.write(hook_template)
             except Exception as e:
                 raise ChutilsException(f"Не удалось записать файл хука: {e}")
-            self.console.print("[bold green]✓ Git-хук pre-commit успешно установлен![/bold green]")
+            self.console.print(
+                "[bold green]✓ Git-хук pre-commit успешно установлен![/bold green]"
+            )
         else:
             try:
                 with open(hook_path, "r", encoding="utf-8", errors="ignore") as f:
                     existing_content = f.read()
             except Exception as e:
-                raise ChutilsException(f"Не удалось прочитать существующий файл хука: {e}")
+                raise ChutilsException(
+                    f"Не удалось прочитать существующий файл хука: {e}"
+                )
 
             if "# chutils pre-commit hook" in existing_content:
-                self.console.print("[yellow]⚠ Git-хук chutils уже установлен в файле pre-commit.[/yellow]")
+                self.console.print(
+                    "[yellow]⚠ Git-хук chutils уже установлен в файле pre-commit.[/yellow]"
+                )
             else:
                 try:
                     separator = "" if existing_content.endswith("\n") else "\n"
@@ -199,11 +206,14 @@ class HooksSubCommand(SubCommand):
                 except Exception as e:
                     raise ChutilsException(f"Не удалось дописать в файл хука: {e}")
                 self.console.print(
-                    "[bold green]✓ Блок проверки chutils добавлен в существующий pre-commit хук![/bold green]")
+                    "[bold green]✓ Блок проверки chutils добавлен в существующий pre-commit хук![/bold green]"
+                )
 
         if sys.platform != "win32":
             try:
                 current_mode = hook_path.stat().st_mode
                 hook_path.chmod(current_mode | 0o111 | 0o444)
             except Exception as e:
-                self.console.print(f"[yellow]⚠ Не удалось установить права chmod +x для хука: {e}[/yellow]")
+                self.console.print(
+                    f"[yellow]⚠ Не удалось установить права chmod +x для хука: {e}[/yellow]"
+                )

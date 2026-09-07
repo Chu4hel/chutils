@@ -2,7 +2,8 @@ import asyncio
 import json
 
 import pytest
-from chutils import bind_context, unbind_context, clear_context
+
+from chutils import bind_context, clear_context, unbind_context
 from chutils.logger import setup_logger
 
 
@@ -18,6 +19,7 @@ async def test_context_isolation():
             # Проверяем, что в этой корутине контекст сохранился
             # и не был перезаписан другой корутиной
             from chutils.context import get_context
+
             ctx = get_context()
             assert ctx.get(name) == value
             assert len(ctx) == 1
@@ -25,10 +27,7 @@ async def test_context_isolation():
             unbind_context(token)
 
     # Запускаем две корутины параллельно
-    await asyncio.gather(
-        task("req_id", "AAA", 0.1),
-        task("req_id", "BBB", 0.05)
-    )
+    await asyncio.gather(task("req_id", "AAA", 0.1), task("req_id", "BBB", 0.05))
 
 
 def test_bind_unbind_clear():
@@ -57,7 +56,9 @@ def test_text_log_context_attribute(capsys, monkeypatch):
     monkeypatch.setenv("CH_NO_RICH", "1")
 
     clear_context()
-    logger = setup_logger(name="text_ctx_test", json_format=False, force_reconfigure=True)
+    logger = setup_logger(
+        name="text_ctx_test", json_format=False, force_reconfigure=True
+    )
 
     # Без контекста %(context)s должен быть пустым
     logger.info("No context")
@@ -76,13 +77,15 @@ def test_text_log_context_attribute(capsys, monkeypatch):
 def test_json_log_context_attribute(capsys):
     """Проверяет группировку контекста в JSON логе."""
     clear_context()
-    logger = setup_logger(name="json_ctx_test", json_format=True, force_reconfigure=True)
+    logger = setup_logger(
+        name="json_ctx_test", json_format=True, force_reconfigure=True
+    )
 
     bind_context(user_id=42, trace="abc")
     logger.info("JSON with context")
 
     captured = capsys.readouterr()
-    log_json = json.loads(captured.err.strip().split('\n')[-1])
+    log_json = json.loads(captured.err.strip().split("\n")[-1])
 
     assert "context" in log_json
     assert log_json["context"]["user_id"] == 42

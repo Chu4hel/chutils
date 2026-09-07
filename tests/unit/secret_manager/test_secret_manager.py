@@ -33,6 +33,7 @@ def test_init_fallback_to_project_path(project_with_marker, monkeypatch):
 
     # Переходим в корень фейкового проекта
     import os
+
     os.chdir(project_root)
 
     sm = SecretManager("")  # или SecretManager(None)
@@ -79,8 +80,13 @@ def test_get_secret_not_found(secret_manager, mocker):
 
 def test_delete_secret_success(secret_manager, mocker):
     """Проверяет успешное удаление секрета."""
-    mock_get = mocker.patch("chutils.secret_manager.providers.keyring.get_password", return_value="some_value")
-    mock_delete = mocker.patch("chutils.secret_manager.providers.keyring.delete_password")
+    mock_get = mocker.patch(
+        "chutils.secret_manager.providers.keyring.get_password",
+        return_value="some_value",
+    )
+    mock_delete = mocker.patch(
+        "chutils.secret_manager.providers.keyring.delete_password"
+    )
 
     result = secret_manager.delete_secret("my_key")
 
@@ -91,8 +97,12 @@ def test_delete_secret_success(secret_manager, mocker):
 
 def test_delete_secret_not_found(secret_manager, mocker):
     """Проверяет удаление несуществующего секрета."""
-    mock_get = mocker.patch("chutils.secret_manager.providers.keyring.get_password", return_value=None)
-    mock_delete = mocker.patch("chutils.secret_manager.providers.keyring.delete_password")
+    mock_get = mocker.patch(
+        "chutils.secret_manager.providers.keyring.get_password", return_value=None
+    )
+    mock_delete = mocker.patch(
+        "chutils.secret_manager.providers.keyring.delete_password"
+    )
 
     result = secret_manager.delete_secret("non_existent_key")
 
@@ -116,7 +126,7 @@ def test_delete_secret_error(secret_manager, mocker):
 
 def test_update_secret_is_alias_for_save(secret_manager, mocker):
     """Проверяет, что update_secret является псевдонимом для save_secret."""
-    save_mock = mocker.patch.object(secret_manager, 'save_secret')
+    save_mock = mocker.patch.object(secret_manager, "save_secret")
     secret_manager.update_secret("my_key", "new_value")
     save_mock.assert_called_once_with("my_key", "new_value")
 
@@ -141,10 +151,13 @@ def test_get_secret_from_dotenv(project_with_marker, mocker, monkeypatch):
     # Создаем фейковый .env файл
     fs.create_file(project_root / ".env", contents="MY_DOTENV_SECRET=dotenv_value")
     # Убеждаемся, что keyring ничего не вернет
-    mocker.patch("chutils.secret_manager.providers.keyring.get_password", return_value=None)
+    mocker.patch(
+        "chutils.secret_manager.providers.keyring.get_password", return_value=None
+    )
 
     # Сбрасываем состояние
     from chutils import config
+
     config._cm._reset()
     monkeypatch.setattr("chutils.config.get_base_dir", lambda: project_root)
 
@@ -164,11 +177,14 @@ def test_get_secret_prioritizes_keyring(project_with_marker, monkeypatch):
     fs, project_root = project_with_marker
     fs.create_file(project_root / ".env", contents="SHARED_SECRET=dotenv_value")
     # Keyring возвращает свое значение
-    monkeypatch.setattr("chutils.secret_manager.providers.keyring.get_password",
-                        lambda *args, **kwargs: "keyring_value")
+    monkeypatch.setattr(
+        "chutils.secret_manager.providers.keyring.get_password",
+        lambda *args, **kwargs: "keyring_value",
+    )
 
     # Сбрасываем состояние
     from chutils import config
+
     config._cm._reset()
     monkeypatch.setattr("chutils.config.get_base_dir", lambda: project_root)
 
@@ -188,6 +204,7 @@ def test_keyring_not_available_providers_list(monkeypatch):
     # Должны остаться только DotEnvProvider и EnvProvider
     provider_classes = [type(p) for p in sm.providers]
     from chutils.secret_manager.providers import KeyringProvider
+
     assert KeyringProvider not in provider_classes
 
 
@@ -195,8 +212,8 @@ def test_keyring_not_available_raises_exception(monkeypatch):
     """Проверяет, что при отсутствии keyring вызов методов KeyringProvider бросает OptionalDependencyError."""
     monkeypatch.setattr("chutils.secret_manager.providers.KEYRING_AVAILABLE", False)
 
-    from chutils.secret_manager.providers import KeyringProvider
     from chutils.exceptions import OptionalDependencyError
+    from chutils.secret_manager.providers import KeyringProvider
 
     provider = KeyringProvider()
     with pytest.raises(OptionalDependencyError):

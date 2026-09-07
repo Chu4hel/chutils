@@ -77,14 +77,17 @@ class CompressingRotatingFileHandler(logging.handlers.RotatingFileHandler):
         if os.path.exists(dfn_uncompressed):
             try:
                 import gzip
-                with open(dfn_uncompressed, 'rb') as f_in:
-                    with gzip.open(dfn_compressed, 'wb') as f_out:
+
+                with open(dfn_uncompressed, "rb") as f_in:
+                    with gzip.open(dfn_compressed, "wb") as f_out:
                         f_out.writelines(f_in)
 
                 import sys
+
                 if sys.platform == "win32":
                     try:
                         import ctypes
+
                         ctypes.windll.kernel32.DeleteFileW(dfn_uncompressed)
                     except (ImportError, AttributeError):
                         os.remove(dfn_uncompressed)
@@ -116,8 +119,9 @@ class CompressingTimedRotatingFileHandler(SafeTimedRotatingFileHandler):
             if os.path.exists(source_file) and not os.path.exists(dest_file):
                 try:
                     import gzip
-                    with open(source_file, 'rb') as f_in:
-                        with gzip.open(dest_file, 'wb') as f_out:
+
+                    with open(source_file, "rb") as f_in:
+                        with gzip.open(dest_file, "wb") as f_out:
                             f_out.writelines(f_in)
                     os.remove(source_file)  # Удаляем исходный несжатый файл
                 except Exception as e:

@@ -1,4 +1,5 @@
 """FileBackend — хранение журнала аудита в append-only JSONL файле."""
+
 from __future__ import annotations
 
 import json
@@ -46,13 +47,13 @@ class FileBackend(BaseAuditBackend):
         return str(record.get("hash", ""))
 
     def log(
-            self,
-            action: str,
-            actor: str,
-            *,
-            target: str | None = None,
-            status: str = "success",
-            details: dict[str, object] | None = None,
+        self,
+        action: str,
+        actor: str,
+        *,
+        target: str | None = None,
+        status: str = "success",
+        details: dict[str, object] | None = None,
     ) -> str:
         """Добавляет событие в JSONL-файл.
 

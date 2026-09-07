@@ -7,7 +7,9 @@ class MetricsProvider(ABC):
     """
 
     @abstractmethod
-    def increment(self, name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
+    def increment(
+        self, name: str, value: float = 1.0, labels: dict[str, str] | None = None
+    ) -> None:
         """Увеличить счетчик (Counter) на заданное значение.
 
         Args:
@@ -15,10 +17,11 @@ class MetricsProvider(ABC):
             value: Значение, на которое нужно увеличить счетчик.
             labels: Словарь меток для метрики.
         """
-        pass
 
     @abstractmethod
-    def set_gauge(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+    def set_gauge(
+        self, name: str, value: float, labels: dict[str, str] | None = None
+    ) -> None:
         """Установить значение датчика (Gauge).
 
         Args:
@@ -26,10 +29,11 @@ class MetricsProvider(ABC):
             value: Устанавливаемое значение датчика.
             labels: Словарь меток для метрики.
         """
-        pass
 
     @abstractmethod
-    def observe(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+    def observe(
+        self, name: str, value: float, labels: dict[str, str] | None = None
+    ) -> None:
         """Записать значение в гистограмму/таймер (Histogram/Timer).
 
         Args:
@@ -37,7 +41,6 @@ class MetricsProvider(ABC):
             value: Наблюдаемое значение.
             labels: Словарь меток для метрики.
         """
-        pass
 
     @abstractmethod
     def generate_latest(self) -> str:
@@ -46,11 +49,9 @@ class MetricsProvider(ABC):
         Returns:
             Строка с накопленными метриками.
         """
-        pass
 
     @abstractmethod
     def clear(self) -> None:
         """
         Очистить все накопленные данные (для тестов).
         """
-        pass

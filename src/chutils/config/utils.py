@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from chutils.typing import JSONDict
+
 from .providers import get_providers
 
 logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
@@ -330,7 +331,7 @@ def _parse_pyproject_toml_section_fallback(path: str, target_section: str) -> JS
 
         if line.startswith("["):
             section_name = line.strip("[]").strip()
-            in_section = (section_name == target_section)
+            in_section = section_name == target_section
             continue
 
         if in_section and "=" in line:

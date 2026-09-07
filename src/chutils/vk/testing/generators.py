@@ -20,7 +20,13 @@ def _compute_vk_sign(vk_params: dict[str, str], secret_key: str) -> str:
         digestmod=hashlib.sha256,
     ).digest()
 
-    return base64.b64encode(hash_code).decode("utf-8").rstrip("=").replace("+", "-").replace("/", "_")
+    return (
+        base64.b64encode(hash_code)
+        .decode("utf-8")
+        .rstrip("=")
+        .replace("+", "-")
+        .replace("/", "_")
+    )
 
 
 def generate_fake_launch_params(
@@ -103,7 +109,9 @@ def generate_fake_init_data(
     )
 
 
-def generate_fake_user(user_id: int = 123456, first_name: str = "Иван", last_name: str = "Иванов") -> dict[str, Any]:
+def generate_fake_user(
+    user_id: int = 123456, first_name: str = "Иван", last_name: str = "Иванов"
+) -> dict[str, Any]:
     """Возвращает Pydantic-совместимый словарь с данными пользователя VK API.
 
     Args:

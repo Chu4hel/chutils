@@ -1,8 +1,6 @@
-import pytest
-
 from chutils.telegram.formatting import (
-    escape_markdown,
     escape_html,
+    escape_markdown,
     smart_truncate,
     split_message,
 )
@@ -30,7 +28,7 @@ def test_escape_markdown_v1():
 
 def test_escape_html():
     """Проверяет экранирование спецсимволов для HTML."""
-    raw = "1 < 2 & 3 > 0 \"quote\""
+    raw = '1 < 2 & 3 > 0 "quote"'
     escaped = escape_html(raw)
     assert escaped == "1 &lt; 2 &amp; 3 &gt; 0 &quot;quote&quot;"
 

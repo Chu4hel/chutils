@@ -132,4 +132,3 @@ def test_click() -> None:
     assert mock_action_chains.click_and_hold.call_count == 1
     assert mock_action_chains.pause.call_count == 1
     assert mock_action_chains.release.call_count == 1
-

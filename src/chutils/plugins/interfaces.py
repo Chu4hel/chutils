@@ -24,7 +24,6 @@ class BasePlugin(ABC):
         Returns:
             Имя плагина.
         """
-        pass
 
     @property
     def version(self) -> str:
@@ -50,7 +49,6 @@ class SecretProviderPlugin(BasePlugin, SecretProvider):
     Интерфейс для плагина-провайдера секретов.
     Позволяет подключить стороннее хранилище секретов (например, AWS Secrets Manager, Vault).
     """
-    pass
 
 
 class ConfigProviderPlugin(BasePlugin, ConfigProvider):
@@ -58,7 +56,6 @@ class ConfigProviderPlugin(BasePlugin, ConfigProvider):
     Интерфейс для плагина-провайдера конфигураций.
     Позволяет загружать и сохранять конфигурации из внешних систем (например, Consul, Etcd).
     """
-    pass
 
 
 class LoggerHandlerPlugin(BasePlugin):
@@ -70,14 +67,13 @@ class LoggerHandlerPlugin(BasePlugin):
     @abstractmethod
     def get_handler(self, **kwargs: Any) -> logging.Handler:
         """Создает и возвращает настроенный экземпляр logging.Handler.
-        
+
         Args:
             **kwargs: Параметры конфигурации для инициализации хэндлера.
 
         Returns:
             Настроенный объект logging.Handler.
         """
-        pass
 
 
 class MetricsPlugin(BasePlugin, MetricsProvider):
@@ -85,7 +81,6 @@ class MetricsPlugin(BasePlugin, MetricsProvider):
     Интерфейс для плагина-провайдера метрик.
     Позволяет подключить стороннюю систему сбора метрик (например, Datadog, StatsD).
     """
-    pass
 
 
 class CaptchaSolverPlugin(BasePlugin):
@@ -115,7 +110,6 @@ class CaptchaSolverPlugin(BasePlugin):
         Returns:
             Строка ответа (g-recaptcha-response).
         """
-        pass
 
     async def async_solve_recaptcha(
         self,
@@ -138,10 +132,13 @@ class CaptchaSolverPlugin(BasePlugin):
             Строка ответа.
         """
         import asyncio
+
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(
             None,
-            lambda: self.solve_recaptcha(sitekey, page_url, timeout, poll_interval, **kwargs)
+            lambda: self.solve_recaptcha(
+                sitekey, page_url, timeout, poll_interval, **kwargs
+            ),
         )
 
 
@@ -162,7 +159,6 @@ class TaskQueuePlugin(BasePlugin):
         Returns:
             Экземпляр очереди задач.
         """
-        pass
 
 
 class BrowserStealthPlugin(BasePlugin):
@@ -180,7 +176,6 @@ class BrowserStealthPlugin(BasePlugin):
             context: Объект контекста браузера или страницы Playwright.
             **kwargs: Дополнительные параметры конфигурации маскировки.
         """
-        pass
 
     @abstractmethod
     def apply_selenium(self, driver: Any, **kwargs: Any) -> None:
@@ -190,7 +185,6 @@ class BrowserStealthPlugin(BasePlugin):
             driver: Экземпляр драйвера Selenium.
             **kwargs: Дополнительные параметры конфигурации маскировки.
         """
-        pass
 
     @abstractmethod
     def apply_nodriver(self, tab: Any, **kwargs: Any) -> None:
@@ -200,7 +194,6 @@ class BrowserStealthPlugin(BasePlugin):
             tab: Объект вкладки браузера nodriver.
             **kwargs: Дополнительные параметры конфигурации маскировки.
         """
-        pass
 
 
 class HttpBackendPlugin(BasePlugin):
@@ -219,7 +212,6 @@ class HttpBackendPlugin(BasePlugin):
         Returns:
             Экземпляр HTTP-клиента.
         """
-        pass
 
     @abstractmethod
     def create_async_client(self, **kwargs: Any) -> Any:
@@ -231,5 +223,3 @@ class HttpBackendPlugin(BasePlugin):
         Returns:
             Экземпляр асинхронного HTTP-клиента.
         """
-        pass
-

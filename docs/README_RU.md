@@ -256,15 +256,15 @@ key = secrets.get_secret("API_KEY")
 
 ```python
 from chutils import SecretManager
-from chutils.secret_manager.providers import KeyringProvider, DotEnvProvider, EnvProvider
+from chutils.secret_manager.providers import (
+    KeyringProvider,
+    DotEnvProvider,
+    EnvProvider,
+)
 
 secrets = SecretManager(
     service_name="my_app",
-    providers=[
-        KeyringProvider(),
-        DotEnvProvider(),
-        EnvProvider()
-    ]
+    providers=[KeyringProvider(), DotEnvProvider(), EnvProvider()],
 )
 ```
 
@@ -274,7 +274,11 @@ secrets = SecretManager(
 
 ```python
 from chutils import SecretManager
-from chutils.secret_manager.providers import AWSSecretManagerProvider, GCPSecretManagerProvider, EnvProvider
+from chutils.secret_manager.providers import (
+    AWSSecretManagerProvider,
+    GCPSecretManagerProvider,
+    EnvProvider,
+)
 
 # Инициализируем облачные провайдеры (требуется установка chutils[aws,gcp])
 aws_provider = AWSSecretManagerProvider(region_name="us-east-1")
@@ -284,8 +288,7 @@ gcp_provider = GCPSecretManagerProvider(project_id="my-gcp-project")
 # Если обращение к AWS/GCP вызовет ошибку сети или секрет там отсутствует,
 # SecretManager залогирует предупреждение и автоматически перейдет к EnvProvider (Fallback).
 secrets = SecretManager(
-    service_name="my_service",
-    providers=[aws_provider, gcp_provider, EnvProvider()]
+    service_name="my_service", providers=[aws_provider, gcp_provider, EnvProvider()]
 )
 ```
 

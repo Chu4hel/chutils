@@ -30,7 +30,7 @@ from chutils import setup_logger
 # Настройка автоматического маскирования email и телефонов
 logger = setup_logger(
     use_predefined_patterns=["email", "phone"],
-    custom_patterns=[r"ID-\d{4}"]  # Свои регулярные выражения
+    custom_patterns=[r"ID-\d{4}"],  # Свои регулярные выражения
 )
 
 # Выведет: "Contact user [MASKED] at [MASKED]"
@@ -152,10 +152,7 @@ async def handle_request(request_id: str):
 
 
 # В асинхронном цикле контексты изолированы
-asyncio.gather(
-    handle_request("REQ-1"),
-    handle_request("REQ-2")
-)
+asyncio.gather(handle_request("REQ-1"), handle_request("REQ-2"))
 ```
 
 ## 2. Кэширование (Smart Caching)
@@ -336,7 +333,7 @@ from chutils import (
     setup_logger,
     start_config_watcher,
     on_config_change,
-    get_config_value
+    get_config_value,
 )
 
 logger = setup_logger()
@@ -444,8 +441,7 @@ from chutils.exceptions import ConfigValidationGroupError
 
 try:
     validate_required_keys(
-        section="Secrets",
-        keys=["telegram_bot_token", "database_url", "api_key"]
+        section="Secrets", keys=["telegram_bot_token", "database_url", "api_key"]
     )
 except ConfigValidationGroupError as e:
     # Выведет структурированный список всех недостающих настроек за один проход
@@ -643,7 +639,7 @@ future_date = now + timedelta(days=1)
 
 print(humanize_timedelta(past_date))  # "5 минут назад"
 print(humanize_timedelta(future_date))  # "завтра"
-print(humanize_timedelta(past_date, locale='en'))  # "5 minutes ago"
+print(humanize_timedelta(past_date, locale="en"))  # "5 minutes ago"
 ```
 
 ## 12. Быстрое создание CLI (CLI Booster)
@@ -749,7 +745,7 @@ get_config()
 
 # 3. Получаем и форматируем отчет
 trace = _cm.get_trace()
-print(format_trace(trace, format_type='tree'))
+print(format_trace(trace, format_type="tree"))
 ```
 
 ## 14. Распределенное трассирование (OpenTelemetry)
@@ -823,8 +819,7 @@ config = get_config(remote_url="https://api.example.com/config.json")
 ```python
 # Опрос каждые 60 секунд
 config = get_config(
-    remote_url="https://api.example.com/config.json",
-    polling_interval=60
+    remote_url="https://api.example.com/config.json", polling_interval=60
 )
 ```
 
@@ -851,7 +846,7 @@ config = get_config(
 ```python
 config = get_config(
     remote_url="https://secure-config.local/app.yml",
-    remote_auth=("admin", "secret-token")
+    remote_auth=("admin", "secret-token"),
 )
 ```
 
@@ -1153,9 +1148,7 @@ from chutils import rate_limit
 
 # Лимит: 1 вызов в секунду на каждого конкретного пользователя
 @rate_limit(
-    max_calls=1,
-    period=1.0,
-    key_func=lambda user_id, *args, **kwargs: f"user_{user_id}"
+    max_calls=1, period=1.0, key_func=lambda user_id, *args, **kwargs: f"user_{user_id}"
 )
 def send_notification(user_id: int, message: str):
     print(f"Уведомление отправлено пользователю {user_id}")
@@ -1208,6 +1201,7 @@ class DatabaseConnection:
 @provide(scope="transient")
 def get_current_time() -> float:
     import time
+
     return time.time()
 ```
 
@@ -1531,7 +1525,9 @@ from chutils.env import BaseEnvManifest
 
 class AppEnv(BaseEnvManifest):
     DATABASE_URL: str = Field(description="URL подключения к базе данных")
-    API_KEY: str = Field(json_schema_extra={"secret": True}, description="Секретный API-ключ")
+    API_KEY: str = Field(
+        json_schema_extra={"secret": True}, description="Секретный API-ключ"
+    )
     PORT: int = Field(default=8080, description="Порт веб-сервера")
 ```
 

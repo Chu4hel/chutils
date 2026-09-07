@@ -26,6 +26,7 @@ Async-использование:
     async with AsyncHttpClient(base_url="https://api.example.com") as client:
         resp = await client.get("/status")
 """
+
 from __future__ import annotations
 
 from .api import delete, get, patch, post, put

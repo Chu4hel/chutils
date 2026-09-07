@@ -7,7 +7,8 @@ from __future__ import annotations
 import asyncio
 import inspect
 import time
-from typing import Any, Callable, TYPE_CHECKING
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .base import BaseTaskQueue
@@ -94,7 +95,9 @@ class WorkerPool:
                 duration = time.monotonic() - start_time
                 metrics_collector = getattr(self.queue, "metrics", None)
                 if metrics_collector:
-                    metrics_collector.observe_execution_duration(duration, status=status)
+                    metrics_collector.observe_execution_duration(
+                        duration, status=status
+                    )
                     metrics_collector.inc_tasks_processed(status=status)
 
                 if self.limiter:
@@ -110,8 +113,7 @@ class WorkerPool:
             return
         self._running = True
         self._workers = [
-            asyncio.create_task(self._worker_loop())
-            for _ in range(self.max_workers)
+            asyncio.create_task(self._worker_loop()) for _ in range(self.max_workers)
         ]
 
     async def stop(self) -> None:

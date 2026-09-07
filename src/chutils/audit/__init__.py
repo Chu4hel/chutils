@@ -16,6 +16,7 @@ chutils.audit — Неизменяемый журнал событий ауди�
     def login(user_id: str) -> None:
         ...
 """
+
 from chutils.audit.backends.base import BaseAuditBackend
 from chutils.audit.backends.file import FileBackend
 from chutils.audit.backends.sqlite import SqliteBackend
@@ -28,7 +29,7 @@ except ImportError:
     PostgresBackend = None  # type: ignore[assignment,misc]
 
 try:
-    from chutils.audit.api import audit_event, audit_context
+    from chutils.audit.api import audit_context, audit_event
 except ImportError:
     audit_event = None  # type: ignore[assignment]
     audit_context = None  # type: ignore[assignment]
@@ -37,8 +38,8 @@ __all__ = [
     "AuditEvent",
     "BaseAuditBackend",
     "FileBackend",
-    "SqliteBackend",
     "PostgresBackend",
-    "audit_event",
+    "SqliteBackend",
     "audit_context",
+    "audit_event",
 ]

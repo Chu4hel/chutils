@@ -18,6 +18,7 @@
         headers={"Authorization": "Bearer token"},
     )
 """
+
 from __future__ import annotations
 
 from .client import HttpClient
@@ -26,11 +27,11 @@ from .resilience import ResiliencePolicy
 
 
 def get(
-        url: str,
-        *,
-        headers: dict[str, str] | None = None,
-        timeout: float | None = None,
-        policy: ResiliencePolicy | None = None,
+    url: str,
+    *,
+    headers: dict[str, str] | None = None,
+    timeout: float | None = None,
+    policy: ResiliencePolicy | None = None,
 ) -> HttpResponse:
     """Выполняет GET-запрос.
 
@@ -59,13 +60,13 @@ def get(
 
 
 def post(
-        url: str,
-        *,
-        headers: dict[str, str] | None = None,
-        json_data: object | None = None,
-        data: bytes | str | None = None,
-        timeout: float | None = None,
-        policy: ResiliencePolicy | None = None,
+    url: str,
+    *,
+    headers: dict[str, str] | None = None,
+    json_data: object | None = None,
+    data: bytes | str | None = None,
+    timeout: float | None = None,
+    policy: ResiliencePolicy | None = None,
 ) -> HttpResponse:
     """Выполняет POST-запрос.
 
@@ -90,17 +91,19 @@ def post(
         ```
     """
     with HttpClient(policy=policy) as client:
-        return client.post(url, headers=headers, json_data=json_data, data=data, timeout=timeout)
+        return client.post(
+            url, headers=headers, json_data=json_data, data=data, timeout=timeout
+        )
 
 
 def put(
-        url: str,
-        *,
-        headers: dict[str, str] | None = None,
-        json_data: object | None = None,
-        data: bytes | str | None = None,
-        timeout: float | None = None,
-        policy: ResiliencePolicy | None = None,
+    url: str,
+    *,
+    headers: dict[str, str] | None = None,
+    json_data: object | None = None,
+    data: bytes | str | None = None,
+    timeout: float | None = None,
+    policy: ResiliencePolicy | None = None,
 ) -> HttpResponse:
     """Выполняет PUT-запрос.
 
@@ -116,15 +119,17 @@ def put(
         Объект HttpResponse.
     """
     with HttpClient(policy=policy) as client:
-        return client.put(url, headers=headers, json_data=json_data, data=data, timeout=timeout)
+        return client.put(
+            url, headers=headers, json_data=json_data, data=data, timeout=timeout
+        )
 
 
 def delete(
-        url: str,
-        *,
-        headers: dict[str, str] | None = None,
-        timeout: float | None = None,
-        policy: ResiliencePolicy | None = None,
+    url: str,
+    *,
+    headers: dict[str, str] | None = None,
+    timeout: float | None = None,
+    policy: ResiliencePolicy | None = None,
 ) -> HttpResponse:
     """Выполняет DELETE-запрос.
 
@@ -142,13 +147,13 @@ def delete(
 
 
 def patch(
-        url: str,
-        *,
-        headers: dict[str, str] | None = None,
-        json_data: object | None = None,
-        data: bytes | str | None = None,
-        timeout: float | None = None,
-        policy: ResiliencePolicy | None = None,
+    url: str,
+    *,
+    headers: dict[str, str] | None = None,
+    json_data: object | None = None,
+    data: bytes | str | None = None,
+    timeout: float | None = None,
+    policy: ResiliencePolicy | None = None,
 ) -> HttpResponse:
     """Выполняет PATCH-запрос.
 
@@ -164,4 +169,6 @@ def patch(
         Объект HttpResponse.
     """
     with HttpClient(policy=policy) as client:
-        return client.patch(url, headers=headers, json_data=json_data, data=data, timeout=timeout)
+        return client.patch(
+            url, headers=headers, json_data=json_data, data=data, timeout=timeout
+        )

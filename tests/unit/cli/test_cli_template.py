@@ -32,15 +32,17 @@ class MockConfig(BaseModel):
     if str(tmp_path) in sys.path:
         sys.path.remove(str(tmp_path))
     # Удаляем модули из кэша
-    if "test_module" in sys.modules: del sys.modules["test_module"]
-    if "test_module.models" in sys.modules: del sys.modules["test_module.models"]
+    if "test_module" in sys.modules:
+        del sys.modules["test_module"]
+    if "test_module.models" in sys.modules:
+        del sys.modules["test_module.models"]
 
 
 @pytest.mark.skipif(not PYDANTIC_AVAILABLE, reason="Pydantic not installed")
 def test_cli_template_yaml(mocker, capsys, temp_module):
     """Проверяет генерацию YAML шаблона через CLI."""
     test_args = ["chutils", "template", "--model", temp_module, "--format", "yaml"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -63,7 +65,7 @@ def test_cli_init_with_model(mocker, capsys, temp_module, tmp_path):
 
     try:
         test_args = ["chutils", "init", "-y", "--model", temp_module]
-        mocker.patch.object(sys, 'argv', test_args)
+        mocker.patch.object(sys, "argv", test_args)
 
         with pytest.raises(SystemExit) as e:
             main()

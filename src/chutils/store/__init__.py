@@ -1,6 +1,7 @@
 """
 Модуль chutils.store — Абстракция Key-Value хранилища.
 """
+
 from __future__ import annotations
 
 from .backends.base import BaseStoreBackend as BaseStoreBackend

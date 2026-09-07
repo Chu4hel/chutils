@@ -2,7 +2,6 @@
 Тесты для автоматического Fallback-поиска в окружении и маскирования секретов.
 """
 
-import os
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -26,7 +25,9 @@ def test_fallback_env_priority_chain(monkeypatch: pytest.MonkeyPatch) -> None:
     assert val == "postgres://localhost/db_ch_key"
 
     # 3. Проверяем приоритет CH_SECTION_KEY над CH_KEY и KEY
-    monkeypatch.setenv("CH_DATABASE_DATABASE_URL", "postgres://localhost/db_section_key")
+    monkeypatch.setenv(
+        "CH_DATABASE_DATABASE_URL", "postgres://localhost/db_section_key"
+    )
     val = get_config_value("Database", "database_url")
     assert val == "postgres://localhost/db_section_key"
 

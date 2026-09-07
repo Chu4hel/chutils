@@ -4,17 +4,10 @@
 
 from __future__ import annotations
 
-import io
 import time
-from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
-import pytest
-
-from chutils.config.sse import SseConfigClient, SseEvent, parse_sse_lines
-
-if TYPE_CHECKING:
-    pass
+from chutils.config.sse import SseConfigClient, parse_sse_lines
 
 
 class TestSseParser:
@@ -33,7 +26,7 @@ class TestSseParser:
         lines = [
             "event: reload\n",
             "id: 42\n",
-            "data: {\"config_version\": 2}\n",
+            'data: {"config_version": 2}\n',
             "\n",
         ]
         events = list(parse_sse_lines(lines))
@@ -128,7 +121,7 @@ class TestSseConfigClient:
             attempt_count += 1
             if attempt_count == 1:
                 raise OSError("Network error")
-            
+
             mock_res = MagicMock()
             mock_res.readline.side_effect = [
                 b"data: ok\n",

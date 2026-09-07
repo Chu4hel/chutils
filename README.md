@@ -118,9 +118,11 @@ Each example focuses on a specific task.
    from pydantic import BaseModel
    from chutils import get_config
 
+
    class AppConfig(BaseModel):
        app_name: str
        version: str
+
 
    # Returns an instance of AppConfig
    cfg = get_config(model=AppConfig)
@@ -130,6 +132,7 @@ Each example focuses on a specific task.
    You can also validate specific sections:
    ```python
    from chutils import get_config_section
+
    db_cfg = get_config_section("Database", model=MyDbModel)
    ```
 
@@ -241,15 +244,15 @@ You can configure the providers list explicitly:
 
 ```python
 from chutils import SecretManager
-from chutils.secret_manager.providers import KeyringProvider, DotEnvProvider, EnvProvider
+from chutils.secret_manager.providers import (
+    KeyringProvider,
+    DotEnvProvider,
+    EnvProvider,
+)
 
 secrets = SecretManager(
     service_name="my_app",
-    providers=[
-        KeyringProvider(),
-        DotEnvProvider(),
-        EnvProvider()
-    ]
+    providers=[KeyringProvider(), DotEnvProvider(), EnvProvider()],
 )
 ```
 
@@ -259,7 +262,11 @@ The library supports transparent integration with AWS Secrets Manager and Google
 
 ```python
 from chutils import SecretManager
-from chutils.secret_manager.providers import AWSSecretManagerProvider, GCPSecretManagerProvider, EnvProvider
+from chutils.secret_manager.providers import (
+    AWSSecretManagerProvider,
+    GCPSecretManagerProvider,
+    EnvProvider,
+)
 
 # Initialize cloud providers (requires installation of chutils[aws,gcp])
 aws_provider = AWSSecretManagerProvider(region_name="us-east-1")
@@ -269,8 +276,7 @@ gcp_provider = GCPSecretManagerProvider(project_id="my-gcp-project")
 # If AWS or GCP calls fail due to network/permissions or the secret is missing,
 # SecretManager logs a warning and automatically falls back to EnvProvider.
 secrets = SecretManager(
-    service_name="my_service",
-    providers=[aws_provider, gcp_provider, EnvProvider()]
+    service_name="my_service", providers=[aws_provider, gcp_provider, EnvProvider()]
 )
 ```
 

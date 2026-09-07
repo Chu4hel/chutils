@@ -3,6 +3,7 @@
 Поддерживает различные форматы проектов (pyproject.toml, requirements.txt, Pipfile)
 и lock-файлы (uv.lock, poetry.lock, Pipfile.lock).
 """
+
 from __future__ import annotations
 
 import importlib.metadata
@@ -29,7 +30,7 @@ def clean_version_specifier(spec: str) -> str | None:
     """
     if not spec:
         return None
-    match = re.search(r"v?(\d+(?:\.\d+)+(?:-[a-zA-Z0-9.]+)?)" , spec)
+    match = re.search(r"v?(\d+(?:\.\d+)+(?:-[a-zA-Z0-9.]+)?)", spec)
     if match:
         return match.group(1)
     return None
@@ -53,12 +54,14 @@ def parse_chutils_from_pyproject(content: str) -> str | None:
         re.search(r'(?ms)^\[project\].*?^name\s*=\s*["\']chutils["\']', content)
     )
     if is_chutils_repo:
-        match = re.search(r'(?ms)^\[project\].*?^version\s*=\s*["\']([^"\']+)["\']', content)
+        match = re.search(
+            r'(?ms)^\[project\].*?^version\s*=\s*["\']([^"\']+)["\']', content
+        )
         if match:
             return clean_version_specifier(match.group(1))
 
     # 2. Ищем chutils в секциях зависимостей Poetry: chutils = "^3.2.0" или chutils = { version = "3.2.0" }
-    poetry_match = re.search(r'^chutils\s*=\s*(.+)$', content, re.MULTILINE)
+    poetry_match = re.search(r"^chutils\s*=\s*(.+)$", content, re.MULTILINE)
     if poetry_match:
         v = clean_version_specifier(poetry_match.group(1))
         if v:
@@ -104,11 +107,17 @@ def parse_chutils_from_lockfile(filename: str, content: str) -> str | None:
             return clean_version_specifier(match.group(1))
 
     # TOML lock-файлы (uv.lock, poetry.lock)
-    match = re.search(r'(?ms)\[\[package\]\]\s*name\s*=\s*["\']chutils["\'].*?version\s*=\s*["\']([^"\']+)["\']', content)
+    match = re.search(
+        r'(?ms)\[\[package\]\]\s*name\s*=\s*["\']chutils["\'].*?version\s*=\s*["\']([^"\']+)["\']',
+        content,
+    )
     if match:
         return clean_version_specifier(match.group(1))
 
-    match_rev = re.search(r'(?ms)\[\[package\]\]\s*version\s*=\s*["\']([^"\']+)["\'].*?name\s*=\s*["\']chutils["\']', content)
+    match_rev = re.search(
+        r'(?ms)\[\[package\]\]\s*version\s*=\s*["\']([^"\']+)["\'].*?name\s*=\s*["\']chutils["\']',
+        content,
+    )
     if match_rev:
         return clean_version_specifier(match_rev.group(1))
 
@@ -148,7 +157,9 @@ def parse_version_from_toml(content: str) -> str | None:
     if version:
         return version
 
-    match = re.search(r'(?ms)^\[project\].*?^version\s*=\s*["\']([^"\']+)["\']', content)
+    match = re.search(
+        r'(?ms)^\[project\].*?^version\s*=\s*["\']([^"\']+)["\']', content
+    )
     if match:
         return clean_version_specifier(match.group(1))
     match = re.search(r'^version\s*=\s*["\']([^"\']+)["\']', content, re.MULTILINE)
@@ -246,7 +257,7 @@ def get_git_head_version(base_dir: str) -> str | None:
                 cwd=base_dir,
                 capture_output=True,
                 text=True,
-                check=True
+                check=True,
             )
             content = result.stdout
             if not content:
@@ -297,7 +308,7 @@ def save_last_known_version(base_dir: str, version: str) -> None:
         version: Строка версии.
     """
     try:
-        from chutils.fs import ensure_dir, atomic_write
+        from chutils.fs import atomic_write, ensure_dir
 
         path = Path(base_dir) / ".chutils" / "last_known_version.json"
         ensure_dir(path.parent)

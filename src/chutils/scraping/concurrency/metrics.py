@@ -37,7 +37,9 @@ class QueueMetricsCollector:
                 labels={"queue_name": self.queue_name, "status": status},
             )
 
-    def observe_execution_duration(self, duration_seconds: float, status: str = "completed") -> None:
+    def observe_execution_duration(
+        self, duration_seconds: float, status: str = "completed"
+    ) -> None:
         """Записать время выполнения задачи.
 
         Args:

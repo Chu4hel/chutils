@@ -14,8 +14,12 @@ def test_multiple_loggers_rotation(project_with_marker, time_machine, fast_rotat
     logging.shutdown()
     os.chdir(project_root)
 
-    logger1 = setup_logger("logger1", log_file_name="rotation1.log", force_reconfigure=True)
-    logger2 = setup_logger("logger2", log_file_name="rotation2.log", force_reconfigure=True)
+    logger1 = setup_logger(
+        "logger1", log_file_name="rotation1.log", force_reconfigure=True
+    )
+    logger2 = setup_logger(
+        "logger2", log_file_name="rotation2.log", force_reconfigure=True
+    )
 
     logger1.info("Logger 1 - message 1")
     logger2.info("Logger 2 - message 1")
@@ -33,15 +37,20 @@ def test_multiple_loggers_rotation(project_with_marker, time_machine, fast_rotat
     assert any(f.startswith("rotation2.log.") for f in log_files)
 
 
-def test_log_rotation_no_permission_error(project_with_marker, time_machine, fast_rotation, monkeypatch):
+def test_log_rotation_no_permission_error(
+    project_with_marker, time_machine, fast_rotation, monkeypatch
+):
     """Тестирует базовую ротацию с pyfakefs."""
     fs, project_root = project_with_marker
     logs_dir = project_root / "logs"
     fs.create_dir(logs_dir)
-    fs.create_file(project_root / "config.yml",
-                   contents='Logging:\n  log_level: "DEBUG"\n  log_file_name: "test_rotation.log"\n  log_backup_count: 5\n')
+    fs.create_file(
+        project_root / "config.yml",
+        contents='Logging:\n  log_level: "DEBUG"\n  log_file_name: "test_rotation.log"\n  log_backup_count: 5\n',
+    )
 
     from chutils import config as chutils_config
+
     logging.shutdown()
     chutils_config._cm.paths_initialized = False
     os.chdir(project_root)
@@ -59,6 +68,7 @@ def test_log_rotation_no_permission_error(project_with_marker, time_machine, fas
 def test_rotation_on_real_filesystem_is_working(time_machine, fast_rotation):
     """Финальный тест ротации на реальной ФС во временной папке."""
     from pathlib import Path
+
     with tempfile.TemporaryDirectory() as tmpdir:
         logs_dir = Path(tmpdir)
         logging.shutdown()
@@ -67,7 +77,9 @@ def test_rotation_on_real_filesystem_is_working(time_machine, fast_rotation):
         log_file_path = logs_dir / "rotation_debug.log"
         log_file_path.touch()
 
-        logger = setup_logger("debug_logger", log_file_name=str(log_file_path), force_reconfigure=True)
+        logger = setup_logger(
+            "debug_logger", log_file_name=str(log_file_path), force_reconfigure=True
+        )
 
         logger.info("Message 1")
         time_machine.advance(1.1)
@@ -90,16 +102,17 @@ def test_size_based_rotation(project_with_marker, monkeypatch):
 
     logging.shutdown()
     from chutils import config as chutils_config
+
     chutils_config._cm.paths_initialized = False
     os.chdir(project_root)
 
     logger = setup_logger(
         "size_rotation_logger",
         log_file_name="size_rotation.log",
-        rotation_type='size',
+        rotation_type="size",
         max_bytes=100,
         backup_count=2,
-        force_reconfigure=True
+        force_reconfigure=True,
     )
 
     for i in range(10):
@@ -123,10 +136,12 @@ def test_rotation_with_shared_handler_no_error(project_with_marker, monkeypatch)
 
     logging.shutdown()
     from chutils import config as chutils_config
+
     chutils_config._cm.paths_initialized = False
     # Сбрасываем кэш обработчиков перед тестом
     from chutils.logger import core as chutils_logger_core
-    monkeypatch.setattr(chutils_logger_core, '_file_handler_cache', {})
+
+    monkeypatch.setattr(chutils_logger_core, "_file_handler_cache", {})
     os.chdir(project_root)
 
     log_file = "shared_rotation.log"
@@ -135,25 +150,31 @@ def test_rotation_with_shared_handler_no_error(project_with_marker, monkeypatch)
     logger_a = setup_logger(
         "logger_A",
         log_file_name=log_file,
-        rotation_type='size',
+        rotation_type="size",
         max_bytes=150,  # Небольшой размер для быстрого срабатывания
         backup_count=2,
-        force_reconfigure=True
+        force_reconfigure=True,
     )
     logger_b = setup_logger(
         "logger_B",
         log_file_name=log_file,
-        rotation_type='size',
+        rotation_type="size",
         max_bytes=150,
         backup_count=2,
-        force_reconfigure=True # Используем True, чтобы убедиться, что логика кэша отрабатывает
+        force_reconfigure=True,  # Используем True, чтобы убедиться, что логика кэша отрабатывает
     )
 
     # Убедимся, что оба логгера используют один и тот же объект обработчика
-    handler_a = next((h for h in logger_a.handlers if isinstance(h, logging.FileHandler)), None)
-    handler_b = next((h for h in logger_b.handlers if isinstance(h, logging.FileHandler)), None)
+    handler_a = next(
+        (h for h in logger_a.handlers if isinstance(h, logging.FileHandler)), None
+    )
+    handler_b = next(
+        (h for h in logger_b.handlers if isinstance(h, logging.FileHandler)), None
+    )
     assert handler_a is not None
-    assert handler_a is handler_b, "Обработчики должны быть одним и тем же объектом из кэша"
+    assert handler_a is handler_b, (
+        "Обработчики должны быть одним и тем же объектом из кэша"
+    )
 
     # Генерируем логи, чтобы вызвать ротацию
     for i in range(15):
@@ -165,5 +186,6 @@ def test_rotation_with_shared_handler_no_error(project_with_marker, monkeypatch)
     # Проверяем, что ротация произошла успешно
     log_files = fs.listdir(logs_dir)
     assert "shared_rotation.log" in log_files
-    assert "shared_rotation.log.1" in log_files, "Ротация должна была создать как минимум один бэкап"
-
+    assert "shared_rotation.log.1" in log_files, (
+        "Ротация должна была создать как минимум один бэкап"
+    )

@@ -14,7 +14,9 @@ class DatabaseConnection:
         self.host = os.getenv("DB_HOST", "localhost")
         self.port = os.getenv("DB_PORT", "5432")
         self.username = os.getenv("DB_USER", "postgres")
-        self.password = os.getenv("DB_PASSWORD")  # Плохо: Секрет читается из открытых переменных окружения.
+        self.password = os.getenv(
+            "DB_PASSWORD"
+        )  # Плохо: Секрет читается из открытых переменных окружения.
 
     def connect(self):
         print(f"Connecting to {self.host}:{self.port} as {self.username}")

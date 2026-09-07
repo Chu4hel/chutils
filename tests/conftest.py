@@ -12,8 +12,10 @@ except Exception:
 @pytest.fixture
 def config_fs(fs):  # fs - это фикстура из pyfakefs
     from pathlib import Path
+
     from chutils import config
     from chutils.logger import core as logger_core
+
     """
     Настраивает фейковую файловую систему и сбрасывает состояние модулей config и logger.
     """
@@ -22,6 +24,7 @@ def config_fs(fs):  # fs - это фикстура из pyfakefs
 
     # Сброс состояния модуля logger
     from chutils.logger.internal import utils as logger_utils
+
     logger_core._file_handler_cache.clear()
     logger_core._initialization_message_shown = False
     logger_utils._LOG_DIR = None
@@ -34,6 +37,7 @@ def config_fs(fs):  # fs - это фикстура из pyfakefs
 
     # Установка текущей директории
     import os
+
     os.chdir(src_path)
 
     # Передаем управление тесту

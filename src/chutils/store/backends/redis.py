@@ -1,6 +1,7 @@
 """
 Redis бэкенд для chutils.store.
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -8,6 +9,7 @@ import sys
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
+
 from .base import BaseStoreBackend
 
 
@@ -23,7 +25,6 @@ def is_redis_available() -> bool:
         return importlib.util.find_spec("redis") is not None
     except Exception:
         return False
-
 
 
 class RedisStore(BaseStoreBackend):
@@ -73,7 +74,7 @@ class RedisStore(BaseStoreBackend):
         val = client.get(key)
         return default if val is None else val
 
-    def set(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
+    def set(self, key: str, value: Any, ttl: float | None = None) -> bool:
         """Сохраняет значение по ключу с опциональным TTL (синхронно).
 
         Args:
@@ -139,7 +140,7 @@ class RedisStore(BaseStoreBackend):
         val = await client.get(key)
         return default if val is None else val
 
-    async def aset(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
+    async def aset(self, key: str, value: Any, ttl: float | None = None) -> bool:
         """Сохраняет значение по ключу (асинхронно).
 
         Args:

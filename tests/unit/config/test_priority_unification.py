@@ -2,7 +2,13 @@ import os
 
 from pydantic import BaseModel
 
-from chutils.config import get_config, get_config_section, get_config_value, get_config_int, _cm
+from chutils.config import (
+    _cm,
+    get_config,
+    get_config_int,
+    get_config_section,
+    get_config_value,
+)
 
 
 class SampleModel(BaseModel):
@@ -32,7 +38,9 @@ def test_ini_case_preservation(tmp_path):
     """Проверка сохранения регистра в INI файлах."""
     project_root = tmp_path / "project"
     project_root.mkdir()
-    (project_root / "config.ini").write_text("[Service]\nMyKey = True\nlowerkey = false")
+    (project_root / "config.ini").write_text(
+        "[Service]\nMyKey = True\nlowerkey = false"
+    )
 
     _cm._reset()
     os.chdir(project_root)
@@ -48,10 +56,7 @@ def test_ini_case_preservation(tmp_path):
 
 def test_case_insensitive_section_lookup():
     """Проверка регистронезависимого поиска секций."""
-    config = {
-        "Logging": {"level": "INFO"},
-        "database": {"user": "admin"}
-    }
+    config = {"Logging": {"level": "INFO"}, "database": {"user": "admin"}}
 
     # Точное совпадение
     assert get_config_section("Logging", config=config)["level"] == "INFO"

@@ -48,7 +48,7 @@ def _patch_template_everywhere(mocker, val=None, side_effect=None):
     targets = [
         "chutils.commands.template.generate_yaml_template",
         "src.chutils.commands.template.generate_yaml_template",
-        "chutils.config.generator.generate_yaml_template"
+        "chutils.config.generator.generate_yaml_template",
     ]
     for t in targets:
         try:
@@ -74,7 +74,9 @@ def test_cli_template_yaml_stdout(cli_runner, config_fs, mocker):
     template_mod = _get_template_module()
     mock_module = mocker.MagicMock()
     mock_module.Settings = Settings
-    mocker.patch.object(template_mod.importlib, "import_module", return_value=mock_module)
+    mocker.patch.object(
+        template_mod.importlib, "import_module", return_value=mock_module
+    )
     mocker.patch.object(template_mod, "PYDANTIC_AVAILABLE", True)
 
     result = cli_runner.invoke(["template", "-m", "models:Settings", "-f", "yaml"])
@@ -90,7 +92,9 @@ def test_cli_template_save_file(cli_runner, config_fs, mocker):
     template_mod = _get_template_module()
     mock_module = mocker.MagicMock()
     mock_module.Settings = Settings
-    mocker.patch.object(template_mod.importlib, "import_module", return_value=mock_module)
+    mocker.patch.object(
+        template_mod.importlib, "import_module", return_value=mock_module
+    )
     mocker.patch.object(template_mod, "PYDANTIC_AVAILABLE", True)
 
     result = cli_runner.invoke(["template", "-m", "models:Settings", "-o", "out.yml"])
@@ -109,7 +113,10 @@ def test_cli_template_no_pydantic(cli_runner, mocker):
 
     result = cli_runner.invoke(["template", "-m", "m:M"])
     assert result.exit_code == 1
-    assert "Pydantic не установлен" in result.stdout or "Pydantic не установлен" in result.stderr
+    assert (
+        "Pydantic не установлен" in result.stdout
+        or "Pydantic не установлен" in result.stderr
+    )
 
 
 def test_cli_template_import_error(cli_runner, mocker):
@@ -117,11 +124,16 @@ def test_cli_template_import_error(cli_runner, mocker):
     mocker.patch("chutils.config.generator.PYDANTIC_AVAILABLE", True)
     template_mod = _get_template_module()
     mocker.patch.object(template_mod, "PYDANTIC_AVAILABLE", True)
-    mocker.patch.object(template_mod.importlib, "import_module", side_effect=ImportError("Fail"))
+    mocker.patch.object(
+        template_mod.importlib, "import_module", side_effect=ImportError("Fail")
+    )
 
     result = cli_runner.invoke(["template", "-m", "m:M"])
     assert result.exit_code == 1
-    assert "Не удалось импортировать модель" in result.stdout or "Не удалось импортировать модель" in result.stderr
+    assert (
+        "Не удалось импортировать модель" in result.stdout
+        or "Не удалось импортировать модель" in result.stderr
+    )
 
 
 def test_cli_template_generation_error(cli_runner, mocker):
@@ -131,9 +143,14 @@ def test_cli_template_generation_error(cli_runner, mocker):
     template_mod = _get_template_module()
     mock_module = mocker.MagicMock()
     mock_module.M = Settings
-    mocker.patch.object(template_mod.importlib, "import_module", return_value=mock_module)
+    mocker.patch.object(
+        template_mod.importlib, "import_module", return_value=mock_module
+    )
     mocker.patch.object(template_mod, "PYDANTIC_AVAILABLE", True)
 
     result = cli_runner.invoke(["template", "-m", "m:M"])
     assert result.exit_code == 1
-    assert "Ошибка при генерации шаблона" in result.stdout or "Ошибка при генерации шаблона" in result.stderr
+    assert (
+        "Ошибка при генерации шаблона" in result.stdout
+        or "Ошибка при генерации шаблона" in result.stderr
+    )

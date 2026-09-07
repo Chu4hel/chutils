@@ -82,7 +82,8 @@ class ChatContextSubCommand(SubCommand):
             )
 
             if args.output:
-                from chutils.fs import ensure_dir, atomic_write
+                from chutils.fs import atomic_write, ensure_dir
+
                 output_path = Path(args.output).resolve()
                 ensure_dir(output_path.parent)
                 atomic_write(output_path, markdown_content)

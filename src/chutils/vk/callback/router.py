@@ -2,15 +2,14 @@
 
 import inspect
 import os
-from typing import Any, Callable, Coroutine
+from collections.abc import Callable
+from typing import Any
 
 from chutils.exceptions.base import ChutilsException
 
 
 class VKCallbackError(ChutilsException):
     """Исключение при обработке VK Callback API события."""
-
-    pass
 
 
 class VKCallbackRouter:
@@ -45,6 +44,7 @@ class VKCallbackRouter:
         """Поиск confirmation_code через secret_manager / config / env."""
         try:
             from chutils.secret_manager import SecretManager
+
             sm = SecretManager()
             for key in ("vk_confirmation_code", "CH_VK_CONFIRMATION_CODE"):
                 val = sm.get_secret(key)
@@ -65,6 +65,7 @@ class VKCallbackRouter:
         """Поиск secret_key группы через secret_manager / config / env."""
         try:
             from chutils.secret_manager import SecretManager
+
             sm = SecretManager()
             for key in ("vk_secret_key", "CH_VK_SECRET_KEY"):
                 val = sm.get_secret(key)
@@ -80,7 +81,9 @@ class VKCallbackRouter:
 
         return None
 
-    def on_event(self, event_type: str) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+    def on_event(
+        self, event_type: str
+    ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
         """Декоратор подписки на тип события VK Callback API (например, 'message_new').
 
         Args:
@@ -89,6 +92,7 @@ class VKCallbackRouter:
         Returns:
             Декоратор функции-обработчика.
         """
+
         def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
             if event_type not in self._event_handlers:
                 self._event_handlers[event_type] = []
@@ -150,7 +154,7 @@ class VKCallbackRouter:
         if self.secret_key and secret != self.secret_key:
             raise VKCallbackError(
                 "Недействительный секретный ключ (secret) в событии VK Callback API.",
-                hint="Проверьте совпадение secret_key группы VK и настроек приложения."
+                hint="Проверьте совпадение secret_key группы VK и настроек приложения.",
             )
 
         # Тип запроса confirmation -> вернуть confirmation_code
@@ -158,7 +162,7 @@ class VKCallbackRouter:
             if not self.confirmation_code:
                 raise VKCallbackError(
                     "Получен запрос 'confirmation', но confirmation_code не задан.",
-                    hint="Укажите confirmation_code в VKCallbackRouter или через VK_CONFIRMATION_CODE."
+                    hint="Укажите confirmation_code в VKCallbackRouter или через VK_CONFIRMATION_CODE.",
                 )
             return self.confirmation_code
 
@@ -176,6 +180,7 @@ class VKCallbackRouter:
             except Exception as exc:
                 # Логируем ошибку, но не заваливаем ответ "ok" для VK
                 from chutils.logger import setup_logger
+
                 setup_logger("chutils.vk.callback").error(
                     f"Ошибка при выполнении хэндлера {handler.__name__} для события {event_type}: {exc}"
                 )
@@ -191,7 +196,9 @@ class VKCallbackRouter:
         try:
             from fastapi import APIRouter, HTTPException, Request, Response
         except ImportError:
-            raise RuntimeError("FastAPI не установлен. Установите fastapi или chutils[vk].")
+            raise RuntimeError(
+                "FastAPI не установлен. Установите fastapi или chutils[vk]."
+            )
 
         fastapi_router = APIRouter()
 
@@ -200,7 +207,9 @@ class VKCallbackRouter:
             try:
                 body = await request.json()
             except Exception as exc:
-                raise HTTPException(status_code=400, detail="Invalid JSON body") from exc
+                raise HTTPException(
+                    status_code=400, detail="Invalid JSON body"
+                ) from exc
 
             try:
                 res_text = await self.handle_event(body)

@@ -127,6 +127,14 @@ filterwarnings = [
 [tool.ruff]
 target-version = "py310"
 
+[tool.ruff.lint]
+ignore = [
+    "B009",   # Do not call getattr with a constant attribute name
+    "B010",   # Do not call setattr with a constant attribute name
+    "BLE001", # Do not catch blind exception
+    "S110",   # try-except-pass
+]
+
 [tool.mypy]
 python_version = "3.10"
 strict = true

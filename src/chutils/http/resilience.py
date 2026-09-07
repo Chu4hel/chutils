@@ -6,6 +6,7 @@ retry, timeout, semaphore (max_concurrency) и circuit_breaker,
 а также методы `apply_sync` и `apply_async` для применения этих политик
 к произвольным вызываемым объектам.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -14,23 +15,25 @@ import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from chutils.logger import ChutilsLogger
 
-_module_logger: Optional["ChutilsLogger"] = None
+_module_logger: ChutilsLogger | None = None
 
 
-def _get_log() -> "ChutilsLogger":
+def _get_log() -> ChutilsLogger:
     """Возвращает лениво инициализированный логгер модуля."""
     global _module_logger
     if _module_logger is None:
         from chutils import logger as chutils_logger
+
         _module_logger = chutils_logger.setup_logger(__name__)
     if _module_logger is None:
         raise RuntimeError("Не удалось инициализировать логгер chutils.http.resilience")
     return _module_logger
+
 
 _UNSET = object()
 """Значение-маркер: статус-код ещё не извлечён."""
@@ -55,7 +58,9 @@ class _CircuitBreakerState:
 
     _failure_count: int = field(default=0, init=False, repr=False)
     _opened_at: float | None = field(default=None, init=False, repr=False)
-    _lock: threading.Lock = field(default_factory=threading.Lock, init=False, repr=False)
+    _lock: threading.Lock = field(
+        default_factory=threading.Lock, init=False, repr=False
+    )
 
     @property
     def is_open(self) -> bool:
@@ -119,18 +124,18 @@ class ResiliencePolicy:
     """
 
     def __init__(
-            self,
-            *,
-            retries: int = 3,
-            retry_delay: float = 0.5,
-            retry_backoff: float = 2.0,
-            retry_jitter: bool = False,
-            retry_exceptions: tuple[type[Exception], ...] = (Exception,),
-            retry_on_status_codes: tuple[int, ...] = (429, 500, 502, 503, 504),
-            timeout: float | None = None,
-            max_concurrency: int | None = None,
-            cb_failure_threshold: int = 5,
-            cb_recovery_timeout: float = 30.0,
+        self,
+        *,
+        retries: int = 3,
+        retry_delay: float = 0.5,
+        retry_backoff: float = 2.0,
+        retry_jitter: bool = False,
+        retry_exceptions: tuple[type[Exception], ...] = (Exception,),
+        retry_on_status_codes: tuple[int, ...] = (429, 500, 502, 503, 504),
+        timeout: float | None = None,
+        max_concurrency: int | None = None,
+        cb_failure_threshold: int = 5,
+        cb_recovery_timeout: float = 30.0,
     ) -> None:
         """Инициализирует политику отказоустойчивости.
 
@@ -159,7 +164,9 @@ class ResiliencePolicy:
 
         # Синхронный семафор
         self._semaphore: threading.Semaphore | None = (
-            threading.Semaphore(max_concurrency) if max_concurrency is not None else None
+            threading.Semaphore(max_concurrency)
+            if max_concurrency is not None
+            else None
         )
         # Асинхронный семафор создаётся лениво (в event loop)
         self._async_semaphore: asyncio.Semaphore | None = None
@@ -185,9 +192,9 @@ class ResiliencePolicy:
         return self._async_semaphore
 
     def _should_retry_exception(
-            self,
-            exc: Exception,
-            http_error_extractor: Callable[[Exception], int] | None,
+        self,
+        exc: Exception,
+        http_error_extractor: Callable[[Exception], int] | None,
     ) -> bool:
         """Определяет, нужен ли повтор для данного исключения.
 
@@ -204,7 +211,7 @@ class ResiliencePolicy:
                 code = http_error_extractor(exc)
                 if code in self.retry_on_status_codes:
                     return True
-            except Exception:  # noqa: BLE001
+            except Exception:
                 pass
 
         return isinstance(exc, self.retry_exceptions)
@@ -219,19 +226,19 @@ class ResiliencePolicy:
         Returns:
             Задержка в секундах.
         """
-        delay = base_delay * (self.retry_backoff ** attempt)
+        delay = base_delay * (self.retry_backoff**attempt)
         if self.retry_jitter:
-            delay *= random.uniform(0.5, 1.5)  # noqa: S311
+            delay *= random.uniform(0.5, 1.5)
         return delay
 
     # ─── apply_sync ────────────────────────────────────────────────────────
 
     def apply_sync(
-            self,
-            func: Callable[..., object],
-            *args: object,
-            http_error_extractor: Callable[[Exception], int] | None = None,
-            **kwargs: object,
+        self,
+        func: Callable[..., object],
+        *args: object,
+        http_error_extractor: Callable[[Exception], int] | None = None,
+        **kwargs: object,
     ) -> object:
         """Применяет политику к синхронному вызову.
 
@@ -277,6 +284,7 @@ class ResiliencePolicy:
             try:
                 if self.timeout is not None:
                     import concurrent.futures
+
                     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
                         future = ex.submit(_call)
                         try:
@@ -295,11 +303,13 @@ class ResiliencePolicy:
             except ChutilsTimeoutError:
                 self._cb_state.record_failure()
                 raise
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 last_exc = exc
                 self._cb_state.record_failure()
 
-                if attempt < self.retries and self._should_retry_exception(exc, http_error_extractor):
+                if attempt < self.retries and self._should_retry_exception(
+                    exc, http_error_extractor
+                ):
                     delay = self._compute_delay(attempt, self.retry_delay)
                     _get_log().debug(
                         "Попытка %d/%d не удалась (%s). Повтор через %.2f сек.",
@@ -314,17 +324,17 @@ class ResiliencePolicy:
                 raise
 
         # Этот код недостижим, но удовлетворяет type checker
-        assert last_exc is not None  # noqa: S101
+        assert last_exc is not None
         raise last_exc
 
     # ─── apply_async ───────────────────────────────────────────────────────
 
     async def apply_async(
-            self,
-            func: Callable[..., object],
-            *args: object,
-            http_error_extractor: Callable[[Exception], int] | None = None,
-            **kwargs: object,
+        self,
+        func: Callable[..., object],
+        *args: object,
+        http_error_extractor: Callable[[Exception], int] | None = None,
+        **kwargs: object,
     ) -> object:
         """Применяет политику к асинхронному вызову.
 
@@ -356,6 +366,7 @@ class ResiliencePolicy:
         last_exc: Exception | None = None
 
         for attempt in range(self.retries + 1):
+
             async def _call() -> object:
                 if sem is not None:
                     async with sem:
@@ -380,11 +391,13 @@ class ResiliencePolicy:
             except ChutilsTimeoutError:
                 self._cb_state.record_failure()
                 raise
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 last_exc = exc
                 self._cb_state.record_failure()
 
-                if attempt < self.retries and self._should_retry_exception(exc, http_error_extractor):
+                if attempt < self.retries and self._should_retry_exception(
+                    exc, http_error_extractor
+                ):
                     delay = self._compute_delay(attempt, self.retry_delay)
                     _get_log().debug(
                         "Async попытка %d/%d не удалась (%s). Повтор через %.2f сек.",
@@ -398,5 +411,5 @@ class ResiliencePolicy:
 
                 raise
 
-        assert last_exc is not None  # noqa: S101
+        assert last_exc is not None
         raise last_exc

@@ -3,8 +3,8 @@ from __future__ import annotations
 import functools
 import inspect
 import typing as t
-from typing import Any
 from collections.abc import Callable
+from typing import Any
 
 from .env import OTEL_AVAILABLE
 from .typing import P, R
@@ -63,10 +63,10 @@ def get_current_trace_context() -> dict[str, str] | None:
 
 
 def setup_tracing(
-        service_name: str,
-        exporter_type: str = "console",
-        otlp_endpoint: str | None = None,
-        otlp_protocol: str = "grpc",
+    service_name: str,
+    exporter_type: str = "console",
+    otlp_endpoint: str | None = None,
+    otlp_protocol: str = "grpc",
 ) -> bool:
     """
     Настраивает OpenTelemetry SDK для сбора трасс.
@@ -99,13 +99,20 @@ def setup_tracing(
         exporter: SpanExporter
         if exporter_type == "console":
             from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+
             exporter = ConsoleSpanExporter()
         elif exporter_type == "otlp":
             if otlp_protocol == "grpc":
-                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter as GrpcExporter
+                from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+                    OTLPSpanExporter as GrpcExporter,
+                )
+
                 exporter = GrpcExporter(endpoint=otlp_endpoint)
             else:
-                from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter as HttpExporter
+                from opentelemetry.exporter.otlp.proto.http.trace_exporter import (
+                    OTLPSpanExporter as HttpExporter,
+                )
+
                 exporter = HttpExporter(endpoint=otlp_endpoint)
         else:
             return False
@@ -120,9 +127,9 @@ def setup_tracing(
 
 
 def trace(
-        name: str | Callable[P, R] | None = None,
-        attributes: dict[str, Any] | None = None,
-        capture_kwargs: bool = False,
+    name: str | Callable[P, R] | None = None,
+    attributes: dict[str, Any] | None = None,
+    capture_kwargs: bool = False,
 ) -> Any:
     """
     Декоратор для автоматического создания спана при вызове функции.
@@ -165,24 +172,30 @@ def trace(
         span_name = (name if isinstance(name, str) else None) or func.__name__
 
         if inspect.iscoroutinefunction(func):
+
             @functools.wraps(func)
             async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
                 actual_attributes = attributes.copy() if attributes else {}
                 if capture_kwargs:
                     actual_attributes.update({f"arg.{k}": v for k, v in kwargs.items()})
 
-                with tracer.start_as_current_span(span_name, attributes=actual_attributes):
+                with tracer.start_as_current_span(
+                    span_name, attributes=actual_attributes
+                ):
                     return await func(*args, **kwargs)  # type: ignore[no-any-return]
 
             return async_wrapper  # type: ignore[return-value]
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
                 actual_attributes = attributes.copy() if attributes else {}
                 if capture_kwargs:
                     actual_attributes.update({f"arg.{k}": v for k, v in kwargs.items()})
 
-                with tracer.start_as_current_span(span_name, attributes=actual_attributes):
+                with tracer.start_as_current_span(
+                    span_name, attributes=actual_attributes
+                ):
                     return func(*args, **kwargs)
 
             return sync_wrapper

@@ -35,7 +35,9 @@ def test_scaffolder_validation_invalid_names() -> None:
     keywords = ["import", "class", "def", "return", "try", "for"]
     for kw in keywords:
         scaffolder = Scaffolder(module_name=kw, output_dir="dummy")
-        with pytest.raises(CommandError, match="является зарезервированным ключевым словом"):
+        with pytest.raises(
+            CommandError, match="является зарезервированным ключевым словом"
+        ):
             scaffolder.validate()
 
 
@@ -54,7 +56,9 @@ def test_scaffolder_output_directory_exists(tmp_path: Path) -> None:
         scaffolder.validate()
 
     # С force=True валидация должна проходить успешно
-    scaffolder_force = Scaffolder(module_name="test_module", output_dir=str(module_dir), force=True)
+    scaffolder_force = Scaffolder(
+        module_name="test_module", output_dir=str(module_dir), force=True
+    )
     scaffolder_force.validate()
 
 
@@ -116,7 +120,9 @@ def test_scaffolder_generated_code_quality(tmp_path: Path) -> None:
                     try:
                         compile(f.read(), str(file_path), "exec")
                     except SyntaxError as e:
-                        pytest.fail(f"Синтаксическая ошибка в сгенерированном файле {file_path}: {e}")
+                        pytest.fail(
+                            f"Синтаксическая ошибка в сгенерированном файле {file_path}: {e}"
+                        )
 
     # Запуск ruff (если доступен в системе)
     if shutil.which("ruff"):
@@ -125,7 +131,9 @@ def test_scaffolder_generated_code_quality(tmp_path: Path) -> None:
             capture_output=True,
             text=True,
         )
-        assert result.returncode == 0, f"Ruff linting failed on generated module:\n{result.stdout}\n{result.stderr}"
+        assert result.returncode == 0, (
+            f"Ruff linting failed on generated module:\n{result.stdout}\n{result.stderr}"
+        )
 
     # Запуск mypy (если доступен в системе)
     if shutil.which("mypy"):
@@ -136,4 +144,6 @@ def test_scaffolder_generated_code_quality(tmp_path: Path) -> None:
             capture_output=True,
             text=True,
         )
-        assert result.returncode == 0, f"Mypy strict validation failed on generated module:\n{result.stdout}\n{result.stderr}"
+        assert result.returncode == 0, (
+            f"Mypy strict validation failed on generated module:\n{result.stdout}\n{result.stderr}"
+        )

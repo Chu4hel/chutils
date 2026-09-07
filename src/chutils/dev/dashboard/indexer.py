@@ -1,6 +1,7 @@
 """
 Модуль для сканирования и извлечения CLI-команд, декорированных @cli_command.
 """
+
 from __future__ import annotations
 
 import ast
@@ -12,6 +13,7 @@ from typing import NamedTuple
 
 class CLIArgument(NamedTuple):
     """Информация об аргументе CLI-команды."""
+
     name: str
     type_str: str
     default_str: str | None
@@ -27,11 +29,11 @@ class CLICommandInfo:
     arguments: list[CLIArgument]
 
     def __init__(
-            self,
-            name: str,
-            file_path: str,
-            docstring: str | None,
-            arguments: list[CLIArgument],
+        self,
+        name: str,
+        file_path: str,
+        docstring: str | None,
+        arguments: list[CLIArgument],
     ) -> None:
         """Инициализирует информацию о CLI-команде.
 
@@ -65,7 +67,9 @@ def parse_docstring_args(docstring: str | None) -> dict[str, str]:
     if args_section:
         content = args_section.group(1)
         # Регулярка для поиска отдельных аргументов: "name (type): description"
-        matches = re.findall(r"^\s*([a-zA-Z_0-9]+)\s*(\(.*?\))?:\s*(.*?)$", content, re.MULTILINE)
+        matches = re.findall(
+            r"^\s*([a-zA-Z_0-9]+)\s*(\(.*?\))?:\s*(.*?)$", content, re.MULTILINE
+        )
         for name, _, desc in matches:
             arg_help[name] = desc.strip()
 
@@ -104,7 +108,9 @@ class CLICommandDiscoverer:
 
         for root, dirs, files in os.walk(self.root_dir):
             # Фильтруем папки на месте
-            dirs[:] = [d for d in dirs if d not in ignore_dirs and not d.startswith(".")]
+            dirs[:] = [
+                d for d in dirs if d not in ignore_dirs and not d.startswith(".")
+            ]
 
             for file in files:
                 if file.endswith(".py"):
@@ -152,17 +158,21 @@ class CLICommandDiscoverer:
         """Проверяет, есть ли у функции декоратор cli_command."""
         for dec in node.decorator_list:
             # Случай: @cli_command
-            if isinstance(dec, ast.Name) and dec.id == "cli_command":
-                return True
-            # Случай: @cli_command() или с аргументами
-            elif isinstance(dec, ast.Call) and isinstance(dec.func, ast.Name) and dec.func.id == "cli_command":
-                return True
-            # Случай: @chutils.cli_command
-            elif isinstance(dec, ast.Attribute) and dec.attr == "cli_command":
+            if (
+                isinstance(dec, ast.Name)
+                and dec.id == "cli_command"
+                or isinstance(dec, ast.Call)
+                and isinstance(dec.func, ast.Name)
+                and dec.func.id == "cli_command"
+                or isinstance(dec, ast.Attribute)
+                and dec.attr == "cli_command"
+            ):
                 return True
         return False
 
-    def _extract_command_info(self, node: ast.FunctionDef, file_path: Path) -> CLICommandInfo:
+    def _extract_command_info(
+        self, node: ast.FunctionDef, file_path: Path
+    ) -> CLICommandInfo:
         """Извлекает информацию о CLI-команде из AST-узла функции.
 
         Args:

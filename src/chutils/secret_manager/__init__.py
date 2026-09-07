@@ -1,10 +1,10 @@
 from .core import SecretManager
-from .providers import SecretProvider, KeyringProvider, DotEnvProvider, EnvProvider
+from .providers import DotEnvProvider, EnvProvider, KeyringProvider, SecretProvider
 
 __all__ = [
-    'SecretManager',
-    'SecretProvider',
-    'KeyringProvider',
-    'DotEnvProvider',
-    'EnvProvider'
+    "DotEnvProvider",
+    "EnvProvider",
+    "KeyringProvider",
+    "SecretManager",
+    "SecretProvider",
 ]

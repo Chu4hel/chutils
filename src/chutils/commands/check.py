@@ -4,8 +4,8 @@ import argparse
 from pathlib import Path
 from typing import Any
 
-from .base import BaseCommand
 from ..cli_utils import get_console
+from .base import BaseCommand
 
 
 class CheckCommand(BaseCommand):
@@ -57,7 +57,8 @@ class CheckCommand(BaseCommand):
             help="Выполнить только системный Health Check среды",
         )
         check_parser.add_argument(
-            "-m", "--model",
+            "-m",
+            "--model",
             help="Путь к Pydantic-модели для проверки конфигурации (например, 'myapp.config:Settings')",
         )
         check_parser.add_argument(
@@ -88,18 +89,36 @@ class CheckCommand(BaseCommand):
         has_errors = False
 
         if not args.json:
-            console.print("[bold cyan]=== Комплексная проверка проекта (chutils check) ===[/bold cyan]\n")
+            console.print(
+                "[bold cyan]=== Комплексная проверка проекта (chutils check) ===[/bold cyan]\n"
+            )
 
         # 1. Системная диагностика (Health Check)
         if run_system:
             from chutils.diagnostics.manager import default_manager
+
             diag_report = default_manager.run_checks_sync()
 
             status_str = str(getattr(diag_report.status, "value", diag_report.status))
-            passed_count = getattr(diag_report, "passed_checks", len([c for c in getattr(diag_report, "checks", []) if
-                                                                      getattr(c, "status", None) == "HEALTHY"]))
-            total_count = getattr(diag_report, "total_checks", len(getattr(diag_report, "checks", [])))
-            duration = getattr(diag_report, "total_duration", getattr(diag_report, "total_duration_sec", 0.0))
+            passed_count = getattr(
+                diag_report,
+                "passed_checks",
+                len(
+                    [
+                        c
+                        for c in getattr(diag_report, "checks", [])
+                        if getattr(c, "status", None) == "HEALTHY"
+                    ]
+                ),
+            )
+            total_count = getattr(
+                diag_report, "total_checks", len(getattr(diag_report, "checks", []))
+            )
+            duration = getattr(
+                diag_report,
+                "total_duration",
+                getattr(diag_report, "total_duration_sec", 0.0),
+            )
 
             results["checks"]["system"] = {
                 "status": status_str,
@@ -113,12 +132,17 @@ class CheckCommand(BaseCommand):
             if not args.json:
                 console.print("[bold yellow]1. Системный Health Check:[/bold yellow]")
                 status_color = "green" if status_str == "HEALTHY" else "red"
-                console.print(f"Статус системы: [{status_color}]{status_str}[/{status_color}]")
+                console.print(
+                    f"Статус системы: [{status_color}]{status_str}[/{status_color}]"
+                )
                 console.print(f"Успешных проверок: {passed_count}/{total_count}\n")
 
         # 2. Валидация Pydantic конфигурации
         if run_config:
-            from chutils.commands.utils import _import_string, ensure_project_paths_in_sys_path
+            from chutils.commands.utils import (
+                _import_string,
+                ensure_project_paths_in_sys_path,
+            )
             from chutils.config import get_config
             from chutils.env import PYDANTIC_AVAILABLE
 
@@ -180,13 +204,19 @@ class CheckCommand(BaseCommand):
             results["checks"]["config"] = config_result
 
             if not args.json:
-                console.print("[bold yellow]2. Валидация конфигурации Pydantic:[/bold yellow]")
+                console.print(
+                    "[bold yellow]2. Валидация конфигурации Pydantic:[/bold yellow]"
+                )
                 if config_result["status"] == "SUCCESS":
-                    console.print(f"[bold green]✓ {config_result['message']}[/bold green]\n")
+                    console.print(
+                        f"[bold green]✓ {config_result['message']}[/bold green]\n"
+                    )
                 elif config_result["status"] == "WARNING":
                     console.print(f"[yellow]⚠ {config_result['message']}[/yellow]\n")
                 else:
-                    console.print(f"[bold red]✗ Ошибка валидации: {config_result.get('error')}[/bold red]\n")
+                    console.print(
+                        f"[bold red]✗ Ошибка валидации: {config_result.get('error')}[/bold red]\n"
+                    )
 
         # 3. AI-Readiness аудит (ai-lint)
         if run_lint:
@@ -218,21 +248,33 @@ class CheckCommand(BaseCommand):
             }
 
             if not args.json:
-                console.print("[bold yellow]3. Аудит AI-готовности (ai-lint):[/bold yellow]")
+                console.print(
+                    "[bold yellow]3. Аудит AI-готовности (ai-lint):[/bold yellow]"
+                )
                 if lint_status == "SUCCESS":
-                    console.print("[bold green]✓ Все проверки AI-готовности пройдены![/bold green]\n")
+                    console.print(
+                        "[bold green]✓ Все проверки AI-готовности пройдены![/bold green]\n"
+                    )
                 elif lint_status == "WARNING":
-                    console.print(f"[yellow]⚠ Найдено предупреждений: {warns_count}[/yellow]\n")
+                    console.print(
+                        f"[yellow]⚠ Найдено предупреждений: {warns_count}[/yellow]\n"
+                    )
                 else:
                     console.print(
-                        f"[bold red]✗ Найдено ошибок: {errors_count}, предупреждений: {warns_count}[/bold red]\n")
+                        f"[bold red]✗ Найдено ошибок: {errors_count}, предупреждений: {warns_count}[/bold red]\n"
+                    )
 
         if args.json:
             import json
+
             console.print(json.dumps(results, indent=2, ensure_ascii=False))
         else:
             if has_errors:
-                console.print("[bold red]Вывод: Проект содержит ошибки! Проверьте детали выше.[/bold red]")
+                console.print(
+                    "[bold red]Вывод: Проект содержит ошибки! Проверьте детали выше.[/bold red]"
+                )
                 raise SystemExit(1)
             else:
-                console.print("[bold green]Вывод: Все проверенные компоненты проекта в порядке![/bold green]")
+                console.print(
+                    "[bold green]Вывод: Все проверенные компоненты проекта в порядке![/bold green]"
+                )

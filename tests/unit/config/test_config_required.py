@@ -1,16 +1,17 @@
 """Тесты для строгого режима Config API (параметр required)."""
+
 from pathlib import Path
 
 import pytest
 
 from chutils import (
-    get_config_value,
-    get_config_int,
-    get_config_float,
     get_config_boolean,
+    get_config_float,
+    get_config_int,
     get_config_list,
-    get_config_section,
     get_config_path,
+    get_config_section,
+    get_config_value,
 )
 from chutils.config import _cm, find_project_root
 from chutils.exceptions import ConfigKeyNotFoundError
@@ -69,9 +70,15 @@ class TestConfigRequired:
 
     def test_get_value_required_false_returns_fallback(self, initialized_fs):
         """Проверяет, что при required=False (или по умолчанию) возвращается fallback."""
-        assert get_config_value("Database", "missing_key", fallback="fallback_val") == "fallback_val"
+        assert (
+            get_config_value("Database", "missing_key", fallback="fallback_val")
+            == "fallback_val"
+        )
         assert get_config_value("Database", "missing_key") is None
-        assert get_config_value("Database", "empty_str", fallback="fallback_val") == "fallback_val"
+        assert (
+            get_config_value("Database", "empty_str", fallback="fallback_val")
+            == "fallback_val"
+        )
 
     # Тесты для get_config_int
     def test_get_int_success(self, initialized_fs):
@@ -128,7 +135,12 @@ class TestConfigRequired:
             get_config_path("Database", "missing_path", required=True)
 
     def test_get_path_required_false(self, initialized_fs):
-        assert get_config_path("Database", "missing_path", fallback="fallback", resolve_from_root=False) == "fallback"
+        assert (
+            get_config_path(
+                "Database", "missing_path", fallback="fallback", resolve_from_root=False
+            )
+            == "fallback"
+        )
 
     # Тесты для get_config_section
     def test_get_section_success(self, initialized_fs):

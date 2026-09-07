@@ -4,7 +4,7 @@ from typing import Any
 
 import httpx  # chutils: ignore[ChutilsIntegrationRule]
 
-from .base import BaseCaptchaSolver, BaseAsyncCaptchaSolver
+from .base import BaseAsyncCaptchaSolver, BaseCaptchaSolver
 from .exceptions import (
     CaptchaBalanceError,
     CaptchaServiceError,
@@ -15,18 +15,28 @@ from .exceptions import (
 def _handle_error(response_text: str) -> None:
     """Обрабатывает текстовые ошибки RuCaptcha и генерирует исключения."""
     if "ERROR_ZERO_BALANCE" in response_text:
-        raise CaptchaBalanceError("Баланс аккаунта RuCaptcha равен нулю или недостаточен.")
-    elif "ERROR_WRONG_USER_KEY" in response_text or "ERROR_KEY_DOES_NOT_EXIST" in response_text:
-        raise CaptchaServiceError(f"Неверный API-ключ пользователя RuCaptcha: {response_text}")
+        raise CaptchaBalanceError(
+            "Баланс аккаунта RuCaptcha равен нулю или недостаточен."
+        )
+    elif (
+        "ERROR_WRONG_USER_KEY" in response_text
+        or "ERROR_KEY_DOES_NOT_EXIST" in response_text
+    ):
+        raise CaptchaServiceError(
+            f"Неверный API-ключ пользователя RuCaptcha: {response_text}"
+        )
     else:
         raise CaptchaServiceError(f"Ошибка сервиса RuCaptcha: {response_text}")
 
 
 class RuCaptchaSolver(BaseCaptchaSolver):
     """Синхронный клиент для RuCaptcha / 2Captcha."""
+
     secret_key_name = "RUCAPTCHA_API_KEY"
 
-    def __init__(self, api_key: str | None = None, host: str = "https://rucaptcha.com") -> None:
+    def __init__(
+        self, api_key: str | None = None, host: str = "https://rucaptcha.com"
+    ) -> None:
         """Инициализирует RuCaptchaSolver.
 
         Args:
@@ -36,6 +46,7 @@ class RuCaptchaSolver(BaseCaptchaSolver):
         # Также проверяем TWOCAPTCHA_API_KEY как альтернативу
         if not api_key:
             from chutils.secret_manager import SecretManager
+
             try:
                 sm = SecretManager("")
                 api_key = sm.get_secret("TWOCAPTCHA_API_KEY")
@@ -45,11 +56,11 @@ class RuCaptchaSolver(BaseCaptchaSolver):
         self.host = host.rstrip("/")
 
     def solve_image(
-            self,
-            image_data: bytes | str,
-            timeout: float = 60.0,
-            poll_interval: float = 5.0,
-            **kwargs: Any,
+        self,
+        image_data: bytes | str,
+        timeout: float = 60.0,
+        poll_interval: float = 5.0,
+        **kwargs: Any,
     ) -> str:
         """Синхронно решает капчу-изображение.
 
@@ -63,7 +74,11 @@ class RuCaptchaSolver(BaseCaptchaSolver):
             Распознанный текст с изображения.
         """
         # 1. Отправка капчи
-        img_b64 = image_data if isinstance(image_data, str) else base64.b64encode(image_data).decode("utf-8")
+        img_b64 = (
+            image_data
+            if isinstance(image_data, str)
+            else base64.b64encode(image_data).decode("utf-8")
+        )
 
         payload = {
             "key": self.api_key,
@@ -87,7 +102,12 @@ class RuCaptchaSolver(BaseCaptchaSolver):
             while time.time() - start_time < timeout:
                 res_resp = client.get(
                     f"{self.host}/res.php",
-                    params={"key": self.api_key, "action": "get", "id": task_id, "json": 1},
+                    params={
+                        "key": self.api_key,
+                        "action": "get",
+                        "id": task_id,
+                        "json": 1,
+                    },
                 )
                 res_data = res_resp.json()
 
@@ -100,15 +120,17 @@ class RuCaptchaSolver(BaseCaptchaSolver):
 
                 time.sleep(poll_interval)
 
-            raise CaptchaTimeoutError(f"Превышено время ожидания решения капчи ({timeout} сек).")
+            raise CaptchaTimeoutError(
+                f"Превышено время ожидания решения капчи ({timeout} сек)."
+            )
 
     def solve_recaptcha(
-            self,
-            sitekey: str,
-            page_url: str,
-            timeout: float = 120.0,
-            poll_interval: float = 5.0,
-            **kwargs: Any,
+        self,
+        sitekey: str,
+        page_url: str,
+        timeout: float = 120.0,
+        poll_interval: float = 5.0,
+        **kwargs: Any,
     ) -> str:
         """Синхронно решает ReCaptcha v2/v3.
 
@@ -144,7 +166,12 @@ class RuCaptchaSolver(BaseCaptchaSolver):
             while time.time() - start_time < timeout:
                 res_resp = client.get(
                     f"{self.host}/res.php",
-                    params={"key": self.api_key, "action": "get", "id": task_id, "json": 1},
+                    params={
+                        "key": self.api_key,
+                        "action": "get",
+                        "id": task_id,
+                        "json": 1,
+                    },
                 )
                 res_data = res_resp.json()
 
@@ -157,14 +184,19 @@ class RuCaptchaSolver(BaseCaptchaSolver):
 
                 time.sleep(poll_interval)
 
-            raise CaptchaTimeoutError(f"Превышено время ожидания решения ReCaptcha ({timeout} сек).")
+            raise CaptchaTimeoutError(
+                f"Превышено время ожидания решения ReCaptcha ({timeout} сек)."
+            )
 
 
 class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
     """Асинхронный клиент для RuCaptcha / 2Captcha."""
+
     secret_key_name = "RUCAPTCHA_API_KEY"
 
-    def __init__(self, api_key: str | None = None, host: str = "https://rucaptcha.com") -> None:
+    def __init__(
+        self, api_key: str | None = None, host: str = "https://rucaptcha.com"
+    ) -> None:
         """Инициализирует AsyncRuCaptchaSolver.
 
         Args:
@@ -173,6 +205,7 @@ class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
         """
         if not api_key:
             from chutils.secret_manager import SecretManager
+
             try:
                 sm = SecretManager("")
                 api_key = sm.get_secret("TWOCAPTCHA_API_KEY")
@@ -182,11 +215,11 @@ class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
         self.host = host.rstrip("/")
 
     async def solve_image(
-            self,
-            image_data: bytes | str,
-            timeout: float = 60.0,
-            poll_interval: float = 5.0,
-            **kwargs: Any,
+        self,
+        image_data: bytes | str,
+        timeout: float = 60.0,
+        poll_interval: float = 5.0,
+        **kwargs: Any,
     ) -> str:
         """Асинхронно решает капчу-изображение.
 
@@ -201,7 +234,11 @@ class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
         """
         import asyncio
 
-        img_b64 = image_data if isinstance(image_data, str) else base64.b64encode(image_data).decode("utf-8")
+        img_b64 = (
+            image_data
+            if isinstance(image_data, str)
+            else base64.b64encode(image_data).decode("utf-8")
+        )
 
         payload = {
             "key": self.api_key,
@@ -224,7 +261,12 @@ class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
             while time.time() - start_time < timeout:
                 res_resp = await client.get(
                     f"{self.host}/res.php",
-                    params={"key": self.api_key, "action": "get", "id": task_id, "json": 1},
+                    params={
+                        "key": self.api_key,
+                        "action": "get",
+                        "id": task_id,
+                        "json": 1,
+                    },
                 )
                 res_data = res_resp.json()
 
@@ -237,15 +279,17 @@ class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
 
                 await asyncio.sleep(poll_interval)
 
-            raise CaptchaTimeoutError(f"Превышено время ожидания решения капчи ({timeout} сек).")
+            raise CaptchaTimeoutError(
+                f"Превышено время ожидания решения капчи ({timeout} сек)."
+            )
 
     async def solve_recaptcha(
-            self,
-            sitekey: str,
-            page_url: str,
-            timeout: float = 120.0,
-            poll_interval: float = 5.0,
-            **kwargs: Any,
+        self,
+        sitekey: str,
+        page_url: str,
+        timeout: float = 120.0,
+        poll_interval: float = 5.0,
+        **kwargs: Any,
     ) -> str:
         """Асинхронно решает ReCaptcha v2/v3.
 
@@ -283,7 +327,12 @@ class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
             while time.time() - start_time < timeout:
                 res_resp = await client.get(
                     f"{self.host}/res.php",
-                    params={"key": self.api_key, "action": "get", "id": task_id, "json": 1},
+                    params={
+                        "key": self.api_key,
+                        "action": "get",
+                        "id": task_id,
+                        "json": 1,
+                    },
                 )
                 res_data = res_resp.json()
 
@@ -296,4 +345,6 @@ class AsyncRuCaptchaSolver(BaseAsyncCaptchaSolver):
 
                 await asyncio.sleep(poll_interval)
 
-            raise CaptchaTimeoutError(f"Превышено время ожидания решения ReCaptcha ({timeout} сек).")
+            raise CaptchaTimeoutError(
+                f"Превышено время ожидания решения ReCaptcha ({timeout} сек)."
+            )

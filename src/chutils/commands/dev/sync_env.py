@@ -60,13 +60,16 @@ class SyncEnvSubCommand(SubCommand):
         """
         # Загружаем конфигурацию для получения путей к файлам
         from chutils.config.dev import load_ai_lint_config
+
         config = load_ai_lint_config()
 
         env_path = args.env_path or str(config.get("env_path", ".env"))
-        example_path = args.example_path or str(config.get("example_path", ".env.example"))
+        example_path = args.example_path or str(
+            config.get("example_path", ".env.example")
+        )
 
-        from chutils.env import is_rich_enabled
         from chutils.dev.env_sync import check_env_sync, sync_env_files
+        from chutils.env import is_rich_enabled
 
         env_path_obj = Path(env_path)
         example_path_obj = Path(example_path)
@@ -91,6 +94,7 @@ class SyncEnvSubCommand(SubCommand):
         use_rich = is_rich_enabled()
         if use_rich:
             from rich.table import Table
+
             table = Table(title="Обнаруженные расхождения в переменных окружения")
             table.add_column("Файл", style="cyan")
             table.add_column("Переменная", style="magenta")
@@ -111,13 +115,21 @@ class SyncEnvSubCommand(SubCommand):
 
             self.console.print(table)
         else:
-            self.console.print("\n=== Обнаруженные расхождения в переменных окружения ===")
-            self.console.print(f"{'Файл':<20} | {'Переменная':<30} | Действие (при синхронизации)")
+            self.console.print(
+                "\n=== Обнаруженные расхождения в переменных окружения ==="
+            )
+            self.console.print(
+                f"{'Файл':<20} | {'Переменная':<30} | Действие (при синхронизации)"
+            )
             self.console.print("-" * 80)
             for k in diff.missing_in_example:
-                self.console.print(f"{example_path_obj.name:<20} | {k:<30} | Добавить в {example_path_obj.name} (пустое значение)")
+                self.console.print(
+                    f"{example_path_obj.name:<20} | {k:<30} | Добавить в {example_path_obj.name} (пустое значение)"
+                )
             for k in diff.missing_in_env:
-                self.console.print(f"{env_path_obj.name:<20} | {k:<30} | Добавить в {env_path_obj.name} (дефолтное значение из {example_path_obj.name})")
+                self.console.print(
+                    f"{env_path_obj.name:<20} | {k:<30} | Добавить в {env_path_obj.name} (дефолтное значение из {example_path_obj.name})"
+                )
             self.console.print()
 
         if args.dry_run:
@@ -133,6 +145,7 @@ class SyncEnvSubCommand(SubCommand):
         else:
             if use_rich:
                 from rich.prompt import Confirm
+
                 if diff.missing_in_env:
                     sync_env = Confirm.ask(
                         f"Добавить отсутствующие переменные в [cyan]{env_path_obj.name}[/cyan]?",
@@ -145,10 +158,22 @@ class SyncEnvSubCommand(SubCommand):
                     )
             else:
                 if diff.missing_in_env:
-                    ans = input(f"Добавить отсутствующие переменные в {env_path_obj.name}? [y/N]: ").strip().lower()
+                    ans = (
+                        input(
+                            f"Добавить отсутствующие переменные в {env_path_obj.name}? [y/N]: "
+                        )
+                        .strip()
+                        .lower()
+                    )
                     sync_env = ans in ("y", "yes")
                 if diff.missing_in_example:
-                    ans = input(f"Добавить отсутствующие переменные в {example_path_obj.name}? [y/N]: ").strip().lower()
+                    ans = (
+                        input(
+                            f"Добавить отсутствующие переменные в {example_path_obj.name}? [y/N]: "
+                        )
+                        .strip()
+                        .lower()
+                    )
                     sync_example = ans in ("y", "yes")
 
         if not sync_env and not sync_example:

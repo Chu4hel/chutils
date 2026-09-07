@@ -6,7 +6,8 @@ from __future__ import annotations
 
 import functools
 import logging  # chutils: ignore[ChutilsIntegrationRule]
-from typing import Any, Callable, Generic, TypeVar, ParamSpec
+from collections.abc import Callable
+from typing import Any, Generic, ParamSpec, TypeVar
 
 from .shim import Signal, require_qt
 
@@ -77,7 +78,9 @@ class TypedSignal(Generic[P]):
         self.types = types
         self._underlying_signal = Signal(*types) if Signal is not None else None
 
-    def __get__(self, instance: Any, owner: type | None = None) -> BoundTypedSignal[P] | TypedSignal[P]:
+    def __get__(
+        self, instance: Any, owner: type | None = None
+    ) -> BoundTypedSignal[P] | TypedSignal[P]:
         if instance is None:
             return self
 
@@ -85,7 +88,7 @@ class TypedSignal(Generic[P]):
             cache = getattr(instance, "_typed_signals_cache", None)
             if cache is None:
                 cache = {}
-                setattr(instance, "_typed_signals_cache", cache)
+                instance._typed_signals_cache = cache
 
             if id(self) in cache:
                 return cache[id(self)]  # type: ignore[no-any-return]
@@ -98,9 +101,9 @@ class TypedSignal(Generic[P]):
 
 
 def qt_slot(
-        *types: type,
-        catch_exceptions: bool = True,
-        logger_name: str | None = None,
+    *types: type,
+    catch_exceptions: bool = True,
+    logger_name: str | None = None,
 ) -> Callable[[Callable[P, T]], Callable[P, T | None]]:
     """Декоратор для безопасных слотов Qt с автоматическим логированием ошибок.
 
@@ -158,9 +161,8 @@ def bind_qt_signals(instance: Any, bind_by_signature: bool = False) -> int:
             continue
 
         # Проверяем, является ли атрибут сигналом Qt или TypedSignal
-        is_signal = (
-                isinstance(attr_val, BoundTypedSignal)
-                or (hasattr(attr_val, "connect") and hasattr(attr_val, "emit"))
+        is_signal = isinstance(attr_val, BoundTypedSignal) or (
+            hasattr(attr_val, "connect") and hasattr(attr_val, "emit")
         )
 
         if not is_signal:

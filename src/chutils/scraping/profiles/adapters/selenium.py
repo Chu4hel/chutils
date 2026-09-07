@@ -1,6 +1,7 @@
 """Адаптер экспорта и импорта профилей для Selenium / undetected-chromedriver."""
 
 from typing import Any
+
 from chutils.logger import setup_logger
 from chutils.scraping.profiles.models import (
     BrowserProfile,

@@ -1,13 +1,13 @@
 from chutils.dev.version_detector import (
     clean_version_specifier,
-    parse_chutils_from_pyproject,
+    detect_version_upgrade,
+    get_current_version,
+    get_git_head_version,
     parse_chutils_from_lockfile,
+    parse_chutils_from_pyproject,
     parse_chutils_from_requirements,
     parse_version_from_toml,
     parse_version_tuple,
-    get_current_version,
-    get_git_head_version,
-    detect_version_upgrade,
 )
 
 
@@ -128,10 +128,15 @@ def test_get_current_version_with_lockfile(tmp_path, mocker):
     base_dir = str(tmp_path)
 
     pyproject = tmp_path / "pyproject.toml"
-    pyproject.write_text('[project]\nname = "my_app"\nversion = "0.1.0"\ndependencies = ["chutils>=3.0.0"]', encoding="utf-8")
+    pyproject.write_text(
+        '[project]\nname = "my_app"\nversion = "0.1.0"\ndependencies = ["chutils>=3.0.0"]',
+        encoding="utf-8",
+    )
 
     uv_lock = tmp_path / "uv.lock"
-    uv_lock.write_text('[[package]]\nname = "chutils"\nversion = "3.2.1"', encoding="utf-8")
+    uv_lock.write_text(
+        '[[package]]\nname = "chutils"\nversion = "3.2.1"', encoding="utf-8"
+    )
 
     # Считывается точная версия 3.2.1 из uv.lock, а не версия проекта 0.1.0!
     assert get_current_version(base_dir) == "3.2.1"
@@ -153,13 +158,13 @@ def test_detect_version_upgrade(mocker):
     """Проверяет логику определения повышения версии."""
     mocker.patch(
         "chutils.dev.version_detector.get_git_head_version",
-        side_effect=lambda bd: "3.1.0"
+        side_effect=lambda bd: "3.1.0",
     )
 
     # 1. Версия повысилась
     mocker.patch(
         "chutils.dev.version_detector.get_current_version",
-        side_effect=lambda bd: "3.2.0"
+        side_effect=lambda bd: "3.2.0",
     )
     old, new, upgraded = detect_version_upgrade("/fake/dir")
     assert old == "3.1.0"
@@ -169,7 +174,7 @@ def test_detect_version_upgrade(mocker):
     # 2. Версия не изменилась
     mocker.patch(
         "chutils.dev.version_detector.get_current_version",
-        side_effect=lambda bd: "3.1.0"
+        side_effect=lambda bd: "3.1.0",
     )
     old, new, upgraded = detect_version_upgrade("/fake/dir")
     assert upgraded is False

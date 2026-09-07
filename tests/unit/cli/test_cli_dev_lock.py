@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-import pytest
 
 from chutils.dev.project_metadata import save_context_metadata_cache
 

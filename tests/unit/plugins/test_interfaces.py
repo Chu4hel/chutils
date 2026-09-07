@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import Any
 import logging
+from typing import Any
 
 import pytest
 
@@ -89,13 +89,19 @@ def test_metrics_plugin_interface():
         def name(self) -> str:
             return "my-metrics-plugin"
 
-        def increment(self, name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
+        def increment(
+            self, name: str, value: float = 1.0, labels: dict[str, str] | None = None
+        ) -> None:
             pass
 
-        def set_gauge(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+        def set_gauge(
+            self, name: str, value: float, labels: dict[str, str] | None = None
+        ) -> None:
             pass
 
-        def observe(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+        def observe(
+            self, name: str, value: float, labels: dict[str, str] | None = None
+        ) -> None:
             pass
 
         def generate_latest(self) -> str:
@@ -157,4 +163,3 @@ def test_http_backend_plugin_interface():
     assert plugin.name == "curl_cffi"
     assert plugin.create_client() == "sync-client"
     assert plugin.create_async_client() == "async-client"
-

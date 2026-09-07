@@ -13,7 +13,6 @@ from chutils.exceptions import ConfigLoadError
 
 
 class TestRemoteConfigIntegration(unittest.TestCase):
-
     def test_load_from_real_service(self):
         # Используем стабильный публичный JSON API
         url = "https://jsonplaceholder.typicode.com/todos/1"
@@ -32,6 +31,7 @@ class TestRemoteConfigIntegration(unittest.TestCase):
 
         except ConfigLoadError as e:
             import pytest
+
             pytest.skip(f"Пропуск теста из-за ошибки сети или таймаута: {e}")
         except Exception as e:
             self.fail(f"Непредвиденная ошибка в интеграционном тесте: {e}")
@@ -45,5 +45,5 @@ class TestRemoteConfigIntegration(unittest.TestCase):
             provider.load()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -50,16 +50,12 @@ from chutils.web.proxy_pool import ProxyPool
 
 # Задаем пул прокси
 proxy_pool = ProxyPool(
-    proxies=["http://proxy1:8080", "http://proxy2:8080"],
-    strategy="round_robin"
+    proxies=["http://proxy1:8080", "http://proxy2:8080"], strategy="round_robin"
 )
 
 # Настраиваем WebClient на смену прокси при ошибках (2 повторные попытки)
 with WebClient(
-        proxy_pool=proxy_pool,
-        rotate_proxy=True,
-        retries=2,
-        retry_delay=1.0
+    proxy_pool=proxy_pool, rotate_proxy=True, retries=2, retry_delay=1.0
 ) as client:
     # Запрос автоматически ротирует прокси на каждую попытку в случае сбоя
     resp = client.get("https://httpbin.org/get")
@@ -71,10 +67,10 @@ with WebClient(
 from chutils.web import WebClient
 
 with WebClient(
-        rate_limit_calls=5,  # Не более 5 запросов
-        rate_limit_period=60.0,  # в минуту к одному хосту
-        rate_limit_wait=True,  # Ждать свободного слота (не кидать ошибку)
-        cache_ttl=300  # Кэшировать GET-запросы на 5 минут
+    rate_limit_calls=5,  # Не более 5 запросов
+    rate_limit_period=60.0,  # в минуту к одному хосту
+    rate_limit_wait=True,  # Ждать свободного слота (не кидать ошибку)
+    cache_ttl=300,  # Кэшировать GET-запросы на 5 минут
 ) as client:
     # Первый запрос пойдет в сеть
     resp1 = client.get("https://httpbin.org/ip")

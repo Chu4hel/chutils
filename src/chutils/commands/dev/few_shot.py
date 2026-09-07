@@ -51,5 +51,7 @@ class FewShotSubCommand(SubCommand):
                 console=self.console,
             )
         except Exception as e:
-            self.console.print(f"[bold red]Ошибка генерации few-shot банка:[/bold red] {e}")
+            self.console.print(
+                f"[bold red]Ошибка генерации few-shot банка:[/bold red] {e}"
+            )
             raise SystemExit(1)

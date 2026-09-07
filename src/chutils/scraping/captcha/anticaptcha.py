@@ -4,7 +4,7 @@ from typing import Any
 
 import httpx  # chutils: ignore[ChutilsIntegrationRule]
 
-from .base import BaseCaptchaSolver, BaseAsyncCaptchaSolver
+from .base import BaseAsyncCaptchaSolver, BaseCaptchaSolver
 from .exceptions import (
     CaptchaBalanceError,
     CaptchaServiceError,
@@ -23,7 +23,9 @@ def _handle_error(data: dict[str, Any]) -> None:
 
     if "ERROR_ZERO_BALANCE" in error_code:
         raise CaptchaBalanceError(f"Баланс аккаунта Anti-Captcha пуст: {msg}")
-    elif "ERROR_KEY_DOES_NOT_EXIST" in error_code or "ERROR_WRONG_USER_KEY" in error_code:
+    elif (
+        "ERROR_KEY_DOES_NOT_EXIST" in error_code or "ERROR_WRONG_USER_KEY" in error_code
+    ):
         raise CaptchaServiceError(f"Неверный API-ключ Anti-Captcha: {msg}")
     else:
         raise CaptchaServiceError(f"Ошибка сервиса Anti-Captcha: {msg}")
@@ -31,9 +33,12 @@ def _handle_error(data: dict[str, Any]) -> None:
 
 class AntiCaptchaSolver(BaseCaptchaSolver):
     """Синхронный клиент для Anti-Captcha."""
+
     secret_key_name = "ANTICAPTCHA_API_KEY"
 
-    def __init__(self, api_key: str | None = None, host: str = "https://api.anti-captcha.com") -> None:
+    def __init__(
+        self, api_key: str | None = None, host: str = "https://api.anti-captcha.com"
+    ) -> None:
         """Инициализирует AntiCaptchaSolver.
 
         Args:
@@ -44,11 +49,11 @@ class AntiCaptchaSolver(BaseCaptchaSolver):
         self.host = host.rstrip("/")
 
     def solve_image(
-            self,
-            image_data: bytes | str,
-            timeout: float = 60.0,
-            poll_interval: float = 5.0,
-            **kwargs: Any,
+        self,
+        image_data: bytes | str,
+        timeout: float = 60.0,
+        poll_interval: float = 5.0,
+        **kwargs: Any,
     ) -> str:
         """Синхронно решает капчу-изображение.
 
@@ -61,7 +66,11 @@ class AntiCaptchaSolver(BaseCaptchaSolver):
         Returns:
             Распознанный текст с изображения.
         """
-        img_b64 = image_data if isinstance(image_data, str) else base64.b64encode(image_data).decode("utf-8")
+        img_b64 = (
+            image_data
+            if isinstance(image_data, str)
+            else base64.b64encode(image_data).decode("utf-8")
+        )
 
         task = {
             "type": "ImageToTextTask",
@@ -69,10 +78,7 @@ class AntiCaptchaSolver(BaseCaptchaSolver):
         }
         task.update(kwargs)
 
-        payload = {
-            "clientKey": self.api_key,
-            "task": task
-        }
+        payload = {"clientKey": self.api_key, "task": task}
 
         with httpx.Client() as client:
             resp = client.post(f"{self.host}/createTask", json=payload)
@@ -85,7 +91,7 @@ class AntiCaptchaSolver(BaseCaptchaSolver):
             while time.time() - start_time < timeout:
                 res_resp = client.post(
                     f"{self.host}/getTaskResult",
-                    json={"clientKey": self.api_key, "taskId": task_id}
+                    json={"clientKey": self.api_key, "taskId": task_id},
                 )
                 res_data = res_resp.json()
                 _handle_error(res_data)
@@ -95,15 +101,17 @@ class AntiCaptchaSolver(BaseCaptchaSolver):
 
                 time.sleep(poll_interval)
 
-            raise CaptchaTimeoutError(f"Превышено время ожидания решения капчи ({timeout} сек).")
+            raise CaptchaTimeoutError(
+                f"Превышено время ожидания решения капчи ({timeout} сек)."
+            )
 
     def solve_recaptcha(
-            self,
-            sitekey: str,
-            page_url: str,
-            timeout: float = 120.0,
-            poll_interval: float = 5.0,
-            **kwargs: Any,
+        self,
+        sitekey: str,
+        page_url: str,
+        timeout: float = 120.0,
+        poll_interval: float = 5.0,
+        **kwargs: Any,
     ) -> str:
         """Синхронно решает ReCaptcha v2/v3.
 
@@ -124,10 +132,7 @@ class AntiCaptchaSolver(BaseCaptchaSolver):
         }
         task.update(kwargs)
 
-        payload = {
-            "clientKey": self.api_key,
-            "task": task
-        }
+        payload = {"clientKey": self.api_key, "task": task}
 
         with httpx.Client() as client:
             resp = client.post(f"{self.host}/createTask", json=payload)
@@ -140,7 +145,7 @@ class AntiCaptchaSolver(BaseCaptchaSolver):
             while time.time() - start_time < timeout:
                 res_resp = client.post(
                     f"{self.host}/getTaskResult",
-                    json={"clientKey": self.api_key, "taskId": task_id}
+                    json={"clientKey": self.api_key, "taskId": task_id},
                 )
                 res_data = res_resp.json()
                 _handle_error(res_data)
@@ -150,14 +155,19 @@ class AntiCaptchaSolver(BaseCaptchaSolver):
 
                 time.sleep(poll_interval)
 
-            raise CaptchaTimeoutError(f"Превышено время ожидания решения ReCaptcha ({timeout} сек).")
+            raise CaptchaTimeoutError(
+                f"Превышено время ожидания решения ReCaptcha ({timeout} сек)."
+            )
 
 
 class AsyncAntiCaptchaSolver(BaseAsyncCaptchaSolver):
     """Асинхронный клиент для Anti-Captcha."""
+
     secret_key_name = "ANTICAPTCHA_API_KEY"
 
-    def __init__(self, api_key: str | None = None, host: str = "https://api.anti-captcha.com") -> None:
+    def __init__(
+        self, api_key: str | None = None, host: str = "https://api.anti-captcha.com"
+    ) -> None:
         """Инициализирует AsyncAntiCaptchaSolver.
 
         Args:
@@ -168,11 +178,11 @@ class AsyncAntiCaptchaSolver(BaseAsyncCaptchaSolver):
         self.host = host.rstrip("/")
 
     async def solve_image(
-            self,
-            image_data: bytes | str,
-            timeout: float = 60.0,
-            poll_interval: float = 5.0,
-            **kwargs: Any,
+        self,
+        image_data: bytes | str,
+        timeout: float = 60.0,
+        poll_interval: float = 5.0,
+        **kwargs: Any,
     ) -> str:
         """Асинхронно решает капчу-изображение.
 
@@ -187,7 +197,11 @@ class AsyncAntiCaptchaSolver(BaseAsyncCaptchaSolver):
         """
         import asyncio
 
-        img_b64 = image_data if isinstance(image_data, str) else base64.b64encode(image_data).decode("utf-8")
+        img_b64 = (
+            image_data
+            if isinstance(image_data, str)
+            else base64.b64encode(image_data).decode("utf-8")
+        )
 
         task = {
             "type": "ImageToTextTask",
@@ -195,10 +209,7 @@ class AsyncAntiCaptchaSolver(BaseAsyncCaptchaSolver):
         }
         task.update(kwargs)
 
-        payload = {
-            "clientKey": self.api_key,
-            "task": task
-        }
+        payload = {"clientKey": self.api_key, "task": task}
 
         async with httpx.AsyncClient() as client:
             resp = await client.post(f"{self.host}/createTask", json=payload)
@@ -211,7 +222,7 @@ class AsyncAntiCaptchaSolver(BaseAsyncCaptchaSolver):
             while time.time() - start_time < timeout:
                 res_resp = await client.post(
                     f"{self.host}/getTaskResult",
-                    json={"clientKey": self.api_key, "taskId": task_id}
+                    json={"clientKey": self.api_key, "taskId": task_id},
                 )
                 res_data = res_resp.json()
                 _handle_error(res_data)
@@ -221,15 +232,17 @@ class AsyncAntiCaptchaSolver(BaseAsyncCaptchaSolver):
 
                 await asyncio.sleep(poll_interval)
 
-            raise CaptchaTimeoutError(f"Превышено время ожидания решения капчи ({timeout} сек).")
+            raise CaptchaTimeoutError(
+                f"Превышено время ожидания решения капчи ({timeout} сек)."
+            )
 
     async def solve_recaptcha(
-            self,
-            sitekey: str,
-            page_url: str,
-            timeout: float = 120.0,
-            poll_interval: float = 5.0,
-            **kwargs: Any,
+        self,
+        sitekey: str,
+        page_url: str,
+        timeout: float = 120.0,
+        poll_interval: float = 5.0,
+        **kwargs: Any,
     ) -> str:
         """Асинхронно решает ReCaptcha v2/v3.
 
@@ -252,10 +265,7 @@ class AsyncAntiCaptchaSolver(BaseAsyncCaptchaSolver):
         }
         task.update(kwargs)
 
-        payload = {
-            "clientKey": self.api_key,
-            "task": task
-        }
+        payload = {"clientKey": self.api_key, "task": task}
 
         async with httpx.AsyncClient() as client:
             resp = await client.post(f"{self.host}/createTask", json=payload)
@@ -268,7 +278,7 @@ class AsyncAntiCaptchaSolver(BaseAsyncCaptchaSolver):
             while time.time() - start_time < timeout:
                 res_resp = await client.post(
                     f"{self.host}/getTaskResult",
-                    json={"clientKey": self.api_key, "taskId": task_id}
+                    json={"clientKey": self.api_key, "taskId": task_id},
                 )
                 res_data = res_resp.json()
                 _handle_error(res_data)
@@ -278,4 +288,6 @@ class AsyncAntiCaptchaSolver(BaseAsyncCaptchaSolver):
 
                 await asyncio.sleep(poll_interval)
 
-            raise CaptchaTimeoutError(f"Превышено время ожидания решения ReCaptcha ({timeout} сек).")
+            raise CaptchaTimeoutError(
+                f"Превышено время ожидания решения ReCaptcha ({timeout} сек)."
+            )

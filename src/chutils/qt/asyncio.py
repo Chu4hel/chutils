@@ -6,7 +6,8 @@ from __future__ import annotations
 
 import asyncio
 import inspect
-from typing import Any, Callable, Coroutine, TypeVar
+from collections.abc import Callable, Coroutine
+from typing import Any, TypeVar
 
 from .shim import QtCore, Signal, require_qt
 
@@ -32,10 +33,10 @@ class QtAsyncWorker(QtCore.QThread if QtCore is not None else object):  # type: 
     """QThread для фонового выполнения асинхронных корутин или тяжелых синхронных функций."""
 
     def __init__(
-            self,
-            target: Callable[..., Coroutine[Any, Any, T] | T],
-            *args: Any,
-            **kwargs: Any,
+        self,
+        target: Callable[..., Coroutine[Any, Any, T] | T],
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
         """Инициализирует воркер.
 
@@ -54,7 +55,11 @@ class QtAsyncWorker(QtCore.QThread if QtCore is not None else object):  # type: 
     def run(self) -> None:
         """Основной метод потока QThread."""
         try:
-            if self.signals and hasattr(self.signals, "started") and self.signals.started:
+            if (
+                self.signals
+                and hasattr(self.signals, "started")
+                and self.signals.started
+            ):
                 self.signals.started.emit()
             if inspect.iscoroutinefunction(self.target):
                 result = asyncio.run(self.target(*self.args, **self.kwargs))
@@ -62,10 +67,15 @@ class QtAsyncWorker(QtCore.QThread if QtCore is not None else object):  # type: 
                 result = self.target(*self.args, **self.kwargs)
                 if inspect.isawaitable(result):
                     from typing import cast
+
                     result = asyncio.run(cast(Coroutine[Any, Any, Any], result))
             else:
                 raise ValueError("Параметр target должен быть вызываемым объектом.")
-            if self.signals and hasattr(self.signals, "finished") and self.signals.finished:
+            if (
+                self.signals
+                and hasattr(self.signals, "finished")
+                and self.signals.finished
+            ):
                 self.signals.finished.emit(result)
         except Exception as e:
             if self.signals and hasattr(self.signals, "error") and self.signals.error:
@@ -87,11 +97,11 @@ class QtAsyncWorker(QtCore.QThread if QtCore is not None else object):  # type: 
 
 
 def run_async_task(
-        target: Callable[..., Coroutine[Any, Any, T] | T],
-        *args: Any,
-        on_success: Callable[[T], None] | None = None,
-        on_error: Callable[[Exception], None] | None = None,
-        **kwargs: Any,
+    target: Callable[..., Coroutine[Any, Any, T] | T],
+    *args: Any,
+    on_success: Callable[[T], None] | None = None,
+    on_error: Callable[[Exception], None] | None = None,
+    **kwargs: Any,
 ) -> QtAsyncWorker:
     """Запускает функцию или корутину в фоновом потоке QThread без блокировки UI.
 
@@ -108,24 +118,38 @@ def run_async_task(
     require_qt()
     worker = QtAsyncWorker(target, *args, **kwargs)
 
-    if on_success is not None and hasattr(worker.signals, "finished") and worker.signals.finished:
+    if (
+        on_success is not None
+        and hasattr(worker.signals, "finished")
+        and worker.signals.finished
+    ):
         worker.signals.finished.connect(on_success)
-    if on_error is not None and hasattr(worker.signals, "error") and worker.signals.error:
+    if (
+        on_error is not None
+        and hasattr(worker.signals, "error")
+        and worker.signals.error
+    ):
         worker.signals.error.connect(on_error)
 
     if hasattr(worker.signals, "finished") and worker.signals.finished:
-        worker.signals.finished.connect(worker.deleteLater if hasattr(worker, "deleteLater") else lambda res: None)
+        worker.signals.finished.connect(
+            worker.deleteLater if hasattr(worker, "deleteLater") else lambda res: None
+        )
     if hasattr(worker.signals, "error") and worker.signals.error:
-        worker.signals.error.connect(worker.deleteLater if hasattr(worker, "deleteLater") else lambda err: None)
+        worker.signals.error.connect(
+            worker.deleteLater if hasattr(worker, "deleteLater") else lambda err: None
+        )
 
     worker.start()
     return worker
 
 
 def async_to_qt(
-        on_success: Callable[[Any], None] | None = None,
-        on_error: Callable[[Exception], None] | None = None,
-) -> Callable[[Callable[..., Coroutine[Any, Any, T] | T]], Callable[..., QtAsyncWorker]]:
+    on_success: Callable[[Any], None] | None = None,
+    on_error: Callable[[Exception], None] | None = None,
+) -> Callable[
+    [Callable[..., Coroutine[Any, Any, T] | T]], Callable[..., QtAsyncWorker]
+]:
     """Декоратор для автоматического запуска асинхронной функции в фоновом потоке Qt.
 
     Args:
@@ -136,9 +160,13 @@ def async_to_qt(
         Декорированная функция, возвращающая QtAsyncWorker.
     """
 
-    def decorator(func: Callable[..., Coroutine[Any, Any, T] | T]) -> Callable[..., QtAsyncWorker]:
+    def decorator(
+        func: Callable[..., Coroutine[Any, Any, T] | T],
+    ) -> Callable[..., QtAsyncWorker]:
         def wrapper(*args: Any, **kwargs: Any) -> QtAsyncWorker:
-            return run_async_task(func, *args, on_success=on_success, on_error=on_error, **kwargs)
+            return run_async_task(
+                func, *args, on_success=on_success, on_error=on_error, **kwargs
+            )
 
         return wrapper
 

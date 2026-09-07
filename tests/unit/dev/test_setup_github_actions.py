@@ -46,8 +46,9 @@ def test_generate_workflow_yaml_minimal():
 
 def test_setup_github_actions_subcommand_methods(monkeypatch):
     """Тестирует внутренние методы класса SetupGithubActionsSubCommand для 100% покрытия."""
-    from chutils.commands.dev.setup_github_actions import SetupGithubActionsSubCommand
     import argparse
+
+    from chutils.commands.dev.setup_github_actions import SetupGithubActionsSubCommand
 
     cmd = SetupGithubActionsSubCommand()
 

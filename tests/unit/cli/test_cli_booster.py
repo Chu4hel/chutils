@@ -93,6 +93,7 @@ def test_cli_command_docstring_parsing():
 
     # Проверяем через создание парсера напрямую
     import inspect
+
     from chutils.cli_booster import _create_parser
 
     sig = inspect.signature(documented)

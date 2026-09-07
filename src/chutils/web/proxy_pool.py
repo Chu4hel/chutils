@@ -2,7 +2,8 @@ import random
 import threading
 import time
 import urllib.request
-from typing import Sequence, TYPE_CHECKING
+from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from chutils.logger import ChutilsLogger
@@ -14,6 +15,7 @@ def _get_logger() -> "ChutilsLogger":
     global _module_logger
     if _module_logger is None:
         from chutils.logger import setup_logger
+
         _module_logger = setup_logger(__name__)
     return _module_logger
 
@@ -26,12 +28,12 @@ class ProxyPool:
     """
 
     def __init__(
-            self,
-            proxies: Sequence[str] | None = None,
-            url: str | None = None,
-            update_interval: float | None = None,
-            use_env: bool = False,
-            strategy: str = "random",
+        self,
+        proxies: Sequence[str] | None = None,
+        url: str | None = None,
+        update_interval: float | None = None,
+        use_env: bool = False,
+        strategy: str = "random",
     ) -> None:
         """Инициализирует пул прокси.
 
@@ -87,9 +89,7 @@ class ProxyPool:
         try:
             req = urllib.request.Request(
                 self.url,
-                headers={
-                    "User-Agent": "Mozilla/5.0 chutils.web ProxyPool Updater"
-                },
+                headers={"User-Agent": "Mozilla/5.0 chutils.web ProxyPool Updater"},
             )
             with urllib.request.urlopen(req, timeout=10) as response:
                 content: str = response.read().decode("utf-8")
@@ -104,9 +104,13 @@ class ProxyPool:
             with self._lock:
                 self._proxies = new_proxies
                 self._index = 0
-            _get_logger().info("Пул прокси успешно обновлен с URL. Загружено: %d", len(new_proxies))
+            _get_logger().info(
+                "Пул прокси успешно обновлен с URL. Загружено: %d", len(new_proxies)
+            )
         except Exception as e:
-            _get_logger().warning("Сбой при обновлении прокси с URL %s: %s", self.url, e)
+            _get_logger().warning(
+                "Сбой при обновлении прокси с URL %s: %s", self.url, e
+            )
 
     def start_background_update(self) -> None:
         """Запускает фоновый поток для периодического обновления прокси."""

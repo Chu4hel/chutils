@@ -3,13 +3,14 @@ from __future__ import annotations
 import ast
 import re
 
-from ..ai_lint import Rule, LintResult
+from ..ai_lint import LintResult, Rule
 
 
 class CodeDecompositionRule(Rule):
     """
     Правило контроля размера файлов (LOC) и количества классов.
     """
+
     name = "CodeDecompositionRule"
     description = "Проверяет размер файлов (LOC) и количество классов в них для стимулирования своевременной декомпозиции кода."
     severity = "warn"
@@ -44,7 +45,9 @@ class CodeDecompositionRule(Rule):
                 continue
 
             # 1. Проверяем инлайн-игнорирование
-            ignore_matches = re.findall(r'#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]', content, re.IGNORECASE)
+            ignore_matches = re.findall(
+                r"#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]", content, re.IGNORECASE
+            )
             should_skip = False
             for val in ignore_matches:
                 rules_list = [rule.strip().lower() for rule in val.split(",")]
@@ -62,7 +65,7 @@ class CodeDecompositionRule(Rule):
                 if isinstance(n, ast.Constant):
                     return isinstance(n.value, str)
                 # Fallback для старых версий Python
-                if hasattr(ast, "Str") and isinstance(n, getattr(ast, "Str")):
+                if hasattr(ast, "Str") and isinstance(n, ast.Str):
                     return True
                 return False
 
@@ -83,7 +86,9 @@ class CodeDecompositionRule(Rule):
                         # Собираем docstrings класса
                         if node.body:
                             first = node.body[0]
-                            if isinstance(first, ast.Expr) and _is_string_constant(first.value):
+                            if isinstance(first, ast.Expr) and _is_string_constant(
+                                first.value
+                            ):
                                 start = getattr(first, "lineno", None)
                                 end = getattr(first, "end_lineno", None)
                                 if start is not None and end is not None:
@@ -92,7 +97,9 @@ class CodeDecompositionRule(Rule):
                         # Собираем docstrings функций
                         if node.body:
                             first = node.body[0]
-                            if isinstance(first, ast.Expr) and _is_string_constant(first.value):
+                            if isinstance(first, ast.Expr) and _is_string_constant(
+                                first.value
+                            ):
                                 start = getattr(first, "lineno", None)
                                 end = getattr(first, "end_lineno", None)
                                 if start is not None and end is not None:
@@ -133,7 +140,7 @@ class CodeDecompositionRule(Rule):
                         severity=self.severity,
                         file_path=file_path,
                         line_number=1,
-                        fix_suggestion="Разделите файл на несколько меньших модулей."
+                        fix_suggestion="Разделите файл на несколько меньших модулей.",
                     )
                 )
 
@@ -146,7 +153,7 @@ class CodeDecompositionRule(Rule):
                         severity=self.severity,
                         file_path=file_path,
                         line_number=1,
-                        fix_suggestion="Разнесите классы по отдельным файлам."
+                        fix_suggestion="Разнесите классы по отдельным файлам.",
                     )
                 )
 

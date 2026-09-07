@@ -8,7 +8,7 @@ import typing as t
 from pathlib import Path
 
 from ..env import PYDANTIC_AVAILABLE
-from ..exceptions import OptionalDependencyError, ConfigParseError
+from ..exceptions import ConfigParseError, OptionalDependencyError
 
 if t.TYPE_CHECKING:
     from pydantic import BaseModel
@@ -16,9 +16,9 @@ else:
     try:
         from pydantic import BaseModel
     except ImportError:
+
         class BaseModel:  # type: ignore[no-redef]
             """Заглушка для работы без Pydantic."""
-            pass
 
 
 def _check_pydantic() -> None:
@@ -27,7 +27,7 @@ def _check_pydantic() -> None:
         raise OptionalDependencyError(
             "Pydantic необходим для генерации JSON Schema.",
             dependency="pydantic",
-            hint="Установите его: pip install chutils[pydantic] или poetry add pydantic"
+            hint="Установите его: pip install chutils[pydantic] или poetry add pydantic",
         )
 
 
@@ -50,7 +50,7 @@ def import_model_class(model_path: str) -> type[BaseModel]:
     if ":" not in model_path:
         raise ConfigParseError(
             f"Некорректный формат пути к модели: '{model_path}'",
-            hint="Ожидается 'module.path:ClassName'. Пример: 'myapp.config:Settings'"
+            hint="Ожидается 'module.path:ClassName'. Пример: 'myapp.config:Settings'",
         )
 
     module_name, class_name = model_path.split(":", 1)
@@ -60,29 +60,27 @@ def import_model_class(model_path: str) -> type[BaseModel]:
     except ImportError as e:
         raise ConfigParseError(
             f"Не удалось импортировать модуль '{module_name}': {e}",
-            hint=f"Убедитесь, что модуль '{module_name}' существует и доступен для импорта."
+            hint=f"Убедитесь, что модуль '{module_name}' существует и доступен для импорта.",
         )
 
     model_class = getattr(module, class_name, None)
     if model_class is None:
         raise ConfigParseError(
             f"Класс '{class_name}' не найден в модуле '{module_name}'.",
-            hint="Проверьте правильность написания имени класса."
+            hint="Проверьте правильность написания имени класса.",
         )
 
     if not isinstance(model_class, type) or not issubclass(model_class, BaseModel):
         raise ConfigParseError(
             f"Объект '{model_path}' не является подклассом pydantic.BaseModel.",
-            hint="Ваша модель должна наследоваться от pydantic.BaseModel."
+            hint="Ваша модель должна наследоваться от pydantic.BaseModel.",
         )
 
     return model_class
 
 
 def export_schema(
-        model: type[BaseModel] | str,
-        output_path: str | Path | None = None,
-        indent: int = 4
+    model: type[BaseModel] | str, output_path: str | Path | None = None, indent: int = 4
 ) -> str:
     """
     Генерирует JSON Schema для Pydantic модели и опционально сохраняет в файл.
@@ -108,15 +106,13 @@ def export_schema(
     # Добавляем стандартный заголовок $schema, если его нет (Pydantic его не добавляет по умолчанию)
     if "$schema" not in schema:
         # Используем актуальный драфт (2020-12) или 7, наиболее совместимые с IDE
-        schema = {
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            **schema
-        }
+        schema = {"$schema": "https://json-schema.org/draft/2020-12/schema", **schema}
 
     schema_str = json.dumps(schema, indent=indent, ensure_ascii=False)
 
     if output_path:
-        from chutils.fs import ensure_dir, atomic_write
+        from chutils.fs import atomic_write, ensure_dir
+
         path = Path(output_path)
         # Создаем директории, если их нет
         ensure_dir(path.parent)

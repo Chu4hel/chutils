@@ -4,14 +4,15 @@ import re
 from pathlib import Path
 from typing import Any
 
+from ..ai_lint import LintResult, Rule
 from .dependency_sync import match_glob
-from ..ai_lint import Rule, LintResult
 
 
 class LinterCoverageRule(Rule):
     """
     Правило контроля покрытия исходного кода правилами отслеживания зависимостей (LinterCoverageRule).
     """
+
     name = "LinterCoverageRule"
     description = "Проверяет, что все исходные файлы проекта охвачены правилами зависимостей в ai-lint.toml."
     severity = "warn"
@@ -50,6 +51,7 @@ class LinterCoverageRule(Rule):
 
         # Получаем паттерны глобального игнорирования из конфигурации
         import fnmatch
+
         ignore_patterns: list[str] = []
         raw_ignore = self.config.get("ignore")
         if isinstance(raw_ignore, list):
@@ -57,7 +59,7 @@ class LinterCoverageRule(Rule):
 
         # Регулярное выражение для инлайн-игнорирования
         inline_ignore_pattern = re.compile(
-            r'#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]', re.IGNORECASE
+            r"#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]", re.IGNORECASE
         )
 
         # Загружаем шаблоны игнорирования из .chutilsignore
@@ -111,8 +113,13 @@ class LinterCoverageRule(Rule):
                             break
                         match = inline_ignore_pattern.search(line)
                         if match:
-                            ignored_rules = [r.strip().lower() for r in match.group(1).split(",")]
-                            if "all" in ignored_rules or "lintercoveragerule" in ignored_rules:
+                            ignored_rules = [
+                                r.strip().lower() for r in match.group(1).split(",")
+                            ]
+                            if (
+                                "all" in ignored_rules
+                                or "lintercoveragerule" in ignored_rules
+                            ):
                                 return True
             except Exception:
                 pass
@@ -128,8 +135,8 @@ class LinterCoverageRule(Rule):
         # Проверяем каждый файл на покрытие хотя бы одним глоб-шаблоном из dependencies.
         # Ключи могут быть обычными глоб-шаблонами или начинаться с "new:".
         patterns: list[str] = []
-        for key in dependencies.keys():
-            pattern = key[4:] if key.startswith("new:") else key
+        for key in dependencies:
+            pattern = key.removeprefix("new:")
             patterns.append(pattern)
 
         uncovered_files: list[Path] = []
@@ -145,7 +152,10 @@ class LinterCoverageRule(Rule):
             covered = False
             for pattern in patterns:
                 # Глобальный шаблон "src/chutils/**/*.py" не считается специализированным покрытием для файлов в поддиректориях
-                if is_nested_submodule and pattern in ("src/chutils/**/*.py", "**/*.py"):
+                if is_nested_submodule and pattern in (
+                    "src/chutils/**/*.py",
+                    "**/*.py",
+                ):
                     continue
 
                 if match_glob(py_file, pattern, base_path):
@@ -175,7 +185,7 @@ class LinterCoverageRule(Rule):
                     fix_suggestion=(
                         f"Добавьте глоб-шаблон для '{rel_path}' в секцию [dependencies] "
                         f"файла ai-lint.toml и укажите связанные файлы документации."
-                    )
+                    ),
                 )
             )
 

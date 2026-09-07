@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from chutils import setup_logger, bind_context
+from chutils import bind_context, setup_logger
 
 # Инициализируем настроенный логгер библиотеки chutils
 logger = setup_logger(name="transaction_service")
@@ -31,7 +31,7 @@ def process_transaction(user_id: str, token: str, amount: float) -> None:
         try:
             # Эмуляция выполнения логики
             raise ZeroDivisionError("Сбой шлюза оплаты")
-        except ZeroDivisionError as e:
+        except ZeroDivisionError:
             # Хорошо: Использование logger.exception автоматически добавляет
             # полный traceback ошибки в лог, что критично для отладки.
             logger.exception("Ошибка при выполнении транзакции")

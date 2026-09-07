@@ -19,6 +19,7 @@ def _get_client_secret(provided_secret: str | None) -> str:
     # Пытаемся извлечь через chutils.secret_manager / config / env
     try:
         from chutils.secret_manager import SecretManager
+
         sm = SecretManager()
         for secret_name in ("vk_client_secret", "vk_secret_key", "CH_VK_CLIENT_SECRET"):
             secret_val = sm.get_secret(secret_name)
@@ -28,6 +29,7 @@ def _get_client_secret(provided_secret: str | None) -> str:
         pass
 
     import os
+
     for env_name in ("VK_CLIENT_SECRET", "VK_SECRET_KEY", "CH_VK_CLIENT_SECRET"):
         env_val = os.getenv(env_name)  # chutils: ignore[ChutilsIntegrationRule]
         if env_val:
@@ -35,11 +37,13 @@ def _get_client_secret(provided_secret: str | None) -> str:
 
     raise VKMAValidationError(
         "Не указан client_secret VK и не найден в secret_manager/env.",
-        hint="Передайте client_secret явным образом или установите переменную VK_CLIENT_SECRET."
+        hint="Передайте client_secret явным образом или установите переменную VK_CLIENT_SECRET.",
     )
 
 
-def _extract_vk_params_and_sign(raw_query: str | dict[str, Any]) -> tuple[dict[str, str], str]:
+def _extract_vk_params_and_sign(
+    raw_query: str | dict[str, Any],
+) -> tuple[dict[str, str], str]:
     """Извлекает отсортированные параметры vk_* и подпись sign из query-строки или словаря."""
     params_dict: dict[str, str] = {}
 
@@ -57,14 +61,14 @@ def _extract_vk_params_and_sign(raw_query: str | dict[str, Any]) -> tuple[dict[s
     else:
         raise VKMAValidationError(
             f"Неподдерживаемый тип raw_query: {type(raw_query).__name__}. Ожидался str или dict.",
-            hint="Передайте query-строку запуска VKMA или словарь параметров."
+            hint="Передайте query-строку запуска VKMA или словарь параметров.",
         )
 
     sign = params_dict.get("sign")
     if not sign:
         raise VKMAValidationError(
             "Отсутствует обязательный параметр подписи 'sign' в параметрах VKMA.",
-            hint="Убедитесь, что переданы все параметры запуска, включая 'sign'."
+            hint="Убедитесь, что переданы все параметры запуска, включая 'sign'.",
         )
 
     # Фильтруем только параметры, начинающиеся с vk_
@@ -98,17 +102,21 @@ def validate_vkma_launch_params(
     if max_age_seconds is not None:
         vk_ts_str = vk_params.get("vk_ts")
         if not vk_ts_str:
-            raise VKMAValidationError("Отсутствует обязательный параметр 'vk_ts' в launchParams.")
+            raise VKMAValidationError(
+                "Отсутствует обязательный параметр 'vk_ts' в launchParams."
+            )
         try:
             vk_ts = int(vk_ts_str)
         except ValueError as exc:
-            raise VKMAValidationError(f"Некорректный формат vk_ts: {vk_ts_str!r}.") from exc
+            raise VKMAValidationError(
+                f"Некорректный формат vk_ts: {vk_ts_str!r}."
+            ) from exc
 
         now = int(time.time())
         if now - vk_ts > max_age_seconds:
             raise VKMAValidationError(
                 f"Срок действия параметров запуска VKMA истек (возраст: {now - vk_ts}с, лимит: {max_age_seconds}с).",
-                hint="Запросите новый initData / launchParams с клиента VK Mini App."
+                hint="Запросите новый initData / launchParams с клиента VK Mini App.",
             )
 
     # Алгоритм подписи VK:
@@ -123,15 +131,21 @@ def validate_vkma_launch_params(
     hash_code = hmac.new(
         secret.encode("utf-8"),
         msg=query_string.encode("utf-8"),
-        digestmod=hashlib.sha256
+        digestmod=hashlib.sha256,
     ).digest()
 
-    expected_sign = base64.b64encode(hash_code).decode("utf-8").rstrip("=").replace("+", "-").replace("/", "_")
+    expected_sign = (
+        base64.b64encode(hash_code)
+        .decode("utf-8")
+        .rstrip("=")
+        .replace("+", "-")
+        .replace("/", "_")
+    )
 
     if not hmac.compare_digest(expected_sign, sign):
         raise VKMAValidationError(
             "Недействительная подпись (HMAC-SHA256) параметров запуска VKMA.",
-            hint="Проверьте правильность client_secret и целостность параметров launchParams."
+            hint="Проверьте правильность client_secret и целостность параметров launchParams.",
         )
 
     return True
@@ -152,7 +166,9 @@ def parse_vkma_launch_params(
     Returns:
         Экземпляр VKMALaunchParams.
     """
-    validate_vkma_launch_params(raw_query, client_secret=client_secret, max_age_seconds=max_age_seconds)
+    validate_vkma_launch_params(
+        raw_query, client_secret=client_secret, max_age_seconds=max_age_seconds
+    )
 
     if isinstance(raw_query, str):
         if "?" in raw_query:
@@ -165,4 +181,6 @@ def parse_vkma_launch_params(
     try:
         return VKMALaunchParams.model_validate(data)
     except Exception as exc:
-        raise VKMAValidationError(f"Ошибка валидации Pydantic модели VKMALaunchParams: {exc}") from exc
+        raise VKMAValidationError(
+            f"Ошибка валидации Pydantic модели VKMALaunchParams: {exc}"
+        ) from exc

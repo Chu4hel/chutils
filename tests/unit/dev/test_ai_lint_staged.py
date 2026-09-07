@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import subprocess
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
 from pytest_mock import MockerFixture
 
 from chutils.dev.ai_lint import LinterEngine
-from chutils.dev.rules import ManifestRule, EnvSyncRule, APIMapRule
+from chutils.dev.rules import APIMapRule, EnvSyncRule, ManifestRule
 
 
 @pytest.fixture
@@ -18,7 +18,9 @@ def mock_git_diff(mocker: MockerFixture) -> Generator[mocker.MagicMock, None, No
     yield mock_run
 
 
-def test_collect_staged_files_success(mock_git_diff: MockerFixture, tmp_path: Path) -> None:
+def test_collect_staged_files_success(
+    mock_git_diff: MockerFixture, tmp_path: Path
+) -> None:
     """Проверяет успешный сбор staged файлов через git diff."""
     # Настраиваем фейковый вывод git diff
     mock_stdout = "src/chutils/cli.py\ndocs/api_map.md\n"
@@ -46,11 +48,13 @@ def test_collect_staged_files_success(mock_git_diff: MockerFixture, tmp_path: Pa
         cwd=str(tmp_path.resolve()),
         capture_output=True,
         text=True,
-        check=True
+        check=True,
     )
 
 
-def test_collect_staged_files_fallback(mock_git_diff: MockerFixture, tmp_path: Path) -> None:
+def test_collect_staged_files_fallback(
+    mock_git_diff: MockerFixture, tmp_path: Path
+) -> None:
     """Проверяет фолбек на полное сканирование при ошибке git diff."""
     # Настраиваем ошибку git diff
     mock_git_diff.side_effect = subprocess.SubprocessError("Git error")
@@ -107,7 +111,9 @@ def test_env_sync_rule_staged_optimization(tmp_path: Path) -> None:
     assert len(results) == 0
 
     # Если .env входит в список измененных, проверка запускается (найдет расхождение)
-    results_with_change = rule.check(str(tmp_path), [str((tmp_path / ".env").resolve())])
+    results_with_change = rule.check(
+        str(tmp_path), [str((tmp_path / ".env").resolve())]
+    )
     assert len(results_with_change) > 0
 
 

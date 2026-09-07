@@ -56,7 +56,7 @@ backend.log(
     actor="user_123",
     target="web_app",
     status="success",
-    details={"ip": "192.168.1.50"}
+    details={"ip": "192.168.1.50"},
 )
 
 # Проверяем целостность файла
@@ -77,7 +77,9 @@ from chutils import SqliteBackend, audit_context
 
 backend = SqliteBackend("logs/audit.db")
 
-with audit_context(action="payment.process", actor="user_99", target="invoice_555", backend=backend) as ctx:
+with audit_context(
+    action="payment.process", actor="user_99", target="invoice_555", backend=backend
+) as ctx:
     # Выполнение бизнес-логики...
     ctx.details["amount"] = 1500
     ctx.details["currency"] = "USD"
@@ -101,7 +103,9 @@ def get_doc_target(doc_id: str, *args, **kwargs) -> str:
     return f"document_{doc_id}"
 
 
-@audit_event(action="document.delete", actor="admin", target=get_doc_target, backend=backend)
+@audit_event(
+    action="document.delete", actor="admin", target=get_doc_target, backend=backend
+)
 def delete_document(doc_id: str) -> None:
     print(f"Документ {doc_id} удален.")
 

@@ -1,7 +1,8 @@
 import asyncio
-from unittest.mock import MagicMock, patch, AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+
 from chutils.decorators import retry
 
 
@@ -19,7 +20,9 @@ def test_retry_sync_success_first_try():
 
 def test_retry_sync_success_after_retries():
     """Проверка успешного выполнения после нескольких неудачных попыток."""
-    mock_func = MagicMock(side_effect=[ValueError("fail"), ValueError("fail"), "success"])
+    mock_func = MagicMock(
+        side_effect=[ValueError("fail"), ValueError("fail"), "success"]
+    )
 
     with patch("time.sleep") as mock_sleep:
         decorated = retry(retries=3, delay=0.1, backoff=2.0)(mock_func)
@@ -65,15 +68,15 @@ def test_retry_sync_logging(caplog):
     # Устанавливаем уровень логирования для захвата и разрешаем распространение (propagate)
     # так как в chutils.logger по умолчанию propagate=False
     import chutils.decorators
+
     logger = chutils.decorators._get_logger()
     logger.propagate = True
 
-    with caplog.at_level("WARNING", logger=logger.name):
-        with patch("time.sleep"):
-            decorated = retry(retries=3)(mock_func)
-            decorated()
+    with caplog.at_level("WARNING", logger=logger.name), patch("time.sleep"):
+        decorated = retry(retries=3)(mock_func)
+        decorated()
 
-            assert "Попытка 1/3 завершилась ошибкой: error 1" in caplog.text
+        assert "Попытка 1/3 завершилась ошибкой: error 1" in caplog.text
 
     # Возвращаем в исходное состояние (опционально, но хорошо для изоляции)
     logger.propagate = False

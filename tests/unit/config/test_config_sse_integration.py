@@ -7,11 +7,8 @@ from __future__ import annotations
 import time
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from chutils.config.core import get_config
 from chutils.config.manager import _cm
-from chutils.config.sse import SseConfigClient
 from chutils.config.watcher import on_config_change
 
 

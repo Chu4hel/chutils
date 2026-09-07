@@ -1,4 +1,5 @@
 """Абстрактный базовый класс для бэкендов хранения журнала аудита."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -13,13 +14,13 @@ class BaseAuditBackend(ABC):
 
     @abstractmethod
     def log(
-            self,
-            action: str,
-            actor: str,
-            *,
-            target: str | None = None,
-            status: str = "success",
-            details: dict[str, object] | None = None,
+        self,
+        action: str,
+        actor: str,
+        *,
+        target: str | None = None,
+        status: str = "success",
+        details: dict[str, object] | None = None,
     ) -> str:
         """Записывает событие в журнал аудита.
 

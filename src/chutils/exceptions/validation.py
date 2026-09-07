@@ -6,19 +6,17 @@ from .base import ChutilsException
 class ChutilsConfigurationError(ChutilsException):
     """Ошибка конфигурации компонентов chutils."""
 
-    pass
-
 
 class ChutilsValidationError(ChutilsException):
     """Исключение при ошибке валидации данных."""
 
     def __init__(
-            self,
-            message: str,
-            errors: list[dict[str, t.Any]] | None = None,
-            raw_error: Exception | None = None,
-            hint: str | None = None,
-            **context: t.Any,
+        self,
+        message: str,
+        errors: list[dict[str, t.Any]] | None = None,
+        raw_error: Exception | None = None,
+        hint: str | None = None,
+        **context: t.Any,
     ) -> None:
         """Инициализирует исключение валидации.
 
@@ -83,11 +81,11 @@ class EnvValidationError(ChutilsException):
     """Исключение при ошибке валидации переменных окружения."""
 
     def __init__(
-            self,
-            message: str,
-            errors: list[dict[str, t.Any]] | None = None,
-            hint: str | None = None,
-            **context: t.Any,
+        self,
+        message: str,
+        errors: list[dict[str, t.Any]] | None = None,
+        hint: str | None = None,
+        **context: t.Any,
     ) -> None:
         """Инициализирует исключение валидации переменных окружения.
 

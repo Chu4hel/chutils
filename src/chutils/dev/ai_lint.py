@@ -52,7 +52,9 @@ INLINE_IGNORE_SYNTAX: str = "# chutils: ignore[<RuleName>]"
     code()  # chutils: ignore[all]
 """
 
-IGNORE_PATTERN = re.compile(r'#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]', re.IGNORECASE)
+IGNORE_PATTERN = re.compile(
+    r"#\s*chutils:\s*ignore\s*\[\s*([^\]]+)\s*\]", re.IGNORECASE
+)
 
 try:
     from pydantic import BaseModel
@@ -61,16 +63,17 @@ try:
 except ImportError:
     HAS_PYDANTIC = False
 
-
     class BaseModel:  # type: ignore[no-redef]
         """Временный базовый класс-заглушка при отсутствии Pydantic."""
-        pass
+
 
 if HAS_PYDANTIC:
+
     class LintResult(BaseModel):
         """
         Представляет результат одной проверки правила.
         """
+
         rule_name: str
         message: str
         severity: str
@@ -78,19 +81,20 @@ if HAS_PYDANTIC:
         line_number: int | None = None
         fix_suggestion: str | None = None
 else:
+
     class LintResult:  # type: ignore[no-redef]
         """
         Представляет результат одной проверки правила (Fallback версия без Pydantic).
         """
 
         def __init__(
-                self,
-                rule_name: str,
-                message: str,
-                severity: str,
-                file_path: str | None = None,
-                line_number: int | None = None,
-                fix_suggestion: str | None = None,
+            self,
+            rule_name: str,
+            message: str,
+            severity: str,
+            file_path: str | None = None,
+            line_number: int | None = None,
+            fix_suggestion: str | None = None,
         ) -> None:
             """Инициализирует fallback-результат проверки правила.
 
@@ -134,6 +138,7 @@ class Rule:
     Правила не должны сами проверять инлайн-комментарии: фильтрация выполняется
     автоматически в ``LinterEngine.run()``.
     """
+
     name: str = ""
     description: str = ""
     severity: str = "error"  # Может быть "error" или "warn"
@@ -181,7 +186,11 @@ def load_custom_rules(custom_rules_path: str) -> list[Rule]:
             # Находим все классы в модуле, которые наследуют Rule
             for attr_name in dir(module):
                 attr = getattr(module, attr_name)
-                if isinstance(attr, type) and issubclass(attr, Rule) and attr is not Rule:
+                if (
+                    isinstance(attr, type)
+                    and issubclass(attr, Rule)
+                    and attr is not Rule
+                ):
                     rules.append(attr())
     except Exception:
         # В случае ошибок загрузки возвращаем то, что удалось загрузить
@@ -254,10 +263,17 @@ class LinterEngine:
         Загружает правила (встроенные и кастомные).
         """
         from .rules import (
-            ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
-            ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule,
-            APIMapHashRule, FileDependencySyncRule, UpgradeCheckRule,
-            LinterCoverageRule
+            APIMapHashRule,
+            APIMapRule,
+            ChutilsIntegrationRule,
+            CodeDecompositionRule,
+            DocstringQualityRule,
+            EnvSyncRule,
+            FileDependencySyncRule,
+            LinterCoverageRule,
+            ManifestRule,
+            SecurityHardcodeRule,
+            UpgradeCheckRule,
         )
 
         # Регистрируем встроенные правила
@@ -272,7 +288,7 @@ class LinterEngine:
             APIMapHashRule(),
             FileDependencySyncRule(),
             UpgradeCheckRule(),
-            LinterCoverageRule()
+            LinterCoverageRule(),
         ]
 
         # Загружаем кастомные правила
@@ -312,7 +328,9 @@ class LinterEngine:
                 if part == norm_pattern or fnmatch.fnmatch(part, norm_pattern):
                     return True
 
-            if fnmatch.fnmatch(rel_path_str, norm_pattern) or fnmatch.fnmatch(rel_path_str, f"{norm_pattern}/*"):
+            if fnmatch.fnmatch(rel_path_str, norm_pattern) or fnmatch.fnmatch(
+                rel_path_str, f"{norm_pattern}/*"
+            ):
                 return True
         return False
 
@@ -335,19 +353,19 @@ class LinterEngine:
             Список абсолютных путей к файлам.
         """
         import subprocess
+
         from chutils.cli_utils import get_console
+
         console = get_console()
 
         try:
             cmd = ["git", "diff", "--cached", "--name-only", "--diff-filter=d"]
             result = subprocess.run(
-                cmd,
-                cwd=str(self.base_dir),
-                capture_output=True,
-                text=True,
-                check=True
+                cmd, cwd=str(self.base_dir), capture_output=True, text=True, check=True
             )
-            relative_paths = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+            relative_paths = [
+                line.strip() for line in result.stdout.splitlines() if line.strip()
+            ]
 
             absolute_paths: list[str] = []
             for rel_path in relative_paths:
@@ -417,8 +435,8 @@ class LinterEngine:
                 results.append(
                     LintResult(
                         rule_name=rule.name,
-                        message=f"Ошибка при выполнении правила {rule.name}: {str(e)}",
-                        severity="error"
+                        message=f"Ошибка при выполнении правила {rule.name}: {e!s}",
+                        severity="error",
                     )
                 )
 
@@ -461,10 +479,13 @@ class LinterEngine:
         """
         from chutils.cli_utils import get_console
         from chutils.env import RICH_AVAILABLE
+
         console = get_console()
 
         if not results:
-            console.print("[green]✓ Все проверки пройдены! Код готов к работе с AI.[/green]")
+            console.print(
+                "[green]✓ Все проверки пройдены! Код готов к работе с AI.[/green]"
+            )
             return True
 
         # Считаем количество ошибок и предупреждений
@@ -503,7 +524,10 @@ class LinterEngine:
                     table.add_column("Важность", width=12)
                     table.add_column("Описание / Рекомендация", style="dim")
 
-                    for r in sorted(rule_results, key=lambda x: (get_rel_path(x.file_path), x.line_number or 0)):
+                    for r in sorted(
+                        rule_results,
+                        key=lambda x: (get_rel_path(x.file_path), x.line_number or 0),
+                    ):
                         color = "red" if r.severity == "error" else "yellow"
                         sev_str = f"[{color}]{r.severity.upper()}[/{color}]"
                         loc = get_rel_path(r.file_path)
@@ -524,18 +548,29 @@ class LinterEngine:
 
                 for file_rel, file_results in sorted(by_file.items()):
                     # Выводим путь к файлу как заголовок группы
-                    file_link = f"[link={file_rel}]{file_rel}[/link]" if file_rel != "Глобальные проверки" else file_rel
+                    file_link = (
+                        f"[link={file_rel}]{file_rel}[/link]"
+                        if file_rel != "Глобальные проверки"
+                        else file_rel
+                    )
                     console.print(f"\n[bold cyan]Файл: {file_link}[/bold cyan]")
                     table = Table(box=None, show_header=True, collapse_padding=True)
-                    table.add_column("Строка", style="magenta", width=12, justify="right")
+                    table.add_column(
+                        "Строка", style="magenta", width=12, justify="right"
+                    )
                     table.add_column("Важность", width=12)
                     table.add_column("Правило", style="blue", width=25)
                     table.add_column("Описание / Рекомендация")
 
-                    for r in sorted(file_results, key=lambda x: (x.line_number or 0, x.rule_name)):
+                    for r in sorted(
+                        file_results, key=lambda x: (x.line_number or 0, x.rule_name)
+                    ):
                         color = "red" if r.severity == "error" else "yellow"
                         sev_str = f"[{color}]{r.severity.upper()}[/{color}]"
-                        if r.line_number is not None and file_rel != "Глобальные проверки":
+                        if (
+                            r.line_number is not None
+                            and file_rel != "Глобальные проверки"
+                        ):
                             target_loc = f"{file_rel}:{r.line_number}"
                             line_str = f"[link={target_loc}]{r.line_number}[/link]"
                         elif r.line_number is not None:
@@ -556,12 +591,20 @@ class LinterEngine:
             if self.group_by == "rule":
                 sorted_results = sorted(
                     results,
-                    key=lambda r: (r.rule_name, get_rel_path(r.file_path), r.line_number or 0)
+                    key=lambda r: (
+                        r.rule_name,
+                        get_rel_path(r.file_path),
+                        r.line_number or 0,
+                    ),
                 )
             else:
                 sorted_results = sorted(
                     results,
-                    key=lambda r: (get_rel_path(r.file_path), r.severity, r.line_number or 0)
+                    key=lambda r: (
+                        get_rel_path(r.file_path),
+                        r.severity,
+                        r.line_number or 0,
+                    ),
                 )
 
             for r in sorted_results:

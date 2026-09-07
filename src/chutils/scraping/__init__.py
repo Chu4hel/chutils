@@ -1,11 +1,13 @@
 """Модуль скрейпинга, автоматизации и утилиты антидетекта."""
 
 import importlib
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .profiles import (
         BrowserProfile as BrowserProfile,
+    )
+    from .profiles import (
         ProfileManager as ProfileManager,
     )
 
@@ -30,4 +32,4 @@ def __dir__() -> list[str]:
     )
 
 
-__all__ = ["captcha", "concurrency", "humanize", "BrowserProfile", "ProfileManager"]
+__all__ = ["BrowserProfile", "ProfileManager", "captcha", "concurrency", "humanize"]

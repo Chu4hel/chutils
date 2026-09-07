@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import functools
 import inspect
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 import time
 from collections.abc import Callable
 from typing import Any, TypeVar
-
-import logging  # chutils: ignore[ChutilsIntegrationRule]
 
 from chutils.telegram.access import _extract_user_info
 from chutils.telegram.rate_limit import _extract_chat_id
@@ -15,14 +14,16 @@ F = TypeVar("F", bound=Callable[..., Any])
 logger = logging.getLogger("chutils.telegram")
 
 
-def _extract_update_id(args: tuple[Any, ...], kwargs: dict[str, Any]) -> int | str | None:
+def _extract_update_id(
+    args: tuple[Any, ...], kwargs: dict[str, Any]
+) -> int | str | None:
     """Извлекает update_id из события."""
     if "update_id" in kwargs:
         val = kwargs["update_id"]
         return val if isinstance(val, (int, str)) else None
     for arg in args:
         if hasattr(arg, "update_id"):
-            val = getattr(arg, "update_id")
+            val = arg.update_id
             return val if isinstance(val, (int, str)) else None
     return None
 
@@ -43,7 +44,9 @@ class trace_telegram_update:
 
     def __enter__(self) -> trace_telegram_update:
         self.start_time = time.perf_counter()
-        uid, uname = _extract_user_info((self.event,), {}) if self.event else (None, None)
+        uid, uname = (
+            _extract_user_info((self.event,), {}) if self.event else (None, None)
+        )
         cid = _extract_chat_id((self.event,), {}) if self.event else None
         upid = _extract_update_id((self.event,), {}) if self.event else None
 
@@ -60,7 +63,9 @@ class trace_telegram_update:
                 exc_info=(exc_type, exc_val, exc_tb),
             )
         else:
-            self.logger.info(f"Telegram update processed successfully in {duration_ms}ms")
+            self.logger.info(
+                f"Telegram update processed successfully in {duration_ms}ms"
+            )
 
     async def __aenter__(self) -> trace_telegram_update:
         return self.__enter__()
@@ -82,7 +87,9 @@ class trace_telegram_update:
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 event = args[0] if args else kwargs.get("event")
-                async with trace_telegram_update(event=event, logger_instance=self.logger):
+                async with trace_telegram_update(
+                    event=event, logger_instance=self.logger
+                ):
                     return await func(*args, **kwargs)
 
             return async_wrapper  # type: ignore[return-value]

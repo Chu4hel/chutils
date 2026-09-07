@@ -6,7 +6,7 @@
 Каждый модуль при этом может писать в свой собственный файл.
 """
 
-from chutils.logger import setup_logger, ChutilsLogger, LogLevel
+from chutils.logger import ChutilsLogger, LogLevel, setup_logger
 
 
 def main() -> None:
@@ -15,16 +15,12 @@ def main() -> None:
     """
     # 1. Модуль 'Core' - здесь нам важна каждая деталь (уровень DEVDEBUG)
     core_logger: ChutilsLogger = setup_logger(
-        "core",
-        log_level=LogLevel.DEVDEBUG,
-        log_file_name="core_debug.log"
+        "core", log_level=LogLevel.DEVDEBUG, log_file_name="core_debug.log"
     )
 
     # 2. Модуль 'Utils' - вспомогательный код, смотрим только ошибки (уровень WARNING)
     utils_logger: ChutilsLogger = setup_logger(
-        "utils",
-        log_level=LogLevel.WARNING,
-        log_file_name="utils_errors.log"
+        "utils", log_level=LogLevel.WARNING, log_file_name="utils_errors.log"
     )
 
     # 3. Основной логгер (настройки по умолчанию из config.yml)

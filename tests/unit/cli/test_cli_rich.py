@@ -1,4 +1,3 @@
-
 from chutils.cli_utils import FallbackConsole, get_console
 
 
@@ -18,7 +17,8 @@ def test_fallback_console_rule(capsys):
 
 
 def test_get_console_fallback_when_rich_unavailable(monkeypatch):
-    from chutils import env, cli_utils
+    from chutils import cli_utils, env
+
     monkeypatch.setattr(env, "RICH_AVAILABLE", False)
     monkeypatch.setattr(cli_utils, "_console", None)
 
@@ -27,7 +27,8 @@ def test_get_console_fallback_when_rich_unavailable(monkeypatch):
 
 
 def test_get_console_fallback_when_no_color(monkeypatch, mocker):
-    from chutils import env, cli_utils
+    from chutils import cli_utils, env
+
     monkeypatch.setattr(env, "RICH_AVAILABLE", True)
     monkeypatch.setenv("NO_COLOR", "1")
     monkeypatch.setattr(cli_utils, "_console", None)
@@ -45,6 +46,7 @@ def test_get_console_returns_rich_when_available(monkeypatch, mocker):
     mock_console_class.return_value = mock_console_instance
 
     from chutils import env
+
     monkeypatch.setattr(env, "RICH_AVAILABLE", True)
     monkeypatch.delenv("NO_COLOR", raising=False)
     monkeypatch.delenv("CH_NO_COLOR", raising=False)

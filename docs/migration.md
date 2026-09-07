@@ -91,6 +91,7 @@ except OptionalDependencyError as e:
   конфигурации `_cm` и функцию поиска корня:
   ```python
   from chutils.config import _cm, find_project_root
+
   _cm.initialize_paths(find_project_root)
   ```
 - `config._sync_legacy_state()` — синхронизация устаревшего глобального состояния больше не поддерживается.

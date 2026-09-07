@@ -63,8 +63,8 @@ def test_cli_dev_generate_tree_no_pydantic(cli_runner, mocker):
     result = cli_runner.invoke(["dev", "generate-context", "--tree"])
     assert result.exit_code == 1
     assert (
-            "Pydantic is required" in result.stderr
-            or "Pydantic is required" in result.stdout
+        "Pydantic is required" in result.stderr
+        or "Pydantic is required" in result.stdout
     )
 
 
@@ -76,8 +76,8 @@ def test_cli_dev_generate_tree_error(cli_runner, mocker):
     result = cli_runner.invoke(["dev", "generate-context", "--tree"])
     assert result.exit_code == 1
     assert (
-            "Ошибка при генерации индекса" in result.stderr
-            or "Ошибка при генерации индекса" in result.stdout
+        "Ошибка при генерации индекса" in result.stderr
+        or "Ошибка при генерации индекса" in result.stdout
     )
 
 
@@ -117,7 +117,9 @@ def test_cli_dev_ai_lint_soft_mode(cli_runner, mocker):
         file_path="app.py",
     )
     mocker.patch("chutils.dev.ai_lint.LinterEngine.run", return_value=[mock_error])
-    result = cli_runner.invoke(["dev", "ai-lint", "--soft-mode", "--output-format", "default"])
+    result = cli_runner.invoke(
+        ["dev", "ai-lint", "--soft-mode", "--output-format", "default"]
+    )
     assert result.exit_code == 0
     assert "Critical error detected" in result.stdout
 
@@ -139,7 +141,9 @@ def test_cli_dev_ai_lint_strict_mode(cli_runner, mocker):
     assert res_normal.exit_code == 0
 
     # Со strict - должен упасть
-    res_strict = cli_runner.invoke(["dev", "ai-lint", "--strict", "--output-format", "default"])
+    res_strict = cli_runner.invoke(
+        ["dev", "ai-lint", "--strict", "--output-format", "default"]
+    )
     assert res_strict.exit_code == 1
     assert "Warning detected" in res_strict.stdout
 
@@ -226,7 +230,11 @@ def test_cli_dev_chat_context_file(cli_runner, mocker, config_fs):
     assert "Контекстный срез успешно сохранен в: my_context.md" in result.stdout
     assert fs.exists("my_context.md")
     from pathlib import Path
-    assert Path("my_context.md").read_text(encoding="utf-8") == "# Mocked Context Slice Output"
+
+    assert (
+        Path("my_context.md").read_text(encoding="utf-8")
+        == "# Mocked Context Slice Output"
+    )
 
 
 def test_cli_dev_chat_context_interactive(cli_runner, mocker):
@@ -248,9 +256,14 @@ def test_cli_dev_chat_context_interactive(cli_runner, mocker):
 def test_cli_dev_scaffold_success(cli_runner, config_fs):
     """Проверяет успешное создание структуры слоев Чистой Архитектуры."""
     fs, project_root = config_fs
-    result = cli_runner.invoke(["dev", "scaffold", "new_test_module", "-o", f"{project_root}/new_test_module"])
+    result = cli_runner.invoke(
+        ["dev", "scaffold", "new_test_module", "-o", f"{project_root}/new_test_module"]
+    )
     assert result.exit_code == 0
-    assert "успешно инициализирован" in result.stdout or "успешно инициализирован" in result.stderr
+    assert (
+        "успешно инициализирован" in result.stdout
+        or "успешно инициализирован" in result.stderr
+    )
 
     # Проверяем файлы в мокнутой ФС
     assert fs.exists(f"{project_root}/new_test_module/__init__.py")
@@ -265,7 +278,10 @@ def test_cli_dev_scaffold_invalid_name(cli_runner):
     """Проверяет ошибку при попытке использовать невалидное имя модуля."""
     result = cli_runner.invoke(["dev", "scaffold", "invalid-name"])
     assert result.exit_code == 1
-    assert "Некорректное имя модуля" in result.stdout or "Некорректное имя модуля" in result.stderr
+    assert (
+        "Некорректное имя модуля" in result.stdout
+        or "Некорректное имя модуля" in result.stderr
+    )
 
 
 def test_cli_dev_scaffold_already_exists_error(cli_runner, config_fs):
@@ -275,9 +291,14 @@ def test_cli_dev_scaffold_already_exists_error(cli_runner, config_fs):
     fs.create_dir(module_path)
     fs.create_file(f"{module_path}/dummy.txt", contents="content")
 
-    result = cli_runner.invoke(["dev", "scaffold", "existing_module", "-o", module_path])
+    result = cli_runner.invoke(
+        ["dev", "scaffold", "existing_module", "-o", module_path]
+    )
     assert result.exit_code == 1
-    assert "уже существует и не пуста" in result.stdout or "уже существует и не пуста" in result.stderr
+    assert (
+        "уже существует и не пуста" in result.stdout
+        or "уже существует и не пуста" in result.stderr
+    )
 
 
 def test_cli_dev_scaffold_force_overwrite(cli_runner, config_fs):
@@ -287,9 +308,14 @@ def test_cli_dev_scaffold_force_overwrite(cli_runner, config_fs):
     fs.create_dir(module_path)
     fs.create_file(f"{module_path}/dummy.txt", contents="content")
 
-    result = cli_runner.invoke(["dev", "scaffold", "existing_module", "-o", module_path, "-f"])
+    result = cli_runner.invoke(
+        ["dev", "scaffold", "existing_module", "-o", module_path, "-f"]
+    )
     assert result.exit_code == 0
-    assert "успешно инициализирован" in result.stdout or "успешно инициализирован" in result.stderr
+    assert (
+        "успешно инициализирован" in result.stdout
+        or "успешно инициализирован" in result.stderr
+    )
     assert fs.exists(f"{module_path}/__init__.py")
 
 
@@ -300,7 +326,10 @@ def test_cli_dev_mock_init_success(cli_runner, config_fs):
 
     result = cli_runner.invoke(["dev", "mock", "init", "-o", mocks_path])
     assert result.exit_code == 0
-    assert "Шаблон конфигурации успешно сохранен" in result.stdout or "Шаблон конфигурации успешно сохранен" in result.stderr
+    assert (
+        "Шаблон конфигурации успешно сохранен" in result.stdout
+        or "Шаблон конфигурации успешно сохранен" in result.stderr
+    )
     assert fs.exists(mocks_path)
 
 
@@ -320,15 +349,24 @@ def test_cli_dev_sync_env_success_synchronized(cli_runner, config_fs):
     fs.create_file(f"{project_root}/.env.example", contents="A=\n")
 
     result = cli_runner.invoke(
-        ["dev", "sync-env", "--env-path", f"{project_root}/.env", "--example-path", f"{project_root}/.env.example"])
+        [
+            "dev",
+            "sync-env",
+            "--env-path",
+            f"{project_root}/.env",
+            "--example-path",
+            f"{project_root}/.env.example",
+        ]
+    )
     assert result.exit_code == 0
     assert "Файлы полностью синхронизированы" in result.stdout
 
 
 def test_cli_dev_sync_env_dry_run(cli_runner, config_fs):
     """Проверяет dry-run режим sync-env."""
-    from chutils.cli_utils import set_console_width
     from pathlib import Path
+
+    from chutils.cli_utils import set_console_width
 
     set_console_width(80)
     try:
@@ -336,25 +374,33 @@ def test_cli_dev_sync_env_dry_run(cli_runner, config_fs):
         fs.create_file(f"{project_root}/.env", contents="A=1\nB=2\n")
         fs.create_file(f"{project_root}/.env.example", contents="A=\n")
 
-        result = cli_runner.invoke([
-            "dev", "sync-env",
-            "--env-path", f"{project_root}/.env",
-            "--example-path", f"{project_root}/.env.example",
-            "--dry-run"
-        ])
+        result = cli_runner.invoke(
+            [
+                "dev",
+                "sync-env",
+                "--env-path",
+                f"{project_root}/.env",
+                "--example-path",
+                f"{project_root}/.env.example",
+                "--dry-run",
+            ]
+        )
         assert result.exit_code == 0
         assert "Dry-run режим. Изменения не внесены" in result.stdout
         assert "Обнаруженные расхождения в переменных окружения" in result.stdout
         # Файлы не должны измениться
-        assert Path(f"{project_root}/.env.example").read_text(encoding="utf-8") == "A=\n"
+        assert (
+            Path(f"{project_root}/.env.example").read_text(encoding="utf-8") == "A=\n"
+        )
     finally:
         set_console_width(None)
 
 
 def test_cli_dev_sync_env_force(cli_runner, config_fs):
     """Проверяет принудительную синхронизацию с флагом --yes."""
-    from chutils.cli_utils import set_console_width
     from pathlib import Path
+
+    from chutils.cli_utils import set_console_width
 
     set_console_width(80)
     try:
@@ -362,17 +408,24 @@ def test_cli_dev_sync_env_force(cli_runner, config_fs):
         fs.create_file(f"{project_root}/.env", contents="A=1\nB=2\n")
         fs.create_file(f"{project_root}/.env.example", contents="A=\nC=3\n")
 
-        result = cli_runner.invoke([
-            "dev", "sync-env",
-            "--env-path", f"{project_root}/.env",
-            "--example-path", f"{project_root}/.env.example",
-            "--yes"
-        ])
+        result = cli_runner.invoke(
+            [
+                "dev",
+                "sync-env",
+                "--env-path",
+                f"{project_root}/.env",
+                "--example-path",
+                f"{project_root}/.env.example",
+                "--yes",
+            ]
+        )
         assert result.exit_code == 0
         assert "успешно обновлен" in result.stdout
 
         # Проверяем, что B перенеслось в .env.example
-        example_content = Path(f"{project_root}/.env.example").read_text(encoding="utf-8")
+        example_content = Path(f"{project_root}/.env.example").read_text(
+            encoding="utf-8"
+        )
         assert "B=" in example_content
         # Проверяем, что C перенеслось в .env с дефолтным значением 3
         env_content = Path(f"{project_root}/.env").read_text(encoding="utf-8")
@@ -389,12 +442,17 @@ def test_cli_dev_sync_env_no_rich(cli_runner, config_fs, mocker):
     fs.create_file(f"{project_root}/.env", contents="A=1\nB=2\n")
     fs.create_file(f"{project_root}/.env.example", contents="A=\n")
 
-    result = cli_runner.invoke([
-        "dev", "sync-env",
-        "--env-path", f"{project_root}/.env",
-        "--example-path", f"{project_root}/.env.example",
-        "--dry-run"
-    ])
+    result = cli_runner.invoke(
+        [
+            "dev",
+            "sync-env",
+            "--env-path",
+            f"{project_root}/.env",
+            "--example-path",
+            f"{project_root}/.env.example",
+            "--dry-run",
+        ]
+    )
     assert result.exit_code == 0
     assert "Dry-run режим. Изменения не внесены" in result.stdout
     assert "=== Обнаруженные расхождения в переменных окружения ===" in result.stdout
@@ -407,9 +465,13 @@ def test_generate_context_metadata_markdown(cli_runner, config_fs):
     fs.create_dir(f"{project_dir}/src")
     fs.create_file(f"{project_dir}/src/__init__.py", contents="")
     fs.create_file(f"{project_dir}/src/app.py", contents="def my_func(): pass")
-    fs.create_file(f"{project_dir}/pyproject.toml", contents='[project]\nversion = "1.2.3"\n')
+    fs.create_file(
+        f"{project_dir}/pyproject.toml", contents='[project]\nversion = "1.2.3"\n'
+    )
 
-    result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir, "-f", "markdown"])
+    result = cli_runner.invoke(
+        ["dev", "generate-context", "--project", project_dir, "-f", "markdown"]
+    )
     assert result.exit_code == 0
     assert "---" in result.stdout
     assert "chutils_version:" in result.stdout
@@ -424,13 +486,18 @@ def test_generate_context_metadata_json(cli_runner, config_fs):
     fs.create_dir(f"{project_dir}/src")
     fs.create_file(f"{project_dir}/src/__init__.py", contents="")
     fs.create_file(f"{project_dir}/src/app.py", contents="def my_func(): pass")
-    fs.create_file(f"{project_dir}/pyproject.toml", contents='[project]\nversion = "4.5.6"\n')
+    fs.create_file(
+        f"{project_dir}/pyproject.toml", contents='[project]\nversion = "4.5.6"\n'
+    )
 
-    result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir, "-f", "json"])
+    result = cli_runner.invoke(
+        ["dev", "generate-context", "--project", project_dir, "-f", "json"]
+    )
     assert result.exit_code == 0
 
     # Парсим JSON и проверяем метаданные
     import json
+
     data = json.loads(result.stdout)
     assert "metadata" in data
     assert data["metadata"]["project_version"] == "4.5.6"
@@ -444,12 +511,17 @@ def test_generate_context_metadata_tree(cli_runner, config_fs):
     fs.create_dir(f"{project_dir}/src")
     fs.create_file(f"{project_dir}/src/__init__.py", contents="")
     fs.create_file(f"{project_dir}/src/app.py", contents="def my_func(): pass")
-    fs.create_file(f"{project_dir}/pyproject.toml", contents='[project]\nversion = "7.8.9"\n')
+    fs.create_file(
+        f"{project_dir}/pyproject.toml", contents='[project]\nversion = "7.8.9"\n'
+    )
 
-    result = cli_runner.invoke(["dev", "generate-context", "--project", project_dir, "--tree"])
+    result = cli_runner.invoke(
+        ["dev", "generate-context", "--project", project_dir, "--tree"]
+    )
     assert result.exit_code == 0
 
     import json
+
     data = json.loads(result.stdout)
     assert "metadata" in data
     assert data["metadata"]["project_version"] == "7.8.9"
@@ -459,20 +531,31 @@ def test_generate_context_metadata_tree(cli_runner, config_fs):
 def test_cli_dev_diagnostics_with_rich(cli_runner, mocker):
     """Проверяет запуск diagnostics с включенным rich."""
     from chutils.cli_utils import set_console_width
+
     set_console_width(80)
     try:
         mocker.patch("chutils.env.is_rich_enabled", return_value=True)
         mocker.patch("chutils.cli_utils.is_rich_enabled", return_value=True)
 
-        from chutils.diagnostics.models import HealthReport, CheckResult
+        from chutils.diagnostics.models import CheckResult, HealthReport
+
         mock_report = HealthReport(
             status="HEALTHY",
             total_time=0.123,
             results=[
-                CheckResult(name="test_check", success=True, critical=True, execution_time=0.05, message="Check OK")
-            ]
+                CheckResult(
+                    name="test_check",
+                    success=True,
+                    critical=True,
+                    execution_time=0.05,
+                    message="Check OK",
+                )
+            ],
         )
-        mocker.patch("chutils.diagnostics.manager.DiagnosticsManager.run_checks_sync", return_value=mock_report)
+        mocker.patch(
+            "chutils.diagnostics.manager.DiagnosticsManager.run_checks_sync",
+            return_value=mock_report,
+        )
 
         result = cli_runner.invoke(["dev", "diagnostics"])
         assert result.exit_code == 0
@@ -485,23 +568,37 @@ def test_cli_dev_diagnostics_with_rich(cli_runner, mocker):
 def test_cli_dev_diagnostics_no_rich(cli_runner, mocker):
     """Проверяет запуск diagnostics без rich (текстовый фоллбек)."""
     from chutils.cli_utils import set_console_width
+
     set_console_width(80)
     try:
         mocker.patch("chutils.env.is_rich_enabled", return_value=False)
 
-        from chutils.diagnostics.models import HealthReport, CheckResult
+        from chutils.diagnostics.models import CheckResult, HealthReport
+
         mock_report = HealthReport(
             status="HEALTHY",
             total_time=0.123,
             results=[
-                CheckResult(name="test_check", success=True, critical=True, execution_time=0.05, message="Check OK")
-            ]
+                CheckResult(
+                    name="test_check",
+                    success=True,
+                    critical=True,
+                    execution_time=0.05,
+                    message="Check OK",
+                )
+            ],
         )
-        mocker.patch("chutils.diagnostics.manager.DiagnosticsManager.run_checks_sync", return_value=mock_report)
+        mocker.patch(
+            "chutils.diagnostics.manager.DiagnosticsManager.run_checks_sync",
+            return_value=mock_report,
+        )
 
         result = cli_runner.invoke(["dev", "diagnostics"])
         assert result.exit_code == 0
-        assert "Название        | Статус | Критичность  | Время (с)  | Детали" in result.stdout
+        assert (
+            "Название        | Статус | Критичность  | Время (с)  | Детали"
+            in result.stdout
+        )
         assert "test_check" in result.stdout
     finally:
         set_console_width(None)

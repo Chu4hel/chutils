@@ -10,10 +10,12 @@ def main() -> None:
     """Точка входа в CLI."""
     # Гарантируем доступность CWD и CWD/src в sys.path для прозрачного импорта
     from chutils.commands.utils import ensure_project_paths_in_sys_path
+
     ensure_project_paths_in_sys_path()
 
     # Сбрасываем кэш консолей для корректного перехвата вывода в тестах
     from chutils import cli_utils
+
     cli_utils._console = None
     cli_utils._err_console = None
 
@@ -36,13 +38,13 @@ def main() -> None:
   chutils validate --model myapp.config:Settings
   chutils show-paths --json
 """,
-        formatter_class=argparse.RawDescriptionHelpFormatter
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     subparsers = parser.add_subparsers(
         title="Доступные команды",
         dest="command",
         metavar="COMMAND",
-        help="Используйте 'chutils COMMAND --help' для получения справки по конкретной команде"
+        help="Используйте 'chutils COMMAND --help' для получения справки по конкретной команде",
     )
 
     # Регистрируем все доступные команды
@@ -58,11 +60,12 @@ def main() -> None:
     args = parser.parse_args()
 
     # Диспетчеризация выполнения
-    if hasattr(args, 'handler'):
-        from chutils.exceptions import ChutilsException, PathTraversalError
+    if hasattr(args, "handler"):
+        import logging  # chutils: ignore[ChutilsIntegrationRule]
+
         from chutils.cli_utils import get_console
         from chutils.env import RICH_AVAILABLE
-        import logging  # chutils: ignore[ChutilsIntegrationRule]
+        from chutils.exceptions import ChutilsException, PathTraversalError
 
         console = get_console(stderr=True)
 
@@ -73,14 +76,17 @@ def main() -> None:
             logger = logging.getLogger("chutils.security")
             logger.error(
                 "Попытка Path Traversal! Исходный путь: %s, Базовый путь: %s",
-                e.context.get('attempted_path'),
-                e.context.get('base_path')
+                e.context.get("attempted_path"),
+                e.context.get("base_path"),
             )
 
             if RICH_AVAILABLE:
                 from rich.text import Text
+
                 console.print()
-                console.print(Text("ОШИБКА БЕЗОПАСНОСТИ: ", style="bold red") + Text(e.message))
+                console.print(
+                    Text("ОШИБКА БЕЗОПАСНОСТИ: ", style="bold red") + Text(e.message)
+                )
                 if e.hint:
                     console.print(Text("СОВЕТ: ", style="bold yellow") + Text(e.hint))
             else:
@@ -91,8 +97,9 @@ def main() -> None:
 
         except ChutilsException as e:
             if RICH_AVAILABLE:
-                from rich.text import Text
                 from rich.panel import Panel
+                from rich.text import Text
+
                 # Выводим префикс стилизованно, а сообщение как чистый текст (защита от markup)
                 console.print()
                 console.print(Text("ОШИБКА: ", style="bold red") + Text(e.message))
@@ -100,7 +107,12 @@ def main() -> None:
                 if e.hint:
                     # Внутри панели используем Text для защиты от markup
                     console.print(
-                        Panel(Text(e.hint), title="[bold yellow]Подсказка[/bold yellow]", border_style="yellow"))
+                        Panel(
+                            Text(e.hint),
+                            title="[bold yellow]Подсказка[/bold yellow]",
+                            border_style="yellow",
+                        )
+                    )
             else:
                 console.print(f"\nОШИБКА: {e.message}", markup=False)
                 if e.hint:
@@ -110,12 +122,14 @@ def main() -> None:
         except Exception as e:
             if RICH_AVAILABLE:
                 from rich.text import Text
+
                 console.print()
-                console.print(Text("НЕПРЕДВИДЕННАЯ ОШИБКА: ", style="bold red") + Text(str(e)))
+                console.print(
+                    Text("НЕПРЕДВИДЕННАЯ ОШИБКА: ", style="bold red") + Text(str(e))
+                )
             else:
                 console.print(f"\nНЕПРЕДВИДЕННАЯ ОШИБКА: {e}", markup=False)
             sys.exit(1)
-
 
     else:
         parser.print_help()

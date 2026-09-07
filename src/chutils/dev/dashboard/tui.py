@@ -1,6 +1,7 @@
 """
 Основной модуль TUI-интерфейса дашборда CLI-команд.
 """
+
 from __future__ import annotations
 
 import json
@@ -72,35 +73,39 @@ class DashboardTUI:
 
             layout = self._create_layout()
 
-            with InputReader() as reader:
-                with Live(layout, console=self.console, refresh_per_second=10, screen=True) as live:
-                    while True:
-                        # Если процесс запущен, вычитываем логи
-                        if self.mode == "running":
-                            self._update_logs()
+            with (
+                InputReader() as reader,
+                Live(
+                    layout, console=self.console, refresh_per_second=10, screen=True
+                ) as live,
+            ):
+                while True:
+                    # Если процесс запущен, вычитываем логи
+                    if self.mode == "running":
+                        self._update_logs()
 
-                        key = reader.get_key()
-                        if key:
-                            if key == "ctrl-c":
-                                self._terminate_running_process()
+                    key = reader.get_key()
+                    if key:
+                        if key == "ctrl-c":
+                            self._terminate_running_process()
+                            break
+
+                        # Обработка клавиш в зависимости от режима
+                        if self.mode == "list":
+                            if not self._handle_list_keys(key):
                                 break
+                        elif self.mode == "search":
+                            self._handle_search_key(key)
+                        elif self.mode == "form":
+                            self._handle_form_key(key)
+                        elif self.mode == "running":
+                            self._handle_running_key(key)
 
-                            # Обработка клавиш в зависимости от режима
-                            if self.mode == "list":
-                                if not self._handle_list_keys(key):
-                                    break
-                            elif self.mode == "search":
-                                self._handle_search_key(key)
-                            elif self.mode == "form":
-                                self._handle_form_key(key)
-                            elif self.mode == "running":
-                                self._handle_running_key(key)
+                    # Обновляем макет
+                    self._refresh_layout(layout)
+                    live.update(layout)
 
-                        # Обновляем макет
-                        self._refresh_layout(layout)
-                        live.update(layout)
-
-                        time.sleep(0.01)
+                    time.sleep(0.01)
 
             # Восстанавливаем курсор при выходе
             self.console.show_cursor(True)
@@ -157,7 +162,7 @@ class DashboardTUI:
             content.append("\n  Команды не найдены", style="dim italic")
         else:
             for idx, cmd in enumerate(self.filtered_commands):
-                is_selected = (idx == self.selected_cmd_idx)
+                is_selected = idx == self.selected_cmd_idx
 
                 # Стилизация выбранного элемента
                 if is_selected:
@@ -180,7 +185,10 @@ class DashboardTUI:
     def _render_top_right_panel(self) -> Panel:
         """Отрисовывает верхнюю правую панель (карточка или форма)."""
         if not self.filtered_commands:
-            return Panel(Text("Выберите команду слева", style="dim"), title=" Справка / Форма запуска ")
+            return Panel(
+                Text("Выберите команду слева", style="dim"),
+                title=" Справка / Форма запуска ",
+            )
 
         cmd = self.filtered_commands[self.selected_cmd_idx]
 
@@ -221,7 +229,7 @@ class DashboardTUI:
         content.append("Заполните аргументы функции:\n\n", style="dim")
 
         for idx, arg in enumerate(cmd.arguments):
-            is_focused = (idx == self.form_focus_idx)
+            is_focused = idx == self.form_focus_idx
             focus_prefix = "> " if is_focused else "  "
             focus_style = "bold yellow" if is_focused else "white"
 
@@ -236,7 +244,7 @@ class DashboardTUI:
             if arg.type_str == "bool":
                 display_val = f"[ {val} ]"
             else:
-                display_val = f"\"{val}\"" if val else "[ пусто ]"
+                display_val = f'"{val}"' if val else "[ пусто ]"
 
             content.append(display_val, style="bold green" if val else "dim red")
 
@@ -248,12 +256,12 @@ class DashboardTUI:
         content.append("\n")
 
         # Кнопка Запуск
-        run_focused = (self.form_focus_idx == len(cmd.arguments))
+        run_focused = self.form_focus_idx == len(cmd.arguments)
         run_style = "bold black on green" if run_focused else "bold green"
         content.append("   [ ЗАПУСТИТЬ КОМАНДУ ]   ", style=run_style)
 
         # Кнопка Назад
-        back_focused = (self.form_focus_idx == len(cmd.arguments) + 1)
+        back_focused = self.form_focus_idx == len(cmd.arguments) + 1
         back_style = "bold black on red" if back_focused else "bold red"
         content.append("   [ НАЗАД ]   \n", style=back_style)
 
@@ -268,7 +276,9 @@ class DashboardTUI:
 
         if not self.log_lines:
             return Panel(
-                Align.center(Text("Логи отсутствуют. Запустите команду из формы.", style="dim")),
+                Align.center(
+                    Text("Логи отсутствуют. Запустите команду из формы.", style="dim")
+                ),
                 title=title,
                 border_style=border_style,
             )
@@ -290,7 +300,9 @@ class DashboardTUI:
             footer.append("  ")
             footer.append(" [Esc/Ctrl+C] Выход ", style="bold black on red")
         elif self.mode == "search":
-            footer.append(" [Буквы/Цифры] Ввод поискового запроса ", style="bold black on yellow")
+            footer.append(
+                " [Буквы/Цифры] Ввод поискового запроса ", style="bold black on yellow"
+            )
             footer.append("  ")
             footer.append(" [Esc] Сбросить поиск ", style="bold black on red")
             footer.append("  ")
@@ -302,7 +314,10 @@ class DashboardTUI:
             footer.append("  ")
             footer.append(" [Esc] Назад ", style="bold black on red")
         elif self.mode == "running":
-            footer.append(" [Esc/Ctrl+C] Остановить выполнение и вернуться ", style="bold black on red")
+            footer.append(
+                " [Esc/Ctrl+C] Остановить выполнение и вернуться ",
+                style="bold black on red",
+            )
         return footer
 
     # --- Обработка клавиатуры ---
@@ -384,7 +399,9 @@ class DashboardTUI:
                     self.form_focus_idx = (self.form_focus_idx + 1) % total_fields
                 elif len(key) == 1:
                     # Добавляем символ в поле ввода
-                    self.form_fields[arg.name] = self.form_fields.get(arg.name, "") + key
+                    self.form_fields[arg.name] = (
+                        self.form_fields.get(arg.name, "") + key
+                    )
 
     def _handle_running_key(self, key: str) -> None:
         """Обрабатывает клавиши в режиме выполнения."""
@@ -398,7 +415,9 @@ class DashboardTUI:
         """Фильтрует список команд на основе поискового запроса."""
         query = self.search_query.lower()
         self.filtered_commands = [
-            c for c in self.commands if query in c.name.lower() or (c.docstring and query in c.docstring.lower())
+            c
+            for c in self.commands
+            if query in c.name.lower() or (c.docstring and query in c.docstring.lower())
         ]
         self.selected_cmd_idx = 0
 
@@ -439,7 +458,9 @@ class DashboardTUI:
         # Сохраняем в историю
         self._save_to_history(cmd.name, self.form_fields)
 
-        self.log_lines = [f"[bold green]>>> Запуск {cmd.name} из {cmd.file_path}...[/bold green]\n"]
+        self.log_lines = [
+            f"[bold green]>>> Запуск {cmd.name} из {cmd.file_path}...[/bold green]\n"
+        ]
         self.mode = "running"
 
         # Строим аргументы командной строки
@@ -456,7 +477,7 @@ class DashboardTUI:
             # Для остальных позиционных или именованных аргументов
             elif val:
                 # Проверим, опциональный ли он (был ли дефолт в AST)
-                is_optional = (arg.default_str is not None)
+                is_optional = arg.default_str is not None
                 if is_optional:
                     args_list.append(f"--{arg.name.replace('_', '-')}")
                     args_list.append(val)
@@ -467,11 +488,11 @@ class DashboardTUI:
         # и запустить функцию из ее исходного файла.
         py_cmd = (
             "import sys, importlib.util; "
-            f"spec = importlib.util.spec_from_file_location('__main__', {repr(cmd.file_path)}); "
+            f"spec = importlib.util.spec_from_file_location('__main__', {cmd.file_path!r}); "
             "mod = importlib.util.module_from_spec(spec); "
             "sys.modules['__main__'] = mod; "
             "spec.loader.exec_module(mod); "
-            f"getattr(mod, {repr(cmd.name)})()"
+            f"getattr(mod, {cmd.name!r})()"
         )
 
         env = os.environ.copy()  # chutils: ignore[ChutilsIntegrationRule]
@@ -492,12 +513,15 @@ class DashboardTUI:
             # Переводим дескриптор в неблокирующий режим (для Unix)
             if sys.platform != "win32":
                 import fcntl
+
                 if self.process_runner.stdout:
                     fd = self.process_runner.stdout.fileno()
                     fl = fcntl.fcntl(fd, fcntl.F_GETFL)
                     fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
         except Exception as e:
-            self.log_lines.append(f"[bold red]Ошибка запуска подпроцесса: {e}[/bold red]\n")
+            self.log_lines.append(
+                f"[bold red]Ошибка запуска подпроцесса: {e}[/bold red]\n"
+            )
             self.process_runner = None
             self.mode = "form"
 
@@ -554,7 +578,9 @@ class DashboardTUI:
     def _terminate_running_process(self) -> None:
         """Завершает выполняющийся подпроцесс."""
         if self.process_runner:
-            self.log_lines.append("\n[bold red]>>> Завершение процесса пользователем...[/bold red]\n")
+            self.log_lines.append(
+                "\n[bold red]>>> Завершение процесса пользователем...[/bold red]\n"
+            )
             try:
                 self.process_runner.terminate()
                 self.process_runner.wait(timeout=1.0)
@@ -570,6 +596,7 @@ class DashboardTUI:
     def _load_history(self) -> dict[str, dict[str, str]]:
         """Загружает историю параметров из файла кэша."""
         from typing import cast
+
         if self.history_path.exists():
             try:
                 with open(self.history_path, encoding="utf-8") as f:
@@ -588,6 +615,7 @@ class DashboardTUI:
         self.history[cmd_name] = fields
         try:
             from chutils.fs import atomic_write
+
             atomic_write(self.history_path, self.history, indent=2, ensure_ascii=False)
         except Exception:
             pass

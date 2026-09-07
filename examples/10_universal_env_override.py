@@ -7,7 +7,7 @@
 
 import os
 
-from chutils import get_config_value, get_config_int
+from chutils import get_config_int, get_config_value
 
 
 def run_example() -> None:

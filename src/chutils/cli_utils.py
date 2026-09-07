@@ -18,8 +18,8 @@ else:
 
 if RICH_AVAILABLE:
     from rich.console import Console
-    from rich.table import Table
     from rich.panel import Panel
+    from rich.table import Table
 else:
     Console = None  # type: ignore[assignment, misc]
     Table = None  # type: ignore[assignment, misc]
@@ -64,7 +64,9 @@ class FallbackConsole:
         # Мы ищем слова, которые часто используются в стилях Rich, или коды цветов.
         return re.sub(
             r"\[/?(?:bold|italic|underline|strike|dim|reverse|blink|red|green|yellow|blue|magenta|cyan|white|black|grey|#[\da-fA-F]{3,6}|rgb\(\d+,\d+,\d+\)|on\s+\w+)[^\]]*\]",
-            "", text)
+            "",
+            text,
+        )
 
     def print(self, *args: Any, **kwargs: Any) -> None:
         """Выводит аргументы в консоль с поддержкой очистки rich-разметки.
@@ -93,8 +95,10 @@ class FallbackConsole:
                 # пытаемся вывести его как-то осмысленно или просто repr.
                 if not isinstance(arg, str):
                     is_panel = type(arg).__name__ == "Panel"
-                    if hasattr(arg, "title") and getattr(arg, "title"):
-                        processed_args.append(f"=== {self._strip_markup(str(getattr(arg, 'title')))} ===")
+                    if hasattr(arg, "title") and arg.title:
+                        processed_args.append(
+                            f"=== {self._strip_markup(str(arg.title))} ==="
+                        )
                         if not is_panel:
                             continue
 
@@ -143,7 +147,9 @@ def _get_default_width() -> int | None:
     width, _ = shutil.get_terminal_size(fallback=(80, 24))
 
     # Специфичное поведение для PyCharm (часто ограничивает ширину в 80 символов при запуске логов)
-    if os.getenv("PYCHARM_HOSTED") == "1" and width == 80:  # chutils: ignore[ChutilsIntegrationRule]
+    if (
+        os.getenv("PYCHARM_HOSTED") == "1" and width == 80
+    ):  # chutils: ignore[ChutilsIntegrationRule]
         return 140
 
     return width

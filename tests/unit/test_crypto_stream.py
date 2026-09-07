@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from chutils.crypto import encrypt_file, decrypt_file, _HAS_CRYPTOGRAPHY
+from chutils.crypto import _HAS_CRYPTOGRAPHY, decrypt_file, encrypt_file
 
 
 @pytest.mark.skipif(not _HAS_CRYPTOGRAPHY, reason="Требуется библиотека cryptography")
@@ -64,14 +64,27 @@ def test_stream_encryption_progress_callback(tmp_path: Path):
     def on_progress(processed: int, total: int) -> None:
         progress_history.append((processed, total))
 
-    encrypt_file(input_file, seed, enc_file, stream=True, chunk_size=1024, progress_callback=on_progress)
+    encrypt_file(
+        input_file,
+        seed,
+        enc_file,
+        stream=True,
+        chunk_size=1024,
+        progress_callback=on_progress,
+    )
 
     assert len(progress_history) > 1
     assert progress_history[0][0] == 0
     assert progress_history[-1][0] == 5000
 
     dec_history: list[tuple[int, int]] = []
-    decrypt_file(enc_file, seed, dec_file, stream=True, progress_callback=lambda p, t: dec_history.append((p, t)))
+    decrypt_file(
+        enc_file,
+        seed,
+        dec_file,
+        stream=True,
+        progress_callback=lambda p, t: dec_history.append((p, t)),
+    )
 
     assert len(dec_history) > 1
     assert dec_history[0][0] == 27  # Header (7B magic + 4B size + 16B salt)

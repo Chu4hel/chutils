@@ -55,7 +55,9 @@ def test_standard_asyncio_run(setup_fs_config):
     asyncio.run(run_test())
 
 
-@pytest.mark.skipif(not UVLOOP_AVAILABLE, reason="uvloop доступен только на Linux/macOS")
+@pytest.mark.skipif(
+    not UVLOOP_AVAILABLE, reason="uvloop доступен только на Linux/macOS"
+)
 def test_uvloop_event_loop(setup_fs_config):
     """Проверяет работу асинхронного доступа с использованием uvloop."""
 

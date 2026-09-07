@@ -2,10 +2,10 @@ import pytest
 from pydantic import BaseModel, Field
 
 from chutils.config.generator import (
-    generate_yaml_template,
+    PYDANTIC_AVAILABLE,
     generate_env_template,
     generate_json_schema,
-    PYDANTIC_AVAILABLE
+    generate_yaml_template,
 )
 
 
@@ -48,6 +48,7 @@ def test_generate_env_template():
 def test_generate_json_schema():
     schema_json = generate_json_schema(MainConfig)
     import json
+
     schema = json.loads(schema_json)
 
     assert schema["title"] == "MainConfig"

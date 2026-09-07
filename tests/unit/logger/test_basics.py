@@ -1,6 +1,6 @@
 import logging
 
-from chutils import setup_logger, ChutilsLogger
+from chutils import ChutilsLogger, setup_logger
 from chutils.logger import DEVDEBUG_LEVEL_NUM, MEDIUMDEBUG_LEVEL_NUM
 
 

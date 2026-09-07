@@ -1,6 +1,7 @@
 """
 Юнит-тесты для StoreManager.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -10,7 +11,6 @@ from chutils.store.manager import StoreManager
 
 
 class CustomDummy:
-
     def __init__(self, name: str) -> None:
         self.name = name
 

@@ -12,7 +12,8 @@ import fnmatch
 import os
 import threading
 import time
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from ..logger import setup_logger
 
@@ -22,6 +23,7 @@ logger = setup_logger()
 try:
     import watchdog.events
     import watchdog.observers
+
     HAS_WATCHDOG = True
 except ImportError:
     HAS_WATCHDOG = False
@@ -71,7 +73,9 @@ class BaseWatcher(abc.ABC):
         self.extensions = {ext.lstrip(".").lower() for ext in exts}
 
         self.ignore_patterns = (
-            ignore_patterns if ignore_patterns is not None else list(DEFAULT_IGNORE_PATTERNS)
+            ignore_patterns
+            if ignore_patterns is not None
+            else list(DEFAULT_IGNORE_PATTERNS)
         )
         self.debounce_seconds = debounce_seconds
         self.callback = callback
@@ -104,7 +108,9 @@ class BaseWatcher(abc.ABC):
             pattern_clean = pattern.strip("/\\")
             if any(fnmatch.fnmatch(part, pattern_clean) for part in parts):
                 return False
-            if fnmatch.fnmatch(norm_path, pattern) or fnmatch.fnmatch(os.path.basename(norm_path), pattern):
+            if fnmatch.fnmatch(norm_path, pattern) or fnmatch.fnmatch(
+                os.path.basename(norm_path), pattern
+            ):
                 return False
 
         # Проверка расширения файла
@@ -129,7 +135,9 @@ class BaseWatcher(abc.ABC):
             if self._debounce_timer is not None:
                 self._debounce_timer.cancel()
 
-            self._debounce_timer = threading.Timer(self.debounce_seconds, self._flush_changes)
+            self._debounce_timer = threading.Timer(
+                self.debounce_seconds, self._flush_changes
+            )
             self._debounce_timer.daemon = True
             self._debounce_timer.start()
 
@@ -212,7 +220,8 @@ class PollingWatcher(BaseWatcher):
             for root, dirs, files in os.walk(target_path):
                 # Исключаем диры, попадающие под ignore_patterns
                 dirs[:] = [
-                    d for d in dirs
+                    d
+                    for d in dirs
                     if not any(
                         fnmatch.fnmatch(d, pat.strip("/\\"))
                         for pat in self.ignore_patterns
@@ -408,7 +417,9 @@ def get_watcher(
                 callback=callback,
             )
         except Exception as err:
-            logger.warning(f"Не удалось инициализировать WatchdogWatcher: {err}. Используется PollingWatcher.")
+            logger.warning(
+                f"Не удалось инициализировать WatchdogWatcher: {err}. Используется PollingWatcher."
+            )
 
     logger.warning(
         "[WARNING] watchdog не установлен. Используется медленный fallback-опрос диска. "

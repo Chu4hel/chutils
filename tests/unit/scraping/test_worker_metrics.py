@@ -1,7 +1,9 @@
 """Unit-тесты метрик пула воркеров (WorkerPool)."""
 
 import asyncio
+
 import pytest
+
 from chutils.scraping.concurrency.models import ScrapingTask
 from chutils.scraping.concurrency.pool import WorkerPool
 from chutils.scraping.concurrency.queues import InMemoryTaskQueue

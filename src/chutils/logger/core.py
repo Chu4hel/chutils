@@ -10,11 +10,11 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 from typing import Any
 
 from .internal.levels import (
+    DEVDEBUG_LEVEL_NUM,
+    MEDIUMDEBUG_LEVEL_NUM,
     LogLevel,
     LogLevelsMixin,
     init_custom_levels,
-    DEVDEBUG_LEVEL_NUM,
-    MEDIUMDEBUG_LEVEL_NUM
 )
 from .internal.utils import stop_all_async_loggers
 from .masking import _GLOBAL_MASKS, _update_mask_re
@@ -26,12 +26,12 @@ atexit.register(stop_all_async_loggers)
 init_custom_levels()
 
 __all__ = [
-    'setup_logger',
-    'setup_logger_from_config',
-    'ChutilsLogger',
-    'LogLevel',
-    'DEVDEBUG_LEVEL_NUM',
-    'MEDIUMDEBUG_LEVEL_NUM'
+    "DEVDEBUG_LEVEL_NUM",
+    "MEDIUMDEBUG_LEVEL_NUM",
+    "ChutilsLogger",
+    "LogLevel",
+    "setup_logger",
+    "setup_logger_from_config",
 ]
 
 
@@ -84,27 +84,27 @@ _initialization_message_shown = False
 
 
 def setup_logger(
-        name: str = 'app_logger',
-        config_section_name: str | None = None,
-        log_level: LogLevel | None = None,
-        log_file_name: str | None = None,
-        file_logging: bool | None = None,
-        no_file: bool | None = None,
-        force_reconfigure: bool = False,
-        rotation_type: str | None = None,
-        max_bytes: int | None = None,
-        compress: bool | None = None,
-        backup_count: int | None = None,
-        encoding: str | None = None,
-        when: str | None = None,
-        interval: int | None = None,
-        utc: bool | None = None,
-        at_time: Any = None,
-        json_format: bool | None = None,
-        use_async: bool | None = None,
-        custom_patterns: list[str] | None = None,
-        use_predefined_patterns: list[str | list[str]] | None = None,
-        **kwargs: Any
+    name: str = "app_logger",
+    config_section_name: str | None = None,
+    log_level: LogLevel | None = None,
+    log_file_name: str | None = None,
+    file_logging: bool | None = None,
+    no_file: bool | None = None,
+    force_reconfigure: bool = False,
+    rotation_type: str | None = None,
+    max_bytes: int | None = None,
+    compress: bool | None = None,
+    backup_count: int | None = None,
+    encoding: str | None = None,
+    when: str | None = None,
+    interval: int | None = None,
+    utc: bool | None = None,
+    at_time: Any = None,
+    json_format: bool | None = None,
+    use_async: bool | None = None,
+    custom_patterns: list[str] | None = None,
+    use_predefined_patterns: list[str | list[str]] | None = None,
+    **kwargs: Any,
 ) -> ChutilsLogger:
     """
     Настраивает и возвращает экземпляр логгера.
@@ -170,13 +170,16 @@ def setup_logger(
     if "level" in kwargs and log_level is None:
         log_level = kwargs.pop("level")
 
-    valid_file_handler_kwargs = {'mode', 'delay', 'errors'}
+    valid_file_handler_kwargs = {"mode", "delay", "errors"}
     invalid_kwargs = set(kwargs.keys()) - valid_file_handler_kwargs
     if invalid_kwargs:
         bad_arg = sorted(invalid_kwargs)[0]
-        raise TypeError(f"setup_logger() got an unexpected keyword argument {bad_arg!r}")
+        raise TypeError(
+            f"setup_logger() got an unexpected keyword argument {bad_arg!r}"
+        )
 
     from .internal.builder import LoggerBuilder
+
     builder = LoggerBuilder(name, config_section_name, **kwargs)
 
     return builder.build(
@@ -197,14 +200,14 @@ def setup_logger(
         utc=utc,
         at_time=at_time,
         custom_patterns=custom_patterns,
-        use_predefined_patterns=use_predefined_patterns
+        use_predefined_patterns=use_predefined_patterns,
     )
 
 
 def setup_logger_from_config(
-        name: str = 'app_logger',
-        config_section_name: str | None = None,
-        force_reconfigure: bool = False
+    name: str = "app_logger",
+    config_section_name: str | None = None,
+    force_reconfigure: bool = False,
 ) -> ChutilsLogger:
     """Инициализирует логгер, используя настройки исключительно из файла конфигурации.
 
@@ -229,5 +232,5 @@ def setup_logger_from_config(
     return setup_logger(
         name=name,
         config_section_name=config_section_name,
-        force_reconfigure=force_reconfigure
+        force_reconfigure=force_reconfigure,
     )

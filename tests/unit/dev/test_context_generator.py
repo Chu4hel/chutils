@@ -1,7 +1,10 @@
 from pathlib import Path
-import pytest
 
-from chutils.dev.context import GitIgnoreMatcher, get_changed_files, update_tree_incrementally
+from chutils.dev.context import (
+    GitIgnoreMatcher,
+    get_changed_files,
+    update_tree_incrementally,
+)
 
 
 def test_gitignore_matcher_basic(tmp_path: Path):
@@ -35,7 +38,10 @@ def test_get_changed_files_empty(tmp_path: Path):
 
 def test_update_tree_incrementally_no_changes(tmp_path: Path):
     """Проверяет поведение при отсутствии измененных файлов."""
-    old_data = {"root": {"name": "root", "children": []}, "metadata": {"project_hash": "abc"}}
+    old_data = {
+        "root": {"name": "root", "children": []},
+        "metadata": {"project_hash": "abc"},
+    }
     updated = update_tree_incrementally(
         old_data,
         changed_files=[],

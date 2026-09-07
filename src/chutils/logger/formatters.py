@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from chutils.env import JSON_LOGGER_AVAILABLE
 
@@ -30,9 +30,14 @@ else:
     _jsonlogger = None
 
 if TYPE_CHECKING:
+
     class _BaseFormatter(logging.Formatter):
-        def add_fields(self, log_record: dict[str, Any], record: logging.LogRecord,
-                       message_dict: dict[str, Any]) -> None:
+        def add_fields(
+            self,
+            log_record: dict[str, Any],
+            record: logging.LogRecord,
+            message_dict: dict[str, Any],
+        ) -> None:
             """Добавляет поля в словарь записи лога.
 
             Args:
@@ -54,7 +59,12 @@ class ChutilsJsonFormatter(_BaseFormatter):
     во вложенный объект 'context', а данные трассировки выносит на верхний уровень.
     """
 
-    def add_fields(self, log_record: dict[str, Any], record: logging.LogRecord, message_dict: dict[str, Any]) -> None:
+    def add_fields(
+        self,
+        log_record: dict[str, Any],
+        record: logging.LogRecord,
+        message_dict: dict[str, Any],
+    ) -> None:
         """Добавляет кастомные поля в запись JSON-лога.
 
         Args:
@@ -68,26 +78,26 @@ class ChutilsJsonFormatter(_BaseFormatter):
         super().add_fields(log_record, record, message_dict)
 
         # Добавляем данные контекста
-        if hasattr(record, 'context_dict'):
-            context_dict = getattr(record, 'context_dict')
+        if hasattr(record, "context_dict"):
+            context_dict = record.context_dict
             if isinstance(context_dict, dict) and context_dict:
                 # Создаем копию, чтобы не менять оригинал при удалении ключей трассировки
                 ctx = context_dict.copy()
 
                 # Выносим trace_id и span_id на верхний уровень, если они есть
-                if 'trace_id' in ctx:
-                    log_record['trace_id'] = ctx.pop('trace_id')
-                if 'span_id' in ctx:
-                    log_record['span_id'] = ctx.pop('span_id')
+                if "trace_id" in ctx:
+                    log_record["trace_id"] = ctx.pop("trace_id")
+                if "span_id" in ctx:
+                    log_record["span_id"] = ctx.pop("span_id")
 
                 if ctx:
-                    log_record['context'] = ctx
+                    log_record["context"] = ctx
 
         # Фолбэк, если ключи есть в record, но не в context_dict
-        if 'trace_id' not in log_record and hasattr(record, 'trace_id'):
-            log_record['trace_id'] = getattr(record, 'trace_id')
-        if 'span_id' not in log_record and hasattr(record, 'span_id'):
-            log_record['span_id'] = getattr(record, 'span_id')
+        if "trace_id" not in log_record and hasattr(record, "trace_id"):
+            log_record["trace_id"] = record.trace_id
+        if "span_id" not in log_record and hasattr(record, "span_id"):
+            log_record["span_id"] = record.span_id
 
 
-__all__ = ["ChutilsJsonFormatter", "JSON_LOGGER_AVAILABLE"]
+__all__ = ["JSON_LOGGER_AVAILABLE", "ChutilsJsonFormatter"]

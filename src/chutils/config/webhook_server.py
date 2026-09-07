@@ -11,7 +11,6 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 import threading
 from collections.abc import Callable
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from typing import ClassVar
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +36,9 @@ def verify_webhook_request(
     headers_lower = {k.lower(): v for k, v in headers.items()}
 
     if secret_token:
-        token_hdr = headers_lower.get("x-chutils-webhook-token") or headers_lower.get("authorization")
+        token_hdr = headers_lower.get("x-chutils-webhook-token") or headers_lower.get(
+            "authorization"
+        )
         if not token_hdr:
             return False, 401, "Missing authorization token"
 
@@ -50,7 +51,9 @@ def verify_webhook_request(
             return False, 403, "Invalid authorization token"
 
     if hmac_secret:
-        sig_hdr = headers_lower.get("x-chutils-signature") or headers_lower.get("x-hub-signature-256")
+        sig_hdr = headers_lower.get("x-chutils-signature") or headers_lower.get(
+            "x-hub-signature-256"
+        )
         if not sig_hdr:
             return False, 401, "Missing HMAC signature header"
 
@@ -84,7 +87,7 @@ class _WebhookRequestHandler(BaseHTTPRequestHandler):
         """
         logger.debug(format_str, *args)
 
-    def do_POST(self) -> None:  # noqa: N802
+    def do_POST(self) -> None:
         """Обрабатывает POST-запросы к эндпоинту Webhook."""
         try:
             app = getattr(self.server, "app_server", None)
@@ -178,7 +181,11 @@ class WebhookConfigServer:
     @property
     def is_running(self) -> bool:
         """Возвращает True, если сервер запущен и принимает соединения."""
-        return self._httpd is not None and self._thread is not None and self._thread.is_alive()
+        return (
+            self._httpd is not None
+            and self._thread is not None
+            and self._thread.is_alive()
+        )
 
     @property
     def port(self) -> int:
@@ -192,7 +199,9 @@ class WebhookConfigServer:
         if self.is_running:
             return
 
-        self._httpd = HTTPServer((self.host, self.requested_port), _WebhookRequestHandler)
+        self._httpd = HTTPServer(
+            (self.host, self.requested_port), _WebhookRequestHandler
+        )
         setattr(self._httpd, "app_server", self)
 
         self._thread = threading.Thread(
@@ -201,7 +210,9 @@ class WebhookConfigServer:
             daemon=True,
         )
         self._thread.start()
-        logger.debug("Webhook-сервер запущен на %s:%d%s", self.host, self.port, self.path)
+        logger.debug(
+            "Webhook-сервер запущен на %s:%d%s", self.host, self.port, self.path
+        )
 
     def stop(self) -> None:
         """Останавливает фоновый HTTP-сервер."""

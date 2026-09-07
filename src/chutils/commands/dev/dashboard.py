@@ -1,6 +1,7 @@
 """
 Подкоманда CLI для интерактивного TUI-дашборда CLI команд.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -22,7 +23,6 @@ class DashboardSubCommand(SubCommand):
             subparsers: Объект subparsers для добавления подкоманд.
         """
         # Аргументы уже зарегистрированы централизованно в DevCommand.register
-        pass
 
     def handle(self, args: argparse.Namespace) -> None:
         """Обработчик выполнения подкоманды.
@@ -35,6 +35,8 @@ class DashboardSubCommand(SubCommand):
         try:
             run_dashboard(console=self.console)
         except Exception as e:
-            self.err_console.print(f"[bold red]Ошибка при работе дашборда:[/bold red] {e}")
+            self.err_console.print(
+                f"[bold red]Ошибка при работе дашборда:[/bold red] {e}"
+            )
             sys.exit(1)
         sys.exit(0)

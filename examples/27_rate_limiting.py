@@ -8,7 +8,7 @@
 import asyncio
 import time
 
-from chutils import rate_limit, RateLimitExceededError, setup_logger
+from chutils import RateLimitExceededError, rate_limit, setup_logger
 
 logger = setup_logger("rate_limiting_example")
 
@@ -30,7 +30,7 @@ async def async_api_call(ip: str) -> None:
     max_calls=1,
     period=2.0,
     key_func=lambda method, path: f"route_{method}_{path}",
-    wait=False
+    wait=False,
 )
 def handle_request(method: str, path: str) -> None:
     logger.info(f"[Route API] Запрос {method} {path} выполнен")

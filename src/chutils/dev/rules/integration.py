@@ -3,13 +3,14 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-from ..ai_lint import Rule, LintResult
+from ..ai_lint import LintResult, Rule
 
 
 class ChutilsIntegrationRule(Rule):
     """
     Правило поощрения использования встроенных механизмов chutils.
     """
+
     name = "ChutilsIntegrationRule"
     description = "Рекомендует использовать модули chutils (logger, config, secret_manager) вместо стандартных альтернатив."
     severity = "warn"
@@ -49,11 +50,12 @@ class ChutilsIntegrationRule(Rule):
             has_tempfile_call = False
             for subnode in ast.walk(tree):
                 if isinstance(subnode, ast.Call):
-                    if isinstance(subnode.func, ast.Attribute) and subnode.func.attr in ("NamedTemporaryFile",
-                                                                                         "mkstemp"):
-                        has_tempfile_call = True
-                        break
-                    elif isinstance(subnode.func, ast.Name) and subnode.func.id in ("NamedTemporaryFile", "mkstemp"):
+                    if (
+                        isinstance(subnode.func, ast.Attribute)
+                        and subnode.func.attr in ("NamedTemporaryFile", "mkstemp")
+                        or isinstance(subnode.func, ast.Name)
+                        and subnode.func.id in ("NamedTemporaryFile", "mkstemp")
+                    ):
                         has_tempfile_call = True
                         break
 
@@ -69,7 +71,7 @@ class ChutilsIntegrationRule(Rule):
                                     severity=self.severity,
                                     file_path=file_path,
                                     line_number=node.lineno,
-                                    fix_suggestion="Используйте: from chutils import setup_logger; logger = setup_logger()"
+                                    fix_suggestion="Используйте: from chutils import setup_logger; logger = setup_logger()",
                                 )
                             )
                         elif name.name == "keyring":
@@ -80,7 +82,7 @@ class ChutilsIntegrationRule(Rule):
                                     severity=self.severity,
                                     file_path=file_path,
                                     line_number=node.lineno,
-                                    fix_suggestion="Используйте: from chutils import SecretManager"
+                                    fix_suggestion="Используйте: from chutils import SecretManager",
                                 )
                             )
                         elif name.name == "requests":
@@ -91,7 +93,7 @@ class ChutilsIntegrationRule(Rule):
                                     severity=self.severity,
                                     file_path=file_path,
                                     line_number=node.lineno,
-                                    fix_suggestion="Используйте: from chutils.web import WebClient"
+                                    fix_suggestion="Используйте: from chutils.web import WebClient",
                                 )
                             )
                         elif name.name == "httpx":
@@ -102,7 +104,7 @@ class ChutilsIntegrationRule(Rule):
                                     severity=self.severity,
                                     file_path=file_path,
                                     line_number=node.lineno,
-                                    fix_suggestion="Используйте: from chutils.web import WebClient, AsyncWebClient"
+                                    fix_suggestion="Используйте: from chutils.web import WebClient, AsyncWebClient",
                                 )
                             )
                 elif isinstance(node, ast.ImportFrom):
@@ -114,7 +116,7 @@ class ChutilsIntegrationRule(Rule):
                                 severity=self.severity,
                                 file_path=file_path,
                                 line_number=node.lineno,
-                                fix_suggestion="Настройте логирование через 'setup_logger' из chutils."
+                                fix_suggestion="Настройте логирование через 'setup_logger' из chutils.",
                             )
                         )
                     elif node.module == "keyring":
@@ -125,7 +127,7 @@ class ChutilsIntegrationRule(Rule):
                                 severity=self.severity,
                                 file_path=file_path,
                                 line_number=node.lineno,
-                                fix_suggestion="Используйте 'SecretManager' из chutils."
+                                fix_suggestion="Используйте 'SecretManager' из chutils.",
                             )
                         )
                     elif node.module == "requests":
@@ -136,7 +138,7 @@ class ChutilsIntegrationRule(Rule):
                                 severity=self.severity,
                                 file_path=file_path,
                                 line_number=node.lineno,
-                                fix_suggestion="Используйте 'WebClient' из chutils.web."
+                                fix_suggestion="Используйте 'WebClient' из chutils.web.",
                             )
                         )
                     elif node.module == "httpx":
@@ -147,7 +149,7 @@ class ChutilsIntegrationRule(Rule):
                                 severity=self.severity,
                                 file_path=file_path,
                                 line_number=node.lineno,
-                                fix_suggestion="Используйте 'WebClient' или 'AsyncWebClient' из chutils.web."
+                                fix_suggestion="Используйте 'WebClient' или 'AsyncWebClient' из chutils.web.",
                             )
                         )
                 # Проверка os.getenv/os.environ
@@ -155,14 +157,19 @@ class ChutilsIntegrationRule(Rule):
                 #   - os.environ.copy() — передача окружения в подпроцесс
                 #   - env=os.environ — прямая передача окружения по именованному аргументу
                 elif isinstance(node, ast.Attribute):
-                    if isinstance(node.value, ast.Name) and node.value.id == "os" and node.attr in ("environ",
-                                                                                                    "getenv"):
+                    if (
+                        isinstance(node.value, ast.Name)
+                        and node.value.id == "os"
+                        and node.attr in ("environ", "getenv")
+                    ):
                         _parent = parent_map.get(id(node))
                         # os.environ.copy() — легитимный паттерн для subprocess
-                        if isinstance(_parent, ast.Attribute) and _parent.attr == "copy":
-                            pass
-                        # env=os.environ — прямая передача в ключевой аргумент subprocess
-                        elif isinstance(_parent, ast.keyword) and _parent.arg == "env":
+                        if (
+                            isinstance(_parent, ast.Attribute)
+                            and _parent.attr == "copy"
+                            or isinstance(_parent, ast.keyword)
+                            and _parent.arg == "env"
+                        ):
                             pass
                         else:
                             results.append(
@@ -172,17 +179,29 @@ class ChutilsIntegrationRule(Rule):
                                     severity=self.severity,
                                     file_path=file_path,
                                     line_number=node.lineno,
-                                    fix_suggestion="Получайте конфигурацию через 'chutils.get_config_value'."
+                                    fix_suggestion="Получайте конфигурацию через 'chutils.get_config_value'.",
                                 )
                             )
                 # Проверка mkdir(parents=True, exist_ok=True)
-                elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == "mkdir":
+                elif (
+                    isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Attribute)
+                    and node.func.attr == "mkdir"
+                ):
                     has_parents_true = False
                     has_exist_ok_true = False
                     for kw in node.keywords:
-                        if kw.arg == "parents" and isinstance(kw.value, ast.Constant) and kw.value.value is True:
+                        if (
+                            kw.arg == "parents"
+                            and isinstance(kw.value, ast.Constant)
+                            and kw.value.value is True
+                        ):
                             has_parents_true = True
-                        elif kw.arg == "exist_ok" and isinstance(kw.value, ast.Constant) and kw.value.value is True:
+                        elif (
+                            kw.arg == "exist_ok"
+                            and isinstance(kw.value, ast.Constant)
+                            and kw.value.value is True
+                        ):
                             has_exist_ok_true = True
                     if has_parents_true and has_exist_ok_true:
                         results.append(
@@ -192,11 +211,13 @@ class ChutilsIntegrationRule(Rule):
                                 severity=self.severity,
                                 file_path=file_path,
                                 line_number=node.lineno,
-                                fix_suggestion="Используйте: from chutils.fs import ensure_dir; ensure_dir(path)"
+                                fix_suggestion="Используйте: from chutils.fs import ensure_dir; ensure_dir(path)",
                             )
                         )
                 # Проверка write_text/write_bytes и других паттернов атомарной записи
-                elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+                elif isinstance(node, ast.Call) and isinstance(
+                    node.func, ast.Attribute
+                ):
                     if node.func.attr in ("write_text", "write_bytes"):
                         results.append(
                             LintResult(
@@ -205,14 +226,20 @@ class ChutilsIntegrationRule(Rule):
                                 severity=self.severity,
                                 file_path=file_path,
                                 line_number=node.lineno,
-                                fix_suggestion="Используйте: from chutils.fs import atomic_write; atomic_write(file_path, data)"
+                                fix_suggestion="Используйте: from chutils.fs import atomic_write; atomic_write(file_path, data)",
                             )
                         )
-                    elif node.func.attr in ("replace", "rename", "move") and has_tempfile_call:
+                    elif (
+                        node.func.attr in ("replace", "rename", "move")
+                        and has_tempfile_call
+                    ):
                         is_os_or_shutil = False
                         module_name = ""
                         func_value = node.func.value
-                        if isinstance(func_value, ast.Name) and func_value.id in ("os", "shutil"):
+                        if isinstance(func_value, ast.Name) and func_value.id in (
+                            "os",
+                            "shutil",
+                        ):
                             is_os_or_shutil = True
                             module_name = func_value.id
                         if is_os_or_shutil:
@@ -223,11 +250,13 @@ class ChutilsIntegrationRule(Rule):
                                     severity=self.severity,
                                     file_path=file_path,
                                     line_number=node.lineno,
-                                    fix_suggestion="Используйте: from chutils.fs import atomic_write; atomic_write(file_path, data)"
+                                    fix_suggestion="Используйте: from chutils.fs import atomic_write; atomic_write(file_path, data)",
                                 )
                             )
                     elif node.func.attr in ("dump", "dump_all"):
-                        if isinstance(node.func.value, ast.Name) and node.func.value.id in ("json", "yaml"):
+                        if isinstance(
+                            node.func.value, ast.Name
+                        ) and node.func.value.id in ("json", "yaml"):
                             results.append(
                                 LintResult(
                                     rule_name=self.name,
@@ -235,7 +264,7 @@ class ChutilsIntegrationRule(Rule):
                                     severity=self.severity,
                                     file_path=file_path,
                                     line_number=node.lineno,
-                                    fix_suggestion="Используйте: from chutils.fs import atomic_write; atomic_write(file_path, data)"
+                                    fix_suggestion="Используйте: from chutils.fs import atomic_write; atomic_write(file_path, data)",
                                 )
                             )
                     elif node.func.attr == "utcnow":
@@ -246,7 +275,7 @@ class ChutilsIntegrationRule(Rule):
                                 severity=self.severity,
                                 file_path=file_path,
                                 line_number=node.lineno,
-                                fix_suggestion="Используйте: from chutils.time import utc_now; utc_now()"
+                                fix_suggestion="Используйте: from chutils.time import utc_now; utc_now()",
                             )
                         )
                     elif node.func.attr == "now":
@@ -254,8 +283,11 @@ class ChutilsIntegrationRule(Rule):
 
                         def is_utc_node(arg_node: ast.AST) -> bool:
                             if isinstance(arg_node, ast.Attribute):
-                                return isinstance(arg_node.value,
-                                                  ast.Name) and arg_node.value.id == "timezone" and arg_node.attr == "utc"
+                                return (
+                                    isinstance(arg_node.value, ast.Name)
+                                    and arg_node.value.id == "timezone"
+                                    and arg_node.attr == "utc"
+                                )
                             elif isinstance(arg_node, ast.Name):
                                 return arg_node.id in ("utc", "UTC")
                             return False
@@ -275,7 +307,7 @@ class ChutilsIntegrationRule(Rule):
                                     severity=self.severity,
                                     file_path=file_path,
                                     line_number=node.lineno,
-                                    fix_suggestion="Используйте: from chutils.time import utc_now; utc_now()"
+                                    fix_suggestion="Используйте: from chutils.time import utc_now; utc_now()",
                                 )
                             )
         return results

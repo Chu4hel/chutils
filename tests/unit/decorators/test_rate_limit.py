@@ -3,8 +3,8 @@ import time
 
 import pytest
 
-from chutils import rate_limit, RateLimitExceededError
-from chutils.decorators import clear_limiters, TokenBucket, LeakyBucket
+from chutils import RateLimitExceededError, rate_limit
+from chutils.decorators import LeakyBucket, TokenBucket, clear_limiters
 
 
 @pytest.fixture(autouse=True)

@@ -40,12 +40,12 @@ def test_metadata_extraction_decorators(tmp_path):
     (pkg / "__init__.py").write_text("", encoding="utf-8")
 
     module = pkg / "api.py"
-    content = '''
+    content = """
 @retry(retries=3)
 @app.route("/")
 def get_root():
     pass
-'''
+"""
     module.write_text(content, encoding="utf-8")
 
     indexer = Indexer(str(pkg))

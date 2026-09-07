@@ -54,7 +54,7 @@ def clear_context() -> None:
 class ContextFilter(logging.Filter):
     """
     Фильтр, обогащающий LogRecord данными из контекста.
-    
+
     Добавляет:
     - Индивидуальные ключи контекста как атрибуты (для %(key)s).
     - record.context: Строка вида "[key1=val1 key2=val2 ]" или "" если пусто.
@@ -75,6 +75,7 @@ class ContextFilter(logging.Filter):
         # Добавляем данные трассировки OpenTelemetry, если они доступны
         try:
             from .tracing import get_current_trace_context
+
             trace_ctx = get_current_trace_context()
             if trace_ctx:
                 ctx.update(trace_ctx)

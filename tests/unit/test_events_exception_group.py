@@ -1,4 +1,5 @@
 """Тесты для класса EventBusExceptionGroup (наследование от ExceptionGroup)."""
+
 import sys
 
 from chutils.exceptions import EventBusExceptionGroup
@@ -11,7 +12,9 @@ def test_event_bus_exception_group_inheritance():
     else:
         from exceptiongroup import ExceptionGroup as expected_base
 
-    eg = EventBusExceptionGroup("test message", [ValueError("error 1"), TypeError("error 2")])
+    eg = EventBusExceptionGroup(
+        "test message", [ValueError("error 1"), TypeError("error 2")]
+    )
     assert isinstance(eg, expected_base)
 
 
@@ -34,6 +37,7 @@ except* TypeError:
         assert locs["type_error_caught"] is True
     else:
         from exceptiongroup import ExceptionGroup as EG
+
         try:
             raise eg
         except EG as e:

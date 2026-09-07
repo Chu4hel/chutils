@@ -26,10 +26,10 @@ from chutils.config.custom_providers import (
     get_registry,
 )
 
-
 # ---------------------------------------------------------------------------
 # Вспомогательные фикстуры
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(autouse=True)
 def clean_registry():
@@ -43,11 +43,14 @@ def clean_registry():
 # DictConfigProvider
 # ---------------------------------------------------------------------------
 
+
 class TestDictConfigProvider:
     """Тесты для DictConfigProvider."""
 
     def test_get_value_returns_existing(self):
-        provider = DictConfigProvider({"database": {"host": "localhost", "port": "5432"}})
+        provider = DictConfigProvider(
+            {"database": {"host": "localhost", "port": "5432"}}
+        )
         assert provider.get_value("database", "host") == "localhost"
         assert provider.get_value("database", "port") == "5432"
 
@@ -72,7 +75,9 @@ class TestDictConfigProvider:
         assert provider.get_value("db", "MaxRetries") == "3"
 
     def test_value_types_preserved(self):
-        provider = DictConfigProvider({"app": {"port": 8080, "debug": True, "rate": 1.5}})
+        provider = DictConfigProvider(
+            {"app": {"port": 8080, "debug": True, "rate": 1.5}}
+        )
         assert provider.get_value("app", "port") == 8080
         assert provider.get_value("app", "debug") is True
         assert provider.get_value("app", "rate") == 1.5
@@ -98,6 +103,7 @@ class TestDictConfigProvider:
 # BaseConfigProvider — абстрактный интерфейс
 # ---------------------------------------------------------------------------
 
+
 class TestBaseConfigProvider:
     """Тесты на соблюдение контракта BaseConfigProvider."""
 
@@ -109,6 +115,7 @@ class TestBaseConfigProvider:
         class IncompleteProvider(BaseConfigProvider):
             async def aget_value(self, section: str, key: str) -> Any | None:
                 return None
+
             # get_value не реализован
 
         with pytest.raises(TypeError):
@@ -118,6 +125,7 @@ class TestBaseConfigProvider:
         class IncompleteProvider(BaseConfigProvider):
             def get_value(self, section: str, key: str) -> Any | None:
                 return None
+
             # aget_value не реализован
 
         with pytest.raises(TypeError):
@@ -138,6 +146,7 @@ class TestBaseConfigProvider:
 # ---------------------------------------------------------------------------
 # _CustomProviderRegistry — приоритизация
 # ---------------------------------------------------------------------------
+
 
 class TestCustomProviderRegistry:
     """Тесты для реестра провайдеров."""
@@ -261,6 +270,7 @@ class TestCustomProviderRegistry:
 # Интеграция с get_config_value
 # ---------------------------------------------------------------------------
 
+
 class TestGetConfigValueIntegration:
     """Тесты интеграции провайдеров с get_config_value."""
 
@@ -315,6 +325,7 @@ class TestGetConfigValueIntegration:
 # ---------------------------------------------------------------------------
 # Асинхронные провайдеры с симуляцией сетевой задержки
 # ---------------------------------------------------------------------------
+
 
 class TestAsyncProviderWithDelay:
     """Тесты асинхронных провайдеров с имитацией сетевой задержки."""
@@ -375,13 +386,16 @@ class TestAsyncProviderWithDelay:
         """aget_config_value возвращает fallback, если ключ нигде не найден."""
         from chutils.config import aget_config_value
 
-        result = await aget_config_value("missing", "key", fallback="default", config={})
+        result = await aget_config_value(
+            "missing", "key", fallback="default", config={}
+        )
         assert result == "default"
 
 
 # ---------------------------------------------------------------------------
 # reset_providers (публичное API)
 # ---------------------------------------------------------------------------
+
 
 class TestResetProviders:
     """Тесты функции reset_providers."""

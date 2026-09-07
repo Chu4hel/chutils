@@ -4,8 +4,8 @@
 
 from __future__ import annotations
 
-import hmac
 import hashlib
+import hmac
 import json
 import urllib.request
 from unittest.mock import MagicMock
@@ -65,7 +65,9 @@ class TestWebhookValidation:
 
         # Также с префиксом sha256=
         headers_prefix = {"X-Hub-Signature-256": f"sha256={sig}"}
-        valid, code, _ = verify_webhook_request(headers_prefix, body, hmac_secret=secret)
+        valid, code, _ = verify_webhook_request(
+            headers_prefix, body, hmac_secret=secret
+        )
         assert valid
 
     def test_hmac_validation_invalid(self) -> None:

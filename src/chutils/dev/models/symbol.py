@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from .base import BaseModel, Field, Breadcrumbs
+from .base import BaseModel, Breadcrumbs, Field
 
 
 class Symbol(BaseModel):
     """Описание функции, класса или константы."""
+
     name: str
     type: str
     """function, class, constant, method"""

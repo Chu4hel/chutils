@@ -1,11 +1,11 @@
 """
 Пример 2: Основы логирования и ротация файлов.
 
-Демонстрирует создание логгера с использованием ChutilsLogger, работу с 
+Демонстрирует создание логгера с использованием ChutilsLogger, работу с
 кастомными уровнями (DEVDEBUG, MEDIUMDEBUG) и автоматическую ротацию файлов.
 """
 
-from chutils import setup_logger_from_config, ChutilsLogger
+from chutils import ChutilsLogger, setup_logger_from_config
 
 
 def main() -> None:
@@ -29,7 +29,9 @@ def main() -> None:
     logger.devdebug("Максимально детальная отладка (DEVDEBUG, уровень 9).")
 
     logger.info("\n--- Демонстрация ротации логов ---")
-    logger.info("В config.yml для секции [Logging] установлен max_bytes: 1МБ и compress: true.")
+    logger.info(
+        "В config.yml для секции [Logging] установлен max_bytes: 1МБ и compress: true."
+    )
     logger.info("При превышении размера файл 'example_app.log' будет сжат в '.gz',")
     logger.info("а новые записи продолжатся в свежем файле.")
 

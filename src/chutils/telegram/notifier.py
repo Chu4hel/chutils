@@ -34,7 +34,11 @@ class TelegramLogHandler(logging.Handler):
                 from chutils.config import get_config_value
 
                 token = token or get_config_value("Telegram", "bot_token", None)
-                chat = chat or get_config_value("Telegram", "admin_chat_id", None) or get_config_value("Telegram", "chat_id", None)
+                chat = (
+                    chat
+                    or get_config_value("Telegram", "admin_chat_id", None)
+                    or get_config_value("Telegram", "chat_id", None)
+                )
             except Exception:
                 pass
 
@@ -119,7 +123,11 @@ def send_alert(
             from chutils.config import get_config_value
 
             token = token or get_config_value("Telegram", "bot_token", None)
-            chat = chat or get_config_value("Telegram", "admin_chat_id", None) or get_config_value("Telegram", "chat_id", None)
+            chat = (
+                chat
+                or get_config_value("Telegram", "admin_chat_id", None)
+                or get_config_value("Telegram", "chat_id", None)
+            )
         except Exception:
             pass
 
@@ -171,7 +179,9 @@ class HealthCheckAlertBridge:
         self.chat_id = chat_id
         self.notify_on_degraded = notify_on_degraded
 
-    def on_health_check(self, service_name: str, status: str, details: dict[str, Any] | None = None) -> bool:
+    def on_health_check(
+        self, service_name: str, status: str, details: dict[str, Any] | None = None
+    ) -> bool:
         """Обрабатывает событие проверки здоровья и отправляет алерт при проблемах.
 
         Args:
@@ -190,7 +200,11 @@ class HealthCheckAlertBridge:
             return False
 
         level = "CRITICAL" if status_upper == "UNHEALTHY" else "WARNING"
-        details_str = json.dumps(details, ensure_ascii=False, indent=2) if details else "No details"
+        details_str = (
+            json.dumps(details, ensure_ascii=False, indent=2)
+            if details
+            else "No details"
+        )
 
         title = f"Health Alert: {service_name}"
         msg = f"<b>Status:</b> <code>{status_upper}</code>\n<b>Details:</b>\n<pre>{details_str}</pre>"

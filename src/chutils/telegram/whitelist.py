@@ -37,9 +37,13 @@ class AccessListManager:
         """
         self.storage_path = Path(storage_path).resolve() if storage_path else None
         self.allowed_ids: set[int] = set(allowed_ids or [])
-        self.allowed_usernames: set[str] = {u.lstrip("@").lower() for u in (allowed_usernames or [])}
+        self.allowed_usernames: set[str] = {
+            u.lstrip("@").lower() for u in (allowed_usernames or [])
+        }
         self.blocked_ids: set[int] = set(blocked_ids or [])
-        self.blocked_usernames: set[str] = {u.lstrip("@").lower() for u in (blocked_usernames or [])}
+        self.blocked_usernames: set[str] = {
+            u.lstrip("@").lower() for u in (blocked_usernames or [])
+        }
 
         if self.storage_path and self.storage_path.exists():
             self.load()
@@ -67,7 +71,9 @@ class AccessListManager:
                     elif isinstance(val, str):
                         self.blocked_usernames.add(val.lstrip("@").lower())
 
-    def is_user_allowed(self, user_id: int | None = None, username: str | None = None) -> bool:
+    def is_user_allowed(
+        self, user_id: int | None = None, username: str | None = None
+    ) -> bool:
         """Проверяет разрешения для пользователя.
 
         Args:
@@ -219,7 +225,9 @@ def allowed_only(
                 uid, uname = _extract_user_info(args, kwargs)
                 if not mgr.is_user_allowed(uid, uname):
                     if raise_on_denied:
-                        raise TelegramAccessDeniedError("Access denied by whitelist/blacklist", user_id=uid)
+                        raise TelegramAccessDeniedError(
+                            "Access denied by whitelist/blacklist", user_id=uid
+                        )
                     if silent:
                         return None
                     if refusal_text:
@@ -247,7 +255,9 @@ def allowed_only(
                 uid, uname = _extract_user_info(args, kwargs)
                 if not mgr.is_user_allowed(uid, uname):
                     if raise_on_denied:
-                        raise TelegramAccessDeniedError("Access denied by whitelist/blacklist", user_id=uid)
+                        raise TelegramAccessDeniedError(
+                            "Access denied by whitelist/blacklist", user_id=uid
+                        )
                     if silent:
                         return None
                     if refusal_text:

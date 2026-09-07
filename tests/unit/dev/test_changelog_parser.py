@@ -1,7 +1,7 @@
 from chutils.dev.changelog_parser import (
-    parse_release_body,
     filter_releases_by_version_range,
     generate_migration_context_markdown,
+    parse_release_body,
 )
 
 
@@ -60,7 +60,9 @@ def test_parse_release_body_custom_headers():
 * setup_logger: Добавлена поддержка аргумента level наряду с log_level.
 """
     result = parse_release_body(body)
-    assert result["new_api"] == ["setup_logger: Добавлена поддержка аргумента level наряду с log_level."]
+    assert result["new_api"] == [
+        "setup_logger: Добавлена поддержка аргумента level наряду с log_level."
+    ]
 
 
 def test_parse_release_body_bold_markdown_preservation():
@@ -68,7 +70,6 @@ def test_parse_release_body_bold_markdown_preservation():
     body = "- **DatabaseManager**: Added connection pooling"
     result = parse_release_body(body)
     assert result["new_api"] == ["**DatabaseManager**: Added connection pooling"]
-
 
 
 def test_parse_release_body_empty():

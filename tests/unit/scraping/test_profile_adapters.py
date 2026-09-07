@@ -1,7 +1,9 @@
 """Тесты адаптеров профилей браузеров (nodriver, playwright, selenium)."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
+
 from chutils.scraping.profiles.adapters.nodriver import (
     export_nodriver_profile,
     import_nodriver_profile,
@@ -14,7 +16,6 @@ from chutils.scraping.profiles.adapters.selenium import (
     export_selenium_profile,
     import_selenium_profile,
 )
-from chutils.scraping.profiles.models import BrowserProfile, CookieData, HeaderData, StorageData
 
 
 @pytest.mark.asyncio

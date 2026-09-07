@@ -4,10 +4,13 @@ import importlib.util
 import os
 import typing as t
 
+from typing_extensions import Self
+
 T = t.TypeVar("T", bound="BaseEnvManifest")
 
 
 # --- Проверка доступности внешних библиотек (Discovery) ---
+
 
 def _is_installed(package_name: str) -> bool:
     """Проверяет наличие пакета в системе без его импорта."""
@@ -53,7 +56,7 @@ def has_watchdog() -> bool:
 
 def is_rich_enabled() -> bool:
     """Централизованная проверка: доступен ли Rich и разрешен ли он настройками.
-    
+
     Учитывает:
     - Наличие установленного пакета rich.
     - Переменные окружения NO_COLOR, CH_NO_COLOR.
@@ -65,9 +68,24 @@ def is_rich_enabled() -> bool:
     if not RICH_AVAILABLE:
         return False
 
-    no_color = os.getenv("NO_COLOR", "").lower() in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
-    ch_no_color = os.getenv("CH_NO_COLOR", "").lower() in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
-    ch_no_rich = os.getenv("CH_NO_RICH", "").lower() in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
+    no_color = os.getenv("NO_COLOR", "").lower() in [
+        "true",
+        "1",
+        "yes",
+        "y",
+    ]  # chutils: ignore[ChutilsIntegrationRule]
+    ch_no_color = os.getenv("CH_NO_COLOR", "").lower() in [
+        "true",
+        "1",
+        "yes",
+        "y",
+    ]  # chutils: ignore[ChutilsIntegrationRule]
+    ch_no_rich = os.getenv("CH_NO_RICH", "").lower() in [
+        "true",
+        "1",
+        "yes",
+        "y",
+    ]  # chutils: ignore[ChutilsIntegrationRule]
 
     return not (no_color or ch_no_color or ch_no_rich)
 
@@ -85,7 +103,12 @@ def is_otel_enabled() -> bool:
     if not OTEL_AVAILABLE:
         return False
 
-    return os.getenv("CH_DISABLE_TRACING", "").lower() not in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
+    return os.getenv("CH_DISABLE_TRACING", "").lower() not in [
+        "true",
+        "1",
+        "yes",
+        "y",
+    ]  # chutils: ignore[ChutilsIntegrationRule]
 
 
 if PYDANTIC_AVAILABLE:
@@ -95,7 +118,7 @@ if PYDANTIC_AVAILABLE:
         """Базовый манифест переменных окружения на базе Pydantic."""
 
         @classmethod
-        def load(cls: type[T]) -> T:
+        def load(cls) -> Self:
             """Загружает и валидирует переменные окружения.
 
             Returns:
@@ -111,8 +134,8 @@ if PYDANTIC_AVAILABLE:
             # Инициализация SecretManager для поиска отсутствующих секретов
             secret_mgr = None
             try:
-                from chutils.secret_manager import SecretManager
                 from chutils.config import get_config_value
+                from chutils.secret_manager import SecretManager
 
                 service_name = get_config_value("App", "name", None)
                 if not service_name:
@@ -122,7 +145,9 @@ if PYDANTIC_AVAILABLE:
                 pass
 
             for field_name, field_info in cls.model_fields.items():
-                val = os.environ.get(field_name)  # chutils: ignore[ChutilsIntegrationRule]
+                val = os.environ.get(
+                    field_name
+                )  # chutils: ignore[ChutilsIntegrationRule]
 
                 # Ищем в SecretManager, если переменная секретная и отсутствует в os.environ
                 if val is None and secret_mgr is not None:
@@ -171,6 +196,7 @@ if PYDANTIC_AVAILABLE:
                     ) from e
                 raise e
 else:
+
     class BaseEnvManifest:
         """Заглушка манифеста переменных окружения (Pydantic не установлен)."""
 
@@ -191,4 +217,3 @@ else:
                 dependency="pydantic",
                 hint="Установите его: pip install chutils[pydantic]",
             )
-

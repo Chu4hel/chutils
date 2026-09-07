@@ -1,7 +1,7 @@
 """
 Управление жизненным циклом приложения.
 
-Обеспечивает механизмы регистрации функций очистки (cleanup callbacks), 
+Обеспечивает механизмы регистрации функций очистки (cleanup callbacks),
 которые будут выполнены при завершении работы приложения.
 """
 
@@ -13,8 +13,8 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 import signal
 import sys
 import time
-from collections.abc import Callable, Awaitable
-from typing import Union, Any, TYPE_CHECKING, cast
+from collections.abc import Awaitable, Callable
+from typing import TYPE_CHECKING, Any, Union, cast
 
 from chutils.config import get_config_int
 
@@ -54,8 +54,10 @@ class LifecycleManager:
         """
         if func not in self._cleanup_callbacks:
             self._cleanup_callbacks.append(func)
-            logger.debug("Зарегистрирована функция очистки: %s",
-                         func.__name__ if hasattr(func, '__name__') else str(func))
+            logger.debug(
+                "Зарегистрирована функция очистки: %s",
+                func.__name__ if hasattr(func, "__name__") else str(func),
+            )
         return func
 
     def get_cleanup_callbacks(self) -> list[CleanupCallback]:
@@ -89,7 +91,9 @@ class LifecycleManager:
                 old_handler = signal.signal(sig, self._handle_signal)
                 self._old_signal_handlers[sig] = old_handler
             except (ValueError, RuntimeError) as e:
-                logger.warning("Не удалось установить обработчик для сигнала %s: %s", sig, e)
+                logger.warning(
+                    "Не удалось установить обработчик для сигнала %s: %s", sig, e
+                )
 
         self._setup_done = True
         logger.debug("Настроен Graceful Shutdown для сигналов: %s", target_signals)
@@ -113,10 +117,16 @@ class LifecycleManager:
         except ValueError:
             sig_name = str(signum)
 
-        logger.info("Получен сигнал %s (%s). Запускается процесс завершения работы...", signum, sig_name)
+        logger.info(
+            "Получен сигнал %s (%s). Запускается процесс завершения работы...",
+            signum,
+            sig_name,
+        )
 
         if self._is_shutting_down:
-            logger.warning("Процесс завершения уже запущен. Повторный сигнал игнорируется.")
+            logger.warning(
+                "Процесс завершения уже запущен. Повторный сигнал игнорируется."
+            )
             return
 
         self._run_cleanup()
@@ -164,9 +174,9 @@ class LifecycleManager:
         logger.info("Выполнение функций очистки (%d)...", len(callbacks))
         await self._execute_all(callbacks, float(timeout))
 
-
-
-    async def _execute_all(self, callbacks: list[CleanupCallback], timeout: float) -> None:
+    async def _execute_all(
+        self, callbacks: list[CleanupCallback], timeout: float
+    ) -> None:
         """
         Асинхронно выполняет все коллбэки с учетом общего таймаута.
         """
@@ -175,7 +185,10 @@ class LifecycleManager:
         for func in callbacks:
             elapsed = time.time() - start_time
             if elapsed >= timeout:
-                logger.error("Превышен таймаут очистки (%ds). Оставшиеся функции не будут выполнены.", timeout)
+                logger.error(
+                    "Превышен таймаут очистки (%ds). Оставшиеся функции не будут выполнены.",
+                    timeout,
+                )
                 break
 
             try:
@@ -184,11 +197,17 @@ class LifecycleManager:
                 else:
                     # Выполняем синхронную функцию
                     cast(Callable[[], Any], func)()
-                logger.debug("Успешно выполнена очистка: %s",
-                             func.__name__ if hasattr(func, '__name__') else str(func))
+                logger.debug(
+                    "Успешно выполнена очистка: %s",
+                    func.__name__ if hasattr(func, "__name__") else str(func),
+                )
             except Exception as e:
-                logger.error("Ошибка при выполнении функции очистки %s: %s",
-                             func.__name__ if hasattr(func, '__name__') else str(func), e, exc_info=True)
+                logger.error(
+                    "Ошибка при выполнении функции очистки %s: %s",
+                    func.__name__ if hasattr(func, "__name__") else str(func),
+                    e,
+                    exc_info=True,
+                )
 
     def _clear_registry(self) -> None:
         """
@@ -343,4 +362,3 @@ def lifecycle(
 
 
 async_lifecycle = lifecycle
-

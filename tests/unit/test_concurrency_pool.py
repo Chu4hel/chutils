@@ -23,7 +23,9 @@ async def test_worker_pool_async_handler() -> None:
         processed.append(task.url)
 
     limiter = DomainRateLimiter(default_delay=0.01)
-    pool = WorkerPool(queue=queue, handler=sample_handler, limiter=limiter, max_workers=3)
+    pool = WorkerPool(
+        queue=queue, handler=sample_handler, limiter=limiter, max_workers=3
+    )
 
     await queue.push(ScrapingTask(url="https://site1.com/p1"))
     await queue.push(ScrapingTask(url="https://site2.com/p2"))

@@ -2,23 +2,23 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 
 from .base import MetricsProvider
 from .in_memory import InMemoryMetricsProvider
-from .prometheus import PrometheusMetricsProvider, PROMETHEUS_AVAILABLE
-from .timer import timer, TimerContext
+from .prometheus import PROMETHEUS_AVAILABLE, PrometheusMetricsProvider
+from .timer import TimerContext, timer
 
 __all__ = [
-    "MetricsProvider",
-    "InMemoryMetricsProvider",
-    "PrometheusMetricsProvider",
     "PROMETHEUS_AVAILABLE",
-    "get_provider",
-    "set_provider",
-    "increment",
-    "set_gauge",
-    "observe",
-    "generate_latest",
-    "clear",
-    "timer",
+    "InMemoryMetricsProvider",
+    "MetricsProvider",
+    "PrometheusMetricsProvider",
     "TimerContext",
+    "clear",
+    "generate_latest",
+    "get_provider",
+    "increment",
+    "observe",
+    "set_gauge",
+    "set_provider",
+    "timer",
 ]
 
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ _active_provider: MetricsProvider | None = None
 
 def get_provider() -> MetricsProvider:
     """Получить текущий активный провайдер метрик.
-    
+
     Если провайдер не задан вручную, инициализирует PrometheusMetricsProvider
     (если библиотека доступна) или InMemoryMetricsProvider в качестве fallback.
 
@@ -40,7 +40,8 @@ def get_provider() -> MetricsProvider:
     if _active_provider is None:
         # Пытаемся подгрузить плагины метрик
         try:
-            from ..plugins import registry, MetricsPlugin
+            from ..plugins import MetricsPlugin, registry
+
             registry.discover_plugins("chutils.plugins.metrics")
             external_metrics_providers = registry.get_plugins_by_type(MetricsPlugin)
             if external_metrics_providers:
@@ -48,7 +49,8 @@ def get_provider() -> MetricsProvider:
                 _active_provider = plugin
                 plugin_name = getattr(plugin, "name", "unknown")
                 logger.debug(
-                    f"Инициализирован внешний MetricsPlugin '{plugin_name}' в качестве основного провайдера метрик.")
+                    f"Инициализирован внешний MetricsPlugin '{plugin_name}' в качестве основного провайдера метрик."
+                )
         except Exception as e:
             logger.error(f"Ошибка при поиске плагинов метрик: {e}")
 
@@ -58,6 +60,7 @@ def get_provider() -> MetricsProvider:
         # делаем импорт локально
         try:
             from chutils import get_config_value
+
             prefer_prometheus = get_config_value("Metrics", "prometheus_enabled", True)
         except Exception:
             prefer_prometheus = True
@@ -65,14 +68,19 @@ def get_provider() -> MetricsProvider:
         if prefer_prometheus and PROMETHEUS_AVAILABLE:
             try:
                 _active_provider = PrometheusMetricsProvider()
-                logger.debug("Инициализирован PrometheusMetricsProvider в качестве основного провайдера метрик.")
+                logger.debug(
+                    "Инициализирован PrometheusMetricsProvider в качестве основного провайдера метрик."
+                )
             except Exception as e:
                 logger.warning(
-                    f"Не удалось инициализировать PrometheusMetricsProvider: {e}. Переключение на In-Memory.")
+                    f"Не удалось инициализировать PrometheusMetricsProvider: {e}. Переключение на In-Memory."
+                )
                 _active_provider = InMemoryMetricsProvider()
         else:
             _active_provider = InMemoryMetricsProvider()
-            logger.debug("Инициализирован InMemoryMetricsProvider в качестве основного провайдера метрик.")
+            logger.debug(
+                "Инициализирован InMemoryMetricsProvider в качестве основного провайдера метрик."
+            )
 
     return _active_provider
 
@@ -87,7 +95,9 @@ def set_provider(provider: MetricsProvider) -> None:
     _active_provider = provider
 
 
-def increment(name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
+def increment(
+    name: str, value: float = 1.0, labels: dict[str, str] | None = None
+) -> None:
     """Увеличить счетчик (Counter) на заданное значение.
 
     Args:

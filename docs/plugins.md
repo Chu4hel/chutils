@@ -60,6 +60,7 @@ datadog_metrics = "chutils_datadog.metrics:DatadogMetricsPlugin"
 ```python
 from chutils.plugins import register_plugin, SecretProviderPlugin
 
+
 class LocalSecretPlugin(SecretProviderPlugin):
     @property
     def name(self) -> str:
@@ -76,6 +77,7 @@ class LocalSecretPlugin(SecretProviderPlugin):
     def delete(self, key: str, service_name: str) -> bool:
         return True
 
+
 # Явно регистрируем плагин до инициализации подсистем
 register_plugin(LocalSecretPlugin())
 ```
@@ -91,6 +93,7 @@ register_plugin(LocalSecretPlugin())
 ```python
 from typing import Optional
 from chutils.plugins import SecretProviderPlugin
+
 
 class VaultSecretPlugin(SecretProviderPlugin):
     @property
@@ -119,6 +122,7 @@ from typing import Any
 from chutils.plugins import ConfigProviderPlugin
 from chutils.typing import JSONDict
 
+
 class TOMLConfigPlugin(ConfigProviderPlugin):
     @property
     def name(self) -> str:
@@ -131,6 +135,7 @@ class TOMLConfigPlugin(ConfigProviderPlugin):
     def load(self, path: str) -> JSONDict:
         # Логика парсинга TOML
         import toml
+
         with open(path, "r", encoding="utf-8") as f:
             return toml.load(f)
 
@@ -148,6 +153,7 @@ import logging
 from typing import Any
 from chutils.plugins import LoggerHandlerPlugin
 
+
 class SentryHandlerPlugin(LoggerHandlerPlugin):
     @property
     def name(self) -> str:
@@ -157,6 +163,7 @@ class SentryHandlerPlugin(LoggerHandlerPlugin):
         # Инициализируем и возвращаем хэндлер
         # kwargs содержит объединенные параметры настроек логгера
         from sentry_sdk.integrations.logging import EventHandler
+
         return EventHandler()
 ```
 
@@ -225,6 +232,7 @@ class AdvancedStealthPlugin(BrowserStealthPlugin):
 from typing import Any
 from chutils.plugins import HttpBackendPlugin
 
+
 class CurlCffiHttpPlugin(HttpBackendPlugin):
     @property
     def name(self) -> str:
@@ -233,11 +241,13 @@ class CurlCffiHttpPlugin(HttpBackendPlugin):
     def create_client(self, **kwargs: Any) -> Any:
         # Инициализация синхронной сессии curl_cffi.requests.Session
         from curl_cffi import requests
+
         return requests.Session(**kwargs)
 
     def create_async_client(self, **kwargs: Any) -> Any:
         # Инициализация асинхронной сессии curl_cffi.requests.AsyncSession
         from curl_cffi import requests
+
         return requests.AsyncSession(**kwargs)
 ```
 

@@ -1,15 +1,11 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING
 
 import pytest
 
 from chutils.diagnostics.manager import DiagnosticsManager
 from chutils.diagnostics.web import get_fastapi_health_handler, get_flask_health_handler
-
-if TYPE_CHECKING:
-    from flask import Response
 
 
 @pytest.mark.asyncio
@@ -119,6 +115,7 @@ async def test_fastapi_helper() -> None:
     assert response.status_code == 200
     # Проверяем содержимое
     import json
+
     body = json.loads(response.body.decode())
     assert body["status"] == "HEALTHY"
 
@@ -169,13 +166,14 @@ def test_flask_helper() -> None:
 def test_cli_diagnostics_command(mocker, capsys) -> None:
     """Проверяет запуск CLI-команды dev diagnostics."""
     import sys
+
     from chutils.cli import main
-    
+
     # Мокаем пути к конфигам, чтобы встроенная проверка config не падала в тестовом окружении
     mocker.patch("chutils.get_config_file_path", return_value=None)
-    
+
     test_args = ["chutils", "dev", "diagnostics"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -189,15 +187,16 @@ def test_cli_diagnostics_command(mocker, capsys) -> None:
 
 def test_cli_diagnostics_command_json(mocker, capsys) -> None:
     """Проверяет запуск CLI-команды dev diagnostics с флагом --json."""
-    import sys
     import json
+    import sys
+
     from chutils.cli import main
-    
+
     # Мокаем пути к конфигам, чтобы встроенная проверка config не падала в тестовом окружении
     mocker.patch("chutils.get_config_file_path", return_value=None)
-    
+
     test_args = ["chutils", "dev", "diagnostics", "--json"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -209,10 +208,10 @@ def test_cli_diagnostics_command_json(mocker, capsys) -> None:
     assert "results" in data
 
 
-
 def test_models_without_pydantic(mocker) -> None:
     """Проверяет работоспособность dataclass-fallback моделей при отсутствии Pydantic."""
     import importlib
+
     import chutils.diagnostics.manager
 
     mocker.patch("chutils.env.has_pydantic", return_value=False)
@@ -222,25 +221,17 @@ def test_models_without_pydantic(mocker) -> None:
         importlib.reload(chutils.diagnostics.models)
         importlib.reload(chutils.diagnostics.manager)
 
-        from chutils.diagnostics.models import CheckResult, HealthReport
         from chutils.diagnostics.manager import DiagnosticsManager
+        from chutils.diagnostics.models import CheckResult, HealthReport
 
         res = CheckResult(
-            name="test",
-            success=True,
-            critical=False,
-            execution_time=0.1,
-            message="ok"
+            name="test", success=True, critical=False, execution_time=0.1, message="ok"
         )
         dump = res.model_dump()
         assert dump["name"] == "test"
         assert dump["success"] is True
 
-        report = HealthReport(
-            status="HEALTHY",
-            results=[res],
-            total_time=0.1
-        )
+        report = HealthReport(status="HEALTHY", results=[res], total_time=0.1)
         report_dump = report.model_dump()
         assert report_dump["status"] == "HEALTHY"
         assert len(report_dump["results"]) == 1
@@ -332,20 +323,25 @@ def test_built_in_check_config_failure(mocker) -> None:
 
 def test_built_in_check_keyring_failures(mocker) -> None:
     """Проверяет встроенную проверку keyring при ошибках доступа."""
-    from chutils.diagnostics.manager import check_keyring
     from keyring.errors import NoKeyringError
+
+    from chutils.diagnostics.manager import check_keyring
 
     mocker.patch("chutils.secret_manager.providers.KEYRING_AVAILABLE", True)
     import keyring
 
     # Кейс 1: NoKeyringError
-    mocker.patch.object(keyring, "set_password", side_effect=NoKeyringError("No keyring"))
+    mocker.patch.object(
+        keyring, "set_password", side_effect=NoKeyringError("No keyring")
+    )
     success, msg = check_keyring()
     assert success is False
     assert "Системное хранилище секретов недоступно" in msg
 
     # Кейс 2: Любая другая ошибка
-    mocker.patch.object(keyring, "set_password", side_effect=RuntimeError("Keyring locked"))
+    mocker.patch.object(
+        keyring, "set_password", side_effect=RuntimeError("Keyring locked")
+    )
     success, msg = check_keyring()
     assert success is False
     assert "Ошибка при обращении к keyring" in msg
@@ -356,7 +352,9 @@ def test_web_helpers_import_errors(mocker) -> None:
     manager = DiagnosticsManager()
 
     # FastAPI ImportError
-    mocker.patch("builtins.__import__", side_effect=ImportError("No module named fastapi"))
+    mocker.patch(
+        "builtins.__import__", side_effect=ImportError("No module named fastapi")
+    )
     with pytest.raises(RuntimeError) as exc:
         get_fastapi_health_handler(manager)
     assert "FastAPI не установлен" in str(exc.value)

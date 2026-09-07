@@ -1,13 +1,15 @@
 """Flask интеграция для валидации VKMA launchParams."""
 
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable
+from typing import Any
 
 from chutils.vkma.exceptions import VKMAValidationError
 from chutils.vkma.validator import parse_vkma_launch_params
 
 try:
     from flask import g, jsonify, request
+
     HAS_FLASK = True
 except ImportError:
     HAS_FLASK = False
@@ -26,11 +28,14 @@ def require_vkma_auth(
     Returns:
         Декоратор функции-обработчика Flask.
     """
+
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             if not HAS_FLASK:
-                raise RuntimeError("Пакет flask не установлен. Установите chutils[vkma] или flask.")
+                raise RuntimeError(
+                    "Пакет flask не установлен. Установите chutils[vkma] или flask."
+                )
 
             auth_header = request.headers.get("Authorization")
             raw_params: str | dict[str, Any] | None = None
@@ -43,7 +48,9 @@ def require_vkma_auth(
                 raw_params = request.headers.get("X-VKMA-Init-Data")
 
             if not raw_params:
-                return jsonify({"detail": "Отсутствуют параметры авторизации VKMA."}), 401
+                return jsonify(
+                    {"detail": "Отсутствуют параметры авторизации VKMA."}
+                ), 401
 
             try:
                 vkma_params = parse_vkma_launch_params(
@@ -53,7 +60,9 @@ def require_vkma_auth(
                 )
                 g.vkma_params = vkma_params
             except VKMAValidationError as exc:
-                return jsonify({"detail": f"Ошибка авторизации VKMA: {exc.message}"}), 401
+                return jsonify(
+                    {"detail": f"Ошибка авторизации VKMA: {exc.message}"}
+                ), 401
 
             return func(*args, **kwargs)
 

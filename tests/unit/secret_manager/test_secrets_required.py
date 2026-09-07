@@ -1,4 +1,5 @@
 """Тесты для параметров fallback и required в SecretManager.get_secret / aget_secret."""
+
 import pytest
 
 from chutils.exceptions import SecretNotFoundError
@@ -12,6 +13,7 @@ def sm(mocker):
     """SecretManager с мок-провайдером, у которого нет секретов."""
     mocker.patch("chutils.secret_manager.core._warn_about_missing_keyring")
     from chutils.secret_manager.providers import EnvProvider
+
     return SecretManager(SERVICE_NAME, providers=[EnvProvider()])
 
 

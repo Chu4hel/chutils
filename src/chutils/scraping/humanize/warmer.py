@@ -5,14 +5,14 @@ import urllib.parse
 from typing import Any
 
 from .actions import (
-    async_move_mouse,
-    async_scroll_to,
-    async_human_sleep,
-    move_mouse,
-    scroll_to,
-    human_sleep,
     _is_nodriver,
     _is_playwright,
+    async_human_sleep,
+    async_move_mouse,
+    async_scroll_to,
+    human_sleep,
+    move_mouse,
+    scroll_to,
 )
 
 DEFAULT_TRUST_SITES = [
@@ -28,7 +28,7 @@ DEFAULT_TRUST_SITES = [
 class ProfileWarmer:
     """
     Класс для асинхронного прогрева браузерных профилей (Playwright, nodriver).
-    
+
     Обеспечивает естественный цифровой след путем посещения сайтов, скроллинга,
     имитации мыши и переходов по внутренним ссылкам.
     """
@@ -81,23 +81,38 @@ class ProfileWarmer:
                 first_run = True
 
                 # Имитация человеческих действий
-                while first_run or (asyncio.get_event_loop().time() - start_time < site_duration):
+                while first_run or (
+                    asyncio.get_event_loop().time() - start_time < site_duration
+                ):
                     first_run = False
                     action = random.choice(
-                        ["scroll", "mouse", "sleep", "click_link" if click_random_links else "sleep"]
+                        [
+                            "scroll",
+                            "mouse",
+                            "sleep",
+                            "click_link" if click_random_links else "sleep",
+                        ]
                     )
 
                     if action == "scroll":
                         scroll_x = random.randint(0, 50)
                         scroll_y = random.randint(150, 900)
                         await async_scroll_to(
-                            self.browser_or_tab, scroll_x, scroll_y, steps=random.randint(5, 12), delay_between_steps=0.01
+                            self.browser_or_tab,
+                            scroll_x,
+                            scroll_y,
+                            steps=random.randint(5, 12),
+                            delay_between_steps=0.01,
                         )
                     elif action == "mouse":
                         dest_x = random.randint(50, 750)
                         dest_y = random.randint(50, 550)
                         await async_move_mouse(
-                            self.browser_or_tab, dest_x, dest_y, steps=random.randint(10, 20), delay_between_steps=0.005
+                            self.browser_or_tab,
+                            dest_x,
+                            dest_y,
+                            steps=random.randint(10, 20),
+                            delay_between_steps=0.005,
                         )
                     elif action == "sleep":
                         await async_human_sleep(1.0, 3.0)
@@ -167,20 +182,33 @@ class SyncProfileWarmer:
                 while first_run or (time.time() - start_time < site_duration):
                     first_run = False
                     action = random.choice(
-                        ["scroll", "mouse", "sleep", "click_link" if click_random_links else "sleep"]
+                        [
+                            "scroll",
+                            "mouse",
+                            "sleep",
+                            "click_link" if click_random_links else "sleep",
+                        ]
                     )
 
                     if action == "scroll":
                         scroll_x = random.randint(0, 50)
                         scroll_y = random.randint(150, 900)
                         scroll_to(
-                            self.driver, scroll_x, scroll_y, steps=random.randint(5, 12), delay_between_steps=0.01
+                            self.driver,
+                            scroll_x,
+                            scroll_y,
+                            steps=random.randint(5, 12),
+                            delay_between_steps=0.01,
                         )
                     elif action == "mouse":
                         dest_x = random.randint(50, 750)
                         dest_y = random.randint(50, 550)
                         move_mouse(
-                            self.driver, dest_x, dest_y, steps=random.randint(10, 20), delay_between_steps=0.005
+                            self.driver,
+                            dest_x,
+                            dest_y,
+                            steps=random.randint(10, 20),
+                            delay_between_steps=0.005,
                         )
                     elif action == "sleep":
                         human_sleep(1.0, 3.0)

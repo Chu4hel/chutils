@@ -14,12 +14,10 @@ from chutils.exceptions import ChutilsException, OptionalDependencyError
 
 class ConfigLoadError(ChutilsException):
     """Исключение при невозможности прочитать файл конфигурации."""
-    pass
 
 
 class InvalidPortError(ChutilsException):
     """Исключение при некорректном формате порта."""
-    pass
 
 
 def read_system_config(file_path: str) -> str:
@@ -65,7 +63,9 @@ def parse_port(port_str: str) -> int:
     try:
         port = int(port_str)
         if not (1 <= port <= 65535):
-            raise InvalidPortError(f"Номер порта вне допустимого диапазона (1-65535): {port}")
+            raise InvalidPortError(
+                f"Номер порта вне допустимого диапазона (1-65535): {port}"
+            )
         return port
     except ValueError as e:
         raise InvalidPortError(
@@ -82,6 +82,7 @@ def use_crypto_feature() -> str:
     """
     try:
         from chutils.crypto import encrypt_portable
+
         return encrypt_portable("secret_data", seed="my_seed")
     except OptionalDependencyError as e:
         # Хорошо: Перехватываем специфичную ошибку отсутствия зависимости.

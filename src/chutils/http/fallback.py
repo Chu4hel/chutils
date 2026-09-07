@@ -9,6 +9,7 @@ Fallback HTTP-клиент на базе стандартной библиоте
 - Базовую обработку ошибок (HTTP-статус-коды)
 - Интеграцию с ResiliencePolicy
 """
+
 from __future__ import annotations
 
 import json
@@ -17,37 +18,42 @@ import urllib.error
 import urllib.request
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .resilience import ResiliencePolicy
     from chutils.logger import ChutilsLogger
 
-_module_logger: Optional["ChutilsLogger"] = None
+    from .resilience import ResiliencePolicy
+
+_module_logger: ChutilsLogger | None = None
 
 
-def _get_log() -> "ChutilsLogger":
+def _get_log() -> ChutilsLogger:
     """Возвращает лениво инициализированный логгер модуля."""
     global _module_logger
     if _module_logger is None:
         from chutils import logger as chutils_logger
+
         _module_logger = chutils_logger.setup_logger(__name__)
     if _module_logger is None:
         raise RuntimeError("Не удалось инициализировать логгер chutils.http.fallback")
     return _module_logger
 
+
 # ─── Сенситивные заголовки для маскирования в логах ─────────────────────────
 
-_SENSITIVE_HEADERS: frozenset[str] = frozenset({
-    "authorization",
-    "x-api-key",
-    "api-key",
-    "cookie",
-    "set-cookie",
-    "token",
-    "x-auth-token",
-    "proxy-authorization",
-})
+_SENSITIVE_HEADERS: frozenset[str] = frozenset(
+    {
+        "authorization",
+        "x-api-key",
+        "api-key",
+        "cookie",
+        "set-cookie",
+        "token",
+        "x-auth-token",
+        "proxy-authorization",
+    }
+)
 
 
 def _mask_headers(headers: Mapping[str, str]) -> dict[str, str]:
@@ -152,13 +158,13 @@ class UrllibFallbackClient:
     """
 
     def __init__(
-            self,
-            *,
-            base_url: str = "",
-            default_headers: dict[str, str] | None = None,
-            timeout: float | None = 30.0,
-            policy: ResiliencePolicy | None = None,
-            sensitive_headers: set[str] | None = None,
+        self,
+        *,
+        base_url: str = "",
+        default_headers: dict[str, str] | None = None,
+        timeout: float | None = 30.0,
+        policy: ResiliencePolicy | None = None,
+        sensitive_headers: set[str] | None = None,
     ) -> None:
         """Инициализирует fallback HTTP-клиент.
 
@@ -199,8 +205,7 @@ class UrllibFallbackClient:
             Копия словаря с заменёнными значениями.
         """
         return {
-            k: "[MASKED]" if self._is_sensitive(k) else v
-            for k, v in headers.items()
+            k: "[MASKED]" if self._is_sensitive(k) else v for k, v in headers.items()
         }
 
     def _build_url(self, path: str) -> str:
@@ -217,12 +222,12 @@ class UrllibFallbackClient:
         return self.base_url + "/" + path.lstrip("/") if self.base_url else path
 
     def _do_request(
-            self,
-            method: str,
-            url: str,
-            headers: dict[str, str],
-            body: bytes | None,
-            timeout: float | None,
+        self,
+        method: str,
+        url: str,
+        headers: dict[str, str],
+        body: bytes | None,
+        timeout: float | None,
     ) -> HttpResponse:
         """Выполняет HTTP-запрос через urllib.
 
@@ -245,7 +250,7 @@ class UrllibFallbackClient:
 
         start = time.monotonic()
         try:
-            with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
                 content = resp.read()
                 elapsed = time.monotonic() - start
                 resp_headers = dict(resp.headers.items())
@@ -275,14 +280,14 @@ class UrllibFallbackClient:
             ) from e
 
     def request(
-            self,
-            method: str,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        method: str,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет HTTP-запрос с заданным методом.
 
@@ -333,7 +338,7 @@ class UrllibFallbackClient:
         else:
             resp = _call()
 
-        assert isinstance(resp, HttpResponse)  # noqa: S101
+        assert isinstance(resp, HttpResponse)
 
         _get_log().debug(
             "← %s %s  status=%d  elapsed=%.3fs",
@@ -344,7 +349,13 @@ class UrllibFallbackClient:
         )
         return resp
 
-    def get(self, path: str, *, headers: dict[str, str] | None = None, timeout: float | None = None) -> HttpResponse:
+    def get(
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        timeout: float | None = None,
+    ) -> HttpResponse:
         """Выполняет GET-запрос.
 
         Args:
@@ -358,13 +369,13 @@ class UrllibFallbackClient:
         return self.request("GET", path, headers=headers, timeout=timeout)
 
     def post(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет POST-запрос.
 
@@ -378,16 +389,23 @@ class UrllibFallbackClient:
         Returns:
             Объект HttpResponse.
         """
-        return self.request("POST", path, headers=headers, json_data=json_data, data=data, timeout=timeout)
+        return self.request(
+            "POST",
+            path,
+            headers=headers,
+            json_data=json_data,
+            data=data,
+            timeout=timeout,
+        )
 
     def put(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет PUT-запрос.
 
@@ -401,9 +419,22 @@ class UrllibFallbackClient:
         Returns:
             Объект HttpResponse.
         """
-        return self.request("PUT", path, headers=headers, json_data=json_data, data=data, timeout=timeout)
+        return self.request(
+            "PUT",
+            path,
+            headers=headers,
+            json_data=json_data,
+            data=data,
+            timeout=timeout,
+        )
 
-    def delete(self, path: str, *, headers: dict[str, str] | None = None, timeout: float | None = None) -> HttpResponse:
+    def delete(
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        timeout: float | None = None,
+    ) -> HttpResponse:
         """Выполняет DELETE-запрос.
 
         Args:
@@ -417,13 +448,13 @@ class UrllibFallbackClient:
         return self.request("DELETE", path, headers=headers, timeout=timeout)
 
     def patch(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет PATCH-запрос.
 
@@ -437,7 +468,14 @@ class UrllibFallbackClient:
         Returns:
             Объект HttpResponse.
         """
-        return self.request("PATCH", path, headers=headers, json_data=json_data, data=data, timeout=timeout)
+        return self.request(
+            "PATCH",
+            path,
+            headers=headers,
+            json_data=json_data,
+            data=data,
+            timeout=timeout,
+        )
 
     def close(self) -> None:
         """Закрывает клиент (no-op для urllib-клиента, для совместимости API)."""

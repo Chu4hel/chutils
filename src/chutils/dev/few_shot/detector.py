@@ -92,7 +92,9 @@ class ArchitectureDetector:
                     class_name = node.name
 
                     # Use Cases
-                    is_use_case = any(kw in class_name for kw in self._USE_CASE_KEYWORDS)
+                    is_use_case = any(
+                        kw in class_name for kw in self._USE_CASE_KEYWORDS
+                    )
                     if not is_use_case:
                         for base in node.bases:
                             base_str = self._base_to_str(base)

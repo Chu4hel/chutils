@@ -346,7 +346,9 @@ class LintResult:
     message: str  # Сообщение об ошибке/предупреждении
     severity: str  # Уровень критичности: "error" или "warn"
     file_path: Optional[str]  # Абсолютный путь к файлу с проблемой (опционально)
-    line_number: Optional[int]  # Номер строки с проблемой (1-индексированный, опционально)
+    line_number: Optional[
+        int
+    ]  # Номер строки с проблемой (1-индексированный, опционально)
     fix_suggestion: Optional[str]  # Совет по исправлению проблемы (опционально)
 
 
@@ -358,7 +360,7 @@ class Rule:
     def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
         """
         Выполняет проверку. Должен возвращать список LintResult.
-        
+
         Args:
             base_dir: Абсолютный путь к корню проекта.
             files: Список абсолютных путей ко всем неигнорируемым файлам проекта.
@@ -394,7 +396,7 @@ class AnyTypeVisitor(ast.NodeVisitor):
                     severity="error",
                     file_path=self.file_path,
                     line_number=node.lineno,
-                    fix_suggestion="Используйте более конкретный тип или Union/Generic вместо Any."
+                    fix_suggestion="Используйте более конкретный тип или Union/Generic вместо Any.",
                 )
             )
         self.generic_visit(node)

@@ -7,7 +7,7 @@ def test_cli_show_paths_basic(cli_runner, project_with_marker):
     result = cli_runner.invoke(["show-paths"])
     assert result.exit_code == 0
     # Приводим пути к единому формату для надежности
-    assert str(project_root).replace('\\', '/') in result.stdout.replace('\\', '/')
+    assert str(project_root).replace("\\", "/") in result.stdout.replace("\\", "/")
 
 
 def test_cli_show_paths_json(cli_runner, project_with_marker):
@@ -25,9 +25,12 @@ def test_cli_show_paths_json(cli_runner, project_with_marker):
 def test_cli_show_paths_not_found(cli_runner, monkeypatch, config_fs):
     """Проверяет вывод, когда корень не найден."""
     from chutils import config
+
     # Сбрасываем кэш путей и мокаем find_project_root
     config._cm._reset()
-    monkeypatch.setattr("chutils.config.utils.find_project_root", lambda *args, **kwargs: None)
+    monkeypatch.setattr(
+        "chutils.config.utils.find_project_root", lambda *args, **kwargs: None
+    )
 
     result = cli_runner.invoke(["show-paths"])
     assert result.exit_code == 0
@@ -43,4 +46,7 @@ def test_cli_show_paths_rich(cli_runner, config_fs, mocker):
 
     result = cli_runner.invoke(["show-paths"])
     assert result.exit_code == 0
-    assert "Диагностика путей конфигурации" in result.stdout or "Корень проекта" in result.stdout
+    assert (
+        "Диагностика путей конфигурации" in result.stdout
+        or "Корень проекта" in result.stdout
+    )

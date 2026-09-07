@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from chutils.exceptions import ChutilsConfigurationError
-from chutils.scraping.captcha.base import BaseCaptchaSolver, BaseAsyncCaptchaSolver
+from chutils.scraping.captcha.base import BaseAsyncCaptchaSolver, BaseCaptchaSolver
 
 
 class DummySolver(BaseCaptchaSolver):

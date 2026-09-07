@@ -100,7 +100,7 @@ from chutils.scraping.humanize import (
     async_click,
     async_scroll_to,
     async_type_text,
-    async_human_sleep
+    async_human_sleep,
 )
 
 # Плавное движение мыши (по умолчанию используется WindMouse или Bezier)
@@ -113,7 +113,9 @@ await async_click(page, selector="#submit-btn")
 await async_scroll_to(page, x=0, y=800)
 
 # Ввод текста со скоростью 40 WPM и вероятностью опечаток 5%
-await async_type_text(page, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0)
+await async_type_text(
+    page, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0
+)
 
 # Асинхронная пауза "на чтение" от 1 до 3 секунд
 await async_human_sleep(1.0, 3.0)
@@ -141,7 +143,9 @@ await async_click(tab, x=400, y=300)
 await async_scroll_to(tab, x=0, y=800)
 
 # Ввод текста с опечатками (через CDP dispatchKeyEvent)
-await async_type_text(tab, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0)
+await async_type_text(
+    tab, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0
+)
 ```
 
 ### Обертки для Selenium (синхронные)
@@ -152,7 +156,7 @@ from chutils.scraping.humanize import (
     click,
     scroll_to,
     type_text,
-    human_sleep
+    human_sleep,
 )
 
 # Плавное движение мыши с физической моделью WindMouse
@@ -165,7 +169,9 @@ click(driver, selector="#submit-btn")
 scroll_to(driver, x=0, y=800)
 
 # Ввод текста
-type_text(driver, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0)
+type_text(
+    driver, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0
+)
 
 # Синхронная пауза
 human_sleep(1.0, 3.0)
@@ -201,7 +207,7 @@ await apply_antidetect_playwright(
     webgl_vendor="AMD Inc.",
     webgl_renderer="Radeon RX 6800",
     hardware_concurrency=12,
-    device_memory=16
+    device_memory=16,
 )
 
 # Для Selenium (применяется к WebDriver через CDP)
@@ -210,7 +216,7 @@ apply_antidetect_selenium(
     webgl_vendor="Intel",
     webgl_renderer="Intel UHD Graphics",
     hardware_concurrency=4,
-    device_memory=8
+    device_memory=8,
 )
 
 # Для nodriver (применяется к вкладке Tab через CDP протокол)
@@ -219,7 +225,7 @@ await apply_antidetect_nodriver(
     webgl_vendor="NVIDIA Corporation",
     webgl_renderer="NVIDIA GeForce RTX 4090",
     hardware_concurrency=24,
-    device_memory=64
+    device_memory=64,
 )
 ```
 
@@ -255,9 +261,7 @@ warmer = ProfileWarmer(page_or_tab)
 # Прогрев: посетит 3 случайных сайта из встроенного списка
 # На каждом сайте проведет от 10 до 20 секунд, имитируя скроллинг, мышь и переходы по ссылкам
 await warmer.warm_up(
-    sites_count=3,
-    duration_per_site=(10.0, 20.0),
-    click_random_links=True
+    sites_count=3, duration_per_site=(10.0, 20.0), click_random_links=True
 )
 ```
 
@@ -269,11 +273,7 @@ from chutils.scraping.humanize import SyncProfileWarmer
 # Принимает экземпляр Selenium WebDriver
 warmer = SyncProfileWarmer(driver)
 
-warmer.warm_up(
-    sites_count=3,
-    duration_per_site=(10.0, 20.0),
-    click_random_links=True
-)
+warmer.warm_up(sites_count=3, duration_per_site=(10.0, 20.0), click_random_links=True)
 ```
 
 ---
@@ -291,12 +291,17 @@ from chutils.scraping.concurrency import (
     WorkerPool,
 )
 
+
 async def main():
     # Очередь с включенным трекингом Prometheus-метрических показателей
     queue = InMemoryTaskQueue(name="wiki_queue", enable_metrics=True)
-    await queue.push(ScrapingTask(url="https://ru.wikipedia.org/wiki/Python", priority=5))
+    await queue.push(
+        ScrapingTask(url="https://ru.wikipedia.org/wiki/Python", priority=5)
+    )
 
-    limiter = DomainRateLimiter(default_delay=0.5, domain_rules={"*.wikipedia.org": 1.0})
+    limiter = DomainRateLimiter(
+        default_delay=0.5, domain_rules={"*.wikipedia.org": 1.0}
+    )
 
     async def process(task):
         print(f"Обработка: {task.url}")

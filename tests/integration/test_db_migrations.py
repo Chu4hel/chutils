@@ -8,17 +8,15 @@
 - status: вывод текущей ревизии.
 - history: вывод истории миграций.
 """
+
 import argparse
 import sys
-import shutil
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 import sqlalchemy as sa
-from sqlalchemy import MetaData, Column, Integer, String
-
+from sqlalchemy import Column, Integer, MetaData, String
 
 # ---------------------------------------------------------------------------
 # Фикстуры
@@ -54,7 +52,9 @@ def test_metadata() -> MetaData:
 
 
 @pytest.fixture
-def mock_config(sqlite_url: str, tmp_migrations_dir: Path, test_metadata: MetaData) -> MagicMock:
+def mock_config(
+    sqlite_url: str, tmp_migrations_dir: Path, test_metadata: MetaData
+) -> MagicMock:
     """Создаёт мок для _resolve_config, возвращающий тестовые параметры."""
     mock = MagicMock(return_value=(sqlite_url, tmp_migrations_dir, test_metadata))
     return mock
@@ -277,7 +277,6 @@ class TestAlembicIntegration:
     ) -> None:
         """Проверяет, что status без директории миграций выводит подсказку."""
         from chutils.commands.db import DbCommand
-        from chutils.cli_utils import get_console
 
         assert not tmp_migrations_dir.exists()
 

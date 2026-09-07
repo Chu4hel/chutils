@@ -5,13 +5,14 @@ import json
 from typing import Any
 
 from chutils import config
+
 from .base import BaseCommand
 
 
 class ShowPathsCommand(BaseCommand):
     """
     Диагностика путей поиска файлов конфигурации.
-    
+
     Показывает корень проекта, обнаруженные файлы и список маркеров,
     которые библиотека использует для поиска настроек.
     """
@@ -25,12 +26,12 @@ class ShowPathsCommand(BaseCommand):
         show_paths_parser = subparsers.add_parser(
             "show-paths",
             help="Показать пути поиска конфигурации",
-            description="Отображение путей, которые chutils использует для загрузки настроек."
+            description="Отображение путей, которые chutils использует для загрузки настроек.",
         )
         show_paths_parser.add_argument(
             "--json",
             action="store_true",
-            help="Вывод информации в формате JSON для автоматической обработки"
+            help="Вывод информации в формате JSON для автоматической обработки",
         )
         show_paths_parser.set_defaults(handler=self.handle)
 
@@ -54,7 +55,7 @@ class ShowPathsCommand(BaseCommand):
             "main_config": main_path,
             "env_config": env_path,
             "local_config": local_path,
-            "search_markers": _cm.CONFIG_MARKERS
+            "search_markers": _cm.CONFIG_MARKERS,
         }
 
         if args.json:
@@ -65,7 +66,11 @@ class ShowPathsCommand(BaseCommand):
             if is_rich_enabled():
                 from rich.table import Table
 
-                table = Table(title="Диагностика путей конфигурации", show_header=True, header_style="bold magenta")
+                table = Table(
+                    title="Диагностика путей конфигурации",
+                    show_header=True,
+                    header_style="bold magenta",
+                )
                 table.add_column("Параметр", style="cyan")
                 table.add_column("Значение", style="green")
 
@@ -76,7 +81,9 @@ class ShowPathsCommand(BaseCommand):
 
                 self.console.print(table)
 
-                self.console.print("\n[bold]Список маркеров для поиска (в порядке приоритета):[/bold]")
+                self.console.print(
+                    "\n[bold]Список маркеров для поиска (в порядке приоритета):[/bold]"
+                )
                 for marker in _cm.CONFIG_MARKERS:
                     self.console.print(f" • [yellow]{marker}[/yellow]")
             else:

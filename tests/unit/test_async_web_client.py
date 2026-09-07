@@ -37,8 +37,12 @@ async def test_async_web_client_proxy_rotation_on_retry(mocker: MockerFixture) -
         mock_response,
     ]
 
-    pool = ProxyPool(proxies=["http://proxy1:8080", "http://proxy2:8080"], strategy="round_robin")
-    client = AsyncWebClient(proxy_pool=pool, rotate_proxy=True, retries=1, retry_delay=0.01)
+    pool = ProxyPool(
+        proxies=["http://proxy1:8080", "http://proxy2:8080"], strategy="round_robin"
+    )
+    client = AsyncWebClient(
+        proxy_pool=pool, rotate_proxy=True, retries=1, retry_delay=0.01
+    )
 
     resp = await client.get("http://async-retry.example.com")
     assert resp.status_code == 200
@@ -53,7 +57,9 @@ async def test_async_web_client_rate_limit(mocker: MockerFixture) -> None:
     mock_response.status_code = 200
     mock_send.return_value = mock_response
 
-    client = AsyncWebClient(rate_limit_calls=1, rate_limit_period=10.0, rate_limit_wait=False)
+    client = AsyncWebClient(
+        rate_limit_calls=1, rate_limit_period=10.0, rate_limit_wait=False
+    )
 
     await client.get("http://async-limit.example.com")
 

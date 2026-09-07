@@ -6,36 +6,32 @@ from .base import ChutilsException, _BaseExceptionGroup
 class ConfigError(ChutilsException):
     """Общая ошибка конфигурации."""
 
-    pass
-
 
 class ConfigLoadError(ConfigError):
     """Ошибка при загрузке файла конфигурации (отсутствие файла, права доступа)."""
-
-    pass
 
 
 class ConfigParseError(ConfigError):
     """Ошибка при парсинге содержимого конфигурации (невалидный YAML/JSON/INI)."""
 
-    pass
-
 
 class ConfigKeyNotFoundError(ConfigError):
     """Ошибка: ключ или секция конфигурации не найдены."""
-
-    pass
 
 
 class ConfigValidationGroupError(_BaseExceptionGroup, ConfigError):
     """Группа ошибок валидации ключей конфигурации (отсутствие обязательных ключей)."""
 
-    def __new__(cls, message: str, exceptions: list[Exception], **context: t.Any) -> "ConfigValidationGroupError":
+    def __new__(
+        cls, message: str, exceptions: list[Exception], **context: t.Any
+    ) -> "ConfigValidationGroupError":
         # BaseExceptionGroup неизменяем, поэтому конструируем его через __new__
         self = _BaseExceptionGroup.__new__(cls, message, exceptions)
         return self
 
-    def __init__(self, message: str, exceptions: list[Exception], **context: t.Any) -> None:
+    def __init__(
+        self, message: str, exceptions: list[Exception], **context: t.Any
+    ) -> None:
         """Инициализирует группу ошибок валидации конфигурации.
 
         Args:

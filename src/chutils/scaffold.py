@@ -5,7 +5,9 @@ from pathlib import Path
 from typing import Any
 
 
-def unpack_template(template_name: str, target_dir: str | Path, context: dict[str, Any] | None = None) -> list[str]:
+def unpack_template(
+    template_name: str, target_dir: str | Path, context: dict[str, Any] | None = None
+) -> list[str]:
     """Распаковывает выбранный шаблон проекта из `chutils.templates` в целевую директорию.
 
     Args:

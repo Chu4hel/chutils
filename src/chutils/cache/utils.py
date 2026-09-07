@@ -5,10 +5,7 @@ import typing as t
 
 
 def generate_cache_key(
-        func_name: str,
-        args: tuple[t.Any, ...],
-        kwargs: dict[str, t.Any],
-        prefix: str = ""
+    func_name: str, args: tuple[t.Any, ...], kwargs: dict[str, t.Any], prefix: str = ""
 ) -> str:
     """Генерирует детерминированный ключ кэша на основе имени функции и аргументов.
 
@@ -22,9 +19,9 @@ def generate_cache_key(
         Строка хэша ключа кэша.
     """
     sorted_kwargs = sorted(kwargs.items())
-    args_repr = f"args:{repr(args)}|kwargs:{repr(sorted_kwargs)}"
+    args_repr = f"args:{args!r}|kwargs:{sorted_kwargs!r}"
     base_str = f"{prefix}:{func_name}:{args_repr}"
-    key_hash = hashlib.md5(base_str.encode('utf-8')).hexdigest()
+    key_hash = hashlib.md5(base_str.encode("utf-8")).hexdigest()
 
     return f"cache:{key_hash}"
 
@@ -58,7 +55,9 @@ class AsyncLockManager:
     def __init__(self) -> None:
         """Инициализирует AsyncLockManager."""
         self._locks: dict[str, asyncio.Lock] = {}
-        self._global_lock = threading.Lock()  # Используем threading.Lock для защиты словаря
+        self._global_lock = (
+            threading.Lock()
+        )  # Используем threading.Lock для защиты словаря
 
     def get_lock(self, key: str) -> asyncio.Lock:
         """Получить (или создать) асинхронную блокировку для ключа.

@@ -9,6 +9,7 @@ from chutils.cli import main
 @dataclass
 class CliResult:
     """Результат выполнения CLI команды."""
+
     exit_code: int
     stdout: str
     stderr: str
@@ -42,6 +43,7 @@ class CliRunner:
         try:
             # Сбрасываем кэши консолей перед каждым запуском, чтобы подхватить новые sys.stdout/stderr
             from chutils import cli_utils
+
             cli_utils._console = None
             cli_utils._err_console = None
 
@@ -56,11 +58,7 @@ class CliRunner:
             raise
 
         captured = self.capsys.readouterr()
-        return CliResult(
-            exit_code=exit_code,
-            stdout=captured.out,
-            stderr=captured.err
-        )
+        return CliResult(exit_code=exit_code, stdout=captured.out, stderr=captured.err)
 
 
 @pytest.fixture

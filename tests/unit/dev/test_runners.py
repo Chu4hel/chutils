@@ -3,17 +3,12 @@
 """
 
 import sys
-import time
-from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from chutils.dev.runners import InProcessReloader, SubprocessRunner
 from chutils.lifecycle import register_cleanup
-
-if TYPE_CHECKING:
-    from pytest import TempPathFactory
 
 
 def test_subprocess_runner_lifecycle() -> None:
@@ -69,7 +64,9 @@ def test_in_process_reloader_target_parsing() -> None:
     assert reloader.func_name == "join"
 
 
-def test_in_process_reloader_execution_and_lifecycle(tmp_path: pytest.TempPathFactory) -> None:
+def test_in_process_reloader_execution_and_lifecycle(
+    tmp_path: pytest.TempPathFactory,
+) -> None:
     """Проверяет запуск функции и вызов очистки LifecycleManager при перезагрузке."""
     cleanup_called = []
 

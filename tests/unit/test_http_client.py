@@ -10,6 +10,7 @@
 - Маскирование заголовков в логах
 - Единоразовое предупреждение при fallback
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -20,15 +21,14 @@ import pytest
 from chutils.http.fallback import HttpResponse
 from chutils.http.resilience import ResiliencePolicy
 
-
 # ─── Вспомогательные фабрики ─────────────────────────────────────────────────
 
 
 def _make_httpx_response(
-        status_code: int = 200,
-        content: bytes = b'{"ok": true}',
-        url: str = "http://example.com/",
-        headers: dict[str, str] | None = None,
+    status_code: int = 200,
+    content: bytes = b'{"ok": true}',
+    url: str = "http://example.com/",
+    headers: dict[str, str] | None = None,
 ) -> MagicMock:
     """Создаёт мок httpx.Response."""
     mock = MagicMock()
@@ -47,12 +47,14 @@ def _make_httpx_response(
 def test_http_client_importable() -> None:
     """HttpClient импортируется из chutils.http."""
     from chutils.http import HttpClient
+
     assert HttpClient is not None
 
 
 def test_http_client_defaults() -> None:
     """Проверяет значения по умолчанию HttpClient."""
     from chutils.http import HttpClient
+
     client = HttpClient()
     assert client.base_url == ""
     assert client.timeout == 30.0
@@ -62,6 +64,7 @@ def test_http_client_defaults() -> None:
 def test_http_client_custom_init() -> None:
     """Проверяет кастомные параметры HttpClient."""
     from chutils.http import HttpClient
+
     policy = ResiliencePolicy(retries=1)
     client = HttpClient(
         base_url="https://api.example.com",
@@ -101,11 +104,15 @@ def test_http_client_get_falls_back_to_urllib_when_httpx_missing() -> None:
     """HttpClient использует UrllibFallbackClient, если httpx недоступен."""
     from chutils.http import HttpClient
 
-    mock_resp = HttpResponse(200, {}, b'{"fallback": true}', 0.01, "http://example.com/data")
+    mock_resp = HttpResponse(
+        200, {}, b'{"fallback": true}', 0.01, "http://example.com/data"
+    )
 
     with patch("chutils.http.client.HTTPX_AVAILABLE", False):
         client = HttpClient()
-        with patch.object(client._get_fallback_client(), "request", return_value=mock_resp) as mock_req:
+        with patch.object(
+            client._get_fallback_client(), "request", return_value=mock_resp
+        ) as mock_req:
             resp = client.get("http://example.com/data")
 
     # Клиент должен вернуть HttpResponse
@@ -115,6 +122,7 @@ def test_http_client_get_falls_back_to_urllib_when_httpx_missing() -> None:
 def test_http_client_fallback_warning_emitted_once(caplog: Any) -> None:
     """При fallback на urllib логируется единоразовое предупреждение."""
     import logging
+
     from chutils.http import HttpClient
 
     mock_resp = HttpResponse(200, {}, b"ok", 0.01, "http://example.com/")
@@ -126,10 +134,16 @@ def test_http_client_fallback_warning_emitted_once(caplog: Any) -> None:
             with patch.object(fallback, "request", return_value=mock_resp):
                 with caplog.at_level(logging.WARNING):
                     client.get("http://example.com/")
-                    client.get("http://example.com/")  # второй вызов — предупреждение не должно дублироваться
+                    client.get(
+                        "http://example.com/"
+                    )  # второй вызов — предупреждение не должно дублироваться
 
     # Предупреждение о fallback должно быть не более одного раза
-    fallback_warnings = [r for r in caplog.records if "fallback" in r.message.lower() or "urllib" in r.message.lower()]
+    fallback_warnings = [
+        r
+        for r in caplog.records
+        if "fallback" in r.message.lower() or "urllib" in r.message.lower()
+    ]
     assert len(fallback_warnings) <= 1
 
 
@@ -140,6 +154,7 @@ def test_http_client_fallback_warning_emitted_once(caplog: Any) -> None:
 def test_http_client_methods_available(method: str) -> None:
     """Все HTTP-методы доступны у HttpClient."""
     from chutils.http import HttpClient
+
     client = HttpClient()
     assert callable(getattr(client, method))
 
@@ -205,7 +220,9 @@ def test_http_client_applies_policy_on_request() -> None:
             mock_client.__exit__ = MagicMock(return_value=False)
             mock_httpx.Client.return_value = mock_client
 
-            with patch.object(policy, "apply_sync", wraps=policy.apply_sync) as mock_apply:
+            with patch.object(
+                policy, "apply_sync", wraps=policy.apply_sync
+            ) as mock_apply:
                 client = HttpClient(policy=policy)
                 client.get("http://example.com/")
 
@@ -218,6 +235,7 @@ def test_http_client_applies_policy_on_request() -> None:
 def test_http_client_masks_auth_in_logs(caplog: Any) -> None:
     """Authorization не появляется в логах в открытом виде."""
     import logging
+
     from chutils.http import HttpClient
 
     mock_response = _make_httpx_response()
@@ -247,6 +265,7 @@ def test_http_client_masks_auth_in_logs(caplog: Any) -> None:
 def test_async_http_client_importable() -> None:
     """AsyncHttpClient импортируется из chutils.http."""
     from chutils.http import AsyncHttpClient
+
     assert AsyncHttpClient is not None
 
 
@@ -324,7 +343,9 @@ async def test_async_http_client_applies_policy() -> None:
     with patch("chutils.http.client.HTTPX_AVAILABLE", True):
         with patch("chutils.http.client.httpx") as mock_httpx:
             mock_httpx.AsyncClient.return_value = mock_async_client
-            with patch.object(policy, "apply_async", wraps=policy.apply_async) as mock_apply:
+            with patch.object(
+                policy, "apply_async", wraps=policy.apply_async
+            ) as mock_apply:
                 async with AsyncHttpClient(policy=policy) as client:
                     await client.get("http://example.com/")
 

@@ -33,18 +33,17 @@ _QWERTY_NEIGHBORS = {
 """Карта соседних клавиш для QWERTY-раскладки, используемая для имитации опечаток."""
 
 
-
 class WindMouseGenerator:
     """Генератор траекторий перемещения мыши на основе физической модели WindMouse (гравитация, ветер, инерция)."""
 
     def __init__(
-            self,
-            gravity: float = 9.0,
-            wind: float = 3.0,
-            min_wait: float = 0.002,
-            max_wait: float = 0.005,
-            max_step: float = 15.0,
-            target_area: float = 8.0,
+        self,
+        gravity: float = 9.0,
+        wind: float = 3.0,
+        min_wait: float = 0.002,
+        max_wait: float = 0.005,
+        max_step: float = 15.0,
+        target_area: float = 8.0,
     ) -> None:
         """Инициализирует генератор WindMouse.
 
@@ -64,15 +63,15 @@ class WindMouseGenerator:
         self.target_area = target_area
 
     def generate(
-            self,
-            start: tuple[int, int],
-            end: tuple[int, int],
-            gravity: float | None = None,
-            wind: float | None = None,
-            min_wait: float | None = None,
-            max_wait: float | None = None,
-            max_step: float | None = None,
-            target_area: float | None = None,
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        gravity: float | None = None,
+        wind: float | None = None,
+        min_wait: float | None = None,
+        max_wait: float | None = None,
+        max_step: float | None = None,
+        target_area: float | None = None,
     ) -> list[tuple[int, int, float]]:
         """Генерирует последовательность точек (x, y, delay) от start к end.
 
@@ -125,8 +124,12 @@ class WindMouseGenerator:
                 cur_wind = w * (dist / max(1.0, t_area))
 
             # Вектор случайного ветра (дрейф)
-            w_x = w_x / sqrt3 + (random.random() * (cur_wind * 2 + 1) - cur_wind) / sqrt5
-            w_y = w_y / sqrt5 + (random.random() * (cur_wind * 2 + 1) - cur_wind) / sqrt5
+            w_x = (
+                w_x / sqrt3 + (random.random() * (cur_wind * 2 + 1) - cur_wind) / sqrt5
+            )
+            w_y = (
+                w_y / sqrt5 + (random.random() * (cur_wind * 2 + 1) - cur_wind) / sqrt5
+            )
 
             # Сила притяжения к цели
             mag = max(dist, 1.0)
@@ -164,11 +167,11 @@ class BezierCurveGenerator:
     """Генератор траекторий перемещения на основе кривых Безье."""
 
     def generate(
-            self,
-            start: tuple[int, int],
-            end: tuple[int, int],
-            steps: int = 30,
-            deviation: float = 0.2,
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        steps: int = 30,
+        deviation: float = 0.2,
     ) -> list[tuple[int, int]]:
         """Генерирует сглаженную траекторию от start к end.
 
@@ -276,7 +279,7 @@ class JitterDelayGenerator:
             # Логнормальное распределение: большинство значений близки к base, но бывают длинные хвосты
             # mu и sigma подбираются так, чтобы среднее значение было близко к base_delay
             sigma = self.jitter
-            mu = math.log(base_delay) - (sigma ** 2) / 2
+            mu = math.log(base_delay) - (sigma**2) / 2
             val = random.lognormvariate(mu, sigma)
             return max(0.001, val)
         else:
@@ -287,6 +290,7 @@ class JitterDelayGenerator:
 
 class TypoAction(NamedTuple):
     """Представляет действие ввода символа или нажатия backspace при имитации печати."""
+
     action: str  # 'type' или 'backspace'
     char: str  # символ для ввода (пусто для backspace)
 
@@ -294,7 +298,9 @@ class TypoAction(NamedTuple):
 class KeyboardTypoGenerator:
     """Генератор последовательностей ввода символов с реалистичными опечатками."""
 
-    def generate_sequence(self, text: str, error_rate: float = 0.05) -> list[TypoAction]:
+    def generate_sequence(
+        self, text: str, error_rate: float = 0.05
+    ) -> list[TypoAction]:
         """Генерирует последовательность нажатий клавиш для ввода текста.
 
         Включает случайные опечатки, их обнаружение и исправление через Backspace.
@@ -314,7 +320,11 @@ class KeyboardTypoGenerator:
             char = text[i]
 
             # Решаем, делать ли опечатку
-            if error_rate > 0.0 and random.random() < error_rate and char.lower() in _QWERTY_NEIGHBORS:
+            if (
+                error_rate > 0.0
+                and random.random() < error_rate
+                and char.lower() in _QWERTY_NEIGHBORS
+            ):
                 # Берем случайного соседа
                 neighbors = _QWERTY_NEIGHBORS[char.lower()]
                 wrong_char = random.choice(neighbors)

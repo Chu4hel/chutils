@@ -14,7 +14,9 @@ def mock_missing_rapidfuzz(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(text, "_HAS_RAPIDFUZZ", False)
 
 
-def test_is_significant_difference_raises_dependency_error(mock_missing_rapidfuzz: None) -> None:
+def test_is_significant_difference_raises_dependency_error(
+    mock_missing_rapidfuzz: None,
+) -> None:
     """Проверяет, что is_significant_difference выбрасывает OptionalDependencyError при отсутствии rapidfuzz."""
     with pytest.raises(OptionalDependencyError) as exc_info:
         text.is_significant_difference("text1", "text2")

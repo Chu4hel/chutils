@@ -1,4 +1,5 @@
 """Тесты для модуля chutils.dev.generate_few_shot."""
+
 from __future__ import annotations
 
 import ast
@@ -9,6 +10,8 @@ from pathlib import Path
 import pytest
 
 from chutils.dev.few_shot import (
+    GEMINI_BLOCK_END,
+    GEMINI_BLOCK_START,
     ArchitectureDetector,
     DetectedEntities,
     FewShotBankWriter,
@@ -16,10 +19,7 @@ from chutils.dev.few_shot import (
     TemplateRenderer,
     generate_few_shot_bank,
     update_ai_manifests,
-    GEMINI_BLOCK_START,
-    GEMINI_BLOCK_END,
 )
-
 
 # ---------------------------------------------------------------------------
 # Фикстуры
@@ -182,9 +182,7 @@ class TestArchitectureDetector:
         root = tmp_path / "proj"
         pycache = root / "__pycache__"
         pycache.mkdir(parents=True)
-        (pycache / "foo.py").write_text(
-            "class FakeUseCase: pass\n", encoding="utf-8"
-        )
+        (pycache / "foo.py").write_text("class FakeUseCase: pass\n", encoding="utf-8")
         detector = ArchitectureDetector(root)
         entities = detector.detect()
         assert "FakeUseCase" not in entities.use_cases
@@ -217,9 +215,11 @@ class TestArchitectureDetector:
 
 
 class TestTemplateRenderer:
-    @pytest.mark.parametrize("category", ["use_cases", "repositories", "logging", "errors", "di"])
+    @pytest.mark.parametrize(
+        "category", ["use_cases", "repositories", "logging", "errors", "di"]
+    )
     def test_good_pattern_is_valid_python(
-            self, category: str, entities_all: DetectedEntities
+        self, category: str, entities_all: DetectedEntities
     ) -> None:
         renderer = TemplateRenderer(entities_all)
         code = renderer.render_good_pattern(category)
@@ -227,36 +227,46 @@ class TestTemplateRenderer:
         # Не должно быть SyntaxError
         ast.parse(code)
 
-    @pytest.mark.parametrize("category", ["use_cases", "repositories", "logging", "errors", "di"])
+    @pytest.mark.parametrize(
+        "category", ["use_cases", "repositories", "logging", "errors", "di"]
+    )
     def test_bad_pattern_is_valid_python(
-            self, category: str, entities_all: DetectedEntities
+        self, category: str, entities_all: DetectedEntities
     ) -> None:
         renderer = TemplateRenderer(entities_all)
         code = renderer.render_bad_pattern(category)
         assert code, f"Bad pattern для '{category}' пустой"
         ast.parse(code)
 
-    @pytest.mark.parametrize("category", ["use_cases", "repositories", "logging", "errors", "di"])
+    @pytest.mark.parametrize(
+        "category", ["use_cases", "repositories", "logging", "errors", "di"]
+    )
     def test_readme_is_non_empty(
-            self, category: str, entities_all: DetectedEntities
+        self, category: str, entities_all: DetectedEntities
     ) -> None:
         renderer = TemplateRenderer(entities_all)
         readme = renderer.render_readme(category)
         assert readme.strip(), f"README для '{category}' пустой"
         assert category.replace("_", " ") in readme.lower() or category in readme
 
-    def test_good_pattern_uses_real_class_name(self, entities_all: DetectedEntities) -> None:
+    def test_good_pattern_uses_real_class_name(
+        self, entities_all: DetectedEntities
+    ) -> None:
         """Шаблон Use Case должен использовать реальное имя класса."""
         renderer = TemplateRenderer(entities_all)
         code = renderer.render_good_pattern("use_cases")
         assert "CreateOrderUseCase" in code
 
-    def test_good_pattern_repositories_uses_real_name(self, entities_all: DetectedEntities) -> None:
+    def test_good_pattern_repositories_uses_real_name(
+        self, entities_all: DetectedEntities
+    ) -> None:
         renderer = TemplateRenderer(entities_all)
         code = renderer.render_good_pattern("repositories")
         assert "AbstractUserRepository" in code or "UserRepository" in code
 
-    def test_unknown_category_returns_empty(self, entities_all: DetectedEntities) -> None:
+    def test_unknown_category_returns_empty(
+        self, entities_all: DetectedEntities
+    ) -> None:
         renderer = TemplateRenderer(entities_all)
         assert renderer.render_good_pattern("unknown_cat") == ""
         assert renderer.render_bad_pattern("unknown_cat") == ""
@@ -307,7 +317,9 @@ class TestFewShotBankWriter:
         (cat_dir / "good_pattern.py").write_text("# old\n", encoding="utf-8")
 
         writer = FewShotBankWriter(output_dir, force=True)
-        written = writer.write_category("use_cases", "# new\npass\n", "pass\n", "readme\n")
+        written = writer.write_category(
+            "use_cases", "# new\npass\n", "pass\n", "readme\n"
+        )
         assert written is True
         assert "# new" in (cat_dir / "good_pattern.py").read_text(encoding="utf-8")
 
@@ -398,7 +410,9 @@ class TestUpdateAIManifests:
         (examples_dir / "README.md").write_text("# README", encoding="utf-8")
 
         cursorrules = tmp_path / ".cursorrules"
-        cursorrules.write_text("// Это невалидный JSON с комментарием\n{}", encoding="utf-8")
+        cursorrules.write_text(
+            "// Это невалидный JSON с комментарием\n{}", encoding="utf-8"
+        )
 
         result = update_ai_manifests(tmp_path)
         assert result is True
@@ -438,7 +452,9 @@ class TestGenerateFewShotBank:
         # Первый запуск
         generate_few_shot_bank(str(fake_project))
         # Помечаем файл пользовательским контентом
-        good_file = fake_project / "docs" / "ai_examples" / "use_cases" / "good_pattern.py"
+        good_file = (
+            fake_project / "docs" / "ai_examples" / "use_cases" / "good_pattern.py"
+        )
         user_content = "# USER MODIFIED\npass\n"
         good_file.write_text(user_content, encoding="utf-8")
         # Второй запуск без force
@@ -449,7 +465,9 @@ class TestGenerateFewShotBank:
     def test_force_overwrites(self, fake_project: Path) -> None:
         """С флагом --force файлы перезаписываются."""
         generate_few_shot_bank(str(fake_project))
-        good_file = fake_project / "docs" / "ai_examples" / "use_cases" / "good_pattern.py"
+        good_file = (
+            fake_project / "docs" / "ai_examples" / "use_cases" / "good_pattern.py"
+        )
         old_content = good_file.read_text(encoding="utf-8")
         # Модифицируем
         good_file.write_text("# MODIFIED\n", encoding="utf-8")
@@ -502,10 +520,12 @@ class TestLazyImport:
     def test_lazy_import_generate_few_shot_bank(self) -> None:
         """generate_few_shot_bank должна быть доступна через chutils."""
         import chutils
+
         func = getattr(chutils, "generate_few_shot_bank", None)
         # Модуль зарегистрирован как lazy — он может быть подмодулем или функцией
         assert func is not None or hasattr(chutils, "dev")
 
     def test_direct_import(self) -> None:
         from chutils.dev.few_shot import generate_few_shot_bank as gfb
+
         assert callable(gfb)

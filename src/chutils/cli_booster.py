@@ -37,7 +37,7 @@ def cli_command(func: F) -> F:
         def my_script(name: str, count: int = 1):
             \"""
             Пример скрипта.
-            
+
             Args:
                 name (str): Имя пользователя.
                 count (int): Количество повторений.
@@ -73,13 +73,15 @@ def cli_command(func: F) -> F:
     return wrapper  # type: ignore[return-value]
 
 
-def _create_parser(func: Callable[..., Any], sig: inspect.Signature) -> argparse.ArgumentParser:
+def _create_parser(
+    func: Callable[..., Any], sig: inspect.Signature
+) -> argparse.ArgumentParser:
     """Создает ArgumentParser на основе сигнатуры функции."""
     doc_help = _parse_docstring(func.__doc__ or "")
 
     parser = argparse.ArgumentParser(
-        description=func.__doc__.strip().split('\n\n')[0] if func.__doc__ else None,
-        formatter_class=argparse.RawDescriptionHelpFormatter
+        description=func.__doc__.strip().split("\n\n")[0] if func.__doc__ else None,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     for name, param in sig.parameters.items():
         _add_argument(parser, name, param, doc_help.get(name))
@@ -100,15 +102,21 @@ def _parse_docstring(docstring: str) -> dict[str, str]:
     if args_section:
         content = args_section.group(1)
         # Регулярка для поиска отдельных аргументов: "name (type): description"
-        matches = re.findall(r"^\s*([a-zA-Z_0-9]+)\s*(\(.*?\))?:\s*(.*?)$", content, re.MULTILINE)
+        matches = re.findall(
+            r"^\s*([a-zA-Z_0-9]+)\s*(\(.*?\))?:\s*(.*?)$", content, re.MULTILINE
+        )
         for name, _, desc in matches:
             arg_help[name] = desc.strip()
 
     return arg_help
 
 
-def _add_argument(parser: argparse.ArgumentParser, name: str, param: inspect.Parameter,
-                  help_text: str | None = None) -> None:
+def _add_argument(
+    parser: argparse.ArgumentParser,
+    name: str,
+    param: inspect.Parameter,
+    help_text: str | None = None,
+) -> None:
     """Добавляет аргумент в парсер на основе параметра функции."""
     name_cli = name.replace("_", "-")
 

@@ -81,7 +81,5 @@ class MockSubCommand(SubCommand):
             else:
                 runner.run()
         except Exception as e:
-            self.console.print(
-                f"[bold red]Ошибка мок-сервера:[/bold red] {e}"
-            )
+            self.console.print(f"[bold red]Ошибка мок-сервера:[/bold red] {e}")
             raise SystemExit(1)

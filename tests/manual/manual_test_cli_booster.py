@@ -5,7 +5,13 @@ from chutils.cli_booster import cli_command
 
 
 @cli_command
-def test_func(name: str, age: int, is_admin: bool = False, tags: list[str] = None, home: Path = None):
+def test_func(
+    name: str,
+    age: int,
+    is_admin: bool = False,
+    tags: list[str] = None,
+    home: Path = None,
+):
     """
     Тестовая функция для CLI Booster.
     """
@@ -19,5 +25,15 @@ def test_func(name: str, age: int, is_admin: bool = False, tags: list[str] = Non
 if __name__ == "__main__":
     # Симулируем вызов CLI
     # Ожидаем: Name: Alice, Age: 30, Admin: True, Tags: ['dev', 'test'], Home: /tmp
-    sys.argv = ["test_script.py", "Alice", "30", "--is-admin", "--tags", "dev", "test", "--home", "/tmp"]
+    sys.argv = [
+        "test_script.py",
+        "Alice",
+        "30",
+        "--is-admin",
+        "--tags",
+        "dev",
+        "test",
+        "--home",
+        "/tmp",
+    ]
     test_func()

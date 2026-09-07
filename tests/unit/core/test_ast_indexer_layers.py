@@ -5,7 +5,9 @@ def test_layer_identification_public(tmp_path):
     """Тест определения публичного слоя через __init__.py."""
     pkg = tmp_path / "chutils"
     pkg.mkdir()
-    (pkg / "__init__.py").write_text("_LAZY_MAPPING = {'get_config': ('.core', None)}", encoding="utf-8")
+    (pkg / "__init__.py").write_text(
+        "_LAZY_MAPPING = {'get_config': ('.core', None)}", encoding="utf-8"
+    )
 
     module = pkg / "core.py"
     module.write_text("def get_config(): pass", encoding="utf-8")
@@ -47,8 +49,10 @@ def test_layer_identification_override(tmp_path):
     (pkg / "__init__.py").write_text("", encoding="utf-8")
 
     module = pkg / "infra.py"
-    module.write_text('"""\n@layer: infrastructure\n"""\ndef setup():\n    """@layer: setup"""\n    pass',
-                      encoding="utf-8")
+    module.write_text(
+        '"""\n@layer: infrastructure\n"""\ndef setup():\n    """@layer: setup"""\n    pass',
+        encoding="utf-8",
+    )
 
     indexer = Indexer(str(pkg))
     index = indexer.index()

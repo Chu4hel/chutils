@@ -4,11 +4,11 @@ from unittest.mock import MagicMock
 import pytest
 
 from chutils.config import (
-    get_config,
     _cm,
+    get_config,
     on_config_change,
     start_config_watcher,
-    stop_config_watcher
+    stop_config_watcher,
 )
 from chutils.config.watcher import ConfigChangeHandler
 from chutils.exceptions import OptionalDependencyError
@@ -136,6 +136,7 @@ def test_internal_save_suppression(mocker):
 
     from chutils.config import save_config_value
     from chutils.config.watcher import ConfigChangeHandler
+
     handler = ConfigChangeHandler([config_path])
 
     # 1. Сохраняем с notify=False

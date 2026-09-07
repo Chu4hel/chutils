@@ -1,14 +1,16 @@
 """
 chutils.http.streaming — Модуль для поддержки HTTP-стриминга (SSE/Chunked) и WebSockets.
 """  # chutils: ignore[CodeDecompositionRule]
+
 from __future__ import annotations
 
 import asyncio
 import random
 import time
+from collections.abc import AsyncIterator, Callable, Iterable, Iterator
 from dataclasses import dataclass
 from types import TracebackType
-from typing import Any, AsyncIterator, Callable, Iterable, Iterator
+from typing import Any
 
 import httpx  # chutils: ignore[ChutilsIntegrationRule]
 
@@ -18,6 +20,7 @@ from chutils.exceptions import OptionalDependencyError
 @dataclass
 class ServerSentEvent:
     """Представляет собой отдельное событие Server-Sent Events (SSE)."""
+
     id: str | None = None
     event: str | None = None
     data: str = ""
@@ -51,7 +54,7 @@ def default_backoff(
 def _check_websockets() -> None:
     """Проверяет наличие установленной библиотеки websockets."""
     try:
-        import websockets  # noqa: F401
+        import websockets
         import websockets.sync.client  # noqa: F401
     except ImportError:
         raise OptionalDependencyError(
@@ -81,7 +84,12 @@ class SSEParser:
         """
         self.current_lines.append(line)
         if not line.strip():
-            if not self.current_data and not self.current_id and not self.current_event and not self.current_retry:
+            if (
+                not self.current_data
+                and not self.current_id
+                and not self.current_event
+                and not self.current_retry
+            ):
                 raw = "\n".join(self.current_lines)
                 self.current_lines = []
                 return ServerSentEvent(raw=raw)
@@ -135,7 +143,9 @@ class AsyncEventStreamClient:
         headers: dict[str, str] | None = None,
         timeout: float | None = None,
         filter_heartbeats: bool = True,
-        reconnect_strategy: Iterable[float] | Callable[[], Iterable[float]] | None = None,
+        reconnect_strategy: Iterable[float]
+        | Callable[[], Iterable[float]]
+        | None = None,
     ) -> None:
         self.url = url
         self.headers = headers or {}
@@ -177,7 +187,9 @@ class AsyncEventStreamClient:
                     await self._client.__aenter__()
                     client_created = True
 
-                async with self._client.stream("GET", self.url, headers=self.headers) as response:
+                async with self._client.stream(
+                    "GET", self.url, headers=self.headers
+                ) as response:
                     response.raise_for_status()
 
                     if self._reconnect_strategy_input is None:
@@ -194,7 +206,9 @@ class AsyncEventStreamClient:
 
                         event = parser.feed_line(line)
                         if event is not None:
-                            is_empty = not event.data and not event.id and not event.event
+                            is_empty = (
+                                not event.data and not event.id and not event.event
+                            )
                             if self.filter_heartbeats and is_empty:
                                 continue
                             yield event
@@ -208,7 +222,7 @@ class AsyncEventStreamClient:
 
                 await asyncio.sleep(delay)
             finally:
-                if 'client_created' in locals() and client_created and self._client:
+                if "client_created" in locals() and client_created and self._client:
                     await self._client.__aexit__(None, None, None)
                     self._client = None
 
@@ -222,7 +236,9 @@ class EventStreamClient:
         headers: dict[str, str] | None = None,
         timeout: float | None = None,
         filter_heartbeats: bool = True,
-        reconnect_strategy: Iterable[float] | Callable[[], Iterable[float]] | None = None,
+        reconnect_strategy: Iterable[float]
+        | Callable[[], Iterable[float]]
+        | None = None,
     ) -> None:
         self.url = url
         self.headers = headers or {}
@@ -264,7 +280,9 @@ class EventStreamClient:
                     self._client.__enter__()
                     client_created = True
 
-                with self._client.stream("GET", self.url, headers=self.headers) as response:
+                with self._client.stream(
+                    "GET", self.url, headers=self.headers
+                ) as response:
                     response.raise_for_status()
 
                     if self._reconnect_strategy_input is None:
@@ -280,7 +298,9 @@ class EventStreamClient:
 
                         event = parser.feed_line(line)
                         if event is not None:
-                            is_empty = not event.data and not event.id and not event.event
+                            is_empty = (
+                                not event.data and not event.id and not event.event
+                            )
                             if self.filter_heartbeats and is_empty:
                                 continue
                             yield event
@@ -294,7 +314,7 @@ class EventStreamClient:
 
                 time.sleep(delay)
             finally:
-                if 'client_created' in locals() and client_created and self._client:
+                if "client_created" in locals() and client_created and self._client:
                     self._client.__exit__(None, None, None)
                     self._client = None
 
@@ -307,7 +327,9 @@ class AsyncWebSocketClient:
         url: str,
         headers: dict[str, str] | None = None,
         filter_heartbeats: bool = True,
-        reconnect_strategy: Iterable[float] | Callable[[], Iterable[float]] | None = None,
+        reconnect_strategy: Iterable[float]
+        | Callable[[], Iterable[float]]
+        | None = None,
     ) -> None:
         _check_websockets()
         self.url = url
@@ -328,6 +350,7 @@ class AsyncWebSocketClient:
     async def connect(self) -> None:
         """Устанавливает асинхронное соединение по WebSocket."""
         import websockets
+
         self._websocket = await websockets.connect(self.url, extra_headers=self.headers)
         if self._delay_iter is None:
             self._reset_reconnect_strategy()
@@ -353,6 +376,7 @@ class AsyncWebSocketClient:
             message: Сообщение для отправки.
         """
         import websockets.exceptions
+
         while True:
             try:
                 if self._websocket is None:
@@ -369,6 +393,7 @@ class AsyncWebSocketClient:
             Принятое сообщение.
         """
         import websockets.exceptions
+
         while True:
             try:
                 if self._websocket is None:
@@ -421,7 +446,9 @@ class WebSocketClient:
         url: str,
         headers: dict[str, str] | None = None,
         filter_heartbeats: bool = True,
-        reconnect_strategy: Iterable[float] | Callable[[], Iterable[float]] | None = None,
+        reconnect_strategy: Iterable[float]
+        | Callable[[], Iterable[float]]
+        | None = None,
     ) -> None:
         _check_websockets()
         self.url = url
@@ -442,6 +469,7 @@ class WebSocketClient:
     def connect(self) -> None:
         """Устанавливает синхронное соединение по WebSocket."""
         import websockets.sync.client
+
         self._websocket = websockets.sync.client.connect(
             self.url, additional_headers=self.headers
         )
@@ -469,6 +497,7 @@ class WebSocketClient:
             message: Сообщение для отправки.
         """
         import websockets.exceptions
+
         while True:
             try:
                 if self._websocket is None:
@@ -485,6 +514,7 @@ class WebSocketClient:
             Принятое сообщение.
         """
         import websockets.exceptions
+
         while True:
             try:
                 if self._websocket is None:

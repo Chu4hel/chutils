@@ -66,7 +66,5 @@ class ScaffoldSubCommand(SubCommand):
                 f"[bold green] [OK] [/bold green] Модуль '{args.module_name}' успешно инициализирован."
             )
         except Exception as e:
-            self.console.print(
-                f"[bold red]Ошибка инициализации:[/bold red] {e}"
-            )
+            self.console.print(f"[bold red]Ошибка инициализации:[/bold red] {e}")
             raise SystemExit(1)

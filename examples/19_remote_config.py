@@ -26,26 +26,23 @@ class ConfigHandler(BaseHTTPRequestHandler):
         ConfigHandler.counter += 1
 
         # Проверяем Basic Auth (admin:secret)
-        auth_header = self.headers.get('Authorization')
-        if auth_header != 'Basic YWRtaW46c2VjcmV0':  # base64(admin:secret)
+        auth_header = self.headers.get("Authorization")
+        if auth_header != "Basic YWRtaW46c2VjcmV0":  # base64(admin:secret)
             self.send_response(401)
-            self.send_header('WWW-Authenticate', 'Basic realm="Config"')
+            self.send_header("WWW-Authenticate", 'Basic realm="Config"')
             self.end_headers()
             return
 
         self.send_response(200)
-        self.send_header('Content-Type', 'application/json')
+        self.send_header("Content-Type", "application/json")
         self.end_headers()
 
         # Динамически меняем версию в ответе
         config_data = {
-            "App": {
-                "version": f"1.0.{ConfigHandler.counter}",
-                "status": "alive"
-            },
+            "App": {"version": f"1.0.{ConfigHandler.counter}", "status": "alive"},
             "RemoteConfig": {
                 "interval": 2  # Устанавливаем интервал опроса 2 секунды
-            }
+            },
         }
         self.wfile.write(json.dumps(config_data).encode())
 
@@ -55,7 +52,7 @@ class ConfigHandler(BaseHTTPRequestHandler):
 
 
 def run_mock_server() -> None:
-    server = HTTPServer(('127.0.0.1', 8888), ConfigHandler)
+    server = HTTPServer(("127.0.0.1", 8888), ConfigHandler)
     server.serve_forever()
 
 
@@ -72,7 +69,7 @@ def main() -> None:
     config = get_config(
         remote_url="http://127.0.0.1:8888/config.json",
         remote_auth=("admin", "secret"),
-        polling_interval=5  # Начальный интервал (будет переопределен сервером на 2 сек)
+        polling_interval=5,  # Начальный интервал (будет переопределен сервером на 2 сек)
     )
 
     logger.info(f"Загруженная версия: {config.get('App', {}).get('version')}")
@@ -85,7 +82,7 @@ def main() -> None:
         # При каждом вызове get_config() мы будем получать актуальные данные из кэша,
         # который обновляется в фоновом потоке.
         current_config = get_config()
-        version = current_config.get('App', {}).get('version')
+        version = current_config.get("App", {}).get("version")
         logger.info(f"Секунда {i + 1}, текущая версия в приложении: {version}")
 
     logger.info("\n--- Пример завершен ---")

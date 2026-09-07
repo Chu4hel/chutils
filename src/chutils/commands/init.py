@@ -12,7 +12,7 @@ from .base import BaseCommand
 class InitCommand(BaseCommand):
     """
     Инициализация нового проекта с использованием chutils.
-    
+
     Создает базовый или расширенный файл config.yml с рекомендуемыми настройками,
     настраивает Git-исключения, а также опционально разворачивает окружение,
     миграции, CI/CD, диагностику и скелет чистой архитектуры.
@@ -27,22 +27,25 @@ class InitCommand(BaseCommand):
         init_parser = subparsers.add_parser(
             "init",
             help="Инициализировать новый проект",
-            description="Быстрое создание структуры конфигурации и настройка исключений git."
+            description="Быстрое создание структуры конфигурации и настройка исключений git.",
         )
         init_parser.add_argument(
-            "-y", "--yes",
+            "-y",
+            "--yes",
             action="store_true",
-            help="Автоматически отвечать 'да' на все вопросы (использовать настройки по умолчанию)"
+            help="Автоматически отвечать 'да' на все вопросы (использовать настройки по умолчанию)",
         )
         init_parser.add_argument(
-            "-m", "--model",
-            help="Путь к Pydantic модели для генерации детального конфига (например, 'myapp.config:Settings')"
+            "-m",
+            "--model",
+            help="Путь к Pydantic модели для генерации детального конфига (например, 'myapp.config:Settings')",
         )
         init_parser.add_argument(
-            "-t", "--template",
+            "-t",
+            "--template",
             choices=["default", "vk-miniapp", "vk-bot", "vk-bot-miniapp"],
             default="default",
-            help="Выбор готового шаблона проекта (default, vk-miniapp, vk-bot, vk-bot-miniapp)"
+            help="Выбор готового шаблона проекта (default, vk-miniapp, vk-bot, vk-bot-miniapp)",
         )
         init_parser.set_defaults(handler=self.handle)
 
@@ -77,7 +80,9 @@ class InitCommand(BaseCommand):
             project_name = "Project"
         else:
             try:
-                project_name = input("Введите имя проекта [Project]: ").strip() or "Project"
+                project_name = (
+                    input("Введите имя проекта [Project]: ").strip() or "Project"
+                )
             except EOFError:
                 project_name = "Project"
 
@@ -86,10 +91,12 @@ class InitCommand(BaseCommand):
         if config_path and os.path.exists(config_path):
             if not args.yes:
                 try:
-                    confirm = input(f"Файл {config_path} уже существует. Перезаписать? [y/N]: ").lower()
+                    confirm = input(
+                        f"Файл {config_path} уже существует. Перезаписать? [y/N]: "
+                    ).lower()
                 except EOFError:
-                    confirm = 'n'
-                if confirm != 'y':
+                    confirm = "n"
+                if confirm != "y":
                     print("[SKIP] Создание config.yml отменено.")
                     config_path = None
             else:
@@ -98,8 +105,11 @@ class InitCommand(BaseCommand):
         # Обработка выбора шаблона проекта
         if hasattr(args, "template") and args.template != "default":
             from chutils.scaffold import unpack_template
+
             print(f"[INFO] Создание проекта по шаблону '{args.template}'...")
-            unpack_template(args.template, os.getcwd(), context={"project_name": project_name})
+            unpack_template(
+                args.template, os.getcwd(), context={"project_name": project_name}
+            )
             print(f"[OK] Проект по шаблону '{args.template}' успешно инициализирован!")
             return
         setup_db = False
@@ -115,28 +125,63 @@ class InitCommand(BaseCommand):
         setup_scaffold = False
 
         if config_path and not args.yes:
-            setup_db = self._ask_yes_no("Настроить конфигурацию Базы Данных (Database)?", False)
+            setup_db = self._ask_yes_no(
+                "Настроить конфигурацию Базы Данных (Database)?", False
+            )
             if setup_db:
-                setup_alembic = self._ask_yes_no("Инициализировать директорию миграций Alembic (migrations/)?", False)
-            setup_audit = self._ask_yes_no("Настроить криптографический аудит-лог (chutils.audit)?", False)
-            setup_cloud_secrets = self._ask_yes_no("Настроить интеграцию с облачными провайдерами секретов (AWS/GCP)?", False)
-            setup_env = self._ask_yes_no("Создать декларативные файлы окружения .env и .env.example?", False)
-            setup_ai_ready = self._ask_yes_no("Сгенерировать AI-Ready конфигурацию (ai-lint.toml, GEMINI.md)?", False)
-            setup_metrics = self._ask_yes_no("Добавить шаблон настройки экспорта метрик Prometheus?", False)
-            setup_ci = self._ask_yes_no("Сгенерировать GitHub Actions CI workflow?", False)
-            setup_pypi = self._ask_yes_no("Проверить скорость PyPI-зеркал и настроить оптимальное зеркало?", False)
-            setup_diagnostics = self._ask_yes_no("Настроить модуль диагностики здоровья (FastAPI/Flask health эндпоинт)?", False)
-            setup_scaffold = self._ask_yes_no("Развернуть скелет Clean Architecture (через chutils dev scaffold)?", False)
+                setup_alembic = self._ask_yes_no(
+                    "Инициализировать директорию миграций Alembic (migrations/)?", False
+                )
+            setup_audit = self._ask_yes_no(
+                "Настроить криптографический аудит-лог (chutils.audit)?", False
+            )
+            setup_cloud_secrets = self._ask_yes_no(
+                "Настроить интеграцию с облачными провайдерами секретов (AWS/GCP)?",
+                False,
+            )
+            setup_env = self._ask_yes_no(
+                "Создать декларативные файлы окружения .env и .env.example?", False
+            )
+            setup_ai_ready = self._ask_yes_no(
+                "Сгенерировать AI-Ready конфигурацию (ai-lint.toml, GEMINI.md)?", False
+            )
+            setup_metrics = self._ask_yes_no(
+                "Добавить шаблон настройки экспорта метрик Prometheus?", False
+            )
+            setup_ci = self._ask_yes_no(
+                "Сгенерировать GitHub Actions CI workflow?", False
+            )
+            setup_pypi = self._ask_yes_no(
+                "Проверить скорость PyPI-зеркал и настроить оптимальное зеркало?", False
+            )
+            setup_diagnostics = self._ask_yes_no(
+                "Настроить модуль диагностики здоровья (FastAPI/Flask health эндпоинт)?",
+                False,
+            )
+            setup_scaffold = self._ask_yes_no(
+                "Развернуть скелет Clean Architecture (через chutils dev scaffold)?",
+                False,
+            )
 
         if config_path:
             if args.model:
                 # Пытаемся сгенерировать на основе модели
-                from ..config.generator import generate_yaml_template, PYDANTIC_AVAILABLE
                 import importlib
+
+                from ..config.generator import (
+                    PYDANTIC_AVAILABLE,
+                    generate_yaml_template,
+                )
+
                 if not PYDANTIC_AVAILABLE:
                     print("[WARN] Pydantic не установлен. Будет создан базовый конфиг.")
                     config_content = self._get_default_config(
-                        project_name, setup_db, setup_audit, setup_cloud_secrets, setup_metrics, setup_diagnostics
+                        project_name,
+                        setup_db,
+                        setup_audit,
+                        setup_cloud_secrets,
+                        setup_metrics,
+                        setup_diagnostics,
                     )
                 else:
                     try:
@@ -148,10 +193,11 @@ class InitCommand(BaseCommand):
                                 module_path, class_name = parts
                             else:
                                 from ..exceptions import CommandError
+
                                 raise CommandError(
                                     f"Некорректный формат модели: '{args.model}'",
                                     hint="Используйте формат 'module:Class' или 'module.Class'. "
-                                         "Пример: 'myapp.config:Settings'"
+                                    "Пример: 'myapp.config:Settings'",
                                 )
 
                         sys.path.insert(0, str(Path.cwd()))
@@ -164,11 +210,21 @@ class InitCommand(BaseCommand):
                         print(f"[WARN] Ошибка при загрузке модели '{args.model}': {e}")
                         print("[INFO] Будет создан базовый конфиг.")
                         config_content = self._get_default_config(
-                            project_name, setup_db, setup_audit, setup_cloud_secrets, setup_metrics, setup_diagnostics
+                            project_name,
+                            setup_db,
+                            setup_audit,
+                            setup_cloud_secrets,
+                            setup_metrics,
+                            setup_diagnostics,
                         )
             else:
                 config_content = self._get_default_config(
-                    project_name, setup_db, setup_audit, setup_cloud_secrets, setup_metrics, setup_diagnostics
+                    project_name,
+                    setup_db,
+                    setup_audit,
+                    setup_cloud_secrets,
+                    setup_metrics,
+                    setup_diagnostics,
                 )
 
             with open(config_path, "w", encoding="utf-8") as f:
@@ -179,9 +235,12 @@ class InitCommand(BaseCommand):
         if setup_alembic:
             try:
                 from .db import _init_migrations_dir
+
                 _init_migrations_dir(Path("migrations"))
             except Exception as e:
-                print(f"[WARN] Не удалось инициализировать директорию миграций Alembic: {e}")
+                print(
+                    f"[WARN] Не удалось инициализировать директорию миграций Alembic: {e}"
+                )
 
         # 2. Декларативное окружение (.env / .env.example)
         if setup_env:
@@ -190,10 +249,14 @@ class InitCommand(BaseCommand):
                 env_example = Path(".env.example")
                 if not env_example.exists():
                     with open(env_example, "w", encoding="utf-8") as f:
-                        f.write("# Декларативное окружение проекта\nDATABASE_URL=sqlite+aiosqlite:///./database.db\nPORT=8000\n")
+                        f.write(
+                            "# Декларативное окружение проекта\nDATABASE_URL=sqlite+aiosqlite:///./database.db\nPORT=8000\n"
+                        )
                 if not env_file.exists():
                     with open(env_file, "w", encoding="utf-8") as f:
-                        f.write("# Локальное окружение\nDATABASE_URL=sqlite+aiosqlite:///./database.db\nPORT=8000\n")
+                        f.write(
+                            "# Локальное окружение\nDATABASE_URL=sqlite+aiosqlite:///./database.db\nPORT=8000\n"
+                        )
                 print("[OK] Файлы .env и .env.example созданы.")
             except Exception as e:
                 print(f"[WARN] Не удалось создать файлы окружения: {e}")
@@ -204,12 +267,16 @@ class InitCommand(BaseCommand):
                 ai_lint_file = Path("ai-lint.toml")
                 if not ai_lint_file.exists():
                     with open(ai_lint_file, "w", encoding="utf-8") as f:
-                        f.write("[ai-lint]\nstrict = false\nignore = [\".git\", \".venv\", \"__pycache__\", \"build\", \"dist\", \"docs\", \"tests\", \"examples\"]\nrules = []\n")
-                
+                        f.write(
+                            '[ai-lint]\nstrict = false\nignore = [".git", ".venv", "__pycache__", "build", "dist", "docs", "tests", "examples"]\nrules = []\n'
+                        )
+
                 gemini_file = Path("GEMINI.md")
                 if not gemini_file.exists():
                     with open(gemini_file, "w", encoding="utf-8") as f:
-                        f.write("# Контекст проекта ИИ\n\nЭтот файл содержит информацию о структуре проекта для ассистентов ИИ.\n")
+                        f.write(
+                            "# Контекст проекта ИИ\n\nЭтот файл содержит информацию о структуре проекта для ассистентов ИИ.\n"
+                        )
                 print("[OK] Файлы ai-lint.toml и GEMINI.md созданы.")
             except Exception as e:
                 print(f"[WARN] Не удалось настроить AI-Ready файлы: {e}")
@@ -218,8 +285,10 @@ class InitCommand(BaseCommand):
         if setup_ci:
             try:
                 from ..dev.github_actions import generate_workflow_yaml
+
                 ci_path = Path(".github/workflows/ci.yml")
                 from chutils.fs import ensure_dir
+
                 ensure_dir(ci_path.parent)
                 yaml_content = generate_workflow_yaml(
                     python_versions=["3.10", "3.11", "3.12", "3.13"],
@@ -237,10 +306,13 @@ class InitCommand(BaseCommand):
         # 5. Тестирование зеркал PyPI
         if setup_pypi:
             try:
-                from .pypi import DEFAULT_MIRRORS, measure_mirror, find_best_mirror
+                from .pypi import DEFAULT_MIRRORS, find_best_mirror, measure_mirror
+
                 print("[INFO] Тестирование доступности PyPI-зеркал...")
                 results = []
-                for mirror in DEFAULT_MIRRORS[:3]:  # Проверим первые 3 зеркала для скорости
+                for mirror in DEFAULT_MIRRORS[
+                    :3
+                ]:  # Проверим первые 3 зеркала для скорости
                     res = measure_mirror(mirror, "chutils")
                     results.append(res)
                 best_mirror = find_best_mirror(results, "https://pypi.org/simple/")
@@ -251,9 +323,14 @@ class InitCommand(BaseCommand):
                     if pyproject_path.exists():
                         with open(pyproject_path, "r", encoding="utf-8") as f:
                             pyproject_content = f.read()
-                        if "[[tool.uv.index]]" not in pyproject_content and best_mirror != "https://pypi.org/simple/":
+                        if (
+                            "[[tool.uv.index]]" not in pyproject_content
+                            and best_mirror != "https://pypi.org/simple/"
+                        ):
                             with open(pyproject_path, "a", encoding="utf-8") as f:
-                                f.write(f"\n[[tool.uv.index]]\nname = \"custom-mirror\"\nurl = \"{best_mirror}\"\ndefault = true\n")
+                                f.write(
+                                    f'\n[[tool.uv.index]]\nname = "custom-mirror"\nurl = "{best_mirror}"\ndefault = true\n'
+                                )
                             print("[OK] Зеркало сохранено в pyproject.toml.")
             except Exception as e:
                 print(f"[WARN] Не удалось настроить зеркало PyPI: {e}")
@@ -280,9 +357,15 @@ app.add_api_route("/health", get_fastapi_health_handler(default_manager), method
         # 7. Декларативный CLI Clean Architecture (dev scaffold)
         if setup_scaffold:
             try:
-                scaffold_module_name = self._ask_str("Введите имя первого Clean Arch модуля", "app_module")
+                scaffold_module_name = self._ask_str(
+                    "Введите имя первого Clean Arch модуля", "app_module"
+                )
                 from ..dev.scaffold import Scaffolder
-                scaffolder = Scaffolder(module_name=scaffold_module_name, output_dir=f"./src/{scaffold_module_name}")
+
+                scaffolder = Scaffolder(
+                    module_name=scaffold_module_name,
+                    output_dir=f"./src/{scaffold_module_name}",
+                )
                 scaffolder.scaffold()
                 print(f"[OK] Скелет модуля Clean Arch {scaffold_module_name} создан.")
             except Exception as e:
@@ -291,8 +374,12 @@ app.add_api_route("/health", get_fastapi_health_handler(default_manager), method
         # Обновляем .gitignore
         gitignore_path = ".gitignore"
         gitignore_entries = [
-            "config.local.yml", "config.local.yaml", "config.local.ini", "config.local.json",
-            "*.log", "logs/"
+            "config.local.yml",
+            "config.local.yaml",
+            "config.local.ini",
+            "config.local.json",
+            "*.log",
+            "logs/",
         ]
 
         existing_content = ""
@@ -308,8 +395,7 @@ app.add_api_route("/health", get_fastapi_health_handler(default_manager), method
                 if existing_content and not existing_content.endswith("\n"):
                     f.write("\n")
                 f.write("\n# chutils\n")
-                for entry in new_entries:
-                    f.write(f"{entry}\n")
+                f.writelines(f"{entry}\n" for entry in new_entries)
             print(f"[OK] Файл {gitignore_path} обновлен.")
         else:
             print(f"[SKIP] Файл {gitignore_path} уже содержит необходимые исключения.")
@@ -323,7 +409,7 @@ app.add_api_route("/health", get_fastapi_health_handler(default_manager), method
         setup_metrics: bool = False,
         setup_diagnostics: bool = False,
     ) -> str:
-        project_name_lower = project_name.lower().replace(' ', '_')
+        project_name_lower = project_name.lower().replace(" ", "_")
         content = f"""# Конфигурация проекта {project_name}
 
 Logging:
@@ -376,4 +462,3 @@ Diagnostics:
   critical_only: false
 """
         return content
-

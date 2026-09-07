@@ -1,16 +1,20 @@
 """Интеграционные тесты ProfileManager."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock
+
+import pytest
+
 from chutils.scraping import BrowserProfile, ProfileManager
-from chutils.scraping.profiles.models import CookieData, HeaderData, StorageData
+from chutils.scraping.profiles.models import CookieData
 
 
 @pytest.mark.asyncio
 async def test_profile_manager_playwright():
     context_mock = AsyncMock()
     context_mock.storage_state.return_value = {
-        "cookies": [{"name": "auth", "value": "secret", "domain": "test.com", "path": "/"}],
+        "cookies": [
+            {"name": "auth", "value": "secret", "domain": "test.com", "path": "/"}
+        ],
         "origins": [],
     }
 
@@ -26,7 +30,11 @@ async def test_profile_manager_playwright():
 async def test_profile_manager_nodriver():
     tab_mock = AsyncMock()
     tab_mock.send.side_effect = [
-        {"cookies": [{"name": "nd", "value": "val", "domain": "test.com", "path": "/"}]},
+        {
+            "cookies": [
+                {"name": "nd", "value": "val", "domain": "test.com", "path": "/"}
+            ]
+        },
         None,
         None,
     ]

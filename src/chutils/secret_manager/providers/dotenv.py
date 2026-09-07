@@ -4,9 +4,9 @@ import os
 
 from dotenv import load_dotenv
 
+from ... import config
 from . import _get_logger
 from .base import SecretProvider
-from ... import config
 
 
 class DotEnvProvider(SecretProvider):
@@ -37,7 +37,7 @@ class DotEnvProvider(SecretProvider):
         if not path:
             base_dir = config.get_base_dir()
             if base_dir:
-                path = os.path.join(base_dir, '.env')
+                path = os.path.join(base_dir, ".env")
 
         if path and os.path.exists(path):
             load_dotenv(dotenv_path=path, override=False)

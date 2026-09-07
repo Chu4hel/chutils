@@ -5,9 +5,9 @@
 - AsyncWebSocketClient / WebSocketClient (соединение, отправка/получение, автореконнект, фильтрация пингов)
 - Выброс OptionalDependencyError при отсутствии websockets
 """
+
 from __future__ import annotations
 
-import sys
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -71,7 +71,7 @@ async def test_async_event_stream_client_filter_heartbeats() -> None:
     """AsyncEventStreamClient фильтрует пинги/комментарии по умолчанию."""
     mock_lines = [
         b": keepalive",  # Комментарий
-        b"",             # Пустое событие (из-за комментария)
+        b"",  # Пустое событие (из-за комментария)
         b"data: hello",
         b"",
     ]
@@ -87,7 +87,9 @@ async def test_async_event_stream_client_filter_heartbeats() -> None:
 
     # С фильтрацией (по умолчанию)
     with patch("httpx.AsyncClient", return_value=mock_client):
-        client = AsyncEventStreamClient("http://example.com/sse", filter_heartbeats=True)
+        client = AsyncEventStreamClient(
+            "http://example.com/sse", filter_heartbeats=True
+        )
         events: list[ServerSentEvent] = []
         async with client:
             async for event in client:
@@ -99,7 +101,9 @@ async def test_async_event_stream_client_filter_heartbeats() -> None:
     # Без фильтрации
     mock_response.aiter_lines.side_effect = lambda: _async_lines(mock_lines)
     with patch("httpx.AsyncClient", return_value=mock_client):
-        client = AsyncEventStreamClient("http://example.com/sse", filter_heartbeats=False)
+        client = AsyncEventStreamClient(
+            "http://example.com/sse", filter_heartbeats=False
+        )
         events = []
         async with client:
             async for event in client:
@@ -132,7 +136,10 @@ async def test_async_event_stream_client_reconnect() -> None:
     # Стратегия реконнекта: 1 задержка в 0.001 секунд
     reconnect_strategy = [0.001]
 
-    with patch("httpx.AsyncClient", return_value=mock_client), patch("asyncio.sleep") as mock_sleep:
+    with (
+        patch("httpx.AsyncClient", return_value=mock_client),
+        patch("asyncio.sleep") as mock_sleep,
+    ):
         client = AsyncEventStreamClient(
             "http://example.com/sse", reconnect_strategy=reconnect_strategy
         )
@@ -209,7 +216,10 @@ async def test_async_websocket_client_reconnect() -> None:
     ]
 
     # Сначала connect возвращает одно соединение, затем другое (или то же самое с восстановленным поведением)
-    with patch("websockets.connect", AsyncMock(return_value=mock_ws)), patch("asyncio.sleep") as mock_sleep:
+    with (
+        patch("websockets.connect", AsyncMock(return_value=mock_ws)),
+        patch("asyncio.sleep") as mock_sleep,
+    ):
         client = AsyncWebSocketClient("ws://example.com/ws", reconnect_strategy=[0.001])
         async with client as ws:
             msg = await ws.recv()
@@ -258,6 +268,7 @@ def test_websocket_client_missing_dependency() -> None:
 def test_default_backoff_generator() -> None:
     """Проверяет работу генератора экспоненциального бэкоффа по умолчанию."""
     from chutils.http.streaming import default_backoff
+
     gen = default_backoff(base_delay=0.1, max_delay=1.0, factor=2.0)
     delays = [next(gen) for _ in range(5)]
     # Каждый delay должен быть меньше или равен соответствующему экспоненциальному значению
@@ -363,7 +374,9 @@ async def test_async_event_stream_client_default_backoff() -> None:
     """AsyncEventStreamClient может использовать бэкофф по умолчанию."""
     mock_response = MagicMock()
     mock_response.status_code = 200
-    mock_response.aiter_lines.side_effect = lambda: _async_lines([b"data: default-backoff", b""])
+    mock_response.aiter_lines.side_effect = lambda: _async_lines(
+        [b"data: default-backoff", b""]
+    )
 
     mock_client = AsyncMock()
     mock_client.__aenter__.return_value = mock_client
@@ -371,10 +384,9 @@ async def test_async_event_stream_client_default_backoff() -> None:
     mock_client.stream.return_value.__aenter__.return_value = mock_response
 
     # Подменяем default_backoff на быстрый бэкофф, чтобы не ждать секунды
-    from chutils.http.streaming import default_backoff
-    with patch("httpx.AsyncClient", return_value=mock_client), patch(
-        "chutils.http.streaming.default_backoff",
-        return_value=iter([0.001])
+    with (
+        patch("httpx.AsyncClient", return_value=mock_client),
+        patch("chutils.http.streaming.default_backoff", return_value=iter([0.001])),
     ):
         client = AsyncEventStreamClient("http://example.com/sse")
         async with client:
@@ -382,4 +394,3 @@ async def test_async_event_stream_client_default_backoff() -> None:
 
     assert len(events) == 1
     assert events[0].data == "default-backoff"
-

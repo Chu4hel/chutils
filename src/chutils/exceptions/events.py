@@ -6,8 +6,6 @@ from .base import ChutilsException, _BaseExceptionGroup
 class EventBusError(ChutilsException):
     """Общая ошибка шины событий."""
 
-    pass
-
 
 class EventBusExceptionGroup(_BaseExceptionGroup, EventBusError):
     """
@@ -16,7 +14,7 @@ class EventBusExceptionGroup(_BaseExceptionGroup, EventBusError):
     """
 
     def __init__(
-            self, message: str, exceptions: list[Exception], **context: t.Any
+        self, message: str, exceptions: list[Exception], **context: t.Any
     ) -> None:
         """Инициализирует группу исключений шины событий.
 

@@ -1,4 +1,5 @@
 """SqliteBackend — хранение журнала аудита в SQLite через стандартную библиотеку sqlite3."""
+
 from __future__ import annotations
 
 import json
@@ -94,13 +95,13 @@ class SqliteBackend(BaseAuditBackend):
         return row[0] if row else ""
 
     def log(
-            self,
-            action: str,
-            actor: str,
-            *,
-            target: str | None = None,
-            status: str = "success",
-            details: dict[str, object] | None = None,
+        self,
+        action: str,
+        actor: str,
+        *,
+        target: str | None = None,
+        status: str = "success",
+        details: dict[str, object] | None = None,
     ) -> str:
         """Добавляет событие в таблицу audit_log.
 
@@ -168,8 +169,18 @@ class SqliteBackend(BaseAuditBackend):
 
         prev_hash = ""
         for row in rows:
-            (rid, actor, action, target, status, details_str,
-             env_str, timestamp, stored_prev_hash, stored_hash) = row
+            (
+                rid,
+                actor,
+                action,
+                target,
+                status,
+                details_str,
+                env_str,
+                timestamp,
+                stored_prev_hash,
+                stored_hash,
+            ) = row
 
             # Строим dict в том же порядке что AuditEvent.model_dump(mode="json")
             data: dict[str, object] = {

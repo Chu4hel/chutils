@@ -16,10 +16,12 @@ from chutils.config import register_provider, get_config_value
 from chutils.config.custom_providers import DictConfigProvider
 
 # 1. Создаём провайдер
-provider = DictConfigProvider({
-    "database": {"host": "prod-db.internal", "port": "5432"},
-    "app": {"debug": "false"},
-})
+provider = DictConfigProvider(
+    {
+        "database": {"host": "prod-db.internal", "port": "5432"},
+        "app": {"debug": "false"},
+    }
+)
 
 # 2. Регистрируем (priority=10 — высокий приоритет)
 register_provider(provider, priority=10)
@@ -230,10 +232,12 @@ from chutils.config.custom_providers import DictConfigProvider
 
 @pytest.fixture(autouse=True)
 def mock_config():
-    provider = DictConfigProvider({
-        "database": {"host": "test-db", "port": "5432"},
-        "app": {"debug": "true", "log_level": "DEBUG"},
-    })
+    provider = DictConfigProvider(
+        {
+            "database": {"host": "test-db", "port": "5432"},
+            "app": {"debug": "true", "log_level": "DEBUG"},
+        }
+    )
     register_provider(provider, priority=0)  # priority=0 → максимальный приоритет
     yield
     reset_providers()  # обязательно сбрасываем после теста

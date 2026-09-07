@@ -9,10 +9,11 @@ from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, TypeVar, overload, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast, overload
 
 from chutils.exceptions import ConfigParseError, OptionalDependencyError
 from chutils.typing import JSONDict
+
 from . import utils
 from .core import get_config
 from .manager import _cm
@@ -27,11 +28,11 @@ logger = logging.getLogger(__name__)
 
 
 def get_config_value(
-        section: str,
-        key: str,
-        fallback: Any = None,
-        config: JSONDict | None = None,
-        required: bool = False,
+    section: str,
+    key: str,
+    fallback: Any = None,
+    config: JSONDict | None = None,
+    required: bool = False,
 ) -> Any:
     """Получает произвольное значение из конфигурации.
 
@@ -59,6 +60,7 @@ def get_config_value(
     """
     # 1. Опрашиваем кастомные провайдеры (наивысший приоритет)
     from .custom_providers import get_registry
+
     provider_value = get_registry().get_value(section, key)
     if provider_value is not None:
         return provider_value
@@ -94,7 +96,13 @@ def get_config_value(
     # Если значение не найдено или является пустой строкой, пробуем fallback-поиск в переменных окружения
     if value is None or value == "":
         import os
-        disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
+
+        disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in (
+            "true",
+            "1",
+            "yes",
+            "y",
+        )  # chutils: ignore[ChutilsIntegrationRule]
         if not disable_env_override:
             sec_up = section.upper()
             key_up = key.upper()
@@ -104,12 +112,15 @@ def get_config_value(
                 key_up,
             )
             for candidate in candidates:
-                env_val = os.environ.get(candidate)  # chutils: ignore[ChutilsIntegrationRule]
+                env_val = os.environ.get(
+                    candidate
+                )  # chutils: ignore[ChutilsIntegrationRule]
                 if env_val is not None and env_val != "":
                     value = env_val
                     if section.lower() == "secrets":
                         try:
                             from chutils.logger import setup_logger
+
                             setup_logger().add_mask(env_val)
                         except Exception:
                             pass
@@ -129,11 +140,11 @@ def get_config_value(
 
 
 async def aget_config_value(
-        section: str,
-        key: str,
-        fallback: Any = None,
-        config: JSONDict | None = None,
-        required: bool = False,
+    section: str,
+    key: str,
+    fallback: Any = None,
+    config: JSONDict | None = None,
+    required: bool = False,
 ) -> Any:
     """Асинхронно получает произвольное значение из конфигурации.
 
@@ -157,6 +168,7 @@ async def aget_config_value(
 
     # 1. Асинхронно опрашиваем кастомные провайдеры
     from .custom_providers import get_registry
+
     provider_value = await get_registry().aget_value(section, key)
     if provider_value is not None:
         return provider_value
@@ -177,11 +189,11 @@ async def aget_config_value(
 
 
 def get_config_int(
-        section: str,
-        key: str,
-        fallback: int = 0,
-        config: JSONDict | None = None,
-        required: bool = False,
+    section: str,
+    key: str,
+    fallback: int = 0,
+    config: JSONDict | None = None,
+    required: bool = False,
 ) -> int:
     """
     Получает целочисленное значение из конфигурации.
@@ -206,11 +218,11 @@ def get_config_int(
 
 
 def get_config_float(
-        section: str,
-        key: str,
-        fallback: float = 0.0,
-        config: JSONDict | None = None,
-        required: bool = False,
+    section: str,
+    key: str,
+    fallback: float = 0.0,
+    config: JSONDict | None = None,
+    required: bool = False,
 ) -> float:
     """
     Получает дробное значение из конфигурации.
@@ -235,11 +247,11 @@ def get_config_float(
 
 
 def get_config_boolean(
-        section: str,
-        key: str,
-        fallback: bool = False,
-        config: JSONDict | None = None,
-        required: bool = False,
+    section: str,
+    key: str,
+    fallback: bool = False,
+    config: JSONDict | None = None,
+    required: bool = False,
 ) -> bool:
     """
     Получает булево значение из конфигурации.
@@ -291,11 +303,11 @@ def get_config_boolean(
 
 
 def get_config_list(
-        section: str,
-        key: str,
-        fallback: list[Any] | None = None,
-        config: JSONDict | None = None,
-        required: bool = False,
+    section: str,
+    key: str,
+    fallback: list[Any] | None = None,
+    config: JSONDict | None = None,
+    required: bool = False,
 ) -> list[Any]:
     """
     Получает значение как список из конфигурации.
@@ -341,30 +353,30 @@ def get_config_list(
 
 @overload
 def get_config_section(
-        section_name: str,
-        fallback: JSONDict | None = None,
-        config: JSONDict | None = None,
-        model: None = None,
-        required: bool = False,
+    section_name: str,
+    fallback: JSONDict | None = None,
+    config: JSONDict | None = None,
+    model: None = None,
+    required: bool = False,
 ) -> JSONDict: ...
 
 
 @overload
 def get_config_section(
-        section_name: str,
-        fallback: JSONDict | None = None,
-        config: JSONDict | None = None,
-        model: type[T] = ...,
-        required: bool = False,
+    section_name: str,
+    fallback: JSONDict | None = None,
+    config: JSONDict | None = None,
+    model: type[T] = ...,
+    required: bool = False,
 ) -> T: ...
 
 
 def get_config_section(
-        section_name: str,
-        fallback: JSONDict | None = None,
-        config: JSONDict | None = None,
-        model: type[T] | None = None,
-        required: bool = False,
+    section_name: str,
+    fallback: JSONDict | None = None,
+    config: JSONDict | None = None,
+    model: type[T] | None = None,
+    required: bool = False,
 ) -> JSONDict | T:
     """
     Получает всю секцию конфигурации как словарь или Pydantic модель.
@@ -420,12 +432,12 @@ def get_config_section(
 
 
 def get_config_path(
-        section: str,
-        key: str,
-        fallback: str | None = None,
-        config: JSONDict | None = None,
-        resolve_from_root: bool = True,
-        required: bool = False,
+    section: str,
+    key: str,
+    fallback: str | None = None,
+    config: JSONDict | None = None,
+    resolve_from_root: bool = True,
+    required: bool = False,
 ) -> str | None:
     """
     Получает путь из конфигурации.
@@ -460,8 +472,8 @@ def get_config_path(
     if resolve_from_root and base_dir:
         # Безопасное разрешение пути с проверкой на выход за пределы корня проекта (Path Traversal)
         try:
-            from chutils.fs import resolve_safe_path
             from chutils.exceptions import PathTraversalError
+            from chutils.fs import resolve_safe_path
 
             return str(resolve_safe_path(path_str, base_dir))
         except PathTraversalError as e:
@@ -475,9 +487,9 @@ def get_config_path(
 
 
 def validate_required_keys(
-        section: str | dict[str, Any],
-        keys: list[str] | str,
-        config: JSONDict | None = None,
+    section: str | dict[str, Any],
+    keys: list[str] | str,
+    config: JSONDict | None = None,
 ) -> None:
     """
     Проверяет наличие списка обязательных ключей в указанной секции конфигурации или словаре.
@@ -501,7 +513,11 @@ def validate_required_keys(
             if val is None or val == "":
                 from chutils.exceptions import ConfigKeyNotFoundError
 
-                errors.append(ConfigKeyNotFoundError(f"Key '{key}' not found or empty in provided dictionary"))
+                errors.append(
+                    ConfigKeyNotFoundError(
+                        f"Key '{key}' not found or empty in provided dictionary"
+                    )
+                )
     else:
         if config is None:
             config = cast(JSONDict, get_config())
@@ -515,7 +531,11 @@ def validate_required_keys(
     if errors:
         from chutils.exceptions import ConfigValidationGroupError
 
-        sec_name = "provided dictionary" if isinstance(section, dict) else f"section '{section}'"
+        sec_name = (
+            "provided dictionary"
+            if isinstance(section, dict)
+            else f"section '{section}'"
+        )
         raise ConfigValidationGroupError(
             f"Validation failed for {sec_name}. Missing or empty required keys.",
             exceptions=errors,

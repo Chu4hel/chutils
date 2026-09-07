@@ -2,7 +2,6 @@
 Тесты для DomainRateLimiter.
 """
 
-import asyncio
 import time
 
 import pytest

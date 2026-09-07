@@ -1,6 +1,6 @@
 import asyncio
 import time
-from typing import Any, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 import httpx  # chutils: ignore[ChutilsIntegrationRule]
 from httpx._utils import URLPattern
@@ -8,6 +8,7 @@ from httpx._utils import URLPattern
 from chutils.cache import InMemoryCacheBackend
 from chutils.decorators import get_limiter
 from chutils.exceptions import RateLimitExceededError
+
 from .proxy_pool import ProxyPool
 from .user_agent import UserAgentRotator
 
@@ -21,6 +22,7 @@ def _get_logger() -> "ChutilsLogger":
     global _module_logger
     if _module_logger is None:
         from chutils.logger import setup_logger
+
         _module_logger = setup_logger(__name__)
     return _module_logger
 
@@ -32,23 +34,23 @@ class WebClient(httpx.Client):
     """
 
     def __init__(
-            self,
-            *args: Any,
-            user_agent_rotator: UserAgentRotator | None = None,
-            proxy_pool: ProxyPool | None = None,
-            rotate_ua: bool = True,
-            rotate_proxy: bool = True,
-            retries: int = 0,
-            retry_delay: float = 1.0,
-            retry_backoff: float = 2.0,
-            retry_on_5xx: bool = True,
-            rate_limit_calls: int | None = None,
-            rate_limit_period: float = 1.0,
-            rate_limit_strategy: str = "token_bucket",
-            rate_limit_wait: bool = False,
-            cache_ttl: int | None = None,
-            cache_backend: Any | None = None,
-            **kwargs: Any,
+        self,
+        *args: Any,
+        user_agent_rotator: UserAgentRotator | None = None,
+        proxy_pool: ProxyPool | None = None,
+        rotate_ua: bool = True,
+        rotate_proxy: bool = True,
+        retries: int = 0,
+        retry_delay: float = 1.0,
+        retry_backoff: float = 2.0,
+        retry_on_5xx: bool = True,
+        rate_limit_calls: int | None = None,
+        rate_limit_period: float = 1.0,
+        rate_limit_strategy: str = "token_bucket",
+        rate_limit_wait: bool = False,
+        cache_ttl: int | None = None,
+        cache_backend: Any | None = None,
+        **kwargs: Any,
     ) -> None:
         """Инициализирует WebClient.
 
@@ -71,7 +73,7 @@ class WebClient(httpx.Client):
             **kwargs: Именованные аргументы для родительского класса httpx.Client.
         """
         self.user_agent_rotator: UserAgentRotator = (
-                user_agent_rotator or UserAgentRotator()
+            user_agent_rotator or UserAgentRotator()
         )
         self.proxy_pool: ProxyPool | None = proxy_pool
         self._rotate_ua_enabled: bool = rotate_ua
@@ -89,7 +91,7 @@ class WebClient(httpx.Client):
 
         self._cache_ttl: int | None = cache_ttl
         self._cache_backend: InMemoryCacheBackend[Any] = (
-                cache_backend or InMemoryCacheBackend()
+            cache_backend or InMemoryCacheBackend()
         )
 
         # Сохраняем аргументы транспорта для пересоздания
@@ -134,9 +136,7 @@ class WebClient(httpx.Client):
         }
         self._mounts = dict(sorted(self._mounts.items()))
 
-    def send(
-            self, request: httpx.Request, *args: Any, **kwargs: Any
-    ) -> httpx.Response:
+    def send(self, request: httpx.Request, *args: Any, **kwargs: Any) -> httpx.Response:
         """Перехватывает отправку запроса для ротации, лимитов и кэширования.
 
         Args:
@@ -193,14 +193,12 @@ class WebClient(httpx.Client):
 
                 # Кэшируем успешный ответ
                 if (
-                        request.method == "GET"
-                        and self._cache_ttl is not None
-                        and resp.status_code == 200
+                    request.method == "GET"
+                    and self._cache_ttl is not None
+                    and resp.status_code == 200
                 ):
                     resp.read()
-                    self._cache_backend.set(
-                        cache_key, resp, ttl=self._cache_ttl
-                    )
+                    self._cache_backend.set(cache_key, resp, ttl=self._cache_ttl)
 
                 return resp
             except (httpx.RequestError, httpx.HTTPStatusError) as e:
@@ -229,23 +227,23 @@ class AsyncWebClient(httpx.AsyncClient):
     """
 
     def __init__(
-            self,
-            *args: Any,
-            user_agent_rotator: UserAgentRotator | None = None,
-            proxy_pool: ProxyPool | None = None,
-            rotate_ua: bool = True,
-            rotate_proxy: bool = True,
-            retries: int = 0,
-            retry_delay: float = 1.0,
-            retry_backoff: float = 2.0,
-            retry_on_5xx: bool = True,
-            rate_limit_calls: int | None = None,
-            rate_limit_period: float = 1.0,
-            rate_limit_strategy: str = "token_bucket",
-            rate_limit_wait: bool = False,
-            cache_ttl: int | None = None,
-            cache_backend: Any | None = None,
-            **kwargs: Any,
+        self,
+        *args: Any,
+        user_agent_rotator: UserAgentRotator | None = None,
+        proxy_pool: ProxyPool | None = None,
+        rotate_ua: bool = True,
+        rotate_proxy: bool = True,
+        retries: int = 0,
+        retry_delay: float = 1.0,
+        retry_backoff: float = 2.0,
+        retry_on_5xx: bool = True,
+        rate_limit_calls: int | None = None,
+        rate_limit_period: float = 1.0,
+        rate_limit_strategy: str = "token_bucket",
+        rate_limit_wait: bool = False,
+        cache_ttl: int | None = None,
+        cache_backend: Any | None = None,
+        **kwargs: Any,
     ) -> None:
         """Инициализирует AsyncWebClient.
 
@@ -268,7 +266,7 @@ class AsyncWebClient(httpx.AsyncClient):
             **kwargs: Именованные аргументы для родительского класса httpx.AsyncClient.
         """
         self.user_agent_rotator: UserAgentRotator = (
-                user_agent_rotator or UserAgentRotator()
+            user_agent_rotator or UserAgentRotator()
         )
         self.proxy_pool: ProxyPool | None = proxy_pool
         self._rotate_ua_enabled: bool = rotate_ua
@@ -286,7 +284,7 @@ class AsyncWebClient(httpx.AsyncClient):
 
         self._cache_ttl: int | None = cache_ttl
         self._cache_backend: InMemoryCacheBackend[Any] = (
-                cache_backend or InMemoryCacheBackend()
+            cache_backend or InMemoryCacheBackend()
         )
 
         self._transport_kwargs: dict[str, Any] = {
@@ -329,7 +327,7 @@ class AsyncWebClient(httpx.AsyncClient):
         self._mounts = dict(sorted(self._mounts.items()))
 
     async def send(
-            self, request: httpx.Request, *args: Any, **kwargs: Any
+        self, request: httpx.Request, *args: Any, **kwargs: Any
     ) -> httpx.Response:
         """Перехватывает отправку запроса для ротации, лимитов и кэширования.
 
@@ -387,14 +385,12 @@ class AsyncWebClient(httpx.AsyncClient):
 
                 # Кэшируем успешный ответ
                 if (
-                        request.method == "GET"
-                        and self._cache_ttl is not None
-                        and resp.status_code == 200
+                    request.method == "GET"
+                    and self._cache_ttl is not None
+                    and resp.status_code == 200
                 ):
                     await resp.aread()
-                    await self._cache_backend.aset(
-                        cache_key, resp, ttl=self._cache_ttl
-                    )
+                    await self._cache_backend.aset(cache_key, resp, ttl=self._cache_ttl)
 
                 return resp
             except (httpx.RequestError, httpx.HTTPStatusError) as e:

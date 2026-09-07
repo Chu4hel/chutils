@@ -12,17 +12,18 @@ try:
 except ImportError:
     PYDANTIC_INSTALLED = False
 
-
     # Заглушки для типов, чтобы тесты не падали на этапе импорта
     class BaseModel:
         pass
 
-
     class ValidationError(Exception):
         pass
 
+
 # Пропускаем тесты, если pydantic не установлен (кроме теста на ImportError)
-pytestmark = pytest.mark.skipif(not PYDANTIC_INSTALLED, reason="Pydantic is required for these tests")
+pytestmark = pytest.mark.skipif(
+    not PYDANTIC_INSTALLED, reason="Pydantic is required for these tests"
+)
 
 
 class DbConfig(BaseModel):
@@ -102,7 +103,9 @@ Database:
 async def test_aget_config_with_model(config_fs):
     """Тест успешной асинхронной валидации через Pydantic модель."""
     fs, project_root = config_fs
-    yaml_content = "name: AsyncApp\nversion: 2.0.0\nDatabase:\n  host: async-db\n  port: 5432"
+    yaml_content = (
+        "name: AsyncApp\nversion: 2.0.0\nDatabase:\n  host: async-db\n  port: 5432"
+    )
     fs.create_file(project_root / "config.yml", contents=yaml_content)
     fs.create_file(project_root / "pyproject.toml", contents="")
     config._cm._reset()
@@ -133,7 +136,7 @@ def test_import_error_when_pydantic_missing(config_fs, monkeypatch):
     import sys
 
     # Сохраняем оригинал, если он есть
-    original_pydantic = sys.modules.get('pydantic')
+    original_pydantic = sys.modules.get("pydantic")
 
     try:
         # Эмулируем отсутствие pydantic через мок внутренней функции в utils
@@ -145,11 +148,12 @@ def test_import_error_when_pydantic_missing(config_fs, monkeypatch):
 
         # Создаем фиктивную модель (просто класс)
         class DummyModel:
-            def __init__(self, **kwargs): pass
+            def __init__(self, **kwargs):
+                pass
 
         with pytest.raises(OptionalDependencyError, match="Pydantic is required"):
             get_config(model=DummyModel)
 
     finally:
         if original_pydantic:
-            sys.modules['pydantic'] = original_pydantic
+            sys.modules["pydantic"] = original_pydantic

@@ -1,6 +1,7 @@
 """
 Юнит-тесты для сквозных интеграций chutils.store (трассировка, метрики, декоратор кэша).
 """
+
 from __future__ import annotations
 
 from contextlib import nullcontext
@@ -21,8 +22,9 @@ def test_store_manager_metrics_and_tracing_hooks() -> None:
     mock_get_tracer = MagicMock(return_value=mock_tracer)
     mock_increment = MagicMock()
 
-    with patch("chutils.tracing.get_tracer", mock_get_tracer), patch(
-        "chutils.metrics.increment", mock_increment
+    with (
+        patch("chutils.tracing.get_tracer", mock_get_tracer),
+        patch("chutils.metrics.increment", mock_increment),
     ):
         manager = StoreManager(backend=MemoryStore())
 

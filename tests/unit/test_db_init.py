@@ -7,12 +7,12 @@
 - Чтение URL из конфигурации chutils (секции [Database] и [Secrets]).
 - ConfigError, если URL не найден ни в параметрах, ни в конфигурации.
 """
+
 import importlib
 import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 
 # ---------------------------------------------------------------------------
 # Вспомогательные функции
@@ -38,7 +38,9 @@ class TestDbImportSafety:
         """Проверяет, что импорт без sqlalchemy вызывает OptionalDependencyError."""
         _clear_db_modules()
 
-        with patch.dict(sys.modules, {"sqlalchemy": None, "sqlalchemy.ext.asyncio": None}):
+        with patch.dict(
+            sys.modules, {"sqlalchemy": None, "sqlalchemy.ext.asyncio": None}
+        ):
             from chutils.exceptions import OptionalDependencyError
 
             with pytest.raises(OptionalDependencyError) as exc_info:
@@ -52,7 +54,9 @@ class TestDbImportSafety:
         """Проверяет, что сообщение об ошибке содержит подсказку по установке."""
         _clear_db_modules()
 
-        with patch.dict(sys.modules, {"sqlalchemy": None, "sqlalchemy.ext.asyncio": None}):
+        with patch.dict(
+            sys.modules, {"sqlalchemy": None, "sqlalchemy.ext.asyncio": None}
+        ):
             from chutils.exceptions import OptionalDependencyError
 
             with pytest.raises(OptionalDependencyError) as exc_info:
@@ -77,7 +81,9 @@ class TestDatabaseManagerInit:
 
         # Патчим имена прямо в пространстве имён модуля chutils.db
         with (
-            patch("chutils.db.create_async_engine", return_value=mock_engine) as mock_create,
+            patch(
+                "chutils.db.create_async_engine", return_value=mock_engine
+            ) as mock_create,
             patch("chutils.db.async_sessionmaker", return_value=mock_session_factory),
         ):
             from chutils.db import DatabaseManager
@@ -95,7 +101,9 @@ class TestDatabaseManagerInit:
         mock_session_factory = MagicMock()
 
         with (
-            patch("chutils.db.create_async_engine", return_value=mock_engine) as mock_create,
+            patch(
+                "chutils.db.create_async_engine", return_value=mock_engine
+            ) as mock_create,
             patch("chutils.db.async_sessionmaker", return_value=mock_session_factory),
         ):
             from chutils.db import DatabaseManager
@@ -111,7 +119,9 @@ class TestDatabaseManagerInit:
         mock_session_factory = MagicMock()
 
         with (
-            patch("chutils.db.create_async_engine", return_value=mock_engine) as mock_create,
+            patch(
+                "chutils.db.create_async_engine", return_value=mock_engine
+            ) as mock_create,
             patch("chutils.db.async_sessionmaker", return_value=mock_session_factory),
         ):
             from chutils.db import DatabaseManager
@@ -135,13 +145,17 @@ class TestDatabaseManagerConfigReading:
         mock_engine = MagicMock()
         mock_session_factory = MagicMock()
 
-        def mock_get_config_value(section: str, key: str, default: str | None = None) -> str | None:
+        def mock_get_config_value(
+            section: str, key: str, default: str | None = None
+        ) -> str | None:
             if section == "Database" and key == "url":
                 return "postgresql+asyncpg://user:pass@localhost/db"
             return default
 
         with (
-            patch("chutils.db.create_async_engine", return_value=mock_engine) as mock_create,
+            patch(
+                "chutils.db.create_async_engine", return_value=mock_engine
+            ) as mock_create,
             patch("chutils.db.async_sessionmaker", return_value=mock_session_factory),
             patch("chutils.db.get_config_value", side_effect=mock_get_config_value),
         ):
@@ -157,14 +171,18 @@ class TestDatabaseManagerConfigReading:
         mock_engine = MagicMock()
         mock_session_factory = MagicMock()
 
-        def mock_get_config_value(section: str, key: str, default: str | None = None) -> str | None:
+        def mock_get_config_value(
+            section: str, key: str, default: str | None = None
+        ) -> str | None:
             # url возвращает None, database_url — нет
             if section == "Database" and key == "database_url":
                 return "postgresql+asyncpg://user:pass@db-key-host/db"
             return default
 
         with (
-            patch("chutils.db.create_async_engine", return_value=mock_engine) as mock_create,
+            patch(
+                "chutils.db.create_async_engine", return_value=mock_engine
+            ) as mock_create,
             patch("chutils.db.async_sessionmaker", return_value=mock_session_factory),
             patch("chutils.db.get_config_value", side_effect=mock_get_config_value),
         ):
@@ -180,13 +198,17 @@ class TestDatabaseManagerConfigReading:
         mock_engine = MagicMock()
         mock_session_factory = MagicMock()
 
-        def mock_get_config_value(section: str, key: str, default: str | None = None) -> str | None:
+        def mock_get_config_value(
+            section: str, key: str, default: str | None = None
+        ) -> str | None:
             if section == "Secrets" and key == "database_url":
                 return "postgresql+asyncpg://user:pass@secrets-host/db"
             return default
 
         with (
-            patch("chutils.db.create_async_engine", return_value=mock_engine) as mock_create,
+            patch(
+                "chutils.db.create_async_engine", return_value=mock_engine
+            ) as mock_create,
             patch("chutils.db.async_sessionmaker", return_value=mock_session_factory),
             patch("chutils.db.get_config_value", side_effect=mock_get_config_value),
         ):
@@ -220,9 +242,14 @@ class TestDatabaseManagerConfigReading:
         explicit_url = "sqlite+aiosqlite:///explicit.db"
 
         with (
-            patch("chutils.db.create_async_engine", return_value=mock_engine) as mock_create,
+            patch(
+                "chutils.db.create_async_engine", return_value=mock_engine
+            ) as mock_create,
             patch("chutils.db.async_sessionmaker", return_value=mock_session_factory),
-            patch("chutils.db.get_config_value", return_value="postgresql+asyncpg://config-host/db"),
+            patch(
+                "chutils.db.get_config_value",
+                return_value="postgresql+asyncpg://config-host/db",
+            ),
         ):
             from chutils.db import DatabaseManager
 

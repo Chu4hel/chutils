@@ -6,17 +6,25 @@
 """
 
 from .core import (
-    EventBus as EventBus,
     ErrorStrategy as ErrorStrategy,
-    subscribe as subscribe,
+)
+from .core import (
+    EventBus as EventBus,
+)
+from .core import (
     publish as publish,
+)
+from .core import (
     publish_async as publish_async,
+)
+from .core import (
+    subscribe as subscribe,
 )
 
 __all__ = [
-    "EventBus",
     "ErrorStrategy",
-    "subscribe",
+    "EventBus",
     "publish",
     "publish_async",
+    "subscribe",
 ]

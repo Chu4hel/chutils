@@ -10,6 +10,7 @@ def use_encryption(data: str) -> str:
     try:
         # Импорт опциональной зависимости напрямую
         from cryptography.fernet import Fernet
+
         key = Fernet.generate_key()
         f = Fernet(key)
         return f.encrypt(data.encode()).decode()
@@ -30,6 +31,7 @@ def use_text_similarity(a: str, b: str) -> bool:
     """Сравнивает строки — устаревший подход."""
     try:
         from rapidfuzz import fuzz
+
         return fuzz.ratio(a, b) > 90
     except (ImportError, RuntimeError):
         # Плохо: Нет информации для пользователя о том, как установить зависимость.

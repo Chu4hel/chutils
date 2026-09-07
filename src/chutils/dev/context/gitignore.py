@@ -41,7 +41,11 @@ class GitIgnoreMatcher:
         for gitignore_file in base_dir.rglob(".gitignore"):
             # Пропускаем служебные директории типа .git или .venv при поиске .gitignore
             parts = gitignore_file.relative_to(self.root_path).parts
-            if any(p.startswith(".") and p != ".gitignore" for p in parts) or "venv" in parts or "build" in parts:
+            if (
+                any(p.startswith(".") and p != ".gitignore" for p in parts)
+                or "venv" in parts
+                or "build" in parts
+            ):
                 continue
             self._load_file_rules(gitignore_file, gitignore_file.parent)
 
@@ -77,10 +81,13 @@ class GitIgnoreMatcher:
         if not rule:
             return None
 
-        anchored = "/" in rule[:-1] if rule.endswith("/") else "/" in rule or rule.startswith("/")
+        anchored = (
+            "/" in rule[:-1]
+            if rule.endswith("/")
+            else "/" in rule or rule.startswith("/")
+        )
 
-        if rule.startswith("/"):
-            rule = rule[1:]
+        rule = rule.removeprefix("/")
 
         parts: list[str] = []
         i = 0
