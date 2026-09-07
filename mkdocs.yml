@@ -24,24 +24,41 @@ nav:
   - Главная: index.md
   - Проверка AI-готовности: ai_lint.md
   - Рецепты: recipes.md
-  - Система плагинов: plugins.md
-  - Умный HTTP-клиент (web): web.md
-  - Имитация поведения (scraping): scraping.md
-  - Решение капчи (captcha): captcha.md
+  - Модули и интеграции:
+      - HTTP-клиент и стриминг: http.md
+      - Веб-утилиты (web): web.md
+      - Интеграция с Telegram: telegram.md
+      - ВКонтакте Бот (Callback API): vk_bot.md
+      - VK Mini Apps (VKMA): vkma.md
+      - Тестирование VK: vk_testing.md
+      - Журнал аудита: audit.md
+      - Key-Value хранилище (Store): store.md
+      - Интеграция с Qt: qt.md
+      - Имитация поведения (scraping): scraping.md
+      - Решение капчи (captcha): captcha.md
+      - Система плагинов: plugins.md
+      - Кастомные провайдеры конфигов: custom_config_providers.md
   - Справочник API: api.md
   - Тестирование: testing.md
   - "Миграция: v2 -> v3": migration.md
   - Опциональные зависимости: dependencies.md
   - CLI Reference:
       - Обзор: cli/index.md
+      - Комплексная проверка (check): cli/check.md
       - Инициализация (init): cli/init.md
       - Управление секретами (secrets): cli/secrets.md
       - Валидация (validate): cli/validate.md
+      - Синхронизация окружения (env): cli/env.md
+      - Управление БД (db): cli/db.md
       - Пути поиска (show-paths): cli/show_paths.md
       - Генерация шаблонов (template): cli/template.md
       - Настройки и отладка (config): cli/config.md
       - Инструменты разработчика (dev): cli/dev.md
       - Проверка зеркал (pypi): cli/pypi.md
+  - Для AI-ассистентов:
+      - Руководство по интеграции: INTEGRATION_AI.md
+      - Советы для AI (AI Hints): ai_hints.md
+      - Примеры Few-Shot: ai_examples/README.md
   - Проект:
       - Обзор (RU): README_RU.md
       - Кодекс поведения: CODE_OF_CONDUCT_RU.md
