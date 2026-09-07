@@ -164,7 +164,7 @@ async def aget_config_value(
         Значение из конфигурации или `fallback`.
     """
     import asyncio
-    import concurrent.futures  # noqa: F401
+    import concurrent.futures.thread  # noqa: F401
     import functools
 
     # 1. Асинхронно опрашиваем кастомные провайдеры

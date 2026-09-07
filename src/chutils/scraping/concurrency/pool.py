@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import asyncio
-import concurrent.futures  # noqa: F401
+import concurrent.futures.thread  # noqa: F401
 import inspect
 import time
 from collections.abc import Callable

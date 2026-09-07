@@ -1,5 +1,7 @@
+import concurrent.futures.thread  # noqa: F401
 import keyring
 import pytest
+
 
 pytest_plugins = ["chutils.testing.fixtures"]
 

@@ -7,6 +7,7 @@
 
 import asyncio
 import concurrent.futures
+import concurrent.futures.thread
 import functools
 import inspect
 import random
@@ -224,7 +225,9 @@ def timeout(
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R | Any:
                 # Используем ThreadPoolExecutor для запуска в отдельном потоке
-                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                from concurrent.futures.thread import ThreadPoolExecutor
+
+                with ThreadPoolExecutor(max_workers=1) as executor:
                     future = executor.submit(func, *args, **kwargs)
                     try:
                         return future.result(timeout=seconds)

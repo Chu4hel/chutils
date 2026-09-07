@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import asyncio
-import concurrent.futures  # noqa: F401
+import concurrent.futures.thread  # noqa: F401
 import functools
 import inspect
 import logging  # chutils: ignore[ChutilsIntegrationRule]

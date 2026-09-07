@@ -10,6 +10,7 @@ retry, timeout, semaphore (max_concurrency) и circuit_breaker,
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures.thread  # noqa: F401
 import random
 import threading
 import time
@@ -284,8 +285,9 @@ class ResiliencePolicy:
             try:
                 if self.timeout is not None:
                     import concurrent.futures
+                    from concurrent.futures.thread import ThreadPoolExecutor
 
-                    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+                    with ThreadPoolExecutor(max_workers=1) as ex:
                         future = ex.submit(_call)
                         try:
                             result = future.result(timeout=self.timeout)

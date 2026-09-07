@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-import concurrent.futures  # noqa: F401
+import concurrent.futures.thread  # noqa: F401
 import inspect
 import time
 from collections.abc import Awaitable, Callable
@@ -240,7 +240,7 @@ class DiagnosticsManager:
         if loop and loop.is_running():
             # Если мы уже находимся внутри асинхронного цикла, запускаем через run_until_complete
             # в отдельном потоке с новым циклом событий, чтобы не блокировать текущий.
-            from concurrent.futures import ThreadPoolExecutor
+            from concurrent.futures.thread import ThreadPoolExecutor
 
             with ThreadPoolExecutor(max_workers=1) as executor:
                 future = executor.submit(asyncio.run, self.run_checks())

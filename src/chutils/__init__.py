@@ -32,6 +32,7 @@
 
 """
 
+import concurrent.futures.thread  # noqa: F401
 import importlib
 import os
 from typing import Any

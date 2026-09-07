@@ -10552,7 +10552,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 24,
+            "line_number": 25,
             "bases": [],
             "children": []
           },
@@ -10572,7 +10572,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 31,
+            "line_number": 32,
             "bases": [],
             "children": []
           },
@@ -10592,7 +10592,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 50,
+            "line_number": 51,
             "bases": [],
             "children": []
           },
@@ -10612,7 +10612,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 136,
+            "line_number": 137,
             "bases": [],
             "children": []
           },
@@ -10632,7 +10632,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 178,
+            "line_number": 179,
             "bases": [],
             "children": []
           },
@@ -10652,7 +10652,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 245,
+            "line_number": 248,
             "bases": [],
             "children": [
               {
@@ -10671,7 +10671,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 248,
+                "line_number": 251,
                 "bases": [],
                 "children": []
               },
@@ -10691,7 +10691,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 263,
+                "line_number": 266,
                 "bases": [],
                 "children": []
               }
@@ -10713,7 +10713,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 309,
+            "line_number": 312,
             "bases": [],
             "children": [
               {
@@ -10732,7 +10732,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 312,
+                "line_number": 315,
                 "bases": [],
                 "children": []
               },
@@ -10752,7 +10752,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 327,
+                "line_number": 330,
                 "bases": [],
                 "children": []
               }
@@ -10774,7 +10774,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 373,
+            "line_number": 376,
             "bases": [],
             "children": []
           },
@@ -10794,7 +10794,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 376,
+            "line_number": 379,
             "bases": [],
             "children": []
           },
@@ -10814,7 +10814,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 399,
+            "line_number": 402,
             "bases": [],
             "children": []
           },
@@ -10834,7 +10834,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 405,
+            "line_number": 408,
             "bases": [],
             "children": []
           },
@@ -10854,7 +10854,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 487,
+            "line_number": 490,
             "bases": [],
             "children": [
               {
@@ -10873,7 +10873,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 490,
+                "line_number": 493,
                 "bases": [],
                 "children": []
               },
@@ -10893,7 +10893,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 519,
+                "line_number": 522,
                 "bases": [],
                 "children": []
               },
@@ -10913,7 +10913,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 534,
+                "line_number": 537,
                 "bases": [],
                 "children": []
               },
@@ -10933,7 +10933,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 565,
+                "line_number": 568,
                 "bases": [],
                 "children": []
               },
@@ -10953,7 +10953,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 582,
+                "line_number": 585,
                 "bases": [],
                 "children": []
               }
@@ -10975,7 +10975,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 607,
+            "line_number": 610,
             "bases": [],
             "children": []
           },
@@ -10995,7 +10995,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 668,
+            "line_number": 671,
             "bases": [],
             "children": []
           },
@@ -11015,7 +11015,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 737,
+            "line_number": 740,
             "bases": [],
             "children": []
           }
@@ -21411,7 +21411,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 26,
+                "line_number": 27,
                 "bases": [],
                 "children": []
               },
@@ -21431,7 +21431,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 38,
+                "line_number": 39,
                 "bases": [],
                 "children": []
               },
@@ -21451,7 +21451,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 45,
+                "line_number": 46,
                 "bases": [
                   "Exception"
                 ],
@@ -21475,7 +21475,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 53,
+                "line_number": 54,
                 "bases": [],
                 "children": [
                   {
@@ -21496,7 +21496,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 66,
+                    "line_number": 67,
                     "bases": [],
                     "children": []
                   },
@@ -21516,7 +21516,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 78,
+                    "line_number": 79,
                     "bases": [],
                     "children": []
                   },
@@ -21536,7 +21536,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 91,
+                    "line_number": 92,
                     "bases": [],
                     "children": []
                   }
@@ -21558,7 +21558,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 101,
+                "line_number": 102,
                 "bases": [],
                 "children": [
                   {
@@ -21577,7 +21577,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 126,
+                    "line_number": 127,
                     "bases": [],
                     "children": []
                   },
@@ -21597,7 +21597,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 182,
+                    "line_number": 183,
                     "bases": [],
                     "children": []
                   },
@@ -21617,7 +21617,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 194,
+                    "line_number": 195,
                     "bases": [],
                     "children": []
                   },
@@ -21637,7 +21637,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 219,
+                    "line_number": 220,
                     "bases": [],
                     "children": []
                   },
@@ -21657,7 +21657,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 236,
+                    "line_number": 237,
                     "bases": [],
                     "children": []
                   },
@@ -21677,7 +21677,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 332,
+                    "line_number": 334,
                     "bases": [],
                     "children": []
                   }
@@ -37715,7 +37715,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 42,
+        "line_number": 43,
         "bases": [],
         "children": []
       },
@@ -37735,7 +37735,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 341,
+        "line_number": 342,
         "bases": [],
         "children": []
       },
@@ -37755,7 +37755,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 374,
+        "line_number": 375,
         "bases": [],
         "children": []
       },
@@ -37775,7 +37775,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 394,
+        "line_number": 395,
         "bases": [],
         "children": []
       }
@@ -39922,8 +39922,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "bd7258d5ba1c1aa101c739ea6b52e95a365b2e71 (dirty)",
-    "generated_at": "2026-09-07T17:14:56.324808+00:00",
-    "project_hash": "1bda1af8ff385efb83897c863f2d2a4276670f074b8f8c29c492ec0815c5c074"
+    "git_commit": "08f394ea09474adcde99870b0667e46d806878cb (dirty)",
+    "generated_at": "2026-09-07T18:14:36.000611+00:00",
+    "project_hash": "37db33fae82d8dbe28d9aac0d7d83e9f7c991c62803af010e4766e1acdcdeb72"
   }
 }

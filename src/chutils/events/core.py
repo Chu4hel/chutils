@@ -1,7 +1,7 @@
 """Ядро шины событий (In-Memory Event Bus)."""
 
 import asyncio
-import concurrent.futures  # noqa: F401
+import concurrent.futures.thread  # noqa: F401
 import inspect
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import threading

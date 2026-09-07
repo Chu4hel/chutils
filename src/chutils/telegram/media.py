@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import asyncio
-import concurrent.futures  # noqa: F401
+import concurrent.futures.thread  # noqa: F401
 import os
 from pathlib import Path
 from typing import Any

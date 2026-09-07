@@ -132,7 +132,7 @@ class CaptchaSolverPlugin(BasePlugin):
             Строка ответа.
         """
         import asyncio
-        import concurrent.futures  # noqa: F401
+        import concurrent.futures.thread  # noqa: F401
 
         loop = asyncio.get_running_loop()
 
