@@ -55,7 +55,7 @@ def is_async_callable(obj: t.Any) -> bool:
     """
     if inspect.iscoroutinefunction(obj):
         return True
-    if hasattr(obj, "__call__"):
+    if callable(obj):
         return inspect.iscoroutinefunction(obj.__call__)
     return False
 

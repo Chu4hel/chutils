@@ -173,7 +173,7 @@ def setup_logger(
     valid_file_handler_kwargs = {"mode", "delay", "errors"}
     invalid_kwargs = set(kwargs.keys()) - valid_file_handler_kwargs
     if invalid_kwargs:
-        bad_arg = sorted(invalid_kwargs)[0]
+        bad_arg = min(invalid_kwargs)
         raise TypeError(
             f"setup_logger() got an unexpected keyword argument {bad_arg!r}"
         )

@@ -357,9 +357,7 @@ def _make_inject_decorator(
             # Инъецируем, если:
             # 1. Есть явный маркер Inject()
             # 2. Или параметр не имеет значения по умолчанию, но его тип зарегистрирован в контейнере
-            if is_explicit_inject:
-                injectable_params.append((name, param))
-            elif (
+            if is_explicit_inject or (
                 param.default is inspect.Parameter.empty
                 and has_annotation
                 and (

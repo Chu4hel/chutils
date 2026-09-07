@@ -12,9 +12,8 @@ from dataclasses import dataclass
 from types import TracebackType
 from typing import Any
 
-from typing_extensions import Self
-
 import httpx  # chutils: ignore[ChutilsIntegrationRule]
+from typing_extensions import Self
 
 from chutils.exceptions import OptionalDependencyError
 

@@ -209,9 +209,11 @@ class DatabaseManager:
             async with db.transaction() as session:
                 session.add(MyModel(name="test"))
         """
-        async with self._session_factory() as async_session:
-            async with async_session.begin():
-                yield async_session
+        async with (
+            self._session_factory() as async_session,
+            async_session.begin(),
+        ):
+            yield async_session
 
     # ------------------------------------------------------------------
     # Публичный API: health check и lifecycle

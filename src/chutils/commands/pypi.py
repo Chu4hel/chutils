@@ -250,9 +250,9 @@ def find_best_mirror(results: list[dict[str, Any]], current_url: str) -> str | N
     current_latency = current_result["latency_ms"] or float("inf")
 
     # Сравниваем скорость: если скорость выше на 50%+
-    if best_speed > 0 and current_speed > 0 and best_speed >= current_speed * 1.5:
-        return str(best_result["url"])
-    elif best_speed > 0 and current_speed == 0:
+    if (
+        best_speed > 0 and current_speed > 0 and best_speed >= current_speed * 1.5
+    ) or (best_speed > 0 and current_speed == 0):
         return str(best_result["url"])
 
     # Сравниваем пинг: если пинг ниже на 30%+ и разница не менее 50 мс

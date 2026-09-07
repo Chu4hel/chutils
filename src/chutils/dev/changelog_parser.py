@@ -68,9 +68,7 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
 
             # 1. Проверяем начало секции Breaking Changes
             if any(re.search(pat, clean_header) for pat in BREAKING_PATTERNS) and (
-                line_strip.startswith("#")
-                or line_strip.startswith("**")
-                or line_strip.startswith("*")
+                line_strip.startswith(("#", "**", "*"))
                 or clean_header in ["breaking changes", "breaking"]
             ):
                 current_section = "breaking_changes"
@@ -78,9 +76,7 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
 
             # 2. Проверяем начало секции Deprecations
             elif any(re.search(pat, clean_header) for pat in DEPRECATION_PATTERNS) and (
-                line_strip.startswith("#")
-                or line_strip.startswith("**")
-                or line_strip.startswith("*")
+                line_strip.startswith(("#", "**", "*"))
                 or clean_header in ["deprecations", "deprecated"]
             ):
                 current_section = "deprecations"
