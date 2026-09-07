@@ -41,7 +41,7 @@ class CodeDecompositionRule(Rule):
             try:
                 with open(file_path, encoding="utf-8") as f:
                     content = f.read()
-            except Exception:
+            except (OSError, UnicodeDecodeError):
                 continue
 
             # 1. Проверяем инлайн-игнорирование
@@ -65,9 +65,7 @@ class CodeDecompositionRule(Rule):
                 if isinstance(n, ast.Constant):
                     return isinstance(n.value, str)
                 # Fallback для старых версий Python
-                if hasattr(ast, "Str") and isinstance(n, ast.Str):
-                    return True
-                return False
+                return bool(hasattr(ast, "Str") and isinstance(n, ast.Str))
 
             try:
                 tree = ast.parse(content)

@@ -37,7 +37,7 @@ _config_plugins_loaded = False
 
 def _ensure_config_plugins_loaded() -> None:
     """Лениво загружает плагины конфигурации и добавляет их в _PROVIDERS."""
-    global _PROVIDERS, _config_plugins_loaded
+    global _config_plugins_loaded
     if not _config_plugins_loaded:
         _config_plugins_loaded = True
         try:
@@ -146,7 +146,7 @@ def _enrich_config_data_with_pydantic_aliases(
             if alias in config_data:
                 found_key = alias
                 break
-            for k in config_data.keys():
+            for k in config_data:
                 if k.lower() == alias.lower():
                     found_key = k
                     break
@@ -337,7 +337,7 @@ def get_config(
                                 continue
 
                             # Проверяем, есть ли такая секция (регистронезависимо)
-                            for existing_sec in config_data.keys():
+                            for existing_sec in config_data:
                                 if existing_sec.lower() == s_candidate.lower():
                                     # Нашли существующую секцию. Теперь поищем ключ в ней.
                                     actual_sec = existing_sec
@@ -346,7 +346,7 @@ def get_config(
                                     if isinstance(config_data[existing_sec], dict):
                                         for existing_key in config_data[
                                             existing_sec
-                                        ].keys():
+                                        ]:
                                             if (
                                                 existing_key.lower()
                                                 == k_candidate.lower()

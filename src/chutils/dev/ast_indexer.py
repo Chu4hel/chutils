@@ -396,7 +396,7 @@ class Indexer:
 
         # Теги из docstring (:tag:)
         tags = re.findall(r":([\w-]+):", docstring)
-        breadcrumbs.tags = sorted(list(set(tags)))
+        breadcrumbs.tags = sorted(set(tags))
 
         if "thread-safe" in breadcrumbs.tags:
             breadcrumbs.is_thread_safe = True

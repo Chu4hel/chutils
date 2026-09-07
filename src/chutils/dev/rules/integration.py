@@ -36,7 +36,7 @@ class ChutilsIntegrationRule(Rule):
                 with open(file_path, encoding="utf-8") as f:
                     content = f.read()
                 tree = ast.parse(content)
-            except Exception:
+            except (OSError, UnicodeDecodeError, SyntaxError):
                 continue
 
             # Карта родительских узлов для контекстного анализа AST

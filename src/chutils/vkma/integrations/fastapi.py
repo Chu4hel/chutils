@@ -8,8 +8,7 @@ from chutils.vkma.models import VKMALaunchParams
 from chutils.vkma.validator import parse_vkma_launch_params
 
 try:
-    from fastapi import Depends, HTTPException, status
-    from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+    from fastapi import HTTPException, status
     from starlette.middleware.base import BaseHTTPMiddleware
     from starlette.requests import Request
     from starlette.responses import JSONResponse, Response

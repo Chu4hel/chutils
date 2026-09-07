@@ -387,7 +387,6 @@ def get_limiter(
     Returns:
         Экземпляр ограничителя частоты (TokenBucket или LeakyBucket).
     """
-    global _limiters
     with _limiters_lock:
         if key not in _limiters:
             if strategy == "leaky_bucket":
@@ -399,7 +398,6 @@ def get_limiter(
 
 def clear_limiters() -> None:
     """Очищает реестр ограничителей (для тестов)."""
-    global _limiters
     with _limiters_lock:
         _limiters.clear()
 

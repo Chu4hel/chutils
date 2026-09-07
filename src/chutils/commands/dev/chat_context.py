@@ -61,7 +61,7 @@ class ChatContextSubCommand(SubCommand):
         if args.modules:
             modules_list = [m.strip() for m in args.modules.split(",") if m.strip()]
 
-        project_path = Path(".").resolve()
+        project_path = Path.cwd()
 
         # Если не указаны ни модули, ни задача, запускаем интерактивный режим
         if not modules_list and not args.task:

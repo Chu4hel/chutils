@@ -155,7 +155,7 @@ def bind_qt_signals(instance: Any, bind_by_signature: bool = False) -> int:
 
         try:
             attr_val = getattr(instance, attr_name)
-        except Exception:
+        except (AttributeError, RuntimeError):
             continue
 
         # Проверяем, является ли атрибут сигналом Qt или TypedSignal

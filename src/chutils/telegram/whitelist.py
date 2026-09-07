@@ -98,10 +98,7 @@ class AccessListManager:
         # Проверка белого списка
         if user_id is not None and user_id in self.allowed_ids:
             return True
-        if clean_uname and clean_uname in self.allowed_usernames:
-            return True
-
-        return False
+        return bool(clean_uname and clean_uname in self.allowed_usernames)
 
     def allow_user(self, user_id_or_username: int | str) -> None:
         """Добавляет пользователя в белый список и убирает из черного.

@@ -62,7 +62,7 @@ def get_git_changed_files(base_dir: str) -> list[str]:
     except (subprocess.SubprocessError, FileNotFoundError):
         pass
 
-    return sorted(list(changed_files))
+    return sorted(changed_files)
 
 
 def get_git_new_files(base_dir: str) -> list[str]:
@@ -107,7 +107,7 @@ def get_git_new_files(base_dir: str) -> list[str]:
     except (subprocess.SubprocessError, FileNotFoundError):
         pass
 
-    return sorted(list(new_files))
+    return sorted(new_files)
 
 
 def match_glob(file_path: Path, glob_pattern: str, base_dir: Path) -> bool:

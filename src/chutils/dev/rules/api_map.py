@@ -207,7 +207,7 @@ class APIMapRule(Rule):
                     try:
                         with open(target_file_path, encoding="utf-8") as f:
                             actual_content = f.read()
-                    except Exception:
+                    except (OSError, UnicodeDecodeError):
                         continue
 
                     actual_compare = actual_content.strip()
@@ -230,7 +230,7 @@ class APIMapRule(Rule):
                     try:
                         with open(target_file_path, encoding="utf-8") as f:
                             actual_data = json.load(f)
-                    except Exception:
+                    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
                         continue
 
                     actual_api = (
@@ -279,7 +279,7 @@ class APIMapRule(Rule):
                         scan_path = base_path / "src" / "chutils"
                         indexer = Indexer(str(scan_path))
                         expected_index = indexer.index()
-                    except Exception:
+                    except (OSError, UnicodeDecodeError, SyntaxError, ValueError):
                         continue
 
                     with open(target_file_path, encoding="utf-8") as f:
@@ -413,7 +413,7 @@ class APIMapHashRule(Rule):
                 try:
                     with open(target_file_path, encoding="utf-8") as f:
                         content = f.read()
-                except Exception:
+                except (OSError, UnicodeDecodeError):
                     continue
 
                 # Парсим Frontmatter

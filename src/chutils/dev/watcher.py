@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import abc
 import fnmatch
+import importlib.util
 import os
 import threading
 import time
@@ -20,13 +21,7 @@ from ..logger import setup_logger
 logger = setup_logger()
 
 # Проверяем доступность библиотеки watchdog
-try:
-    import watchdog.events
-    import watchdog.observers
-
-    HAS_WATCHDOG = True
-except ImportError:
-    HAS_WATCHDOG = False
+HAS_WATCHDOG: bool = importlib.util.find_spec("watchdog") is not None
 
 DEFAULT_EXTENSIONS = ["py", "yaml", "yml", "json", "toml", "ini"]
 DEFAULT_IGNORE_PATTERNS = [
@@ -115,10 +110,7 @@ class BaseWatcher(abc.ABC):
 
         # Проверка расширения файла
         ext = os.path.splitext(file_path)[1].lstrip(".").lower()
-        if self.extensions and ext not in self.extensions:
-            return False
-
-        return True
+        return not (self.extensions and ext not in self.extensions)
 
     def _notify_change(self, file_path: str) -> None:
         """

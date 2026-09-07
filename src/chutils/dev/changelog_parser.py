@@ -151,7 +151,7 @@ def filter_releases_by_version_range(
             tag_t = parse_version_tuple(tag)
             if old_t < tag_t <= new_t:
                 filtered.append(r)
-        except Exception:
+        except (ValueError, TypeError):
             continue
 
     # Сортируем от старых к новым по кортежу версии

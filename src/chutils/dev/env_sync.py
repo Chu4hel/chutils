@@ -46,8 +46,8 @@ def check_env_sync(env_path: str | Path, example_path: str | Path) -> EnvDiff:
     env_keys = {e.key for e in env_entries if e.key is not None}
     example_keys = {e.key for e in example_entries if e.key is not None}
 
-    missing_in_env = sorted(list(example_keys - env_keys))
-    missing_in_example = sorted(list(env_keys - example_keys))
+    missing_in_env = sorted(example_keys - env_keys)
+    missing_in_example = sorted(env_keys - example_keys)
 
     return EnvDiff(
         missing_in_env=missing_in_env,

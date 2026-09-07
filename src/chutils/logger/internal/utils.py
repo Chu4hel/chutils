@@ -49,7 +49,6 @@ def stop_all_async_loggers() -> None:
     """
     Останавливает все активные асинхронные слушатели логов.
     """
-    global _async_listeners
     for listener in _async_listeners:
         try:
             listener.stop()
@@ -64,5 +63,4 @@ def register_async_listener(listener: logging.handlers.QueueListener) -> None:
     Args:
         listener: Объект QueueListener для регистрации.
     """
-    global _async_listeners
     _async_listeners.append(listener)

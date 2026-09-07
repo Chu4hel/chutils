@@ -117,7 +117,13 @@ class CLICommandDiscoverer:
                     file_path = Path(root) / file
                     try:
                         commands.extend(self._parse_file(file_path))
-                    except Exception:
+                    except (
+                        OSError,
+                        SyntaxError,
+                        UnicodeDecodeError,
+                        ValueError,
+                        AttributeError,
+                    ):
                         # Игнорируем ошибки парсинга некорректных/битых файлов
                         continue
 

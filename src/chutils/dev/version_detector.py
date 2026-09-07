@@ -273,7 +273,7 @@ def get_git_head_version(base_dir: str) -> str | None:
             if v:
                 return v
         except Exception:
-            continue
+            pass
 
     return None
 

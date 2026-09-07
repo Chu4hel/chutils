@@ -359,7 +359,7 @@ class Scaffolder:
         if output_dir:
             self.output_path = Path(output_dir).resolve()
         else:
-            self.output_path = Path(".").resolve() / self.module_name
+            self.output_path = Path.cwd() / self.module_name
 
     def validate(self) -> None:
         """Проверяет имя модуля и доступность каталога."""

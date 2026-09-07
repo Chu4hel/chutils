@@ -165,7 +165,7 @@ class GenerateContextSubCommand(SubCommand):
                 )
                 raise SystemExit(1)
         else:
-            project_path = Path(".").resolve()
+            project_path = Path.cwd()
             # Получаем список всех публичных атрибутов chutils
             public_attrs = [attr for attr in dir(chutils) if not attr.startswith("_")]
 
@@ -579,7 +579,7 @@ class GenerateContextSubCommand(SubCommand):
                     from chutils.dev.ast_indexer import save_context_metadata_cache
 
                     save_context_metadata_cache(
-                        Path(".").resolve(),
+                        Path.cwd(),
                         args.output,
                         "tree",
                         proj_hash,
@@ -598,7 +598,7 @@ class GenerateContextSubCommand(SubCommand):
                 from chutils.dev.ast_indexer import save_context_metadata_cache
 
                 save_context_metadata_cache(
-                    Path(".").resolve(),
+                    Path.cwd(),
                     args.output,
                     "tree",
                     proj_hash,

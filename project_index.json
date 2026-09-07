@@ -10814,7 +10814,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 400,
+            "line_number": 399,
             "bases": [],
             "children": []
           },
@@ -10834,7 +10834,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 407,
+            "line_number": 405,
             "bases": [],
             "children": []
           },
@@ -10854,7 +10854,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 489,
+            "line_number": 487,
             "bases": [],
             "children": [
               {
@@ -10873,7 +10873,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 492,
+                "line_number": 490,
                 "bases": [],
                 "children": []
               },
@@ -10893,7 +10893,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 521,
+                "line_number": 519,
                 "bases": [],
                 "children": []
               },
@@ -10913,7 +10913,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 536,
+                "line_number": 534,
                 "bases": [],
                 "children": []
               },
@@ -10933,7 +10933,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 567,
+                "line_number": 565,
                 "bases": [],
                 "children": []
               },
@@ -10953,7 +10953,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 584,
+                "line_number": 582,
                 "bases": [],
                 "children": []
               }
@@ -10975,7 +10975,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 609,
+            "line_number": 607,
             "bases": [],
             "children": []
           },
@@ -10995,7 +10995,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 670,
+            "line_number": 668,
             "bases": [],
             "children": []
           },
@@ -11015,7 +11015,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 739,
+            "line_number": 737,
             "bases": [],
             "children": []
           }
@@ -12553,7 +12553,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 126,
+                        "line_number": 132,
                         "bases": [],
                         "children": []
                       },
@@ -12573,7 +12573,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 156,
+                        "line_number": 162,
                         "bases": [],
                         "children": []
                       },
@@ -12593,7 +12593,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 172,
+                        "line_number": 178,
                         "bases": [],
                         "children": []
                       }
@@ -17141,7 +17141,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 20,
+                "line_number": 21,
                 "bases": [],
                 "children": []
               },
@@ -17161,7 +17161,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 31,
+                "line_number": 26,
                 "bases": [],
                 "children": []
               },
@@ -17181,7 +17181,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 32,
+                "line_number": 27,
                 "bases": [],
                 "children": []
               },
@@ -17201,7 +17201,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 46,
+                "line_number": 41,
                 "bases": [
                   "abc.ABC"
                 ],
@@ -17222,7 +17222,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 58,
+                    "line_number": 53,
                     "bases": [],
                     "children": []
                   },
@@ -17244,7 +17244,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 89,
+                    "line_number": 84,
                     "bases": [],
                     "children": []
                   },
@@ -17264,7 +17264,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 93,
+                    "line_number": 88,
                     "bases": [],
                     "children": []
                   },
@@ -17284,7 +17284,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 123,
+                    "line_number": 115,
                     "bases": [],
                     "children": []
                   },
@@ -17304,7 +17304,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 144,
+                    "line_number": 136,
                     "bases": [],
                     "children": []
                   },
@@ -17326,7 +17326,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 158,
+                    "line_number": 150,
                     "bases": [],
                     "children": []
                   },
@@ -17348,7 +17348,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 162,
+                    "line_number": 154,
                     "bases": [],
                     "children": []
                   }
@@ -17370,7 +17370,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 166,
+                "line_number": 158,
                 "bases": [
                   "BaseWatcher"
                 ],
@@ -17391,7 +17391,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 179,
+                    "line_number": 171,
                     "bases": [],
                     "children": []
                   },
@@ -17411,7 +17411,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 200,
+                    "line_number": 192,
                     "bases": [],
                     "children": []
                   },
@@ -17431,7 +17431,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 241,
+                    "line_number": 233,
                     "bases": [],
                     "children": []
                   },
@@ -17451,7 +17451,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 260,
+                    "line_number": 252,
                     "bases": [],
                     "children": []
                   },
@@ -17471,7 +17471,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 271,
+                    "line_number": 263,
                     "bases": [],
                     "children": []
                   }
@@ -17493,7 +17493,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 289,
+                "line_number": 281,
                 "bases": [],
                 "children": [
                   {
@@ -17512,7 +17512,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 292,
+                    "line_number": 284,
                     "bases": [],
                     "children": []
                   },
@@ -17532,7 +17532,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 295,
+                    "line_number": 287,
                     "bases": [],
                     "children": []
                   }
@@ -17554,7 +17554,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 311,
+                "line_number": 303,
                 "bases": [
                   "BaseWatcher"
                 ],
@@ -17575,7 +17575,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 323,
+                    "line_number": 315,
                     "bases": [],
                     "children": []
                   },
@@ -17595,7 +17595,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 345,
+                    "line_number": 337,
                     "bases": [],
                     "children": []
                   },
@@ -17615,7 +17615,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 367,
+                    "line_number": 359,
                     "bases": [],
                     "children": []
                   }
@@ -17637,7 +17637,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 385,
+                "line_number": 377,
                 "bases": [],
                 "children": []
               }
@@ -23607,7 +23607,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 61,
+                    "line_number": 60,
                     "bases": [],
                     "children": []
                   }
@@ -34822,7 +34822,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 106,
+                    "line_number": 103,
                     "bases": [],
                     "children": []
                   },
@@ -34842,7 +34842,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 124,
+                    "line_number": 121,
                     "bases": [],
                     "children": []
                   },
@@ -34862,7 +34862,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 142,
+                    "line_number": 139,
                     "bases": [],
                     "children": []
                   },
@@ -34882,7 +34882,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 160,
+                    "line_number": 157,
                     "bases": [],
                     "children": []
                   },
@@ -34902,7 +34902,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 173,
+                    "line_number": 170,
                     "bases": [],
                     "children": []
                   }
@@ -34924,7 +34924,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 188,
+                "line_number": 185,
                 "bases": [],
                 "children": []
               }
@@ -36834,7 +36834,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 25,
+                    "line_number": 24,
                     "bases": [],
                     "children": []
                   }
@@ -39882,8 +39882,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "3088ed2d541b4edc70bcc7191e70f6acc46a1b7f (dirty)",
-    "generated_at": "2026-09-07T14:48:59.155962+00:00",
-    "project_hash": "004a79d68f3c52a77dbe1c9676e8fc44eee41c8f4a95a81c5eefed96101fed5a"
+    "git_commit": "48b029bd9e4df66b416df06f60ccc3fe2137468d (dirty)",
+    "generated_at": "2026-09-07T15:06:31.834438+00:00",
+    "project_hash": "75815c969ee72f97bc07a38beb1ef250c1ec6b2a11b4092462ba707bbdaa77ff"
   }
 }

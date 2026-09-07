@@ -639,6 +639,4 @@ class LinterEngine:
             return True
         if errors_count > 0:
             return False
-        if self.strict and warnings_count > 0:
-            return False
-        return True
+        return not (self.strict and warnings_count > 0)
