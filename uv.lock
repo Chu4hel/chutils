@@ -558,7 +558,7 @@ wheels = [
 
 [[package]]
 name = "chutils"
-version = "3.5.0"
+version = "3.6.0"
 source = { editable = "." }
 dependencies = [
     { name = "exceptiongroup", marker = "python_full_version < '3.11'" },
