@@ -19,7 +19,10 @@ def test_cli_secrets_set_fail(cli_runner, mocker):
     result = cli_runner.invoke(["secrets", "set", "MY_KEY", "MY_VAL"])
 
     assert result.exit_code == 1
-    assert "Не удалось сохранить секрет" in result.stderr or "Не удалось сохранить секрет" in result.stdout
+    assert (
+        "Не удалось сохранить секрет" in result.stderr
+        or "Не удалось сохранить секрет" in result.stdout
+    )
 
 
 def test_cli_secrets_delete_success(cli_runner, mocker):
@@ -43,7 +46,10 @@ def test_cli_secrets_delete_fail(cli_runner, mocker):
     result = cli_runner.invoke(["secrets", "delete", "MY_KEY"])
 
     assert result.exit_code == 1
-    assert "Не удалось удалить секрет" in result.stderr or "Не удалось удалить секрет" in result.stdout
+    assert (
+        "Не удалось удалить секрет" in result.stderr
+        or "Не удалось удалить секрет" in result.stdout
+    )
 
 
 def test_cli_secrets_no_subcommand(cli_runner):
@@ -56,15 +62,23 @@ def test_cli_secrets_no_subcommand(cli_runner):
 def test_cli_secrets_error_handling(cli_runner, mocker):
     """Проверяет обработку SecretError."""
     from chutils.exceptions import SecretError
+
     mock_sm = mocker.patch("chutils.commands.secrets.SecretManager")
-    mock_sm.return_value.save_secret.side_effect = SecretError("Secret storage error", hint="Unlock your keyring")
+    mock_sm.return_value.save_secret.side_effect = SecretError(
+        "Secret storage error", hint="Unlock your keyring"
+    )
 
     result = cli_runner.invoke(["secrets", "set", "K", "V"])
 
     assert result.exit_code == 1
-    assert "Secret storage error" in result.stderr or "Secret storage error" in result.stdout
+    assert (
+        "Secret storage error" in result.stderr
+        or "Secret storage error" in result.stdout
+    )
     # Проверка подсказки (в stderr она может быть без тегов)
-    assert "Unlock your keyring" in result.stderr or "Unlock your keyring" in result.stdout
+    assert (
+        "Unlock your keyring" in result.stderr or "Unlock your keyring" in result.stdout
+    )
 
 
 def test_cli_secrets_keyring_not_available(cli_runner, monkeypatch):
@@ -74,17 +88,23 @@ def test_cli_secrets_keyring_not_available(cli_runner, monkeypatch):
     # 1. Попытка вызова set
     result = cli_runner.invoke(["secrets", "set", "K", "V"])
     assert result.exit_code == 1
-    assert "Missing optional dependency: please install chutils[keyring]" in (result.stderr + result.stdout)
+    assert "Missing optional dependency: please install chutils[keyring]" in (
+        result.stderr + result.stdout
+    )
 
     # 2. Попытка вызова delete
     result = cli_runner.invoke(["secrets", "delete", "K"])
     assert result.exit_code == 1
-    assert "Missing optional dependency: please install chutils[keyring]" in (result.stderr + result.stdout)
+    assert "Missing optional dependency: please install chutils[keyring]" in (
+        result.stderr + result.stdout
+    )
 
     # 3. Попытка вызова просто secrets
     result = cli_runner.invoke(["secrets"])
     assert result.exit_code == 1
-    assert "Missing optional dependency: please install chutils[keyring]" in (result.stderr + result.stdout)
+    assert "Missing optional dependency: please install chutils[keyring]" in (
+        result.stderr + result.stdout
+    )
 
 
 def test_cli_secrets_get_success(cli_runner, mocker):
@@ -97,7 +117,9 @@ def test_cli_secrets_get_success(cli_runner, mocker):
     assert result.exit_code == 0
     assert "my_secret_value" in result.stdout
     mock_sm.assert_called_with("test_app")
-    mock_sm.return_value.get_secret.assert_called_with("MY_KEY", fallback=None, required=False)
+    mock_sm.return_value.get_secret.assert_called_with(
+        "MY_KEY", fallback=None, required=False
+    )
 
 
 def test_cli_secrets_get_fallback(cli_runner, mocker):
@@ -105,16 +127,21 @@ def test_cli_secrets_get_fallback(cli_runner, mocker):
     mock_sm = mocker.patch("chutils.commands.secrets.SecretManager")
     mock_sm.return_value.get_secret.return_value = "my_fallback"
 
-    result = cli_runner.invoke(["secrets", "get", "MY_KEY", "--fallback", "my_fallback"])
+    result = cli_runner.invoke(
+        ["secrets", "get", "MY_KEY", "--fallback", "my_fallback"]
+    )
 
     assert result.exit_code == 0
     assert "my_fallback" in result.stdout
-    mock_sm.return_value.get_secret.assert_called_with("MY_KEY", fallback="my_fallback", required=False)
+    mock_sm.return_value.get_secret.assert_called_with(
+        "MY_KEY", fallback="my_fallback", required=False
+    )
 
 
 def test_cli_secrets_get_required_error(cli_runner, mocker):
     """Проверяет выброс ошибки при required=True и отсутствии секрета."""
     from chutils.exceptions import SecretNotFoundError
+
     mock_sm = mocker.patch("chutils.commands.secrets.SecretManager")
     mock_sm.return_value.get_secret.side_effect = SecretNotFoundError("MY_KEY")
 
@@ -122,4 +149,6 @@ def test_cli_secrets_get_required_error(cli_runner, mocker):
 
     assert result.exit_code == 1
     assert "MY_KEY" in (result.stderr + result.stdout)
-    mock_sm.return_value.get_secret.assert_called_with("MY_KEY", fallback=None, required=True)
+    mock_sm.return_value.get_secret.assert_called_with(
+        "MY_KEY", fallback=None, required=True
+    )

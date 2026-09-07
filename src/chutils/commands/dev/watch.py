@@ -34,10 +34,14 @@ class WatchSubCommand(SubCommand):
         """
         paths: list[str] = getattr(args, "paths", None) or ["."]
         ext_arg: str | None = getattr(args, "extensions", None)
-        extensions: list[str] | None = [e.strip() for e in ext_arg.split(",")] if ext_arg else None
+        extensions: list[str] | None = (
+            [e.strip() for e in ext_arg.split(",")] if ext_arg else None
+        )
 
         ignore_arg: str | None = getattr(args, "ignore", None)
-        ignore_patterns: list[str] | None = [i.strip() for i in ignore_arg.split(",")] if ignore_arg else None
+        ignore_patterns: list[str] | None = (
+            [i.strip() for i in ignore_arg.split(",")] if ignore_arg else None
+        )
 
         debounce: float = getattr(args, "debounce", 0.5)
         module_target: str | None = getattr(args, "module", None)
@@ -98,8 +102,12 @@ class WatchSubCommand(SubCommand):
             while watcher.is_running:
                 time.sleep(0.2)
         except KeyboardInterrupt:
-            self.console.print("\n[bold cyan][watch] Остановка отслеживания...[/bold cyan]")
+            self.console.print(
+                "\n[bold cyan][watch] Остановка отслеживания...[/bold cyan]"
+            )
         finally:
             watcher.stop()
             runner.stop()
-            self.console.print("[bold green][watch] Отслеживание успешно завершено.[/bold green]")
+            self.console.print(
+                "[bold green][watch] Отслеживание успешно завершено.[/bold green]"
+            )

@@ -8,6 +8,7 @@ from .node import Node
 
 class GraphEdge(BaseModel):
     """Связь в графе зависимостей."""
+
     source: str
     """Путь к исходному модулю"""
     target: str
@@ -18,6 +19,7 @@ class GraphEdge(BaseModel):
 
 class ProjectExample(BaseModel):
     """Описание few-shot примера (кейса)."""
+
     name: str
     description: str
     good_pattern: str
@@ -26,6 +28,7 @@ class ProjectExample(BaseModel):
 
 class ProjectIndex(BaseModel):
     """Корневой объект семантического индекса."""
+
     version: str = "1.0"
     project_name: str = "chutils"
     root: Node

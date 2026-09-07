@@ -1,16 +1,20 @@
 """Pytest fixtures и моки для тестирования приложений VK и VKMA."""
 
+from collections.abc import Callable, Generator
 from contextlib import contextmanager
-from typing import Any, Callable, Generator
-from unittest.mock import MagicMock, patch
+from typing import Any
 
 try:
     import pytest
+
     HAS_PYTEST = True
 except ImportError:
     HAS_PYTEST = False
 
-from chutils.vk.testing.generators import generate_fake_launch_params, generate_fake_user
+from chutils.vk.testing.generators import (
+    generate_fake_launch_params,
+    generate_fake_user,
+)
 
 
 class MockVKApi:
@@ -67,6 +71,7 @@ def mock_vk_api_context() -> Generator[MockVKApi, None, None]:
 
 
 if HAS_PYTEST:
+
     @pytest.fixture
     def vk_launch_params_factory() -> Callable[..., str]:
         """Pytest фикстура-фабрика для генерации поддельных launchParams VKMA.
@@ -74,10 +79,12 @@ if HAS_PYTEST:
         Returns:
             Фабричная функция генерации launchParams.
         """
+
         def _factory(
             user_id: int = 123456,
             app_id: int = 77777,
-            secret_key: str = "test_secret_key",
+            client_secret: str | None = None,
+            secret_key: str | None = None,
             expired: bool = False,
             tampered: bool = False,
             extra_params: dict[str, Any] | None = None,
@@ -85,6 +92,7 @@ if HAS_PYTEST:
             return generate_fake_launch_params(
                 user_id=user_id,
                 app_id=app_id,
+                client_secret=client_secret,
                 secret_key=secret_key,
                 expired=expired,
                 tampered=tampered,

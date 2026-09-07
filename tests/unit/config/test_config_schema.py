@@ -1,14 +1,15 @@
 import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 from pydantic import BaseModel, Field
 
-from chutils.config.schema import export_schema, import_model_class, PYDANTIC_AVAILABLE
+from chutils.config.schema import PYDANTIC_AVAILABLE, export_schema, import_model_class
 
 
 class SampleConfigModel(BaseModel):
     """Тестовая модель для генерации схемы."""
+
     name: str = Field(description="Test name")
     value: int = 42
 
@@ -18,7 +19,7 @@ def test_import_model_class():
     """Тест импорта класса по строковому пути."""
     with patch("importlib.import_module") as mock_import:
         mock_module = MagicMock()
-        setattr(mock_module, "SampleConfigModel", SampleConfigModel)
+        mock_module.SampleConfigModel = SampleConfigModel
         mock_import.return_value = mock_module
 
         cls = import_model_class("some.module:SampleConfigModel")
@@ -29,6 +30,7 @@ def test_import_model_class():
 def test_import_model_class_invalid_format():
     """Тест ошибки формата пути."""
     from chutils.exceptions import ConfigParseError
+
     with pytest.raises(ConfigParseError, match="Некорректный формат пути"):
         import_model_class("invalid_path")
 
@@ -36,6 +38,7 @@ def test_import_model_class_invalid_format():
 def test_import_model_class_not_found():
     """Тест ошибки отсутствия модуля или класса."""
     from chutils.exceptions import ConfigParseError
+
     with patch("importlib.import_module") as mock_import:
         mock_import.side_effect = ImportError("Module not found")
         with pytest.raises(ConfigParseError, match="Не удалось импортировать модуль"):
@@ -58,7 +61,7 @@ def test_import_model_class_type_error():
 
     with patch("importlib.import_module") as mock_import:
         mock_module = MagicMock()
-        setattr(mock_module, "NotABaseModel", NotABaseModel)
+        mock_module.NotABaseModel = NotABaseModel
         mock_import.return_value = mock_module
         with pytest.raises(ConfigParseError, match="не является подклассом"):
             import_model_class("some.module:NotABaseModel")

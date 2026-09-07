@@ -1,9 +1,9 @@
-from .container import Container, default_container, provide, inject, Inject
+from .container import Container, Inject, default_container, inject, provide
 
 __all__ = [
     "Container",
-    "default_container",
-    "provide",
-    "inject",
     "Inject",
+    "default_container",
+    "inject",
+    "provide",
 ]

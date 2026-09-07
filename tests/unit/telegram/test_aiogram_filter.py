@@ -1,7 +1,8 @@
-import pytest
 from unittest.mock import AsyncMock
 
-from chutils.telegram.aiogram import AdminFilter, SecretUserFilter, _HAS_AIOGRAM
+import pytest
+
+from chutils.telegram.aiogram import AdminFilter, SecretUserFilter
 
 
 @pytest.mark.asyncio

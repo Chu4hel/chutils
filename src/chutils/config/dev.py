@@ -5,13 +5,23 @@ from pathlib import Path
 from typing import Any
 
 from chutils.typing import JSONDict
+
 from .core import get_config
 from .manager import _cm
-from .utils import load_pyproject_toml, load_pyproject_clean_config, find_project_root
+from .utils import find_project_root, load_pyproject_clean_config, load_pyproject_toml
 
 DEFAULT_AI_LINT_CONFIG: JSONDict = {
     "strict": False,
-    "ignore": [".git", ".venv", "__pycache__", "build", "dist", "docs", "tests", "examples"],
+    "ignore": [
+        ".git",
+        ".venv",
+        "__pycache__",
+        "build",
+        "dist",
+        "docs",
+        "tests",
+        "examples",
+    ],
     "rules": [],
     "exclude_rules": [],
     "custom_rules_path": None,
@@ -20,13 +30,14 @@ DEFAULT_AI_LINT_CONFIG: JSONDict = {
     "example_path": ".env.example",
     "max_file_lines": 700,
     "max_file_classes": 5,
-    "dependencies": {}  # chutils: ignore[ChutilsIntegrationRule]
+    "dependencies": {},  # chutils: ignore[ChutilsIntegrationRule]
 }
 
 
 def _parse_flat_toml(path: Path) -> JSONDict:
     """Легковесный TOML-парсер для извлечения параметров без сторонних зависимостей."""
     import ast
+
     result: JSONDict = {}
     current_section: str | None = None
     root_data: dict[str, Any] = {}
@@ -58,9 +69,14 @@ def _parse_flat_toml(path: Path) -> JSONDict:
                 elif val_str.lower() == "false":
                     val = False
                 elif val_str.startswith("[") and val_str.endswith("]"):
-                    val = [item.strip(" '\"") for item in val_str[1:-1].split(",") if item.strip()]
+                    val = [
+                        item.strip(" '\"")
+                        for item in val_str[1:-1].split(",")
+                        if item.strip()
+                    ]
                 elif (val_str.startswith('"') and val_str.endswith('"')) or (
-                        val_str.startswith("'") and val_str.endswith("'")):
+                    val_str.startswith("'") and val_str.endswith("'")
+                ):
                     val = val_str[1:-1]
                 else:
                     val = val_str
@@ -103,6 +119,7 @@ def load_external_config(path: Path) -> JSONDict:
 
     if path.suffix == ".json":
         import json
+
         try:
             with open(path, encoding="utf-8") as f:
                 data = json.load(f)
@@ -125,11 +142,13 @@ def load_external_config(path: Path) -> JSONDict:
         data = {}
         try:
             import tomllib
+
             with open(path, "rb") as f:
                 data = tomllib.load(f)
         except ImportError:
             try:
                 import tomli
+
                 with open(path, "rb") as f:
                     data = tomli.load(f)
             except ImportError:
@@ -190,7 +209,9 @@ def _get_env_config() -> JSONDict:
             elif val.lower() == "false":
                 env_config[config_key] = False
             elif val.startswith("[") and val.endswith("]"):
-                env_config[config_key] = [item.strip(" '\"") for item in val[1:-1].split(",") if item.strip()]
+                env_config[config_key] = [
+                    item.strip(" '\"") for item in val[1:-1].split(",") if item.strip()
+                ]
             else:
                 try:
                     if "." in val:
@@ -238,7 +259,11 @@ def load_ai_lint_config(cli_args: JSONDict | None = None) -> JSONDict:
         if ext_path.exists():
             ext_config = load_external_config(ext_path)
             for k, v in ext_config.items():
-                if k == "dependencies" and isinstance(v, dict) and isinstance(merged_config.get("dependencies"), dict):
+                if (
+                    k == "dependencies"
+                    and isinstance(v, dict)
+                    and isinstance(merged_config.get("dependencies"), dict)
+                ):
                     merged_config["dependencies"].update(v)
                 else:
                     merged_config[k] = v
@@ -265,9 +290,13 @@ def load_ai_lint_config(cli_args: JSONDict | None = None) -> JSONDict:
     if cli_args:
         cli_ignore = cli_args.get("ignore")
         if cli_ignore is not None:
-            cli_ignore_list = cli_ignore if isinstance(cli_ignore, list) else [cli_ignore]
+            cli_ignore_list = (
+                cli_ignore if isinstance(cli_ignore, list) else [cli_ignore]
+            )
             current_ignore = merged_config.get("ignore", [])
-            current_list = current_ignore if isinstance(current_ignore, list) else [current_ignore]
+            current_list = (
+                current_ignore if isinstance(current_ignore, list) else [current_ignore]
+            )
 
             result = list(current_list)
             for item in cli_ignore_list:
@@ -353,7 +382,9 @@ def load_clean_config(cli_args: JSONDict | None = None) -> JSONDict:
     raw_extras = DEFAULT_CLEAN_CONFIG.get("extra_clean_targets", [])
 
     merged_config: JSONDict = {
-        "default_excludes": list(raw_excludes) if isinstance(raw_excludes, list) else [],
+        "default_excludes": list(raw_excludes)
+        if isinstance(raw_excludes, list)
+        else [],
         "default_targets": list(raw_targets) if isinstance(raw_targets, list) else [],
         "extra_clean_targets": list(raw_extras) if isinstance(raw_extras, list) else [],
     }

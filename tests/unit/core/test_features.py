@@ -16,10 +16,7 @@ def features_setup(tmp_path, monkeypatch):
 
 def test_boolean_flags(features_setup):
     features_file = features_setup / "features.yml"
-    features_file.write_text(yaml.dump({
-        "feature_on": True,
-        "feature_off": False
-    }))
+    features_file.write_text(yaml.dump({"feature_on": True, "feature_off": False}))
     _cm.features_file_path = str(features_file)
 
     assert is_feature_enabled("feature_on") is True
@@ -36,11 +33,9 @@ def test_missing_flag(features_setup):
 
 def test_env_strategy(features_setup, monkeypatch):
     features_file = features_setup / "features.yml"
-    features_file.write_text(yaml.dump({
-        "env_feature": {
-            "environments": ["production", "staging"]
-        }
-    }))
+    features_file.write_text(
+        yaml.dump({"env_feature": {"environments": ["production", "staging"]}})
+    )
     _cm.features_file_path = str(features_file)
 
     monkeypatch.setenv("CH_ENV", "production")
@@ -52,11 +47,7 @@ def test_env_strategy(features_setup, monkeypatch):
 
 def test_rollout_strategy(features_setup):
     features_file = features_setup / "features.yml"
-    features_file.write_text(yaml.dump({
-        "rollout_feature": {
-            "rollout": 50
-        }
-    }))
+    features_file.write_text(yaml.dump({"rollout_feature": {"rollout": 50}}))
     _cm.features_file_path = str(features_file)
 
     # Эти user_id подобраны так, чтобы один попадал в 50%, а другой нет
@@ -70,11 +61,7 @@ def test_rollout_strategy(features_setup):
 def test_fallback_to_main_config(features_setup):
     # Файла features.yml нет
     config_file = features_setup / "config.yml"
-    config_file.write_text(yaml.dump({
-        "feature_flags": {
-            "main_config_feature": True
-        }
-    }))
+    config_file.write_text(yaml.dump({"feature_flags": {"main_config_feature": True}}))
     _cm.config_file_path = str(config_file)
     _cm.initialize_paths(lambda x, y: features_setup)
 
@@ -83,12 +70,16 @@ def test_fallback_to_main_config(features_setup):
 
 def test_complex_feature_disabled(features_setup):
     features_file = features_setup / "features.yml"
-    features_file.write_text(yaml.dump({
-        "disabled_complex": {
-            "enabled": False,
-            "environments": ["development"]  # Даже если окружение подходит
-        }
-    }))
+    features_file.write_text(
+        yaml.dump(
+            {
+                "disabled_complex": {
+                    "enabled": False,
+                    "environments": ["development"],  # Даже если окружение подходит
+                }
+            }
+        )
+    )
     _cm.features_file_path = str(features_file)
 
     assert is_feature_enabled("disabled_complex") is False
@@ -136,11 +127,7 @@ async def test_require_feature_decorator_async(features_setup):
 
 
 def test_require_feature_with_context(features_setup):
-    _cm.set_features({
-        "rollout_feature": {
-            "rollout": 50
-        }
-    })
+    _cm.set_features({"rollout_feature": {"rollout": 50}})
 
     @require_feature("rollout_feature")
     def feature_func(context=None):

@@ -1,6 +1,4 @@
-import pytest
-
-from chutils.telegram.keyboard import build_inline_keyboard, PaginatorKeyboard
+from chutils.telegram.keyboard import PaginatorKeyboard, build_inline_keyboard
 
 
 def test_build_inline_keyboard_tuples():
@@ -36,7 +34,9 @@ def test_build_inline_keyboard_dicts_and_urls():
 
 def test_paginator_keyboard():
     """Проверяет пагинацию PaginatorKeyboard."""
-    items = [f"Item {i}" for i in range(1, 13)]  # 12 элементов = 3 страницы по 5 элементов
+    items = [
+        f"Item {i}" for i in range(1, 13)
+    ]  # 12 элементов = 3 страницы по 5 элементов
     paginator = PaginatorKeyboard(items, per_page=5, callback_prefix="catalog")
 
     assert paginator.total_pages == 3

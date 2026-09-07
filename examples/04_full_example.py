@@ -1,12 +1,19 @@
 """
 Пример 4: Комплексное использование всех компонентов.
 
-Этот пример имитирует реальное приложение, которое использует конфигурацию для 
+Этот пример имитирует реальное приложение, которое использует конфигурацию для
 настроек подключения, SecretManager для паролей, логгер для отслеживания работы
 и OpenTelemetry для трассировки вызовов.
 """
 
-from chutils import get_config_value, setup_logger, SecretManager, ChutilsLogger, setup_tracing, trace
+from chutils import (
+    ChutilsLogger,
+    SecretManager,
+    get_config_value,
+    setup_logger,
+    setup_tracing,
+    trace,
+)
 
 
 @trace(capture_kwargs=True)
@@ -16,7 +23,9 @@ def connect_to_db(host: str, user: str, password: str) -> bool:
     logger.info("Подключение к БД...")
 
     if password:
-        logger.info("[SUCCESS] Успешная авторизация пользователя '%s' на %s.", user, host)
+        logger.info(
+            "[SUCCESS] Успешная авторизация пользователя '%s' на %s.", user, host
+        )
         return True
 
     logger.error("[FAILED] Не удалось получить учетные данные!")
@@ -49,13 +58,16 @@ def main() -> None:
     db_password = secrets.get_secret(password_key) or ""
 
     if not db_password:
-        logger.warning("Пароль для '%s' не найден в Keyring. Сохраняем тестовое значение...", db_user)
+        logger.warning(
+            "Пароль для '%s' не найден в Keyring. Сохраняем тестовое значение...",
+            db_user,
+        )
         # В реальной жизни здесь могла бы быть форма ввода пароля
         secrets.save_secret(password_key, "SecurePassword_999")
         db_password = secrets.get_secret(password_key) or "SecurePassword_999"
 
     # 6. Выполняем "бизнес-логику" (функция обернута в @trace)
-    # Обратите внимание: лог внутри connect_to_db будет иметь тот же trace_id, 
+    # Обратите внимание: лог внутри connect_to_db будет иметь тот же trace_id,
     # что и логи в main(), если они вызваны внутри одного спана.
     connect_to_db(db_host, db_user, db_password)
 

@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
-from typing import Any
+from typing import Any, cast
+
+from typing_extensions import Self
 
 logger = logging.getLogger("chutils.plugins")
 
 
 class PluginError(Exception):
     """Базовое исключение для ошибок системы плагинов."""
-    pass
 
 
 class PluginRegistry:
@@ -16,14 +17,15 @@ class PluginRegistry:
     Реестр плагинов chutils.
     Управляет жизненным циклом, регистрацией и автообнаружением плагинов.
     """
+
     _instance: PluginRegistry | None = None
     _initialized: bool = False
 
-    def __new__(cls) -> PluginRegistry:
+    def __new__(cls) -> Self:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._initialized = False
-        return cls._instance
+        return cast(Self, cls._instance)
 
     def __init__(self) -> None:
         """Инициализирует PluginRegistry."""
@@ -86,10 +88,11 @@ class PluginRegistry:
         result = []
         for plugin in self._plugins.values():
             # Если плагин зарегистрирован как класс
-            if isinstance(plugin, type) and issubclass(plugin, plugin_type):
-                result.append(plugin)
-            # Если плагин зарегистрирован как инстанс
-            elif isinstance(plugin, plugin_type):
+            if (
+                isinstance(plugin, type)
+                and issubclass(plugin, plugin_type)
+                or isinstance(plugin, plugin_type)
+            ):
                 result.append(plugin)
         return result
 
@@ -106,6 +109,7 @@ class PluginRegistry:
         logger.debug("Запуск автообнаружения плагинов для группы '%s'...", group)
 
         from importlib.metadata import entry_points
+
         eps = entry_points(group=group)
 
         for ep in eps:
@@ -119,11 +123,11 @@ class PluginRegistry:
                     plugin_instance = plugin_class
 
                 self.register(plugin_instance)
-            except Exception as e:
-                logger.error(
-                    "Не удалось загрузить плагин '%s' из entry_point '%s': %s",
-                    ep.name, ep.value, str(e),
-                    exc_info=True
+            except Exception:
+                logger.exception(
+                    "Не удалось загрузить плагин '%s' из entry_point '%s'",
+                    ep.name,
+                    ep.value,
                 )
 
         self._loaded_groups.add(group)
@@ -158,7 +162,10 @@ def get_captcha_solver_plugin(name: str) -> Any | None:
     plugin = registry.get_plugin(name)
     if plugin is not None:
         from .interfaces import CaptchaSolverPlugin
-        if isinstance(plugin, (CaptchaSolverPlugin, type)) or hasattr(plugin, "solve_recaptcha"):
+
+        if isinstance(plugin, (CaptchaSolverPlugin, type)) or hasattr(
+            plugin, "solve_recaptcha"
+        ):
             return plugin
     return None
 
@@ -179,6 +186,48 @@ def get_task_queue_plugin(name: str) -> Any | None:
     plugin = registry.get_plugin(name)
     if plugin is not None:
         from .interfaces import TaskQueuePlugin
-        if isinstance(plugin, (TaskQueuePlugin, type)) or hasattr(plugin, "create_queue"):
+
+        if isinstance(plugin, (TaskQueuePlugin, type)) or hasattr(
+            plugin, "create_queue"
+        ):
+            return plugin
+    return None
+
+
+def get_browser_stealth_plugins() -> list[Any]:
+    """Возвращает список всех зарегистрированных плагинов глубокой маскировки браузера (BrowserStealthPlugin).
+
+    Выполняет автообнаружение из групп `chutils.plugins.stealth` и `chutils.plugins`.
+
+    Returns:
+        Список экземпляров плагинов маскировки браузера.
+    """
+    registry.discover_plugins(group="chutils.plugins.stealth")
+    registry.discover_plugins(group="chutils.plugins")
+    from .interfaces import BrowserStealthPlugin
+
+    return registry.get_plugins_by_type(BrowserStealthPlugin)
+
+
+def get_http_backend_plugin(name: str) -> Any | None:
+    """Возвращает зарегистрированный плагин HTTP-бэкенда по имени.
+
+    Выполняет автообнаружение из групп `chutils.plugins.http` и `chutils.plugins`.
+
+    Args:
+        name: Имя бэкенда (например, 'curl_cffi', 'tls_client').
+
+    Returns:
+        Экземпляр плагина или None.
+    """
+    registry.discover_plugins(group="chutils.plugins.http")
+    registry.discover_plugins(group="chutils.plugins")
+    plugin = registry.get_plugin(name)
+    if plugin is not None:
+        from .interfaces import HttpBackendPlugin
+
+        if isinstance(plugin, (HttpBackendPlugin, type)) or (
+            hasattr(plugin, "create_client") or hasattr(plugin, "create_async_client")
+        ):
             return plugin
     return None

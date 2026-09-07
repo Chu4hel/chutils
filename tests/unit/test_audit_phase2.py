@@ -6,14 +6,14 @@
 - @audit_event: успешный вызов, логирование исключений, callable actor/target, async-функции.
 - audit_context: успешный блок, перехват исключений, изменение status/details.
 """
+
 from __future__ import annotations
 
 import asyncio
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock
 
 import pytest
-
 
 # ---------------------------------------------------------------------------
 # Тесты PostgresBackend (с mock-соединением)
@@ -73,6 +73,7 @@ class TestPostgresBackend:
     def test_log_returns_uuid(self) -> None:
         """log() возвращает строку UUID."""
         import uuid
+
         from chutils.audit.backends.postgres import PostgresBackend
 
         mock_conn = MagicMock()
@@ -102,8 +103,7 @@ class TestPostgresBackend:
 
         # Второй INSERT должен содержать prev_hash = "abc123"
         insert_calls = [
-            c for c in mock_cursor.execute.call_args_list
-            if "INSERT" in str(c).upper()
+            c for c in mock_cursor.execute.call_args_list if "INSERT" in str(c).upper()
         ]
         assert len(insert_calls) == 2
 
@@ -129,8 +129,18 @@ class TestPostgresBackend:
         mock_cursor = MagicMock()
         # Возвращаем одну запись с неверным hash
         mock_cursor.fetchall.return_value = [
-            ("id-1", "actor", "action", None, "success",
-             "{}", "{}", "2026-01-01T00:00:00Z", "", "wrong_hash")
+            (
+                "id-1",
+                "actor",
+                "action",
+                None,
+                "success",
+                "{}",
+                "{}",
+                "2026-01-01T00:00:00Z",
+                "",
+                "wrong_hash",
+            )
         ]
         mock_conn.cursor.return_value.__enter__ = MagicMock(return_value=mock_cursor)
         mock_conn.cursor.return_value.__exit__ = MagicMock(return_value=False)
@@ -150,11 +160,13 @@ class TestAuditEventDecorator:
 
     def _make_file_backend(self, tmp_path: Path) -> object:
         from chutils.audit.backends.file import FileBackend
+
         return FileBackend(tmp_path / "audit.jsonl")
 
     def test_decorates_sync_function(self, tmp_path: Path) -> None:
         """@audit_event оборачивает синхронную функцию и создаёт запись."""
         import json
+
         from chutils.audit.api import audit_event
 
         backend = self._make_file_backend(tmp_path)
@@ -176,6 +188,7 @@ class TestAuditEventDecorator:
     def test_decorates_async_function(self, tmp_path: Path) -> None:
         """@audit_event оборачивает асинхронную функцию."""
         import json
+
         from chutils.audit.api import audit_event
 
         backend = self._make_file_backend(tmp_path)
@@ -195,6 +208,7 @@ class TestAuditEventDecorator:
     def test_records_failure_on_exception(self, tmp_path: Path) -> None:
         """@audit_event записывает status='failed' и детали при исключении."""
         import json
+
         from chutils.audit.api import audit_event
 
         backend = self._make_file_backend(tmp_path)
@@ -214,6 +228,7 @@ class TestAuditEventDecorator:
     def test_callable_actor(self, tmp_path: Path) -> None:
         """@audit_event поддерживает callable для actor."""
         import json
+
         from chutils.audit.api import audit_event
 
         backend = self._make_file_backend(tmp_path)
@@ -233,6 +248,7 @@ class TestAuditEventDecorator:
     def test_callable_target(self, tmp_path: Path) -> None:
         """@audit_event поддерживает callable для target."""
         import json
+
         from chutils.audit.api import audit_event
 
         backend = self._make_file_backend(tmp_path)
@@ -240,7 +256,9 @@ class TestAuditEventDecorator:
         def get_target(doc_id: str, **_: object) -> str:
             return f"doc_{doc_id}"
 
-        @audit_event(action="test.target", actor="u", target=get_target, backend=backend)
+        @audit_event(
+            action="test.target", actor="u", target=get_target, backend=backend
+        )
         def process(doc_id: str) -> str:
             return doc_id
 
@@ -252,11 +270,14 @@ class TestAuditEventDecorator:
     def test_string_target(self, tmp_path: Path) -> None:
         """@audit_event принимает строковый target."""
         import json
+
         from chutils.audit.api import audit_event
 
         backend = self._make_file_backend(tmp_path)
 
-        @audit_event(action="test.str_target", actor="u", target="resource_1", backend=backend)
+        @audit_event(
+            action="test.str_target", actor="u", target="resource_1", backend=backend
+        )
         def my_func() -> None:
             pass
 
@@ -267,6 +288,7 @@ class TestAuditEventDecorator:
     def test_failure_on_async_exception(self, tmp_path: Path) -> None:
         """@audit_event записывает failed для async-исключения."""
         import json
+
         from chutils.audit.api import audit_event
 
         backend = self._make_file_backend(tmp_path)
@@ -292,11 +314,13 @@ class TestAuditContext:
 
     def _make_file_backend(self, tmp_path: Path) -> object:
         from chutils.audit.backends.file import FileBackend
+
         return FileBackend(tmp_path / "audit.jsonl")
 
     def test_successful_block_records_success(self, tmp_path: Path) -> None:
         """audit_context записывает status='success' при нормальном выходе."""
         import json
+
         from chutils.audit.api import audit_context
 
         backend = self._make_file_backend(tmp_path)
@@ -311,6 +335,7 @@ class TestAuditContext:
     def test_exception_block_records_failed(self, tmp_path: Path) -> None:
         """audit_context записывает status='failed' при исключении."""
         import json
+
         from chutils.audit.api import audit_context
 
         backend = self._make_file_backend(tmp_path)
@@ -326,6 +351,7 @@ class TestAuditContext:
     def test_context_allows_setting_details(self, tmp_path: Path) -> None:
         """audit_context позволяет добавлять details через ctx.details."""
         import json
+
         from chutils.audit.api import audit_context
 
         backend = self._make_file_backend(tmp_path)
@@ -339,6 +365,7 @@ class TestAuditContext:
     def test_context_allows_overriding_status(self, tmp_path: Path) -> None:
         """audit_context позволяет переопределить status через ctx.status."""
         import json
+
         from chutils.audit.api import audit_context
 
         backend = self._make_file_backend(tmp_path)
@@ -352,11 +379,14 @@ class TestAuditContext:
     def test_context_with_target(self, tmp_path: Path) -> None:
         """audit_context принимает параметр target."""
         import json
+
         from chutils.audit.api import audit_context
 
         backend = self._make_file_backend(tmp_path)
 
-        with audit_context(action="ctx.target", actor="u", target="doc_1", backend=backend):
+        with audit_context(
+            action="ctx.target", actor="u", target="doc_1", backend=backend
+        ):
             pass
 
         record = json.loads((tmp_path / "audit.jsonl").read_text().splitlines()[0])

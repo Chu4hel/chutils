@@ -6,11 +6,10 @@ from __future__ import annotations
 
 import abc
 import importlib
-import os
 import signal
 import subprocess
 import sys
-from typing import Any, Callable
+from collections.abc import Callable
 
 from ..lifecycle import run_cleanup
 from ..logger import setup_logger
@@ -72,10 +71,16 @@ class SubprocessRunner(BaseRunner):
 
     def start(self) -> None:
         """Запускает внешнюю команду через subprocess.Popen."""
-        if self._is_running and self._process is not None and self._process.poll() is None:
+        if (
+            self._is_running
+            and self._process is not None
+            and self._process.poll() is None
+        ):
             return
 
-        cmd_str = self.command if isinstance(self.command, str) else " ".join(self.command)
+        cmd_str = (
+            self.command if isinstance(self.command, str) else " ".join(self.command)
+        )
         logger.info(f"[watch] Запуск процесса: {cmd_str}")
 
         creationflags = 0
@@ -118,7 +123,9 @@ class SubprocessRunner(BaseRunner):
 
             self._process.wait(timeout=self.graceful_timeout)
         except (subprocess.TimeoutExpired, OSError):
-            logger.warning(f"[watch] Процесс PID {pid} не ответил за {self.graceful_timeout}s. Принудительное уничтожение (KILL)...")
+            logger.warning(
+                f"[watch] Процесс PID {pid} не ответил за {self.graceful_timeout}s. Принудительное уничтожение (KILL)..."
+            )
             try:
                 self._process.kill()
                 self._process.wait(timeout=1.0)
@@ -147,7 +154,9 @@ class InProcessReloader(BaseRunner):
     ) -> None:
         super().__init__()
         if ":" not in target:
-            raise ValueError(f"Некорректный формат target '{target}'. Ожидается 'module.path:func_name'")
+            raise ValueError(
+                f"Некорректный формат target '{target}'. Ожидается 'module.path:func_name'"
+            )
 
         self.target = target
         self.module_name, self.func_name = target.split(":", 1)
@@ -158,11 +167,16 @@ class InProcessReloader(BaseRunner):
         """Динамически импортирует модуль и возвращает целевую функцию."""
         module = importlib.import_module(self.module_name)
         if not hasattr(module, self.func_name):
-            raise AttributeError(f"Модуль '{self.module_name}' не содержит функцию '{self.func_name}'")
+            raise AttributeError(
+                f"Модуль '{self.module_name}' не содержит функцию '{self.func_name}'"
+            )
         func = getattr(module, self.func_name)
         if not callable(func):
-            raise TypeError(f"Атрибут '{self.func_name}' в модуле '{self.module_name}' не является вызываемым объектом")
+            raise TypeError(
+                f"Атрибут '{self.func_name}' в модуле '{self.module_name}' не является вызываемым объектом"
+            )
         from typing import cast
+
         return cast(Callable[..., object], func)
 
     def start(self) -> None:
@@ -197,6 +211,8 @@ class InProcessReloader(BaseRunner):
             try:
                 importlib.reload(sys.modules[self.module_name])
             except Exception as err:
-                logger.error(f"[watch] Ошибка при перезагрузке модуля '{self.module_name}': {err}")
+                logger.error(
+                    f"[watch] Ошибка при перезагрузке модуля '{self.module_name}': {err}"
+                )
 
         self.start()

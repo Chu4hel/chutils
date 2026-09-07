@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import Any
 import logging
+from typing import Any
 
 import pytest
 
@@ -89,13 +89,19 @@ def test_metrics_plugin_interface():
         def name(self) -> str:
             return "my-metrics-plugin"
 
-        def increment(self, name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
+        def increment(
+            self, name: str, value: float = 1.0, labels: dict[str, str] | None = None
+        ) -> None:
             pass
 
-        def set_gauge(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+        def set_gauge(
+            self, name: str, value: float, labels: dict[str, str] | None = None
+        ) -> None:
             pass
 
-        def observe(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+        def observe(
+            self, name: str, value: float, labels: dict[str, str] | None = None
+        ) -> None:
             pass
 
         def generate_latest(self) -> str:
@@ -107,3 +113,53 @@ def test_metrics_plugin_interface():
     plugin = MyMetricsPlugin()
     assert plugin.name == "my-metrics-plugin"
     assert plugin.generate_latest() == "metrics-data"
+
+
+def test_browser_stealth_plugin_interface():
+    """Проверяет корректность реализации BrowserStealthPlugin."""
+    from chutils.plugins import BrowserStealthPlugin
+
+    class MyStealthPlugin(BrowserStealthPlugin):
+        @property
+        def name(self) -> str:
+            return "my-stealth-plugin"
+
+        def apply_playwright(self, context: Any, **kwargs: Any) -> None:
+            context.stealth_applied = True
+
+        def apply_selenium(self, driver: Any, **kwargs: Any) -> None:
+            driver.stealth_applied = True
+
+        def apply_nodriver(self, tab: Any, **kwargs: Any) -> None:
+            tab.stealth_applied = True
+
+    plugin = MyStealthPlugin()
+    assert plugin.name == "my-stealth-plugin"
+
+    class DummyContext:
+        stealth_applied = False
+
+    dummy = DummyContext()
+    plugin.apply_playwright(dummy)
+    assert dummy.stealth_applied is True
+
+
+def test_http_backend_plugin_interface():
+    """Проверяет корректность реализации HttpBackendPlugin."""
+    from chutils.plugins import HttpBackendPlugin
+
+    class MyHttpPlugin(HttpBackendPlugin):
+        @property
+        def name(self) -> str:
+            return "curl_cffi"
+
+        def create_client(self, **kwargs: Any) -> Any:
+            return "sync-client"
+
+        def create_async_client(self, **kwargs: Any) -> Any:
+            return "async-client"
+
+    plugin = MyHttpPlugin()
+    assert plugin.name == "curl_cffi"
+    assert plugin.create_client() == "sync-client"
+    assert plugin.create_async_client() == "async-client"

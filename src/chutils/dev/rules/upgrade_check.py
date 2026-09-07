@@ -1,17 +1,18 @@
 """
 Правило проверки обновлений версии пакета chutils и генерации AI-Changelog.
 """
+
 from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import os
 from pathlib import Path
 
-from ..ai_lint import Rule, LintResult
+from ..ai_lint import LintResult, Rule
 from ..changelog_parser import (
     filter_releases_by_version_range,
-    parse_release_body,
     generate_migration_context_markdown,
+    parse_release_body,
 )
 from ..upgrade_client import fetch_changelogs
 from ..version_detector import detect_version_upgrade
@@ -23,6 +24,7 @@ class UpgradeCheckRule(Rule):
     """
     Правило для проверки обновления версии chutils и автоматической генерации AI-Changelog.
     """
+
     name = "UpgradeCheckRule"
     description = "Обнаруживает обновление версии пакета в pyproject.toml и генерирует миграционный файл контекста для ИИ."
     severity = "warn"
@@ -40,14 +42,29 @@ class UpgradeCheckRule(Rule):
         results: list[LintResult] = []
 
         # Проверяем отключение правила через ENV или конфигурационные файлы
-        disable_env = os.getenv("CHUTILS_DISABLE_UPGRADE_CHECK", "").lower() in ("1", "true", "yes", "on")  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule]
+        disable_env = os.getenv("CHUTILS_DISABLE_UPGRADE_CHECK", "").lower() in (
+            "1",
+            "true",
+            "yes",
+            "on",
+        )
         if disable_env:
             return results
 
-        generate_changelog = os.getenv("CHUTILS_GENERATE_CHANGELOG", "1").lower() not in ("0", "false", "no", "off")  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule]
+        generate_changelog = os.getenv(
+            "CHUTILS_GENERATE_CHANGELOG", "1"
+        ).lower() not in (
+            "0",
+            "false",
+            "no",
+            "off",
+        )
 
         try:
             from chutils.config.dev import load_ai_lint_config
+
             lint_cfg = load_ai_lint_config()
 
             # Проверка exclude_rules
@@ -73,11 +90,15 @@ class UpgradeCheckRule(Rule):
         # 2. Получаем чейнджлоги по сети / из кэша
         all_releases = fetch_changelogs(base_dir)
         if not all_releases:
-            logger.warning("Не удалось получить информацию о релизах для генерации AI-Changelog.")
+            logger.warning(
+                "Не удалось получить информацию о релизах для генерации AI-Changelog."
+            )
             return results
 
         # 3. Фильтруем релизы в нужном диапазоне
-        target_releases = filter_releases_by_version_range(all_releases, old_version, new_version)
+        target_releases = filter_releases_by_version_range(
+            all_releases, old_version, new_version
+        )
         if not target_releases:
             return results
 
@@ -102,15 +123,19 @@ class UpgradeCheckRule(Rule):
             )
 
             try:
-                from chutils.fs import ensure_dir, atomic_write
+                from chutils.fs import atomic_write, ensure_dir
+
                 context_file = Path(base_dir) / ".chutils" / "migration_context.md"
                 ensure_dir(context_file.parent)
                 atomic_write(context_file, markdown_content)
 
                 from ..version_detector import save_last_known_version
+
                 save_last_known_version(base_dir, new_version)
             except Exception as e:
-                logger.error("Не удалось записать файл миграционного контекста для ИИ: %s", e)
+                logger.error(
+                    "Не удалось записать файл миграционного контекста для ИИ: %s", e
+                )
                 return results
 
         # 6. Формируем красивое предупреждение в линтер
@@ -122,7 +147,9 @@ class UpgradeCheckRule(Rule):
             f"Обнаружено обновление версии chutils: v{old_version} -> v{new_version}.",
         ]
         if generate_changelog:
-            msg_parts.append("Файл AI-миграции сохранен в .chutils/migration_context.md.")
+            msg_parts.append(
+                "Файл AI-миграции сохранен в .chutils/migration_context.md."
+            )
         msg_parts.append("Краткая сводка изменений:")
 
         if breaking_count > 0:
@@ -133,7 +160,9 @@ class UpgradeCheckRule(Rule):
             msg_parts.append(f"  - Deprecations: {deprecations_count} шт.")
 
         if breaking_count == 0 and new_api_count == 0 and deprecations_count == 0:
-            msg_parts.append("  - Изменений API не обнаружено (патч-обновление или пустой чейнджлог).")
+            msg_parts.append(
+                "  - Изменений API не обнаружено (патч-обновление или пустой чейнджлог)."
+            )
 
         results.append(
             LintResult(
@@ -141,7 +170,7 @@ class UpgradeCheckRule(Rule):
                 message="\n".join(msg_parts),
                 severity=self.severity,
                 file_path=str(Path(base_dir) / "pyproject.toml"),
-                fix_suggestion="Ознакомьтесь с файлом .chutils/migration_context.md для получения полной информации по миграции."
+                fix_suggestion="Ознакомьтесь с файлом .chutils/migration_context.md для получения полной информации по миграции.",
             )
         )
 

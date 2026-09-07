@@ -18,23 +18,23 @@
 """
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
-from typing import Any, TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
-from .core import get_config, aget_config, save_config_value, asave_config_value
+from .core import aget_config, asave_config_value, get_config, save_config_value
 from .custom_providers import (
     BaseConfigProvider,
     DictConfigProvider,
 )
 from .getters import (
-    get_config_value,
     aget_config_value,
-    get_config_int,
-    get_config_float,
     get_config_boolean,
+    get_config_float,
+    get_config_int,
     get_config_list,
-    get_config_section,
     get_config_path,
-    validate_required_keys
+    get_config_section,
+    get_config_value,
+    validate_required_keys,
 )
 from .manager import _cm
 from .utils import find_project_root
@@ -45,18 +45,21 @@ from .watcher import (
 )
 
 if TYPE_CHECKING:
-    from ..logger import ChutilsLogger
     from pydantic import BaseModel
-    from .generator import (
-        generate_yaml_template,
-        generate_env_template,
-        generate_json_schema,
-    )
-    from .schema import export_schema, import_model_class
+
+    from ..logger import ChutilsLogger
     from .dev import (
         load_ai_lint_config as load_ai_lint_config,
+    )
+    from .dev import (
         parse_chutils_ignore as parse_chutils_ignore,
     )
+    from .generator import (
+        generate_env_template,
+        generate_json_schema,
+        generate_yaml_template,
+    )
+    from .schema import export_schema, import_model_class
 
 T = TypeVar("T", bound="BaseModel")
 """Тип для Pydantic моделей."""
@@ -64,53 +67,53 @@ T = TypeVar("T", bound="BaseModel")
 logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 __all__ = [
-    'get_config',
-    'aget_config',
-    'save_config_value',
-    'asave_config_value',
-    'get_config_value',
-    'aget_config_value',
-    'get_config_int',
-    'get_config_float',
-    'get_config_boolean',
-    'get_config_list',
-    'get_config_section',
-    'get_config_path',
-    'validate_required_keys',
-    'get_base_dir',
-    'get_config_file_path',
-    'is_config_loaded',
-    'are_paths_initialized',
-    'get_config_paths',
-    'get_all_config_paths',
-    'on_config_change',
-    'start_config_watcher',
-    'stop_config_watcher',
-    'generate_yaml_template',
-    'generate_env_template',
-    'generate_json_schema',
-    'export_schema',
-    'import_model_class',
-    'load_ai_lint_config',
-    'parse_chutils_ignore',
-    'register_provider',
-    'reset_providers',
-    'BaseConfigProvider',
-    'DictConfigProvider',
-    'trigger_reload',
-    'start_webhook_server',
-    'stop_webhook_server',
-    'SseConfigClient',
-    'SseEvent',
-    'parse_sse_lines',
-    'WebhookConfigServer',
-    'verify_webhook_request',
-    'create_fastapi_webhook_route',
-    'create_flask_webhook_route',
+    "BaseConfigProvider",
+    "DictConfigProvider",
+    "SseConfigClient",
+    "SseEvent",
+    "WebhookConfigServer",
+    "aget_config",
+    "aget_config_value",
+    "are_paths_initialized",
+    "asave_config_value",
+    "create_fastapi_webhook_route",
+    "create_flask_webhook_route",
+    "export_schema",
+    "generate_env_template",
+    "generate_json_schema",
+    "generate_yaml_template",
+    "get_all_config_paths",
+    "get_base_dir",
+    "get_config",
+    "get_config_boolean",
+    "get_config_file_path",
+    "get_config_float",
+    "get_config_int",
+    "get_config_list",
+    "get_config_path",
+    "get_config_paths",
+    "get_config_section",
+    "get_config_value",
+    "import_model_class",
+    "is_config_loaded",
+    "load_ai_lint_config",
+    "on_config_change",
+    "parse_chutils_ignore",
+    "parse_sse_lines",
+    "register_provider",
+    "reset_providers",
+    "save_config_value",
+    "start_config_watcher",
+    "start_webhook_server",
+    "stop_config_watcher",
+    "stop_webhook_server",
+    "trigger_reload",
+    "validate_required_keys",
+    "verify_webhook_request",
 ]
 
 
-def _get_logger() -> 'ChutilsLogger':
+def _get_logger() -> "ChutilsLogger":
     """
     Вспомогательная функция для получения типизированного логгера.
 
@@ -118,7 +121,8 @@ def _get_logger() -> 'ChutilsLogger':
         Экземпляр логгера (может быть ChutilsLogger, если инициализирован).
     """
     from typing import cast
-    return cast('ChutilsLogger', logger)
+
+    return cast("ChutilsLogger", logger)
 
 
 def __getattr__(name: str) -> Any:
@@ -126,24 +130,28 @@ def __getattr__(name: str) -> Any:
     Обеспечивает ленивую загрузку экспортируемых функций генератора и схемы.
     """
     lazy_imports = {
-        'generate_yaml_template': ('.generator', 'generate_yaml_template'),
-        'generate_env_template': ('.generator', 'generate_env_template'),
-        'generate_json_schema': ('.generator', 'generate_json_schema'),
-        'export_schema': ('.schema', 'export_schema'),
-        'import_model_class': ('.schema', 'import_model_class'),
-        'load_ai_lint_config': ('.dev', 'load_ai_lint_config'),
-        'parse_chutils_ignore': ('.dev', 'parse_chutils_ignore'),
-        'SseConfigClient': ('.sse', 'SseConfigClient'),
-        'SseEvent': ('.sse', 'SseEvent'),
-        'parse_sse_lines': ('.sse', 'parse_sse_lines'),
-        'WebhookConfigServer': ('.webhook_server', 'WebhookConfigServer'),
-        'verify_webhook_request': ('.webhook_server', 'verify_webhook_request'),
-        'create_fastapi_webhook_route': ('.integrations', 'create_fastapi_webhook_route'),
-        'create_flask_webhook_route': ('.integrations', 'create_flask_webhook_route'),
+        "generate_yaml_template": (".generator", "generate_yaml_template"),
+        "generate_env_template": (".generator", "generate_env_template"),
+        "generate_json_schema": (".generator", "generate_json_schema"),
+        "export_schema": (".schema", "export_schema"),
+        "import_model_class": (".schema", "import_model_class"),
+        "load_ai_lint_config": (".dev", "load_ai_lint_config"),
+        "parse_chutils_ignore": (".dev", "parse_chutils_ignore"),
+        "SseConfigClient": (".sse", "SseConfigClient"),
+        "SseEvent": (".sse", "SseEvent"),
+        "parse_sse_lines": (".sse", "parse_sse_lines"),
+        "WebhookConfigServer": (".webhook_server", "WebhookConfigServer"),
+        "verify_webhook_request": (".webhook_server", "verify_webhook_request"),
+        "create_fastapi_webhook_route": (
+            ".integrations",
+            "create_fastapi_webhook_route",
+        ),
+        "create_flask_webhook_route": (".integrations", "create_flask_webhook_route"),
     }
 
     if name in lazy_imports:
         import importlib
+
         mod_path, attr_name = lazy_imports[name]
         module = importlib.import_module(mod_path, __package__ or __name__)
         return getattr(module, attr_name)
@@ -215,7 +223,9 @@ def get_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | Non
     return _cm.get_config_paths(cfg_file)
 
 
-def get_all_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None, str | None]:
+def get_all_config_paths(
+    cfg_file: str | None = None,
+) -> tuple[str | None, str | None, str | None]:
     """
     Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
 
@@ -230,7 +240,7 @@ def get_all_config_paths(cfg_file: str | None = None) -> tuple[str | None, str |
     return _cm.get_all_config_paths(cfg_file)
 
 
-def register_provider(provider: 'BaseConfigProvider', priority: int = 100) -> None:
+def register_provider(provider: "BaseConfigProvider", priority: int = 100) -> None:
     """Регистрирует кастомный провайдер конфигурации.
 
     Провайдеры опрашиваются перед чтением локальных файлов конфигурации.

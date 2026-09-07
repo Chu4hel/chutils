@@ -73,29 +73,29 @@ def test_parse_fallbacks_from_project(tmp_path):
     venv_dir.mkdir()
 
     (app_dir / "main.py").write_text(
-        'from chutils import get_config_value\n'
+        "from chutils import get_config_value\n"
         'x = get_config_value("App", "port", 8080)\n',
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
     (utils_dir / "helper.py").write_text(
-        'from chutils import get_config_boolean\n'
+        "from chutils import get_config_boolean\n"
         'debug = get_config_boolean("App", "debug", True)\n',
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
     (tests_dir / "test_main.py").write_text(
-        'from chutils import get_config_value\n'
-        '# Должно быть проигнорировано, так как папка tests\n'
+        "from chutils import get_config_value\n"
+        "# Должно быть проигнорировано, так как папка tests\n"
         'x = get_config_value("App", "test_key", "ignored_test")\n',
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
     (venv_dir / "lib.py").write_text(
-        'from chutils import get_config_value\n'
-        '# Должно быть проигнорировано, так как папка .venv\n'
+        "from chutils import get_config_value\n"
+        "# Должно быть проигнорировано, так как папка .venv\n"
         'x = get_config_value("App", "venv_key", "ignored_venv")\n',
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
     project_fallbacks = parse_fallbacks_from_project(str(app_dir))

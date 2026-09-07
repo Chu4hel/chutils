@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def utc_now() -> datetime:
     """
     Возвращает текущее время в формате UTC с информацией о часовом поясе.
-    
+
     Returns:
         Объект datetime, представляющий текущее время в UTC.
     """
@@ -27,13 +27,13 @@ def utc_now() -> datetime:
 def _ensure_aware_utc(dt: datetime) -> datetime:
     """
     Гарантирует, что объект datetime является "timezone aware" в зоне UTC.
-    
+
     Если dt наивный (naive), он считается локальным временем и конвертируется в UTC.
     Если dt уже осведомленный (aware), он просто конвертируется в UTC.
-    
+
     Args:
         dt: Исходный объект datetime.
-        
+
     Returns:
         Объект datetime в зоне UTC.
     """
@@ -45,24 +45,24 @@ def _ensure_aware_utc(dt: datetime) -> datetime:
     return dt.astimezone(timezone.utc)
 
 
-def parse_datetime(value: str | int | float) -> datetime:
+def parse_datetime(value: str | float) -> datetime:
     """
     Парсит дату и время из различных форматов и приводит к UTC aware объекту.
-    
+
     Поддерживаемые форматы:
     - ISO 8601 строки (например, "2023-01-01T12:00:00").
     - UNIX timestamps в секундах (int/float).
     - UNIX timestamps в миллисекундах (длинные числа).
-    
-    Если установлена библиотека python-dateutil (chutils[date]), 
+
+    Если установлена библиотека python-dateutil (chutils[date]),
     поддерживается более широкий спектр форматов.
-    
+
     Args:
         value: Строка с датой или числовое представление (timestamp).
-        
+
     Returns:
         Объект datetime в зоне UTC.
-        
+
     Raises:
         ValueError: Если формат не распознан.
     """
@@ -84,6 +84,7 @@ def parse_datetime(value: str | int | float) -> datetime:
     # Пытаемся использовать dateutil, если он доступен
     try:
         from dateutil import parser
+
         dt = parser.parse(value)
         return _ensure_aware_utc(dt)
     except (ImportError, ValueError, OverflowError):
@@ -96,36 +97,36 @@ def parse_datetime(value: str | int | float) -> datetime:
 # --- Humanize Time ---
 
 _DEFAULT_LOCALES: dict[str, dict[str, Any]] = {
-    'en': {
-        'now': 'just now',
-        'yesterday': 'yesterday',
-        'tomorrow': 'tomorrow',
-        'past': '{n} {unit} ago',
-        'future': 'in {n} {unit}',
-        'units': {
-            'second': ('second', 'seconds'),
-            'minute': ('minute', 'minutes'),
-            'hour': ('hour', 'hours'),
-            'day': ('day', 'days'),
-            'month': ('month', 'months'),
-            'year': ('year', 'years'),
-        }
+    "en": {
+        "now": "just now",
+        "yesterday": "yesterday",
+        "tomorrow": "tomorrow",
+        "past": "{n} {unit} ago",
+        "future": "in {n} {unit}",
+        "units": {
+            "second": ("second", "seconds"),
+            "minute": ("minute", "minutes"),
+            "hour": ("hour", "hours"),
+            "day": ("day", "days"),
+            "month": ("month", "months"),
+            "year": ("year", "years"),
+        },
     },
-    'ru': {
-        'now': 'только что',
-        'yesterday': 'вчера',
-        'tomorrow': 'завтра',
-        'past': '{n} {unit} назад',
-        'future': 'через {n} {unit}',
-        'units': {
-            'second': ('секунду', 'секунды', 'секунд'),
-            'minute': ('минуту', 'минуты', 'минут'),
-            'hour': ('час', 'часа', 'часов'),
-            'day': ('день', 'дня', 'дней'),
-            'month': ('месяц', 'месяца', 'месяцев'),
-            'year': ('год', 'года', 'лет'),
-        }
-    }
+    "ru": {
+        "now": "только что",
+        "yesterday": "вчера",
+        "tomorrow": "завтра",
+        "past": "{n} {unit} назад",
+        "future": "через {n} {unit}",
+        "units": {
+            "second": ("секунду", "секунды", "секунд"),
+            "minute": ("минуту", "минуты", "минут"),
+            "hour": ("час", "часа", "часов"),
+            "day": ("день", "дня", "дней"),
+            "month": ("месяц", "месяца", "месяцев"),
+            "year": ("год", "года", "лет"),
+        },
+    },
 }
 
 
@@ -140,18 +141,18 @@ def _pluralize_ru(n: int, forms: tuple[str, ...]) -> str:
 
 
 def humanize_timedelta(
-        dt: datetime | timedelta | int | float,
-        locale: str = 'ru',
-        custom_locales: dict[str, Any] | None = None
+    dt: datetime | timedelta | float,
+    locale: str = "ru",
+    custom_locales: dict[str, Any] | None = None,
 ) -> str:
     """
     Превращает дату, timedelta или количество секунд в человекочитаемую строку относительно текущего времени.
-    
+
     Args:
         dt: Дата (datetime), интервал (timedelta) или количество секунд (int/float).
         locale: Код локали ('ru' или 'en').
         custom_locales: Дополнительные локали или переопределения.
-        
+
     Returns:
         Строка вида "5 минут назад", "вчера" и т.д.
     """
@@ -174,42 +175,42 @@ def humanize_timedelta(
 
     if locale not in all_locales:
         logger.warning("Locale '%s' not found, falling back to 'en'", locale)
-        locale = 'en'
+        locale = "en"
 
     loc = all_locales[locale]
 
     if abs_seconds < 10:
-        return str(loc['now'])
+        return str(loc["now"])
 
     # Определяем единицу измерения и количество
     # Используем небольшое смещение (округление)
     if abs_seconds < 60:
-        n, unit_key = int(abs_seconds), 'second'
+        n, unit_key = int(abs_seconds), "second"
     elif abs_seconds < 3600:
-        n, unit_key = int((abs_seconds + 30) / 60), 'minute'
+        n, unit_key = int((abs_seconds + 30) / 60), "minute"
     elif abs_seconds < 86400 - 1800:  # Все что меньше 23.5 часов - это часы
-        n, unit_key = int((abs_seconds + 1800) / 3600), 'hour'
+        n, unit_key = int((abs_seconds + 1800) / 3600), "hour"
     elif abs_seconds < 2592000:  # 30 дней
-        n, unit_key = int((abs_seconds + 43200) / 86400), 'day'
+        n, unit_key = int((abs_seconds + 43200) / 86400), "day"
     elif abs_seconds < 31536000:  # 365 дней
-        n, unit_key = int(abs_seconds / 2592000), 'month'
+        n, unit_key = int(abs_seconds / 2592000), "month"
     else:
-        n, unit_key = int(abs_seconds / 31536000), 'year'
+        n, unit_key = int(abs_seconds / 31536000), "year"
 
     # Специальные случаи для дней
-    if unit_key == 'day' and n == 1:
+    if unit_key == "day" and n == 1:
         if seconds > 0:
-            return str(loc['yesterday'])
+            return str(loc["yesterday"])
         else:
-            return str(loc['tomorrow'])
+            return str(loc["tomorrow"])
 
     # Форматируем единицу измерения
-    forms = loc['units'][unit_key]
-    if locale == 'ru':
+    forms = loc["units"][unit_key]
+    if locale == "ru":
         unit_str = _pluralize_ru(n, forms)
     else:
         unit_str = forms[0] if n == 1 else forms[1]
 
     # Собираем финальную строку
-    pattern = str(loc['past'] if seconds > 0 else loc['future'])
+    pattern = str(loc["past"] if seconds > 0 else loc["future"])
     return pattern.format(n=n, unit=unit_str)

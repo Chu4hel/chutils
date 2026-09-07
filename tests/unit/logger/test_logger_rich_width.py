@@ -1,4 +1,4 @@
-from chutils.cli_utils import set_console_width, _get_default_width
+from chutils.cli_utils import _get_default_width, set_console_width
 from chutils.logger import setup_logger
 
 
@@ -25,6 +25,6 @@ def test_logger_invalid_width_handled(mock_chutils_config):
     # Не должно упасть, должно просто проигнорировать
     setup_logger("test_invalid_width", force_reconfigure=True)
 
-    # Значение не должно измениться на 'invalid', 
+    # Значение не должно измениться на 'invalid',
     # в данном случае оно останется 120, так как set_console_width(int(...)) упадет и поймается
     assert _get_default_width() == 120

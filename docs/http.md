@@ -147,8 +147,5 @@ from chutils.http.streaming import AsyncWebSocketClient
 
 # Передаем список фиксированных задержек в секундах.
 # После 3 попыток (0.1с, 0.5с, 1.0с) клиент пробросит ошибку соединения дальше.
-client = AsyncWebSocketClient(
-    "ws://example.com/ws",
-    reconnect_strategy=[0.1, 0.5, 1.0]
-)
+client = AsyncWebSocketClient("ws://example.com/ws", reconnect_strategy=[0.1, 0.5, 1.0])
 ```

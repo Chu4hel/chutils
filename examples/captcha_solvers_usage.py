@@ -9,9 +9,9 @@
 import asyncio
 
 from chutils.scraping.captcha import (
-    RuCaptchaSolver,
     AsyncAntiCaptchaSolver,
     CaptchaError,
+    RuCaptchaSolver,
 )
 
 
@@ -51,7 +51,7 @@ async def run_async_example() -> None:
             sitekey="6LeOeSkUAAAAACl2pxhXLD37t3h7wJz16F8ySU73",
             page_url="https://rucaptcha.com/demo/recaptcha-v2",
             timeout=15.0,
-            poll_interval=2.0
+            poll_interval=2.0,
         )
         print(f"Полученный ReCaptcha-токен: {token[:30]}...")
 

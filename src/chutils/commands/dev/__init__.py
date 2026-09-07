@@ -3,8 +3,8 @@ from __future__ import annotations
 import argparse
 from typing import Any
 
-from .base import SubCommand
 from ..base import BaseCommand
+from .base import SubCommand
 
 
 def get_subcommands() -> list[type[SubCommand]]:
@@ -13,21 +13,21 @@ def get_subcommands() -> list[type[SubCommand]]:
     Returns:
         Список классов, унаследованных от SubCommand.
     """
-    from .generate_context import GenerateContextSubCommand
     from .ai_lint import AiLintSubCommand
     from .chat_context import ChatContextSubCommand
-    from .scaffold import ScaffoldSubCommand
-    from .mock import MockSubCommand
-    from .hooks import HooksSubCommand
-    from .few_shot import FewShotSubCommand
-    from .diagnostics import DiagnosticsSubCommand
-    from .sync_env import SyncEnvSubCommand
-    from .profile_imports import ProfileImportsSubCommand
-    from .dashboard import DashboardSubCommand
-    from .setup_github_actions import SetupGithubActionsSubCommand
     from .clean import CleanSubCommand
-    from .watch import WatchSubCommand
+    from .dashboard import DashboardSubCommand
+    from .diagnostics import DiagnosticsSubCommand
+    from .few_shot import FewShotSubCommand
+    from .generate_context import GenerateContextSubCommand
+    from .hooks import HooksSubCommand
     from .lock import LockSubCommand
+    from .mock import MockSubCommand
+    from .profile_imports import ProfileImportsSubCommand
+    from .scaffold import ScaffoldSubCommand
+    from .setup_github_actions import SetupGithubActionsSubCommand
+    from .sync_env import SyncEnvSubCommand
+    from .watch import WatchSubCommand
 
     return [
         GenerateContextSubCommand,
@@ -474,41 +474,57 @@ class DevCommand(BaseCommand):
             action="store_true",
             dest="interactive",
             default=True,
-            help="Запустить интерактивную настройку (по умолчанию)"
+            help="Запустить интерактивную настройку (по умолчанию)",
         )
         interactive_group.add_argument(
             "--no-interactive",
             action="store_false",
             dest="interactive",
-            help="Отключить интерактивный опрос"
+            help="Отключить интерактивный опрос",
         )
 
         setup_gha_parser.add_argument(
             "--python-versions",
             default="3.10,3.11,3.12,3.13",
-            help="Список версий Python через запятую (например, 3.10,3.11,3.12,3.13)"
+            help="Список версий Python через запятую (например, 3.10,3.11,3.12,3.13)",
         )
 
         pytest_group = setup_gha_parser.add_mutually_exclusive_group()
-        pytest_group.add_argument("--with-pytest", action="store_true", dest="with_pytest", default=None)
-        pytest_group.add_argument("--without-pytest", action="store_false", dest="with_pytest", default=None)
+        pytest_group.add_argument(
+            "--with-pytest", action="store_true", dest="with_pytest", default=None
+        )
+        pytest_group.add_argument(
+            "--without-pytest", action="store_false", dest="with_pytest", default=None
+        )
 
         mypy_group = setup_gha_parser.add_mutually_exclusive_group()
-        mypy_group.add_argument("--with-mypy", action="store_true", dest="with_mypy", default=None)
-        mypy_group.add_argument("--without-mypy", action="store_false", dest="with_mypy", default=None)
+        mypy_group.add_argument(
+            "--with-mypy", action="store_true", dest="with_mypy", default=None
+        )
+        mypy_group.add_argument(
+            "--without-mypy", action="store_false", dest="with_mypy", default=None
+        )
 
         ruff_group = setup_gha_parser.add_mutually_exclusive_group()
-        ruff_group.add_argument("--with-ruff", action="store_true", dest="with_ruff", default=None)
-        ruff_group.add_argument("--without-ruff", action="store_false", dest="with_ruff", default=None)
+        ruff_group.add_argument(
+            "--with-ruff", action="store_true", dest="with_ruff", default=None
+        )
+        ruff_group.add_argument(
+            "--without-ruff", action="store_false", dest="with_ruff", default=None
+        )
 
         ailint_group = setup_gha_parser.add_mutually_exclusive_group()
-        ailint_group.add_argument("--with-ai-lint", action="store_true", dest="with_ai_lint", default=None)
-        ailint_group.add_argument("--without-ai-lint", action="store_false", dest="with_ai_lint", default=None)
+        ailint_group.add_argument(
+            "--with-ai-lint", action="store_true", dest="with_ai_lint", default=None
+        )
+        ailint_group.add_argument(
+            "--without-ai-lint", action="store_false", dest="with_ai_lint", default=None
+        )
 
         setup_gha_parser.add_argument(
             "--output-file",
             default=".github/workflows/ci.yml",
-            help="Путь для сохранения сгенерированного workflow (по умолчанию: .github/workflows/ci.yml)"
+            help="Путь для сохранения сгенерированного workflow (по умолчанию: .github/workflows/ci.yml)",
         )
 
         setup_gha_parser.set_defaults(handler=self.handle_setup_github_actions)
@@ -636,6 +652,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .generate_context import GenerateContextSubCommand
+
         GenerateContextSubCommand().handle(args)
 
     def handle_ai_lint(self, args: argparse.Namespace) -> None:
@@ -645,6 +662,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .ai_lint import AiLintSubCommand
+
         AiLintSubCommand().handle(args)
 
     def handle_chat_context(self, args: argparse.Namespace) -> None:
@@ -654,6 +672,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .chat_context import ChatContextSubCommand
+
         ChatContextSubCommand().handle(args)
 
     def handle_scaffold(self, args: argparse.Namespace) -> None:
@@ -663,6 +682,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .scaffold import ScaffoldSubCommand
+
         ScaffoldSubCommand().handle(args)
 
     def handle_mock(self, args: argparse.Namespace) -> None:
@@ -672,6 +692,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .mock import MockSubCommand
+
         MockSubCommand().handle(args)
 
     def handle_install_hooks(self, args: argparse.Namespace) -> None:
@@ -681,6 +702,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .hooks import HooksSubCommand
+
         HooksSubCommand().handle(args)
 
     def handle_generate_few_shot(self, args: argparse.Namespace) -> None:
@@ -690,6 +712,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .few_shot import FewShotSubCommand
+
         FewShotSubCommand().handle(args)
 
     def handle_diagnostics(self, args: argparse.Namespace) -> None:
@@ -699,6 +722,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .diagnostics import DiagnosticsSubCommand
+
         DiagnosticsSubCommand().handle(args)
 
     def handle_sync_env(self, args: argparse.Namespace) -> None:
@@ -708,6 +732,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .sync_env import SyncEnvSubCommand
+
         SyncEnvSubCommand().handle(args)
 
     def handle_profile_imports(self, args: argparse.Namespace) -> None:
@@ -717,6 +742,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .profile_imports import ProfileImportsSubCommand
+
         ProfileImportsSubCommand().handle(args)
 
     def handle_dashboard(self, args: argparse.Namespace) -> None:
@@ -726,6 +752,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .dashboard import DashboardSubCommand
+
         DashboardSubCommand().handle(args)
 
     def handle_setup_github_actions(self, args: argparse.Namespace) -> None:
@@ -735,6 +762,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .setup_github_actions import SetupGithubActionsSubCommand
+
         SetupGithubActionsSubCommand().handle(args)
 
     def handle_clean(self, args: argparse.Namespace) -> None:
@@ -744,6 +772,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .clean import CleanSubCommand
+
         CleanSubCommand().handle(args)
 
     def handle_watch(self, args: argparse.Namespace) -> None:
@@ -753,6 +782,7 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .watch import WatchSubCommand
+
         WatchSubCommand().handle(args)
 
     def handle_lock(self, args: argparse.Namespace) -> None:
@@ -762,4 +792,5 @@ class DevCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from .lock import LockSubCommand
+
         LockSubCommand().handle(args)

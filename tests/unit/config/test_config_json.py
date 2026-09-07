@@ -5,11 +5,11 @@ from pathlib import Path
 import pytest
 
 from chutils.config import (
-    get_config,
-    save_config_value,
-    get_config_file_path,
     _cm,
-    find_project_root
+    find_project_root,
+    get_config,
+    get_config_file_path,
+    save_config_value,
 )
 from chutils.exceptions import ConfigParseError
 
@@ -18,6 +18,7 @@ from chutils.exceptions import ConfigParseError
 def reset_config_state():
     """Сбрасывает глобальное состояние модуля config перед каждым тестом."""
     import chutils.config
+
     chutils.config._cm._reset()
     yield
 
@@ -25,10 +26,12 @@ def reset_config_state():
 def test_json_config_auto_discovery(fs):
     """Тест автоматического обнаружения config.json."""
     # Используем абсолютный путь, подходящий для платформы
-    root_path = "/app" if os.name != 'nt' else "C:/app"
+    root_path = "/app" if os.name != "nt" else "C:/app"
     fs.create_dir(root_path)
     fs.create_file(os.path.join(root_path, "pyproject.toml"))
-    fs.create_file(os.path.join(root_path, "config.json"), contents='{"section": {"key": "value"}}')
+    fs.create_file(
+        os.path.join(root_path, "config.json"), contents='{"section": {"key": "value"}}'
+    )
 
     fs.cwd = root_path
 
@@ -40,9 +43,12 @@ def test_json_config_auto_discovery(fs):
 
 def test_json_config_loading(fs):
     """Тест загрузки данных из config.json."""
-    root_path = "/app" if os.name != 'nt' else "C:/app"
+    root_path = "/app" if os.name != "nt" else "C:/app"
     fs.create_file(os.path.join(root_path, "pyproject.toml"))
-    fs.create_file(os.path.join(root_path, "config.json"), contents='{"Section1": {"key1": "val1"}}')
+    fs.create_file(
+        os.path.join(root_path, "config.json"),
+        contents='{"Section1": {"key1": "val1"}}',
+    )
     fs.cwd = root_path
 
     config = get_config()
@@ -51,11 +57,16 @@ def test_json_config_loading(fs):
 
 def test_json_local_override(fs):
     """Тест переопределения через config.local.json."""
-    root_path = "/app" if os.name != 'nt' else "C:/app"
+    root_path = "/app" if os.name != "nt" else "C:/app"
     fs.create_file(os.path.join(root_path, "pyproject.toml"))
-    fs.create_file(os.path.join(root_path, "config.json"),
-                   contents='{"Section1": {"key1": "original", "key2": "keep"}}')
-    fs.create_file(os.path.join(root_path, "config.local.json"), contents='{"Section1": {"key1": "overridden"}}')
+    fs.create_file(
+        os.path.join(root_path, "config.json"),
+        contents='{"Section1": {"key1": "original", "key2": "keep"}}',
+    )
+    fs.create_file(
+        os.path.join(root_path, "config.local.json"),
+        contents='{"Section1": {"key1": "overridden"}}',
+    )
     fs.cwd = root_path
 
     config = get_config()
@@ -65,7 +76,7 @@ def test_json_local_override(fs):
 
 def test_save_config_value_json(fs):
     """Тест сохранения значения в JSON файл."""
-    root_path = "/app" if os.name != 'nt' else "C:/app"
+    root_path = "/app" if os.name != "nt" else "C:/app"
     config_path = os.path.join(root_path, "config.json")
     fs.create_file(os.path.join(root_path, "pyproject.toml"))
     fs.create_file(config_path, contents='{"Section1": {"key1": "old_val"}}')
@@ -84,7 +95,7 @@ def test_save_config_value_json(fs):
 
 def test_invalid_json_handling(fs):
     """Тест обработки некорректного JSON."""
-    root_path = "/app" if os.name != 'nt' else "C:/app"
+    root_path = "/app" if os.name != "nt" else "C:/app"
     fs.create_file(os.path.join(root_path, "pyproject.toml"))
     fs.create_file(os.path.join(root_path, "config.json"), contents='{"invalid": json')
     fs.cwd = root_path

@@ -1,6 +1,7 @@
 """
 Пакет команд для CLI.
 """
+
 from .base import BaseCommand
 
 
@@ -10,17 +11,17 @@ def get_commands() -> list[type[BaseCommand]]:
     Returns:
         Список классов, унаследованных от BaseCommand.
     """
-    from .secrets import SecretsCommand
-    from .init import InitCommand
-    from .validate import ValidateCommand
     from .check import CheckCommand
-    from .paths import ShowPathsCommand
-    from .template import TemplateCommand
     from .config import ConfigCommand
+    from .db import DbCommand
     from .dev import DevCommand
     from .env import EnvCommand
+    from .init import InitCommand
+    from .paths import ShowPathsCommand
     from .pypi import PyPiCommand
-    from .db import DbCommand
+    from .secrets import SecretsCommand
+    from .template import TemplateCommand
+    from .validate import ValidateCommand
 
     return [
         SecretsCommand,

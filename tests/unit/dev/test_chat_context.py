@@ -5,14 +5,14 @@ from pathlib import Path
 import pytest
 
 from chutils.dev.chat_context import (
+    collect_context_slice,
     extract_keywords,
-    score_node,
+    filter_examples,
     filter_node_by_modules,
     filter_symbols_by_layer,
-    filter_examples,
-    collect_context_slice,
+    score_node,
 )
-from chutils.dev.models import Node, Symbol, ProjectExample, ProjectIndex
+from chutils.dev.models import Node, ProjectExample, ProjectIndex, Symbol
 
 
 @pytest.fixture

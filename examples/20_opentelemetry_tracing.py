@@ -8,7 +8,7 @@ pip install chutils[otel]
 
 import time
 
-from chutils import setup_logger, setup_tracing, trace, LogLevel
+from chutils import LogLevel, setup_logger, setup_tracing, trace
 
 # 1. Настройка трассировки
 # В реальном приложении вы можете использовать exporter_type="otlp" для Jaeger/Zipkin.
@@ -38,7 +38,7 @@ def validate_card(card_number: str) -> bool:
 def main() -> None:
     logger.info("Запуск основного процесса...")
 
-    # Все логи внутри этой функции и вызываемых ею @trace функций 
+    # Все логи внутри этой функции и вызываемых ею @trace функций
     # будут иметь один и тот же trace_id.
     process_payment(99.99)
 

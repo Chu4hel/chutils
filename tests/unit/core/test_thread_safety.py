@@ -180,12 +180,13 @@ async def test_asave_config_does_not_block_loop(config_fs, mocker):
     fs, project_root = config_fs
     config_path = project_root / "config.yml"
 
-    initial_content = "App:\n  name: \"BlockTest\"\n"
+    initial_content = 'App:\n  name: "BlockTest"\n'
     fs.create_file(config_path, contents=initial_content)
     await config.aget_config()
 
     # Мокаем медленную запись в файл (имитируем 0.2 секунды I/O блокировки)
     from chutils.config.providers import YamlConfigProvider
+
     original_save = YamlConfigProvider.save
 
     def slow_save(self, path, section, key, value):

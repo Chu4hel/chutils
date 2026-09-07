@@ -19,23 +19,31 @@ def test_cli_config_debug_with_model(cli_runner, config_fs, mocker):
     """Проверяет config debug с указанием модели."""
     fs, project_root = config_fs
     from pydantic import BaseModel
+
     class Settings(BaseModel):
         app_name: str = "TestApp"
 
     mocker.patch("chutils.config.schema.import_model_class", return_value=Settings)
 
-    result = cli_runner.invoke(["config", "debug", "--model", "myapp:Settings", "--defaults"])
+    result = cli_runner.invoke(
+        ["config", "debug", "--model", "myapp:Settings", "--defaults"]
+    )
     assert result.exit_code == 0
     assert "default" in result.stdout
 
 
 def test_cli_config_debug_import_error(cli_runner, mocker):
     """Проверяет ошибку импорта модели в config debug."""
-    mocker.patch("chutils.config.schema.import_model_class", side_effect=Exception("Import fail"))
+    mocker.patch(
+        "chutils.config.schema.import_model_class", side_effect=Exception("Import fail")
+    )
 
     result = cli_runner.invoke(["config", "debug", "--model", "bad:Model"])
     assert result.exit_code == 1
-    assert "Ошибка при импорте модели" in result.stderr or "Ошибка при импорте модели" in result.stdout
+    assert (
+        "Ошибка при импорте модели" in result.stderr
+        or "Ошибка при импорте модели" in result.stdout
+    )
 
 
 def test_cli_config_generate_schema_stdout(cli_runner, mocker):
@@ -58,7 +66,9 @@ def test_cli_config_generate_schema_file(cli_runner, config_fs, mocker):
 
     mocker.patch("chutils.config.export_schema", side_effect=mock_export)
 
-    result = cli_runner.invoke(["config", "generate-schema", "--model", "m:M", "-o", "schema.json"])
+    result = cli_runner.invoke(
+        ["config", "generate-schema", "--model", "m:M", "-o", "schema.json"]
+    )
     assert result.exit_code == 0
     assert "успешно сохранена" in result.stdout
     assert fs.exists("schema.json")
@@ -70,7 +80,10 @@ def test_cli_config_generate_schema_error(cli_runner, mocker):
 
     result = cli_runner.invoke(["config", "generate-schema", "--model", "m:M"])
     assert result.exit_code == 1
-    assert "Ошибка при генерации схемы" in result.stderr or "Ошибка при генерации схемы" in result.stdout
+    assert (
+        "Ошибка при генерации схемы" in result.stderr
+        or "Ошибка при генерации схемы" in result.stdout
+    )
 
 
 def test_cli_config_debug_include_fallbacks(cli_runner, project_with_marker, mocker):
@@ -78,7 +91,7 @@ def test_cli_config_debug_include_fallbacks(cli_runner, project_with_marker, moc
     fs, project_root = project_with_marker
     mocker.patch(
         "chutils.config.ast_fallback_parser.parse_fallbacks_from_project",
-        return_value={"SectionFromCode": {"key_from_code": "code_fallback_val"}}
+        return_value={"SectionFromCode": {"key_from_code": "code_fallback_val"}},
     )
 
     result = cli_runner.invoke(["config", "debug", "--include-fallbacks"])

@@ -2,15 +2,14 @@ from __future__ import annotations
 
 from typing import Any
 
-__all__ = ["BaseModel", "Field", "Breadcrumbs"]
+__all__ = ["BaseModel", "Breadcrumbs", "Field"]
 
 try:
     from pydantic import BaseModel, Field
 except ImportError:
+
     class BaseModel:  # type: ignore[no-redef]
         """Заглушка Pydantic BaseModel при его отсутствии."""
-        pass
-
 
     def Field(**kwargs: Any) -> Any:  # type: ignore[no-redef]
         """Заглушка Pydantic Field при его отсутствии.
@@ -26,6 +25,7 @@ except ImportError:
 
 class Breadcrumbs(BaseModel):
     """Метаданные символа (хлебные крошки)."""
+
     is_async: bool = False
     is_thread_safe: bool = False
     is_heavy: bool = False

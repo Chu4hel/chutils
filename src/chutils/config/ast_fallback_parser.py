@@ -56,9 +56,13 @@ def parse_fallbacks_from_file(file_path: str) -> dict[str, dict[str, Any]]:
                 func_name = node.func.attr
 
             if func_name in {
-                "get_config_value", "get_config_int", "get_config_float",
-                "get_config_boolean", "get_config_list", "get_config_section",
-                "get_config_path"
+                "get_config_value",
+                "get_config_int",
+                "get_config_float",
+                "get_config_boolean",
+                "get_config_list",
+                "get_config_section",
+                "get_config_path",
             }:
                 try:
                     # Извлекаем section
@@ -130,10 +134,18 @@ def parse_fallbacks_from_project(base_dir: str) -> dict[str, dict[str, Any]]:
         parts = path.parts
         # Игнорируем виртуальные окружения, тесты и скрытые папки
         if any(
-                p.startswith(".") or p in {
-                    "venv", ".venv", "tests", "site-packages",
-                    "node_modules", "dist", "build"
-                } for p in parts
+            p.startswith(".")
+            or p
+            in {
+                "venv",
+                ".venv",
+                "tests",
+                "site-packages",
+                "node_modules",
+                "dist",
+                "build",
+            }
+            for p in parts
         ):
             continue
 

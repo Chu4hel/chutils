@@ -7,13 +7,14 @@
 
 import asyncio
 import concurrent.futures
+import concurrent.futures.thread
 import functools
 import inspect
 import random
 import threading
 import time
-from collections.abc import Callable, Awaitable
-from typing import Optional, TYPE_CHECKING, Any, cast
+from collections.abc import Awaitable, Callable
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 from .exceptions import ChutilsTimeoutError
 from .typing import P, R
@@ -48,11 +49,11 @@ def _get_logger() -> "ChutilsLogger":
 
 
 def retry(
-        retries: int = 3,
-        delay: float = 1.0,
-        backoff: float = 2.0,
-        jitter: bool = False,
-        exceptions: tuple[type[Exception], ...] = (Exception,),
+    retries: int = 3,
+    delay: float = 1.0,
+    backoff: float = 2.0,
+    jitter: bool = False,
+    exceptions: tuple[type[Exception], ...] = (Exception,),
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Декоратор для автоматического повторного выполнения функции при возникновении исключений.
@@ -176,7 +177,7 @@ def log_function_details(func: Callable[P, R]) -> Callable[P, R]:
 
 
 def timeout(
-        seconds: float, fallback: Any = _NO_FALLBACK
+    seconds: float, fallback: Any = _NO_FALLBACK
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Декоратор для ограничения времени выполнения функции.
@@ -224,7 +225,9 @@ def timeout(
             @functools.wraps(func)
             def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> R | Any:
                 # Используем ThreadPoolExecutor для запуска в отдельном потоке
-                with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                from concurrent.futures.thread import ThreadPoolExecutor
+
+                with ThreadPoolExecutor(max_workers=1) as executor:
                     future = executor.submit(func, *args, **kwargs)
                     try:
                         return future.result(timeout=seconds)
@@ -374,7 +377,7 @@ _limiters_lock = threading.Lock()
 
 
 def get_limiter(
-        key: str, max_calls: int, period: float, strategy: str = "token_bucket"
+    key: str, max_calls: int, period: float, strategy: str = "token_bucket"
 ) -> TokenBucket | LeakyBucket:
     """Возвращает или создает ограничитель частоты по ключу.
 
@@ -387,7 +390,6 @@ def get_limiter(
     Returns:
         Экземпляр ограничителя частоты (TokenBucket или LeakyBucket).
     """
-    global _limiters
     with _limiters_lock:
         if key not in _limiters:
             if strategy == "leaky_bucket":
@@ -399,17 +401,16 @@ def get_limiter(
 
 def clear_limiters() -> None:
     """Очищает реестр ограничителей (для тестов)."""
-    global _limiters
     with _limiters_lock:
         _limiters.clear()
 
 
 def rate_limit(
-        max_calls: int,
-        period: float,
-        strategy: str = "token_bucket",
-        wait: bool = False,
-        key_func: Callable[..., str] | None = None,
+    max_calls: int,
+    period: float,
+    strategy: str = "token_bucket",
+    wait: bool = False,
+    key_func: Callable[..., str] | None = None,
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Декоратор для ограничения частоты вызовов функции (Throttling).
@@ -490,11 +491,11 @@ class CircuitBreakerState:
     """Машина состояний для паттерна Circuit Breaker (Предохранитель)."""
 
     def __init__(
-            self,
-            failure_threshold: int,
-            recovery_timeout: float,
-            exceptions: tuple[type[Exception], ...],
-            name: str,
+        self,
+        failure_threshold: int,
+        recovery_timeout: float,
+        exceptions: tuple[type[Exception], ...],
+        name: str,
     ) -> None:
         """Инициализирует состояние предохранителя (Circuit Breaker).
 
@@ -548,21 +549,20 @@ class CircuitBreakerState:
         with self._lock:
             self.failure_count += 1
             self.last_failure_time = time.time()
-            if self.state in ("CLOSED", "HALF_OPEN"):
-                if (
-                        self.state == "HALF_OPEN"
-                        or self.failure_count >= self.failure_threshold
-                ):
-                    logger = _get_logger()
-                    logger.warning(
-                        "CircuitBreaker [%s]: цепь разомкнута (OPEN). Ошибка: %s: %s. Блокировка на %s сек.",
-                        self.name,
-                        type(exc).__name__,
-                        exc,
-                        self.recovery_timeout,
-                    )
-                    self.state = "OPEN"
-                    self._report_metrics_state()
+            if self.state in ("CLOSED", "HALF_OPEN") and (
+                self.state == "HALF_OPEN"
+                or self.failure_count >= self.failure_threshold
+            ):
+                logger = _get_logger()
+                logger.warning(
+                    "CircuitBreaker [%s]: цепь разомкнута (OPEN). Ошибка: %s: %s. Блокировка на %s сек.",
+                    self.name,
+                    type(exc).__name__,
+                    exc,
+                    self.recovery_timeout,
+                )
+                self.state = "OPEN"
+                self._report_metrics_state()
             self._half_open_in_progress = False
 
     def _report_metrics_state(self) -> None:
@@ -571,6 +571,7 @@ class CircuitBreakerState:
         """
         try:
             from chutils.metrics import set_gauge
+
             state_val = 0.0
             if self.state == "OPEN":
                 state_val = 1.0
@@ -607,9 +608,9 @@ class CircuitBreakerState:
 
 
 def circuit_breaker(
-        failure_threshold: int = 5,
-        recovery_timeout: float = 60.0,
-        exceptions: tuple[type[Exception], ...] = (Exception,),
+    failure_threshold: int = 5,
+    recovery_timeout: float = 60.0,
+    exceptions: tuple[type[Exception], ...] = (Exception,),
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """Декоратор Circuit Breaker (Предохранитель) для защиты от каскадных сбоев.
 
@@ -643,7 +644,7 @@ def circuit_breaker(
                     return res
                 except Exception as e:
                     state.record_failure(e)
-                    raise e
+                    raise
 
             return cast(Callable[P, R], async_wrapper)
         else:
@@ -660,7 +661,7 @@ def circuit_breaker(
                     return res
                 except Exception as e:
                     state.record_failure(e)
-                    raise e
+                    raise
 
             return sync_wrapper
 
@@ -668,8 +669,8 @@ def circuit_breaker(
 
 
 def semaphore(
-        max_concurrent: int,
-        key: Optional[Callable[..., Any]] = None,
+    max_concurrent: int,
+    key: Callable[..., Any] | None = None,
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Декоратор для ограничения максимального количества параллельных вызовов функции (Semaphore).
@@ -688,7 +689,9 @@ def semaphore(
     sync_semaphores: dict[Any, threading.Semaphore] = {}
     sync_lock = threading.Lock()
 
-    async_semaphores: dict[tuple[asyncio.AbstractEventLoop, Any], asyncio.Semaphore] = {}
+    async_semaphores: dict[
+        tuple[asyncio.AbstractEventLoop, Any], asyncio.Semaphore
+    ] = {}
     async_lock = threading.Lock()
 
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
@@ -735,11 +738,11 @@ def semaphore(
 
 
 def bulkhead(
-        max_concurrent: int,
-        max_waiting: int = 0,
-        timeout: Optional[float] = None,
-        fallback: Any = _NO_FALLBACK,
-        key: Optional[Callable[..., Any]] = None,
+    max_concurrent: int,
+    max_waiting: int = 0,
+    timeout: float | None = None,
+    fallback: Any = _NO_FALLBACK,
+    key: Callable[..., Any] | None = None,
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """
     Декоратор для изоляции ресурсов (Bulkhead).
@@ -823,8 +826,8 @@ def bulkhead(
                                 await handle_rejected_async(
                                     f"Bulkhead limit exceeded (max_concurrent={max_concurrent}, max_waiting={max_waiting})",
                                     *args,
-                                    **kwargs
-                                )
+                                    **kwargs,
+                                ),
                             )
 
                         state.waiting_count += 1
@@ -832,7 +835,9 @@ def bulkhead(
                         try:
                             if timeout is not None:
                                 try:
-                                    await asyncio.wait_for(state.condition.wait(), timeout=timeout)
+                                    await asyncio.wait_for(
+                                        state.condition.wait(), timeout=timeout
+                                    )
                                     slot_acquired = True
                                 except asyncio.TimeoutError:
                                     slot_acquired = False
@@ -848,8 +853,8 @@ def bulkhead(
                                 await handle_rejected_async(
                                     f"Bulkhead acquire timeout (timeout={timeout}s)",
                                     *args,
-                                    **kwargs
-                                )
+                                    **kwargs,
+                                ),
                             )
 
                         state.active_count += 1
@@ -884,8 +889,8 @@ def bulkhead(
                                 handle_rejected(
                                     f"Bulkhead limit exceeded (max_concurrent={max_concurrent}, max_waiting={max_waiting})",
                                     *args,
-                                    **kwargs
-                                )
+                                    **kwargs,
+                                ),
                             )
 
                         state.waiting_count += 1
@@ -900,8 +905,8 @@ def bulkhead(
                                 handle_rejected(
                                     f"Bulkhead acquire timeout (timeout={timeout}s)",
                                     *args,
-                                    **kwargs
-                                )
+                                    **kwargs,
+                                ),
                             )
 
                         state.active_count += 1

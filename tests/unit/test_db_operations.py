@@ -9,7 +9,7 @@
 - Метод ping() возвращает False при ошибке соединения.
 - Метод register_cleanup() регистрирует функцию в chutils.lifecycle.
 """
-import asyncio
+
 import inspect
 from unittest.mock import patch
 
@@ -18,7 +18,6 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from chutils.db import DatabaseManager
-
 
 # ---------------------------------------------------------------------------
 # Фикстуры
@@ -45,10 +44,12 @@ def db_manager(in_memory_db_url: str) -> DatabaseManager:
 async def _create_test_table(db: DatabaseManager) -> None:
     """Создаёт тестовую таблицу items в БД."""
     async with db.session() as session:
-        await session.execute(text(
-            "CREATE TABLE IF NOT EXISTS items "
-            "(id INTEGER PRIMARY KEY, name TEXT NOT NULL)"
-        ))
+        await session.execute(
+            text(
+                "CREATE TABLE IF NOT EXISTS items "
+                "(id INTEGER PRIMARY KEY, name TEXT NOT NULL)"
+            )
+        )
         await session.commit()
 
 
@@ -61,7 +62,9 @@ class TestSessionContextManager:
     """Тесты контекстного менеджера session()."""
 
     @pytest.mark.asyncio
-    async def test_session_returns_async_session(self, db_manager: DatabaseManager) -> None:
+    async def test_session_returns_async_session(
+        self, db_manager: DatabaseManager
+    ) -> None:
         """Проверяет, что session() возвращает экземпляр AsyncSession."""
         async with db_manager.session() as session:
             assert isinstance(session, AsyncSession)
@@ -75,14 +78,15 @@ class TestSessionContextManager:
             assert value == 1
 
     @pytest.mark.asyncio
-    async def test_multiple_sessions_are_independent(self, db_manager: DatabaseManager) -> None:
+    async def test_multiple_sessions_are_independent(
+        self, db_manager: DatabaseManager
+    ) -> None:
         """Проверяет, что несколько вызовов session() не конфликтуют."""
-        async with db_manager.session() as s1:
-            async with db_manager.session() as s2:
-                r1 = await s1.execute(text("SELECT 1"))
-                r2 = await s2.execute(text("SELECT 2"))
-                assert r1.scalar_one() == 1
-                assert r2.scalar_one() == 2
+        async with db_manager.session() as s1, db_manager.session() as s2:
+            r1 = await s1.execute(text("SELECT 1"))
+            r2 = await s2.execute(text("SELECT 2"))
+            assert r1.scalar_one() == 1
+            assert r2.scalar_one() == 2
 
 
 # ---------------------------------------------------------------------------
@@ -94,7 +98,9 @@ class TestTransactionContextManager:
     """Тесты контекстного менеджера transaction()."""
 
     @pytest.mark.asyncio
-    async def test_transaction_commits_on_success(self, db_manager: DatabaseManager) -> None:
+    async def test_transaction_commits_on_success(
+        self, db_manager: DatabaseManager
+    ) -> None:
         """Проверяет автоматический commit при успешном выходе из блока."""
         await _create_test_table(db_manager)
 
@@ -108,7 +114,9 @@ class TestTransactionContextManager:
             assert count == 1
 
     @pytest.mark.asyncio
-    async def test_transaction_rollbacks_on_exception(self, db_manager: DatabaseManager) -> None:
+    async def test_transaction_rollbacks_on_exception(
+        self, db_manager: DatabaseManager
+    ) -> None:
         """Проверяет автоматический rollback при исключении внутри блока."""
         await _create_test_table(db_manager)
 
@@ -126,13 +134,17 @@ class TestTransactionContextManager:
             assert count == 0
 
     @pytest.mark.asyncio
-    async def test_transaction_returns_async_session(self, db_manager: DatabaseManager) -> None:
+    async def test_transaction_returns_async_session(
+        self, db_manager: DatabaseManager
+    ) -> None:
         """Проверяет, что transaction() возвращает AsyncSession."""
         async with db_manager.transaction() as session:
             assert isinstance(session, AsyncSession)
 
     @pytest.mark.asyncio
-    async def test_multiple_inserts_in_one_transaction(self, db_manager: DatabaseManager) -> None:
+    async def test_multiple_inserts_in_one_transaction(
+        self, db_manager: DatabaseManager
+    ) -> None:
         """Проверяет несколько операций в одной транзакции."""
         await _create_test_table(db_manager)
 
@@ -146,7 +158,9 @@ class TestTransactionContextManager:
             assert result.scalar_one() == 3
 
     @pytest.mark.asyncio
-    async def test_exception_does_not_leak_data(self, db_manager: DatabaseManager) -> None:
+    async def test_exception_does_not_leak_data(
+        self, db_manager: DatabaseManager
+    ) -> None:
         """Проверяет, что исключение не приводит к частичной записи данных."""
         await _create_test_table(db_manager)
 
@@ -179,7 +193,9 @@ class TestPing:
     """Тесты метода ping()."""
 
     @pytest.mark.asyncio
-    async def test_ping_returns_true_on_success(self, db_manager: DatabaseManager) -> None:
+    async def test_ping_returns_true_on_success(
+        self, db_manager: DatabaseManager
+    ) -> None:
         """Проверяет, что ping() возвращает True при работающем соединении."""
         result = await db_manager.ping()
         assert result is True
@@ -191,8 +207,11 @@ class TestPing:
 
         # AsyncEngine.connect — read-only в SQLAlchemy 2.0, патчим через модуль
         from unittest.mock import AsyncMock
+
         mock_ctx = AsyncMock()
-        mock_ctx.__aenter__ = AsyncMock(side_effect=OSError("Симуляция ошибки соединения"))
+        mock_ctx.__aenter__ = AsyncMock(
+            side_effect=OSError("Симуляция ошибки соединения")
+        )
 
         with patch("chutils.db.AsyncEngine.connect", return_value=mock_ctx):
             result = await db.ping()
@@ -208,7 +227,7 @@ class TestRegisterCleanup:
     """Тесты метода register_cleanup()."""
 
     def test_register_cleanup_uses_lifecycle_register(
-            self, db_manager: DatabaseManager
+        self, db_manager: DatabaseManager
     ) -> None:
         """Проверяет, что register_cleanup() вызывает chutils.lifecycle.register_cleanup."""
         registered_funcs: list[object] = []
@@ -225,7 +244,7 @@ class TestRegisterCleanup:
         assert inspect.iscoroutinefunction(registered_funcs[0])
 
     def test_register_cleanup_can_be_called_multiple_times(
-            self, db_manager: DatabaseManager
+        self, db_manager: DatabaseManager
     ) -> None:
         """Проверяет, что повторный вызов register_cleanup() не вызывает ошибку."""
         with patch("chutils.lifecycle.register_cleanup") as mock_reg:
@@ -235,7 +254,7 @@ class TestRegisterCleanup:
 
     @pytest.mark.asyncio
     async def test_registered_callback_disposes_engine(
-            self, db_manager: DatabaseManager
+        self, db_manager: DatabaseManager
     ) -> None:
         """Проверяет, что зарегистрированный колбэк вызывает engine.dispose()."""
         from unittest.mock import AsyncMock

@@ -6,19 +6,19 @@ from .detector import ArchitectureDetector
 from .models import DetectedEntities, GenerationResult
 from .renderer import TemplateRenderer
 from .writer import (
-    FewShotBankWriter,
-    update_ai_manifests,
-    _ConsoleProtocol,
-    GEMINI_BLOCK_START,
     GEMINI_BLOCK_END,
+    GEMINI_BLOCK_START,
+    FewShotBankWriter,
+    _ConsoleProtocol,
+    update_ai_manifests,
 )
 
 
 def generate_few_shot_bank(
-        project_path: str,
-        *,
-        force: bool = False,
-        console: _ConsoleProtocol | None = None,
+    project_path: str,
+    *,
+    force: bool = False,
+    console: _ConsoleProtocol | None = None,
 ) -> GenerationResult:
     """Генерирует банк few-shot примеров для целевого проекта.
 
@@ -57,7 +57,9 @@ def generate_few_shot_bank(
     categories = list(entities.categories)
 
     if not categories:
-        _print("[yellow]⚠ Архитектурные абстракции не обнаружены. Банк примеров не будет создан.[/yellow]")
+        _print(
+            "[yellow]⚠ Архитектурные абстракции не обнаружены. Банк примеров не будет создан.[/yellow]"
+        )
         return GenerationResult()
 
     _print(f"[green]✓ Обнаружены категории:[/green] {', '.join(sorted(categories))}")
@@ -65,6 +67,7 @@ def generate_few_shot_bank(
     # 2. Подготовка директории
     output_dir = project_root / "docs" / "ai_examples"
     from chutils.fs import ensure_dir  # chutils: ignore[ChutilsIntegrationRule]
+
     ensure_dir(output_dir)
 
     # 3. Рендер и запись
@@ -94,20 +97,18 @@ def generate_few_shot_bank(
     else:
         _print("[yellow]⚠ Манифесты ИИ не были обновлены.[/yellow]")
 
-    _print(
-        f"\n[bold green]✅ Банк few-shot примеров создан:[/bold green] {output_dir}"
-    )
+    _print(f"\n[bold green]✅ Банк few-shot примеров создан:[/bold green] {output_dir}")
     return result
 
 
 __all__ = [
-    "DetectedEntities",
-    "GenerationResult",
+    "GEMINI_BLOCK_END",
+    "GEMINI_BLOCK_START",
     "ArchitectureDetector",
-    "TemplateRenderer",
+    "DetectedEntities",
     "FewShotBankWriter",
+    "GenerationResult",
+    "TemplateRenderer",
     "generate_few_shot_bank",
     "update_ai_manifests",
-    "GEMINI_BLOCK_START",
-    "GEMINI_BLOCK_END",
 ]

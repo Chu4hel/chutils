@@ -56,14 +56,17 @@ class LockSubCommand(SubCommand):
                 "[bold yellow][WARN] Реестр файлов контекста не найден (.chutils/context_metadata.json).[/bold yellow]"
             )
             self.console.print(
-                "Сгенерируйте контекст командой: [cyan]chutils dev generate-context -o api_map.md[/cyan]")
+                "Сгенерируйте контекст командой: [cyan]chutils dev generate-context -o api_map.md[/cyan]"
+            )
             return
 
         try:
             with open(cache_path, encoding="utf-8") as f:
                 data = json.load(f)
         except Exception as e:
-            self.console.print(f"[bold red]Ошибка при чтении файла реестра {cache_path}: {e}[/bold red]")
+            self.console.print(
+                f"[bold red]Ошибка при чтении файла реестра {cache_path}: {e}[/bold red]"
+            )
             raise SystemExit(1)
 
         files_registry: dict[str, dict[str, Any]] = {}
@@ -80,7 +83,8 @@ class LockSubCommand(SubCommand):
 
         if not files_registry:
             self.console.print(
-                "[bold yellow]Реестр контекста пуст. Зарегистрированные файлы отсутствуют.[/bold yellow]")
+                "[bold yellow]Реестр контекста пуст. Зарегистрированные файлы отсутствуют.[/bold yellow]"
+            )
             return
 
         self.console.print(
@@ -124,6 +128,10 @@ class LockSubCommand(SubCommand):
             try:
                 gen_subcommand.handle(gen_args)
             except Exception as exc:
-                self.console.print(f"[bold red]Ошибка при перегенерации {file_path}: {exc}[/bold red]")
+                self.console.print(
+                    f"[bold red]Ошибка при перегенерации {file_path}: {exc}[/bold red]"
+                )
 
-        self.console.print("[bold green] [OK] Все файлы контекста проекта успешно перегенерированы![/bold green]")
+        self.console.print(
+            "[bold green] [OK] Все файлы контекста проекта успешно перегенерированы![/bold green]"
+        )

@@ -8,7 +8,7 @@
 
 import os
 
-from chutils import get_config_value, get_config_int
+from chutils import get_config_int, get_config_value
 
 
 def main() -> None:
@@ -42,7 +42,7 @@ def main() -> None:
         # Это вызовет исключение, так как ключа нет в конфигурации
         get_config_value("Database", "missing_required_key", required=True)
     except ConfigKeyNotFoundError as e:
-        print(f"\nСтрогий режим (required=True) сработал успешно:")
+        print("\nСтрогий режим (required=True) сработал успешно:")
         print(f"  Ошибка: {e}")
 
 

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures.thread  # noqa: F401
 import inspect
 import time
-from collections.abc import Callable, Awaitable
+from collections.abc import Awaitable, Callable
 
 from chutils.decorators import timeout as timeout_decorator
+
 from .models import CheckResult, HealthReport
 
 
@@ -18,16 +20,42 @@ class DiagnosticsManager:
 
     def __init__(self) -> None:
         """Инициализирует менеджер диагностики."""
-        self._checks: list[dict[str, str | bool | float | Callable[
-            ..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]]] = []
+        self._checks: list[
+            dict[
+                str,
+                str
+                | bool
+                | float
+                | Callable[
+                    ...,
+                    bool
+                    | str
+                    | tuple[bool, str]
+                    | Awaitable[bool | str | tuple[bool, str]],
+                ],
+            ]
+        ] = []
 
     def register(
-            self,
-            name: str,
-            critical: bool = True,
-            timeout: float = 2.0,
-    ) -> Callable[[Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]], Callable[
-        ..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]]:
+        self,
+        name: str,
+        critical: bool = True,
+        timeout: float = 2.0,
+    ) -> Callable[
+        [
+            Callable[
+                ...,
+                bool
+                | str
+                | tuple[bool, str]
+                | Awaitable[bool | str | tuple[bool, str]],
+            ]
+        ],
+        Callable[
+            ...,
+            bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]],
+        ],
+    ]:
         """Декоратор для регистрации функции проверки.
 
         Args:
@@ -40,19 +68,31 @@ class DiagnosticsManager:
         """
 
         def decorator(
-                func: Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]
-        ) -> Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]:
+            func: Callable[
+                ...,
+                bool
+                | str
+                | tuple[bool, str]
+                | Awaitable[bool | str | tuple[bool, str]],
+            ],
+        ) -> Callable[
+            ...,
+            bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]],
+        ]:
             self.add_check(func, name, critical, timeout)
             return func
 
         return decorator
 
     def add_check(
-            self,
-            func: Callable[..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]],
-            name: str,
-            critical: bool = True,
-            timeout: float = 2.0,
+        self,
+        func: Callable[
+            ...,
+            bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]],
+        ],
+        name: str,
+        critical: bool = True,
+        timeout: float = 2.0,
     ) -> None:
         """Добавляет функцию проверки в реестр.
 
@@ -62,17 +102,30 @@ class DiagnosticsManager:
             critical: Является ли проверка критической.
             timeout: Таймаут выполнения в секундах.
         """
-        self._checks.append({
-            "func": func,
-            "name": name,
-            "critical": critical,
-            "timeout": timeout,
-        })
+        self._checks.append(
+            {
+                "func": func,
+                "name": name,
+                "critical": critical,
+                "timeout": timeout,
+            }
+        )
 
     async def _run_single_check(
-            self,
-            check: dict[str, str | bool | float | Callable[
-                ..., bool | str | tuple[bool, str] | Awaitable[bool | str | tuple[bool, str]]]]
+        self,
+        check: dict[
+            str,
+            str
+            | bool
+            | float
+            | Callable[
+                ...,
+                bool
+                | str
+                | tuple[bool, str]
+                | Awaitable[bool | str | tuple[bool, str]],
+            ],
+        ],
     ) -> CheckResult:
         """Выполняет одну диагностическую проверку с контролем таймаута.
 
@@ -82,7 +135,7 @@ class DiagnosticsManager:
         Returns:
             Результат выполнения проверки CheckResult.
         """
-        from typing import cast, Any
+        from typing import Any, cast
 
         name = str(check["name"])
         critical = bool(check["critical"])
@@ -112,7 +165,9 @@ class DiagnosticsManager:
                     success = bool(res[0]) if res else False
             elif isinstance(res, bool):
                 success = res
-                message = "Проверка пройдена" if success else "Проверка завершилась неудачно"
+                message = (
+                    "Проверка пройдена" if success else "Проверка завершилась неудачно"
+                )
             elif isinstance(res, str):
                 success = True
                 message = res
@@ -121,7 +176,7 @@ class DiagnosticsManager:
                 message = str(res) if res is not None else "Проверка завершена успешно"
         except Exception as e:
             success = False
-            error_msg = f"{type(e).__name__}: {str(e)}"
+            error_msg = f"{type(e).__name__}: {e!s}"
 
         execution_time = time.perf_counter() - start_time
         return CheckResult(
@@ -146,7 +201,7 @@ class DiagnosticsManager:
             return HealthReport(
                 status="HEALTHY",
                 results=[],
-                total_time=time.perf_counter() - start_time
+                total_time=time.perf_counter() - start_time,
             )
 
         # Выполняем все проверки параллельно
@@ -155,7 +210,9 @@ class DiagnosticsManager:
 
         # Вычисляем общий статус
         has_unhealthy_critical = any(not r.success for r in results if r.critical)
-        has_unhealthy_noncritical = any(not r.success for r in results if not r.critical)
+        has_unhealthy_noncritical = any(
+            not r.success for r in results if not r.critical
+        )
 
         if has_unhealthy_critical:
             status = "UNHEALTHY"
@@ -165,11 +222,7 @@ class DiagnosticsManager:
             status = "HEALTHY"
 
         total_time = time.perf_counter() - start_time
-        return HealthReport(
-            status=status,
-            results=results,
-            total_time=total_time
-        )
+        return HealthReport(status=status, results=results, total_time=total_time)
 
     def run_checks_sync(self) -> HealthReport:
         """Синхронная обертка для запуска проверок.
@@ -187,7 +240,7 @@ class DiagnosticsManager:
         if loop and loop.is_running():
             # Если мы уже находимся внутри асинхронного цикла, запускаем через run_until_complete
             # в отдельном потоке с новым циклом событий, чтобы не блокировать текущий.
-            from concurrent.futures import ThreadPoolExecutor
+            from concurrent.futures.thread import ThreadPoolExecutor
 
             with ThreadPoolExecutor(max_workers=1) as executor:
                 future = executor.submit(asyncio.run, self.run_checks())
@@ -208,11 +261,13 @@ def check_keyring() -> tuple[bool, str]:
         Кортеж (успех, сообщение).
     """
     from chutils.secret_manager.providers import KEYRING_AVAILABLE
+
     if not KEYRING_AVAILABLE:
         return False, "Библиотека keyring не установлена или не поддерживается."
 
     import keyring  # chutils: ignore[ChutilsIntegrationRule]
     from keyring.errors import NoKeyringError
+
     try:
         service = "chutils_healthcheck"
         key = "test_key"
@@ -223,7 +278,10 @@ def check_keyring() -> tuple[bool, str]:
         if retrieved == val:
             return True, "Хранилище секретов (keyring) доступно и работает корректно."
         else:
-            return False, f"Записанное значение не совпадает с прочитанным ({retrieved} != {val})"
+            return (
+                False,
+                f"Записанное значение не совпадает с прочитанным ({retrieved} != {val})",
+            )
     except NoKeyringError:
         return False, "Системное хранилище секретов недоступно (NoKeyringError)."
     except Exception as e:
@@ -237,12 +295,16 @@ def check_config() -> tuple[bool, str]:
     Returns:
         Кортеж (успех, сообщение).
     """
-    from chutils import get_config_file_path, get_config
     import os
+
+    from chutils import get_config, get_config_file_path
 
     config_path = get_config_file_path()
     if not config_path:
-        return True, "Файлы конфигурации не найдены (используются значения по умолчанию/переменные окружения)."
+        return (
+            True,
+            "Файлы конфигурации не найдены (используются значения по умолчанию/переменные окружения).",
+        )
 
     if not os.path.exists(config_path):
         return False, f"Файл конфигурации {config_path} не найден на диске."

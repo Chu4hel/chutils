@@ -5,11 +5,11 @@ import pytest
 
 from chutils.lifecycle import LifecycleManager
 from chutils.tasks import (
-    periodic_task,
+    ErrorStrategy,
     clear_tasks_registry,
+    periodic_task,
     start_scheduler,
     stop_scheduler,
-    ErrorStrategy,
 )
 
 # Включаем pytest-asyncio
@@ -18,15 +18,25 @@ pytestmark = pytest.mark.asyncio
 
 @pytest.fixture(autouse=True)
 def cleanup_registry():
+    import chutils.tasks.core
+
     clear_tasks_registry()
+    if chutils.tasks.core._scheduler is not None:
+        for job in list(chutils.tasks.core._scheduler._running_tasks.values()):
+            if not job.done():
+                job.cancel()
+        chutils.tasks.core._scheduler._running_tasks.clear()
+        chutils.tasks.core._scheduler = None
     yield
-    # Гарантируем остановку планировщика после каждого теста
-    try:
-        loop = asyncio.get_running_loop()
-        loop.create_task(stop_scheduler())
-    except RuntimeError:
-        pass
     clear_tasks_registry()
+    if chutils.tasks.core._scheduler is not None:
+        for job in list(chutils.tasks.core._scheduler._running_tasks.values()):
+            if not job.done():
+                job.cancel()
+        chutils.tasks.core._scheduler._running_tasks.clear()
+        chutils.tasks.core._scheduler = None
+
+
 
 
 async def test_scheduler_runs_sync_and_async_tasks():
@@ -117,7 +127,9 @@ async def test_error_strategy_ignore(caplog):
     """Проверяет, что по умолчанию ошибки в задачах игнорируются (только логируются)."""
     calls = 0
 
-    @periodic_task(interval_seconds=1, run_immediately=True, error_strategy=ErrorStrategy.IGNORE)
+    @periodic_task(
+        interval_seconds=1, run_immediately=True, error_strategy=ErrorStrategy.IGNORE
+    )
     def failing_task():
         nonlocal calls
         calls += 1
@@ -130,7 +142,9 @@ async def test_error_strategy_ignore(caplog):
 
         # Должно быть 2 запуска (первый упал, второй прошел успешно)
         assert calls == 2
-        assert any("Ошибка выполнения задачи" in record.message for record in caplog.records)
+        assert any(
+            "Ошибка выполнения задачи" in record.message for record in caplog.records
+        )
 
         await stop_scheduler()
 
@@ -139,7 +153,9 @@ async def test_error_strategy_stop_task():
     """Проверяет, что при STOP_TASK упавшая задача исключается из планировщика."""
     calls = 0
 
-    @periodic_task(interval_seconds=1, run_immediately=True, error_strategy=ErrorStrategy.STOP_TASK)
+    @periodic_task(
+        interval_seconds=1, run_immediately=True, error_strategy=ErrorStrategy.STOP_TASK
+    )
     def failing_task():
         nonlocal calls
         calls += 1
@@ -156,10 +172,15 @@ async def test_error_strategy_stop_task():
 async def test_error_strategy_stop_scheduler():
     """Проверяет, что при STOP_SCHEDULER ошибка в задаче останавливает весь планировщик."""
     import chutils.tasks.core
+
     chutils.tasks.core._scheduler = None
     calls = 0
 
-    @periodic_task(interval_seconds=1, run_immediately=True, error_strategy=ErrorStrategy.STOP_SCHEDULER)
+    @periodic_task(
+        interval_seconds=1,
+        run_immediately=True,
+        error_strategy=ErrorStrategy.STOP_SCHEDULER,
+    )
     def fatal_task():
         nonlocal calls
         calls += 1
@@ -180,6 +201,7 @@ async def test_error_strategy_stop_scheduler():
 async def test_graceful_shutdown_integration(mocker):
     """Проверяет интеграцию с chutils.lifecycle для Graceful Shutdown."""
     import chutils.tasks.core
+
     chutils.tasks.core._scheduler = None
 
     # Создаем фейковый LifecycleManager
@@ -265,11 +287,17 @@ async def test_dynamic_interval_config(mocker):
 
 async def test_scheduler_task_logging(caplog):
     """Проверяет структурированное логирование запусков периодических задач."""
+
     @periodic_task(interval_seconds=1, run_immediately=True, name="boosty_sync")
     async def boosty_sync():
         await asyncio.sleep(0.05)
 
-    @periodic_task(interval_seconds=1, run_immediately=True, name="failing_sync", error_strategy=ErrorStrategy.IGNORE)
+    @periodic_task(
+        interval_seconds=1,
+        run_immediately=True,
+        name="failing_sync",
+        error_strategy=ErrorStrategy.IGNORE,
+    )
     def failing_sync():
         raise ValueError("Oops")
 
@@ -279,18 +307,28 @@ async def test_scheduler_task_logging(caplog):
         await stop_scheduler()
 
     # Проверяем старт задачи
-    assert any("Задача 'boosty_sync' запущена." in record.message for record in caplog.records)
+    assert any(
+        "Задача 'boosty_sync' запущена." in record.message for record in caplog.records
+    )
     # Проверяем успешное завершение
-    assert any("Задача 'boosty_sync' выполнена за" in record.message and "сек." in record.message for record in caplog.records)
+    assert any(
+        "Задача 'boosty_sync' выполнена за" in record.message
+        and "сек." in record.message
+        for record in caplog.records
+    )
     # Проверяем ошибку
-    assert any("Ошибка выполнения задачи 'failing_sync': Oops" in record.message for record in caplog.records)
+    assert any(
+        "Ошибка выполнения задачи 'failing_sync'" in record.message
+        for record in caplog.records
+    )
 
 
 async def test_get_interval_supports_float():
     """Проверяет поддержку float значений интервала в PeriodicTask.get_interval()."""
     from chutils.tasks.core import PeriodicTask
 
-    def dummy(): pass
+    def dummy():
+        pass
 
     task_int = PeriodicTask(func=dummy, interval_seconds=5)
     assert task_int.get_interval() == 5
@@ -303,4 +341,3 @@ async def test_get_interval_supports_float():
 
     task_callable = PeriodicTask(func=dummy, interval_seconds=lambda: 0.25)
     assert task_callable.get_interval() == 0.25
-

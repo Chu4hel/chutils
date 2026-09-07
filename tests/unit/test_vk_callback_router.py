@@ -1,12 +1,15 @@
 """Unit-тесты для ядра VKCallbackRouter."""
 
 import pytest
+
 from chutils.vk.callback import VKCallbackError, VKCallbackRouter
 
 
 @pytest.mark.asyncio
 async def test_vk_callback_router_confirmation():
-    router = VKCallbackRouter(confirmation_code="conf_code_12345", secret_key="my_secret")
+    router = VKCallbackRouter(
+        confirmation_code="conf_code_12345", secret_key="my_secret"
+    )
 
     event = {"type": "confirmation", "group_id": 100, "secret": "my_secret"}
     response = await router.handle_event(event)
@@ -32,7 +35,11 @@ async def test_vk_callback_router_event_handling():
     def handle_msg(data):
         handled_events.append(data)
 
-    event = {"type": "message_new", "object": {"message": {"text": "hello"}}, "secret": "sec"}
+    event = {
+        "type": "message_new",
+        "object": {"message": {"text": "hello"}},
+        "secret": "sec",
+    }
     res = await router.handle_event(event)
 
     assert res == "ok"

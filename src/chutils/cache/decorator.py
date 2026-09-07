@@ -4,7 +4,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .in_memory import InMemoryCacheBackend
-from .utils import generate_cache_key, LockManager, AsyncLockManager
+from .utils import AsyncLockManager, LockManager, generate_cache_key
 
 _default_backend: InMemoryCacheBackend[Any] = InMemoryCacheBackend()
 """Бэкенд кэширования в памяти по умолчанию."""
@@ -14,11 +14,11 @@ _async_lock_manager = AsyncLockManager()
 
 
 def cache_with_ttl(
-        ttl: int = 60,
-        key_prefix: str = "",
-        sliding: bool = True,
-        backend: InMemoryCacheBackend[Any] | None = None,
-        tags: list[str] | Callable[..., list[str] | str] | None = None
+    ttl: int = 60,
+    key_prefix: str = "",
+    sliding: bool = True,
+    backend: InMemoryCacheBackend[Any] | None = None,
+    tags: list[str] | Callable[..., list[str] | str] | None = None,
 ) -> Callable[..., Any]:
     """
     Декоратор для кэширования результатов выполнения функций с поддержкой TTL.
@@ -41,7 +41,9 @@ def cache_with_ttl(
     """
     cache: InMemoryCacheBackend[Any] = backend or _default_backend
 
-    def _resolve_tags(args: tuple[Any, ...], kwargs: dict[str, Any]) -> list[str] | None:
+    def _resolve_tags(
+        args: tuple[Any, ...], kwargs: dict[str, Any]
+    ) -> list[str] | None:
         if not tags:
             return None
         if callable(tags):
@@ -68,6 +70,7 @@ def cache_with_ttl(
         generated_keys: set[str] = set()
 
         if is_async:
+
             @functools.wraps(func)
             async def wrapper(*args: Any, **kwargs: Any) -> Any:
                 key = generate_cache_key(func_name, args, kwargs, prefix=key_prefix)
@@ -96,6 +99,7 @@ def cache_with_ttl(
                     await cache.aset(key, result, ttl=ttl, tags=resolved_tags)
                     return result
         else:
+
             @functools.wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> Any:
                 key = generate_cache_key(func_name, args, kwargs, prefix=key_prefix)

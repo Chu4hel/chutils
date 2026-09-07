@@ -47,7 +47,9 @@ from chutils.store import StoreManager, RedisStore
 
 async def main():
     # Инициализация Redis бэкенда
-    store = StoreManager(backend=RedisStore(url="redis://localhost:6379/0"), serializer="json")
+    store = StoreManager(
+        backend=RedisStore(url="redis://localhost:6379/0"), serializer="json"
+    )
 
     await store.aset("session:token123", {"user_id": 42}, ttl=300)
     data = await store.aget("session:token123")

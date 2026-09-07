@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from chutils.logger import setup_logger, LogLevel
+from chutils.logger import LogLevel, setup_logger
 
 
 def test_args_have_highest_priority(project_with_marker, reset_chutils_state):
@@ -20,14 +20,20 @@ Logging:
     fs.create_file(project_root / "config.yml", contents=config_content)
 
     # В функцию передаем другие значения
-    with patch('chutils.logger.internal.builder.SafeTimedRotatingFileHandler') as mock_safe_handler, \
-            patch('chutils.logger.internal.builder.CompressingRotatingFileHandler') as mock_compressing_handler:
+    with (
+        patch(
+            "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+        ) as mock_safe_handler,
+        patch(
+            "chutils.logger.internal.builder.CompressingRotatingFileHandler"
+        ) as mock_compressing_handler,
+    ):
         logger = setup_logger(
             "test_args_priority",
             log_level=LogLevel.INFO,
-            rotation_type='time',
+            rotation_type="time",
             compress=False,
-            force_reconfigure=True
+            force_reconfigure=True,
         )
 
         # Проверяем, что применились значения из аргументов, а не из конфига
@@ -48,8 +54,14 @@ Logging:
 """
     fs.create_file(project_root / "config.yml", contents=config_content)
 
-    with patch('chutils.logger.internal.builder.SafeTimedRotatingFileHandler') as mock_safe_handler, \
-            patch('chutils.logger.internal.builder.CompressingRotatingFileHandler') as mock_compressing_handler:
+    with (
+        patch(
+            "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+        ) as mock_safe_handler,
+        patch(
+            "chutils.logger.internal.builder.CompressingRotatingFileHandler"
+        ) as mock_compressing_handler,
+    ):
         logger = setup_logger("test_config_priority", force_reconfigure=True)
 
         # Проверяем, что применились значения из конфига
@@ -63,8 +75,14 @@ def test_defaults_are_used_when_no_config(project_with_marker, reset_chutils_sta
     # фикстура project_with_marker создает только pyproject.toml, но не config.yml
     fs, project_root = project_with_marker
 
-    with patch('chutils.logger.internal.builder.SafeTimedRotatingFileHandler') as mock_safe_handler, \
-            patch('chutils.logger.internal.builder.CompressingRotatingFileHandler') as mock_compressing_handler:
+    with (
+        patch(
+            "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+        ) as mock_safe_handler,
+        patch(
+            "chutils.logger.internal.builder.CompressingRotatingFileHandler"
+        ) as mock_compressing_handler,
+    ):
         logger = setup_logger("test_default_priority", force_reconfigure=True)
 
         # Проверяем, что применились значения по умолчанию
@@ -77,35 +95,40 @@ def test_kwargs_passthrough(project_with_marker, reset_chutils_state):
     """Тестирует, что произвольные kwargs корректно передаются в конструктор обработчика."""
     fs, project_root = project_with_marker
 
-    with patch('chutils.logger.internal.builder.SafeTimedRotatingFileHandler') as mock_handler:
+    with patch(
+        "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+    ) as mock_handler:
         setup_logger(
-            "test_kwargs",
-            force_reconfigure=True,
-            delay=True,
-            mode='w',
-            errors='ignore'
+            "test_kwargs", force_reconfigure=True, delay=True, mode="w", errors="ignore"
         )
 
         # Проверяем, что конструктор был вызван с нашими kwargs
         mock_handler.assert_called_once()
         call_kwargs = mock_handler.call_args.kwargs
-        assert call_kwargs.get('delay') is True
-        assert call_kwargs.get('mode') == 'w'
-        assert call_kwargs.get('errors') == 'ignore'
+        assert call_kwargs.get("delay") is True
+        assert call_kwargs.get("mode") == "w"
+        assert call_kwargs.get("errors") == "ignore"
 
 
 def test_setup_logger_invalid_kwargs(reset_chutils_state):
     """Проверяет, что setup_logger выбрасывает TypeError при передаче невалидных параметров."""
-    with pytest.raises(TypeError, match="setup_logger\\(\\) got an unexpected keyword argument 'invalid_param'"):
+    with pytest.raises(
+        TypeError,
+        match="setup_logger\\(\\) got an unexpected keyword argument 'invalid_param'",
+    ):
         setup_logger("test_invalid_kwargs", invalid_param="DEBUG")
 
-    with pytest.raises(TypeError, match="setup_logger\\(\\) got an unexpected keyword argument 'unknown_arg'"):
+    with pytest.raises(
+        TypeError,
+        match="setup_logger\\(\\) got an unexpected keyword argument 'unknown_arg'",
+    ):
         setup_logger("test_invalid_kwargs", unknown_arg=True)
 
 
 def test_setup_logger_from_config(project_with_marker, reset_chutils_state):
     """Проверяет корректность работы setup_logger_from_config()."""
     from chutils.logger import setup_logger_from_config
+
     fs, project_root = project_with_marker
 
     config_content = """
@@ -118,3 +141,88 @@ def test_setup_logger_from_config(project_with_marker, reset_chutils_state):
     logger = setup_logger_from_config("logger_from_config", force_reconfigure=True)
     assert logger.name == "logger_from_config"
     assert logger.level == logging.WARNING
+
+
+def test_disable_file_logging_via_config(project_with_marker, reset_chutils_state):
+    """Тест: отключение файлового логирования через file_logging: false в config.yml."""
+    fs, project_root = project_with_marker
+    config_content = """
+Logging:
+  file_logging: false
+"""
+    fs.create_file(project_root / "config.yml", contents=config_content)
+
+    with patch(
+        "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+    ) as mock_safe_handler:
+        logger = setup_logger("test_disable_file_config", force_reconfigure=True)
+        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+        mock_safe_handler.assert_not_called()
+
+
+def test_disable_file_logging_via_config_no_file(
+    project_with_marker, reset_chutils_state
+):
+    """Тест: отключение файлового логирования через no_file: true в config.yml."""
+    fs, project_root = project_with_marker
+    config_content = """
+Logging:
+  no_file: true
+"""
+    fs.create_file(project_root / "config.yml", contents=config_content)
+
+    with patch(
+        "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+    ) as mock_safe_handler:
+        logger = setup_logger("test_disable_no_file_config", force_reconfigure=True)
+        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+        mock_safe_handler.assert_not_called()
+
+
+def test_disable_file_logging_via_argument(project_with_marker, reset_chutils_state):
+    """Тест: отключение файлового логирования через аргумент file_logging=False."""
+    fs, project_root = project_with_marker
+
+    with patch(
+        "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+    ) as mock_safe_handler:
+        logger = setup_logger(
+            "test_disable_file_arg", file_logging=False, force_reconfigure=True
+        )
+        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+        mock_safe_handler.assert_not_called()
+
+
+def test_disable_file_logging_via_no_file_argument(
+    project_with_marker, reset_chutils_state
+):
+    """Тест: отключение файлового логирования через аргумент no_file=True."""
+    fs, project_root = project_with_marker
+
+    with patch(
+        "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+    ) as mock_safe_handler:
+        logger = setup_logger(
+            "test_disable_no_file_arg", no_file=True, force_reconfigure=True
+        )
+        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+        mock_safe_handler.assert_not_called()
+
+
+def test_null_log_file_name_disables_file_handler(
+    project_with_marker, reset_chutils_state
+):
+    """Тест: указание log_file_name: null отключает файловый обработчик."""
+    fs, project_root = project_with_marker
+    config_content = """
+Logging:
+  log_file_name: null
+"""
+    fs.create_file(project_root / "config.yml", contents=config_content)
+
+    with patch(
+        "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+    ) as mock_safe_handler:
+        logger = setup_logger("test_null_filename", force_reconfigure=True)
+        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+        mock_safe_handler.assert_not_called()

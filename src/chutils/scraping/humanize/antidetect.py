@@ -5,16 +5,18 @@ from typing import Any
 from chutils.exceptions import OptionalDependencyError
 
 DEFAULT_WEBGL_VENDOR = "Google Inc. (NVIDIA)"
-DEFAULT_WEBGL_RENDERER = "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11 vs_5_0 ps_5_0, D3D11)"
+DEFAULT_WEBGL_RENDERER = (
+    "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11 vs_5_0 ps_5_0, D3D11)"
+)
 DEFAULT_HARDWARE_CONCURRENCY = 8
 DEFAULT_DEVICE_MEMORY = 8
 
 
 def _get_antidetect_js(
-        webgl_vendor: str,
-        webgl_renderer: str,
-        hardware_concurrency: int,
-        device_memory: int,
+    webgl_vendor: str,
+    webgl_renderer: str,
+    hardware_concurrency: int,
+    device_memory: int,
 ) -> str:
     """Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами."""
     vendor_js = json.dumps(webgl_vendor)
@@ -91,7 +93,7 @@ def _ensure_playwright() -> None:
             "Для использования Playwright-функций требуется библиотека 'playwright'.\n"
             "Установите её: pip install chutils[scraping]",
             dependency="playwright",
-            hint="Выполните pip install chutils[scraping]"
+            hint="Выполните pip install chutils[scraping]",
         )
 
 
@@ -101,7 +103,7 @@ def _ensure_selenium() -> None:
             "Для использования Selenium-функций требуется библиотека 'selenium'.\n"
             "Установите её: pip install chutils[scraping]",
             dependency="selenium",
-            hint="Выполните pip install chutils[scraping]"
+            hint="Выполните pip install chutils[scraping]",
         )
 
 
@@ -111,17 +113,17 @@ def _ensure_nodriver() -> None:
             "Для использования nodriver-функций требуется библиотека 'nodriver'.\n"
             "Установите её: pip install nodriver",
             dependency="nodriver",
-            hint="Выполните pip install nodriver"
+            hint="Выполните pip install nodriver",
         )
 
 
 async def apply_antidetect_playwright(
-        context: Any,
-        *,
-        webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
-        webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
-        hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
-        device_memory: int = DEFAULT_DEVICE_MEMORY,
+    context: Any,
+    *,
+    webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
+    webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
+    hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
+    device_memory: int = DEFAULT_DEVICE_MEMORY,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к контексту Playwright.
 
@@ -143,12 +145,12 @@ async def apply_antidetect_playwright(
 
 
 def apply_antidetect_selenium(
-        driver: Any,
-        *,
-        webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
-        webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
-        hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
-        device_memory: int = DEFAULT_DEVICE_MEMORY,
+    driver: Any,
+    *,
+    webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
+    webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
+    hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
+    device_memory: int = DEFAULT_DEVICE_MEMORY,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к сессии Selenium.
 
@@ -168,20 +170,19 @@ def apply_antidetect_selenium(
     )
     if hasattr(driver, "execute_cdp_cmd"):
         driver.execute_cdp_cmd(
-            "Page.addScriptToEvaluateOnNewDocument",
-            {"source": script}
+            "Page.addScriptToEvaluateOnNewDocument", {"source": script}
         )
     else:
         driver.execute_script(script)
 
 
 async def apply_antidetect_nodriver(
-        tab: Any,
-        *,
-        webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
-        webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
-        hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
-        device_memory: int = DEFAULT_DEVICE_MEMORY,
+    tab: Any,
+    *,
+    webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
+    webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
+    hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
+    device_memory: int = DEFAULT_DEVICE_MEMORY,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.
 

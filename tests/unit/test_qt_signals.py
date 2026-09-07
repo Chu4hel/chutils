@@ -6,18 +6,23 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-import chutils.qt.shim as shim
 from chutils.exceptions import OptionalDependencyError
+from chutils.qt import shim
 
 
 def test_typed_signal_without_qt() -> None:
     """Проверяет выбрасывание OptionalDependencyError при отсутствии Qt."""
-    err = OptionalDependencyError("Библиотека PyQt6 или PySide6 не установлена.", dependency="qt")
-    with patch.object(shim, "QT_BINDING", None), patch("chutils.qt.signals.require_qt", side_effect=err):
+    err = OptionalDependencyError(
+        "Библиотека PyQt6 или PySide6 не установлена.", dependency="qt"
+    )
+    with (
+        patch.object(shim, "QT_BINDING", None),
+        patch("chutils.qt.signals.require_qt", side_effect=err),
+    ):
         from chutils.qt.signals import TypedSignal
+
         with pytest.raises(OptionalDependencyError):
             TypedSignal(str)
-
 
 
 def test_bound_typed_signal_operations() -> None:
@@ -53,6 +58,7 @@ def test_bind_qt_signals_auto_binding() -> None:
     component = DummyComponent()
     with patch("chutils.qt.signals.require_qt"):
         from chutils.qt.signals import bind_qt_signals
+
         count = bind_qt_signals(component)
         assert count == 1
         component.data_loaded.connect.assert_called_once_with(component.on_data_loaded)
@@ -74,6 +80,7 @@ def test_auto_bind_mixin() -> None:
         def __init__(self) -> None:
             super().__init__()
             from chutils.qt.signals import bind_qt_signals
+
             bind_qt_signals(self)
 
     widget = MyBoundWidget()

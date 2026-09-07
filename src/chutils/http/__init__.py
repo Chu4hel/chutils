@@ -26,6 +26,7 @@ Async-использование:
     async with AsyncHttpClient(base_url="https://api.example.com") as client:
         resp = await client.get("/status")
 """
+
 from __future__ import annotations
 
 from .api import delete, get, patch, post, put
@@ -42,22 +43,21 @@ from .streaming import (
 from .tracing import create_http_span, inject_trace_headers
 
 __all__ = [
-    "HttpClient",
+    "AsyncEventStreamClient",
     "AsyncHttpClient",
+    "AsyncWebSocketClient",
+    "EventStreamClient",
+    "HttpClient",
     "HttpResponse",
     "ResiliencePolicy",
-    "UrllibFallbackClient",
-    "inject_trace_headers",
-    "create_http_span",
-    "AsyncEventStreamClient",
-    "EventStreamClient",
-    "AsyncWebSocketClient",
-    "WebSocketClient",
     "ServerSentEvent",
-    # standalone API
+    "UrllibFallbackClient",
+    "WebSocketClient",
+    "create_http_span",
+    "delete",
     "get",
+    "inject_trace_headers",
+    "patch",
     "post",
     "put",
-    "delete",
-    "patch",
 ]

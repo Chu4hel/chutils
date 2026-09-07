@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from typing import Any
+
 from chutils.logger import setup_logger
 from chutils.scraping.profiles.adapters.nodriver import (
     export_nodriver_profile,

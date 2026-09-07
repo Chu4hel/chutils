@@ -1,7 +1,7 @@
 """
 Пример использования pytest-фикстур chutils для тестирования приложений.
 
-Этот файл демонстрирует, как фикстуры `mock_chutils_config`, `mock_chutils_secrets` 
+Этот файл демонстрирует, как фикстуры `mock_chutils_config`, `mock_chutils_secrets`
 и `capture_chutils_logs` упрощают написание тестов для кода, использующего chutils.
 
 Для запуска этого примера как теста выполните:
@@ -11,7 +11,7 @@
 # Чтобы фикстуры были доступны, их нужно импортировать явно или через pytest_plugins
 from typing import Any
 
-from chutils import get_config_value, setup_logger, SecretManager, bind_context
+from chutils import SecretManager, bind_context, get_config_value, setup_logger
 
 
 def my_business_logic() -> bool:
@@ -38,9 +38,7 @@ def my_business_logic() -> bool:
 
 
 def test_business_logic_success(
-        mock_chutils_config: Any,
-        mock_chutils_secrets: Any,
-        capture_chutils_logs: Any
+    mock_chutils_config: Any, mock_chutils_secrets: Any, capture_chutils_logs: Any
 ) -> None:
     """Тест успешного сценария с использованием всех фикстур."""
 
@@ -67,9 +65,7 @@ def test_business_logic_success(
 
 
 def test_business_logic_missing_secret(
-        mock_chutils_config: Any,
-        mock_chutils_secrets: Any,
-        capture_chutils_logs: Any
+    mock_chutils_config: Any, mock_chutils_secrets: Any, capture_chutils_logs: Any
 ) -> None:
     """Тест сценария, когда секрет отсутствует."""
 

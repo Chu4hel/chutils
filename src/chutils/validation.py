@@ -50,7 +50,13 @@ def validate_data(model: type[T], data: dict[str, Any] | str) -> T:
 
             raise ChutilsValidationError(
                 "Ошибка валидации данных: невалидный формат JSON",
-                errors=[{"loc": (), "msg": f"JSONDecodeError: {e}", "type": "json_decode_error"}],
+                errors=[
+                    {
+                        "loc": (),
+                        "msg": f"JSONDecodeError: {e}",
+                        "type": "json_decode_error",
+                    }
+                ],
                 raw_error=e,
                 hint="Проверьте корректность формата JSON строки.",
             ) from e
@@ -91,6 +97,7 @@ def validate_call(func: Callable[P, R]) -> Callable[P, R]:
         OptionalDependencyError: Если пакет pydantic не установлен в системе.
     """
     if not PYDANTIC_AVAILABLE:
+
         @functools.wraps(func)
         def fallback_wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
             from chutils.exceptions import OptionalDependencyError

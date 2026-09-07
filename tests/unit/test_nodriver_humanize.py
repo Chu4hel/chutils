@@ -12,8 +12,12 @@ mock_cdp = MagicMock()
 mock_input = MagicMock()
 mock_cdp.input = mock_input
 
-mock_input.dispatch_mouse_event = MagicMock(side_effect=lambda **kwargs: ("dispatch_mouse_event", kwargs))
-mock_input.dispatch_key_event = MagicMock(side_effect=lambda **kwargs: ("dispatch_key_event", kwargs))
+mock_input.dispatch_mouse_event = MagicMock(
+    side_effect=lambda **kwargs: ("dispatch_mouse_event", kwargs)
+)
+mock_input.dispatch_key_event = MagicMock(
+    side_effect=lambda **kwargs: ("dispatch_key_event", kwargs)
+)
 
 
 from chutils.scraping.humanize.actions import (
@@ -41,11 +45,14 @@ def mock_find_spec(mocker: MockerFixture) -> None:
 @pytest.fixture(autouse=True)
 def mock_sys_modules(mocker: MockerFixture) -> None:
     """Мокает nodriver на уровне sys.modules только на время выполнения тестов в этом модуле."""
-    mocker.patch.dict(sys.modules, {
-        "nodriver": mock_nodriver,
-        "nodriver.cdp": mock_cdp,
-        "nodriver.cdp.input": mock_input,
-    })
+    mocker.patch.dict(
+        sys.modules,
+        {
+            "nodriver": mock_nodriver,
+            "nodriver.cdp": mock_cdp,
+            "nodriver.cdp.input": mock_input,
+        },
+    )
 
 
 @pytest.mark.asyncio
@@ -55,7 +62,9 @@ async def test_async_move_mouse_nodriver() -> None:
     tab._is_nodriver = True
     tab.send = AsyncMock()
 
-    await async_move_mouse(tab, x=200, y=300, start=(0, 0), steps=10, delay_between_steps=0.001)
+    await async_move_mouse(
+        tab, x=200, y=300, start=(0, 0), steps=10, delay_between_steps=0.001
+    )
 
     assert tab.send.call_count == 10
     # Проверяем, что последний вызов отправляет событие на координаты 200, 300
@@ -95,7 +104,9 @@ async def test_async_type_text_nodriver() -> None:
     mock_element._is_nodriver = True
     tab.find.return_value = mock_element
 
-    await async_type_text(tab, selector="#username", text="hello", error_rate=0.0, speed_wpm=300.0)
+    await async_type_text(
+        tab, selector="#username", text="hello", error_rate=0.0, speed_wpm=300.0
+    )
 
     # Проверяем поиск элемента и вызов фокуса
     tab.find.assert_called_once_with("#username")
@@ -126,7 +137,7 @@ async def test_ensure_nodriver_raises_dependency_error(mocker: MockerFixture) ->
     """Проверяет, что при отсутствии nodriver выбрасывается OptionalDependencyError."""
     # Временно удаляем nodriver из sys.modules
     old_nodriver = sys.modules.pop("nodriver", None)
-    
+
     try:
         # Переопределяем find_spec, чтобы возвращал None для nodriver
         mocker.patch("importlib.util.find_spec", return_value=None)

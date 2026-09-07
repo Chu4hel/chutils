@@ -1,10 +1,10 @@
 import os
-from pathlib import Path
+
 
 def test_cli_init_interactive_all_yes(cli_runner, config_fs, mocker):
     """Проверяет интерактивный опрос в init, когда на все вопросы отвечают 'y'."""
     fs, project_root = config_fs
-    
+
     # 1. Проект
     # 2. Перезаписать y (по умолчанию)
     # 3. Настроить конфигурацию Базы Данных (Database)? y
@@ -20,18 +20,37 @@ def test_cli_init_interactive_all_yes(cli_runner, config_fs, mocker):
     # 13. Развернуть скелет Clean Architecture? y
     # 14. Имя первого Clean Arch модуля: my_first_module
     answers = [
-        "InteractiveProj", "y", "y", "y", "y", "y", "y", "y", "y", "y", "y", "y", "my_first_module"
+        "InteractiveProj",
+        "y",
+        "y",
+        "y",
+        "y",
+        "y",
+        "y",
+        "y",
+        "y",
+        "y",
+        "y",
+        "y",
+        "my_first_module",
     ]
     mocker.patch("builtins.input", side_effect=answers)
 
     # Изолируем вызовы внешних инструментов или убираем моки
-    mocker.patch("chutils.commands.pypi.measure_mirror", return_value={
-        "url": "https://pypi.org/simple/", "available": True, "latency_ms": 10.0, "download_speed_kbs": 1000.0, "error": None
-    })
+    mocker.patch(
+        "chutils.commands.pypi.measure_mirror",
+        return_value={
+            "url": "https://pypi.org/simple/",
+            "available": True,
+            "latency_ms": 10.0,
+            "download_speed_kbs": 1000.0,
+            "error": None,
+        },
+    )
 
     result = cli_runner.invoke(["init"])
     assert result.exit_code == 0
-    
+
     # Проверяем файлы
     assert os.path.exists("config.yml")
     assert os.path.exists(".env")
@@ -51,17 +70,29 @@ def test_cli_init_interactive_all_yes(cli_runner, config_fs, mocker):
         assert "Metrics:" in content
         assert "Diagnostics:" in content
 
+
 def test_cli_init_interactive_all_no(cli_runner, config_fs, mocker):
     """Проверяет интерактивный опрос в init, когда на все вопросы отвечают 'n'."""
     fs, project_root = config_fs
     answers = [
-        "InteractiveProjNo", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"
+        "InteractiveProjNo",
+        "n",
+        "n",
+        "n",
+        "n",
+        "n",
+        "n",
+        "n",
+        "n",
+        "n",
+        "n",
+        "n",
     ]
     mocker.patch("builtins.input", side_effect=answers)
 
     result = cli_runner.invoke(["init"])
     assert result.exit_code == 0
-    
+
     assert os.path.exists("config.yml")
     assert not os.path.exists(".env")
     assert not os.path.exists("ai-lint.toml")

@@ -5,6 +5,7 @@ import hashlib
 import hmac
 import time
 import urllib.parse
+
 import pytest
 
 from chutils.vkma import (
@@ -25,10 +26,16 @@ def generate_vk_sign(params: dict[str, str], client_secret: str) -> str:
     hash_code = hmac.new(
         client_secret.encode("utf-8"),
         msg=query_string.encode("utf-8"),
-        digestmod=hashlib.sha256
+        digestmod=hashlib.sha256,
     ).digest()
 
-    return base64.b64encode(hash_code).decode("utf-8").rstrip("=").replace("+", "-").replace("/", "_")
+    return (
+        base64.b64encode(hash_code)
+        .decode("utf-8")
+        .rstrip("=")
+        .replace("+", "-")
+        .replace("/", "_")
+    )
 
 
 SECRET = "my_secret_key_12345"
@@ -92,7 +99,9 @@ def test_validate_expired_ts():
     sign = generate_vk_sign(params, SECRET)
     params["sign"] = sign
 
-    with pytest.raises(VKMAValidationError, match="Срок действия параметров запуска VKMA истек"):
+    with pytest.raises(
+        VKMAValidationError, match="Срок действия параметров запуска VKMA истек"
+    ):
         validate_vkma_launch_params(params, client_secret=SECRET, max_age_seconds=600)
 
 

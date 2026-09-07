@@ -1,9 +1,11 @@
 """
 Реализация легковесного планировщика фоновых задач.
 """
+
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures.thread  # noqa: F401
 import functools
 import inspect
 import logging  # chutils: ignore[ChutilsIntegrationRule]
@@ -20,6 +22,7 @@ logger = logging.getLogger("chutils.tasks")
 
 class ErrorStrategy(str, Enum):
     """Стратегии обработки ошибок в периодических задачах."""
+
     IGNORE = "IGNORE"
     STOP_TASK = "STOP_TASK"
     STOP_SCHEDULER = "STOP_SCHEDULER"
@@ -28,6 +31,7 @@ class ErrorStrategy(str, Enum):
 @dataclass
 class PeriodicTask:
     """Метаданные периодической задачи."""
+
     func: Callable[..., Any]
     interval_seconds: int | float | Callable[[], int | float] | str
     run_immediately: bool = False
@@ -54,16 +58,22 @@ class PeriodicTask:
                 if not isinstance(res, (int, float)) or res <= 0:
                     logger.warning(
                         "Динамический интервал для задачи '%s' вернул некорректное значение: %s. Используется 1 сек.",
-                        self.name, res
+                        self.name,
+                        res,
                     )
                     return 1
                 return res
             except Exception as e:
-                logger.error("Ошибка при вычислении интервала для задачи '%s': %s. Используется 1 сек.", self.name, e)
+                logger.error(
+                    "Ошибка при вычислении интервала для задачи '%s': %s. Используется 1 сек.",
+                    self.name,
+                    e,
+                )
                 return 1
         elif isinstance(self.interval_seconds, str):
             try:
                 from chutils.config import get_config_value
+
                 # Пытаемся распарсить строку вида 'section.key' или 'key'
                 if "." in self.interval_seconds:
                     section, key = self.interval_seconds.split(".", 1)
@@ -75,14 +85,17 @@ class PeriodicTask:
                 if val_num <= 0:
                     logger.warning(
                         "Интервал из конфигурации по ключу '%s' для задачи '%s' не найден или <= 0. Используется 1 сек.",
-                        self.interval_seconds, self.name
+                        self.interval_seconds,
+                        self.name,
                     )
                     return 1
                 return val_num
             except Exception as e:
                 logger.error(
                     "Ошибка при чтении интервала из конфигурации по ключу '%s' для задачи '%s': %s. Используется 1 сек.",
-                    self.interval_seconds, self.name, e
+                    self.interval_seconds,
+                    self.name,
+                    e,
                 )
                 return 1
         else:
@@ -94,11 +107,11 @@ _tasks_registry: list[PeriodicTask] = []
 
 
 def periodic_task(
-        interval_seconds: int | float | Callable[[], int | float] | str,
-        run_immediately: bool = False,
-        overlap: bool = False,
-        error_strategy: ErrorStrategy = ErrorStrategy.IGNORE,
-        name: str = "",
+    interval_seconds: float | Callable[[], int | float] | str,
+    run_immediately: bool = False,
+    overlap: bool = False,
+    error_strategy: ErrorStrategy = ErrorStrategy.IGNORE,
+    name: str = "",
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Декоратор для привязки функции к расписанию планировщика задач.
 
@@ -132,7 +145,7 @@ def periodic_task(
             run_immediately=run_immediately,
             overlap=overlap,
             error_strategy=error_strategy,
-            name=name
+            name=name,
         )
         _tasks_registry.append(task)
 
@@ -161,12 +174,10 @@ def clear_tasks_registry() -> None:
 
 class StopTaskException(Exception):
     """Исключение для остановки отдельной задачи."""
-    pass
 
 
 class StopSchedulerException(Exception):
     """Исключение для остановки всего планировщика."""
-    pass
 
 
 class TaskScheduler:
@@ -178,6 +189,7 @@ class TaskScheduler:
         self._locks: dict[str, asyncio.Lock] = {}
         self._shutdown_event = asyncio.Event()
         self._tasks: list[PeriodicTask] = []
+        self._loop: asyncio.AbstractEventLoop | None = None
 
     async def _run_task(self, task: PeriodicTask) -> None:
         """Внутренний цикл выполнения отдельной периодической задачи."""
@@ -189,17 +201,16 @@ class TaskScheduler:
 
         while not self._shutdown_event.is_set():
             # Проверка перекрытия (overlapping)
-            if not task.overlap:
-                if self._locks[task.name].locked():
-                    logger.warning(
-                        "Запуск задачи '%s' пропущен, так как предыдущее выполнение еще не завершено.",
-                        task.name
-                    )
-                    try:
-                        await asyncio.sleep(task.get_interval())
-                    except asyncio.CancelledError:
-                        break
-                    continue
+            if not task.overlap and self._locks[task.name].locked():
+                logger.warning(
+                    "Запуск задачи '%s' пропущен, так как предыдущее выполнение еще не завершено.",
+                    task.name,
+                )
+                try:
+                    await asyncio.sleep(task.get_interval())
+                except asyncio.CancelledError:
+                    break
+                continue
 
             # Локальная обертка для выполнения
             async def execute_and_handle_errors() -> None:
@@ -211,16 +222,23 @@ class TaskScheduler:
                     else:
                         await asyncio.to_thread(task.func)
                     elapsed = time.perf_counter() - start_time
-                    logger.info("Задача '%s' выполнена за %.2f сек.", task.name, elapsed)
-                except Exception as e:
-                    logger.exception("Ошибка выполнения задачи '%s': %s", task.name, e)
+                    logger.info(
+                        "Задача '%s' выполнена за %.2f сек.", task.name, elapsed
+                    )
+                except Exception:
+                    logger.exception("Ошибка выполнения задачи '%s'", task.name)
 
                     if task.error_strategy == ErrorStrategy.STOP_TASK:
-                        logger.error("Задача '%s' исключена из планировщика из-за ошибки.", task.name)
+                        logger.error(
+                            "Задача '%s' исключена из планировщика из-за ошибки.",
+                            task.name,
+                        )
                         raise StopTaskException()
                     elif task.error_strategy == ErrorStrategy.STOP_SCHEDULER:
-                        logger.critical("Критическая ошибка в задаче '%s'. Инициируется остановка планировщика.",
-                                        task.name)
+                        logger.critical(
+                            "Критическая ошибка в задаче '%s'. Инициируется остановка планировщика.",
+                            task.name,
+                        )
                         raise StopSchedulerException()
 
             try:
@@ -248,6 +266,7 @@ class TaskScheduler:
 
     async def start(self) -> None:
         """Запускает все зарегистрированные периодические задачи."""
+        self._loop = asyncio.get_running_loop()
         self._shutdown_event.clear()
         self._tasks = get_registered_tasks()
 
@@ -255,10 +274,14 @@ class TaskScheduler:
             if task.name not in self._locks:
                 self._locks[task.name] = asyncio.Lock()
 
-            job = asyncio.create_task(self._run_task(task), name=f"scheduler_job_{task.name}")
+            job = asyncio.create_task(
+                self._run_task(task), name=f"scheduler_job_{task.name}"
+            )
             self._running_tasks[task.name] = job
 
-        logger.info("Планировщик фоновых задач запущен. Задач в работе: %d", len(self._tasks))
+        logger.info(
+            "Планировщик фоновых задач запущен. Задач в работе: %d", len(self._tasks)
+        )
 
     async def stop(self) -> None:
         """Останавливает планировщик и все запущенные задачи."""
@@ -276,9 +299,22 @@ class TaskScheduler:
 
         if self._running_tasks:
             logger.debug("Ожидание завершения %d задач...", len(self._running_tasks))
-            await asyncio.gather(*self._running_tasks.values(), return_exceptions=True)
+            try:
+                current_loop = asyncio.get_running_loop()
+            except RuntimeError:
+                current_loop = None
+
+            tasks_to_wait = [
+                job
+                for job in self._running_tasks.values()
+                if not job.done()
+                and (current_loop is None or job.get_loop() is current_loop)
+            ]
+            if tasks_to_wait:
+                await asyncio.gather(*tasks_to_wait, return_exceptions=True)
 
         self._running_tasks.clear()
+        self._locks.clear()
         logger.info("Планировщик фоновых задач остановлен.")
 
 
@@ -291,15 +327,24 @@ def start_scheduler() -> None:
     Запускает глобальный планировщик фоновых задач в текущем Event Loop.
     """
     global _scheduler
-    if _scheduler is not None:
-        logger.warning("Планировщик фоновых задач уже запущен.")
-        return
-
     try:
         loop = asyncio.get_running_loop()
     except RuntimeError:
-        logger.error("Не удалось запустить планировщик: отсутствует активный Event Loop.")
+        logger.error(
+            "Не удалось запустить планировщик: отсутствует активный Event Loop."
+        )
         raise RuntimeError("No running event loop")
+
+    if _scheduler is not None:
+        if (
+            _scheduler._loop is not None
+            and not _scheduler._loop.is_closed()
+            and _scheduler._loop is loop
+            and not _scheduler._shutdown_event.is_set()
+        ):
+            logger.warning("Планировщик фоновых задач уже запущен.")
+            return
+        _scheduler = None
 
     _scheduler = TaskScheduler()
 
@@ -323,3 +368,4 @@ async def stop_scheduler() -> None:
     await _scheduler.stop()
     _scheduler = None
     logger.debug("stop_scheduler() завершен, _scheduler сброшен в None.")
+

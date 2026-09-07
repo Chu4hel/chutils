@@ -1,14 +1,12 @@
 import pytest
 
 from chutils.crypto import (
-    encrypt_portable,
+    _get_fernet_key,
+    decrypt_file,
     decrypt_portable,
     encrypt_file,
-    decrypt_file,
-    _get_fernet_key
+    encrypt_portable,
 )
-
-
 
 
 def test_get_fernet_key_deterministic():
@@ -54,6 +52,7 @@ def test_string_operations_no_cryptography(monkeypatch):
     """Проверяет генерацию ошибки при отсутствии библиотеки cryptography."""
     import chutils.crypto
     from chutils.exceptions import OptionalDependencyError
+
     monkeypatch.setattr(chutils.crypto, "_HAS_CRYPTOGRAPHY", False)
 
     with pytest.raises(OptionalDependencyError) as exc_info:
@@ -84,17 +83,23 @@ def test_file_encryption_success(tmp_path):
     success = decrypt_file(enc_file, seed, output_path=dec_file)
     assert success is True
     assert dec_file.exists()
-    assert dec_file.read_text(encoding="utf-8") == "Содержимое текстового файла для теста"
+    assert (
+        dec_file.read_text(encoding="utf-8") == "Содержимое текстового файла для теста"
+    )
 
     # 2. Шифрование и дешифрование на месте (неявный output_path)
     encrypt_file(src_file, seed)
     # Файл src_file должен теперь быть зашифрован (отличаться от исходного текста)
-    assert src_file.read_text(encoding="utf-8") != "Содержимое текстового файла для теста"
+    assert (
+        src_file.read_text(encoding="utf-8") != "Содержимое текстового файла для теста"
+    )
 
     success_inplace = decrypt_file(src_file, seed)
     assert success_inplace is True
     # Файл должен вернуться к исходному виду
-    assert src_file.read_text(encoding="utf-8") == "Содержимое текстового файла для теста"
+    assert (
+        src_file.read_text(encoding="utf-8") == "Содержимое текстового файла для теста"
+    )
 
 
 def test_file_decryption_failure(tmp_path):
@@ -117,6 +122,7 @@ def test_file_operations_no_cryptography(tmp_path, monkeypatch):
     """Проверяет генерацию ошибки для файловых операций при отсутствии cryptography."""
     import chutils.crypto
     from chutils.exceptions import OptionalDependencyError
+
     monkeypatch.setattr(chutils.crypto, "_HAS_CRYPTOGRAPHY", False)
 
     file_path = tmp_path / "test.txt"

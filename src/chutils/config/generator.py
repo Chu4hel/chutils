@@ -16,10 +16,9 @@ else:
 
         PYDANTIC_AVAILABLE = True
     except ImportError:
+
         class BaseModel:  # type: ignore[no-redef]
             """Заглушка для работы без Pydantic."""
-            pass
-
 
         PYDANTIC_AVAILABLE = False
 
@@ -27,10 +26,11 @@ else:
 def _check_pydantic() -> None:
     if not PYDANTIC_AVAILABLE:
         from ..exceptions import OptionalDependencyError
+
         raise OptionalDependencyError(
             "Pydantic is required for YAML template generation.",
             dependency="pydantic",
-            hint="Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
+            hint="Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'.",
         )
 
 
@@ -151,4 +151,5 @@ def generate_json_schema(model_class: type[BaseModel]) -> str:
         JSON-строка схемы.
     """
     from .schema import export_schema
+
     return export_schema(model_class)

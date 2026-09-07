@@ -7,11 +7,13 @@
 
 import os
 
-from chutils.logger import setup_logger, LogLevel
+from chutils.logger import LogLevel, setup_logger
 from chutils.secret_manager import SecretManager
 
 # 1. Настраиваем логгер
-logger = setup_logger("masking_example", log_level=LogLevel.INFO)  # Или log_level="INFO"
+logger = setup_logger(
+    "masking_example", log_level=LogLevel.INFO
+)  # Или log_level="INFO"
 
 
 def run_example() -> None:
@@ -44,7 +46,9 @@ def run_example() -> None:
     os.environ["CH_DISABLE_LOG_MASKING"] = "true"
     logger.info(f"Теперь секреты видны (для отладки): {my_api_key}")
 
-    print("\nПроверьте вывод логов выше. Секреты в пунктах 1 и 2 должны быть заменены на ***")
+    print(
+        "\nПроверьте вывод логов выше. Секреты в пунктах 1 и 2 должны быть заменены на ***"
+    )
 
 
 if __name__ == "__main__":

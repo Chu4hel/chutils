@@ -1,6 +1,7 @@
 """
 Ядро логики сравнения и синхронизации .env и .env.example.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -16,6 +17,7 @@ from chutils.dev.env_parser import (
 @dataclass
 class EnvDiff:
     """Представляет расхождения в ключах между .env и .env.example."""
+
     missing_in_env: list[str]
     missing_in_example: list[str]
 
@@ -44,8 +46,8 @@ def check_env_sync(env_path: str | Path, example_path: str | Path) -> EnvDiff:
     env_keys = {e.key for e in env_entries if e.key is not None}
     example_keys = {e.key for e in example_entries if e.key is not None}
 
-    missing_in_env = sorted(list(example_keys - env_keys))
-    missing_in_example = sorted(list(env_keys - example_keys))
+    missing_in_env = sorted(example_keys - env_keys)
+    missing_in_example = sorted(env_keys - example_keys)
 
     return EnvDiff(
         missing_in_env=missing_in_env,
@@ -54,10 +56,10 @@ def check_env_sync(env_path: str | Path, example_path: str | Path) -> EnvDiff:
 
 
 def sync_env_files(
-        env_path: str | Path,
-        example_path: str | Path,
-        sync_env: bool = True,
-        sync_example: bool = True,
+    env_path: str | Path,
+    example_path: str | Path,
+    sync_env: bool = True,
+    sync_example: bool = True,
 ) -> tuple[bool, bool]:
     """Синхронизирует файлы .env и .env.example.
 

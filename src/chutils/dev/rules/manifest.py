@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..ai_lint import Rule, LintResult
+from ..ai_lint import LintResult, Rule
 from ..constants import AI_MANIFEST_FILENAMES
 
 
@@ -10,6 +10,7 @@ class ManifestRule(Rule):
     """
     Правило проверки наличия манифестов для ИИ (antigravity.md, agents.md, GEMINI.md).
     """
+
     name = "ManifestRule"
     description = "Проверяет наличие файлов манифестов ИИ (antigravity.md, agents.md, GEMINI.md) в ключевых директориях."
     severity = "warn"
@@ -41,7 +42,7 @@ class ManifestRule(Rule):
                     message="Отсутствует корневой файл манифеста ИИ (antigravity.md, agents.md или GEMINI.md).",
                     severity=self.severity,
                     file_path=str(base_path / "antigravity.md"),
-                    fix_suggestion="Создайте файл манифеста (например, antigravity.md или agents.md) в корне проекта для описания архитектуры и соглашений для ИИ."
+                    fix_suggestion="Создайте файл манифеста (например, antigravity.md или agents.md) в корне проекта для описания архитектуры и соглашений для ИИ.",
                 )
             )
 
@@ -68,7 +69,7 @@ class ManifestRule(Rule):
                                 message=f"В основном пакете {p.name} отсутствует файл манифеста ИИ.",
                                 severity=self.severity,
                                 file_path=str(p / "antigravity.md"),
-                                fix_suggestion=f"Рекомендуется добавить файл манифеста (например, antigravity.md или agents.md) в директорию пакета {p.name}."
+                                fix_suggestion=f"Рекомендуется добавить файл манифеста (например, antigravity.md или agents.md) в директорию пакета {p.name}.",
                             )
                         )
         return results

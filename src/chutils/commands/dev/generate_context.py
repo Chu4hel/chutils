@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import chutils
+
 from .base import SubCommand
 
 _VOLATILE_FIELDS: tuple[str, ...] = ("git_commit", "generated_at", "project_hash")
@@ -136,7 +137,9 @@ class GenerateContextSubCommand(SubCommand):
         if getattr(args, "ignore", None):
             for item in args.ignore:
                 if "," in item:
-                    custom_ignore.extend(p.strip() for p in item.split(",") if p.strip())
+                    custom_ignore.extend(
+                        p.strip() for p in item.split(",") if p.strip()
+                    )
                 else:
                     custom_ignore.append(item.strip())
 
@@ -162,7 +165,7 @@ class GenerateContextSubCommand(SubCommand):
                 )
                 raise SystemExit(1)
         else:
-            project_path = Path(".").resolve()
+            project_path = Path.cwd()
             # Получаем список всех публичных атрибутов chutils
             public_attrs = [attr for attr in dir(chutils) if not attr.startswith("_")]
 
@@ -175,13 +178,13 @@ class GenerateContextSubCommand(SubCommand):
 
                     # Очистка мусорной документации для констант примитивных типов
                     if (
-                            not inspect.isclass(obj)
-                            and not inspect.isfunction(obj)
-                            and not inspect.ismodule(obj)
+                        not inspect.isclass(obj)
+                        and not inspect.isfunction(obj)
+                        and not inspect.ismodule(obj)
+                        and isinstance(obj, (bool, int, float, str, type(None)))
+                        and doc == inspect.getdoc(type(obj))
                     ):
-                        if isinstance(obj, (bool, int, float, str, type(None))):
-                            if doc == inspect.getdoc(type(obj)):
-                                doc = ""
+                        doc = ""
 
                     summary = doc.split("\n")[0] if doc else ""
 
@@ -236,6 +239,7 @@ class GenerateContextSubCommand(SubCommand):
         api_data.sort(key=lambda x: x["name"])
 
         from chutils.dev.ast_indexer import collect_project_metadata
+
         metadata = collect_project_metadata(project_path)
 
         output_content = ""
@@ -294,12 +298,20 @@ class GenerateContextSubCommand(SubCommand):
                     max_len = max(max_len, len(row[i]))
                 col_widths.append(max_len)
 
-            header_line = "|" + "".join(f" {headers[i].ljust(col_widths[i])} |" for i in range(len(headers)))
-            align_line = "|" + "|".join(f":{'-' * (col_widths[i] + 1)}" for i in range(len(headers))) + "|"
+            header_line = "|" + "".join(
+                f" {headers[i].ljust(col_widths[i])} |" for i in range(len(headers))
+            )
+            align_line = (
+                "|"
+                + "|".join(f":{'-' * (col_widths[i] + 1)}" for i in range(len(headers)))
+                + "|"
+            )
 
             output_content += header_line + "\n" + align_line + "\n"
             for row in rows:
-                row_line = "|" + "".join(f" {row[i].ljust(col_widths[i])} |" for i in range(len(headers)))
+                row_line = "|" + "".join(
+                    f" {row[i].ljust(col_widths[i])} |" for i in range(len(headers))
+                )
                 output_content += row_line + "\n"
 
             if args.include_examples and examples:
@@ -318,13 +330,16 @@ class GenerateContextSubCommand(SubCommand):
 
         if args.output and not untracked:
             force: bool = getattr(args, "force", False)
-            if not force and self._is_content_effectively_unchanged(output_content, args.output, args.format):
+            if not force and self._is_content_effectively_unchanged(
+                output_content, args.output, args.format
+            ):
                 self.err_console.print(
                     "[dim green] [SKIP] [/dim green] Содержимое не изменилось "
                     f"(кроме volatile-полей). Запись пропущена: [cyan]{args.output}[/cyan]. "
                     "Используйте [bold]--force[/bold] для принудительной перегенерации."
                 )
                 from chutils.dev.ast_indexer import save_context_metadata_cache
+
                 save_context_metadata_cache(
                     project_path,
                     args.output,
@@ -343,6 +358,7 @@ class GenerateContextSubCommand(SubCommand):
                 f"[bold green] [OK] [/bold green] Контекст успешно сохранен в: [cyan]{args.output}[/cyan]"
             )
             from chutils.dev.ast_indexer import save_context_metadata_cache
+
             save_context_metadata_cache(
                 project_path,
                 args.output,
@@ -361,7 +377,7 @@ class GenerateContextSubCommand(SubCommand):
                 self.console.print("\n" + output_content)
 
     def _collect_symbols_recursive(
-            self, node: Any, current_prefix: str = ""
+        self, node: Any, current_prefix: str = ""
     ) -> list[dict[str, Any]]:
         """Рекурсивно собирает экспортируемые символы из AST индекса.
 
@@ -427,7 +443,9 @@ class GenerateContextSubCommand(SubCommand):
                 )
         return content
 
-    def _is_content_effectively_unchanged(self, new_content: str, output_path: str, fmt: str) -> bool:
+    def _is_content_effectively_unchanged(
+        self, new_content: str, output_path: str, fmt: str
+    ) -> bool:
         """Проверяет, изменилось ли содержимое файла (игнорируя volatile-поля).
 
         Читает существующий файл по output_path и сравнивает нормализованное
@@ -448,10 +466,9 @@ class GenerateContextSubCommand(SubCommand):
             existing = path.read_text(encoding="utf-8")
         except Exception:
             return False
-        return (
-                self._normalize_for_comparison(existing, fmt)
-                == self._normalize_for_comparison(new_content, fmt)
-        )
+        return self._normalize_for_comparison(
+            existing, fmt
+        ) == self._normalize_for_comparison(new_content, fmt)
 
     def _handle_tree_index(self, args: argparse.Namespace) -> None:
         """Генерация иерархического семантического индекса проекта.
@@ -459,8 +476,8 @@ class GenerateContextSubCommand(SubCommand):
         Args:
             args: Объект Namespace с аргументами командной строки.
         """
-        from chutils.exceptions import OptionalDependencyError
         from chutils.env import has_pydantic
+        from chutils.exceptions import OptionalDependencyError
 
         if not has_pydantic():
             raise OptionalDependencyError(
@@ -475,7 +492,9 @@ class GenerateContextSubCommand(SubCommand):
         if getattr(args, "ignore", None):
             for item in args.ignore:
                 if "," in item:
-                    custom_ignore.extend(p.strip() for p in item.split(",") if p.strip())
+                    custom_ignore.extend(
+                        p.strip() for p in item.split(",") if p.strip()
+                    )
                 else:
                     custom_ignore.append(item.strip())
 
@@ -486,17 +505,30 @@ class GenerateContextSubCommand(SubCommand):
                 project_path = Path(chutils.__file__).parent
 
             use_gitignore = bool(getattr(args, "gitignore", True))
-            indexer = Indexer(str(project_path), custom_ignore=custom_ignore, use_gitignore=use_gitignore)
+            indexer = Indexer(
+                str(project_path),
+                custom_ignore=custom_ignore,
+                use_gitignore=use_gitignore,
+            )
 
-            if getattr(args, "incremental", False) and args.output and Path(args.output).exists():
-                from chutils.dev.context.incremental import get_changed_files, update_tree_incrementally
+            if (
+                getattr(args, "incremental", False)
+                and args.output
+                and Path(args.output).exists()
+            ):
+                from chutils.dev.context.incremental import (
+                    get_changed_files,
+                    update_tree_incrementally,
+                )
 
                 changed = get_changed_files(project_path)
                 if changed:
                     self.err_console.print(
                         f"[dim cyan] [INCREMENTAL] [/dim cyan] Найдено {len(changed)} измененных файлов. Инкрементальное обновление..."
                     )
-                    old_tree_data = json.loads(Path(args.output).read_text(encoding="utf-8"))
+                    old_tree_data = json.loads(
+                        Path(args.output).read_text(encoding="utf-8")
+                    )
                     updated_dict = update_tree_incrementally(
                         old_tree_data,
                         changed,
@@ -505,7 +537,9 @@ class GenerateContextSubCommand(SubCommand):
                         use_gitignore=use_gitignore,
                         custom_ignore=custom_ignore,
                     )
-                    output_content = json.dumps(updated_dict, indent=2, ensure_ascii=False)
+                    output_content = json.dumps(
+                        updated_dict, indent=2, ensure_ascii=False
+                    )
                 else:
                     index = indexer.index(include_examples=bool(args.include_examples))
                     output_content = index.model_dump_json(indent=2)
@@ -527,18 +561,25 @@ class GenerateContextSubCommand(SubCommand):
 
             if args.output and not untracked:
                 tree_dict = json.loads(output_content)
-                proj_hash = tree_dict.get("metadata", {}).get("project_hash", "") if isinstance(tree_dict, dict) else ""
+                proj_hash = (
+                    tree_dict.get("metadata", {}).get("project_hash", "")
+                    if isinstance(tree_dict, dict)
+                    else ""
+                )
 
                 force: bool = getattr(args, "force", False)
-                if not force and self._is_content_effectively_unchanged(output_content, args.output, "tree"):
+                if not force and self._is_content_effectively_unchanged(
+                    output_content, args.output, "tree"
+                ):
                     self.err_console.print(
                         "[dim green] [SKIP] [/dim green] Содержимое не изменилось "
                         f"(кроме volatile-полей). Запись пропущена: [cyan]{args.output}[/cyan]. "
                         "Используйте [bold]--force[/bold] для принудительной перегенерации."
                     )
                     from chutils.dev.ast_indexer import save_context_metadata_cache
+
                     save_context_metadata_cache(
-                        Path(".").resolve(),
+                        Path.cwd(),
                         args.output,
                         "tree",
                         proj_hash,
@@ -555,8 +596,9 @@ class GenerateContextSubCommand(SubCommand):
                     f"[bold green] [OK] [/bold green] Иерархический индекс успешно сохранен в: [cyan]{args.output}[/cyan]"
                 )
                 from chutils.dev.ast_indexer import save_context_metadata_cache
+
                 save_context_metadata_cache(
-                    Path(".").resolve(),
+                    Path.cwd(),
                     args.output,
                     "tree",
                     proj_hash,

@@ -7,7 +7,6 @@ from chutils import config
 from chutils.config import _cm, find_project_root
 
 
-
 def test_removed_globals_raise_attribute_error():
     """Проверяет, что доступ к удаленным глобальным переменным вызывает AttributeError."""
     with pytest.raises(AttributeError):
@@ -16,7 +15,6 @@ def test_removed_globals_raise_attribute_error():
         _ = config._CONFIG_FILE_PATH
     with pytest.raises(AttributeError):
         _ = config._config_object
-
 
 
 # Контент для фейкового config.yml
@@ -54,7 +52,11 @@ def test_finds_yaml_first(config_fs):
     _cm.initialize_paths(find_project_root)
 
     # ASSERT
-    assert Path(config.get_config_file_path()).as_posix().endswith('/home/user/project/config.yml')
+    assert (
+        Path(config.get_config_file_path())
+        .as_posix()
+        .endswith("/home/user/project/config.yml")
+    )
 
     # ACT & ASSERT: Проверяем, что загрузились данные из YAML
     db_host = config.get_config_value("Database", "host")
@@ -71,7 +73,11 @@ def test_falls_back_to_ini(config_fs):
     _cm.initialize_paths(find_project_root)
 
     # ASSERT
-    assert Path(config.get_config_file_path()).as_posix().endswith('/home/user/project/config.ini')
+    assert (
+        Path(config.get_config_file_path())
+        .as_posix()
+        .endswith("/home/user/project/config.ini")
+    )
 
     # ACT & ASSERT: Проверяем, что загрузились данные из INI
     db_host = config.get_config_value("Database", "host")
@@ -115,10 +121,11 @@ def test_get_config_path_traversal_protection(config_fs, caplog):
     # Пытаемся разрешить путь - теперь должно бросать исключение
     with pytest.raises(PathTraversalError):
         config.get_config_path(
-            "any", "key",
+            "any",
+            "key",
             fallback="default.txt",
             config={"any": {"key": traversal_path}},
-            resolve_from_root=True
+            resolve_from_root=True,
         )
 
 
@@ -131,15 +138,18 @@ def test_get_config_path_absolute_outside_protection(config_fs, caplog):
     config._cm.paths_initialized = True
 
     # Абсолютный путь вне корня
-    absolute_outside = "/etc/passwd" if Path("/").exists() else "C:/Windows/System32/drivers/etc/hosts"
+    absolute_outside = (
+        "/etc/passwd" if Path("/").exists() else "C:/Windows/System32/drivers/etc/hosts"
+    )
 
     # Пытаемся разрешить путь - теперь должно бросать исключение
     with pytest.raises(PathTraversalError):
         config.get_config_path(
-            "any", "key",
+            "any",
+            "key",
             fallback="safe.txt",
             config={"any": {"key": absolute_outside}},
-            resolve_from_root=True
+            resolve_from_root=True,
         )
 
 
@@ -153,7 +163,7 @@ def test_get_config_section_from_yaml(config_fs):
         "host": "localhost",
         "port": 5432,  # PyYAML парсит как int
         "enable_ssl": True,
-        "timeout": 15.5
+        "timeout": 15.5,
     }
 
 
@@ -164,7 +174,9 @@ def test_save_config_value_on_ini(config_fs):
     fs.create_file(ini_path, contents=FAKE_INI_CONTENT)
 
     # ACT: Сохраняем новое значение, используя явный путь к файлу
-    success = config.save_config_value("Database", "host", "new.host.com", cfg_file=str(ini_path))
+    success = config.save_config_value(
+        "Database", "host", "new.host.com", cfg_file=str(ini_path)
+    )
     assert success is True
 
     # ASSERT: Проверяем, что содержимое файла изменилось
@@ -180,11 +192,14 @@ def test_save_config_value_updates_yaml(config_fs):
     fs.create_file(yaml_path, contents=FAKE_YAML_CONTENT)
 
     # ACT: Пытаемся обновить значение в .yml файле
-    success = config.save_config_value("Database", "host", "new.db.host.com", cfg_file=str(yaml_path))
+    success = config.save_config_value(
+        "Database", "host", "new.db.host.com", cfg_file=str(yaml_path)
+    )
     assert success is True
 
     # ASSERT: Проверяем, что значение в файле изменилось
     import yaml
+
     with open(yaml_path) as f:
         data = yaml.safe_load(f)
 
@@ -200,15 +215,20 @@ def test_save_config_value_adds_to_yaml(config_fs):
     fs.create_file(yaml_path, contents=FAKE_YAML_CONTENT)
 
     # ACT: Добавляем новый ключ в существующую секцию
-    success_add_key = config.save_config_value("Database", "new_key", "new_value", cfg_file=str(yaml_path))
+    success_add_key = config.save_config_value(
+        "Database", "new_key", "new_value", cfg_file=str(yaml_path)
+    )
     assert success_add_key is True
 
     # ACT: Добавляем новую секцию с ключом
-    success_add_section = config.save_config_value("NewSection", "some_key", True, cfg_file=str(yaml_path))
+    success_add_section = config.save_config_value(
+        "NewSection", "some_key", True, cfg_file=str(yaml_path)
+    )
     assert success_add_section is True
 
     # ASSERT: Проверяем, что все данные корректно добавились
     import yaml
+
     with open(yaml_path) as f:
         data = yaml.safe_load(f)
 
@@ -230,7 +250,9 @@ port = 1234
     fs.create_file(ini_path, contents=content)
 
     # ACT: Сохраняем новый ключ 'user' в секцию 'Database'
-    success = config.save_config_value("Database", "user", "test_user", cfg_file=str(ini_path))
+    success = config.save_config_value(
+        "Database", "user", "test_user", cfg_file=str(ini_path)
+    )
     assert success is True
 
     # ASSERT: Проверяем, что содержимое файла изменилось и новый ключ добавлен
@@ -253,7 +275,9 @@ host = localhost_ini
     fs.create_file(ini_path, contents=content)
 
     # ACT: Сохраняем ключ в новой, несуществующей секции 'Server'
-    success = config.save_config_value("Server", "ip", "192.168.1.1", cfg_file=str(ini_path))
+    success = config.save_config_value(
+        "Server", "ip", "192.168.1.1", cfg_file=str(ini_path)
+    )
     assert success is True
 
     # ASSERT: Проверяем, что в файле появилась новая секция и ключ
@@ -321,6 +345,7 @@ def test_get_config_returns_empty_dict_when_no_file_found(config_fs, caplog):
     # Создаем только маркер проекта, но не сам файл конфигурации
     fs.create_file(project_root / "pyproject.toml")
     import os
+
     os.chdir(project_root)  # Убедимся, что мы в корне проекта
 
     # ACT
@@ -404,7 +429,9 @@ App:
     # ASSERT
     assert cfg["App"]["name"] == "LocalApp"
     assert cfg["App"]["version"] == 2.0
-    assert "Database" not in cfg  # Убедимся, что нет секций из несуществующего основного файла
+    assert (
+        "Database" not in cfg
+    )  # Убедимся, что нет секций из несуществующего основного файла
 
 
 def test_save_config_value_does_not_affect_local_config(config_fs):
@@ -440,6 +467,7 @@ App:
 
     # ASSERT: Проверяем, что основной конфиг изменился
     import yaml
+
     with open(main_config_path) as f:
         main_data_after_save = yaml.safe_load(f)
     assert main_data_after_save["App"]["version"] == 1.2
@@ -454,7 +482,9 @@ App:
     config._cm.config_loaded = False  # Сбрасываем кэш для get_config
     merged_cfg = config.get_config()
     assert merged_cfg["App"]["name"] == "MainApp"
-    assert merged_cfg["App"]["version"] == 1.1  # Локальный конфиг переопределяет основной
+    assert (
+        merged_cfg["App"]["version"] == 1.1
+    )  # Локальный конфиг переопределяет основной
     assert merged_cfg["App"]["settings"]["debug"] is True
 
 
@@ -496,7 +526,3 @@ user = local_user
     assert cfg["Database"]["host"] == "localhost"
     assert cfg["Database"]["port"] == "6000"  # INI парсит все как строки
     assert cfg["Database"]["user"] == "local_user"
-
-
-
-

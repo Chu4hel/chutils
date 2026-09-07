@@ -1,6 +1,7 @@
 """
 Тесты для модуля уборки мусора разработки (chutils.dev.cleaner и chutils dev clean).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -27,7 +28,9 @@ def test_clean_item_properties(tmp_path: Path) -> None:
     item_kb = CleanItem(path=tmp_path / "test.txt", size_bytes=2048, is_dir=False)
     assert item_kb.display_size == "2.0 KB"
 
-    item_mb = CleanItem(path=tmp_path / "test.txt", size_bytes=1048576 * 5, is_dir=False)
+    item_mb = CleanItem(
+        path=tmp_path / "test.txt", size_bytes=1048576 * 5, is_dir=False
+    )
     assert item_mb.display_size == "5.0 MB"
 
 
@@ -164,7 +167,10 @@ def test_cli_clean_interactive_decline(tmp_path: Path) -> None:
         force=False,
     )
 
-    with patch("pathlib.Path.cwd", return_value=tmp_path), patch("builtins.input", return_value="n"):
+    with (
+        patch("pathlib.Path.cwd", return_value=tmp_path),
+        patch("builtins.input", return_value="n"),
+    ):
         with pytest.raises(SystemExit) as exc_info:
             cmd.handle(args)
         assert exc_info.value.code == 0

@@ -24,7 +24,9 @@ def mock_rich(monkeypatch):
     # Имитируем наличие модулей в системе для всех импортов
     monkeypatch.setitem(sys.modules, "rich", MagicMock())
     monkeypatch.setitem(sys.modules, "rich.logging", mock_rich_logging)
-    monkeypatch.setitem(sys.modules, "rich.console", MagicMock(Console=mock_console_class))
+    monkeypatch.setitem(
+        sys.modules, "rich.console", MagicMock(Console=mock_console_class)
+    )
     monkeypatch.setitem(sys.modules, "rich.table", MagicMock(Table=MagicMock()))
     monkeypatch.setitem(sys.modules, "rich.panel", MagicMock(Panel=MagicMock()))
 
@@ -33,6 +35,7 @@ def mock_rich(monkeypatch):
 
     # Инъектируем в cli_utils, так как он мог быть уже импортирован с RICH_AVAILABLE=False
     import chutils.cli_utils
+
     monkeypatch.setattr(chutils.cli_utils, "Console", mock_console_class)
     monkeypatch.setattr(chutils.cli_utils, "Table", MagicMock())
     monkeypatch.setattr(chutils.cli_utils, "Panel", MagicMock())
@@ -53,7 +56,9 @@ def test_rich_handler_used_when_available(mock_rich, monkeypatch, reset_chutils_
     assert any(h == mock_rich for h in logger.handlers)
 
 
-def test_rich_handler_not_used_when_no_color(mock_rich, monkeypatch, reset_chutils_state):
+def test_rich_handler_not_used_when_no_color(
+    mock_rich, monkeypatch, reset_chutils_state
+):
     """
     Проверяет, что RichHandler НЕ используется при NO_COLOR=1.
     """
@@ -64,15 +69,17 @@ def test_rich_handler_not_used_when_no_color(mock_rich, monkeypatch, reset_chuti
     # Проверяем, что RichHandler НЕ используется
     assert not any(h == mock_rich for h in logger.handlers)
     # Должен быть обычный StreamHandler
-    assert any(isinstance(h, logging.StreamHandler) and not isinstance(h, MagicMock) for h in logger.handlers)
+    assert any(
+        isinstance(h, logging.StreamHandler) and not isinstance(h, MagicMock)
+        for h in logger.handlers
+    )
 
 
 def test_rich_handler_not_used_when_rich_unavailable(monkeypatch, reset_chutils_state):
     """
     Проверяет, что при отсутствии rich используется стандартный StreamHandler.
     """
-    monkeypatch.setattr("chutils.env.RICH_AVAILABLE",
-                        False)
+    monkeypatch.setattr("chutils.env.RICH_AVAILABLE", False)
 
     logger = setup_logger("test_no_rich", force_reconfigure=True)
 
@@ -84,8 +91,7 @@ def test_is_rich_enabled_logic(monkeypatch):
     """
     Проверяет логику функции is_rich_enabled.
     """
-    monkeypatch.setattr("chutils.env.RICH_AVAILABLE",
-                        True)
+    monkeypatch.setattr("chutils.env.RICH_AVAILABLE", True)
 
     monkeypatch.delenv("NO_COLOR", raising=False)
     monkeypatch.delenv("CH_NO_COLOR", raising=False)

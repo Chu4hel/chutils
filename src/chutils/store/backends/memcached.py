@@ -1,6 +1,7 @@
 """
 Memcached бэкенд для chutils.store.
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -8,6 +9,7 @@ import sys
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
+
 from .base import BaseStoreBackend
 
 
@@ -42,7 +44,9 @@ def is_aiomemcache_available() -> bool:
 class MemcachedStore(BaseStoreBackend):
     """Бэкенд хранилища на базе Memcached (требует опционального пакета pymemcache)."""
 
-    def __init__(self, host: str = "127.0.0.1", port: int = 11211, **kwargs: Any) -> None:
+    def __init__(
+        self, host: str = "127.0.0.1", port: int = 11211, **kwargs: Any
+    ) -> None:
         self._host = host
         self._port = port
         self._kwargs = kwargs
@@ -75,7 +79,9 @@ class MemcachedStore(BaseStoreBackend):
         if self._async_client is None:
             import aiomemcache
 
-            self._async_client = aiomemcache.Client(self._host, self._port, **self._kwargs)
+            self._async_client = aiomemcache.Client(
+                self._host, self._port, **self._kwargs
+            )
         return self._async_client
 
     def get(self, key: str, default: Any = None) -> Any:
@@ -92,7 +98,7 @@ class MemcachedStore(BaseStoreBackend):
         val = client.get(key)
         return default if val is None else val
 
-    def set(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
+    def set(self, key: str, value: Any, ttl: float | None = None) -> bool:
         """Сохраняет значение по ключу с опциональным TTL (синхронно).
 
         Args:
@@ -158,7 +164,7 @@ class MemcachedStore(BaseStoreBackend):
         val = await client.get(key.encode("utf-8"))
         return default if val is None else val
 
-    async def aset(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
+    async def aset(self, key: str, value: Any, ttl: float | None = None) -> bool:
         """Сохраняет значение по ключу (асинхронно).
 
         Args:

@@ -21,15 +21,13 @@
         with audit_context(action="batch.process", actor="worker", backend=backend) as ctx:
             ctx.details["count"] = process_records()
 """
+
 from __future__ import annotations
 
-import asyncio
 import functools
 import inspect
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
-from typing import Union
-
 
 # ---------------------------------------------------------------------------
 # Вспомогательный класс контекста
@@ -56,11 +54,11 @@ class _AuditContextState:
 
 @contextmanager
 def audit_context(
-        action: str,
-        actor: str,
-        *,
-        target: str | None = None,
-        backend: object,
+    action: str,
+    actor: str,
+    *,
+    target: str | None = None,
+    backend: object,
 ) -> Generator[_AuditContextState, None, None]:
     """Контекстный менеджер для регистрации события аудита в блоке кода.
 
@@ -103,16 +101,16 @@ def audit_context(
 # audit_event — декоратор
 # ---------------------------------------------------------------------------
 
-_ActorOrCallable = Union[str, Callable[..., str]]
-_TargetOrCallable = Union[str, Callable[..., str], None]
+_ActorOrCallable = str | Callable[..., str]
+_TargetOrCallable = str | Callable[..., str] | None
 
 
 def audit_event(
-        action: str,
-        actor: _ActorOrCallable = "system",
-        *,
-        target: _TargetOrCallable = None,
-        backend: object,
+    action: str,
+    actor: _ActorOrCallable = "system",
+    *,
+    target: _TargetOrCallable = None,
+    backend: object,
 ) -> Callable:  # type: ignore[type-arg]
     """Декоратор для автоматической регистрации события аудита при вызове функции.
 
@@ -163,9 +161,7 @@ def audit_event(
         @functools.wraps(func)
         async def async_wrapper(*args: object, **kwargs: object) -> object:
             resolved_actor = actor(*args, **kwargs) if callable(actor) else actor
-            resolved_target = (
-                target(*args, **kwargs) if callable(target) else target
-            )
+            resolved_target = target(*args, **kwargs) if callable(target) else target
             status = "success"
             details: dict[str, object] = {}
             try:
@@ -191,4 +187,4 @@ def audit_event(
     return decorator
 
 
-__all__ = ["audit_event", "audit_context"]
+__all__ = ["audit_context", "audit_event"]

@@ -34,7 +34,9 @@ end = time.monotonic()
 loaded_chutils = [m for m in sys.modules if m.startswith('chutils.')]
 print(json.dumps({{"duration": end - start, "modules": loaded_chutils}}))
 """
-    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True)
+    result = subprocess.run(
+        [sys.executable, "-c", script], capture_output=True, text=True
+    )
     if result.returncode != 0:
         print(f"Error: {result.stderr}")
         try:
@@ -49,7 +51,7 @@ if __name__ == "__main__":
         "import chutils",
         "from chutils import retry",
         "from chutils import setup_logger",
-        "from chutils import get_config_value"
+        "from chutils import get_config_value",
     ]
 
     for stmt in import_stmts:
@@ -61,10 +63,10 @@ if __name__ == "__main__":
                 continue
             print(f"Time taken: {data['duration']:.6f} seconds")
             print(f"Loaded chutils submodules: {len(data['modules'])}")
-            if len(data['modules']) > 10:
+            if len(data["modules"]) > 10:
                 print(f"  (showing first 10 of {len(data['modules'])})")
-                for m in sorted(data['modules'])[:10]:
+                for m in sorted(data["modules"])[:10]:
                     print(f"  - {m}")
             else:
-                for m in sorted(data['modules']):
+                for m in sorted(data["modules"]):
                     print(f"  - {m}")

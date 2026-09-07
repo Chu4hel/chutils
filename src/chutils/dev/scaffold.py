@@ -340,10 +340,10 @@ class Scaffolder:
     """Генератор слоев Чистой Архитектуры для нового модуля."""
 
     def __init__(
-            self,
-            module_name: str,
-            output_dir: str | None = None,
-            force: bool = False,
+        self,
+        module_name: str,
+        output_dir: str | None = None,
+        force: bool = False,
     ) -> None:
         """Инициализирует Scaffolder.
 
@@ -359,7 +359,7 @@ class Scaffolder:
         if output_dir:
             self.output_path = Path(output_dir).resolve()
         else:
-            self.output_path = Path(".").resolve() / self.module_name
+            self.output_path = Path.cwd() / self.module_name
 
     def validate(self) -> None:
         """Проверяет имя модуля и доступность каталога."""
@@ -410,7 +410,11 @@ class Scaffolder:
             file_path = self.output_path / rel_path
 
             # Создаем родительские директории, если их нет
-            from chutils.fs import ensure_dir, atomic_write  # chutils: ignore[ChutilsIntegrationRule]
+            from chutils.fs import (  # chutils: ignore[ChutilsIntegrationRule]
+                atomic_write,
+                ensure_dir,
+            )
+
             ensure_dir(file_path.parent)
 
             # Интерполяция шаблона

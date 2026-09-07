@@ -1,6 +1,7 @@
 """
 Потокобезопасный In-Memory бэкенд для chutils.store.
 """
+
 from __future__ import annotations
 
 import threading
@@ -41,7 +42,7 @@ class MemoryStore(BaseStoreBackend):
                 return default
             return val
 
-    def set(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
+    def set(self, key: str, value: Any, ttl: float | None = None) -> bool:
         """Сохраняет значение по ключу с опциональным TTL (синхронно).
 
         Args:
@@ -112,7 +113,7 @@ class MemoryStore(BaseStoreBackend):
         """
         return self.get(key, default=default)
 
-    async def aset(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
+    async def aset(self, key: str, value: Any, ttl: float | None = None) -> bool:
         """Сохраняет значение по ключу (асинхронно).
 
         Args:

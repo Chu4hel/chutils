@@ -15,7 +15,7 @@ try:
 except ImportError:  # pragma: no cover
     _HAS_RAPIDFUZZ = False
 
-__all__ = ["natsort_key", "is_significant_difference"]
+__all__ = ["is_significant_difference", "natsort_key"]
 
 
 def natsort_key(s: str) -> list[int | str]:
@@ -30,7 +30,7 @@ def natsort_key(s: str) -> list[int | str]:
     Returns:
         Список, состоящий из текстовых сегментов (str) и чисел (int).
     """
-    return [int(c) if c.isdigit() else c.lower() for c in re.split(r'(\d+)', s)]
+    return [int(c) if c.isdigit() else c.lower() for c in re.split(r"(\d+)", s)]
 
 
 def is_significant_difference(text1: str, text2: str, threshold: float = 0.9) -> bool:

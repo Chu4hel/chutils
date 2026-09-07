@@ -6,7 +6,8 @@ import textwrap
 from pathlib import Path
 from typing import Protocol
 
-from chutils.fs import ensure_dir, atomic_write
+from chutils.fs import atomic_write, ensure_dir
+
 from ..constants import AI_MANIFEST_FILENAMES
 
 GEMINI_BLOCK_START = "<!-- chutils:few-shot-start -->"
@@ -44,11 +45,11 @@ class FewShotBankWriter:
         self._force = force
 
     def write_category(
-            self,
-            category: str,
-            good_code: str,
-            bad_code: str,
-            readme: str,
+        self,
+        category: str,
+        good_code: str,
+        bad_code: str,
+        readme: str,
     ) -> bool:
         """Записывает файлы категории.
 
@@ -72,9 +73,13 @@ class FewShotBankWriter:
         ensure_dir(cat_dir)
 
         self._validate_python_syntax(good_code, f"{category}/good_pattern.py")
-        self._validate_python_syntax(bad_code, f"{category}/bad_pattern.py")  # chutils: ignore[ChutilsIntegrationRule]
+        self._validate_python_syntax(
+            bad_code, f"{category}/bad_pattern.py"
+        )  # chutils: ignore[ChutilsIntegrationRule]
         # chutils: ignore[ChutilsIntegrationRule]
-        atomic_write(cat_dir / "good_pattern.py", good_code)  # chutils: ignore[ChutilsIntegrationRule]
+        atomic_write(
+            cat_dir / "good_pattern.py", good_code
+        )  # chutils: ignore[ChutilsIntegrationRule]
         atomic_write(cat_dir / "bad_pattern.py", bad_code)
         atomic_write(cat_dir / "README.md", readme)
 
@@ -183,7 +188,9 @@ def _update_text_manifest(manifest_path: Path, categories: list[str]) -> bool:
                 end_idx += 1
             new_content = content[:start_idx] + block + content[end_idx:]
         else:
-            separator = "\n" if not content.endswith("\n") else ""  # chutils: ignore[ChutilsIntegrationRule]
+            separator = (
+                "\n" if not content.endswith("\n") else ""
+            )  # chutils: ignore[ChutilsIntegrationRule]
             new_content = content + separator + "\n" + block
         atomic_write(manifest_path, new_content)
         return True
@@ -213,7 +220,7 @@ def _update_json_cursorrules(manifest_path: Path, categories: list[str]) -> bool
         data = json.loads(content)
         if not isinstance(data, dict):
             # Если это массив или примитив, обработаем как текст
-            raise ValueError("Root is not a JSON object")
+            raise TypeError("Root is not a JSON object")
     except Exception:
         # Невалидный JSON — обрабатываем как текст
         return _update_text_manifest(manifest_path, categories)
@@ -236,7 +243,9 @@ def _update_json_cursorrules(manifest_path: Path, categories: list[str]) -> bool
         return False
 
 
-def update_ai_manifests(project_root: Path, console: _ConsoleProtocol | None = None) -> bool:
+def update_ai_manifests(
+    project_root: Path, console: _ConsoleProtocol | None = None
+) -> bool:
     """Обновляет или создаёт AI-манифесты в корне целевого проекта.
 
     Ищет существующие манифесты из списка AI_MANIFEST_FILENAMES. Если
@@ -261,9 +270,8 @@ def update_ai_manifests(project_root: Path, console: _ConsoleProtocol | None = N
     found_manifests: list[Path] = []
     try:
         for p in project_root.iterdir():
-            if p.is_file():
-                if p.name.lower() in [m.lower() for m in AI_MANIFEST_FILENAMES]:
-                    found_manifests.append(p)
+            if p.is_file() and p.name.lower() in [m.lower() for m in AI_MANIFEST_FILENAMES]:
+                found_manifests.append(p)
     except Exception as e:
         _warn(f"Ошибка сканирования корня проекта: {e}")
         return False
@@ -284,7 +292,9 @@ def update_ai_manifests(project_root: Path, console: _ConsoleProtocol | None = N
             - Используйте few-shot примеры для написания корректного кода.
 
             """)
-        block = _build_manifest_block(categories)  # chutils: ignore[ChutilsIntegrationRule]
+        block = _build_manifest_block(
+            categories
+        )  # chutils: ignore[ChutilsIntegrationRule]
         try:
             atomic_write(agents_path, base_content + "\n" + block)
             found_manifests.append(agents_path)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import Any
 import logging
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -25,7 +25,6 @@ from chutils.secret_manager import SecretManager
 
 class DummyHandler(logging.Handler):
     """Простой обработчик для тестов, чтобы не использовать строгий Mock."""
-    pass
 
 
 @pytest.fixture(autouse=True)
@@ -83,7 +82,9 @@ def test_lazy_loading_secret_manager(mock_entry_points):
             return True
 
     mock_ep.load.return_value = MockSecretPlugin
-    mock_entry_points.side_effect = make_mock_entry_points("chutils.plugins.secret", mock_ep)
+    mock_entry_points.side_effect = make_mock_entry_points(
+        "chutils.plugins.secret", mock_ep
+    )
 
     # 1. Создание SecretManager не должно приводить к загрузке плагина
     sm = SecretManager(service_name="test_lazy")
@@ -113,7 +114,9 @@ def test_lazy_loading_config_manager(mock_entry_points, tmp_path):
             return True
 
     mock_ep.load.return_value = MockConfigPlugin
-    mock_entry_points.side_effect = make_mock_entry_points("chutils.plugins.config", mock_ep)
+    mock_entry_points.side_effect = make_mock_entry_points(
+        "chutils.plugins.config", mock_ep
+    )
 
     # 1. До вызова get_config с файлом .toml плагин не должен загружаться
     toml_file = tmp_path / "config.toml"
@@ -150,7 +153,9 @@ def test_lazy_loading_logger_handler(mock_entry_points):
             return mock_handler
 
     mock_ep.load.return_value = MockLoggerPlugin
-    mock_entry_points.side_effect = make_mock_entry_points("chutils.plugins.logger", mock_ep)
+    mock_entry_points.side_effect = make_mock_entry_points(
+        "chutils.plugins.logger", mock_ep
+    )
 
     # 1. До вызова setup_logger плагин не должен загружаться
     assert not mock_ep.load.called
@@ -171,13 +176,19 @@ def test_lazy_loading_metrics(mock_entry_points):
     class MockMetricsPlugin(MetricsPlugin):
         name = "lazy_metrics"
 
-        def increment(self, name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
+        def increment(
+            self, name: str, value: float = 1.0, labels: dict[str, str] | None = None
+        ) -> None:
             pass
 
-        def set_gauge(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+        def set_gauge(
+            self, name: str, value: float, labels: dict[str, str] | None = None
+        ) -> None:
             pass
 
-        def observe(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+        def observe(
+            self, name: str, value: float, labels: dict[str, str] | None = None
+        ) -> None:
             pass
 
         def generate_latest(self) -> str:
@@ -187,7 +198,9 @@ def test_lazy_loading_metrics(mock_entry_points):
             pass
 
     mock_ep.load.return_value = MockMetricsPlugin
-    mock_entry_points.side_effect = make_mock_entry_points("chutils.plugins.metrics", mock_ep)
+    mock_entry_points.side_effect = make_mock_entry_points(
+        "chutils.plugins.metrics", mock_ep
+    )
 
     # 1. До первого получения провайдера плагин не должен загружаться
     assert not mock_ep.load.called

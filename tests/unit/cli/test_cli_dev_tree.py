@@ -2,13 +2,14 @@ import json
 import sys
 
 import pytest
+
 from chutils.cli import main
 
 
 def test_cli_generate_context_tree(mocker, capsys):
     """Тест CLI команды с флагом --tree."""
     test_args = ["chutils", "dev", "generate-context", "--tree"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -27,7 +28,7 @@ def test_cli_generate_context_tree(mocker, capsys):
 def test_cli_generate_context_tree_no_weights(mocker, capsys):
     """Тест CLI команды с флагами --tree и --no-weights."""
     test_args = ["chutils", "dev", "generate-context", "--tree", "--no-weights"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()

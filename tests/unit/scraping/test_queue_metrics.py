@@ -1,7 +1,7 @@
 """Тесты сбора Prometheus-метрических показателей очередей задач."""
 
 import pytest
-from chutils import metrics
+
 from chutils.scraping.concurrency.metrics import QueueMetricsCollector
 from chutils.scraping.concurrency.models import ScrapingTask
 from chutils.scraping.concurrency.queues import InMemoryTaskQueue, PersistentTaskQueue
@@ -39,7 +39,9 @@ async def test_in_memory_queue_metrics():
 @pytest.mark.asyncio
 async def test_persistent_queue_metrics(tmp_path):
     db_file = tmp_path / "metrics_test.db"
-    queue = PersistentTaskQueue(db_path=db_file, name="test_sqlite", enable_metrics=True)
+    queue = PersistentTaskQueue(
+        db_path=db_file, name="test_sqlite", enable_metrics=True
+    )
 
     task = ScrapingTask(url="https://example.com/2")
     await queue.push(task)

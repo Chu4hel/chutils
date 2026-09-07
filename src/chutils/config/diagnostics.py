@@ -9,7 +9,14 @@ from chutils.cli_utils import get_console
 from chutils.env import is_rich_enabled
 
 SECRET_KEYWORDS = {
-    "password", "secret", "api_key", "token", "auth", "key", "pwd", "credential"
+    "password",
+    "secret",
+    "api_key",
+    "token",
+    "auth",
+    "key",
+    "pwd",
+    "credential",
 }
 """Список ключевых слов, значения которых должны маскироваться по умолчанию."""
 
@@ -35,8 +42,11 @@ def mask_value(key: str, value: Any, show_secrets: bool = False) -> str:
     return str(value)
 
 
-def format_trace(trace_data: dict[str, dict[str, list[dict[str, Any]]]], format_type: str = 'tree',
-                 show_secrets: bool = False) -> str:
+def format_trace(
+    trace_data: dict[str, dict[str, list[dict[str, Any]]]],
+    format_type: str = "tree",
+    show_secrets: bool = False,
+) -> str:
     """Форматирует данные трассировки в выбранный формат.
 
     Args:
@@ -47,15 +57,17 @@ def format_trace(trace_data: dict[str, dict[str, list[dict[str, Any]]]], format_
     Returns:
         Отформатированная строка с диагностическим отчетом.
     """
-    if format_type == 'json':
+    if format_type == "json":
         return _format_json(trace_data, show_secrets)
-    elif format_type == 'table':
+    elif format_type == "table":
         return _format_table(trace_data, show_secrets)
     else:
         return _format_tree(trace_data, show_secrets)
 
 
-def _format_json(trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_secrets: bool) -> str:
+def _format_json(
+    trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_secrets: bool
+) -> str:
     """Форматирует трассировку в JSON."""
     if not show_secrets:
         # Глубокое копирование и маскирование
@@ -64,7 +76,10 @@ def _format_json(trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_se
             masked_data[section] = {}
             for key, history in keys.items():
                 masked_data[section][key] = [
-                    {"source": item["source"], "value": mask_value(key, item["value"], False)}
+                    {
+                        "source": item["source"],
+                        "value": mask_value(key, item["value"], False),
+                    }
                     for item in history
                 ]
         return json.dumps(masked_data, indent=4, ensure_ascii=False)
@@ -72,14 +87,17 @@ def _format_json(trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_se
     return json.dumps(trace_data, indent=4, ensure_ascii=False)
 
 
-def _format_table(trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_secrets: bool) -> str:
+def _format_table(
+    trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_secrets: bool
+) -> str:
     """Форматирует трассировку в таблицу (Rich или текст)."""
     use_rich = is_rich_enabled()
     console = get_console()
 
     if use_rich:
-        from rich.table import Table
         from rich.console import Console
+        from rich.table import Table
+
         table = Table(title="Трассировка конфигурации (Diagnostics)", show_lines=True)
         table.add_column("Секция", style="cyan")
         table.add_column("Ключ", style="green")
@@ -117,14 +135,17 @@ def _format_table(trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_s
         return "\n".join(lines)
 
 
-def _format_tree(trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_secrets: bool) -> str:
+def _format_tree(
+    trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_secrets: bool
+) -> str:
     """Форматирует трассировку в дерево (Rich или текст)."""
     use_rich = is_rich_enabled()
     console = get_console()
 
     if use_rich:
-        from rich.tree import Tree
         from rich.console import Console
+        from rich.tree import Tree
+
         root = Tree("📁 [bold blue]Configuration Root[/bold blue]")
 
         for section in sorted(trace_data.keys()):
@@ -135,7 +156,8 @@ def _format_tree(trace_data: dict[str, dict[str, list[dict[str, Any]]]], show_se
                 winner_source = history[-1]["source"]
 
                 key_node = sec_tree.add(
-                    f"[green]{key}[/green] = [yellow]{final_val}[/yellow] ([dim]{winner_source}[/dim])")
+                    f"[green]{key}[/green] = [yellow]{final_val}[/yellow] ([dim]{winner_source}[/dim])"
+                )
 
                 if len(history) > 1:
                     for item in history[:-1]:

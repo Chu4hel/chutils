@@ -12,6 +12,8 @@ Logging:
   # Уровень логирования.
   # Возможные значения: DEVDEBUG, DEBUG, MEDIUMDEBUG, INFO, WARNING, ERROR, CRITICAL
   log_level: DEBUG
+  # Включение/отключение записи в файл (по умолчанию true).
+  # file_logging: true
   # Имя файла, в который будут сохраняться логи.
   # Файл будет создан в папке /logs в корне проекта.
   log_file_name: example_app.log

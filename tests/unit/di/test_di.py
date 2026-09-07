@@ -4,7 +4,7 @@ import time
 
 import pytest
 
-from chutils.di import Container, provide, inject, Inject
+from chutils.di import Container, Inject, inject, provide
 from chutils.exceptions import DependencyNotFoundError, DependencyResolutionError
 
 
@@ -132,6 +132,7 @@ def test_provide_decorator_missing_return_type():
     container = Container()
 
     with pytest.raises(DependencyResolutionError) as exc_info:
+
         @provide(container=container)
         def invalid_factory():
             return "no_type"
@@ -224,6 +225,7 @@ def test_thread_safety_singleton():
 def test_dependency_not_found():
     """Проверка правильного исключения при отсутствии зависимости."""
     import abc
+
     class AbstractService(abc.ABC):
         @abc.abstractmethod
         def do_something(self):
@@ -254,14 +256,14 @@ def test_autowiring_unregistered_concrete_class():
 def test_inject_no_parens():
     """Тест работы декоратора @inject без скобок."""
     from chutils.di import default_container
-    
+
     # Регистрируем в глобальный контейнер
     default_container.register(DummyDependencyC)
-    
+
     @inject
     def handle_global(c: DummyDependencyC = Inject()):
         return c.value
-        
+
     assert handle_global() == "C"
     default_container.clear()
 
@@ -277,7 +279,7 @@ def test_string_dependencies():
     # 2. Разрешение зависимости с типом класса, если зарегистрирована строка
     class RepositoryClass:
         pass
-        
+
     container.register("RepositoryClass", lambda: RepositoryClass())
     resolved = container.resolve(RepositoryClass)
     assert isinstance(resolved, RepositoryClass)
@@ -290,4 +292,3 @@ def test_string_dependencies():
     container.register(Service)
     service = container.resolve(Service)
     assert service.repo == "DatabaseRepository"
-

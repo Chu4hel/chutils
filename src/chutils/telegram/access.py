@@ -11,12 +11,16 @@ from chutils.exceptions.telegram import TelegramAccessDeniedError
 F = TypeVar("F", bound=Callable[..., Any])
 
 
-def _extract_user_info(args: tuple[Any, ...], kwargs: dict[str, Any]) -> tuple[int | None, str | None]:
+def _extract_user_info(
+    args: tuple[Any, ...], kwargs: dict[str, Any]
+) -> tuple[int | None, str | None]:
     """Извлекает user_id и username из аргументов вызова функции."""
     # Прямые аргументы
     if "user_id" in kwargs or "username" in kwargs:
         uid = kwargs.get("user_id") if isinstance(kwargs.get("user_id"), int) else None
-        uname = kwargs.get("username") if isinstance(kwargs.get("username"), str) else None
+        uname = (
+            kwargs.get("username") if isinstance(kwargs.get("username"), str) else None
+        )
         if uid is not None or uname is not None:
             return uid, uname
     if "from_user" in kwargs and hasattr(kwargs["from_user"], "id"):
@@ -36,9 +40,16 @@ def _extract_user_info(args: tuple[Any, ...], kwargs: dict[str, Any]) -> tuple[i
             return _clean_user(arg.from_user)
         if hasattr(arg, "user") and getattr(arg, "user", None) is not None:
             return _clean_user(arg.user)
-        if hasattr(arg, "effective_user") and getattr(arg, "effective_user", None) is not None:
+        if (
+            hasattr(arg, "effective_user")
+            and getattr(arg, "effective_user", None) is not None
+        ):
             return _clean_user(arg.effective_user)
-        if hasattr(arg, "id") and isinstance(arg.id, int) and (hasattr(arg, "is_bot") or hasattr(arg, "first_name")):
+        if (
+            hasattr(arg, "id")
+            and isinstance(arg.id, int)
+            and (hasattr(arg, "is_bot") or hasattr(arg, "first_name"))
+        ):
             return _clean_user(arg)
 
     return None, None
@@ -73,16 +84,24 @@ def is_admin(
     if admin_ids is None:
         cfg_ids = get_config_value("Telegram", "admin_ids", None)
         if isinstance(cfg_ids, (list, tuple)):
-            admin_ids = [int(x) for x in cfg_ids if str(x).isdigit() or isinstance(x, int)]
+            admin_ids = [
+                int(x) for x in cfg_ids if str(x).isdigit() or isinstance(x, int)
+            ]
         elif isinstance(cfg_ids, str):
-            admin_ids = [int(x.strip()) for x in cfg_ids.split(",") if x.strip().isdigit()]
+            admin_ids = [
+                int(x.strip()) for x in cfg_ids.split(",") if x.strip().isdigit()
+            ]
 
     if admin_usernames is None:
         cfg_names = get_config_value("Telegram", "admin_usernames", None)
         if isinstance(cfg_names, (list, tuple)):
-            admin_usernames = [str(x).strip().lstrip("@").lower() for x in cfg_names if x]
+            admin_usernames = [
+                str(x).strip().lstrip("@").lower() for x in cfg_names if x
+            ]
         elif isinstance(cfg_names, str):
-            admin_usernames = [x.strip().lstrip("@").lower() for x in cfg_names.split(",") if x.strip()]
+            admin_usernames = [
+                x.strip().lstrip("@").lower() for x in cfg_names.split(",") if x.strip()
+            ]
 
     if user_id is not None and admin_ids and user_id in admin_ids:
         return True

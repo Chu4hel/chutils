@@ -1,4 +1,3 @@
-# ruff: noqa: E402
 """
 Модуль chutils.db — готовый менеджер подключений к реляционным БД.
 
@@ -28,8 +27,8 @@ import importlib.util
 from chutils.exceptions import ConfigError, OptionalDependencyError
 
 _HAS_SQLALCHEMY = (
-        importlib.util.find_spec("sqlalchemy") is not None
-        and importlib.util.find_spec("sqlalchemy.ext.asyncio") is not None
+    importlib.util.find_spec("sqlalchemy") is not None
+    and importlib.util.find_spec("sqlalchemy.ext.asyncio") is not None
 )
 """Флаг наличия библиотеки SQLAlchemy."""
 
@@ -44,21 +43,19 @@ if not _HAS_SQLALCHEMY:
 # ---------------------------------------------------------------------------
 # Импорты SQLAlchemy (безопасны, т.к. выше уже проверено наличие)
 # ---------------------------------------------------------------------------
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING, AsyncIterator, cast
+from typing import cast
 
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy import text
 
 from chutils.config import get_config_value
-
-if TYPE_CHECKING:
-    pass
 
 
 class DatabaseManager:
@@ -104,10 +101,10 @@ class DatabaseManager:
     """
 
     def __init__(
-            self,
-            database_url: str | None = None,
-            echo: bool = False,
-            **engine_kwargs: object,
+        self,
+        database_url: str | None = None,
+        echo: bool = False,
+        **engine_kwargs: object,
     ) -> None:
         """Инициализирует DatabaseManager и создаёт асинхронный движок.
 
@@ -212,9 +209,11 @@ class DatabaseManager:
             async with db.transaction() as session:
                 session.add(MyModel(name="test"))
         """
-        async with self._session_factory() as async_session:
-            async with async_session.begin():
-                yield async_session
+        async with (
+            self._session_factory() as async_session,
+            async_session.begin(),
+        ):
+            yield async_session
 
     # ------------------------------------------------------------------
     # Публичный API: health check и lifecycle

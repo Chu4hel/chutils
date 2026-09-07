@@ -68,17 +68,25 @@ def setup_qt_logging(
     if formatter is not None:
         handler.setFormatter(formatter)
     else:
-        handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+        handler.setFormatter(
+            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        )
 
     if widget is not None:
         if hasattr(widget, "appendPlainText"):
-            handler.emitter.message_emitted.connect(lambda msg, lvl: widget.appendPlainText(msg))
+            handler.emitter.message_emitted.connect(
+                lambda msg, lvl: widget.appendPlainText(msg)
+            )
         elif hasattr(widget, "append"):
             handler.emitter.message_emitted.connect(lambda msg, lvl: widget.append(msg))
         elif hasattr(widget, "showMessage"):
-            handler.emitter.message_emitted.connect(lambda msg, lvl: widget.showMessage(msg))
+            handler.emitter.message_emitted.connect(
+                lambda msg, lvl: widget.showMessage(msg)
+            )
         elif hasattr(widget, "setText"):
-            handler.emitter.message_emitted.connect(lambda msg, lvl: widget.setText(msg))
+            handler.emitter.message_emitted.connect(
+                lambda msg, lvl: widget.setText(msg)
+            )
         elif callable(widget):
             handler.emitter.message_emitted.connect(lambda msg, lvl: widget(msg))
 

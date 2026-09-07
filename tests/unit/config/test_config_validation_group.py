@@ -11,11 +11,13 @@ def test_validate_required_keys_success() -> None:
         "Secrets": {
             "telegram_bot_token": "token123",
             "database_url": "postgresql://...",
-            "api_key": "key123"
+            "api_key": "key123",
         }
     }
     # Ошибок быть не должно
-    validate_required_keys("Secrets", ["telegram_bot_token", "database_url", "api_key"], config=config)
+    validate_required_keys(
+        "Secrets", ["telegram_bot_token", "database_url", "api_key"], config=config
+    )
 
 
 def test_validate_required_keys_failure() -> None:
@@ -24,12 +26,14 @@ def test_validate_required_keys_failure() -> None:
         "Secrets": {
             "telegram_bot_token": "token123",
             # database_url отсутствует
-            "api_key": ""  # пустое значение тоже считается ошибкой при required=True
+            "api_key": "",  # пустое значение тоже считается ошибкой при required=True
         }
     }
 
     with pytest.raises(ConfigValidationGroupError) as exc_info:
-        validate_required_keys("Secrets", ["telegram_bot_token", "database_url", "api_key"], config=config)
+        validate_required_keys(
+            "Secrets", ["telegram_bot_token", "database_url", "api_key"], config=config
+        )
 
     err = exc_info.value
     assert len(err.exceptions) == 2

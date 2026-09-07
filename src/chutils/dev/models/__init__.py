@@ -9,9 +9,9 @@ from .symbol import Symbol
 
 __all__ = [
     "Breadcrumbs",
-    "Symbol",
-    "Node",
     "GraphEdge",
+    "Node",
     "ProjectExample",
     "ProjectIndex",
+    "Symbol",
 ]

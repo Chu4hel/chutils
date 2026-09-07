@@ -106,7 +106,9 @@ class AiLintSubCommand(SubCommand):
         if args.rules:
             cli_args["rules"] = [r.strip() for r in args.rules.split(",") if r.strip()]
         if args.exclude_rules:
-            cli_args["exclude_rules"] = [r.strip() for r in args.exclude_rules.split(",") if r.strip()]
+            cli_args["exclude_rules"] = [
+                r.strip() for r in args.exclude_rules.split(",") if r.strip()
+            ]
         if args.custom_rules_path:
             cli_args["custom_rules_path"] = args.custom_rules_path
         if getattr(args, "staged", None) is not None:

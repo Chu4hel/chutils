@@ -1,12 +1,14 @@
 """Aiohttp интеграция для валидации VKMA launchParams."""
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from chutils.vkma.exceptions import VKMAValidationError
 from chutils.vkma.validator import parse_vkma_launch_params
 
 try:
     from aiohttp import web
+
     HAS_AIOHTTP = True
 except ImportError:
     HAS_AIOHTTP = False
@@ -33,7 +35,9 @@ def vkma_auth_middleware(
     excluded = exclude_paths or set()
 
     @web.middleware  # type: ignore[untyped-decorator]
-    async def middleware(request: web.Request, handler: Callable[[web.Request], Any]) -> web.Response:
+    async def middleware(
+        request: web.Request, handler: Callable[[web.Request], Any]
+    ) -> web.Response:
         if request.path in excluded:
             return await handler(request)
 
@@ -48,7 +52,9 @@ def vkma_auth_middleware(
             raw_params = request.headers.get("X-VKMA-Init-Data")
 
         if not raw_params:
-            return web.json_response({"detail": "Отсутствуют параметры авторизации VKMA."}, status=401)
+            return web.json_response(
+                {"detail": "Отсутствуют параметры авторизации VKMA."}, status=401
+            )
 
         try:
             vkma_params = parse_vkma_launch_params(
@@ -58,7 +64,9 @@ def vkma_auth_middleware(
             )
             request["vkma_params"] = vkma_params
         except VKMAValidationError as exc:
-            return web.json_response({"detail": f"Ошибка авторизации VKMA: {exc.message}"}, status=401)
+            return web.json_response(
+                {"detail": f"Ошибка авторизации VKMA: {exc.message}"}, status=401
+            )
 
         return await handler(request)
 

@@ -6,6 +6,7 @@ from .symbol import Symbol
 
 class Node(BaseModel):
     """Узел дерева (пакет или модуль)."""
+
     name: str
     path: str
     """Относительный путь от корня проекта"""

@@ -6,29 +6,29 @@ import logging.handlers  # chutils: ignore[ChutilsIntegrationRule]
 import os
 import queue
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 if TYPE_CHECKING:
     from ..core import ChutilsLogger
 
-from .levels import LogLevel, MEDIUMDEBUG_LEVEL_NUM, DEVDEBUG_LEVEL_NUM
-from .utils import get_log_dir, register_async_listener
-from ..formatters import JSON_LOGGER_AVAILABLE, ChutilsJsonFormatter
-from ..handlers import (
-    SafeTimedRotatingFileHandler,
-    CompressingRotatingFileHandler,
-    CompressingTimedRotatingFileHandler
-)
-from ..masking import (
-    SecretMaskingFilter,
-    _GLOBAL_MASKS,
-    _CUSTOM_PATTERNS,
-    _update_mask_re,
-    PREDEFINED_PATTERNS
-)
 from ... import config as config_api
 from ... import env as env_api
 from ...context import ContextFilter
+from ..formatters import JSON_LOGGER_AVAILABLE, ChutilsJsonFormatter
+from ..handlers import (
+    CompressingRotatingFileHandler,
+    CompressingTimedRotatingFileHandler,
+    SafeTimedRotatingFileHandler,
+)
+from ..masking import (
+    _CUSTOM_PATTERNS,
+    _GLOBAL_MASKS,
+    PREDEFINED_PATTERNS,
+    SecretMaskingFilter,
+    _update_mask_re,
+)
+from .levels import DEVDEBUG_LEVEL_NUM, MEDIUMDEBUG_LEVEL_NUM, LogLevel
+from .utils import get_log_dir, register_async_listener
 
 
 class LoggerBuilder:
@@ -40,10 +40,7 @@ class LoggerBuilder:
     """
 
     def __init__(
-            self,
-            name: str,
-            config_section_name: str | None = None,
-            **kwargs: Any
+        self, name: str, config_section_name: str | None = None, **kwargs: Any
     ):
         """
         Инициализирует строитель для конкретного логгера.
@@ -61,7 +58,7 @@ class LoggerBuilder:
         self.cfg = config_api.get_config()
 
         # Получаем настройки из конфига (Logging + опционально специфичная секция)
-        default_settings: dict[str, Any] = self.cfg.get('Logging', {})
+        default_settings: dict[str, Any] = self.cfg.get("Logging", {})
         specific_settings: dict[str, Any] = {}
         if config_section_name:
             specific_settings = self.cfg.get(config_section_name, {})
@@ -69,23 +66,25 @@ class LoggerBuilder:
         self.settings: dict[str, Any] = {**default_settings, **specific_settings}
 
     def build(
-            self,
-            log_level: LogLevel | None = None,
-            force_reconfigure: bool = False,
-            use_async: bool | None = None,
-            json_format: bool | None = None,
-            log_file_name: str | None = None,
-            rotation_type: str | None = None,
-            max_bytes: int | None = None,
-            compress: bool | None = None,
-            backup_count: int | None = None,
-            encoding: str | None = None,
-            when: str | None = None,
-            interval: int | None = None,
-            utc: bool | None = None,
-            at_time: Any = None,
-            custom_patterns: list[str] | None = None,
-            use_predefined_patterns: list[str | list[str]] | None = None,
+        self,
+        log_level: LogLevel | None = None,
+        force_reconfigure: bool = False,
+        use_async: bool | None = None,
+        json_format: bool | None = None,
+        log_file_name: str | None = None,
+        file_logging: bool | None = None,
+        no_file: bool | None = None,
+        rotation_type: str | None = None,
+        max_bytes: int | None = None,
+        compress: bool | None = None,
+        backup_count: int | None = None,
+        encoding: str | None = None,
+        when: str | None = None,
+        interval: int | None = None,
+        utc: bool | None = None,
+        at_time: Any = None,
+        custom_patterns: list[str] | None = None,
+        use_predefined_patterns: list[str | list[str]] | None = None,
     ) -> ChutilsLogger:
         """Основной метод сборки и настройки логгера.
 
@@ -98,6 +97,8 @@ class LoggerBuilder:
             use_async: Использовать ли асинхронную запись.
             json_format: Использовать ли JSON формат.
             log_file_name: Имя файла лога.
+            file_logging: Включить или отключить запись в файл.
+            no_file: Отключить запись в файл (эквивалент file_logging=False).
             rotation_type: Тип ротации файлов.
             max_bytes: Максимальный размер файла в байтах.
             compress: Сжимать ли ротированные файлы.
@@ -115,18 +116,20 @@ class LoggerBuilder:
         """
         # Слияние настроек из конфига и переданных аргументов (overrides)
         overrides: dict[str, Any] = {
-            'log_file_name': log_file_name,
-            'rotation_type': rotation_type,
-            'max_bytes': max_bytes,
-            'compress': compress,
-            'backup_count': backup_count,
-            'encoding': encoding,
-            'when': when,
-            'interval': interval,
-            'utc': utc,
-            'at_time': at_time,
-            'custom_patterns': custom_patterns,
-            'use_predefined_patterns': use_predefined_patterns
+            "log_file_name": log_file_name,
+            "file_logging": file_logging,
+            "no_file": no_file,
+            "rotation_type": rotation_type,
+            "max_bytes": max_bytes,
+            "compress": compress,
+            "backup_count": backup_count,
+            "encoding": encoding,
+            "when": when,
+            "interval": interval,
+            "utc": utc,
+            "at_time": at_time,
+            "custom_patterns": custom_patterns,
+            "use_predefined_patterns": use_predefined_patterns,
         }
         # Убираем None, чтобы не перезаписать значения из конфига пустышками
         overrides = {k: v for k, v in overrides.items() if v is not None}
@@ -141,7 +144,7 @@ class LoggerBuilder:
         self.logger.propagate = False
 
         if self.logger.hasHandlers() and not force_reconfigure:
-            return cast('ChutilsLogger', self.logger)
+            return cast("ChutilsLogger", self.logger)
 
         if force_reconfigure:
             self._clear_handlers()
@@ -163,14 +166,18 @@ class LoggerBuilder:
         # 6. Добавление стандартных фильтров (маскирование + контекст)
         self._add_standard_filters()
 
-        return cast('ChutilsLogger', self.logger)
+        return cast("ChutilsLogger", self.logger)
 
     def _get_level_int(self, log_level: LogLevel | None) -> int:
         """Определяет числовое значение уровня логирования."""
         if log_level is not None:
-            level_str = log_level.value if isinstance(log_level, LogLevel) else str(log_level).upper()
+            level_str = (
+                log_level.value
+                if isinstance(log_level, LogLevel)
+                else str(log_level).upper()
+            )
         else:
-            level_str = str(self.settings.get('log_level', 'INFO')).upper()
+            level_str = str(self.settings.get("log_level", "INFO")).upper()
 
         # Явное использование констант для предотвращения удаления импортов и как fallback
         if level_str == "MEDIUMDEBUG":
@@ -180,17 +187,20 @@ class LoggerBuilder:
 
         level_int = logging.getLevelName(level_str)
         if not isinstance(level_int, int):
-            self.logger.warning("Неизвестный уровень логирования: '%s'. Используется INFO.", level_str)
+            self.logger.warning(
+                "Неизвестный уровень логирования: '%s'. Используется INFO.", level_str
+            )
             return logging.INFO
         return level_int
 
     def _apply_console_width(self) -> None:
         """Устанавливает ширину консоли из настроек CLI."""
-        cli_settings: dict[str, Any] = self.cfg.get('CLI', {})
-        config_width = cli_settings.get('console_width')
+        cli_settings: dict[str, Any] = self.cfg.get("CLI", {})
+        config_width = cli_settings.get("console_width")
         if config_width is not None:
             try:
                 from chutils.cli_utils import set_console_width
+
                 set_console_width(int(config_width))
             except (ValueError, TypeError, ImportError):
                 pass
@@ -198,10 +208,10 @@ class LoggerBuilder:
     def _clear_handlers(self) -> None:
         """Закрывает и удаляет все существующие обработчики логгера."""
         from ..core import _file_handler_cache
+
         for handler in self.logger.handlers[:]:
-            if isinstance(handler, logging.FileHandler):
-                if handler.baseFilename in _file_handler_cache:
-                    del _file_handler_cache[handler.baseFilename]
+            if isinstance(handler, logging.FileHandler) and handler.baseFilename in _file_handler_cache:
+                del _file_handler_cache[handler.baseFilename]
             handler.close()
             self.logger.removeHandler(handler)
 
@@ -209,18 +219,22 @@ class LoggerBuilder:
         """Определяет, должен ли логгер работать в асинхронном режиме."""
         if explicit_use_async is not None:
             return explicit_use_async
-        val = self.settings.get('use_async', False)
+        val = self.settings.get("use_async", False)
         if isinstance(val, str):
             return val.lower() in ["true", "1", "yes", "y"]
         return bool(val)
 
-    def _create_handlers(self, level_int: int, json_format_arg: bool | None, **params: Any) -> list[logging.Handler]:
+    def _create_handlers(
+        self, level_int: int, json_format_arg: bool | None, **params: Any
+    ) -> list[logging.Handler]:
         """Создает список обработчиков для логгера."""
         # Определение основного формата
         formatter = self._get_formatter(json_format_arg)
 
         # Консольный обработчик
-        console_handler = self._create_console_handler(level_int, formatter, json_format_arg)
+        console_handler = self._create_console_handler(
+            level_int, formatter, json_format_arg
+        )
         target_handlers: list[logging.Handler] = [console_handler]
 
         # Файловый обработчик (если включен)
@@ -230,7 +244,8 @@ class LoggerBuilder:
 
         # Подгружаем плагины-хэндлеры
         try:
-            from ...plugins import registry, LoggerHandlerPlugin
+            from ...plugins import LoggerHandlerPlugin, registry
+
             registry.discover_plugins("chutils.plugins.logger")
             external_plugins = registry.get_plugins_by_type(LoggerHandlerPlugin)
             for plugin in external_plugins:
@@ -241,26 +256,42 @@ class LoggerBuilder:
                             handler.setFormatter(formatter)
                         target_handlers.append(handler)
                         logging.getLogger("chutils.plugins").debug(
-                            "Зарегистрирован внешний лог-хэндлер из плагина '%s'", plugin.name
+                            "Зарегистрирован внешний лог-хэндлер из плагина '%s'",
+                            plugin.name,
                         )
                 except Exception as ex:
                     logging.getLogger("chutils.plugins").error(
-                        "Ошибка инициализации хэндлера плагина '%s': %s", plugin.name, str(ex)
+                        "Ошибка инициализации хэндлера плагина '%s': %s",
+                        plugin.name,
+                        str(ex),
                     )
         except Exception as e:
-            logging.getLogger("chutils.plugins").error("Ошибка при поиске плагинов лог-хэндлеров: %s", str(e))
+            logging.getLogger("chutils.plugins").error(
+                "Ошибка при поиске плагинов лог-хэндлеров: %s", str(e)
+            )
 
         return target_handlers
 
     def _get_formatter(self, json_format: bool | None) -> logging.Formatter:
         """Создает и возвращает подходящий форматер (текстовый или JSON)."""
-        env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
-        log_format = '%(name)s - %(levelname)s %(context)s- %(message)s' if env_no_time else \
-            '%(asctime)s - %(name)s - %(levelname)s %(context)s- %(message)s'
+        # chutils: ignore[ChutilsIntegrationRule]
+        env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in [
+            "true",
+            "1",
+            "yes",
+            "y",
+        ]
+        log_format = (
+            "%(name)s - %(levelname)s %(context)s- %(message)s"
+            if env_no_time
+            else "%(asctime)s - %(name)s - %(levelname)s %(context)s- %(message)s"
+        )
 
         if self._should_use_json(json_format):
             if JSON_LOGGER_AVAILABLE:
-                return ChutilsJsonFormatter('%(asctime)s %(name)s %(levelname)s %(message)s')
+                return ChutilsJsonFormatter(
+                    "%(asctime)s %(name)s %(levelname)s %(message)s"
+                )
             self.logger.warning(
                 "Запрошен формат JSON, но пакет 'python-json-logger' не установлен. Используется стандартный текстовый формат."
             )
@@ -269,32 +300,47 @@ class LoggerBuilder:
 
     def _should_use_json(self, explicit_json: bool | None) -> bool:
         """Определяет, нужно ли использовать JSON формат."""
-        env_json = os.getenv("CH_LOG_JSON", "").lower()  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule]
+        env_json = os.getenv("CH_LOG_JSON", "").lower()
         if env_json:
             return env_json in ["true", "1", "yes", "y"]
         if explicit_json is not None:
             return explicit_json
-        val = self.settings.get('json_format', False)
-        return val.lower() in ["true", "1", "yes", "y"] if isinstance(val, str) else bool(val)
+        val = self.settings.get("json_format", False)
+        return (
+            val.lower() in ["true", "1", "yes", "y"]
+            if isinstance(val, str)
+            else bool(val)
+        )
 
-    def _create_console_handler(self, level_int: int, formatter: logging.Formatter,
-                                json_format: bool | None) -> logging.Handler:
+    def _create_console_handler(
+        self, level_int: int, formatter: logging.Formatter, json_format: bool | None
+    ) -> logging.Handler:
         """Создает обработчик для вывода в консоль (Rich или стандартный)."""
-        env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule]
+        env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in [
+            "true",
+            "1",
+            "yes",
+            "y",
+        ]
 
         handler: logging.Handler
         if env_api.is_rich_enabled() and not self._should_use_json(json_format):
             from rich.logging import RichHandler
-            from chutils.cli_utils import get_console, FallbackConsole
+
+            from chutils.cli_utils import FallbackConsole, get_console
 
             console_obj = get_console(stderr=True)
             handler = RichHandler(
-                console=console_obj if not isinstance(console_obj, FallbackConsole) else None,
+                console=console_obj
+                if not isinstance(console_obj, FallbackConsole)
+                else None,
                 rich_tracebacks=True,
                 markup=True,
                 tracebacks_show_locals=True,
                 show_time=not env_no_time,
-                show_path=False
+                show_path=False,
             )
         else:
             handler = logging.StreamHandler()
@@ -303,25 +349,72 @@ class LoggerBuilder:
         handler.setLevel(level_int)
         return handler
 
-    def _create_file_handler(self, formatter: logging.Formatter, **params: Any) -> logging.Handler | None:
+    def _create_file_handler(
+        self, formatter: logging.Formatter, **params: Any
+    ) -> logging.Handler | None:
         """Создает и настраивает файловый обработчик."""
-        from ..core import _file_handler_cache
         # Используем импорт внутри функции, чтобы избежать циклической зависимости и иметь доступ к переменным
-        import chutils.logger.core as core
+        from chutils.logger import core
 
-        env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in ["true", "1", "yes", "y"]  # chutils: ignore[ChutilsIntegrationRule]
+        from ..core import _file_handler_cache
+
+        # 1. Переменная окружения (высший приоритет)
+        # chutils: ignore[ChutilsIntegrationRule]
+        env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in [
+            "true",
+            "1",
+            "yes",
+            "y",
+        ]
+        if env_no_file:
+            return None
+
+        # 2. Проверка явного отключения файлового логирования
+        file_logging = params.get("file_logging")
+        if file_logging is None:
+            file_logging = params.get("enable_file_logging")
+        if file_logging is None:
+            no_file = params.get("no_file")
+            if no_file is not None:
+                no_file_val = (
+                    no_file.lower() in ["true", "1", "yes", "y"]
+                    if isinstance(no_file, str)
+                    else bool(no_file)
+                )
+                file_logging = not no_file_val
+
+        if file_logging is not None:
+            file_logging_val = (
+                file_logging.lower() in ["true", "1", "yes", "y"]
+                if isinstance(file_logging, str)
+                else bool(file_logging)
+            )
+            if not file_logging_val:
+                return None
+
+        # 3. Имя файла лога
+        filename = (
+            params.get("log_file_name")
+            if params.get("log_file_name") is not None
+            else self.settings.get("log_file_name", "app.log")
+        )
+        if not filename:
+            return None
+
+        # 4. Директория логов
         log_dir = get_log_dir()
-
-        filename = params.get('log_file_name') or self.settings.get('log_file_name', 'app.log')
-
-        if env_no_file or not log_dir or not filename:
+        if not log_dir:
             # Предотвращаем спам варнингом
             if not core._initialization_message_shown:
-                self.logger.warning("Директория для логов не настроена. Файловое логирование отключено.")
+                self.logger.warning(
+                    "Директория для логов не настроена. Файловое логирование отключено."
+                )
                 core._initialization_message_shown = True
             return None
 
-        log_path = Path(filename) if Path(filename).is_absolute() else Path(log_dir) / filename
+        log_path = (
+            Path(filename) if Path(filename).is_absolute() else Path(log_dir) / filename
+        )
         path_str = str(log_path)
 
         if path_str in _file_handler_cache:
@@ -334,77 +427,114 @@ class LoggerBuilder:
             core._initialization_message_shown = True
             return handler
         except Exception as e:
-            self.logger.error("Не удалось настроить файловый обработчик логов для %s: %s", path_str, e)
+            self.logger.error(
+                "Не удалось настроить файловый обработчик логов для %s: %s", path_str, e
+            )
             return None
 
-    def _instantiate_file_handler(self, path: str, **params: Any) -> logging.FileHandler:
+    def _instantiate_file_handler(
+        self, path: str, **params: Any
+    ) -> logging.FileHandler:
         """Инстанцирует конкретный класс файлового обработчика с параметрами ротации."""
-        rtype = params.get('rotation_type') or self.settings.get('rotation_type', 'time')
+        rtype = params.get("rotation_type") or self.settings.get(
+            "rotation_type", "time"
+        )
 
         # Собираем базовые параметры
-        backup_count = int(params.get('backup_count') or self.settings.get('log_backup_count', 3))
-        encoding = params.get('encoding') or self.settings.get('encoding', 'utf-8')
+        backup_count = int(
+            params.get("backup_count") or self.settings.get("log_backup_count", 3)
+        )
+        encoding = params.get("encoding") or self.settings.get("encoding", "utf-8")
 
         # Сжатие
-        compress = params.get('compress')
+        compress = params.get("compress")
         if compress is None:
-            cval = self.settings.get('compress', False)
-            compress = cval.lower() in ['true', '1'] if isinstance(cval, str) else bool(cval)
+            cval = self.settings.get("compress", False)
+            compress = (
+                cval.lower() in ["true", "1"] if isinstance(cval, str) else bool(cval)
+            )
 
         h_class: type[logging.FileHandler]
-        if rtype == 'size':
-            max_bytes = int(params.get('max_bytes') or self.settings.get('max_bytes', 5 * 1024 * 1024))
-            h_class = CompressingRotatingFileHandler if compress else logging.handlers.RotatingFileHandler
-            return h_class(path, maxBytes=max_bytes, backupCount=backup_count, encoding=encoding, **self.kwargs)
+        if rtype == "size":
+            max_bytes = int(
+                params.get("max_bytes")
+                or self.settings.get("max_bytes", 5 * 1024 * 1024)
+            )
+            h_class = (
+                CompressingRotatingFileHandler
+                if compress
+                else logging.handlers.RotatingFileHandler
+            )
+            return h_class(
+                path,
+                maxBytes=max_bytes,
+                backupCount=backup_count,
+                encoding=encoding,
+                **self.kwargs,
+            )
 
         # Ротация по времени
-        when = params.get('when') or self.settings.get('when', 'D')
-        interval = int(params.get('interval') or self.settings.get('interval', 1))
-        utc = params.get('utc')
+        when = params.get("when") or self.settings.get("when", "D")
+        interval = int(params.get("interval") or self.settings.get("interval", 1))
+        utc = params.get("utc")
         if utc is None:
-            uval = self.settings.get('utc', False)
-            utc = uval.lower() in ['true', '1'] if isinstance(uval, str) else bool(uval)
+            uval = self.settings.get("utc", False)
+            utc = uval.lower() in ["true", "1"] if isinstance(uval, str) else bool(uval)
 
-        at_time = params.get('at_time')
+        at_time = params.get("at_time")
         if isinstance(at_time, str):
             try:
                 at_time = datetime.time.fromisoformat(at_time)
             except (TypeError, ValueError):
                 self.logger.error(
                     "Неверный формат времени '%s' для 'at_time' в конфиге. Используется None.",
-                    at_time
+                    at_time,
                 )
                 at_time = None
 
-        h_class = CompressingTimedRotatingFileHandler if compress else SafeTimedRotatingFileHandler
+        h_class = (
+            CompressingTimedRotatingFileHandler
+            if compress
+            else SafeTimedRotatingFileHandler
+        )
         h_args: dict[str, Any] = {
-            'when': when,
-            'interval': interval,
-            'backupCount': backup_count,
-            'encoding': encoding,
-            'utc': utc
+            "when": when,
+            "interval": interval,
+            "backupCount": backup_count,
+            "encoding": encoding,
+            "utc": utc,
         }
         if at_time:
-            h_args['atTime'] = at_time
+            h_args["atTime"] = at_time
 
         return h_class(path, **h_args, **self.kwargs)
 
-    def _apply_async_logging(self, handlers: list[logging.Handler], **params: Any) -> None:
+    def _apply_async_logging(
+        self, handlers: list[logging.Handler], **params: Any
+    ) -> None:
         """Настраивает асинхронную обработку логов через очередь."""
-        max_size = int(params.get('async_max_queue_size') or self.settings.get('async_max_queue_size', 10000))
+        max_size = int(
+            params.get("async_max_queue_size")
+            or self.settings.get("async_max_queue_size", 10000)
+        )
         log_queue: queue.Queue[logging.LogRecord] = queue.Queue(max_size)
 
         self.logger.addHandler(logging.handlers.QueueHandler(log_queue))
 
-        listener = logging.handlers.QueueListener(log_queue, *handlers, respect_handler_level=True)
+        listener = logging.handlers.QueueListener(
+            log_queue, *handlers, respect_handler_level=True
+        )
         listener.start()
         register_async_listener(listener)
 
-    def _apply_masking(self, custom_patterns_arg: list[str] | None,
-                       use_predefined_arg: list[str | list[str]] | None) -> None:
+    def _apply_masking(
+        self,
+        custom_patterns_arg: list[str] | None,
+        use_predefined_arg: list[str | list[str]] | None,
+    ) -> None:
         """Настраивает правила маскирования данных (секреты, регулярки, PII)."""
         # 1. Литеральные строки из конфига (старое поведение)
-        mask_patterns = self.settings.get('mask_patterns', [])
+        mask_patterns = self.settings.get("mask_patterns", [])
         if isinstance(mask_patterns, list):
             for pattern in mask_patterns:
                 if not pattern:
@@ -416,13 +546,15 @@ class LoggerBuilder:
                     _GLOBAL_MASKS.add(pattern)
 
         # 2. Кастомные регулярные выражения (из аргументов и конфига)
-        all_custom: list[str] = (custom_patterns_arg or []) + list(self.settings.get('custom_mask_patterns', []))
+        all_custom: list[str] = (custom_patterns_arg or []) + list(
+            self.settings.get("custom_mask_patterns", [])
+        )
         for p in all_custom:
             if isinstance(p, str) and p:
                 _CUSTOM_PATTERNS.add(p)
 
         # 3. Предустановленные паттерны (PII)
-        config_predefined = self.settings.get('use_predefined_masking', [])
+        config_predefined = self.settings.get("use_predefined_masking", [])
         all_predefined: list[Any] = (use_predefined_arg or []) + list(config_predefined)
 
         for item in all_predefined:

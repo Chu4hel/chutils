@@ -5,7 +5,6 @@ from chutils.env import has_pydantic
 if has_pydantic():
     from pydantic import BaseModel
 
-
     class CheckResult(BaseModel):
         """Результат выполнения проверки диагностики.
 
@@ -17,13 +16,13 @@ if has_pydantic():
             error: Текст ошибки, если проверка завершилась неудачно.
             message: Дополнительное информационное сообщение.
         """
+
         name: str
         success: bool
         critical: bool
         execution_time: float
         error: str | None = None
         message: str | None = None
-
 
     class HealthReport(BaseModel):
         """Отчет о состоянии работоспособности (Health Check) системы.
@@ -33,10 +32,12 @@ if has_pydantic():
             results: Список результатов проверок.
             total_time: Общее время выполнения всех проверок в секундах.
         """
+
         status: str  # HEALTHY, DEGRADED, UNHEALTHY
         results: list[CheckResult]
         total_time: float
 else:
+
     @dataclass
     class CheckResult:  # type: ignore[no-redef]
         """Результат выполнения проверки диагностики (вариант без Pydantic).
@@ -49,6 +50,7 @@ else:
             error: Текст ошибки, если проверка завершилась неудачно.
             message: Дополнительное информационное сообщение.
         """
+
         name: str
         success: bool
         critical: bool
@@ -71,7 +73,6 @@ else:
                 "message": self.message,
             }
 
-
     @dataclass
     class HealthReport:  # type: ignore[no-redef]
         """Отчет о состоянии работоспособности системы (вариант без Pydantic).
@@ -81,11 +82,14 @@ else:
             results: Список результатов проверок.
             total_time: Общее время выполнения всех проверок в секундах.
         """
+
         status: str
         results: list[CheckResult]
         total_time: float
 
-        def model_dump(self) -> dict[str, str | list[dict[str, str | bool | float | None]] | float]:
+        def model_dump(
+            self,
+        ) -> dict[str, str | list[dict[str, str | bool | float | None]] | float]:
             """Преобразует отчет в словарь.
 
             Returns:

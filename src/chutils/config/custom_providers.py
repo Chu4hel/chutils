@@ -152,7 +152,7 @@ class _ProviderEntry:
         priority: Приоритет (меньше → выше).
     """
 
-    __slots__ = ("provider", "priority")
+    __slots__ = ("priority", "provider")
 
     def __init__(self, provider: BaseConfigProvider, priority: int) -> None:
         self.provider = provider
@@ -171,6 +171,7 @@ class _CustomProviderRegistry:
 
     def __init__(self) -> None:
         import threading
+
         self._lock = threading.RLock()
         self._entries: list[_ProviderEntry] = []
 

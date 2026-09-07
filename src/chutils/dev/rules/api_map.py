@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from ..ai_lint import Rule, LintResult
+from ..ai_lint import LintResult, Rule
 from ..project_metadata import calculate_project_hash
 
 
@@ -14,8 +14,11 @@ class APIMapRule(Rule):
     """
     Правило валидации карты API (api_map.md) для соответствия текущему экспорту.
     """
+
     name = "APIMapRule"
-    description = "Сверяет api_map.md с реальным кодом (актуально для библиотеки chutils)."
+    description = (
+        "Сверяет api_map.md с реальным кодом (актуально для библиотеки chutils)."
+    )
     severity = "error"
 
     def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
@@ -37,9 +40,8 @@ class APIMapRule(Rule):
 
         # Если включен режим staged, проверяем, изменились ли Python-файлы.
         # Если изменений нет, пропускаем проверку.
-        if getattr(self, "staged", False):
-            if not any(f.endswith(".py") for f in files):
-                return results
+        if getattr(self, "staged", False) and not any(f.endswith(".py") for f in files):
+            return results
 
         targets = []
         cache_path = base_path / ".chutils" / "context_metadata.json"
@@ -64,8 +66,11 @@ class APIMapRule(Rule):
                 pass
 
         if not targets:
-            for fname, fmt in [("api_map.md", "markdown"), ("project_index.json", "tree"),
-                               ("project_tree.json", "tree")]:
+            for fname, fmt in [
+                ("api_map.md", "markdown"),
+                ("project_index.json", "tree"),
+                ("project_tree.json", "tree"),
+            ]:
                 p = base_path / fname
                 if p.exists():
                     targets.append((p, fmt))
@@ -77,7 +82,7 @@ class APIMapRule(Rule):
                     message="В корне проекта chutils отсутствует файл api_map.md.",
                     severity=self.severity,
                     file_path=str(api_map_path),
-                    fix_suggestion="Сгенерируйте карту API: chutils dev generate-context -o api_map.md"
+                    fix_suggestion="Сгенерируйте карту API: chutils dev generate-context -o api_map.md",
                 )
             )
             return results
@@ -85,7 +90,7 @@ class APIMapRule(Rule):
         try:
             import chutils
 
-            public_attrs = [attr for attr in dir(chutils) if not attr.startswith('_')]
+            public_attrs = [attr for attr in dir(chutils) if not attr.startswith("_")]
             api_data: list[dict[str, Any]] = []
 
             for attr_name in public_attrs:
@@ -95,12 +100,16 @@ class APIMapRule(Rule):
                     signature = ""
                     doc = inspect.getdoc(obj) or ""
 
-                    if not inspect.isclass(obj) and not inspect.isfunction(obj) and not inspect.ismodule(obj):
-                        if isinstance(obj, (bool, int, float, str, type(None))):
-                            if doc == inspect.getdoc(type(obj)):
-                                doc = ""
+                    if (
+                        not inspect.isclass(obj)
+                        and not inspect.isfunction(obj)
+                        and not inspect.ismodule(obj)
+                        and isinstance(obj, (bool, int, float, str, type(None)))
+                        and doc == inspect.getdoc(type(obj))
+                    ):
+                        doc = ""
 
-                    summary = doc.split('\n')[0] if doc else ""
+                    summary = doc.split("\n")[0] if doc else ""
 
                     if inspect.isfunction(obj):
                         obj_type = "function"
@@ -121,14 +130,16 @@ class APIMapRule(Rule):
                     else:
                         obj_type = "constant"
 
-                    signature = re.sub(r' at 0x[0-9a-fA-F]+', '', signature)
+                    signature = re.sub(r" at 0x[0-9a-fA-F]+", "", signature)
 
-                    api_data.append({
-                        "name": attr_name,
-                        "type": obj_type,
-                        "signature": signature,
-                        "summary": summary
-                    })
+                    api_data.append(
+                        {
+                            "name": attr_name,
+                            "type": obj_type,
+                            "signature": signature,
+                            "summary": summary,
+                        }
+                    )
                 except Exception:
                     pass
 
@@ -143,7 +154,7 @@ class APIMapRule(Rule):
                                 message=f"Файл контекста не найден: {target_file_path.name}",
                                 severity=self.severity,
                                 file_path=str(target_file_path),
-                                fix_suggestion=f"Сгенерируйте контекст: chutils dev generate-context -o {target_file_path.name}"
+                                fix_suggestion=f"Сгенерируйте контекст: chutils dev generate-context -o {target_file_path.name}",
                             )
                         )
                     continue
@@ -160,7 +171,9 @@ class APIMapRule(Rule):
 
                         sig_escaped = sig.replace("|", "\\|")
                         summary_escaped = item["summary"].replace("|", "\\|")
-                        summary_escaped = summary_escaped.replace("\n", " ").replace("\r", "")
+                        summary_escaped = summary_escaped.replace("\n", " ").replace(
+                            "\r", ""
+                        )
 
                         rows.append([name, obj_type, sig_escaped, summary_escaped])
 
@@ -171,18 +184,30 @@ class APIMapRule(Rule):
                             max_len = max(max_len, len(row[i]))
                         col_widths.append(max_len)
 
-                    header_line = "|" + "".join(f" {headers[i].ljust(col_widths[i])} |" for i in range(len(headers)))
-                    align_line = "|" + "|".join(f":{'-' * (col_widths[i] + 1)}" for i in range(len(headers))) + "|"
+                    header_line = "|" + "".join(
+                        f" {headers[i].ljust(col_widths[i])} |"
+                        for i in range(len(headers))
+                    )
+                    align_line = (
+                        "|"
+                        + "|".join(
+                            f":{'-' * (col_widths[i] + 1)}" for i in range(len(headers))
+                        )
+                        + "|"
+                    )
 
                     expected_content += header_line + "\n" + align_line + "\n"
                     for row in rows:
-                        row_line = "|" + "".join(f" {row[i].ljust(col_widths[i])} |" for i in range(len(headers)))
+                        row_line = "|" + "".join(
+                            f" {row[i].ljust(col_widths[i])} |"
+                            for i in range(len(headers))
+                        )
                         expected_content += row_line + "\n"
 
                     try:
                         with open(target_file_path, encoding="utf-8") as f:
                             actual_content = f.read()
-                    except Exception:
+                    except (OSError, UnicodeDecodeError):
                         continue
 
                     actual_compare = actual_content.strip()
@@ -198,34 +223,42 @@ class APIMapRule(Rule):
                                 message=f"Файл {target_file_path.name} устарел или не соответствует экспортируемому API chutils.",
                                 severity=self.severity,
                                 file_path=str(target_file_path),
-                                fix_suggestion=f"Обновите карту API: chutils dev generate-context -o {target_file_path.name}"
+                                fix_suggestion=f"Обновите карту API: chutils dev generate-context -o {target_file_path.name}",
                             )
                         )
                 elif target_format == "json":
                     try:
                         with open(target_file_path, encoding="utf-8") as f:
                             actual_data = json.load(f)
-                    except Exception:
+                    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
                         continue
 
-                    actual_api = actual_data.get("api", []) if isinstance(actual_data, dict) else actual_data
+                    actual_api = (
+                        actual_data.get("api", [])
+                        if isinstance(actual_data, dict)
+                        else actual_data
+                    )
                     expected_api = []
                     for item in api_data:
-                        expected_api.append({
-                            "name": item["name"],
-                            "type": item["type"],
-                            "signature": item["signature"],
-                            "summary": item["summary"]
-                        })
+                        expected_api.append(
+                            {
+                                "name": item["name"],
+                                "type": item["type"],
+                                "signature": item["signature"],
+                                "summary": item["summary"],
+                            }
+                        )
 
                     mismatch = False
                     if len(actual_api) != len(expected_api):
                         mismatch = True
                     else:
                         for a, e in zip(actual_api, expected_api):
-                            if (a.get("name") != e["name"] or
-                                    a.get("type") != e["type"] or
-                                    a.get("signature") != e["signature"]):
+                            if (
+                                a.get("name") != e["name"]
+                                or a.get("type") != e["type"]
+                                or a.get("signature") != e["signature"]
+                            ):
                                 mismatch = True
                                 break
 
@@ -236,16 +269,17 @@ class APIMapRule(Rule):
                                 message=f"Файл контекста ({target_file_path.name}) устарел или не соответствует текущему экспорту API.",
                                 severity=self.severity,
                                 file_path=str(target_file_path),
-                                fix_suggestion=f"Обновите контекст: chutils dev generate-context -f json -o {target_file_path.name}"
+                                fix_suggestion=f"Обновите контекст: chutils dev generate-context -f json -o {target_file_path.name}",
                             )
                         )
                 elif target_format == "tree":
                     try:
                         from chutils.dev.ast_indexer import Indexer
+
                         scan_path = base_path / "src" / "chutils"
                         indexer = Indexer(str(scan_path))
                         expected_index = indexer.index()
-                    except Exception:
+                    except (OSError, UnicodeDecodeError, SyntaxError, ValueError):
                         continue
 
                     with open(target_file_path, encoding="utf-8") as f:
@@ -253,11 +287,17 @@ class APIMapRule(Rule):
 
                     expected_dump = expected_index.model_dump()
                     mismatch = False
-                    if "root" not in actual_data or "dependency_graph" not in actual_data:
+                    if (
+                        "root" not in actual_data
+                        or "dependency_graph" not in actual_data
+                    ):
                         mismatch = True
                     else:
-                        if actual_data.get("root") != expected_dump.get("root") or actual_data.get(
-                                "dependency_graph") != expected_dump.get("dependency_graph"):
+                        if actual_data.get("root") != expected_dump.get(
+                            "root"
+                        ) or actual_data.get("dependency_graph") != expected_dump.get(
+                            "dependency_graph"
+                        ):
                             mismatch = True
 
                     if mismatch:
@@ -267,7 +307,7 @@ class APIMapRule(Rule):
                                 message=f"Иерархический индекс ({target_file_path.name}) устарел или не соответствует структуре проекта.",
                                 severity=self.severity,
                                 file_path=str(target_file_path),
-                                fix_suggestion=f"Обновите индекс: chutils dev generate-context --tree -o {target_file_path.name}"
+                                fix_suggestion=f"Обновите индекс: chutils dev generate-context --tree -o {target_file_path.name}",
                             )
                         )
 
@@ -277,7 +317,7 @@ class APIMapRule(Rule):
                     rule_name=self.name,
                     message=f"Ошибка проверки: {e}",
                     severity=self.severity,
-                    file_path=str(base_path)
+                    file_path=str(base_path),
                 )
             )
         return results
@@ -287,8 +327,11 @@ class APIMapHashRule(Rule):
     """
     Правило валидации хэша проекта по карте API.
     """
+
     name = "APIMapHashRule"
-    description = "Сверяет текущий SHA-256 хэш проекта с хэшем, записанным в api_map.md."
+    description = (
+        "Сверяет текущий SHA-256 хэш проекта с хэшем, записанным в api_map.md."
+    )
     severity = "warn"
 
     def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
@@ -309,9 +352,8 @@ class APIMapHashRule(Rule):
 
         # Если включен режим staged, проверяем, изменились ли Python-файлы.
         # Если изменений нет, пропускаем проверку.
-        if getattr(self, "staged", False):
-            if not any(f.endswith(".py") for f in files):
-                return results
+        if getattr(self, "staged", False) and not any(f.endswith(".py") for f in files):
+            return results
 
         targets = []
         cache_path = base_path / ".chutils" / "context_metadata.json"
@@ -338,8 +380,11 @@ class APIMapHashRule(Rule):
                 pass
 
         if not targets:
-            for fname, fmt in [("api_map.md", "markdown"), ("project_index.json", "tree"),
-                               ("project_tree.json", "tree")]:
+            for fname, fmt in [
+                ("api_map.md", "markdown"),
+                ("project_index.json", "tree"),
+                ("project_tree.json", "tree"),
+            ]:
                 p = base_path / fname
                 if p.exists():
                     targets.append((p, fmt, None))
@@ -358,7 +403,7 @@ class APIMapHashRule(Rule):
                             message=f"Файл контекста не найден: {target_file_path.name}",
                             severity=self.severity,
                             file_path=str(target_file_path),
-                            fix_suggestion=f"Сгенерируйте контекст: chutils dev generate-context -o {target_file_path.name}"
+                            fix_suggestion=f"Сгенерируйте контекст: chutils dev generate-context -o {target_file_path.name}",
                         )
                     )
                 continue
@@ -368,7 +413,7 @@ class APIMapHashRule(Rule):
                 try:
                     with open(target_file_path, encoding="utf-8") as f:
                         content = f.read()
-                except Exception:
+                except (OSError, UnicodeDecodeError):
                     continue
 
                 # Парсим Frontmatter
@@ -380,7 +425,7 @@ class APIMapHashRule(Rule):
                             message=f"В {target_file_path.name} отсутствует блок метаданных (YAML Frontmatter).",
                             severity=self.severity,
                             file_path=str(target_file_path),
-                            fix_suggestion=f"Перегенерируйте карту API: chutils dev generate-context -o {target_file_path.name}"
+                            fix_suggestion=f"Перегенерируйте карту API: chutils dev generate-context -o {target_file_path.name}",
                         )
                     )
                     continue
@@ -400,7 +445,7 @@ class APIMapHashRule(Rule):
                             message=f"Блок метаданных (YAML Frontmatter) в {target_file_path.name} не закрыт.",
                             severity=self.severity,
                             file_path=str(target_file_path),
-                            fix_suggestion=f"Перегенерируйте карту API: chutils dev generate-context -o {target_file_path.name}"
+                            fix_suggestion=f"Перегенерируйте карту API: chutils dev generate-context -o {target_file_path.name}",
                         )
                     )
                     continue
@@ -431,13 +476,15 @@ class APIMapHashRule(Rule):
                         message=f"В метаданных {target_file_path.name} отсутствует хэш проекта (project_hash).",
                         severity=self.severity,
                         file_path=str(target_file_path),
-                        fix_suggestion=f"Перегенерируйте карту API: chutils dev generate-context -o {target_file_path.name}"
+                        fix_suggestion=f"Перегенерируйте карту API: chutils dev generate-context -o {target_file_path.name}",
                     )
                 )
                 continue
 
             if actual_hash != project_hash:
-                cmd_suggestion = f"chutils dev generate-context -o {target_file_path.name}"
+                cmd_suggestion = (
+                    f"chutils dev generate-context -o {target_file_path.name}"
+                )
                 if target_format == "tree":
                     cmd_suggestion = f"chutils dev generate-context --tree -o {target_file_path.name}"
                 elif target_format == "json":
@@ -449,7 +496,7 @@ class APIMapHashRule(Rule):
                         message=f"Файл контекста ({target_file_path.name}) устарел: хэш проекта изменился.",
                         severity=self.severity,
                         file_path=str(target_file_path),
-                        fix_suggestion=f"Обновите контекст: {cmd_suggestion}"
+                        fix_suggestion=f"Обновите контекст: {cmd_suggestion}",
                     )
                 )
 

@@ -6,7 +6,14 @@ import asyncio
 import sys
 
 from chutils.qt.asyncio import run_async_task
-from chutils.qt.shim import QApplication, QLabel, QPushButton, QVBoxLayout, QWidget, require_qt
+from chutils.qt.shim import (
+    QApplication,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+    require_qt,
+)
 
 
 async def fetch_data_async(item_id: int) -> str:

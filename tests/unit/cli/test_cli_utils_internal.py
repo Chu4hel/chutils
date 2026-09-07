@@ -17,6 +17,7 @@ def test_import_string_with_dot():
 def test_ensure_project_paths_in_sys_path(tmp_path, monkeypatch):
     """Проверяет авто-добавление cwd и cwd/src в sys.path."""
     import sys
+
     from chutils.commands.utils import ensure_project_paths_in_sys_path
 
     src_dir = tmp_path / "src"

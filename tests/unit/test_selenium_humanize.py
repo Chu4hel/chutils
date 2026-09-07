@@ -6,6 +6,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 from chutils.scraping.humanize.actions import (
+    click,
     move_mouse,
     scroll_to,
     type_text,
@@ -100,3 +101,34 @@ def test_type_text() -> None:
     driver.find_element.assert_called_once()
     element.click.assert_called_once()
     assert element.send_keys.call_count == 5
+
+
+def test_move_mouse_windmouse() -> None:
+    """Проверяет перемещение мыши Selenium с алгоритмом WindMouse."""
+    driver = MagicMock()
+    mock_action_chains = MagicMock()
+    mock_action_chains_class.ActionChains.return_value = mock_action_chains
+    mock_action_chains.move_by_offset.return_value = mock_action_chains
+
+    move_mouse(driver, x=200, y=250, start=(0, 0), algorithm="windmouse")
+
+    assert mock_action_chains_class.ActionChains.call_count > 5
+    assert mock_action_chains.move_by_offset.call_count > 5
+    assert mock_action_chains.perform.call_count > 5
+
+
+def test_click() -> None:
+    """Проверяет реалистичный клик мышью Selenium."""
+    driver = MagicMock()
+    mock_action_chains = MagicMock()
+    mock_action_chains_class.ActionChains.return_value = mock_action_chains
+    mock_action_chains.move_by_offset.return_value = mock_action_chains
+    mock_action_chains.click_and_hold.return_value = mock_action_chains
+    mock_action_chains.pause.return_value = mock_action_chains
+    mock_action_chains.release.return_value = mock_action_chains
+
+    click(driver, x=100, y=150)
+
+    assert mock_action_chains.click_and_hold.call_count == 1
+    assert mock_action_chains.pause.call_count == 1
+    assert mock_action_chains.release.call_count == 1

@@ -8,17 +8,22 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from chutils.exceptions import OptionalDependencyError
-import chutils.qt.shim as shim
+from chutils.qt import shim
 
 
 def test_qt_log_handler_without_qt() -> None:
     """Проверяет выбрасывание OptionalDependencyError при отсутствии Qt."""
-    err = OptionalDependencyError("Библиотека PyQt6 или PySide6 не установлена.", dependency="qt")
-    with patch.object(shim, "QT_BINDING", None), patch("chutils.qt.logging.require_qt", side_effect=err):
+    err = OptionalDependencyError(
+        "Библиотека PyQt6 или PySide6 не установлена.", dependency="qt"
+    )
+    with (
+        patch.object(shim, "QT_BINDING", None),
+        patch("chutils.qt.logging.require_qt", side_effect=err),
+    ):
         from chutils.qt.logging import QtLogHandler
+
         with pytest.raises(OptionalDependencyError):
             QtLogHandler()
-
 
 
 def test_qt_log_handler_emit() -> None:
@@ -27,8 +32,11 @@ def test_qt_log_handler_emit() -> None:
     with patch("chutils.qt.logging.require_qt"):
         with patch("chutils.qt.logging._QtLogEmitter", return_value=mock_emitter):
             from chutils.qt.logging import QtLogHandler
+
             handler = QtLogHandler()
-            record = logging.LogRecord("test", logging.INFO, "path", 10, "Hello Qt!", (), None)
+            record = logging.LogRecord(
+                "test", logging.INFO, "path", 10, "Hello Qt!", (), None
+            )
             handler.emit(record)
 
             mock_emitter.message_emitted.emit.assert_called_once()
@@ -41,9 +49,12 @@ def test_qt_log_handler_emit_error() -> None:
     with patch("chutils.qt.logging.require_qt"):
         with patch("chutils.qt.logging._QtLogEmitter", return_value=mock_emitter):
             from chutils.qt.logging import QtLogHandler
+
             handler = QtLogHandler()
             handler.handleError = MagicMock()
-            record = logging.LogRecord("test", logging.INFO, "path", 10, "Error record", (), None)
+            record = logging.LogRecord(
+                "test", logging.INFO, "path", 10, "Error record", (), None
+            )
             handler.emit(record)
             handler.handleError.assert_called_once_with(record)
 
@@ -57,6 +68,7 @@ def test_setup_qt_logging_callable_widget() -> None:
     with patch("chutils.qt.logging.require_qt"):
         with patch("chutils.qt.logging._QtLogEmitter", return_value=mock_emitter):
             from chutils.qt.logging import setup_qt_logging
+
             setup_qt_logging(widget=func, logger_name="callable_logger")
             callback = mock_emitter.message_emitted.connect.call_args[0][0]
             callback("test_msg", 20)
@@ -66,6 +78,7 @@ def test_setup_qt_logging_callable_widget() -> None:
 def test_setup_qt_logging_append_widget() -> None:
     """Проверяет привязку к виджету с методом append."""
     mock_emitter = MagicMock()
+
     class AppendWidget:
         def append(self, text: str) -> None:
             pass
@@ -75,6 +88,7 @@ def test_setup_qt_logging_append_widget() -> None:
     with patch("chutils.qt.logging.require_qt"):
         with patch("chutils.qt.logging._QtLogEmitter", return_value=mock_emitter):
             from chutils.qt.logging import setup_qt_logging
+
             setup_qt_logging(widget=widget, logger_name="append_logger")
             callback = mock_emitter.message_emitted.connect.call_args[0][0]
             callback("append_msg", 20)
@@ -84,6 +98,7 @@ def test_setup_qt_logging_append_widget() -> None:
 def test_setup_qt_logging_show_message_widget() -> None:
     """Проверяет привязку к виджету с методом showMessage."""
     mock_emitter = MagicMock()
+
     class StatusWidget:
         def showMessage(self, text: str) -> None:
             pass
@@ -93,6 +108,7 @@ def test_setup_qt_logging_show_message_widget() -> None:
     with patch("chutils.qt.logging.require_qt"):
         with patch("chutils.qt.logging._QtLogEmitter", return_value=mock_emitter):
             from chutils.qt.logging import setup_qt_logging
+
             setup_qt_logging(widget=widget, logger_name="show_msg_logger")
             callback = mock_emitter.message_emitted.connect.call_args[0][0]
             callback("status_msg", 20)
@@ -102,6 +118,7 @@ def test_setup_qt_logging_show_message_widget() -> None:
 def test_setup_qt_logging_set_text_widget() -> None:
     """Проверяет привязку к виджету с методом setText."""
     mock_emitter = MagicMock()
+
     class LabelWidget:
         def setText(self, text: str) -> None:
             pass
@@ -111,6 +128,7 @@ def test_setup_qt_logging_set_text_widget() -> None:
     with patch("chutils.qt.logging.require_qt"):
         with patch("chutils.qt.logging._QtLogEmitter", return_value=mock_emitter):
             from chutils.qt.logging import setup_qt_logging
+
             setup_qt_logging(widget=widget, logger_name="set_text_logger")
             callback = mock_emitter.message_emitted.connect.call_args[0][0]
             callback("label_msg", 20)

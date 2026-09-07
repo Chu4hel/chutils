@@ -1,13 +1,11 @@
-from typing import Any, Callable, ParamSpec, TypeVar
+from collections.abc import Callable
+from typing import Any, ParamSpec, TypeVar
 
 from pydantic import BaseModel
 
-P = ParamSpec("P")
-R = TypeVar("R")
-T = TypeVar("T", bound=BaseModel)
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
+_T = TypeVar("_T", bound=BaseModel)
 
-
-def validate_data(model: type[T], data: dict[str, Any] | str) -> T: ...
-
-
-def validate_call(func: Callable[P, R]) -> Callable[P, R]: ...
+def validate_data(model: type[_T], data: dict[str, Any] | str) -> _T: ...
+def validate_call(func: Callable[_P, _R]) -> Callable[_P, _R]: ...

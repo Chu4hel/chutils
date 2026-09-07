@@ -1,7 +1,11 @@
-import pytest
 from unittest.mock import AsyncMock
 
-from chutils.telegram.aiogram import TelegramThrottlingMiddleware, TelegramLoggingMiddleware
+import pytest
+
+from chutils.telegram.aiogram import (
+    TelegramLoggingMiddleware,
+    TelegramThrottlingMiddleware,
+)
 
 
 @pytest.mark.asyncio

@@ -11,7 +11,9 @@ def test_log_no_time_env_var(monkeypatch, capsys):
     monkeypatch.setenv("CH_NO_RICH", "1")
 
     # Принудительно перенастраиваем логгер
-    test_logger = chutils_logger_core.setup_logger("test_no_time", force_reconfigure=True)
+    test_logger = chutils_logger_core.setup_logger(
+        "test_no_time", force_reconfigure=True
+    )
     test_logger.info("Test message without time")
 
     captured = capsys.readouterr()
@@ -20,6 +22,7 @@ def test_log_no_time_env_var(monkeypatch, capsys):
     assert "Test message without time" in captured.err
     # Простейшая проверка: строка не должна начинаться с цифр года (20xx)
     import re
+
     # Регулярка для даты ГГГГ-ММ-ДД
     date_pattern = r"\d{4}-\d{2}-\d{2}"
     assert not re.search(date_pattern, captured.err)
@@ -34,9 +37,7 @@ def test_log_no_file_env_var(monkeypatch, tmp_path):
     chutils_logger_core._file_handler_cache.clear()
 
     test_logger = chutils_logger_core.setup_logger(
-        "test_no_file",
-        log_file_name=str(log_file),
-        force_reconfigure=True
+        "test_no_file", log_file_name=str(log_file), force_reconfigure=True
     )
     test_logger.info("This should not be in a file")
 
@@ -58,9 +59,7 @@ def test_env_vars_priority_over_params(monkeypatch, capsys, tmp_path):
 
     # Передаем параметры, которые должны быть проигнорированы
     test_logger = chutils_logger_core.setup_logger(
-        "test_priority",
-        log_file_name=str(log_file),
-        force_reconfigure=True
+        "test_priority", log_file_name=str(log_file), force_reconfigure=True
     )
     test_logger.info("Priority test message")
 
@@ -68,6 +67,7 @@ def test_env_vars_priority_over_params(monkeypatch, capsys, tmp_path):
 
     # 1. Нет времени
     import re
+
     date_pattern = r"\d{4}-\d{2}-\d{2}"
     assert not re.search(date_pattern, captured.err)
 

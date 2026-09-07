@@ -10,11 +10,11 @@ from pathlib import Path
 
 from chutils import (
     get_config_value,
+    on_config_change,
     save_config_value,
+    setup_logger,
     start_config_watcher,
     stop_config_watcher,
-    on_config_change,
-    setup_logger
 )
 
 # Настраиваем логгер для наглядности
@@ -35,7 +35,7 @@ def main() -> None:
 App:
   greeting: "Hello, World!"
 """
-    config_path.write_text(config_content, encoding='utf-8')
+    config_path.write_text(config_content, encoding="utf-8")
     logger.info("Создан временный файл config.yml")
 
     try:
@@ -48,10 +48,15 @@ App:
             start_config_watcher()
         except ImportError as e:
             logger.error(f"Ошибка: {e}")
-            logger.info("Для работы этого примера установите watchdog: pip install chutils[watch]")
+            logger.info(
+                "Для работы этого примера установите watchdog: pip install chutils[watch]"
+            )
             return
 
-        logger.info("Watcher запущен. Текущее приветствие: " + get_config_value("App", "greeting"))
+        logger.info(
+            "Watcher запущен. Текущее приветствие: "
+            + get_config_value("App", "greeting")
+        )
         logger.info("Попробуйте вручную изменить 'greeting' в файле config.yml...")
         logger.info("Или подождите 2 секунды, скрипт начнет автоматические тесты.")
 
@@ -75,7 +80,7 @@ App:
 App:
   greeting: "Hello from External Process!"
 """
-        config_path.write_text(updated_content, encoding='utf-8')
+        config_path.write_text(updated_content, encoding="utf-8")
 
         # Даем немного времени на обработку события (debounce 1.0 сек)
         time.sleep(2)

@@ -10,7 +10,7 @@ from pathlib import Path
 
 from chutils.exceptions import PathTraversalError
 from chutils.fs import resolve_safe_path
-from chutils.logger import setup_logger, LogLevel
+from chutils.logger import LogLevel, setup_logger
 
 # Настраиваем логгер для вывода результатов
 logger = setup_logger("safe_path_demo", log_level=LogLevel.INFO)
@@ -19,7 +19,7 @@ logger = setup_logger("safe_path_demo", log_level=LogLevel.INFO)
 def read_user_file(user_provided_path: str, base_directory: Path) -> str:
     """
     Безопасно считывает файл, переданный пользователем.
-    
+
     Использует `resolve_safe_path`, чтобы гарантировать, что пользователь
     не сможет выйти за пределы разрешенной директории (base_directory).
     """
@@ -39,7 +39,8 @@ def read_user_file(user_provided_path: str, base_directory: Path) -> str:
         logger.error(
             "Попытка Path Traversal! Пользователь запросил: '%s', "
             "попытка выхода за пределы базы: '%s'",
-            e.context.get("attempted_path"), e.context.get("base_path")
+            e.context.get("attempted_path"),
+            e.context.get("base_path"),
         )
         return f"[ОШИБКА БЕЗОПАСНОСТИ] Доступ запрещен: {e}"
 
@@ -51,7 +52,9 @@ def main() -> None:
 
     # Создаем тестовый файл внутри песочницы
     allowed_file = demo_base / "report.txt"
-    allowed_file.write_text("Конфиденциальные данные отчета: Успешные продажи 2026!", encoding="utf-8")
+    allowed_file.write_text(
+        "Конфиденциальные данные отчета: Успешные продажи 2026!", encoding="utf-8"
+    )
 
     # Создаем секретный файл ВНЕ песочницы (на уровень выше)
     secret_file = demo_base.parent / "super_secret.txt"

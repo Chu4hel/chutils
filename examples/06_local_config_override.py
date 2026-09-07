@@ -2,7 +2,7 @@
 Пример 6: Использование локальных переопределений конфигурации.
 
 Этот пример демонстрирует механизм 'config.yml' + 'config.local.yml'.
-Локальные файлы позволяют переопределять настройки (например, для разработки) 
+Локальные файлы позволяют переопределять настройки (например, для разработки)
 не меняя основной файл конфигурации, который находится в git.
 """
 
@@ -19,22 +19,28 @@ def setup_demo_files(root: Path) -> None:
     (root / "pyproject.toml").touch()  # Маркер корня проекта
 
     # Основной файл (то, что обычно лежит в репозитории)
-    (root / "config.yml").write_text("""
+    (root / "config.yml").write_text(
+        """
 App:
   name: ProductionApp
   version: 1.0
 Database:
   host: db.production.com
   port: 5432
-""", encoding='utf-8')
+""",
+        encoding="utf-8",
+    )
 
     # Локальный файл (то, что создается на машине разработчика)
-    (root / "config.local.yml").write_text("""
+    (root / "config.local.yml").write_text(
+        """
 App:
   version: 1.1-dev
 Database:
   host: localhost
-""", encoding='utf-8')
+""",
+        encoding="utf-8",
+    )
 
 
 def main() -> None:

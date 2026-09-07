@@ -281,4 +281,3 @@ def test_cache_tagging_dynamic():
     assert call_count == 3
     assert get_user_data(2) == {"id": 2, "data": "info"}
     assert call_count == 3  # user_2 остался в кэше
-

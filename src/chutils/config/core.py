@@ -1,24 +1,26 @@
 """
 Ядро системы конфигурации.
 
-Обеспечивает оркестрацию загрузки из разных источников (основной файл, 
+Обеспечивает оркестрацию загрузки из разных источников (основной файл,
 специфичный для окружения, локальный, переменные окружения) и сохранение значений.
 """
 
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures.thread  # noqa: F401
 import functools
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import os
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from chutils.exceptions import OptionalDependencyError
 from chutils.typing import JSONDict
+
 from . import utils
 from .manager import _cm
-from .providers import get_providers, HttpConfigProvider
+from .providers import HttpConfigProvider, get_providers
 
 if TYPE_CHECKING:
     from pydantic import BaseModel
@@ -36,11 +38,12 @@ _config_plugins_loaded = False
 
 def _ensure_config_plugins_loaded() -> None:
     """Лениво загружает плагины конфигурации и добавляет их в _PROVIDERS."""
-    global _PROVIDERS, _config_plugins_loaded
+    global _config_plugins_loaded
     if not _config_plugins_loaded:
         _config_plugins_loaded = True
         try:
-            from ..plugins import registry, ConfigProviderPlugin
+            from ..plugins import ConfigProviderPlugin, registry
+
             registry.discover_plugins("chutils.plugins.config")
             external_providers = registry.get_plugins_by_type(ConfigProviderPlugin)
             for provider in external_providers:
@@ -57,15 +60,16 @@ def _ensure_config_plugins_loaded() -> None:
                     ext_lower = ext.lower()
                     if ext_lower not in _PROVIDERS:
                         _PROVIDERS[ext_lower] = provider
-                        logger.debug("Зарегистрирован внешний ConfigProvider для расширения %s", ext_lower)
+                        logger.debug(
+                            "Зарегистрирован внешний ConfigProvider для расширения %s",
+                            ext_lower,
+                        )
         except Exception as e:
             logger.error("Ошибка при загрузке плагинов конфигурации: %s", str(e))
 
 
 def _enrich_config_data_with_pydantic_aliases(
-    config_data: JSONDict,
-    model: type[Any],
-    section_prefix: str = ""
+    config_data: JSONDict, model: type[Any], section_prefix: str = ""
 ) -> None:
     """
     Обогащает словарь конфигурации значениями из переменных окружения
@@ -79,7 +83,13 @@ def _enrich_config_data_with_pydantic_aliases(
     import os
     from typing import get_args, get_origin
 
-    disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
+    # chutils: ignore[ChutilsIntegrationRule]
+    disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in (
+        "true",
+        "1",
+        "yes",
+        "y",
+    )
 
     fields = getattr(model, "model_fields", None)
     if fields is None:
@@ -96,7 +106,9 @@ def _enrich_config_data_with_pydantic_aliases(
             if args:
                 annotation = args[0]
 
-        if isinstance(annotation, type) and (hasattr(annotation, "model_fields") or hasattr(annotation, "__fields__")):
+        if isinstance(annotation, type) and (
+            hasattr(annotation, "model_fields") or hasattr(annotation, "__fields__")
+        ):
             sec_dict = config_data.get(field_name)
             if not isinstance(sec_dict, dict):
                 for k, v in config_data.items():
@@ -107,8 +119,12 @@ def _enrich_config_data_with_pydantic_aliases(
                     sec_dict = {}
                     config_data[field_name] = sec_dict
 
-            new_prefix = f"{section_prefix}_{field_name}" if section_prefix else field_name
-            _enrich_config_data_with_pydantic_aliases(sec_dict, annotation, section_prefix=new_prefix)
+            new_prefix = (
+                f"{section_prefix}_{field_name}" if section_prefix else field_name
+            )
+            _enrich_config_data_with_pydantic_aliases(
+                sec_dict, annotation, section_prefix=new_prefix
+            )
             continue
 
         aliases: list[str] = [field_name]
@@ -131,7 +147,7 @@ def _enrich_config_data_with_pydantic_aliases(
             if alias in config_data:
                 found_key = alias
                 break
-            for k in config_data.keys():
+            for k in config_data:
                 if k.lower() == alias.lower():
                     found_key = k
                     break
@@ -149,8 +165,10 @@ def _enrich_config_data_with_pydantic_aliases(
 
                 env_val = None
                 for cand in candidates:
-                    if cand in os.environ and os.environ[cand] != "":  # chutils: ignore[ChutilsIntegrationRule]
-                        env_val = os.environ[cand]  # chutils: ignore[ChutilsIntegrationRule]
+                    # chutils: ignore[ChutilsIntegrationRule]
+                    if cand in os.environ and os.environ[cand] != "":
+                        # chutils: ignore[ChutilsIntegrationRule]
+                        env_val = os.environ[cand]
                         break
 
                 if env_val is not None:
@@ -160,12 +178,12 @@ def _enrich_config_data_with_pydantic_aliases(
 
 
 def get_config(
-        model: type[T] | None = None,
-        remote_url: str | None = None,
-        remote_auth: tuple[str, str] | None = None,
-        polling_interval: int | None = None,
-        sse_url: str | None = None,
-        sse_headers: dict[str, str] | None = None,
+    model: type[T] | None = None,
+    remote_url: str | None = None,
+    remote_auth: tuple[str, str] | None = None,
+    polling_interval: int | None = None,
+    sse_url: str | None = None,
+    sse_headers: dict[str, str] | None = None,
 ) -> JSONDict | T:
     """
     Загружает и объединяет конфигурацию из всех доступных источников.
@@ -254,7 +272,7 @@ def get_config(
                         url=remote_url,
                         username=username,
                         password=password,
-                        nest_func=utils._nest_ini_dict
+                        nest_func=utils._nest_ini_dict,
                     )
                     _cm.remote_provider = provider
 
@@ -266,55 +284,74 @@ def get_config(
                     _cm.record_trace_dict(remote_data, remote_url)
                     utils.deep_merge(config_data, remote_data)
                 except Exception as e:
-                    logger.error("Ошибка загрузки удаленной конфигурации с %s: %s", remote_url, e)
-
-            if sse_url:
-                if not _cm.sse_client or _cm.sse_client.url != sse_url:
-                    if _cm.sse_client:
-                        _cm.sse_client.stop()
-                    from .sse import SseConfigClient
-                    sse_client = SseConfigClient(
-                        url=sse_url,
-                        headers=sse_headers,
-                        on_reload=_cm.trigger_reload,
+                    logger.error(
+                        "Ошибка загрузки удаленной конфигурации с %s: %s", remote_url, e
                     )
-                    _cm.sse_client = sse_client
-                    sse_client.start()
+
+            if sse_url and (not _cm.sse_client or _cm.sse_client.url != sse_url):
+                if _cm.sse_client:
+                    _cm.sse_client.stop()
+                from .sse import SseConfigClient
+
+                sse_client = SseConfigClient(
+                    url=sse_url,
+                    headers=sse_headers,
+                    on_reload=_cm.trigger_reload,
+                )
+                _cm.sse_client = sse_client
+                sse_client.start()
 
             # 5. Переменные окружения (CH_SECTION_KEY)
-            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in ("true", "1", "yes", "y")  # chutils: ignore[ChutilsIntegrationRule]
+            # chutils: ignore[ChutilsIntegrationRule]
+            disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in (
+                "true",
+                "1",
+                "yes",
+                "y",
+            )
             if not disable_env_override:
                 env_overrides: JSONDict = {}
-                for env_key, env_value in os.environ.items():  # chutils: ignore[ChutilsIntegrationRule]
-                    if env_key.startswith("CH_") and env_key not in ("CH_ENV", "CH_DISABLE_ENV_OVERRIDE",
-                                                                     "CH_DISABLE_KEYRING_WARNING"):
+                # chutils: ignore[ChutilsIntegrationRule]
+                for env_key, env_value in os.environ.items():
+                    if env_key.startswith("CH_") and env_key not in (
+                        "CH_ENV",
+                        "CH_DISABLE_ENV_OVERRIDE",
+                        "CH_DISABLE_KEYRING_WARNING",
+                    ):
                         full_content = env_key[3:]
                         if not full_content:
                             continue
 
                         # Поиск подходящего разбиения на секцию и ключ
                         # Находим все индексы '_'
-                        indices = [i for i, char in enumerate(full_content) if char == '_']
+                        indices = [
+                            i for i, char in enumerate(full_content) if char == "_"
+                        ]
 
                         best_match = None
                         # Проверяем варианты от самого длинного имени секции к самому короткому
                         # (это позволяет корректно обрабатывать вложенность или длинные имена)
                         for idx in reversed(indices):
                             s_candidate = full_content[:idx]
-                            k_candidate = full_content[idx + 1:]
+                            k_candidate = full_content[idx + 1 :]
                             if not s_candidate or not k_candidate:
                                 continue
 
                             # Проверяем, есть ли такая секция (регистронезависимо)
-                            for existing_sec in config_data.keys():
+                            for existing_sec in config_data:
                                 if existing_sec.lower() == s_candidate.lower():
                                     # Нашли существующую секцию. Теперь поищем ключ в ней.
                                     actual_sec = existing_sec
                                     actual_key = k_candidate.lower()
 
                                     if isinstance(config_data[existing_sec], dict):
-                                        for existing_key in config_data[existing_sec].keys():
-                                            if existing_key.lower() == k_candidate.lower():
+                                        for existing_key in config_data[
+                                            existing_sec
+                                        ]:
+                                            if (
+                                                existing_key.lower()
+                                                == k_candidate.lower()
+                                            ):
                                                 actual_key = existing_key
                                                 break
 
@@ -328,9 +365,12 @@ def get_config(
                         else:
                             # Если совпадений с существующими секциями нет,
                             # используем стандартный сплит по первому '_'
-                            parts = full_content.split('_', 1)
+                            parts = full_content.split("_", 1)
                             if len(parts) == 2:
-                                actual_sec, actual_key = parts[0].lower(), parts[1].lower()
+                                actual_sec, actual_key = (
+                                    parts[0].lower(),
+                                    parts[1].lower(),
+                                )
                             else:
                                 continue
 
@@ -339,7 +379,8 @@ def get_config(
                         env_overrides[actual_sec][actual_key] = env_value
 
                 # Специфический ключ для secrets
-                secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")  # chutils: ignore[ChutilsIntegrationRule]
+                # chutils: ignore[ChutilsIntegrationRule]
+                secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")
                 if secrets_env is not None:
                     if "secrets" not in env_overrides:
                         env_overrides["secrets"] = {}
@@ -360,11 +401,12 @@ def get_config(
 
     if model is not None:
         from chutils.env import has_pydantic
+
         if not has_pydantic():
             raise OptionalDependencyError(
                 "Pydantic is required for configuration validation.",
                 dependency="pydantic",
-                hint="Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'."
+                hint="Install it with 'pip install chutils[pydantic]' or 'poetry add pydantic'.",
             )
         _enrich_config_data_with_pydantic_aliases(config_data, model)
         return model(**config_data)
@@ -394,16 +436,18 @@ async def aget_config(model: type[T] | None = None) -> JSONDict | T:
     """
     async with _get_config_async_lock():
         loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(None, functools.partial(get_config, model=model))
+        return await loop.run_in_executor(
+            None, functools.partial(get_config, model=model)
+        )
 
 
 def save_config_value(
-        section: str,
-        key: str,
-        value: Any,
-        cfg_file: str | None = None,
-        save_to_local: bool = False,
-        notify: bool = True
+    section: str,
+    key: str,
+    value: Any,
+    cfg_file: str | None = None,
+    save_to_local: bool = False,
+    notify: bool = True,
 ) -> bool:
     """
     Сохраняет или обновляет одно значение в файле конфигурации.
@@ -446,7 +490,9 @@ def save_config_value(
             path = main_path
 
     if path is None:
-        logger.error("Невозможно сохранить значение: путь к файлу конфигурации не определен.")
+        logger.error(
+            "Невозможно сохранить значение: путь к файлу конфигурации не определен."
+        )
         return False
 
     if not notify:
@@ -464,7 +510,9 @@ def save_config_value(
     try:
         success = provider.save(path, section, key, value)
         if success:
-            logger.debug("Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path)
+            logger.debug(
+                "Ключ '%s' в секции '[%s]' обновлен в файле %s", key, section, path
+            )
             # Сбрасываем кэш
             _cm.clear_cache()
             return True
@@ -475,12 +523,12 @@ def save_config_value(
 
 
 async def asave_config_value(
-        section: str,
-        key: str,
-        value: Any,
-        cfg_file: str | None = None,
-        save_to_local: bool = False,
-        notify: bool = True
+    section: str,
+    key: str,
+    value: Any,
+    cfg_file: str | None = None,
+    save_to_local: bool = False,
+    notify: bool = True,
 ) -> bool:
     """
     Асинхронно сохраняет одно значение в конфигурационном файле.
@@ -506,5 +554,7 @@ async def asave_config_value(
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(
             None,
-            functools.partial(save_config_value, section, key, value, cfg_file, save_to_local, notify)
+            functools.partial(
+                save_config_value, section, key, value, cfg_file, save_to_local, notify
+            ),
         )

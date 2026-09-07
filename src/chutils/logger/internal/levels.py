@@ -27,6 +27,7 @@ class LogLevel(str, Enum):
     """
     Перечисление для поддерживаемых уровней логирования.
     """
+
     DEVDEBUG = "DEVDEBUG"
     DEBUG = "DEBUG"
     MEDIUMDEBUG = "MEDIUMDEBUG"

@@ -7,6 +7,7 @@
 - FileBackend: запись JSONL, связывание хэшей, verify_integrity, tamper detection.
 - SqliteBackend: аналогично FileBackend через sqlite3.
 """
+
 from __future__ import annotations
 
 import json
@@ -16,10 +17,10 @@ from pathlib import Path
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Тесты исключений
 # ---------------------------------------------------------------------------
+
 
 class TestAuditExceptions:
     """Тесты исключений модуля audit."""
@@ -27,18 +28,21 @@ class TestAuditExceptions:
     def test_audit_error_is_chutils_exception(self) -> None:
         """AuditError наследует ChutilsException."""
         from chutils.exceptions import AuditError, ChutilsException
+
         err = AuditError("тест")
         assert isinstance(err, ChutilsException)
 
     def test_audit_integrity_error_is_audit_error(self) -> None:
         """AuditIntegrityError наследует AuditError."""
-        from chutils.exceptions import AuditIntegrityError, AuditError
+        from chutils.exceptions import AuditError, AuditIntegrityError
+
         err = AuditIntegrityError("нарушение", record_id="abc")
         assert isinstance(err, AuditError)
 
     def test_audit_integrity_error_stores_record_id(self) -> None:
         """AuditIntegrityError сохраняет record_id в context."""
         from chutils.exceptions import AuditIntegrityError
+
         err = AuditIntegrityError("нарушение", record_id="abc-123")
         assert err.context.get("record_id") == "abc-123"
 
@@ -47,11 +51,13 @@ class TestAuditExceptions:
 # Тесты схемы AuditEvent
 # ---------------------------------------------------------------------------
 
+
 class TestAuditEventSchema:
     """Тесты схемы AuditEvent."""
 
     def _make_event(self, **kwargs: object) -> object:
         from chutils.audit.schema import AuditEvent
+
         defaults = dict(
             actor="user_42",
             action="user.login",
@@ -63,12 +69,14 @@ class TestAuditEventSchema:
     def test_id_is_uuid_string(self) -> None:
         """id — строка UUID."""
         import uuid
+
         event = self._make_event()
         uuid.UUID(event.id)  # type: ignore[attr-defined]
 
     def test_timestamp_is_utc(self) -> None:
         """timestamp — datetime в UTC."""
         import datetime
+
         event = self._make_event()
         ts = event.timestamp  # type: ignore[attr-defined]
         assert isinstance(ts, datetime.datetime)
@@ -122,32 +130,43 @@ class TestAuditEventSchema:
     def test_hash_includes_prev_hash(self) -> None:
         """hash зависит от prev_hash — разные prev_hash дают разные hash."""
         from chutils.audit.schema import AuditEvent
+
         e1 = AuditEvent(actor="u", action="a", status="success", prev_hash="")
         e2 = AuditEvent(actor="u", action="a", status="success", prev_hash="x" * 64)
         assert e1.hash != e2.hash
 
     def test_hash_deterministic_for_same_data(self) -> None:
         """hash воспроизводим для одних и тех же данных."""
-        from chutils.audit.schema import AuditEvent
         import datetime
+
+        from chutils.audit.schema import AuditEvent
 
         fixed_ts = datetime.datetime(2025, 1, 1, 0, 0, 0, tzinfo=datetime.timezone.utc)
         fixed_id = "00000000-0000-0000-0000-000000000001"
         e1 = AuditEvent(
-            id=fixed_id, timestamp=fixed_ts,
-            actor="u", action="a", status="success",
-            prev_hash="abc", env={"hostname": "h", "pid": 1, "thread_name": "main"},
+            id=fixed_id,
+            timestamp=fixed_ts,
+            actor="u",
+            action="a",
+            status="success",
+            prev_hash="abc",
+            env={"hostname": "h", "pid": 1, "thread_name": "main"},
         )
         e2 = AuditEvent(
-            id=fixed_id, timestamp=fixed_ts,
-            actor="u", action="a", status="success",
-            prev_hash="abc", env={"hostname": "h", "pid": 1, "thread_name": "main"},
+            id=fixed_id,
+            timestamp=fixed_ts,
+            actor="u",
+            action="a",
+            status="success",
+            prev_hash="abc",
+            env={"hostname": "h", "pid": 1, "thread_name": "main"},
         )
         assert e1.hash == e2.hash
 
     def test_to_jsonl_roundtrip(self) -> None:
         """to_jsonl() → from_jsonl() восстанавливает исходный объект."""
         from chutils.audit.schema import AuditEvent
+
         event = AuditEvent(actor="u", action="a", status="success")
         line = event.to_jsonl()
         restored = AuditEvent.from_jsonl(line)
@@ -160,11 +179,13 @@ class TestAuditEventSchema:
 # Тесты FileBackend
 # ---------------------------------------------------------------------------
 
+
 class TestFileBackend:
     """Тесты FileBackend — JSONL-файл."""
 
     def _make_backend(self, tmp_path: Path) -> object:
         from chutils.audit.backends.file import FileBackend
+
         return FileBackend(tmp_path / "audit.jsonl")
 
     def test_append_creates_file(self, tmp_path: Path) -> None:
@@ -201,6 +222,7 @@ class TestFileBackend:
     def test_verify_integrity_detects_tamper(self, tmp_path: Path) -> None:
         """verify_integrity выбрасывает AuditIntegrityError при изменении записи."""
         from chutils.exceptions import AuditIntegrityError
+
         backend = self._make_backend(tmp_path)
         backend.log("action.1", "actor")  # type: ignore[attr-defined]
         backend.log("action.2", "actor")  # type: ignore[attr-defined]
@@ -261,11 +283,13 @@ class TestFileBackend:
 # Тесты SqliteBackend
 # ---------------------------------------------------------------------------
 
+
 class TestSqliteBackend:
     """Тесты SqliteBackend — хранение в SQLite через sqlite3."""
 
     def _make_backend(self, tmp_path: Path) -> object:
         from chutils.audit.backends.sqlite import SqliteBackend
+
         return SqliteBackend(tmp_path / "audit.db")
 
     def test_log_creates_table(self, tmp_path: Path) -> None:
@@ -273,7 +297,9 @@ class TestSqliteBackend:
         backend = self._make_backend(tmp_path)
         backend.log("login", "user_1")  # type: ignore[attr-defined]
         conn = sqlite3.connect(tmp_path / "audit.db")
-        cur = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='audit_log'")
+        cur = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='audit_log'"
+        )
         assert cur.fetchone() is not None
         conn.close()
 
@@ -292,7 +318,9 @@ class TestSqliteBackend:
         backend.log("a", "u")  # type: ignore[attr-defined]
         backend.log("b", "u")  # type: ignore[attr-defined]
         conn = sqlite3.connect(tmp_path / "audit.db")
-        rows = conn.execute("SELECT hash, prev_hash FROM audit_log ORDER BY rowid").fetchall()
+        rows = conn.execute(
+            "SELECT hash, prev_hash FROM audit_log ORDER BY rowid"
+        ).fetchall()
         assert rows[1][1] == rows[0][0]  # prev_hash[1] == hash[0]
         conn.close()
 
@@ -306,6 +334,7 @@ class TestSqliteBackend:
     def test_verify_integrity_detects_tamper(self, tmp_path: Path) -> None:
         """verify_integrity выбрасывает AuditIntegrityError при изменении записи."""
         from chutils.exceptions import AuditIntegrityError
+
         backend = self._make_backend(tmp_path)
         backend.log("x", "u")  # type: ignore[attr-defined]
         backend.log("y", "u")  # type: ignore[attr-defined]
@@ -328,6 +357,7 @@ class TestSqliteBackend:
 # Тесты ленивого импорта
 # ---------------------------------------------------------------------------
 
+
 def test_lazy_import_no_pydantic(monkeypatch: pytest.MonkeyPatch) -> None:
     """Тест проверки ленивого импорта при отсутствии Pydantic."""
     import sys
@@ -336,10 +366,14 @@ def test_lazy_import_no_pydantic(monkeypatch: pytest.MonkeyPatch) -> None:
     orig_pydantic = sys.modules.get("pydantic")
 
     to_delete = [
-        "chutils", "chutils.audit", "chutils.audit.schema",
-        "chutils.audit.backends", "chutils.audit.backends.file",
-        "chutils.audit.backends.sqlite", "chutils.audit.backends.postgres",
-        "chutils.audit.api"
+        "chutils",
+        "chutils.audit",
+        "chutils.audit.schema",
+        "chutils.audit.backends",
+        "chutils.audit.backends.file",
+        "chutils.audit.backends.sqlite",
+        "chutils.audit.backends.postgres",
+        "chutils.audit.api",
     ]
 
     try:

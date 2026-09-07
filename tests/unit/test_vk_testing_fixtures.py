@@ -1,8 +1,6 @@
-"""Тесты для pytest фикстур и моков chutils.vk.testing."""
+pytest_plugins = ["chutils.vk.testing.fixtures"]
 
-import pytest
-from chutils.vk.testing import MockVKApi, mock_vk_api_context
-from chutils.vk.testing.fixtures import mock_vk_api, vk_launch_params_factory
+from chutils.vk.testing import mock_vk_api_context
 from chutils.vkma import validate_vkma_launch_params
 
 

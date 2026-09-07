@@ -128,7 +128,14 @@ def test_captcha_solver_plugin_registration():
     class MyCaptchaSolver(CaptchaSolverPlugin):
         name = "my_custom_captcha"
 
-        def solve_recaptcha(self, sitekey: str, page_url: str, timeout: float = 120.0, poll_interval: float = 5.0, **kwargs) -> str:
+        def solve_recaptcha(
+            self,
+            sitekey: str,
+            page_url: str,
+            timeout: float = 120.0,
+            poll_interval: float = 5.0,
+            **kwargs,
+        ) -> str:
             return "mocked-g-recaptcha-response"
 
     solver = MyCaptchaSolver()
@@ -136,7 +143,10 @@ def test_captcha_solver_plugin_registration():
 
     found = get_captcha_solver_plugin("my_custom_captcha")
     assert found is solver
-    assert found.solve_recaptcha("sitekey", "http://example.com") == "mocked-g-recaptcha-response"
+    assert (
+        found.solve_recaptcha("sitekey", "http://example.com")
+        == "mocked-g-recaptcha-response"
+    )
 
 
 def test_task_queue_plugin_registration():

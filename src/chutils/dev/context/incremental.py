@@ -5,8 +5,6 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-from chutils.dev.models import ProjectIndex, Node
-
 
 def get_changed_files(project_root: Path) -> list[Path]:
     """Возвращает список измененных или новых Python файлов относительно Git.
@@ -36,12 +34,12 @@ def get_changed_files(project_root: Path) -> list[Path]:
             parts = line.split(maxsplit=1)
             if len(parts) < 2:
                 continue
-            status, path_str = parts[0], parts[1]
+            _status, path_str = parts[0], parts[1]
 
             if "->" in path_str:
                 path_str = path_str.split("->")[-1].strip()
 
-            path_str = path_str.strip('"\'')
+            path_str = path_str.strip("\"'")
             if path_str.endswith(".py"):
                 full_p = (project_root / path_str).resolve()
                 changed_files.add(full_p)
@@ -77,7 +75,9 @@ def update_tree_incrementally(
         return old_index_data
 
     # Создаем полный свежий индекс для извлечения узлов измененных файлов
-    indexer = indexer_class(str(project_root), custom_ignore=custom_ignore, use_gitignore=use_gitignore)
+    indexer = indexer_class(
+        str(project_root), custom_ignore=custom_ignore, use_gitignore=use_gitignore
+    )
     fresh_index = indexer.index()
     fresh_data = json.loads(fresh_index.model_dump_json())
 
@@ -88,7 +88,9 @@ def update_tree_incrementally(
     }
 
     # Вспомогательная функция обновления узла дерева
-    def replace_node_recursive(old_node: dict[str, Any], fresh_root: dict[str, Any]) -> dict[str, Any]:
+    def replace_node_recursive(
+        old_node: dict[str, Any], fresh_root: dict[str, Any]
+    ) -> dict[str, Any]:
         node_path = old_node.get("path", "")
         if node_path in changed_rel_paths:
             # Находим обновленный узел в свежем дереве
@@ -104,13 +106,19 @@ def update_tree_incrementally(
 
         return old_node
 
-    updated_root = replace_node_recursive(old_index_data.get("root", {}), fresh_data.get("root", {}))
+    updated_root = replace_node_recursive(
+        old_index_data.get("root", {}), fresh_data.get("root", {})
+    )
     old_index_data["root"] = updated_root
 
     # Обновляем метаданные хэша проекта
     if "metadata" in old_index_data and "metadata" in fresh_data:
-        old_index_data["metadata"]["project_hash"] = fresh_data["metadata"].get("project_hash", "")
-        old_index_data["metadata"]["generated_at"] = fresh_data["metadata"].get("generated_at", "")
+        old_index_data["metadata"]["project_hash"] = fresh_data["metadata"].get(
+            "project_hash", ""
+        )
+        old_index_data["metadata"]["generated_at"] = fresh_data["metadata"].get(
+            "generated_at", ""
+        )
 
     return old_index_data
 

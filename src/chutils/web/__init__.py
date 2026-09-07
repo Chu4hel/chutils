@@ -9,9 +9,9 @@ if not _HAS_HTTPX:
         "Модуль 'chutils.web' требует установленной библиотеки 'httpx'.\n"
         "Установите её с помощью команды: pip install chutils[web]",
         dependency="httpx",
-        hint="Выполните pip install chutils[web] или pip install httpx."
+        hint="Выполните pip install chutils[web] или pip install httpx.",
     )
 
-from .client import WebClient, AsyncWebClient  # noqa: E402
+from .client import AsyncWebClient, WebClient
 
-__all__ = ["WebClient", "AsyncWebClient"]
+__all__ = ["AsyncWebClient", "WebClient"]

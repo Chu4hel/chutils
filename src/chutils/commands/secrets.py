@@ -5,6 +5,7 @@ from typing import Any
 
 from chutils import config
 from chutils.secret_manager import SecretManager
+
 from .base import BaseCommand
 
 
@@ -129,8 +130,9 @@ class SecretsCommand(BaseCommand):
         Args:
             args: Объект Namespace с аргументами командной строки.
         """
-        from ..exceptions import CommandError, SecretError
         from chutils.secret_manager.providers import KEYRING_AVAILABLE
+
+        from ..exceptions import CommandError, SecretError
 
         if not KEYRING_AVAILABLE:
             raise CommandError(
@@ -162,8 +164,9 @@ class SecretsCommand(BaseCommand):
         Args:
             args: Объект Namespace с аргументами командной строки.
         """
-        from ..exceptions import CommandError, SecretError
         from chutils.secret_manager.providers import KEYRING_AVAILABLE
+
+        from ..exceptions import CommandError, SecretError
 
         if not KEYRING_AVAILABLE:
             raise CommandError(
@@ -195,8 +198,9 @@ class SecretsCommand(BaseCommand):
         Args:
             args: Объект Namespace с аргументами командной строки.
         """
-        from ..exceptions import CommandError, SecretError
         from chutils.secret_manager.providers import KEYRING_AVAILABLE
+
+        from ..exceptions import CommandError, SecretError
 
         if not KEYRING_AVAILABLE:
             raise CommandError(

@@ -6,9 +6,7 @@ def test_ai_lint_integration_with_real_rule(tmp_path) -> None:
     # 1. Создаем файл с нарушением правила SecurityHardcodeRule ( generic secret )
     target_file = tmp_path / "app_code.py"
     target_file.write_text(
-        "import os\n"
-        "api_key_secret = \"super_secret_value_12345\"\n",
-        encoding="utf-8"
+        'import os\napi_key_secret = "super_secret_value_12345"\n', encoding="utf-8"
     )
 
     # Инициализируем LinterEngine
@@ -28,8 +26,8 @@ def test_ai_lint_integration_with_real_rule(tmp_path) -> None:
     # 2. Добавляем инлайн-комментарий игнорирования
     target_file.write_text(
         "import os\n"
-        "api_key_secret = \"super_secret_value_12345\"  # chutils: ignore[SecurityHardcodeRule]\n",
-        encoding="utf-8"
+        'api_key_secret = "super_secret_value_12345"  # chutils: ignore[SecurityHardcodeRule]\n',
+        encoding="utf-8",
     )
 
     # Сбрасываем кэш
@@ -42,10 +40,6 @@ def test_ai_lint_integration_with_real_rule(tmp_path) -> None:
 def test_ai_lint_edge_cases() -> None:
     """Проверка крайних случаев (отсутствие файлов, некорректные строки)."""
     engine = LinterEngine({"base_dir": "."})
-
-    # 1. Результат без file_path и line_number (должен остаться без изменений)
-    r1 = LintResult(rule_name="RuleX", message="Msg X", severity="warn")
-    results = [r1]
 
     # Мокаем правила
     engine.rules = []

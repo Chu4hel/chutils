@@ -9,7 +9,9 @@ from chutils.exceptions import ChutilsException, PathTraversalError
 def test_cli_error_handler_with_hint(mocker, capsys):
     """Проверяет отображение подсказок в глобальном обработчике ошибок CLI."""
     # Мокаем команду, чтобы она кидала исключение с подсказкой
-    mock_handler = mocker.Mock(side_effect=ChutilsException("Something went wrong", hint="Check your settings"))
+    mock_handler = mocker.Mock(
+        side_effect=ChutilsException("Something went wrong", hint="Check your settings")
+    )
 
     # Создаем фиктивный парсер с нашим обработчиком
     mock_args = mocker.Mock()
@@ -17,7 +19,7 @@ def test_cli_error_handler_with_hint(mocker, capsys):
     mocker.patch("argparse.ArgumentParser.parse_args", return_value=mock_args)
 
     test_args = ["chutils", "any_command"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -26,17 +28,21 @@ def test_cli_error_handler_with_hint(mocker, capsys):
     captured = capsys.readouterr()
     assert "ОШИБКА: Something went wrong" in captured.err
     # Проверяем наличие подсказки (может быть в панели Rich или просто текстом)
-    assert "Check your settings" in captured.err or "Check your settings" in captured.out
+    assert (
+        "Check your settings" in captured.err or "Check your settings" in captured.out
+    )
 
 
 def test_cli_path_traversal_logging(mocker, capsys):
     """Проверяет специфичное логирование PathTraversalError в CLI."""
     # Мокаем команду
-    mock_handler = mocker.Mock(side_effect=PathTraversalError(
-        "Path Traversal detected",
-        attempted_path="../../etc/passwd",
-        base_path="/app"
-    ))
+    mock_handler = mocker.Mock(
+        side_effect=PathTraversalError(
+            "Path Traversal detected",
+            attempted_path="../../etc/passwd",
+            base_path="/app",
+        )
+    )
 
     mock_args = mocker.Mock()
     mock_args.handler = mock_handler
@@ -46,7 +52,7 @@ def test_cli_path_traversal_logging(mocker, capsys):
     mock_logger = mocker.patch("logging.getLogger")
 
     test_args = ["chutils", "any_command"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -68,8 +74,16 @@ def test_cli_secrets_set_parsing(mocker):
     mock_sm.return_value.save_secret.return_value = True
 
     # Эмулируем аргументы командной строки
-    test_args = ["chutils", "secrets", "set", "MY_KEY", "MY_VALUE", "--service", "test_app"]
-    mocker.patch.object(sys, 'argv', test_args)
+    test_args = [
+        "chutils",
+        "secrets",
+        "set",
+        "MY_KEY",
+        "MY_VALUE",
+        "--service",
+        "test_app",
+    ]
+    mocker.patch.object(sys, "argv", test_args)
 
     # ACT
     with pytest.raises(SystemExit) as e:
@@ -88,7 +102,7 @@ def test_cli_secrets_delete_parsing(mocker):
 
     # Эмулируем аргументы командной строки
     test_args = ["chutils", "secrets", "delete", "MY_KEY", "-s", "test_app"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     # ACT
     with pytest.raises(SystemExit) as e:
@@ -103,7 +117,7 @@ def test_cli_secrets_delete_parsing(mocker):
 def test_cli_help(mocker, capsys):
     """Проверяет вывод справки."""
     test_args = ["chutils", "--help"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -126,12 +140,18 @@ def test_cli_show_paths(mocker, capsys, monkeypatch):
     mocker.patch("chutils.config.are_paths_initialized", return_value=True)
     mocker.patch("chutils.config.get_base_dir", return_value="/abs/path/project")
     # Обновляем мок на новую функцию get_all_config_paths
-    mocker.patch("chutils.config.get_all_config_paths", return_value=("/abs/path/project/config.yml", None, None))
+    mocker.patch(
+        "chutils.config.get_all_config_paths",
+        return_value=("/abs/path/project/config.yml", None, None),
+    )
     # Для обратной совместимости мокаем и старую
-    mocker.patch("chutils.config.get_config_paths", return_value=("/abs/path/project/config.yml", None))
+    mocker.patch(
+        "chutils.config.get_config_paths",
+        return_value=("/abs/path/project/config.yml", None),
+    )
 
     test_args = ["chutils", "show-paths"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -147,11 +167,17 @@ def test_cli_show_paths_json(mocker, capsys):
     mocker.patch("chutils.config.are_paths_initialized", return_value=True)
     mocker.patch("chutils.config.get_base_dir", return_value="/abs/path/project")
     # Обновляем мок на новую функцию get_all_config_paths
-    mocker.patch("chutils.config.get_all_config_paths",
-                 return_value=("/abs/path/project/config.yml", None, "/abs/path/project/config.local.yml"))
+    mocker.patch(
+        "chutils.config.get_all_config_paths",
+        return_value=(
+            "/abs/path/project/config.yml",
+            None,
+            "/abs/path/project/config.local.yml",
+        ),
+    )
 
     test_args = ["chutils", "show-paths", "--json"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -159,6 +185,7 @@ def test_cli_show_paths_json(mocker, capsys):
     assert e.value.code == 0
     captured = capsys.readouterr()
     import json
+
     data = json.loads(captured.out)
     assert data["base_dir"] == "/abs/path/project"
     assert data["main_config"] == "/abs/path/project/config.yml"
@@ -170,7 +197,7 @@ def test_cli_init_non_interactive(mocker, capsys):
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
 
     test_args = ["chutils", "init", "-y"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -193,7 +220,7 @@ def test_cli_validate_success(mocker, capsys):
     mocker.patch("chutils.config.get_config", return_value={})
 
     test_args = ["chutils", "validate", "-m", "myapp.Settings"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()
@@ -212,13 +239,19 @@ def test_cli_validate_fail(mocker, capsys):
     mocker.patch("chutils.commands.validate._import_string", return_value=mock_model)
 
     # Эмулируем ошибку Pydantic
-    mocker.patch("chutils.config.get_config", side_effect=ValidationError.from_exception_data("Model", []))
+    mocker.patch(
+        "chutils.config.get_config",
+        side_effect=ValidationError.from_exception_data("Model", []),
+    )
     # Переопределим errors для простоты теста
-    mocker.patch.object(ValidationError, 'errors',
-                        return_value=[{'loc': ('Logging', 'level'), 'msg': 'field required'}])
+    mocker.patch.object(
+        ValidationError,
+        "errors",
+        return_value=[{"loc": ("Logging", "level"), "msg": "field required"}],
+    )
 
     test_args = ["chutils", "validate", "-m", "myapp.Settings"]
-    mocker.patch.object(sys, 'argv', test_args)
+    mocker.patch.object(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
         main()

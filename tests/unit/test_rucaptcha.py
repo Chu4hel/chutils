@@ -7,6 +7,7 @@ import pytest
 @pytest.fixture(autouse=True)
 def mock_httpx_installed(mocker) -> None:
     import importlib.util
+
     orig_find_spec = importlib.util.find_spec
 
     def custom_find_spec(name: str, package: str | None = None) -> Any:
@@ -86,8 +87,8 @@ async def test_async_rucaptcha_solve_recaptcha_success(mock_httpx_async_client) 
 
 def test_rucaptcha_raises_balance_error(mock_httpx_client) -> None:
     """Проверяет выброс CaptchaBalanceError при нулевом балансе."""
-    from chutils.scraping.captcha.rucaptcha import RuCaptchaSolver
     from chutils.scraping.captcha.exceptions import CaptchaBalanceError
+    from chutils.scraping.captcha.rucaptcha import RuCaptchaSolver
 
     response_in = MagicMock()
     response_in.json.return_value = {"status": 0, "request": "ERROR_ZERO_BALANCE"}
@@ -102,8 +103,8 @@ def test_rucaptcha_raises_balance_error(mock_httpx_client) -> None:
 
 def test_rucaptcha_raises_service_error(mock_httpx_client) -> None:
     """Проверяет выброс CaptchaServiceError при неверном ключе."""
-    from chutils.scraping.captcha.rucaptcha import RuCaptchaSolver
     from chutils.scraping.captcha.exceptions import CaptchaServiceError
+    from chutils.scraping.captcha.rucaptcha import RuCaptchaSolver
 
     response_in = MagicMock()
     response_in.json.return_value = {"status": 0, "request": "ERROR_WRONG_USER_KEY"}
@@ -113,5 +114,8 @@ def test_rucaptcha_raises_service_error(mock_httpx_client) -> None:
     with pytest.raises(CaptchaServiceError) as exc_info:
         solver.solve_image(image_data=b"dummy")
 
-    assert "пользователя" in str(exc_info.value) or "пользователь" in str(exc_info.value) or "ключ" in str(
-        exc_info.value)
+    assert (
+        "пользователя" in str(exc_info.value)
+        or "пользователь" in str(exc_info.value)
+        or "ключ" in str(exc_info.value)
+    )

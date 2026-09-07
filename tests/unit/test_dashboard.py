@@ -1,13 +1,15 @@
 """
 Юнит-тесты для интерактивного TUI-дашборда CLI-команд.
 """
+
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 from typing import Any, cast
-from rich.console import Console
 from unittest.mock import MagicMock
+
+from rich.console import Console
 
 from chutils.cli_utils import get_console
 from chutils.dev.dashboard.indexer import (
@@ -188,6 +190,7 @@ def test_tui_panels_rendering() -> None:
 
     # Создаем команду с аргументами (str и bool)
     from chutils.dev.dashboard.indexer import CLIArgument
+
     arg1 = CLIArgument("name", "str", None, "Имя")
     arg2 = CLIArgument("verbose", "bool", "True", "Логи")
     cmd = CLICommandInfo("ai_lint", "lint.py", "Анализатор ИИ", [arg1, arg2])
@@ -239,6 +242,7 @@ def test_tui_form_navigation() -> None:
     tui = DashboardTUI(console=cast(Console, console))
 
     from chutils.dev.dashboard.indexer import CLIArgument
+
     arg1 = CLIArgument("name", "str", None, "Имя")
     arg2 = CLIArgument("debug", "bool", "False", "Отладка")
     cmd = CLICommandInfo("test_cmd", "test.py", "Тест", [arg1, arg2])
@@ -397,5 +401,5 @@ def test_tui_run_loop(mocker: Any) -> None:
     mocker.patch("chutils.dev.dashboard.tui.InputReader", return_value=mock_reader)
 
     tui.run()
-    assert getattr(tui.discoverer.discover, "called")
+    assert tui.discoverer.discover.called
     assert mock_reader.get_key.called

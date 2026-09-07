@@ -8,19 +8,24 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from chutils.exceptions import OptionalDependencyError
-import chutils.qt.shim as shim
+from chutils.qt import shim
 
 
 def test_widgets_without_qt() -> None:
     """Проверяет выбрасывание OptionalDependencyError при отсутствии Qt."""
-    err = OptionalDependencyError("Библиотека PyQt6 или PySide6 не установлена.", dependency="qt")
-    with patch.object(shim, "QT_BINDING", None), patch("chutils.qt.widgets.require_qt", side_effect=err):
+    err = OptionalDependencyError(
+        "Библиотека PyQt6 или PySide6 не установлена.", dependency="qt"
+    )
+    with (
+        patch.object(shim, "QT_BINDING", None),
+        patch("chutils.qt.widgets.require_qt", side_effect=err),
+    ):
         from chutils.qt.widgets import BaseDialog, BaseMainWindow
+
         with pytest.raises(OptionalDependencyError):
             BaseMainWindow()
         with pytest.raises(OptionalDependencyError):
             BaseDialog()
-
 
 
 def test_base_main_window_lifecycle() -> None:
@@ -56,6 +61,7 @@ def test_base_main_window_lifecycle() -> None:
         patch.object(shim, "QtCore", mock_qtcore),
     ):
         import sys
+
         if "chutils.qt.shim" in sys.modules:
             sys.modules["chutils.qt.shim"].QT_BINDING = "PyQt6"
             sys.modules["chutils.qt.shim"].require_qt = lambda: None
@@ -63,7 +69,9 @@ def test_base_main_window_lifecycle() -> None:
             sys.modules["chutils.qt.shim"].QtCore = mock_qtcore
 
         import importlib
+
         import chutils.qt.widgets
+
         importlib.reload(chutils.qt.widgets)
         from chutils.qt.widgets import BaseMainWindow
 
@@ -83,6 +91,7 @@ def test_base_main_window_lifecycle() -> None:
 
 def test_base_dialog_lifecycle() -> None:
     """Проверяет логирование жизненного цикла BaseDialog."""
+
     class FakeDialog:
         def __init__(self, *args: Any, **kwargs: Any) -> None:
             pass
@@ -102,13 +111,16 @@ def test_base_dialog_lifecycle() -> None:
         patch.object(shim, "QtWidgets", mock_qtwidgets),
     ):
         import sys
+
         if "chutils.qt.shim" in sys.modules:
             sys.modules["chutils.qt.shim"].QT_BINDING = "PyQt6"
             sys.modules["chutils.qt.shim"].require_qt = lambda: None
             sys.modules["chutils.qt.shim"].QtWidgets = mock_qtwidgets
 
         import importlib
+
         import chutils.qt.widgets
+
         importlib.reload(chutils.qt.widgets)
         from chutils.qt.widgets import BaseDialog
 
@@ -118,10 +130,3 @@ def test_base_dialog_lifecycle() -> None:
         mock_event = MagicMock()
         dialog.showEvent(mock_event)
         dialog.closeEvent(mock_event)
-
-
-
-
-
-
-

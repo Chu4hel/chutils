@@ -2,14 +2,15 @@ from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
-from collections.abc import Callable
 
 from chutils.exceptions import OptionalDependencyError
+
+from .. import env
 from .manager import _cm
 from .utils import find_project_root
-from .. import env
 
 if TYPE_CHECKING:
     from watchdog.events import FileSystemEvent
@@ -29,8 +30,10 @@ def on_config_change(callback: Callable[[], None]) -> None:
         callback: Функция без аргументов.
     """
     if _cm.add_callback(callback):
-        logger.debug("Зарегистрирован коллбэк на изменение конфигурации: %s",
-                     getattr(callback, '__name__', str(callback)))
+        logger.debug(
+            "Зарегистрирован коллбэк на изменение конфигурации: %s",
+            getattr(callback, "__name__", str(callback)),
+        )
 
 
 class ConfigChangeHandler:
@@ -56,7 +59,11 @@ class ConfigChangeHandler:
             return
 
         # Проверяем, что изменен именно один из наших файлов конфигурации
-        event_src_path = event.src_path if isinstance(event.src_path, str) else event.src_path.decode('utf-8')
+        event_src_path = (
+            event.src_path
+            if isinstance(event.src_path, str)
+            else event.src_path.decode("utf-8")
+        )
         event_path = str(Path(event_src_path).absolute())
         if event_path in self.watched_files:
             self._on_modified()
@@ -84,7 +91,11 @@ class ConfigChangeHandler:
             try:
                 callback()
             except Exception as e:
-                logger.error("Ошибка при выполнении коллбэка %s: %s", getattr(callback, '__name__', str(callback)), e)
+                logger.error(
+                    "Ошибка при выполнении коллбэка %s: %s",
+                    getattr(callback, "__name__", str(callback)),
+                    e,
+                )
 
 
 def start_config_watcher() -> bool:
@@ -103,7 +114,7 @@ def start_config_watcher() -> bool:
         raise OptionalDependencyError(
             "Пакет 'watchdog' необходим для работы hot-reload.",
             dependency="watchdog",
-            hint="Установите его с помощью 'pip install chutils[watch]' или 'poetry add watchdog'."
+            hint="Установите его с помощью 'pip install chutils[watch]' или 'poetry add watchdog'.",
         )
 
     from watchdog.observers import Observer

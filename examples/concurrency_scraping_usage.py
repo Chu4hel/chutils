@@ -6,6 +6,7 @@
 """
 
 import asyncio
+
 from chutils.scraping.concurrency import (
     DomainRateLimiter,
     InMemoryTaskQueue,
@@ -19,8 +20,12 @@ async def main() -> None:
     queue = InMemoryTaskQueue()
 
     # Добавляем задачи с разным приоритетом и доменами
-    await queue.push(ScrapingTask(url="https://ru.wikipedia.org/wiki/Python", priority=5))
-    await queue.push(ScrapingTask(url="https://en.wikipedia.org/wiki/Asyncio", priority=10))
+    await queue.push(
+        ScrapingTask(url="https://ru.wikipedia.org/wiki/Python", priority=5)
+    )
+    await queue.push(
+        ScrapingTask(url="https://en.wikipedia.org/wiki/Asyncio", priority=10)
+    )
     await queue.push(ScrapingTask(url="https://example.com/api/data", priority=1))
 
     # 2. Настраиваем лимитер задержек по доменам
@@ -43,7 +48,9 @@ async def main() -> None:
     pool = WorkerPool(queue=queue, handler=process_task, limiter=limiter, max_workers=3)
     await pool.run_until_complete()
 
-    print(f"Все задачи завершены! Успешно: {pool.completed_count}, Ошибок: {pool.failed_count}")
+    print(
+        f"Все задачи завершены! Успешно: {pool.completed_count}, Ошибок: {pool.failed_count}"
+    )
 
 
 if __name__ == "__main__":

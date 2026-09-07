@@ -31,14 +31,16 @@ def main() -> None:
 
     logger.info("\n--- История изменения параметров (Текстовый отчет) ---")
     # Используем встроенную функцию форматирования (доступны форматы: tree, table, json)
-    report = format_trace(trace_data, format_type='tree')
+    report = format_trace(trace_data, format_type="tree")
     print(report)
 
     logger.info("\n--- Прямой доступ к метаданным ---")
     # Например, проверим откуда пришел порт базы данных
-    db_port_history = trace_data.get('database', {}).get('port', [])
+    db_port_history = trace_data.get("database", {}).get("port", [])
     for entry in db_port_history:
-        logger.info(f"Параметр 'database.port' был найден в '{entry['source']}' со значением '{entry['value']}'")
+        logger.info(
+            f"Параметр 'database.port' был найден в '{entry['source']}' со значением '{entry['value']}'"
+        )
 
 
 if __name__ == "__main__":

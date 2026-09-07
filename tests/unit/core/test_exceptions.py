@@ -2,17 +2,17 @@ import pytest
 
 from chutils.exceptions import (
     ChutilsException,
+    CommandError,
     ConfigError,
     ConfigLoadError,
     ConfigParseError,
+    LoggerConfigurationError,
+    OptionalDependencyError,
+    PathTraversalError,
     SecretError,
     SecretNotFoundError,
     SecretProviderError,
-    LoggerConfigurationError,
     WatcherInitializationError,
-    OptionalDependencyError,
-    CommandError,
-    PathTraversalError
 )
 
 
@@ -26,7 +26,7 @@ def test_chutils_exception_no_context():
 
 def test_chutils_exception_with_context():
     exc = ChutilsException("Test message", key="value", count=5)
-    # Порядок в словаре может варьироваться в старых версиях Python, 
+    # Порядок в словаре может варьироваться в старых версиях Python,
     # но в 3.13+ он стабилен. Однако лучше проверять вхождение.
     s = str(exc)
     assert "Test message" in s
@@ -58,7 +58,9 @@ def test_exception_hierarchy():
 
 
 def test_path_traversal_error():
-    exc = PathTraversalError("Danger", attempted_path="../../etc/passwd", base_path="/app")
+    exc = PathTraversalError(
+        "Danger", attempted_path="../../etc/passwd", base_path="/app"
+    )
     assert "Danger" in str(exc)
     assert "attempted_path='../../etc/passwd'" in str(exc)
     assert "base_path='/app'" in str(exc)

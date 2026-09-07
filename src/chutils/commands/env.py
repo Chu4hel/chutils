@@ -41,9 +41,10 @@ class EnvCommand(BaseCommand):
             description="Проверяет переменные окружения по декларативному манифесту.",
         )
         validate_parser.add_argument(
-            "-m", "--manifest",
+            "-m",
+            "--manifest",
             help="Строковый путь к манифесту (например, 'myapp.env:AppEnv'). "
-                 "Если не указан, пытается найти в конфигурационных файлах проекта."
+            "Если не указан, пытается найти в конфигурационных файлах проекта.",
         )
 
     def handle(self, args: argparse.Namespace) -> None:
@@ -67,14 +68,18 @@ class EnvCommand(BaseCommand):
         Args:
             args: Объект Namespace с аргументами.
         """
-        from chutils.exceptions import CommandError, OptionalDependencyError, EnvValidationError
         from chutils.env import PYDANTIC_AVAILABLE
+        from chutils.exceptions import (
+            CommandError,
+            EnvValidationError,
+            OptionalDependencyError,
+        )
 
         if not PYDANTIC_AVAILABLE:
             raise OptionalDependencyError(
                 "Pydantic не установлен.",
                 dependency="pydantic",
-                hint="Установите его: pip install chutils[pydantic]"
+                hint="Установите его: pip install chutils[pydantic]",
             )
 
         manifest_path = args.manifest
@@ -86,7 +91,7 @@ class EnvCommand(BaseCommand):
             raise CommandError(
                 "Манифест переменных окружения не найден.",
                 hint="Укажите путь к манифесту через аргумент -m/--manifest "
-                     "или пропишите его в pyproject.toml / chutils.yaml."
+                "или пропишите его в pyproject.toml / chutils.yaml.",
             )
 
         # Гарантируем, что текущая папка в sys.path
@@ -98,20 +103,23 @@ class EnvCommand(BaseCommand):
         if not manifest_class:
             raise CommandError(
                 f"Не удалось импортировать класс манифеста '{manifest_path}'.",
-                hint="Проверьте правильность написания пути в формате 'module.path:ClassName'."
+                hint="Проверьте правильность написания пути в формате 'module.path:ClassName'.",
             )
 
         from chutils.env import BaseEnvManifest
+
         if not issubclass(manifest_class, BaseEnvManifest):
             raise CommandError(
                 f"Класс '{manifest_path}' не является подклассом BaseEnvManifest.",
-                hint="Убедитесь, что ваш манифест наследуется от chutils.env.BaseEnvManifest."
+                hint="Убедитесь, что ваш манифест наследуется от chutils.env.BaseEnvManifest.",
             )
 
         try:
             # Выполняем загрузку и валидацию
             manifest_class.load()
-            self.console.print("[bold green][OK] Переменные окружения успешно прошли валидацию.[/bold green]")
+            self.console.print(
+                "[bold green][OK] Переменные окружения успешно прошли валидацию.[/bold green]"
+            )
         except EnvValidationError as e:
             self.console.print(e)
             sys.exit(1)
@@ -123,6 +131,7 @@ class EnvCommand(BaseCommand):
         # 1. Из основного конфига
         try:
             from chutils import get_config_value
+
             manifest = get_config_value("env", "manifest", None)
             if manifest:
                 return str(manifest)
@@ -131,17 +140,22 @@ class EnvCommand(BaseCommand):
 
         # 2. Из pyproject.toml
         try:
-            from chutils.config.utils import find_project_root
             from pathlib import Path
+
+            from chutils.config.utils import find_project_root
 
             try:
                 current_dir = Path.cwd()
             except OSError:
-                current_dir = Path('.')
+                current_dir = Path(".")
 
             markers = [
-                'config.yml', 'config.yaml', 'config.ini', 'config.json',
-                'pyproject.toml', '.git'
+                "config.yml",
+                "config.yaml",
+                "config.ini",
+                "config.json",
+                "pyproject.toml",
+                ".git",
             ]
             root = find_project_root(current_dir, markers)
             if root:
@@ -150,11 +164,13 @@ class EnvCommand(BaseCommand):
                     data = {}
                     try:
                         import tomllib
+
                         with open(pyproject_path, "rb") as f:
                             data = tomllib.load(f)
                     except ImportError:
                         try:
                             import tomli
+
                             with open(pyproject_path, "rb") as f:
                                 data = tomli.load(f)
                         except ImportError:
@@ -167,7 +183,7 @@ class EnvCommand(BaseCommand):
                                 if not line or line.startswith("#"):
                                     continue
                                 if line.startswith("[") and line.endswith("]"):
-                                    in_section = (line == "[tool.chutils.env]")
+                                    in_section = line == "[tool.chutils.env]"
                                     continue
                                 if in_section and "=" in line:
                                     k, v = line.split("=", 1)

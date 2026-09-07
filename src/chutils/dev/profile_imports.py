@@ -1,13 +1,14 @@
 """
 Модуль для профилирования импортов и анализа времени холодного старта.
 """
+
 from __future__ import annotations
 
 import json
 import os
 import subprocess
 import sys
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from chutils.cli_utils import ConsoleLike
@@ -47,11 +48,11 @@ class ImportNode:
     """Узел дерева импортов."""
 
     def __init__(
-            self,
-            name: str,
-            self_time_ms: float,
-            cumulative_time_ms: float,
-            depth: int,
+        self,
+        name: str,
+        self_time_ms: float,
+        cumulative_time_ms: float,
+        depth: int,
     ) -> None:
         """Инициализирует узел дерева импортов.
 
@@ -104,8 +105,7 @@ def parse_importtime_line(line: str) -> ImportNode | None:
 
     indent_and_name = parts[2]
     # CPython выводит ровно один пробел после '|' перед отступами
-    if indent_and_name.startswith(" "):
-        indent_and_name = indent_and_name[1:]
+    indent_and_name = indent_and_name.removeprefix(" ")
 
     name = indent_and_name.lstrip()
     num_spaces = len(indent_and_name) - len(name)
@@ -151,11 +151,11 @@ def build_tree(flat_imports: list[ImportNode]) -> list[ImportNode]:
 
 
 def profile_imports(
-        target: str,
-        threshold_ms: float,
-        as_table: bool,
-        as_json: bool,
-        console: ConsoleLike,
+    target: str,
+    threshold_ms: float,
+    as_table: bool,
+    as_json: bool,
+    console: ConsoleLike,
 ) -> None:
     """Выполняет профилирование импортов для указанной цели.
 
@@ -179,10 +179,10 @@ def profile_imports(
     cmd = [sys.executable, "-X", "importtime", "-c", f"import {target}"]
     process = subprocess.run(
         cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         text=True,
         env=env,
+        check=False,
     )
 
     if process.returncode != 0:
@@ -246,15 +246,25 @@ def profile_imports(
     console.print(f"  • Общее время старта: [green]{total_time_ms:.2f}[/green] мс")
 
     if duplicates:
-        console.print("\n[bold yellow]⚠ Обнаружены дублирующиеся импорты (утечки):[/bold yellow]")
-        for name, count in sorted(duplicates.items(), key=lambda x: x[1], reverse=True)[:5]:
-            console.print(f"  • [yellow]{name}[/yellow]: повторено [cyan]{count}[/cyan] раз(а)")
+        console.print(
+            "\n[bold yellow]⚠ Обнаружены дублирующиеся импорты (утечки):[/bold yellow]"
+        )
+        for name, count in sorted(duplicates.items(), key=lambda x: x[1], reverse=True)[
+            :5
+        ]:
+            console.print(
+                f"  • [yellow]{name}[/yellow]: повторено [cyan]{count}[/cyan] раз(а)"
+            )
         if len(duplicates) > 5:
             console.print(f"  ... и еще [cyan]{len(duplicates) - 5}[/cyan] дубликатов.")
 
     if heavy_imports:
-        console.print("\n[bold red]⚠ Обнаружены тяжелые не-ленивые импорты на верхнем уровне:[/bold red]")
-        for name, time_ms, depth in sorted(heavy_imports, key=lambda x: x[1], reverse=True):
+        console.print(
+            "\n[bold red]⚠ Обнаружены тяжелые не-ленивые импорты на верхнем уровне:[/bold red]"
+        )
+        for name, time_ms, depth in sorted(
+            heavy_imports, key=lambda x: x[1], reverse=True
+        ):
             console.print(
                 f"  • [red]{name}[/red] (глубина: {depth}) — [bold red]{time_ms:.2f}[/bold red] мс"
             )
@@ -264,7 +274,9 @@ def profile_imports(
         )
 
 
-def _render_tree(roots: list[ImportNode], threshold_ms: float, console: ConsoleLike) -> None:
+def _render_tree(
+    roots: list[ImportNode], threshold_ms: float, console: ConsoleLike
+) -> None:
     """Отрисовывает иерархическое дерево импортов в консоли.
 
     Args:
@@ -304,7 +316,8 @@ def _render_tree(roots: list[ImportNode], threshold_ms: float, console: ConsoleL
                 return
             indent = "  " * node.depth
             print(
-                f"{indent}• {node.name} (self: {node.self_time_ms:.2f} ms, cumulative: {node.cumulative_time_ms:.2f} ms)")
+                f"{indent}• {node.name} (self: {node.self_time_ms:.2f} ms, cumulative: {node.cumulative_time_ms:.2f} ms)"
+            )
             for child in node.children:
                 print_node(child)
 
@@ -312,7 +325,9 @@ def _render_tree(roots: list[ImportNode], threshold_ms: float, console: ConsoleL
             print_node(r)
 
 
-def _render_table(flat_imports: list[ImportNode], threshold_ms: float, console: ConsoleLike) -> None:
+def _render_table(
+    flat_imports: list[ImportNode], threshold_ms: float, console: ConsoleLike
+) -> None:
     """Отрисовывает плоскую таблицу импортов в консоли.
 
     Args:
@@ -347,9 +362,13 @@ def _render_table(flat_imports: list[ImportNode], threshold_ms: float, console: 
         console.print(table)
     else:
         print("\nТяжелые импорты (сортировка по собственному времени):")
-        print(f"{'Модуль':<50} | {'Глубина':<7} | {'Self (ms)':<10} | {'Cumulative (ms)':<15}")
+        print(
+            f"{'Модуль':<50} | {'Глубина':<7} | {'Self (ms)':<10} | {'Cumulative (ms)':<15}"
+        )
         print("-" * 90)
         for node in sorted_imports:
             if node.self_time_ms < threshold_ms:
                 continue
-            print(f"{node.name:<50} | {node.depth:<7} | {node.self_time_ms:<10.2f} | {node.cumulative_time_ms:<15.2f}")
+            print(
+                f"{node.name:<50} | {node.depth:<7} | {node.self_time_ms:<10.2f} | {node.cumulative_time_ms:<15.2f}"
+            )

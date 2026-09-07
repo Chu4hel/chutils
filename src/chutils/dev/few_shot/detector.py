@@ -65,9 +65,11 @@ class ArchitectureDetector:
                 continue
 
             # DI — по имени файла
-            if py_file.name in self._DI_FILE_NAMES:
-                if py_file.stem not in entities.di_files:
-                    entities.di_files.append(py_file.stem)
+            if (
+                py_file.name in self._DI_FILE_NAMES
+                and py_file.stem not in entities.di_files
+            ):
+                entities.di_files.append(py_file.stem)
 
             # DI — по импортам DI-библиотек
             if not entities.di_files:
@@ -92,7 +94,9 @@ class ArchitectureDetector:
                     class_name = node.name
 
                     # Use Cases
-                    is_use_case = any(kw in class_name for kw in self._USE_CASE_KEYWORDS)
+                    is_use_case = any(
+                        kw in class_name for kw in self._USE_CASE_KEYWORDS
+                    )
                     if not is_use_case:
                         for base in node.bases:
                             base_str = self._base_to_str(base)
@@ -125,23 +129,24 @@ class ArchitectureDetector:
                     # Пользовательские исключения
                     for base in node.bases:
                         base_str = self._base_to_str(base)
-                        if any(exc in base_str for exc in self._EXCEPTION_BASE_NAMES):
-                            if class_name not in seen_errors:
-                                seen_errors.add(class_name)
-                                entities.errors.append(class_name)
+                        if (
+                            any(exc in base_str for exc in self._EXCEPTION_BASE_NAMES)
+                            and class_name not in seen_errors
+                        ):
+                            seen_errors.add(class_name)
+                            entities.errors.append(class_name)
                             break
 
                 # Логгеры — по вызовам функций и присваиваниям
                 elif isinstance(node, ast.Assign):
                     for target in node.targets:
-                        if isinstance(target, ast.Name):
-                            if isinstance(node.value, ast.Call):
-                                func_name = self._call_func_name(node.value)
-                                if any(kw in func_name for kw in self._LOGGING_CALLS):
-                                    var_name = target.id
-                                    if var_name not in seen_loggers:
-                                        seen_loggers.add(var_name)
-                                        entities.loggers.append(var_name)
+                        if isinstance(target, ast.Name) and isinstance(node.value, ast.Call):
+                            func_name = self._call_func_name(node.value)
+                            if any(kw in func_name for kw in self._LOGGING_CALLS):
+                                var_name = target.id
+                                if var_name not in seen_loggers:
+                                    seen_loggers.add(var_name)
+                                    entities.loggers.append(var_name)
 
         return entities
 

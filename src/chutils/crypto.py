@@ -25,7 +25,7 @@ except ImportError:  # pragma: no cover
     AESGCM = None  # type: ignore
     _HAS_CRYPTOGRAPHY = False
 
-__all__ = ["encrypt_portable", "decrypt_portable", "encrypt_file", "decrypt_file"]
+__all__ = ["decrypt_file", "decrypt_portable", "encrypt_file", "encrypt_portable"]
 
 
 def _get_fernet_key(seed: str) -> bytes:
@@ -67,9 +67,7 @@ def encrypt_portable(data: str, seed: str) -> str:
 
 
 def decrypt_portable(
-        encrypted_data: str,
-        seed: str,
-        raise_on_error: bool = False
+    encrypted_data: str, seed: str, raise_on_error: bool = False
 ) -> str | None:
     """Дешифрует строку с использованием детерминированного ключа, полученного из seed.
 
@@ -99,7 +97,9 @@ def decrypt_portable(
         return decrypted_bytes.decode("utf-8")
     except (InvalidToken, Exception) as exc:
         if raise_on_error:
-            raise ValueError(f"Не удалось расшифровать данные: неверный ключ или повреждённый токен ({exc})") from exc
+            raise ValueError(
+                f"Не удалось расшифровать данные: неверный ключ или повреждённый токен ({exc})"
+            ) from exc
         return None
 
 
@@ -109,7 +109,9 @@ DEFAULT_CHUNK_SIZE = 64 * 1024 * 1024
 
 def _derive_aesgcm_key(seed: str, salt: bytes) -> bytes:
     """Генерирует 32-байтный AES-GCM ключ на основе seed и salt."""
-    return hashlib.pbkdf2_hmac("sha256", seed.encode("utf-8"), salt, iterations=100000, dklen=32)
+    return hashlib.pbkdf2_hmac(
+        "sha256", seed.encode("utf-8"), salt, iterations=100000, dklen=32
+    )
 
 
 def _encrypt_stream_file(
@@ -191,13 +193,15 @@ def _decrypt_stream_file(
         with open(file_path, "rb") as fin:
             magic = fin.read(len(STREAM_MAGIC))
             if magic != STREAM_MAGIC:
-                raise ValueError("Неподдерживаемый формат потокового файла или поврежден заголовок")
+                raise ValueError(
+                    "Неподдерживаемый формат потокового файла или поврежден заголовок"
+                )
             processed_size += len(magic)
 
             chunk_size_bytes = fin.read(4)
             if len(chunk_size_bytes) < 4:
                 raise ValueError("Поврежден заголовок файла (размер чанка)")
-            chunk_size = struct.unpack(">I", chunk_size_bytes)[0]
+            _chunk_size = struct.unpack(">I", chunk_size_bytes)[0]
             processed_size += 4
 
             salt = fin.read(16)
@@ -297,7 +301,9 @@ def encrypt_file(
     out_p = Path(output_path) if output_path is not None else fp
 
     if stream:
-        return _encrypt_stream_file(fp, seed, out_p, chunk_size=chunk_size, progress_callback=progress_callback)
+        return _encrypt_stream_file(
+            fp, seed, out_p, chunk_size=chunk_size, progress_callback=progress_callback
+        )
 
     total_size = fp.stat().st_size
     if progress_callback:
@@ -358,12 +364,18 @@ def decrypt_file(
         try:
             with open(fp, "rb") as header_file:
                 header = header_file.read(len(STREAM_MAGIC))
-                is_stream = (header == STREAM_MAGIC)
+                is_stream = header == STREAM_MAGIC
         except Exception:
             is_stream = False
 
     if is_stream:
-        return _decrypt_stream_file(fp, seed, out_p, raise_on_error=raise_on_error, progress_callback=progress_callback)
+        return _decrypt_stream_file(
+            fp,
+            seed,
+            out_p,
+            raise_on_error=raise_on_error,
+            progress_callback=progress_callback,
+        )
 
     total_size = fp.stat().st_size
     if progress_callback:
@@ -380,5 +392,7 @@ def decrypt_file(
         return True
     except (InvalidToken, Exception) as exc:
         if raise_on_error:
-            raise ValueError(f"Не удалось расшифровать файл: неверный ключ или повреждённые данные ({exc})") from exc
+            raise ValueError(
+                f"Не удалось расшифровать файл: неверный ключ или повреждённые данные ({exc})"
+            ) from exc
         return False

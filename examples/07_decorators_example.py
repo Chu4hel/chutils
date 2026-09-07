@@ -7,13 +7,14 @@
 """
 
 from chutils.decorators import log_function_details
-from chutils.logger import setup_logger, ChutilsLogger, LogLevel
+from chutils.logger import ChutilsLogger, LogLevel, setup_logger
 
 
 @log_function_details
 def calculate_complex_logic(a: int, b: int, factor: float = 1.0) -> float:
     """Функция, детали вызова которой мы хотим видеть в логах."""
     import time
+
     time.sleep(0.1)  # Имитация работы
     return (a + b) * factor
 

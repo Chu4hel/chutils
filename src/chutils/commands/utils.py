@@ -30,10 +30,10 @@ def _import_string(import_str: str) -> Any:
     ensure_project_paths_in_sys_path()
 
     try:
-        if ':' in import_str:
-            module_name, obj_name = import_str.split(':', 1)
+        if ":" in import_str:
+            module_name, obj_name = import_str.split(":", 1)
         else:
-            module_name, obj_name = import_str.rsplit('.', 1)
+            module_name, obj_name = import_str.rsplit(".", 1)
 
         module = importlib.import_module(module_name)
         return getattr(module, obj_name)

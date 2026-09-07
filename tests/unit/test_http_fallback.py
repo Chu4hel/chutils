@@ -12,6 +12,7 @@
 - Интеграцию с ResiliencePolicy (retry при ошибке)
 - Контекстный менеджер
 """
+
 from __future__ import annotations
 
 import io
@@ -27,15 +28,14 @@ import pytest
 from chutils.http.fallback import HttpResponse, UrllibFallbackClient
 from chutils.http.resilience import ResiliencePolicy
 
-
 # ─── Вспомогательные фабрики ─────────────────────────────────────────────────
 
 
 def _make_mock_response(
-        status: int = 200,
-        body: bytes = b"ok",
-        url: str = "http://example.com",
-        headers: dict[str, str] | None = None,
+    status: int = 200,
+    body: bytes = b"ok",
+    url: str = "http://example.com",
+    headers: dict[str, str] | None = None,
 ) -> MagicMock:
     """Создаёт мок urllib-ответа для использования в urlopen."""
     msg = HTTPMessage()
@@ -53,9 +53,9 @@ def _make_mock_response(
 
 
 def _make_http_error(
-        code: int,
-        body: bytes = b"error body",
-        url: str = "http://example.com",
+    code: int,
+    body: bytes = b"error body",
+    url: str = "http://example.com",
 ) -> urllib.error.HTTPError:
     """Создаёт HTTPError для тестирования обработки ошибок."""
     msg = HTTPMessage()
@@ -217,7 +217,7 @@ def test_post_with_json_data() -> None:
             mock_req_cls.return_value = MagicMock()
 
             client = UrllibFallbackClient()
-            resp = client.post("http://example.com/items", json_data={"name": "test"})
+            _resp = client.post("http://example.com/items", json_data={"name": "test"})
 
     call_kwargs = mock_req_cls.call_args.kwargs
     body: bytes = call_kwargs.get("data", b"")
@@ -325,7 +325,9 @@ def test_mask_headers_hides_cookie() -> None:
 def test_mask_headers_hides_custom_sensitive() -> None:
     """Кастомные сенситивные заголовки маскируются."""
     client = UrllibFallbackClient(sensitive_headers={"X-Internal-Secret"})
-    result = client._mask({"X-Internal-Secret": "topsecret", "Content-Type": "application/json"})
+    result = client._mask(
+        {"X-Internal-Secret": "topsecret", "Content-Type": "application/json"}
+    )
     assert result["X-Internal-Secret"] == "[MASKED]"
     assert result["Content-Type"] == "application/json"
 
@@ -346,7 +348,9 @@ def test_request_with_policy_retry_on_network_error() -> None:
             raise urllib.error.URLError("timeout")
         return _make_mock_response(200, b"ok")
 
-    policy = ResiliencePolicy(retries=3, retry_delay=0.0, retry_exceptions=(HttpClientError,))
+    policy = ResiliencePolicy(
+        retries=3, retry_delay=0.0, retry_exceptions=(HttpClientError,)
+    )
 
     with patch("urllib.request.urlopen", side_effect=side_effect):
         client = UrllibFallbackClient(policy=policy)
@@ -359,10 +363,13 @@ def test_request_with_policy_retry_on_network_error() -> None:
 # ─── UrllibFallbackClient: HTTP-методы ───────────────────────────────────────
 
 
-@pytest.mark.parametrize("method_name,http_method", [
-    ("get", "GET"),
-    ("delete", "DELETE"),
-])
+@pytest.mark.parametrize(
+    "method_name,http_method",
+    [
+        ("get", "GET"),
+        ("delete", "DELETE"),
+    ],
+)
 def test_simple_methods(method_name: str, http_method: str) -> None:
     """GET и DELETE правильно устанавливают HTTP-метод."""
     mock_resp = _make_mock_response()
@@ -376,10 +383,13 @@ def test_simple_methods(method_name: str, http_method: str) -> None:
     assert mock_req_cls.call_args.kwargs.get("method") == http_method
 
 
-@pytest.mark.parametrize("method_name,http_method", [
-    ("put", "PUT"),
-    ("patch", "PATCH"),
-])
+@pytest.mark.parametrize(
+    "method_name,http_method",
+    [
+        ("put", "PUT"),
+        ("patch", "PATCH"),
+    ],
+)
 def test_body_methods(method_name: str, http_method: str) -> None:
     """PUT и PATCH правильно устанавливают HTTP-метод."""
     mock_resp = _make_mock_response()

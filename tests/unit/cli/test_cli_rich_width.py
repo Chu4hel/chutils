@@ -1,7 +1,7 @@
 import os
 from unittest.mock import patch
 
-from chutils.cli_utils import get_console, set_console_width, _get_default_width
+from chutils.cli_utils import _get_default_width, get_console, set_console_width
 
 
 def test_manual_console_width():

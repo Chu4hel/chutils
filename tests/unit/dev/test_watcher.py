@@ -4,22 +4,15 @@
 
 import os
 import time
-from typing import TYPE_CHECKING
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
 from chutils.dev.watcher import (
-    BaseWatcher,
     PollingWatcher,
     WatchdogWatcher,
     get_watcher,
 )
-
-if TYPE_CHECKING:
-    from _pytest.capture import CaptureFixture
-    from _pytest.logging import LogCaptureFixture
-    from pytest import TempPathFactory
 
 
 def test_base_watcher_extension_filtering(tmp_path: pytest.TempPathFactory) -> None:
@@ -125,7 +118,9 @@ def test_watchdog_watcher_detects_change(tmp_path: pytest.TempPathFactory) -> No
         assert watcher.is_running is False
 
 
-def test_get_watcher_fallback(tmp_path: pytest.TempPathFactory, caplog: pytest.LogCaptureFixture) -> None:
+def test_get_watcher_fallback(
+    tmp_path: pytest.TempPathFactory, caplog: pytest.LogCaptureFixture
+) -> None:
     """Проверяет fallback на PollingWatcher с предупреждением при отсутствии watchdog."""
     with patch("chutils.dev.watcher.HAS_WATCHDOG", False):
         watcher = get_watcher(

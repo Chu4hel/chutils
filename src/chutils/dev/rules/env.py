@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..ai_lint import Rule, LintResult
+from ..ai_lint import LintResult, Rule
 
 
 class EnvSyncRule(Rule):
     """Правило проверки соответствия состава ключей в .env и .env.example."""
+
     name = "EnvSyncRule"
     description = "Проверяет соответствие состава ключей переменных окружения в файлах .env и .env.example."
     severity = "warn"
@@ -26,6 +27,7 @@ class EnvSyncRule(Rule):
 
         try:
             from chutils.config.dev import load_ai_lint_config
+
             config = load_ai_lint_config()
             env_path = str(config.get("env_path", ".env"))
             example_path = str(config.get("example_path", ".env.example"))
@@ -56,7 +58,7 @@ class EnvSyncRule(Rule):
                     message=f"Файл {env_path} существует, но отсутствует шаблон {example_path}.",
                     severity=self.severity,
                     file_path=str(env_abs_path),
-                    fix_suggestion=f"Создайте шаблон {example_path} или запустите синхронизацию: chutils dev sync-env"
+                    fix_suggestion=f"Создайте шаблон {example_path} или запустите синхронизацию: chutils dev sync-env",
                 )
             )
             return results
@@ -68,13 +70,14 @@ class EnvSyncRule(Rule):
                     message=f"Файл шаблона {example_path} существует, но отсутствует локальный {env_path}.",
                     severity=self.severity,
                     file_path=str(example_abs_path),
-                    fix_suggestion=f"Создайте файл {env_path} на основе шаблона или запустите синхронизацию: chutils dev sync-env"
+                    fix_suggestion=f"Создайте файл {env_path} на основе шаблона или запустите синхронизацию: chutils dev sync-env",
                 )
             )
             return results
 
         # Оба файла существуют, сравним их ключи
         from chutils.dev.env_sync import check_env_sync
+
         try:
             diff = check_env_sync(env_abs_path, example_abs_path)
             if diff.has_diff():
@@ -95,7 +98,7 @@ class EnvSyncRule(Rule):
                         message=message,
                         severity=self.severity,
                         file_path=str(env_abs_path),
-                        fix_suggestion="Синхронизируйте файлы: chutils dev sync-env"
+                        fix_suggestion="Синхронизируйте файлы: chutils dev sync-env",
                     )
                 )
         except Exception as e:
@@ -104,7 +107,7 @@ class EnvSyncRule(Rule):
                     rule_name=self.name,
                     message=f"Ошибка при проверке соответствия ключей окружения: {e}",
                     severity=self.severity,
-                    file_path=str(env_abs_path)
+                    file_path=str(env_abs_path),
                 )
             )
 

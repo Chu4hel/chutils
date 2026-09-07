@@ -29,28 +29,38 @@ class KeyringProvider(SecretProvider):
             Значение секрета или None, если он не найден.
         """
         from chutils.secret_manager import providers
+
         if not providers.KEYRING_AVAILABLE:
             from ...exceptions import OptionalDependencyError
+
             raise OptionalDependencyError(
                 "Missing optional dependency: please install chutils[keyring] to use KeyringProvider."
             )
 
         if self.disabled:
-            providers._get_logger().devdebug("Keyring отключен. Поиск секрета '%s' пропущен.", key)
+            providers._get_logger().devdebug(
+                "Keyring отключен. Поиск секрета '%s' пропущен.", key
+            )
             return None
 
         try:
             value = providers.keyring.get_password(service_name, key)
             if value is not None:
-                providers._get_logger().devdebug("Секрет '%s' получен из keyring (сервис: %s).", key, service_name)
+                providers._get_logger().devdebug(
+                    "Секрет '%s' получен из keyring (сервис: %s).", key, service_name
+                )
                 return str(value)
             return None
         except Exception as e:
             # Проверяем по имени класса ошибки, чтобы избежать ImportError
             if type(e).__name__ == "NoKeyringError":
-                providers._get_logger().warning("Keyring не доступен. Поиск только в окружении.")
+                providers._get_logger().warning(
+                    "Keyring не доступен. Поиск только в окружении."
+                )
             else:
-                providers._get_logger().error("Ошибка при получении секрета из keyring: %s", e)
+                providers._get_logger().error(
+                    "Ошибка при получении секрета из keyring: %s", e
+                )
             return None
 
     def set(self, key: str, value: str, service_name: str) -> bool:
@@ -65,26 +75,37 @@ class KeyringProvider(SecretProvider):
             True, если сохранение успешно, иначе False.
         """
         from chutils.secret_manager import providers
+
         if not providers.KEYRING_AVAILABLE:
             from ...exceptions import OptionalDependencyError
+
             raise OptionalDependencyError(
                 "Missing optional dependency: please install chutils[keyring] to use KeyringProvider."
             )
 
         if self.disabled:
-            providers._get_logger().devdebug("Keyring отключен. Секрет '%s' не будет сохранен.", key)
+            providers._get_logger().devdebug(
+                "Keyring отключен. Секрет '%s' не будет сохранен.", key
+            )
             return False
 
         try:
             providers.keyring.set_password(service_name, key, value)
-            providers._get_logger().devdebug("Секрет для ключа '%s' сохранен в keyring (сервис: %s).", key,
-                                             service_name)
+            providers._get_logger().devdebug(
+                "Секрет для ключа '%s' сохранен в keyring (сервис: %s).",
+                key,
+                service_name,
+            )
             return True
         except Exception as e:
             if type(e).__name__ == "NoKeyringError":
-                providers._get_logger().error("Системное хранилище (keyring) не найдено.")
+                providers._get_logger().error(
+                    "Системное хранилище (keyring) не найдено."
+                )
             else:
-                providers._get_logger().error("Ошибка при сохранении секрета в keyring: %s", e)
+                providers._get_logger().error(
+                    "Ошибка при сохранении секрета в keyring: %s", e
+                )
             return False
 
     def delete(self, key: str, service_name: str) -> bool:
@@ -98,8 +119,10 @@ class KeyringProvider(SecretProvider):
             True, если удаление успешно, иначе False.
         """
         from chutils.secret_manager import providers
+
         if not providers.KEYRING_AVAILABLE:
             from ...exceptions import OptionalDependencyError
+
             raise OptionalDependencyError(
                 "Missing optional dependency: please install chutils[keyring] to use KeyringProvider."
             )
@@ -112,13 +135,19 @@ class KeyringProvider(SecretProvider):
                 return True
 
             providers.keyring.delete_password(service_name, key)
-            providers._get_logger().devdebug("Секрет '%s' удален из keyring (сервис: %s).", key, service_name)
+            providers._get_logger().devdebug(
+                "Секрет '%s' удален из keyring (сервис: %s).", key, service_name
+            )
             return True
         except Exception as e:
             if type(e).__name__ == "PasswordDeleteError":
-                providers._get_logger().error("Не удалось удалить секрет '%s' из keyring.", key)
+                providers._get_logger().error(
+                    "Не удалось удалить секрет '%s' из keyring.", key
+                )
             elif type(e).__name__ == "NoKeyringError":
                 pass
             else:
-                providers._get_logger().error("Ошибка при удалении секрета из keyring: %s", e)
+                providers._get_logger().error(
+                    "Ошибка при удалении секрета из keyring: %s", e
+                )
             return False

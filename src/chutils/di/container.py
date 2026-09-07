@@ -11,12 +11,11 @@ T = TypeVar("T")
 
 class InjectMarker:
     """Маркер для инъекции зависимостей через значения по умолчанию."""
-    pass
 
 
 def Inject() -> Any:
     """Маркер инъекции зависимостей (в стиле FastAPI / Depends).
-    
+
     Пример:
         def handle(service: MyService = Inject()):
             ...
@@ -30,7 +29,7 @@ def Inject() -> Any:
 class Container:
     """
     Легковесный IoC/DI контейнер.
-    
+
     Поддерживает:
     - Синглтоны (Singleton) и переходные зависимости (Transient).
     - Автоматическое рекурсивное разрешение зависимостей по Type Hints.
@@ -56,7 +55,9 @@ class Container:
             self._local.stack = []
         return self._local.stack  # type: ignore[no-any-return]
 
-    def _find_provider(self, key: Any) -> tuple[Any, tuple[Callable[..., Any], str]] | None:
+    def _find_provider(
+        self, key: Any
+    ) -> tuple[Any, tuple[Callable[..., Any], str]] | None:
         """Вспомогательный метод для поиска зарегистрированного провайдера."""
         # 1. Прямое совпадение
         if key in self._providers:
@@ -71,7 +72,7 @@ class Container:
         # 3. Если это строка (или ForwardRef/строковая аннотация), нормализуем её в чистую строку
         key_str = str(key)
         if hasattr(key, "__forward_arg__"):
-            key_str = getattr(key, "__forward_arg__")
+            key_str = key.__forward_arg__
 
         if key_str in self._providers:
             return key_str, self._providers[key_str]
@@ -83,14 +84,14 @@ class Container:
         return None
 
     def register(
-            self,
-            dependency_type: type[Any] | str,
-            provider: Callable[..., Any] | None = None,
-            scope: str = "singleton"
+        self,
+        dependency_type: type[Any] | str,
+        provider: Callable[..., Any] | None = None,
+        scope: str = "singleton",
     ) -> None:
         """
         Зарегистрировать зависимость.
-        
+
         Args:
             dependency_type: Класс, интерфейс или строковый идентификатор.
             provider: Функция-фабрика или класс для создания объекта.
@@ -158,13 +159,15 @@ class Container:
                 found = self._find_provider(dependency_type)
 
             # Автоматическая регистрация конкретных классов (Auto-wiring)
-            if found is None:
-                if isinstance(dependency_type, type) and not inspect.isabstract(dependency_type):
-                    # Проверяем, что класс не является стандартным примитивом
-                    if dependency_type.__module__ != "builtins":
-                        self.register(dependency_type)
-                        with self._lock:
-                            found = self._find_provider(dependency_type)
+            if (
+                found is None
+                and isinstance(dependency_type, type)
+                and not inspect.isabstract(dependency_type)
+                and dependency_type.__module__ != "builtins"
+            ):
+                self.register(dependency_type)
+                with self._lock:
+                    found = self._find_provider(dependency_type)
 
             if found is None:
                 raise DependencyNotFoundError(
@@ -184,6 +187,7 @@ class Container:
 
             # Получаем типы параметров с разрешением строковых аннотаций
             import typing
+
             try:
                 if inspect.isclass(provider):
                     type_hints = typing.get_type_hints(provider.__init__)
@@ -205,7 +209,10 @@ class Container:
 
             for param in parameters:
                 # Пропускаем параметры переменной длины (*args, **kwargs)
-                if param.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
+                if param.kind in (
+                    inspect.Parameter.VAR_POSITIONAL,
+                    inspect.Parameter.VAR_KEYWORD,
+                ):
                     continue
 
                 param_name = param.name
@@ -255,14 +262,16 @@ default_container = Container()
 "Глобальный контейнер по умолчанию"
 
 
-def provide(scope: str = "singleton", container: Container | None = None) -> Callable[[Any], Any]:
+def provide(
+    scope: str = "singleton", container: Container | None = None
+) -> Callable[[Any], Any]:
     """Декоратор для декларативной регистрации класса или функции-фабрики в контейнере.
-    
+
     Пример:
         @provide()
         class DatabaseService:
             ...
-            
+
         @provide()
         def create_connection() -> Connection:
             return Connection(...)
@@ -293,9 +302,9 @@ def provide(scope: str = "singleton", container: Container | None = None) -> Cal
 
 
 def inject(
-        func_or_container: Callable[..., Any] | Container | None = None,
-        *,
-        container: Container | None = None
+    func_or_container: Callable[..., Any] | Container | None = None,
+    *,
+    container: Container | None = None,
 ) -> Any:
     """Декоратор для автоматического внедрения зависимостей в аргументы функции.
 
@@ -330,7 +339,9 @@ def inject(
     return _make_inject_decorator(target_container)
 
 
-def _make_inject_decorator(target_container: Container) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+def _make_inject_decorator(
+    target_container: Container,
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Внутренний хелпер для создания декоратора inject под конкретный контейнер."""
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -346,18 +357,24 @@ def _make_inject_decorator(target_container: Container) -> Callable[[Callable[..
             # Инъецируем, если:
             # 1. Есть явный маркер Inject()
             # 2. Или параметр не имеет значения по умолчанию, но его тип зарегистрирован в контейнере
-            if is_explicit_inject:
+            if is_explicit_inject or (
+                param.default is inspect.Parameter.empty
+                and has_annotation
+                and (
+                    target_container.has_provider(param.annotation)
+                    or (
+                        inspect.isclass(param.annotation)
+                        and not inspect.isabstract(param.annotation)
+                    )
+                )
+            ):
                 injectable_params.append((name, param))
-            elif param.default is inspect.Parameter.empty and has_annotation:
-                if target_container.has_provider(param.annotation) or (
-                        inspect.isclass(param.annotation) and not inspect.isabstract(param.annotation)
-                ):
-                    injectable_params.append((name, param))
 
         if not injectable_params:
             return func
 
         if is_async:
+
             @functools.wraps(func)
             async def wrapper(*args: Any, **kwargs: Any) -> Any:
                 bound = sig.bind_partial(*args, **kwargs)
@@ -365,19 +382,28 @@ def _make_inject_decorator(target_container: Container) -> Callable[[Callable[..
 
                 for name, param in injectable_params:
                     # Инъецируем только если аргумент не был передан явно или передан как маркер
-                    if name not in bound_keys or isinstance(bound.arguments[name], InjectMarker):
-                        bound.arguments[name] = target_container.resolve(param.annotation)
+                    if name not in bound_keys or isinstance(
+                        bound.arguments[name], InjectMarker
+                    ):
+                        bound.arguments[name] = target_container.resolve(
+                            param.annotation
+                        )
 
                 return await func(*bound.args, **bound.kwargs)
         else:
+
             @functools.wraps(func)
             def wrapper(*args: Any, **kwargs: Any) -> Any:
                 bound = sig.bind_partial(*args, **kwargs)
                 bound_keys = set(bound.arguments.keys())
 
                 for name, param in injectable_params:
-                    if name not in bound_keys or isinstance(bound.arguments[name], InjectMarker):
-                        bound.arguments[name] = target_container.resolve(param.annotation)
+                    if name not in bound_keys or isinstance(
+                        bound.arguments[name], InjectMarker
+                    ):
+                        bound.arguments[name] = target_container.resolve(
+                            param.annotation
+                        )
 
                 return func(*bound.args, **bound.kwargs)
 

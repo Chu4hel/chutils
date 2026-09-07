@@ -3,7 +3,7 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-from ..ai_lint import Rule, LintResult
+from ..ai_lint import LintResult, Rule
 
 
 class DocstringVisitor(ast.NodeVisitor):
@@ -11,7 +11,9 @@ class DocstringVisitor(ast.NodeVisitor):
     Вспомогательный AST-посетитель для проверки docstrings и type hints.
     """
 
-    def __init__(self, file_path: str, rule_name: str, content: str | None = None) -> None:
+    def __init__(
+        self, file_path: str, rule_name: str, content: str | None = None
+    ) -> None:
         """Инициализирует AST-посетитель docstring'ов.
 
         Args:
@@ -43,8 +45,11 @@ class DocstringVisitor(ast.NodeVisitor):
                     prev_idx = stmt.lineno - 2
                     if prev_idx >= 0:
                         prev_line = lines[prev_idx].strip()
-                        if prev_line.startswith("#") and not prev_line.startswith(
-                                "# ruff:") and not prev_line.startswith("# type:"):
+                        if (
+                            prev_line.startswith("#")
+                            and not prev_line.startswith("# ruff:")
+                            and not prev_line.startswith("# type:")
+                        ):
                             # Проверяем, есть ли под этим выражением docstring (следующее выражение - строковая константа)
                             # Ищем, идет ли следующим выражением Expr с константой-строкой
                             has_docstring = False
@@ -55,9 +60,12 @@ class DocstringVisitor(ast.NodeVisitor):
                                     next_stmt = node.body[curr_idx + 1]
                                     if isinstance(next_stmt, ast.Expr):
                                         val = next_stmt.value
-                                        if isinstance(val, ast.Constant) and isinstance(val.value, str):
-                                            has_docstring = True
-                                        elif hasattr(ast, "Str") and isinstance(val, getattr(ast, "Str")):
+                                        if (
+                                            isinstance(val, ast.Constant)
+                                            and isinstance(val.value, str)
+                                            or hasattr(ast, "Str")
+                                            and isinstance(val, ast.Str)
+                                        ):
                                             has_docstring = True
                             except ValueError:
                                 pass
@@ -74,7 +82,7 @@ class DocstringVisitor(ast.NodeVisitor):
                                             "Напишите содержательный строковый докстринг после объявления переменной. "
                                             "Если комментарий технический, отделите его от переменной пустой строкой, "
                                             "или добавьте '# chutils: ignore[DocstringQualityRule]'."
-                                        )
+                                        ),
                                     )
                                 )
 
@@ -89,16 +97,15 @@ class DocstringVisitor(ast.NodeVisitor):
         old_class_doc = self._current_class_doc
         self._current_class_doc = ast.get_docstring(node)
 
-        if not node.name.startswith("_"):
-            if not self._current_class_doc:
-                self.issues.append(
+        if not node.name.startswith("_") and not self._current_class_doc:
+            self.issues.append(
                     LintResult(
                         rule_name=self.rule_name,
                         message=f"У публичного класса {node.name} отсутствует docstring.",
                         severity="error",
                         file_path=self.file_path,
                         line_number=node.lineno,
-                        fix_suggestion=f"Добавьте docstring для класса {node.name}."
+                        fix_suggestion=f"Добавьте docstring для класса {node.name}.",
                     )
                 )
         self.generic_visit(node)
@@ -128,13 +135,19 @@ class DocstringVisitor(ast.NodeVisitor):
             if isinstance(dec, ast.Attribute) and dec.attr == "overload":
                 return
 
-        is_public = not node.name.startswith("_") or node.name in ("__init__", "__call__")
+        is_public = not node.name.startswith("_") or node.name in (
+            "__init__",
+            "__call__",
+        )
 
         is_property = False
         for dec in node.decorator_list:
-            if isinstance(dec, ast.Name) and dec.id == "property":
-                is_property = True
-            elif isinstance(dec, ast.Attribute) and dec.attr in ("setter", "deleter"):
+            if (
+                isinstance(dec, ast.Name)
+                and dec.id == "property"
+                or isinstance(dec, ast.Attribute)
+                and dec.attr in ("setter", "deleter")
+            ):
                 is_property = True
 
         doc = ast.get_docstring(node)
@@ -149,7 +162,7 @@ class DocstringVisitor(ast.NodeVisitor):
                             severity="warn",
                             file_path=self.file_path,
                             line_number=node.lineno,
-                            fix_suggestion="Добавьте docstring для класса или метода __init__."
+                            fix_suggestion="Добавьте docstring для класса или метода __init__.",
                         )
                     )
             else:
@@ -161,7 +174,7 @@ class DocstringVisitor(ast.NodeVisitor):
                             severity="error",
                             file_path=self.file_path,
                             line_number=node.lineno,
-                            fix_suggestion=f"Добавьте docstring для {node.name}."
+                            fix_suggestion=f"Добавьте docstring для {node.name}.",
                         )
                     )
                 else:
@@ -185,7 +198,7 @@ class DocstringVisitor(ast.NodeVisitor):
                                     severity="warn",
                                     file_path=self.file_path,
                                     line_number=node.lineno,
-                                    fix_suggestion="Добавьте раздел 'Args:' в Google Style для описания параметров."
+                                    fix_suggestion="Добавьте раздел 'Args:' в Google Style для описания параметров.",
                                 )
                             )
                         else:
@@ -199,16 +212,19 @@ class DocstringVisitor(ast.NodeVisitor):
                                             severity="warn",
                                             file_path=self.file_path,
                                             line_number=node.lineno,
-                                            fix_suggestion=f"Опишите параметр '{arg_name}' в разделе 'Args:'."
+                                            fix_suggestion=f"Опишите параметр '{arg_name}' в разделе 'Args:'.",
                                         )
                                     )
 
                     # Проверка Returns: в docstring при непустом возвращаемом типе
                     has_return = False
                     if node.returns:
-                        if isinstance(node.returns, ast.Constant) and node.returns.value is None:
-                            pass
-                        elif isinstance(node.returns, ast.Name) and node.returns.id == "None":
+                        if (
+                            isinstance(node.returns, ast.Constant)
+                            and node.returns.value is None
+                            or isinstance(node.returns, ast.Name)
+                            and node.returns.id == "None"
+                        ):
                             pass
                         else:
                             has_return = True
@@ -221,7 +237,7 @@ class DocstringVisitor(ast.NodeVisitor):
                                 severity="warn",
                                 file_path=self.file_path,
                                 line_number=node.lineno,
-                                fix_suggestion="Добавьте раздел 'Returns:' в Google Style для описания возвращаемого значения."
+                                fix_suggestion="Добавьте раздел 'Returns:' в Google Style для описания возвращаемого значения.",
                             )
                         )
 
@@ -236,7 +252,7 @@ class DocstringVisitor(ast.NodeVisitor):
                         severity=severity_hints,
                         file_path=self.file_path,
                         line_number=arg.lineno,
-                        fix_suggestion=f"Добавьте аннотацию типа для '{arg.arg}'."
+                        fix_suggestion=f"Добавьте аннотацию типа для '{arg.arg}'.",
                     )
                 )
 
@@ -249,7 +265,7 @@ class DocstringVisitor(ast.NodeVisitor):
                     severity=severity_hints,
                     file_path=self.file_path,
                     line_number=node.lineno,
-                    fix_suggestion="Добавьте аннотацию возвращаемого типа (например, -> None)."
+                    fix_suggestion="Добавьте аннотацию возвращаемого типа (например, -> None).",
                 )
             )
 
@@ -258,6 +274,7 @@ class DocstringQualityRule(Rule):
     """
     Правило проверки docstrings по стандарту Google Style и type hints.
     """
+
     name = "DocstringQualityRule"
     description = "Проверяет наличие/качество docstrings (Google Style) и type hints у публичных классов и методов."
     severity = "error"
@@ -276,8 +293,11 @@ class DocstringQualityRule(Rule):
         for file_path in files:
             if not file_path.endswith(".py"):
                 continue
-            if "tests" in Path(file_path).parts or "test" in Path(file_path).name.lower() or "setup.py" in Path(
-                    file_path).name:
+            if (
+                "tests" in Path(file_path).parts
+                or "test" in Path(file_path).name.lower()
+                or "setup.py" in Path(file_path).name
+            ):
                 continue
 
             try:

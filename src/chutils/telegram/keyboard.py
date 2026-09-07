@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import math
-from typing import Any, Sequence, cast
+from collections.abc import Sequence
+from typing import Any, cast
 
 ButtonSpec = tuple[str, str] | tuple[str, str, str | None] | dict[str, Any]
 
@@ -10,7 +11,7 @@ def _format_button(button: ButtonSpec) -> dict[str, str]:
     """Приводит спецификацию кнопки к единому словарю Telegram API InlineKeyboardButton."""
     if isinstance(button, dict):
         res: dict[str, str] = {"text": str(button.get("text", ""))}
-        if "url" in button and button["url"]:
+        if button.get("url"):
             res["url"] = str(button["url"])
         elif "callback_data" in button and button["callback_data"] is not None:
             res["callback_data"] = str(button["callback_data"])
@@ -24,7 +25,7 @@ def _format_button(button: ButtonSpec) -> dict[str, str]:
             res["callback_data"] = str(button[1])
         return res
     else:
-        raise ValueError(f"Unsupported button format: {type(button)}")
+        raise TypeError(f"Unsupported button format: {type(button)}")
 
 
 def build_inline_keyboard(
@@ -53,16 +54,23 @@ def build_inline_keyboard(
 
     if as_aiogram:
         try:
-            from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+            from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
             aiogram_rows = []
             for row in rows:
                 aiogram_row = []
                 for btn in row:
                     if "url" in btn:
-                        aiogram_row.append(InlineKeyboardButton(text=btn["text"], url=btn["url"]))
+                        aiogram_row.append(
+                            InlineKeyboardButton(text=btn["text"], url=btn["url"])
+                        )
                     else:
-                        aiogram_row.append(InlineKeyboardButton(text=btn["text"], callback_data=btn.get("callback_data", "")))
+                        aiogram_row.append(
+                            InlineKeyboardButton(
+                                text=btn["text"],
+                                callback_data=btn.get("callback_data", ""),
+                            )
+                        )
                 aiogram_rows.append(aiogram_row)
             return InlineKeyboardMarkup(inline_keyboard=aiogram_rows)
         except ImportError:
@@ -144,7 +152,9 @@ class PaginatorKeyboard:
             else:
                 buttons.append((str(item), f"{self.callback_prefix}_item_{item}"))
 
-        kb_dict = build_inline_keyboard(buttons, buttons_per_row=buttons_per_row, as_aiogram=False)
+        kb_dict = build_inline_keyboard(
+            buttons, buttons_per_row=buttons_per_row, as_aiogram=False
+        )
         rows: list[list[dict[str, str]]] = kb_dict["inline_keyboard"]
 
         # Панель навигации
@@ -153,16 +163,28 @@ class PaginatorKeyboard:
 
             # Кнопка Назад
             if current_page > 1:
-                nav_row.append({"text": "«", "callback_data": f"{self.callback_prefix}:{current_page - 1}"})
+                nav_row.append(
+                    {
+                        "text": "«",
+                        "callback_data": f"{self.callback_prefix}:{current_page - 1}",
+                    }
+                )
             else:
                 nav_row.append({"text": " ", "callback_data": "noop"})
 
             # Индикатор страницы
-            nav_row.append({"text": f"{current_page}/{self.total_pages}", "callback_data": "noop"})
+            nav_row.append(
+                {"text": f"{current_page}/{self.total_pages}", "callback_data": "noop"}
+            )
 
             # Кнопка Вперед
             if current_page < self.total_pages:
-                nav_row.append({"text": "»", "callback_data": f"{self.callback_prefix}:{current_page + 1}"})
+                nav_row.append(
+                    {
+                        "text": "»",
+                        "callback_data": f"{self.callback_prefix}:{current_page + 1}",
+                    }
+                )
             else:
                 nav_row.append({"text": " ", "callback_data": "noop"})
 
@@ -170,21 +192,30 @@ class PaginatorKeyboard:
 
         # Футер
         if footer_buttons:
-            footer_kb = build_inline_keyboard(footer_buttons, buttons_per_row=len(footer_buttons), as_aiogram=False)
+            footer_kb = build_inline_keyboard(
+                footer_buttons, buttons_per_row=len(footer_buttons), as_aiogram=False
+            )
             rows.extend(footer_kb["inline_keyboard"])
 
         if as_aiogram:
             try:
-                from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+                from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
                 aiogram_rows = []
                 for row in rows:
                     aiogram_row = []
                     for btn in row:
                         if "url" in btn:
-                            aiogram_row.append(InlineKeyboardButton(text=btn["text"], url=btn["url"]))
+                            aiogram_row.append(
+                                InlineKeyboardButton(text=btn["text"], url=btn["url"])
+                            )
                         else:
-                            aiogram_row.append(InlineKeyboardButton(text=btn["text"], callback_data=btn.get("callback_data", "")))
+                            aiogram_row.append(
+                                InlineKeyboardButton(
+                                    text=btn["text"],
+                                    callback_data=btn.get("callback_data", ""),
+                                )
+                            )
                     aiogram_rows.append(aiogram_row)
                 return InlineKeyboardMarkup(inline_keyboard=aiogram_rows)
             except ImportError:

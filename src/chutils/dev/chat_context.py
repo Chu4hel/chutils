@@ -36,7 +36,6 @@ def extract_keywords(text: str) -> list[str]:
         "the",
         "for",
         "with",
-        "как",
         "что",
         "это",
     }
@@ -144,9 +143,9 @@ def filter_symbols_by_layer(node: Node, allowed_layers: set[str]) -> Node:
 
 
 def filter_examples(
-        examples: list[ProjectExample],
-        selected_modules: list[str] | None,
-        keywords: list[str] | None,
+    examples: list[ProjectExample],
+    selected_modules: list[str] | None,
+    keywords: list[str] | None,
 ) -> list[ProjectExample]:
     """Фильтрует few-shot примеры по выбранным модулям или ключевым словам.
 
@@ -172,9 +171,9 @@ def filter_examples(
         if not is_relevant and keywords:
             for kw in keywords:
                 if (
-                        kw in ex_text
-                        or kw in ex.good_pattern.lower()
-                        or kw in ex.bad_pattern.lower()
+                    kw in ex_text
+                    or kw in ex.good_pattern.lower()
+                    or kw in ex.bad_pattern.lower()
                 ):
                     is_relevant = True
                     break
@@ -271,10 +270,10 @@ def generate_examples_markdown(examples: list[ProjectExample]) -> str:
 
 
 def collect_context_slice(
-        project_path: Path,
-        modules: list[str] | None = None,
-        task: str | None = None,
-        layer: str = "public",
+    project_path: Path,
+    modules: list[str] | None = None,
+    task: str | None = None,
+    layer: str = "public",
 ) -> str:
     """Собирает контекстный срез по заданным параметрам.
 

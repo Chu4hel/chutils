@@ -450,6 +450,83 @@ members:
 - bind_qt_signals
 - AutoBindMixin
 
+## Модуль `telegram` (Интеграция с Telegram)
 
+::: chutils.telegram
+options:
+members:
 
+- download_user_file
+- send_telegram_file
+- is_admin
+- admin_only
+- AdminFilter
+- tg_rate_limit
+- TelegramThrottlingMiddleware
+- AccessListManager
+- allowed_only
+- SecretUserFilter
+- trace_telegram_update
+- TelegramLoggingMiddleware
+- escape_markdown
+- escape_html
+- smart_truncate
+- split_message
+- TelegramLogHandler
+- send_alert
+- HealthCheckAlertBridge
+- build_inline_keyboard
+- build_reply_keyboard
+- PaginatorKeyboard
 
+## Модуль `vk` (ВКонтакте Callback API)
+
+::: chutils.vk
+options:
+members:
+
+- VKCallbackRouter
+- VKCallbackError
+
+## Модуль `vkma` (VK Mini Apps Валидация)
+
+::: chutils.vkma
+options:
+members:
+
+- validate_vkma_sign
+- parse_vkma_launch_params
+- VKLaunchParams
+- VKUser
+- VKMAAuthError
+
+## Модуль `audit` (Журнал аудита)
+
+::: chutils.audit
+options:
+members:
+
+- AuditLogger
+- AuditRecord
+- BaseAuditBackend
+- MemoryAuditBackend
+- FileAuditBackend
+
+## Модуль `store` (Key-Value хранилище)
+
+::: chutils.store
+options:
+members:
+
+- StoreManager
+- MemoryStoreBackend
+- RedisStoreBackend
+
+## Модуль `db` (Работа с базами данных)
+
+::: chutils.db
+options:
+members:
+
+- DatabaseManager
+- DatabaseConfig

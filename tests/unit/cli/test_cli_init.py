@@ -53,8 +53,12 @@ def test_cli_init_gitignore_already_contains(cli_runner, config_fs):
     fs, project_root = config_fs
     # Список в коде init.py
     entries = [
-        "config.local.yml", "config.local.yaml", "config.local.ini", "config.local.json",
-        "*.log", "logs/"
+        "config.local.yml",
+        "config.local.yaml",
+        "config.local.ini",
+        "config.local.json",
+        "*.log",
+        "logs/",
     ]
     contents = "\n".join(entries) + "\n"
     fs.create_file(".gitignore", contents=contents)
@@ -68,6 +72,7 @@ def test_cli_init_with_model_success(cli_runner, config_fs, mocker):
     """Проверяет успешную генерацию на основе модели."""
     fs, project_root = config_fs
     from pydantic import BaseModel
+
     class Settings(BaseModel):
         api_key: str = "default_key"
 
@@ -75,7 +80,7 @@ def test_cli_init_with_model_success(cli_runner, config_fs, mocker):
     targets = [
         "chutils.config.generator.generate_yaml_template",
         "chutils.commands.init.generate_yaml_template",
-        "src.chutils.commands.init.generate_yaml_template"
+        "src.chutils.commands.init.generate_yaml_template",
     ]
     for t in targets:
         try:
@@ -96,4 +101,3 @@ def test_cli_init_with_model_success(cli_runner, config_fs, mocker):
     with open("config.yml") as f:
         content = f.read()
         assert "api_key: default_key" in content
-

@@ -23,7 +23,8 @@ QAction: Any = None
 def _load_qt() -> None:
     global QT_BINDING, QtCore, QtGui, QtWidgets, Signal, Slot, Property, QAction
 
-    preferred = (os.getenv("CHUTILS_QT_API") or os.getenv("QT_API") or "").lower()  # chutils: ignore[ChutilsIntegrationRule]
+    api_env = os.getenv("CHUTILS_QT_API") or os.getenv("QT_API") or ""  # chutils: ignore[ChutilsIntegrationRule]
+    preferred = api_env.lower()
 
     bindings: list[str] = []
     if preferred in ("pyqt6", "pyqt"):
@@ -48,7 +49,9 @@ def _load_qt() -> None:
                 Signal = getattr(_PyQt6_QtCore, "pyqtSignal", None)
                 Slot = getattr(_PyQt6_QtCore, "pyqtSlot", None)
                 Property = getattr(_PyQt6_QtCore, "pyqtProperty", None)
-                QAction = getattr(_PyQt6_QtGui, "QAction", getattr(_PyQt6_QtWidgets, "QAction", None))
+                QAction = getattr(
+                    _PyQt6_QtGui, "QAction", getattr(_PyQt6_QtWidgets, "QAction", None)
+                )
                 return
             except ImportError:
                 continue
@@ -67,11 +70,14 @@ def _load_qt() -> None:
                 Signal = getattr(_PySide6_QtCore, "Signal", None)
                 Slot = getattr(_PySide6_QtCore, "Slot", None)
                 Property = getattr(_PySide6_QtCore, "Property", None)
-                QAction = getattr(_PySide6_QtGui, "QAction", getattr(_PySide6_QtWidgets, "QAction", None))
+                QAction = getattr(
+                    _PySide6_QtGui,
+                    "QAction",
+                    getattr(_PySide6_QtWidgets, "QAction", None),
+                )
                 return
             except ImportError:
                 continue
-
 
 
 _load_qt()

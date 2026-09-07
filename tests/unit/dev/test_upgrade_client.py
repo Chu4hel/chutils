@@ -40,6 +40,7 @@ def test_save_and_load_releases_from_cache(fake_base_dir):
     # Искусственно состарим файл кэша
     past_time = time.time() - (13 * 60 * 60)  # 13 часов назад
     import os
+
     os.utime(cache_file, (past_time, past_time))
 
     # Кэш устарел, должен вернуть None по умолчанию
@@ -66,7 +67,9 @@ def test_fetch_changelogs_network_success(mocker, fake_base_dir):
     """Проверяет успешное получение данных по сети."""
     mock_urlopen = mocker.patch("urllib.request.urlopen")
     mock_response = mocker.MagicMock()
-    mock_response.read.return_value = b'[{"tag_name": "v3.2.0", "body": "From network"}]'
+    mock_response.read.return_value = (
+        b'[{"tag_name": "v3.2.0", "body": "From network"}]'
+    )
     mock_urlopen.return_value.__enter__.return_value = mock_response
 
     res = fetch_changelogs(fake_base_dir)
@@ -87,18 +90,24 @@ def test_cache_invalidated_on_version_change(mocker, fake_base_dir):
     releases = [{"tag_name": "v3.4.0", "body": "Old release"}]
 
     # Сохраняем кэш с версией 3.4.0
-    mocker.patch("chutils.dev.upgrade_client._get_installed_version", return_value="3.4.0")
+    mocker.patch(
+        "chutils.dev.upgrade_client._get_installed_version", return_value="3.4.0"
+    )
     save_releases_to_cache(cache_dir, cache_file, releases)
 
     # При той же версии кэш подхватывается
     assert load_releases_from_cache(cache_file) == releases
 
     # При симуляции обновления версии библиотеки до 3.4.1 кэш инвалидируется
-    mocker.patch("chutils.dev.upgrade_client._get_installed_version", return_value="3.4.1")
+    mocker.patch(
+        "chutils.dev.upgrade_client._get_installed_version", return_value="3.4.1"
+    )
     assert load_releases_from_cache(cache_file) is None
 
 
-def test_fetch_changelogs_network_failure_fallback_to_stale_cache(mocker, fake_base_dir):
+def test_fetch_changelogs_network_failure_fallback_to_stale_cache(
+    mocker, fake_base_dir
+):
     """Проверяет fallback к устаревшему кэшу при сбое сети."""
     cache_dir, cache_file = get_cache_paths(fake_base_dir)
     releases = [{"tag_name": "v3.2.0", "body": "Stale data"}]
@@ -107,10 +116,13 @@ def test_fetch_changelogs_network_failure_fallback_to_stale_cache(mocker, fake_b
     # Искусственно состарим файл
     past_time = time.time() - (13 * 60 * 60)
     import os
+
     os.utime(cache_file, (past_time, past_time))
 
     # Симулируем сетевую ошибку
-    mocker.patch("urllib.request.urlopen", side_effect=urllib.error.URLError("No network"))
+    mocker.patch(
+        "urllib.request.urlopen", side_effect=urllib.error.URLError("No network")
+    )
 
     res = fetch_changelogs(fake_base_dir)
     assert res == releases  # Возвращает устаревший кэш
@@ -118,8 +130,9 @@ def test_fetch_changelogs_network_failure_fallback_to_stale_cache(mocker, fake_b
 
 def test_fetch_changelogs_network_failure_no_cache(mocker, fake_base_dir):
     """Проверяет возврат пустого списка при сбое сети и отсутствии кэша."""
-    mocker.patch("urllib.request.urlopen", side_effect=urllib.error.URLError("No network"))
+    mocker.patch(
+        "urllib.request.urlopen", side_effect=urllib.error.URLError("No network")
+    )
 
     res = fetch_changelogs(fake_base_dir)
     assert res == []
-

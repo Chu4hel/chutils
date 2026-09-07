@@ -1,4 +1,5 @@
 """Утилиты для вычисления хэша записей журнала аудита."""
+
 from __future__ import annotations
 
 import hashlib

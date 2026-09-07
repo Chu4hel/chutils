@@ -1,12 +1,13 @@
 """
 Модуль планировщика фоновых задач.
 """
+
 from chutils.tasks.core import (
     ErrorStrategy,
     PeriodicTask,
-    periodic_task,
-    get_registered_tasks,
     clear_tasks_registry,
+    get_registered_tasks,
+    periodic_task,
     start_scheduler,
     stop_scheduler,
 )
@@ -14,9 +15,9 @@ from chutils.tasks.core import (
 __all__ = [
     "ErrorStrategy",
     "PeriodicTask",
-    "periodic_task",
-    "get_registered_tasks",
     "clear_tasks_registry",
+    "get_registered_tasks",
+    "periodic_task",
     "start_scheduler",
     "stop_scheduler",
 ]

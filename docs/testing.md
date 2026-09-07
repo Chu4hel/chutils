@@ -18,7 +18,11 @@ pytest_plugins = ["chutils.testing.fixtures"]
 Или импортируйте их явно в нужном тестовом файле:
 
 ```python
-from chutils.testing.fixtures import mock_chutils_config, mock_chutils_secrets, capture_chutils_logs
+from chutils.testing.fixtures import (
+    mock_chutils_config,
+    mock_chutils_secrets,
+    capture_chutils_logs,
+)
 ```
 
 ---
@@ -43,6 +47,7 @@ def test_database_connection(mock_chutils_config):
     mock_chutils_config.set("database", "port", 5432)
 
     from chutils import get_config_value
+
     assert get_config_value("database", "host") == "localhost"
 ```
 
@@ -61,6 +66,7 @@ def test_api_client(mock_chutils_secrets):
     mock_chutils_secrets.set_secret("api_token", "test-token-123")
 
     from chutils import SecretManager
+
     sm = SecretManager(service_name="my_service")
 
     assert sm.get_secret("api_token") == "test-token-123"

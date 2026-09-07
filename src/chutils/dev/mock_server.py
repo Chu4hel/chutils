@@ -8,7 +8,7 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
-from typing import TypedDict, Union, cast
+from typing import TypedDict, cast
 
 from chutils.exceptions import CommandError
 
@@ -23,9 +23,10 @@ except ImportError:
 
 class RouteConfig(TypedDict, total=False):
     """Конфигурация отдельного маршрута мок-сервера."""
+
     path: str
     method: str
-    response: Union[str, dict[str, object], list[object]]
+    response: str | dict[str, object] | list[object]
     status: int
     delay: float
     is_regex: bool
@@ -82,9 +83,9 @@ DEFAULT_TEMPLATE = """# Декларативная конфигурация ро
 
 
 def interpolate_groups(
-        val: Union[str, dict[str, object], list[object]],
-        groups: tuple[str, ...],
-) -> Union[str, dict[str, object], list[object]]:
+    val: str | dict[str, object] | list[object],
+    groups: tuple[str, ...],
+) -> str | dict[str, object] | list[object]:
     """Рекурсивно подставляет значения групп регулярного выражения вместо $1, $2 и т.д.
 
     Args:
@@ -137,7 +138,6 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
             format: Форматная строка лога.
             *args: Аргументы форматирования.
         """
-        pass
 
     def handle_request(self) -> None:
         """Общая логика обработки входящего запроса."""
@@ -204,7 +204,9 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
                 self.send_header("Content-Length", str(len(response_bytes)))
                 self.end_headers()
 
-                self.runner.debug_log.append(f"Writing response_bytes len={len(response_bytes)}")
+                self.runner.debug_log.append(
+                    f"Writing response_bytes len={len(response_bytes)}"
+                )
                 self.wfile.write(response_bytes)
                 self.wfile.flush()
 
@@ -344,6 +346,7 @@ class MockHTTPRequestHandler(BaseHTTPRequestHandler):
 
 class ThreadingHTTPServer(socketserver.ThreadingMixIn, HTTPServer):
     """Многопоточный HTTP сервер."""
+
     daemon_threads = True
 
 
@@ -351,10 +354,10 @@ class MockServerRunner:
     """Управляющий класс для мок-сервера."""
 
     def __init__(
-            self,
-            port: int = 8888,
-            routes_path: str = "mocks.yml",
-            proxy_fallback: str | None = None,
+        self,
+        port: int = 8888,
+        routes_path: str = "mocks.yml",
+        proxy_fallback: str | None = None,
     ) -> None:
         """Инициализирует MockServerRunner.
 
@@ -373,6 +376,7 @@ class MockServerRunner:
 
         # Ленивая инициализация консоли и логгера
         from chutils.cli_utils import get_console
+
         self.console = get_console()
         # Инициализируем отрисовщик в основном потоке, чтобы избежать KeyError: 'rich._windows_renderer' в фоновых потоках на Windows
         self.console.print("", end="")
@@ -389,7 +393,8 @@ class MockServerRunner:
                 f"Файл конфигурации '{output_path}' уже существует. "
                 "Удалите его или выберите другой путь."
             )
-        path.write_text(DEFAULT_TEMPLATE, encoding="utf-8")  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule]
+        path.write_text(DEFAULT_TEMPLATE, encoding="utf-8")
         self.console.print(
             f"[bold green] [OK] [/bold green] Шаблон конфигурации успешно сохранен в: [cyan]{output_path}[/cyan]"
         )
@@ -400,8 +405,9 @@ class MockServerRunner:
         Args:
             message: Текст лог-сообщения.
         """
-        from datetime import datetime
-        time_str = datetime.now().strftime("%H:%M:%S")
+        from chutils.time import utc_now
+
+        time_str = utc_now().astimezone().strftime("%H:%M:%S")
         self.console.print(f"[dim][{time_str}][/dim] {message}")
 
     def load_config(self) -> None:
@@ -431,7 +437,9 @@ class MockServerRunner:
                 routes_data = json.loads(content)
 
             if not isinstance(routes_data, list):
-                raise CommandError("Конфигурация роутов должна быть списком правил (массивом).")
+                raise CommandError(
+                    "Конфигурация роутов должна быть списком правил (массивом)."
+                )
 
             validated_routes: list[RouteConfig] = []
             for item in routes_data:
@@ -452,7 +460,9 @@ class MockServerRunner:
         except Exception as e:
             if isinstance(e, CommandError):
                 raise
-            raise CommandError(f"Не удалось распарсить файл конфигурации '{self.routes_path}': {e}")
+            raise CommandError(
+                f"Не удалось распарсить файл конфигурации '{self.routes_path}': {e}"
+            )
 
     def check_reload(self) -> None:
         """Проверяет время изменения файла на диске и перезагружает при необходимости."""
@@ -495,7 +505,10 @@ class MockServerRunner:
             f"       - [bold]Адрес:[/bold] [cyan]http://localhost:{self.port}[/cyan]\n"
             f"       - [bold]Конфигурация:[/bold] [cyan]{self.routes_path}[/cyan]\n"
             + (
-                f"       - [bold]Proxy Fallback:[/bold] [cyan]{self.proxy_fallback}[/cyan]\n" if self.proxy_fallback else "")
+                f"       - [bold]Proxy Fallback:[/bold] [cyan]{self.proxy_fallback}[/cyan]\n"
+                if self.proxy_fallback
+                else ""
+            )
             + "       Нажмите [bold red]Ctrl+C[/bold red] для остановки."
         )
 

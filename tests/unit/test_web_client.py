@@ -33,7 +33,9 @@ def test_web_client_proxy_rotation_on_retry(mocker: MockerFixture) -> None:
         MagicMock(status_code=200),
     ]
 
-    pool = ProxyPool(proxies=["http://proxy1:8080", "http://proxy2:8080"], strategy="round_robin")
+    pool = ProxyPool(
+        proxies=["http://proxy1:8080", "http://proxy2:8080"], strategy="round_robin"
+    )
     client = WebClient(proxy_pool=pool, rotate_proxy=True, retries=1, retry_delay=0.01)
 
     resp = client.get("http://sync-retry.example.com")
@@ -50,7 +52,9 @@ def test_web_client_rate_limit(mocker: MockerFixture) -> None:
     mock_send.return_value = mock_response
 
     # Настраиваем лимит 1 запрос в 10 секунд без ожидания
-    client = WebClient(rate_limit_calls=1, rate_limit_period=10.0, rate_limit_wait=False)
+    client = WebClient(
+        rate_limit_calls=1, rate_limit_period=10.0, rate_limit_wait=False
+    )
 
     # Первый запрос должен пройти успешно
     client.get("http://sync-limit.example.com")

@@ -1,6 +1,7 @@
 """
 Утилиты для сбора метаданных и вычисления хэша проекта.
 """
+
 from __future__ import annotations
 
 import datetime
@@ -19,8 +20,10 @@ def calculate_project_hash(project_path: Path) -> str:
         Строка с SHA-256 хэшем в hex-формате.
     """
     import hashlib
+
     # Импортируем внутри функции во избежание круговых импортов
     from chutils.dev.ast_indexer import GitIgnoreMatcher
+
     matcher = GitIgnoreMatcher(project_path)
 
     py_files: list[Path] = []
@@ -78,6 +81,7 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
             return "unknown"
         try:
             import tomllib
+
             with open(toml_path, "rb") as f:
                 data = tomllib.load(f)
                 if isinstance(data, dict):
@@ -107,6 +111,7 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
     if chutils_version == "unknown":
         try:
             import importlib.metadata
+
             chutils_version = importlib.metadata.version("chutils")
         except Exception:
             pass
@@ -114,7 +119,9 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
     if chutils_version == "unknown":
         try:
             chutils_root = Path(chutils.__file__).parent.parent.parent
-            chutils_version = _get_version_from_pyproject(chutils_root / "pyproject.toml")
+            chutils_version = _get_version_from_pyproject(
+                chutils_root / "pyproject.toml"
+            )
         except Exception:
             pass
 
@@ -129,7 +136,7 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
             cwd=str(real_root),
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
         git_commit = res.stdout.strip()
 
@@ -138,7 +145,7 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
             cwd=str(real_root),
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
         if status_res.stdout.strip():
             git_commit += " (dirty)"
@@ -199,13 +206,13 @@ def save_context_metadata_cache(
     """
     import json
     import sys
-    if "pytest" in sys.modules:
-        # Не пишем на реальный диск из тестов
-        if "pytest-" in str(output_file) or "Temp" in str(output_file) or "temp" in str(output_file) or "tmp" in str(
-                output_file):
-            if "pytest-" not in str(project_path) and "Temp" not in str(project_path) and "temp" not in str(
-                    project_path) and "tmp" not in str(project_path):
-                return
+
+    if (
+        "pytest" in sys.modules
+        and any(t in str(output_file) for t in ("pytest-", "Temp", "temp", "tmp"))
+        and not any(t in str(project_path) for t in ("pytest-", "Temp", "temp", "tmp"))
+    ):
+        return
 
     chutils_dir = project_path / ".chutils"
     try:
@@ -256,7 +263,7 @@ def save_context_metadata_cache(
         files_registry[file_path_str] = entry
 
         with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump({"files": files_registry}, f, indent=2, ensure_ascii=False)  # chutils: ignore[ChutilsIntegrationRule]
+            # chutils: ignore[ChutilsIntegrationRule]
+            json.dump({"files": files_registry}, f, indent=2, ensure_ascii=False)
     except Exception:
         pass
-

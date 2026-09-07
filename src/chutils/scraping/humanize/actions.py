@@ -6,7 +6,13 @@ import time
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
-from .math_utils import BezierCurveGenerator, JitterDelayGenerator, KeyboardTypoGenerator
+
+from .math_utils import (
+    BezierCurveGenerator,
+    JitterDelayGenerator,
+    KeyboardTypoGenerator,
+    WindMouseGenerator,
+)
 
 
 # Ленивая проверка наличия библиотек
@@ -21,7 +27,7 @@ def _ensure_playwright() -> None:
             "Модуль 'playwright' не установлен. Для использования Playwright-интеграций "
             "установите его: pip install chutils[scraping] или pip install playwright.",
             dependency="playwright",
-            hint="Выполните pip install chutils[scraping] или pip install playwright."
+            hint="Выполните pip install chutils[scraping] или pip install playwright.",
         )
 
 
@@ -36,7 +42,7 @@ def _ensure_selenium() -> None:
             "Модуль 'selenium' не установлен. Для использования Selenium-интеграций "
             "установите его: pip install chutils[scraping] или pip install selenium.",
             dependency="selenium",
-            hint="Выполните pip install chutils[scraping] или pip install selenium."
+            hint="Выполните pip install chutils[scraping] или pip install selenium.",
         )
 
 
@@ -44,6 +50,7 @@ def _ensure_nodriver() -> None:
     if "nodriver" in sys.modules:
         try:
             from unittest.mock import Mock
+
             is_mock = isinstance(sys.modules["nodriver"], Mock)
         except ImportError:
             is_mock = False
@@ -57,13 +64,14 @@ def _ensure_nodriver() -> None:
             "Модуль 'nodriver' не установлен. Для использования nodriver-интеграций "
             "установите его в ваше окружение (например, pip install nodriver или uv add nodriver).",
             dependency="nodriver",
-            hint="Установите пакет nodriver в ваше окружение (через pip, uv или poetry)."
+            hint="Установите пакет nodriver в ваше окружение (через pip, uv или poetry).",
         )
 
 
 def _is_nodriver(obj: Any) -> bool:
     try:
         from unittest.mock import Mock
+
         is_mock = isinstance(obj, Mock)
     except ImportError:
         is_mock = False
@@ -79,10 +87,10 @@ def _is_playwright(obj: Any) -> bool:
     if obj is None:
         return True
     return not _is_nodriver(obj) and (
-        hasattr(obj, "mouse") or
-        hasattr(obj, "keyboard") or
-        hasattr(obj, "evaluate") or
-        hasattr(obj, "focus")
+        hasattr(obj, "mouse")
+        or hasattr(obj, "keyboard")
+        or hasattr(obj, "evaluate")
+        or hasattr(obj, "focus")
     )
 
 
@@ -122,12 +130,13 @@ async def async_human_sleep(min_seconds: float, max_seconds: float) -> None:
 
 
 async def async_move_mouse(
-        page: Any,
-        x: int,
-        y: int,
-        start: tuple[int, int] | None = None,
-        steps: int = 30,
-        delay_between_steps: float = 0.01,
+    page: Any,
+    x: int,
+    y: int,
+    start: tuple[int, int] | None = None,
+    steps: int = 30,
+    delay_between_steps: float = 0.01,
+    algorithm: str = "bezier",
 ) -> None:
     """Имитирует плавное перемещение мыши Playwright или nodriver.
 
@@ -136,14 +145,48 @@ async def async_move_mouse(
         x: Конечная координата X.
         y: Конечная координата Y.
         start: Начальные координаты X, Y. Если не задано, используется (0, 0).
-        steps: Количество промежуточных шагов движения.
-        delay_between_steps: Задержка между шагами в секундах.
+        steps: Количество промежуточных шагов движения (для алгоритма 'bezier').
+        delay_between_steps: Задержка между шагами в секундах (для алгоритма 'bezier').
+        algorithm: Алгоритм генерации траектории ('bezier' или 'windmouse').
     """
+    start_pt = start or (0, 0)
+
+    if algorithm == "windmouse":
+        wind_gen = WindMouseGenerator()
+        points_with_delay = wind_gen.generate(start_pt, (x, y))
+
+        if _is_nodriver(page):
+            _ensure_nodriver()
+            from nodriver.cdp import input as cdp_input
+
+            for px, py, step_delay in points_with_delay:
+                await page.send(
+                    cdp_input.dispatch_mouse_event(
+                        type_="mouseMoved",
+                        x=px,
+                        y=py,
+                    )
+                )
+                if step_delay > 0:
+                    await asyncio.sleep(step_delay)
+        elif _is_playwright(page):
+            _ensure_playwright()
+
+            for px, py, step_delay in points_with_delay:
+                await page.mouse.move(px, py)
+                if step_delay > 0:
+                    await asyncio.sleep(step_delay)
+        else:
+            raise ValueError(
+                f"Не удалось определить тип переданного объекта: {type(page)}. "
+                "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
+            )
+        return
+
     if _is_nodriver(page):
         _ensure_nodriver()
         from nodriver.cdp import input as cdp_input
 
-        start_pt = start or (0, 0)
         curve_gen = BezierCurveGenerator()
         points = curve_gen.generate(start_pt, (x, y), steps=steps)
 
@@ -160,7 +203,6 @@ async def async_move_mouse(
     elif _is_playwright(page):
         _ensure_playwright()
 
-        start_pt = start or (0, 0)
         curve_gen = BezierCurveGenerator()
         points = curve_gen.generate(start_pt, (x, y), steps=steps)
 
@@ -176,12 +218,12 @@ async def async_move_mouse(
 
 
 async def async_scroll_to(
-        page: Any,
-        x: int,
-        y: int,
-        selector: str | None = None,
-        steps: int = 10,
-        delay_between_steps: float = 0.01,
+    page: Any,
+    x: int,
+    y: int,
+    selector: str | None = None,
+    steps: int = 10,
+    delay_between_steps: float = 0.01,
 ) -> None:
     """Имитирует плавный скроллинг Playwright или nodriver.
 
@@ -245,7 +287,11 @@ async def async_scroll_to(
 
 
 async def async_type_text(
-        page: Any, selector: str, text: str, error_rate: float = 0.05, speed_wpm: float = 40.0
+    page: Any,
+    selector: str,
+    text: str,
+    error_rate: float = 0.05,
+    speed_wpm: float = 40.0,
 ) -> None:
     """Имитирует ввод текста с опечатками Playwright или nodriver.
 
@@ -332,13 +378,15 @@ async def async_type_text(
             "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
         )
 
+
 def move_mouse(
-        driver: Any,
-        x: int,
-        y: int,
-        start: tuple[int, int] | None = None,
-        steps: int = 30,
-        delay_between_steps: float = 0.01,
+    driver: Any,
+    x: int,
+    y: int,
+    start: tuple[int, int] | None = None,
+    steps: int = 30,
+    delay_between_steps: float = 0.01,
+    algorithm: str = "bezier",
 ) -> None:
     """Имитирует плавное перемещение мыши Selenium.
 
@@ -347,18 +395,34 @@ def move_mouse(
         x: Конечная координата X.
         y: Конечная координата Y.
         start: Начальные координаты X, Y. Если не задано, используется (0, 0).
-        steps: Количество промежуточных шагов.
-        delay_between_steps: Задержка между шагами в секундах.
+        steps: Количество промежуточных шагов (для алгоритма 'bezier').
+        delay_between_steps: Задержка между шагами в секундах (для алгоритма 'bezier').
+        algorithm: Алгоритм генерации траектории ('bezier' или 'windmouse').
     """
     _ensure_selenium()
     from selenium.webdriver.common.action_chains import ActionChains
 
     start_pt = start or (0, 0)
+
+    if algorithm == "windmouse":
+        wind_gen = WindMouseGenerator()
+        points = wind_gen.generate(start_pt, (x, y))
+
+        prev_x, prev_y = start_pt
+        for px, py, step_delay in points:
+            dx = px - prev_x
+            dy = py - prev_y
+            ActionChains(driver).move_by_offset(dx, dy).perform()
+            prev_x, prev_y = px, py
+            if step_delay > 0:
+                time.sleep(step_delay)
+        return
+
     curve_gen = BezierCurveGenerator()
-    points = curve_gen.generate(start_pt, (x, y), steps=steps)
+    points_bezier = curve_gen.generate(start_pt, (x, y), steps=steps)
 
     prev_x, prev_y = start_pt
-    for px, py in points:
+    for px, py in points_bezier:
         dx = px - prev_x
         dy = py - prev_y
         ActionChains(driver).move_by_offset(dx, dy).perform()
@@ -368,12 +432,12 @@ def move_mouse(
 
 
 def scroll_to(
-        driver: Any,
-        x: int,
-        y: int,
-        selector: str | None = None,
-        steps: int = 10,
-        delay_between_steps: float = 0.01,
+    driver: Any,
+    x: int,
+    y: int,
+    selector: str | None = None,
+    steps: int = 10,
+    delay_between_steps: float = 0.01,
 ) -> None:
     """Имитирует плавный скроллинг Selenium.
 
@@ -387,8 +451,12 @@ def scroll_to(
     """
     _ensure_selenium()
 
-    scroll_x = driver.execute_script("return window.scrollX || window.pageXOffset || 0;")
-    scroll_y = driver.execute_script("return window.scrollY || window.pageYOffset || 0;")
+    scroll_x = driver.execute_script(
+        "return window.scrollX || window.pageXOffset || 0;"
+    )
+    scroll_y = driver.execute_script(
+        "return window.scrollY || window.pageYOffset || 0;"
+    )
 
     points = []
     for i in range(steps):
@@ -404,7 +472,11 @@ def scroll_to(
 
 
 def type_text(
-        driver: Any, selector: str, text: str, error_rate: float = 0.05, speed_wpm: float = 40.0
+    driver: Any,
+    selector: str,
+    text: str,
+    error_rate: float = 0.05,
+    speed_wpm: float = 40.0,
 ) -> None:
     """Имитирует ввод текста с опечатками Selenium.
 
@@ -436,3 +508,150 @@ def type_text(
         delay = delay_gen.generate(char_delay)
         if delay > 0:
             time.sleep(delay)
+
+
+async def async_click(
+    page: Any,
+    selector: str | None = None,
+    x: int | None = None,
+    y: int | None = None,
+    start: tuple[int, int] | None = None,
+    algorithm: str = "windmouse",
+    button: str = "left",
+) -> None:
+    """Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).
+
+    Args:
+        page: Объект страницы Playwright Page или вкладки nodriver Tab.
+        selector: Селектор целевого элемента (если x, y не заданы).
+        x: Конечная координата X.
+        y: Конечная координата Y.
+        start: Начальные координаты курсора.
+        algorithm: Алгоритм движения ('windmouse' или 'bezier').
+        button: Кнопка мыши ('left', 'right', 'middle').
+    """
+    target_x = x
+    target_y = y
+
+    if target_x is None or target_y is None:
+        if selector is None:
+            raise ValueError(
+                "Необходимо указать координаты (x, y) или CSS-селектор selector."
+            )
+
+        if _is_nodriver(page):
+            _ensure_nodriver()
+            elem = await page.find(selector)
+            box = await elem.get_position() if hasattr(elem, "get_position") else None
+            if box:
+                target_x = int(box.x + box.width * random.uniform(0.3, 0.7))
+                target_y = int(box.y + box.height * random.uniform(0.3, 0.7))
+            else:
+                target_x, target_y = 100, 100
+        elif _is_playwright(page):
+            _ensure_playwright()
+            elem = (
+                await page.query_selector(selector)
+                if hasattr(page, "query_selector")
+                else None
+            )
+            if elem is not None:
+                box = await elem.bounding_box()
+                if box:
+                    target_x = int(box["x"] + box["width"] * random.uniform(0.3, 0.7))
+                    target_y = int(box["y"] + box["height"] * random.uniform(0.3, 0.7))
+            if target_x is None or target_y is None:
+                target_x, target_y = 100, 100
+        else:
+            raise ValueError(
+                f"Не удалось определить тип переданного объекта: {type(page)}. "
+                "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
+            )
+
+    # 1. Плавное перемещение к цели
+    await async_move_mouse(
+        page, x=target_x, y=target_y, start=start, algorithm=algorithm
+    )
+
+    # 2. Пауза перед нажатием
+    await asyncio.sleep(random.uniform(0.04, 0.12))
+
+    # 3. Нажатие, удержание и отпускание кнопки
+    if _is_nodriver(page):
+        _ensure_nodriver()
+        from nodriver.cdp import input as cdp_input
+
+        btn = (
+            "left" if button == "left" else ("right" if button == "right" else "middle")
+        )
+        await page.send(
+            cdp_input.dispatch_mouse_event(
+                type_="mousePressed",
+                x=target_x,
+                y=target_y,
+                button=cdp_input.MouseButton(btn),
+                click_count=1,
+            )
+        )
+        await asyncio.sleep(random.uniform(0.04, 0.09))
+        await page.send(
+            cdp_input.dispatch_mouse_event(
+                type_="mouseReleased",
+                x=target_x,
+                y=target_y,
+                button=cdp_input.MouseButton(btn),
+                click_count=1,
+            )
+        )
+    elif _is_playwright(page):
+        _ensure_playwright()
+        await page.mouse.down(button=button)
+        await asyncio.sleep(random.uniform(0.04, 0.09))
+        await page.mouse.up(button=button)
+
+    # 4. Пауза после клика
+    await asyncio.sleep(random.uniform(0.03, 0.08))
+
+
+def click(
+    driver: Any,
+    selector: str | None = None,
+    x: int | None = None,
+    y: int | None = None,
+    start: tuple[int, int] | None = None,
+    algorithm: str = "windmouse",
+) -> None:
+    """Имитирует реалистичный клик мышью Selenium.
+
+    Args:
+        driver: Экземпляр Selenium WebDriver.
+        selector: CSS-селектор целевого элемента (если x, y не заданы).
+        x: Конечная координата X.
+        y: Конечная координата Y.
+        start: Начальные координаты курсора.
+        algorithm: Алгоритм движения ('windmouse' или 'bezier').
+    """
+    _ensure_selenium()
+    from selenium.webdriver.common.action_chains import ActionChains
+    from selenium.webdriver.common.by import By
+
+    target_x = x
+    target_y = y
+
+    if target_x is None or target_y is None:
+        if selector is None:
+            raise ValueError(
+                "Необходимо указать координаты (x, y) или CSS-селектор selector."
+            )
+        element = driver.find_element(By.CSS_SELECTOR, selector)
+        loc = element.location
+        size = element.size
+        target_x = int(loc["x"] + size["width"] * random.uniform(0.3, 0.7))
+        target_y = int(loc["y"] + size["height"] * random.uniform(0.3, 0.7))
+
+    move_mouse(driver, x=target_x, y=target_y, start=start, algorithm=algorithm)
+    time.sleep(random.uniform(0.04, 0.12))
+
+    actions = ActionChains(driver)
+    actions.click_and_hold().pause(random.uniform(0.04, 0.09)).release().perform()
+    time.sleep(random.uniform(0.03, 0.08))

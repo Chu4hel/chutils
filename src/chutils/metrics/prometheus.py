@@ -3,6 +3,7 @@ import threading
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
+
 from .base import MetricsProvider
 
 PROMETHEUS_AVAILABLE = importlib.util.find_spec("prometheus_client") is not None
@@ -12,7 +13,7 @@ PROMETHEUS_AVAILABLE = importlib.util.find_spec("prometheus_client") is not None
 class PrometheusMetricsProvider(MetricsProvider):
     """
     Провайдер метрик, транслирующий вызовы в prometheus_client.
-    
+
     Использует ленивый импорт. Если библиотека prometheus_client отсутствует,
     выбрасывает OptionalDependencyError при инициализации.
     """
@@ -23,14 +24,16 @@ class PrometheusMetricsProvider(MetricsProvider):
             raise OptionalDependencyError(
                 "Библиотека 'prometheus_client' не установлена.",
                 dependency="prometheus_client",
-                hint="Установите ее с помощью 'pip install chutils[metrics]' или 'pip install prometheus-client'."
+                hint="Установите ее с помощью 'pip install chutils[metrics]' или 'pip install prometheus-client'.",
             )
 
         self._lock = threading.Lock()
         # Кэш созданных объектов метрик: { (name, label_names): prometheus_metric_object }
         self._metrics: dict[tuple[str, tuple[str, ...]], Any] = {}
 
-    def _get_or_create_metric(self, name: str, metric_type: str, labels: dict[str, str] | None) -> Any:
+    def _get_or_create_metric(
+        self, name: str, metric_type: str, labels: dict[str, str] | None
+    ) -> Any:
         label_names = sorted(labels.keys()) if labels else []
         cache_key = (name, tuple(label_names))
 
@@ -42,19 +45,27 @@ class PrometheusMetricsProvider(MetricsProvider):
             import prometheus_client
 
             if metric_type == "counter":
-                metric: Any = prometheus_client.Counter(name, f"Counter for {name}", labelnames=label_names)
+                metric: Any = prometheus_client.Counter(
+                    name, f"Counter for {name}", labelnames=label_names
+                )
             elif metric_type == "gauge":
-                metric = prometheus_client.Gauge(name, f"Gauge for {name}", labelnames=label_names)
+                metric = prometheus_client.Gauge(
+                    name, f"Gauge for {name}", labelnames=label_names
+                )
             elif metric_type == "histogram":
                 # Используем дефолтные бакеты prometheus_client
-                metric = prometheus_client.Histogram(name, f"Histogram for {name}", labelnames=label_names)
+                metric = prometheus_client.Histogram(
+                    name, f"Histogram for {name}", labelnames=label_names
+                )
             else:
                 raise ValueError(f"Неизвестный тип метрики: {metric_type}")
 
             self._metrics[cache_key] = metric
             return metric
 
-    def increment(self, name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None:
+    def increment(
+        self, name: str, value: float = 1.0, labels: dict[str, str] | None = None
+    ) -> None:
         """Увеличить счетчик (Counter) на заданное значение.
 
         Args:
@@ -68,7 +79,9 @@ class PrometheusMetricsProvider(MetricsProvider):
         else:
             metric.inc(value)
 
-    def set_gauge(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+    def set_gauge(
+        self, name: str, value: float, labels: dict[str, str] | None = None
+    ) -> None:
         """Установить значение датчика (Gauge).
 
         Args:
@@ -82,7 +95,9 @@ class PrometheusMetricsProvider(MetricsProvider):
         else:
             metric.set(value)
 
-    def observe(self, name: str, value: float, labels: dict[str, str] | None = None) -> None:
+    def observe(
+        self, name: str, value: float, labels: dict[str, str] | None = None
+    ) -> None:
         """Записать значение в гистограмму/таймер (Histogram/Timer).
 
         Args:
@@ -103,6 +118,7 @@ class PrometheusMetricsProvider(MetricsProvider):
             Строка с отформатированными метриками.
         """
         import prometheus_client
+
         return prometheus_client.generate_latest().decode("utf-8")
 
     def clear(self) -> None:

@@ -15,6 +15,7 @@ from typing import Any
 from urllib.parse import urljoin
 
 from chutils.env import is_rich_enabled
+
 from .base import BaseCommand
 
 DEFAULT_MIRRORS = [
@@ -43,7 +44,8 @@ def get_current_index_url() -> str:
             [sys.executable, "-m", "pip", "config", "get", "global.index-url"],
             capture_output=True,
             text=True,
-            timeout=3
+            timeout=3,
+            check=False,
         )
         if result.returncode == 0:
             url = result.stdout.strip()
@@ -111,7 +113,9 @@ def normalize_url(base_url: str, package: str) -> str:
     return urljoin(base_url, f"{package}/")
 
 
-def measure_mirror(mirror_url: str, package: str, timeout: float = 3.0) -> dict[str, Any]:
+def measure_mirror(
+    mirror_url: str, package: str, timeout: float = 3.0
+) -> dict[str, Any]:
     """Измеряет время отклика и скорость скачивания для конкретного зеркала.
 
     Args:
@@ -153,7 +157,7 @@ def measure_mirror(mirror_url: str, package: str, timeout: float = 3.0) -> dict[
             file_url = None
             for href in hrefs:
                 resolved = urljoin(package_url, href)
-                path_part = resolved.split('#')[0]
+                path_part = resolved.split("#")[0]
                 if path_part.endswith((".whl", ".tar.gz", ".zip", ".tar.bz2", ".tgz")):
                     file_url = resolved
                     if path_part.endswith(".whl"):
@@ -171,7 +175,9 @@ def measure_mirror(mirror_url: str, package: str, timeout: float = 3.0) -> dict[
                     bytes_downloaded = 0
                     max_bytes = 100 * 1024  # Скачиваем не более 100 KB для теста
 
-                    with urllib.request.urlopen(file_req, timeout=timeout) as file_response:
+                    with urllib.request.urlopen(
+                        file_req, timeout=timeout
+                    ) as file_response:
                         while bytes_downloaded < max_bytes:
                             chunk = file_response.read(8192)
                             if not chunk:
@@ -180,7 +186,9 @@ def measure_mirror(mirror_url: str, package: str, timeout: float = 3.0) -> dict[
 
                     duration = time.perf_counter() - speed_start_time
                     if duration > 0 and bytes_downloaded > 0:
-                        result["download_speed_kbs"] = (bytes_downloaded / 1024.0) / duration
+                        result["download_speed_kbs"] = (
+                            bytes_downloaded / 1024.0
+                        ) / duration
                     else:
                         result["download_speed_kbs"] = 0.0
                 except Exception as e:
@@ -195,7 +203,7 @@ def measure_mirror(mirror_url: str, package: str, timeout: float = 3.0) -> dict[
     except TimeoutError:
         result["error"] = "Таймаут"
     except Exception as e:
-        result["error"] = f"Ошибка: {str(e)}"
+        result["error"] = f"Ошибка: {e!s}"
 
     return result
 
@@ -243,16 +251,19 @@ def find_best_mirror(results: list[dict[str, Any]], current_url: str) -> str | N
     current_latency = current_result["latency_ms"] or float("inf")
 
     # Сравниваем скорость: если скорость выше на 50%+
-    if best_speed > 0 and current_speed > 0:
-        if best_speed >= current_speed * 1.5:
-            return str(best_result["url"])
-    elif best_speed > 0 and current_speed == 0:
+    if (
+        best_speed > 0 and current_speed > 0 and best_speed >= current_speed * 1.5
+    ) or (best_speed > 0 and current_speed == 0):
         return str(best_result["url"])
 
     # Сравниваем пинг: если пинг ниже на 30%+ и разница не менее 50 мс
-    if best_latency < current_latency:
-        if current_latency > 0 and best_latency <= current_latency * 0.7 and (current_latency - best_latency) >= 50:
-            return str(best_result["url"])
+    if (
+        best_latency < current_latency
+        and current_latency > 0
+        and best_latency <= current_latency * 0.7
+        and (current_latency - best_latency) >= 50
+    ):
+        return str(best_result["url"])
 
     return None
 
@@ -260,7 +271,7 @@ def find_best_mirror(results: list[dict[str, Any]], current_url: str) -> str | N
 class PyPiCommand(BaseCommand):
     """
     Проверка доступности и производительности зеркал PyPI.
-    
+
     Позволяет измерять время отклика и скорость загрузки пакетов
     с официального PyPI и различных зеркал.
     """
@@ -273,18 +284,17 @@ class PyPiCommand(BaseCommand):
         """
         check_args_parser = argparse.ArgumentParser(add_help=False)
         check_args_parser.add_argument(
-            "-m", "--mirrors",
-            help="Кастомные зеркала для проверки (список URL через запятую)"
+            "-m",
+            "--mirrors",
+            help="Кастомные зеркала для проверки (список URL через запятую)",
         )
         check_args_parser.add_argument(
-            "--json",
-            action="store_true",
-            help="Вывод результатов в формате JSON"
+            "--json", action="store_true", help="Вывод результатов в формате JSON"
         )
         check_args_parser.add_argument(
             "--package",
             default="six",
-            help="Имя пакета для теста скорости загрузки (по умолчанию: six)"
+            help="Имя пакета для теста скорости загрузки (по умолчанию: six)",
         )
 
         pypi_parser = subparsers.add_parser(
@@ -348,7 +358,8 @@ class PyPiCommand(BaseCommand):
                     mirrors_to_check.append(norm_m)
 
         log_console.print(
-            f"[INFO] Начинаем проверку {len(mirrors_to_check)} зеркал (пакет: [yellow]{args.package}[/yellow])...")
+            f"[INFO] Начинаем проверку {len(mirrors_to_check)} зеркал (пакет: [yellow]{args.package}[/yellow])..."
+        )
 
         results = []
         for mirror in mirrors_to_check:
@@ -362,7 +373,7 @@ class PyPiCommand(BaseCommand):
             output_data = {
                 "current_index_url": current_index,
                 "recommended_index_url": best_mirror,
-                "results": results
+                "results": results,
             }
             # Печатаем строго в stdout (console) для корректного пайпинга
             self.console.print(json.dumps(output_data, indent=2, ensure_ascii=False))
@@ -373,7 +384,11 @@ class PyPiCommand(BaseCommand):
         if use_rich:
             from rich.table import Table
 
-            table = Table(title="Результаты проверки зеркал PyPI", show_header=True, header_style="bold magenta")
+            table = Table(
+                title="Результаты проверки зеркал PyPI",
+                show_header=True,
+                header_style="bold magenta",
+            )
             table.add_column("Зеркало (URL)", style="cyan", no_wrap=True)
             table.add_column("Статус", style="bold", justify="center")
             table.add_column("Пинг (мс)", justify="right")
@@ -387,8 +402,14 @@ class PyPiCommand(BaseCommand):
 
                 if r["available"]:
                     status = "[green]Доступен[/green]"
-                    latency = f"{r['latency_ms']:.1f}" if r["latency_ms"] is not None else "-"
-                    speed = f"{r['download_speed_kbs']:.1f}" if r["download_speed_kbs"] is not None else "-"
+                    latency = (
+                        f"{r['latency_ms']:.1f}" if r["latency_ms"] is not None else "-"
+                    )
+                    speed = (
+                        f"{r['download_speed_kbs']:.1f}"
+                        if r["download_speed_kbs"] is not None
+                        else "-"
+                    )
                 else:
                     status = "[red]Ошибка[/red]"
                     latency = "-"
@@ -406,9 +427,19 @@ class PyPiCommand(BaseCommand):
                 is_current = normalize_mirror_url(r["url"]) == norm_current
                 url_str = r["url"] + (" (текущий)" if is_current else "")
                 if r["available"]:
-                    latency = f"{r['latency_ms']:.1f} ms" if r["latency_ms"] is not None else "-"
-                    speed = f"{r['download_speed_kbs']:.1f} KB/s" if r["download_speed_kbs"] is not None else "-"
-                    self.console.print(f"- {url_str}: Доступен | Пинг: {latency} | Скорость: {speed}")
+                    latency = (
+                        f"{r['latency_ms']:.1f} ms"
+                        if r["latency_ms"] is not None
+                        else "-"
+                    )
+                    speed = (
+                        f"{r['download_speed_kbs']:.1f} KB/s"
+                        if r["download_speed_kbs"] is not None
+                        else "-"
+                    )
+                    self.console.print(
+                        f"- {url_str}: Доступен | Пинг: {latency} | Скорость: {speed}"
+                    )
                 else:
                     err = f" ({r['error']})" if r["error"] else ""
                     self.console.print(f"- {url_str}: Недоступен / Ошибка{err}")
@@ -417,10 +448,15 @@ class PyPiCommand(BaseCommand):
         best_mirror = find_best_mirror(results, current_index)
         if best_mirror:
             self.console.print("\n[bold green]Рекомендация:[/bold green]")
-            self.console.print(f"Зеркало [cyan]{best_mirror}[/cyan] работает значительно быстрее вашего текущего.")
+            self.console.print(
+                f"Зеркало [cyan]{best_mirror}[/cyan] работает значительно быстрее вашего текущего."
+            )
             self.console.print("Вы можете переключиться на него, выполнив команду:")
-            self.console.print(f"  [yellow]pip config set global.index-url {best_mirror}[/yellow]\n")
+            self.console.print(
+                f"  [yellow]pip config set global.index-url {best_mirror}[/yellow]\n"
+            )
         else:
             self.console.print("\n[bold green]Рекомендация:[/bold green]")
             self.console.print(
-                "Ваше текущее зеркало является оптимальным или разница в производительности незначительна.\n")
+                "Ваше текущее зеркало является оптимальным или разница в производительности незначительна.\n"
+            )

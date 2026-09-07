@@ -19,11 +19,11 @@ def test_compression_on_rotation(tmp_path, reset_chutils_state):
     logger = setup_logger(
         "compression_logger",
         log_file_name="compression.log",
-        rotation_type='size',
+        rotation_type="size",
         max_bytes=100,
         backup_count=2,
         compress=True,
-        force_reconfigure=True
+        force_reconfigure=True,
     )
 
     for i in range(10):

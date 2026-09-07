@@ -62,7 +62,7 @@ def main() -> None:
     try:
         secrets.get_secret("REQUIRED_KEY_THAT_DOES_NOT_EXIST", required=True)
     except SecretNotFoundError as e:
-        print(f"Строгий режим (required=True) для секретов сработал успешно:")
+        print("Строгий режим (required=True) для секретов сработал успешно:")
         print(f"  Ошибка: {e}")
 
     # Очистка для чистоты следующих запусков

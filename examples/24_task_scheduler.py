@@ -8,7 +8,12 @@
 import asyncio
 import time
 
-from chutils import periodic_task, start_scheduler, setup_logger, setup_graceful_shutdown
+from chutils import (
+    periodic_task,
+    setup_graceful_shutdown,
+    setup_logger,
+    start_scheduler,
+)
 from chutils.tasks import ErrorStrategy
 
 # Настраиваем логгер
@@ -27,7 +32,7 @@ async def send_metrics() -> None:
     run_immediately=False,
     overlap=False,
     error_strategy=ErrorStrategy.IGNORE,
-    name="sync_cache_cleaner"
+    name="sync_cache_cleaner",
 )
 def clean_cache() -> None:
     """Синхронная периодическая задача."""

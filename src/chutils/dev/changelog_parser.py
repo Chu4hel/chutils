@@ -1,6 +1,7 @@
 """
 Модуль для парсинга описаний релизов и генерации AI-Changelog контекста.
 """
+
 from __future__ import annotations
 
 import re
@@ -67,20 +68,16 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
 
             # 1. Проверяем начало секции Breaking Changes
             if any(re.search(pat, clean_header) for pat in BREAKING_PATTERNS) and (
-                    line_strip.startswith("#")
-                    or line_strip.startswith("**")
-                    or line_strip.startswith("*")
-                    or clean_header in ["breaking changes", "breaking"]
+                line_strip.startswith(("#", "**", "*"))
+                or clean_header in ["breaking changes", "breaking"]
             ):
                 current_section = "breaking_changes"
                 is_header = True
 
             # 2. Проверяем начало секции Deprecations
             elif any(re.search(pat, clean_header) for pat in DEPRECATION_PATTERNS) and (
-                    line_strip.startswith("#")
-                    or line_strip.startswith("**")
-                    or line_strip.startswith("*")
-                    or clean_header in ["deprecations", "deprecated"]
+                line_strip.startswith(("#", "**", "*"))
+                or clean_header in ["deprecations", "deprecated"]
             ):
                 current_section = "deprecations"
                 is_header = True
@@ -88,9 +85,12 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
             # 3. Любые другие заголовки относим к категории new_api (общие изменения/улучшения),
             # ЕСЛИ это не заголовок самого релиза с версией (например `# v3.4.0` или `## Релиз v3.4.0`)
             elif line_strip.startswith("#") or (
-                    line_strip.startswith("**") and line_strip.endswith("**")
+                line_strip.startswith("**") and line_strip.endswith("**")
             ):
-                is_version_header = bool(re.search(r"v?\d+\.\d+\.\d+", clean_header)) or "релиз" in clean_header
+                is_version_header = (
+                    bool(re.search(r"v?\d+\.\d+\.\d+", clean_header))
+                    or "релиз" in clean_header
+                )
                 if not is_version_header:
                     current_section = "new_api"
                 is_header = True
@@ -118,7 +118,7 @@ def parse_release_body(body: str) -> dict[str, list[str]]:
 
 
 def filter_releases_by_version_range(
-        releases: list[dict[str, Any]], old_version: str, new_version: str
+    releases: list[dict[str, Any]], old_version: str, new_version: str
 ) -> list[dict[str, Any]]:
     """Фильтрует список релизов, оставляя только версии в диапазоне (old_version, new_version].
 
@@ -147,16 +147,18 @@ def filter_releases_by_version_range(
             tag_t = parse_version_tuple(tag)
             if old_t < tag_t <= new_t:
                 filtered.append(r)
-        except Exception:
+        except (ValueError, TypeError):
             continue
 
     # Сортируем от старых к новым по кортежу версии
-    filtered.sort(key=lambda x: parse_version_tuple(x.get("tag_name") or x.get("name") or ""))
+    filtered.sort(
+        key=lambda x: parse_version_tuple(x.get("tag_name") or x.get("name") or "")
+    )
     return filtered
 
 
 def generate_migration_context_markdown(
-        parsed_changelogs: dict[str, list[str]], old_version: str, new_version: str
+    parsed_changelogs: dict[str, list[str]], old_version: str, new_version: str
 ) -> str:
     """Генерирует Markdown-документ AI Migration Context.
 
@@ -177,7 +179,11 @@ def generate_migration_context_markdown(
     ]
 
     sections_meta = [
-        ("Breaking Changes", "breaking_changes", "Критические изменения API или поведения:"),
+        (
+            "Breaking Changes",
+            "breaking_changes",
+            "Критические изменения API или поведения:",
+        ),
         ("New API", "new_api", "Новые добавленные возможности, классы и методы:"),
         ("Deprecations", "deprecations", "Устаревшие возможности (deprecations):"),
     ]

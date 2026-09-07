@@ -9,11 +9,11 @@ from .pool import WorkerPool
 from .queues import InMemoryTaskQueue, PersistentTaskQueue, RedisTaskQueue
 
 __all__ = [
-    "ScrapingTask",
     "BaseTaskQueue",
+    "DomainRateLimiter",
     "InMemoryTaskQueue",
     "PersistentTaskQueue",
     "RedisTaskQueue",
-    "DomainRateLimiter",
+    "ScrapingTask",
     "WorkerPool",
 ]

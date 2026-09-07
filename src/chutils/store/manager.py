@@ -1,6 +1,7 @@
 """
 Менеджер Key-Value хранилищ chutils.store с поддержкой сериализации, префиксов, метрик и трассировки.
 """
+
 from __future__ import annotations
 
 import json
@@ -208,7 +209,7 @@ class StoreManager:
                 self._record_metric("get", hit=False)
                 return default
 
-    def set(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
+    def set(self, key: str, value: Any, ttl: float | None = None) -> bool:
         """Сериализует и сохраняет значение по ключу.
 
         Args:
@@ -291,7 +292,7 @@ class StoreManager:
                 self._record_metric("aget", hit=False)
                 return default
 
-    async def aset(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
+    async def aset(self, key: str, value: Any, ttl: float | None = None) -> bool:
         """Сериализует и сохраняет значение по ключу (асинхронно).
 
         Args:

@@ -48,7 +48,11 @@ pip install "chutils[captcha]"
 Синхронные клиенты автоматически опрашивают готовность капчи с заданным интервалом до истечения таймаута.
 
 ```python
-from chutils.scraping.captcha import RuCaptchaSolver, AntiCaptchaSolver, CapMonsterSolver
+from chutils.scraping.captcha import (
+    RuCaptchaSolver,
+    AntiCaptchaSolver,
+    CapMonsterSolver,
+)
 from chutils.scraping.captcha import CaptchaError
 
 try:
@@ -63,7 +67,7 @@ try:
     # 2. Решение ReCaptcha v2
     token = solver.solve_recaptcha(
         sitekey="6LeOeSkUAAAAACl2pxhXLD37t3h7wJz16F8ySU73",
-        page_url="https://rucaptcha.com/demo/recaptcha-v2"
+        page_url="https://rucaptcha.com/demo/recaptcha-v2",
     )
     print(f"Токен ReCaptcha: {token}")
 
@@ -89,8 +93,7 @@ async def main():
 
     # Асинхронный скролл/опрос
     token = await solver.solve_recaptcha(
-        sitekey="sitekey_value_here",
-        page_url="https://example.com/login"
+        sitekey="sitekey_value_here", page_url="https://example.com/login"
     )
     print(f"Токен: {token}")
 

@@ -1,6 +1,7 @@
 """
 Провайдер секретов для GCP Secret Manager.
 """
+
 from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
@@ -8,6 +9,7 @@ import os
 from typing import Any, cast
 
 from chutils.exceptions import OptionalDependencyError
+
 from .base import SecretProvider
 
 logger = logging.getLogger("chutils.secret_manager.providers.gcp")
@@ -38,10 +40,9 @@ class GCPSecretManagerProvider(SecretProvider):
         if self._project_id is not None:
             return self._project_id
 
-        project = (
-            os.environ.get("GOOGLE_CLOUD_PROJECT")  # chutils: ignore[ChutilsIntegrationRule]
-            or os.environ.get("GCP_PROJECT")  # chutils: ignore[ChutilsIntegrationRule]
-        )
+        gcp_proj = os.environ.get("GOOGLE_CLOUD_PROJECT")  # chutils: ignore[ChutilsIntegrationRule]
+        gcp_fb = os.environ.get("GCP_PROJECT")  # chutils: ignore[ChutilsIntegrationRule]
+        project = gcp_proj or gcp_fb
         if not project:
             raise ValueError(
                 "Идентификатор проекта Google Cloud (project_id) не задан. "
@@ -89,13 +90,20 @@ class GCPSecretManagerProvider(SecretProvider):
         except Exception as e:
             try:
                 from google.api_core.exceptions import NotFound
+
                 if isinstance(e, NotFound):
-                    logger.debug("Секрет %s не найден в GCP Secret Manager.", secret_name)
+                    logger.debug(
+                        "Секрет %s не найден в GCP Secret Manager.", secret_name
+                    )
                     return None
             except ImportError:
                 pass
 
-            logger.warning("Ошибка при получении секрета %s из GCP Secret Manager: %s", secret_name, e)
+            logger.warning(
+                "Ошибка при получении секрета %s из GCP Secret Manager: %s",
+                secret_name,
+                e,
+            )
             return None
 
     def set(self, key: str, value: str, service_name: str) -> bool:
@@ -120,6 +128,7 @@ class GCPSecretManagerProvider(SecretProvider):
         except Exception as e:
             try:
                 from google.api_core.exceptions import NotFound
+
                 is_not_found = isinstance(e, NotFound)
             except ImportError:
                 is_not_found = False
@@ -134,19 +143,33 @@ class GCPSecretManagerProvider(SecretProvider):
                         }
                     )
                 except Exception as ex:
-                    logger.error("Не удалось создать секрет %s в GCP Secret Manager: %s", secret_name, ex)
+                    logger.error(
+                        "Не удалось создать секрет %s в GCP Secret Manager: %s",
+                        secret_name,
+                        ex,
+                    )
                     return False
             else:
-                logger.error("Ошибка при проверке секрета %s в GCP Secret Manager: %s", secret_name, e)
+                logger.error(
+                    "Ошибка при проверке секрета %s в GCP Secret Manager: %s",
+                    secret_name,
+                    e,
+                )
                 return False
 
         # 2. Добавляем новую версию секрета
         try:
             payload = {"data": value.encode("UTF-8")}
-            client.add_secret_version(request={"parent": secret_path, "payload": payload})
+            client.add_secret_version(
+                request={"parent": secret_path, "payload": payload}
+            )
             return True
         except Exception as e:
-            logger.error("Не удалось добавить версию секрета %s в GCP Secret Manager: %s", secret_name, e)
+            logger.error(
+                "Не удалось добавить версию секрета %s в GCP Secret Manager: %s",
+                secret_name,
+                e,
+            )
             return False
 
     def delete(self, key: str, service_name: str) -> bool:
@@ -166,5 +189,7 @@ class GCPSecretManagerProvider(SecretProvider):
             client.delete_secret(request={"name": secret_path})
             return True
         except Exception as e:
-            logger.error("Не удалось удалить секрет %s из GCP Secret Manager: %s", secret_name, e)
+            logger.error(
+                "Не удалось удалить секрет %s из GCP Secret Manager: %s", secret_name, e
+            )
             return False

@@ -23,10 +23,8 @@ def test_linter_coverage_rule_disabled_when_rule_not_in_enabled_rules(tmp_path):
     """Тест: LinterCoverageRule не срабатывает, если FileDependencySyncRule отключено."""
     rule = LinterCoverageRule()
     rule.config = {
-        "dependencies": {
-            "src/chutils/covered.py": ["docs/api.md"]
-        },
-        "rules": ["LinterCoverageRule"]  # FileDependencySyncRule нет в списке
+        "dependencies": {"src/chutils/covered.py": ["docs/api.md"]},
+        "rules": ["LinterCoverageRule"],  # FileDependencySyncRule нет в списке
     }
 
     # Создаём исходные файлы (один покрыт, другой нет)
@@ -45,7 +43,7 @@ def test_linter_coverage_rule_detects_uncovered_files(tmp_path):
     rule.config = {
         "dependencies": {
             "src/chutils/covered.py": ["docs/api.md"],
-            "new:src/chutils/new_covered.py": ["docs/api.md"]
+            "new:src/chutils/new_covered.py": ["docs/api.md"],
         }
     }
 
@@ -75,11 +73,7 @@ def test_linter_coverage_rule_detects_uncovered_files(tmp_path):
 def test_linter_coverage_rule_fully_covered(tmp_path):
     """Тест: LinterCoverageRule не возвращает предупреждений, если все файлы покрыты."""
     rule = LinterCoverageRule()
-    rule.config = {
-        "dependencies": {
-            "src/chutils/**/*.py": ["docs/api.md"]
-        }
-    }
+    rule.config = {"dependencies": {"src/chutils/**/*.py": ["docs/api.md"]}}
 
     src_dir = tmp_path / "src" / "chutils"
     src_dir.mkdir(parents=True, exist_ok=True)
@@ -94,13 +88,8 @@ def test_linter_coverage_rule_global_ignore(tmp_path):
     """Тест: LinterCoverageRule не ругается на файлы, подходящие под глобальный игнор."""
     rule = LinterCoverageRule()
     rule.config = {
-        "dependencies": {
-            "src/chutils/covered.py": ["docs/api.md"]
-        },
-        "ignore": [
-            "**/ignored_dir/*",
-            "special_ignore.py"
-        ]
+        "dependencies": {"src/chutils/covered.py": ["docs/api.md"]},
+        "ignore": ["**/ignored_dir/*", "special_ignore.py"],
     }
 
     src_dir = tmp_path / "src" / "chutils"
@@ -126,11 +115,7 @@ def test_linter_coverage_rule_global_ignore(tmp_path):
 def test_linter_coverage_rule_inline_ignore(tmp_path):
     """Тест: LinterCoverageRule не ругается на файлы с инлайн-комментарием игнорирования."""
     rule = LinterCoverageRule()
-    rule.config = {
-        "dependencies": {
-            "src/chutils/covered.py": ["docs/api.md"]
-        }
-    }
+    rule.config = {"dependencies": {"src/chutils/covered.py": ["docs/api.md"]}}
 
     src_dir = tmp_path / "src" / "chutils"
     src_dir.mkdir(parents=True, exist_ok=True)
@@ -139,15 +124,13 @@ def test_linter_coverage_rule_inline_ignore(tmp_path):
     # Файл, игнорирующий конкретное правило
     inline_ignored = src_dir / "inline_ignored.py"
     inline_ignored.write_text(
-        "# chutils: ignore[LinterCoverageRule]\nprint('ignore me')",
-        encoding="utf-8"
+        "# chutils: ignore[LinterCoverageRule]\nprint('ignore me')", encoding="utf-8"
     )
 
     # Файл, игнорирующий все правила
     all_ignored = src_dir / "all_ignored.py"
     all_ignored.write_text(
-        "# chutils: ignore[all]\nprint('ignore all')",
-        encoding="utf-8"
+        "# chutils: ignore[all]\nprint('ignore all')", encoding="utf-8"
     )
 
     # Обычный непокрытый файл
@@ -162,11 +145,7 @@ def test_linter_coverage_rule_inline_ignore(tmp_path):
 def test_linter_coverage_rule_files_ignore_by_file_configs(tmp_path):
     """Тест: LinterCoverageRule игнорирует файлы из .chutilsignore, но НЕ из .gitignore."""
     rule = LinterCoverageRule()
-    rule.config = {
-        "dependencies": {
-            "src/chutils/covered.py": ["docs/api.md"]
-        }
-    }
+    rule.config = {"dependencies": {"src/chutils/covered.py": ["docs/api.md"]}}
 
     # 1. Создаём файлы игнорирования в корне проекта
     gitignore = tmp_path / ".gitignore"
@@ -185,7 +164,9 @@ def test_linter_coverage_rule_files_ignore_by_file_configs(tmp_path):
     (src_dir / "git_ignored.py").write_text("print('git ignore')", encoding="utf-8")
 
     # Файл, прописанный в .chutilsignore (должен быть проигнорирован)
-    (src_dir / "chutils_ignored.py").write_text("print('chutils ignore')", encoding="utf-8")
+    (src_dir / "chutils_ignored.py").write_text(
+        "print('chutils ignore')", encoding="utf-8"
+    )
 
     results = rule.check(str(tmp_path), [])
 

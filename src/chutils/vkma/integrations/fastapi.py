@@ -1,18 +1,18 @@
 """FastAPI / Starlette интеграция для валидации VKMA launchParams / initData."""
 
-from typing import Any, Callable, Sequence
-from urllib.parse import unquote
+from collections.abc import Callable, Sequence
+from typing import Any
 
 from chutils.vkma.exceptions import VKMAValidationError
 from chutils.vkma.models import VKMALaunchParams
 from chutils.vkma.validator import parse_vkma_launch_params
 
 try:
+    from fastapi import HTTPException, status
     from starlette.middleware.base import BaseHTTPMiddleware
     from starlette.requests import Request
     from starlette.responses import JSONResponse, Response
-    from fastapi import Depends, HTTPException, status
-    from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
     HAS_FASTAPI = True
 except ImportError:
     HAS_FASTAPI = False
@@ -43,6 +43,7 @@ def _extract_vk_raw_params_from_request(request: Any) -> str | dict[str, Any] | 
 
 
 if HAS_FASTAPI:
+
     class VKMAAuthMiddleware(BaseHTTPMiddleware):
         """FastAPI / Starlette Middleware для автоматической валидации параметров VKMA."""
 
@@ -58,7 +59,9 @@ if HAS_FASTAPI:
             self.max_age_seconds = max_age_seconds
             self.exclude_paths = set(exclude_paths or [])
 
-        async def dispatch(self, request: Request, call_next: Callable[[Request], Any]) -> Any:
+        async def dispatch(
+            self, request: Request, call_next: Callable[[Request], Any]
+        ) -> Any:
             """Перехватывает HTTP-запрос и проверяет подпись VKMA launchParams.
 
             Args:
@@ -75,7 +78,9 @@ if HAS_FASTAPI:
             if not raw_params:
                 return JSONResponse(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    content={"detail": "Отсутствуют параметры авторизации VKMA (initData / launchParams)."},
+                    content={
+                        "detail": "Отсутствуют параметры авторизации VKMA (initData / launchParams)."
+                    },
                 )
 
             try:
@@ -102,7 +107,9 @@ if HAS_FASTAPI:
         Returns:
             Спарсенная и валидированная модель VKMALaunchParams.
         """
-        if hasattr(request.state, "vkma_params") and isinstance(request.state.vkma_params, VKMALaunchParams):
+        if hasattr(request.state, "vkma_params") and isinstance(
+            request.state.vkma_params, VKMALaunchParams
+        ):
             return request.state.vkma_params
 
         raw_params = _extract_vk_raw_params_from_request(request)

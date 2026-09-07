@@ -9,8 +9,8 @@ import threading
 import time
 import urllib.error
 import urllib.request
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 import pytest
 
@@ -18,7 +18,9 @@ from chutils.dev.mock_server import MockServerRunner, interpolate_groups
 from chutils.exceptions import CommandError
 
 # Отключаем системный прокси для urllib в тестах, чтобы локальные запросы шли напрямую
-urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler({})))
+urllib.request.install_opener(
+    urllib.request.build_opener(urllib.request.ProxyHandler({}))
+)
 
 
 def get_free_port() -> int:
@@ -39,14 +41,14 @@ def test_interpolate_groups() -> None:
         "nested": {
             "name": "User $1",
             "age": 25,  # Должно остаться числом
-        }
+        },
     }
     expected_dict = {
         "id": "100",
         "nested": {
             "name": "User 100",
             "age": 25,
-        }
+        },
     }
     assert interpolate_groups(data_dict, ("100",)) == expected_dict
 
@@ -147,7 +149,9 @@ def mock_server() -> Generator[tuple[MockServerRunner, int, Path, str], None, No
     shutil.rmtree(temp_dir, ignore_errors=True)
 
 
-def test_server_mock_requests(mock_server: tuple[MockServerRunner, int, Path, str]) -> None:
+def test_server_mock_requests(
+    mock_server: tuple[MockServerRunner, int, Path, str],
+) -> None:
     runner, port, _, _ = mock_server
 
     try:
@@ -186,7 +190,9 @@ def test_server_delay(mock_server: tuple[MockServerRunner, int, Path, str]) -> N
     assert duration >= 0.2
 
 
-def test_server_hot_reload(mock_server: tuple[MockServerRunner, int, Path, str]) -> None:
+def test_server_hot_reload(
+    mock_server: tuple[MockServerRunner, int, Path, str],
+) -> None:
     _, port, routes_file, _ = mock_server
 
     # Перезаписываем файл конфигурации роутов
@@ -231,7 +237,9 @@ def test_server_proxy_fallback() -> None:
     result: "accepted"
 """
         backend_routes_file.write_text(backend_config, encoding="utf-8")
-        backend_runner = MockServerRunner(port=backend_port, routes_path=str(backend_routes_file))
+        backend_runner = MockServerRunner(
+            port=backend_port, routes_path=str(backend_routes_file)
+        )
         backend_runner.load_config()
 
         backend_thread = threading.Thread(target=backend_runner.run)
@@ -252,7 +260,7 @@ def test_server_proxy_fallback() -> None:
         proxy_runner = MockServerRunner(
             port=proxy_port,
             routes_path=str(proxy_routes_file),
-            proxy_fallback=f"http://127.0.0.1:{backend_port}"
+            proxy_fallback=f"http://127.0.0.1:{backend_port}",
         )
         proxy_runner.load_config()
 
@@ -284,15 +292,15 @@ def test_server_proxy_fallback() -> None:
             url_post,
             data=json.dumps({"test": "value"}).encode("utf-8"),
             headers={"Content-Type": "application/json"},
-            method="POST"
+            method="POST",
         )
         with urllib.request.urlopen(req) as resp:
             assert resp.status == 201
             data = json.loads(resp.read().decode("utf-8"))
             assert data == {"result": "accepted"}
     finally:
-        if 'backend_runner' in locals():
+        if "backend_runner" in locals():
             backend_runner.stop()
-        if 'proxy_runner' in locals():
+        if "proxy_runner" in locals():
             proxy_runner.stop()
         shutil.rmtree(temp_dir, ignore_errors=True)

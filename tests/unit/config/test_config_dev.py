@@ -1,7 +1,11 @@
 import os
 
 from chutils.config import find_project_root
-from chutils.config.dev import parse_chutils_ignore, load_ai_lint_config, DEFAULT_AI_LINT_CONFIG
+from chutils.config.dev import (
+    DEFAULT_AI_LINT_CONFIG,
+    load_ai_lint_config,
+    parse_chutils_ignore,
+)
 
 
 def test_parse_chutils_ignore_not_exists(config_fs):
@@ -38,6 +42,7 @@ def test_load_ai_lint_config_defaults(project_with_marker):
     fs, project_root = project_with_marker
     # Сбрасываем пути менеджера, чтобы он нашел наш новый корень с pyproject.toml
     from chutils.config import _cm
+
     _cm._reset()
     _cm.initialize_paths(find_project_root)
 
@@ -67,6 +72,7 @@ custom_rules_path = "some/path"
     fs.create_file(pyproject_file, contents=toml_content)
 
     from chutils.config import _cm
+
     _cm._reset()
     _cm.initialize_paths(find_project_root)
 
@@ -98,6 +104,7 @@ Dev:
     fs.create_file(project_root / "config.yml", contents=yml_content)
 
     from chutils.config import _cm
+
     _cm._reset()
     _cm.initialize_paths(find_project_root)
 
@@ -125,6 +132,7 @@ custom_rules_path = "toml_path"
 
     try:
         from chutils.config import _cm
+
         _cm._reset()
         _cm.initialize_paths(find_project_root)
 
@@ -145,13 +153,11 @@ def test_load_ai_lint_config_cli_args(project_with_marker):
 
     try:
         from chutils.config import _cm
+
         _cm._reset()
         _cm.initialize_paths(find_project_root)
 
-        cli_args = {
-            "strict": True,
-            "custom_rules_path": "cli_path"
-        }
+        cli_args = {"strict": True, "custom_rules_path": "cli_path"}
         config = load_ai_lint_config(cli_args=cli_args)
         assert config["strict"] is True
         assert config["custom_rules_path"] == "cli_path"
@@ -178,6 +184,7 @@ ignore = [".git", "custom_dir"]
     fs.create_file(project_root / ".chutilsignore", contents=ignore_content)
 
     from chutils.config import _cm
+
     _cm._reset()
     _cm.initialize_paths(find_project_root)
 

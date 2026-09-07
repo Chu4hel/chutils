@@ -21,7 +21,7 @@ def main() -> None:
     print("--- Вариант 1: Использование переменной окружения ---")
     secrets_env = SecretManager("docker_service")
 
-    # Теперь, даже если Keyring не установлен в системе, вы не увидите 
+    # Теперь, даже если Keyring не установлен в системе, вы не увидите
     # предупреждений (WARNING) в консоли.
     val = secrets_env.get_secret("DB_PASSWORD")
     print(f"Поиск секрета: {val} (поиск выполнен только в .env и окружении)")

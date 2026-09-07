@@ -117,8 +117,8 @@ def test_install_hooks_with_ruff_and_flake8(tmp_path, monkeypatch) -> None:
 
     content = hook_path.read_text(encoding="utf-8")
     # ruff и flake8 должны работать только по staged файлам, а не по всему проекту
-    assert "CHUTILS_STAGED_PY" in content          # сбор staged .py файлов
-    assert "xargs" in content                       # передача файлов через xargs
-    assert "ruff check --fix" in content            # ruff есть в хуке
+    assert "CHUTILS_STAGED_PY" in content  # сбор staged .py файлов
+    assert "xargs" in content  # передача файлов через xargs
+    assert "ruff check --fix" in content  # ruff есть в хуке
     assert "xargs" in content and "flake8" in content  # flake8 есть в хуке
-    assert "flake8 ." not in content               # не должно сканировать весь проект
+    assert "flake8 ." not in content  # не должно сканировать весь проект

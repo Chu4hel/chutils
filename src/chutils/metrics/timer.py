@@ -1,27 +1,32 @@
-import asyncio
 import functools
 import inspect
 import time
-from typing import Any, TypeVar
 from collections.abc import Callable
+from types import TracebackType
+from typing import Any, TypeVar
+
+from typing_extensions import Self
 
 F = TypeVar("F", bound=Callable[..., Any])
 
 
-def _observe_lazy(name: str, value: float, labels: dict[str, str] | None = None) -> None:
+def _observe_lazy(
+    name: str, value: float, labels: dict[str, str] | None = None
+) -> None:
     # Ленивый импорт во избежание циклической зависимости при инициализации пакета
     from . import observe
+
     observe(name, value, labels)
 
 
 class TimerContext:
     """
     Контекстный менеджер и декоратор для замера времени выполнения функций и блоков кода.
-    
+
     Пример использования в качестве контекстного менеджера:
         with timer("db_query_duration_seconds", labels={"op": "select"}):
             db.execute("SELECT ...")
-            
+
     Пример использования в качестве декоратора:
         @timer("http_request_duration_seconds", labels={"endpoint": "/users"})
         def handle():
@@ -39,11 +44,16 @@ class TimerContext:
         self.labels = labels
         self.start_time: float | None = None
 
-    def __enter__(self) -> "TimerContext":
+    def __enter__(self) -> Self:
         self.start_time = time.perf_counter()
         return self
 
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         if self.start_time is not None:
             duration = time.perf_counter() - self.start_time
             _observe_lazy(self.name, duration, self.labels)
@@ -60,6 +70,7 @@ class TimerContext:
         is_async = inspect.iscoroutinefunction(func)
 
         if is_async:
+
             @functools.wraps(func)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 start = time.perf_counter()
@@ -68,8 +79,10 @@ class TimerContext:
                 finally:
                     duration = time.perf_counter() - start
                     _observe_lazy(self.name, duration, self.labels)
+
             return async_wrapper  # type: ignore[return-value]
         else:
+
             @functools.wraps(func)
             def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
                 start = time.perf_counter()
@@ -78,6 +91,7 @@ class TimerContext:
                 finally:
                     duration = time.perf_counter() - start
                     _observe_lazy(self.name, duration, self.labels)
+
             return sync_wrapper  # type: ignore[return-value]
 
 

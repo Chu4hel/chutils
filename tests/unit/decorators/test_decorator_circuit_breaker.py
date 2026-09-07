@@ -1,4 +1,5 @@
 """Тесты для декоратора circuit_breaker."""
+
 import asyncio
 import threading
 import time
@@ -160,9 +161,7 @@ async def test_circuit_breaker_async_concurrency():
         await asyncio.sleep(0.005)
         return "ok"
 
-    results = await asyncio.gather(
-        target(), target(), target(), target(), target()
-    )
+    results = await asyncio.gather(target(), target(), target(), target(), target())
     assert results == ["ok"] * 5
     assert call_count == 5
 

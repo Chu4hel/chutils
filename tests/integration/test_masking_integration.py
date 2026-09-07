@@ -15,6 +15,7 @@ def test_secret_manager_masking_integration(caplog, monkeypatch):
 
     # Сбрасываем глобальные маски для чистоты теста
     from chutils.logger import masking as chutils_masking
+
     chutils_masking._GLOBAL_MASKS.clear()
     chutils_masking._update_mask_re()
 
@@ -44,6 +45,7 @@ def test_secret_manager_masking_opt_out(caplog, monkeypatch):
     monkeypatch.setenv(secret_key, secret_value)
 
     from chutils.logger import masking as chutils_masking
+
     chutils_masking._GLOBAL_MASKS.clear()
     chutils_masking._update_mask_re()
 

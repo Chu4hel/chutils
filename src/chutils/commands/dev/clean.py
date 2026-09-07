@@ -1,6 +1,7 @@
 """
 Подкоманда CLI для очистки проекта от временных файлов и кэшей (chutils dev clean).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -21,7 +22,6 @@ class CleanSubCommand(SubCommand):
         Args:
             subparsers: Действие подпарсеров argparse.
         """
-        pass
 
     def handle(self, args: argparse.Namespace) -> None:
         """Обработчик выполнения подкоманды dev clean.
@@ -41,7 +41,9 @@ class CleanSubCommand(SubCommand):
         items: list[CleanItem] = scan_project(base_dir=base_dir, extra_targets=None)
 
         if not items:
-            self.console.print("[bold green]Мусорные файлы не обнаружены. Проект чист![/bold green]")
+            self.console.print(
+                "[bold green]Мусорные файлы не обнаружены. Проект чист![/bold green]"
+            )
             sys.exit(0)
 
         total_bytes = sum(item.size_bytes for item in items)
@@ -66,11 +68,17 @@ class CleanSubCommand(SubCommand):
         # Интерактивное подтверждение, если не передан --yes / --force
         if not cli_args["force"]:
             try:
-                answer = input(
-                    f"\nВы действительно хотите удалить эти элементы ({formatted_total})? [y/N]: "
-                ).strip().lower()
+                answer = (
+                    input(
+                        f"\nВы действительно хотите удалить эти элементы ({formatted_total})? [y/N]: "
+                    )
+                    .strip()
+                    .lower()
+                )
             except (KeyboardInterrupt, EOFError):
-                self.console.print("\n[yellow]Операция очистки отменена пользователем.[/yellow]")
+                self.console.print(
+                    "\n[yellow]Операция очистки отменена пользователем.[/yellow]"
+                )
                 sys.exit(0)
 
             if answer not in ("y", "yes", "д", "да"):
@@ -101,14 +109,22 @@ class CleanSubCommand(SubCommand):
         try:
             from rich.table import Table
 
-            table = Table(title="Элементы для удаления", show_header=True, header_style="bold magenta")
+            table = Table(
+                title="Элементы для удаления",
+                show_header=True,
+                header_style="bold magenta",
+            )
             table.add_column("№", justify="right", style="dim", width=4)
             table.add_column("Тип", justify="center", width=8)
             table.add_column("Путь", justify="left")
             table.add_column("Размер", justify="right", style="cyan", width=12)
 
             for idx, item in enumerate(items, start=1):
-                item_type = "[bold blue]DIR[/bold blue]" if item.is_dir else "[green]FILE[/green]"
+                item_type = (
+                    "[bold blue]DIR[/bold blue]"
+                    if item.is_dir
+                    else "[green]FILE[/green]"
+                )
                 try:
                     rel_path = item.path.relative_to(Path.cwd())
                 except ValueError:
@@ -125,4 +141,6 @@ class CleanSubCommand(SubCommand):
                     rel_path = item.path.relative_to(Path.cwd())
                 except ValueError:
                     rel_path = item.path
-                self.console.print(f" {idx:3d}. [{item_type}] {rel_path} ({item.display_size})")
+                self.console.print(
+                    f" {idx:3d}. [{item_type}] {rel_path} ({item.display_size})"
+                )

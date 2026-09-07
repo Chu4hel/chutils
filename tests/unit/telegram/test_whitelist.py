@@ -1,8 +1,9 @@
-import pytest
 from pathlib import Path
 
-from chutils.telegram.whitelist import AccessListManager, allowed_only
+import pytest
+
 from chutils.exceptions.telegram import TelegramAccessDeniedError
+from chutils.telegram.whitelist import AccessListManager, allowed_only
 
 
 def test_access_list_manager_basic():
@@ -33,6 +34,7 @@ def test_access_list_manager_dynamic_and_persistence(tmp_path: Path):
 
 def test_allowed_only_decorator():
     """Проверяет работы декоратора @allowed_only."""
+
     @allowed_only(allowed_ids=[777], raise_on_denied=True)
     def protected_handler(user_id: int):
         return "GRANTED"

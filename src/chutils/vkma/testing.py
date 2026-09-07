@@ -9,9 +9,9 @@ from chutils.vk.testing import (
 )
 
 __all__ = [
-    "generate_fake_launch_params",
-    "generate_fake_init_data",
-    "generate_fake_user",
     "MockVKApi",
+    "generate_fake_init_data",
+    "generate_fake_launch_params",
+    "generate_fake_user",
     "mock_vk_api_context",
 ]

@@ -6,7 +6,7 @@
 
 ## 🛠️ Функции генерации данных
 
-- `generate_fake_launch_params(user_id=12345, app_id=77777, secret_key="...", expired=False, tampered=False, extra_params=None) -> str`
+- `generate_fake_launch_params(user_id=12345, app_id=77777, client_secret="...", expired=False, tampered=False, extra_params=None) -> str`
 - `generate_fake_init_data(...) -> str`
 - `generate_fake_user(user_id=12345, first_name="Иван", last_name="Иванов") -> dict`
 

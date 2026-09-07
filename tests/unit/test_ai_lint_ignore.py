@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from chutils.dev.ai_lint import LinterEngine, LintResult, IGNORE_PATTERN
+from chutils.dev.ai_lint import IGNORE_PATTERN, LinterEngine, LintResult
 
 
 def test_ignore_pattern_regex() -> None:
@@ -22,7 +22,9 @@ def test_ignore_pattern_regex() -> None:
     assert match.group(1).strip() == "all"
 
     # 4. Текст обоснования после скобок
-    match = IGNORE_PATTERN.search("a = 4  # chutils: ignore[RuleName] -- обоснование ошибки")
+    match = IGNORE_PATTERN.search(
+        "a = 4  # chutils: ignore[RuleName] -- обоснование ошибки"
+    )
     assert match is not None
     assert match.group(1).strip() == "RuleName"
 
@@ -42,19 +44,43 @@ def test_linter_engine_suppression_logic(tmp_path) -> None:
         "line 4\n"
         "line 5  # chutils: ignore[all]\n"
         "line 6\n",
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
     engine = LinterEngine({"base_dir": str(tmp_path)})
 
     # Ошибка на строке 2 (игнорируется RuleA)
-    r1 = LintResult(rule_name="RuleA", message="Err A", severity="error", file_path=str(file_path), line_number=2)
+    r1 = LintResult(
+        rule_name="RuleA",
+        message="Err A",
+        severity="error",
+        file_path=str(file_path),
+        line_number=2,
+    )
     # Ошибка на строке 2 другого правила (НЕ игнорируется)
-    r2 = LintResult(rule_name="RuleC", message="Err C", severity="error", file_path=str(file_path), line_number=2)
+    r2 = LintResult(
+        rule_name="RuleC",
+        message="Err C",
+        severity="error",
+        file_path=str(file_path),
+        line_number=2,
+    )
     # Ошибка на строке 4 с блочным игнорированием на строке 3 (игнорируется RuleB)
-    r3 = LintResult(rule_name="RuleB", message="Err B", severity="error", file_path=str(file_path), line_number=4)
+    r3 = LintResult(
+        rule_name="RuleB",
+        message="Err B",
+        severity="error",
+        file_path=str(file_path),
+        line_number=4,
+    )
     # Ошибка на строке 5 (игнорируется все через all)
-    r4 = LintResult(rule_name="RuleC", message="Err C", severity="error", file_path=str(file_path), line_number=5)
+    r4 = LintResult(
+        rule_name="RuleC",
+        message="Err C",
+        severity="error",
+        file_path=str(file_path),
+        line_number=5,
+    )
 
     # Имитируем запуск
     engine.rules = []

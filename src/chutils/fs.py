@@ -12,15 +12,23 @@ import shutil
 import tempfile
 import uuid
 import zipfile
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Literal
-from collections.abc import Generator
+from typing import TYPE_CHECKING, Any, Literal
 
 from chutils.exceptions import OptionalDependencyError, PathTraversalError
 
-__all__ = ["resolve_safe_path", "ensure_dir", "atomic_write", "get_temp_file", "remove_path", "cleanup_paths",
-           "safe_filename", "zip_folder"]
+__all__ = [
+    "atomic_write",
+    "cleanup_paths",
+    "ensure_dir",
+    "get_temp_file",
+    "remove_path",
+    "resolve_safe_path",
+    "safe_filename",
+    "zip_folder",
+]
 
 if TYPE_CHECKING:
     import yaml
@@ -51,6 +59,7 @@ def resolve_safe_path(path: str | Path, base_dir: str | Path | None = None) -> P
     if base_dir is None:
         try:
             from chutils.config import get_base_dir
+
             base_dir = get_base_dir()
         except (ImportError, AttributeError):
             base_dir = Path.cwd()
@@ -71,7 +80,7 @@ def resolve_safe_path(path: str | Path, base_dir: str | Path | None = None) -> P
         raise PathTraversalError(
             f"Обнаружена попытка выхода за пределы разрешенной директории: {path}",
             attempted_path=path,
-            base_path=base_dir
+            base_path=base_dir,
         )
 
     return resolved
@@ -93,11 +102,11 @@ def ensure_dir(path: str | Path) -> Path:
 
 
 def atomic_write(
-        file_path: str | Path,
-        data: Any,
-        mode: str = 'w',
-        encoding: str = 'utf-8',
-        **kwargs: Any
+    file_path: str | Path,
+    data: Any,
+    mode: str = "w",
+    encoding: str = "utf-8",
+    **kwargs: Any,
 ) -> None:
     """
     Атомарная запись данных в файл.
@@ -124,21 +133,23 @@ def atomic_write(
     ensure_dir(parent_dir)
 
     suffix = target_path.suffix.lower()
-    is_binary = 'b' in mode
+    is_binary = "b" in mode
 
     # Создаем временный файл в той же директории
-    fd, temp_path_str = tempfile.mkstemp(dir=str(parent_dir), prefix=f".{target_path.name}.", suffix=".tmp")
+    fd, temp_path_str = tempfile.mkstemp(
+        dir=str(parent_dir), prefix=f".{target_path.name}.", suffix=".tmp"
+    )
     temp_path = Path(temp_path_str)
 
     try:
-        if suffix == '.json' and isinstance(data, (dict, list)):
+        if suffix == ".json" and isinstance(data, (dict, list)):
             with os.fdopen(fd, mode, encoding=None if is_binary else encoding) as f:
                 json.dump(data, f, **kwargs)  # chutils: ignore[ChutilsIntegrationRule]
-        elif suffix in ('.yml', '.yaml') and isinstance(data, (dict, list)):
+        elif suffix in (".yml", ".yaml") and isinstance(data, (dict, list)):
             if not YAML_AVAILABLE:
                 raise OptionalDependencyError(
                     "Пакет 'pyyaml' не установлен. Автоматическая сериализация YAML невозможна.",
-                    dependency="pyyaml"
+                    dependency="pyyaml",
                 )
             with os.fdopen(fd, mode, encoding=None if is_binary else encoding) as f:
                 yaml.dump(data, f, **kwargs)  # chutils: ignore[ChutilsIntegrationRule]
@@ -160,7 +171,7 @@ def atomic_write(
 
 
 @contextmanager
-def get_temp_file(suffix: str = '') -> Generator[Path, None, None]:
+def get_temp_file(suffix: str = "") -> Generator[Path, None, None]:
     """
     Контекстный менеджер для работы с временным файлом.
     Файл автоматически удаляется при выходе из блока with.
@@ -188,12 +199,12 @@ def get_temp_file(suffix: str = '') -> Generator[Path, None, None]:
 
 
 def remove_path(
-        path: str | Path,
-        *,
-        retries: int = 3,
-        delay: float = 0.1,
-        on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
-        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+    path: str | Path,
+    *,
+    retries: int = 3,
+    delay: float = 0.1,
+    on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
+    orphan_collision: Literal["raise", "overwrite", "unique"] = "raise",
 ) -> bool:
     """Безопасно удаляет файл или директорию по указанному пути.
 
@@ -238,24 +249,22 @@ def remove_path(
         elif on_locked == "warn":
             try:
                 from chutils.logger import get_logger
+
                 get_logger().warning(
-                    "Не удалось удалить путь %s после %d попыток: %s",
-                    p, retries, e
+                    "Не удалось удалить путь %s после %d попыток: %s", p, retries, e
                 )
             except (ImportError, Exception):
                 import logging  # chutils: ignore[ChutilsIntegrationRule]
+
                 logging.getLogger("chutils").warning(
-                    "Не удалось удалить путь %s после %d попыток: %s",
-                    p, retries, e
+                    "Не удалось удалить путь %s после %d попыток: %s", p, retries, e
                 )
             return False
         elif on_locked == "rename_orphan":
             orphan_path = p.with_name(f"{p.name}.orphan")
             if orphan_path.exists() or orphan_path.is_symlink():
                 if orphan_collision == "raise":
-                    raise FileExistsError(
-                        f"Орфан-путь уже существует: {orphan_path}"
-                    )
+                    raise FileExistsError(f"Орфан-путь уже существует: {orphan_path}")
                 elif orphan_collision == "overwrite":
                     try:
                         if orphan_path.is_dir():
@@ -274,11 +283,11 @@ def remove_path(
 
 
 def cleanup_paths(
-        *paths: str | Path,
-        retries: int = 3,
-        delay: float = 0.1,
-        on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
-        orphan_collision: Literal["raise", "overwrite", "unique"] = "raise"
+    *paths: str | Path,
+    retries: int = 3,
+    delay: float = 0.1,
+    on_locked: Literal["raise", "rename_orphan", "warn"] = "warn",
+    orphan_collision: Literal["raise", "overwrite", "unique"] = "raise",
 ) -> None:
     """Пакетное удаление нескольких путей.
 
@@ -303,7 +312,7 @@ def cleanup_paths(
                 retries=retries,
                 delay=delay,
                 on_locked=on_locked,
-                orphan_collision=orphan_collision
+                orphan_collision=orphan_collision,
             )
         except Exception:
             if on_locked == "raise":
@@ -311,25 +320,81 @@ def cleanup_paths(
 
 
 CYRILLIC_TO_LATIN: dict[str, str] = {
-    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
-    'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
-    'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
-    'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu',
-    'я': 'ya',
-    'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'Yo', 'Ж': 'Zh',
-    'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M', 'Н': 'N', 'О': 'O',
-    'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U', 'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts',
-    'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch', 'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'Yu',
-    'Я': 'Ya'
+    "а": "a",
+    "б": "b",
+    "в": "v",
+    "г": "g",
+    "д": "d",
+    "е": "e",
+    "ё": "yo",
+    "ж": "zh",
+    "з": "z",
+    "и": "i",
+    "й": "y",
+    "к": "k",
+    "л": "l",
+    "м": "m",
+    "н": "n",
+    "о": "o",
+    "п": "p",
+    "р": "r",
+    "с": "s",
+    "т": "t",
+    "у": "u",
+    "ф": "f",
+    "х": "kh",
+    "ц": "ts",
+    "ч": "ch",
+    "ш": "sh",
+    "щ": "shch",
+    "ъ": "",
+    "ы": "y",
+    "ь": "",
+    "э": "e",
+    "ю": "yu",
+    "я": "ya",
+    "А": "A",
+    "Б": "B",
+    "В": "V",
+    "Г": "G",
+    "Д": "D",
+    "Е": "E",
+    "Ё": "Yo",
+    "Ж": "Zh",
+    "З": "Z",
+    "И": "I",
+    "Й": "Y",
+    "К": "K",
+    "Л": "L",
+    "М": "M",
+    "Н": "N",
+    "О": "O",
+    "П": "P",
+    "Р": "R",
+    "С": "S",
+    "Т": "T",
+    "У": "U",
+    "Ф": "F",
+    "Х": "Kh",
+    "Ц": "Ts",
+    "Ч": "Ch",
+    "Ш": "Sh",
+    "Щ": "Shch",
+    "Ъ": "",
+    "Ы": "Y",
+    "Ь": "",
+    "Э": "E",
+    "Ю": "Yu",
+    "Я": "Ya",
 }
 
 
 def safe_filename(
-        name: str,
-        replacement: str = "_",
-        strip_chars: str = " _.-",
-        max_length: int = 255,
-        transliterate: bool = False
+    name: str,
+    replacement: str = "_",
+    strip_chars: str = " _.-",
+    max_length: int = 255,
+    transliterate: bool = False,
 ) -> str:
     """Очищает строку, делая её безопасной для использования в качестве имени файла.
 
@@ -365,17 +430,17 @@ def safe_filename(
     name = re.sub(pattern + "+", replacement, name)
 
     # Удаляем replacement перед точками (например, "_." -> ".")
-    name = re.sub(rf'{re.escape(replacement)}+\.', '.', name)
+    name = re.sub(rf"{re.escape(replacement)}+\.", ".", name)
 
     # Удаляем ведущие/замыкающие символы
     name = name.strip(strip_chars)
 
     if len(name) > max_length:
         # Ищем расширение (допускается составное расширение типа .tar.gz)
-        match = re.search(r'(\.[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)?)$', name)
+        match = re.search(r"(\.[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)?)$", name)
         if match and len(match.group(1)) <= 15:
             ext = match.group(1)
-            name_part = name[:-len(ext)]
+            name_part = name[: -len(ext)]
             allowed_name_len = max_length - len(ext)
             if allowed_name_len > 0:
                 name = name_part[:allowed_name_len] + ext
@@ -391,10 +456,10 @@ def safe_filename(
 
 
 def zip_folder(
-        folder_path: str | Path,
-        output_path: str | Path,
-        compression: int = zipfile.ZIP_DEFLATED,
-        exclude: list[str] | None = None
+    folder_path: str | Path,
+    output_path: str | Path,
+    compression: int = zipfile.ZIP_DEFLATED,
+    exclude: list[str] | None = None,
 ) -> Path:
     """Архивирует содержимое папки в ZIP-архив с сохранением структуры.
 
@@ -426,6 +491,7 @@ def zip_folder(
 
     def _should_exclude(path: Path) -> bool:
         import fnmatch
+
         rel_path = path.relative_to(src_dir)
         rel_path_str = rel_path.as_posix()
         for pattern in exclude_patterns:
@@ -437,11 +503,13 @@ def zip_folder(
                 return True
             # 3. Проверяем родительские папки
             for parent in rel_path.parents:
-                if fnmatch.fnmatch(parent.name, pattern) or fnmatch.fnmatch(parent.as_posix(), pattern):
+                if fnmatch.fnmatch(parent.name, pattern) or fnmatch.fnmatch(
+                    parent.as_posix(), pattern
+                ):
                     return True
         return False
 
-    with zipfile.ZipFile(out_file, 'w', compression) as zipf:
+    with zipfile.ZipFile(out_file, "w", compression) as zipf:
         for root, dirs, files in os.walk(src_dir):
             root_path = Path(root)
 

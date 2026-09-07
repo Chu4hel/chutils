@@ -99,15 +99,20 @@ async def test_persistent_task_queue_sqlite() -> None:
 async def test_persistent_task_queue_push_serialization_error() -> None:
     """Проверяет откат транзакции дедупликации при ошибке сериализации payload."""
     from datetime import datetime
+
     with tempfile.TemporaryDirectory() as tmpdir:
         db_path = os.path.join(tmpdir, "test_leak.db")
         queue = PersistentTaskQueue(db_path=db_path)
 
-        bad_task = ScrapingTask(url="https://e.com", dedup_key="key1", payload={"t": datetime.now()})
+        bad_task = ScrapingTask(
+            url="https://e.com", dedup_key="key1", payload={"t": datetime.now()}
+        )
         with pytest.raises(TypeError):
             await queue.push(bad_task)
 
-        good_task = ScrapingTask(url="https://e.com", dedup_key="key1", payload={"t": "2026-07-28"})
+        good_task = ScrapingTask(
+            url="https://e.com", dedup_key="key1", payload={"t": "2026-07-28"}
+        )
         result = await queue.push(good_task)
         assert result is True
         await queue.close()
@@ -127,17 +132,19 @@ async def test_redis_task_queue_methods() -> None:
     mock_redis = AsyncMock()
     mock_redis.sadd.return_value = True
     mock_redis.zpopmin.return_value = [(b"task_123", 0)]
-    mock_redis.get.return_value = json.dumps({
-        "url": "https://example.com/redis",
-        "priority": 1,
-        "payload": {},
-        "attempts": 0,
-        "max_attempts": 3,
-        "task_id": "task_123",
-        "dedup_key": "https://example.com/redis",
-        "created_at": 1000.0,
-        "last_error": None,
-    })
+    mock_redis.get.return_value = json.dumps(
+        {
+            "url": "https://example.com/redis",
+            "priority": 1,
+            "payload": {},
+            "attempts": 0,
+            "max_attempts": 3,
+            "task_id": "task_123",
+            "dedup_key": "https://example.com/redis",
+            "created_at": 1000.0,
+            "last_error": None,
+        }
+    )
     mock_redis.zcard.return_value = 1
 
     mock_module = MagicMock()
@@ -145,7 +152,9 @@ async def test_redis_task_queue_methods() -> None:
     mock_asyncio_module.from_url.return_value = mock_redis
     mock_module.asyncio = mock_asyncio_module
 
-    with patch.dict("sys.modules", {"redis": mock_module, "redis.asyncio": mock_asyncio_module}):
+    with patch.dict(
+        "sys.modules", {"redis": mock_module, "redis.asyncio": mock_asyncio_module}
+    ):
         queue = RedisTaskQueue("redis://localhost:6379/0")
 
         task = ScrapingTask(url="https://example.com/redis", task_id="task_123")

@@ -1,4 +1,3 @@
-# ruff: noqa: E402
 """
 Парсер AST для построения иерархического индекса проекта.
 """
@@ -10,7 +9,7 @@ import re
 from pathlib import Path
 
 from .context import GitIgnoreMatcher
-from .models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge, ProjectExample
+from .models import Breadcrumbs, GraphEdge, Node, ProjectExample, ProjectIndex, Symbol
 
 
 class Indexer:
@@ -40,7 +39,9 @@ class Indexer:
         self._current_imports: dict[str, str] = {}
         """Карта импортов текущего модуля {asname: full_path}"""
         self._public_symbols = self._discover_public_api()
-        self.gitignore = GitIgnoreMatcher(self.project_root, custom_ignore=custom_ignore, use_gitignore=use_gitignore)
+        self.gitignore = GitIgnoreMatcher(
+            self.project_root, custom_ignore=custom_ignore, use_gitignore=use_gitignore
+        )
 
     @property
     def _graph(self) -> list[GraphEdge]:
@@ -53,7 +54,7 @@ class Indexer:
 
     def _resolve_module_path(self, module_path: str) -> str:
         """Резолвит строку импорта в путь к модулю/пакету внутри проекта."""
-        parts = module_path.split('.')
+        parts = module_path.split(".")
         current = ""
         best_match = ""
 
@@ -65,19 +66,27 @@ class Indexer:
 
             # Проверяем, существует ли такой путь относительно project_root
             full_path = self.project_root / current
-            if full_path.is_dir() or (full_path.with_suffix('.py')).is_file():
+            if full_path.is_dir() or (full_path.with_suffix(".py")).is_file():
                 best_match = current
 
-        return best_match if best_match else module_path.replace('.', '/')
+        return best_match if best_match else module_path.replace(".", "/")
 
-    def _record_dependency(self, source: str, target_module: str, force_internal: bool = False) -> None:
+    def _record_dependency(
+        self, source: str, target_module: str, force_internal: bool = False
+    ) -> None:
         """Регистрирует связь между модулями."""
         # Нам нужны только внутренние зависимости chutils или принудительно помеченные
-        if not force_internal and not target_module.startswith("chutils") and not target_module.startswith("."):
+        if (
+            not force_internal
+            and not target_module.startswith("chutils")
+            and not target_module.startswith(".")
+        ):
             return
 
         # Нормализуем путь цели
-        if target_module.startswith(".") and not any(c.isalnum() for c in target_module):
+        if target_module.startswith(".") and not any(
+            c.isalnum() for c in target_module
+        ):
             # Если это чисто точки ('.', '..'), оставляем как есть
             target_path = target_module
         else:
@@ -90,7 +99,9 @@ class Indexer:
         if source not in self._graph_map:
             self._graph_map[source] = {}
 
-        self._graph_map[source][target_path] = self._graph_map[source].get(target_path, 0) + 1
+        self._graph_map[source][target_path] = (
+            self._graph_map[source].get(target_path, 0) + 1
+        )
 
     def _discover_public_api(self) -> set[str]:
         """Парсит основной __init__.py для поиска публичных экспортов."""
@@ -105,7 +116,10 @@ class Indexer:
             for node in tree.body:
                 if isinstance(node, ast.Assign):
                     for target in node.targets:
-                        if isinstance(target, ast.Name) and target.id in ("_LAZY_MAPPING", "__all__"):
+                        if isinstance(target, ast.Name) and target.id in (
+                            "_LAZY_MAPPING",
+                            "__all__",
+                        ):
                             if isinstance(node.value, ast.Dict):
                                 # Случай с _LAZY_MAPPING
                                 for k in node.value.keys:
@@ -139,17 +153,27 @@ class Indexer:
                 bad_path = item / "bad_pattern.py"
                 readme_path = item / "README.md"
 
-                good_code = good_path.read_text(encoding="utf-8") if good_path.exists() else ""
-                bad_code = bad_path.read_text(encoding="utf-8") if bad_path.exists() else ""
-                readme_text = readme_path.read_text(encoding="utf-8") if readme_path.exists() else ""
+                good_code = (
+                    good_path.read_text(encoding="utf-8") if good_path.exists() else ""
+                )
+                bad_code = (
+                    bad_path.read_text(encoding="utf-8") if bad_path.exists() else ""
+                )
+                readme_text = (
+                    readme_path.read_text(encoding="utf-8")
+                    if readme_path.exists()
+                    else ""
+                )
 
                 if good_code or bad_code or readme_text:
-                    examples.append(ProjectExample(
-                        name=item.name,
-                        description=readme_text,
-                        good_pattern=good_code,
-                        bad_pattern=bad_code
-                    ))
+                    examples.append(
+                        ProjectExample(
+                            name=item.name,
+                            description=readme_text,
+                            good_pattern=good_code,
+                            bad_pattern=bad_code,
+                        )
+                    )
         return examples
 
     def index(self, include_examples: bool = False) -> ProjectIndex:
@@ -169,7 +193,7 @@ class Indexer:
             root=root_node,
             dependency_graph=self._graph,
             examples=examples,
-            metadata=metadata
+            metadata=metadata,
         )
 
     def _get_layer(self, name: str, docstring: str) -> str:
@@ -194,8 +218,7 @@ class Indexer:
         """Рекурсивно строит дерево узлов (пакетов и модулей)."""
         # rel_path теперь всегда строится от project_root (например, 'chutils/core')
         rel_path = str(current_path.relative_to(self.project_root)).replace("\\", "/")
-        if rel_path.endswith(".py"):
-            rel_path = rel_path[:-3]
+        rel_path = rel_path.removesuffix(".py")
         if rel_path == ".":
             rel_path = current_path.name
 
@@ -206,7 +229,11 @@ class Indexer:
         # Получаем docstring и AST для модуля/пакета
         docstring = ""
         tree: ast.Module | None = None
-        init_file = current_path / "__init__.py" if is_pkg else (None if is_dir else current_path)
+        init_file = (
+            current_path / "__init__.py"
+            if is_pkg
+            else (None if is_dir else current_path)
+        )
         if init_file and init_file.exists():
             try:
                 tree = ast.parse(init_file.read_text(encoding="utf-8"))
@@ -220,7 +247,7 @@ class Indexer:
             type=node_type,
             layer=self._get_layer(current_path.name.replace(".py", ""), docstring),
             docstring=docstring,
-            summary=docstring.split('\n')[0] if docstring else ""
+            summary=docstring.split("\n")[0] if docstring else "",
         )
 
         # Анализ зависимостей
@@ -241,7 +268,9 @@ class Indexer:
                     if full_base:
                         for alias in item.names:
                             if alias.name == "*":
-                                self._record_dependency(rel_path, full_base, force_internal=is_relative)
+                                self._record_dependency(
+                                    rel_path, full_base, force_internal=is_relative
+                                )
                                 continue
 
                             # Формируем полное имя: .base.ClassName или ClassName
@@ -250,11 +279,15 @@ class Indexer:
                             else:
                                 full_name = f"{full_base}{alias.name}"
 
-                            self._current_imports[alias.asname or alias.name] = full_name
+                            self._current_imports[alias.asname or alias.name] = (
+                                full_name
+                            )
 
                             if is_relative:
                                 # Для относительных импортов регистрируем зависимость
-                                self._record_dependency(rel_path, full_base, force_internal=True)
+                                self._record_dependency(
+                                    rel_path, full_base, force_internal=True
+                                )
                             else:
                                 self._record_dependency(rel_path, full_name)
 
@@ -262,7 +295,9 @@ class Indexer:
             # Обработка пакета или директории
             for fs_item in sorted(current_path.iterdir()):
                 # Проверяем .gitignore целевого проекта
-                rel_item_path = str(fs_item.relative_to(self.project_root)).replace("\\", "/")
+                rel_item_path = str(fs_item.relative_to(self.project_root)).replace(
+                    "\\", "/"
+                )
                 if self.gitignore.matches(rel_item_path):
                     continue
 
@@ -299,22 +334,26 @@ class Indexer:
                     if isinstance(target, ast.Name):
                         if target.id.startswith("__") and target.id.endswith("__"):
                             continue
-                        symbols.append(Symbol(
-                            name=target.id,
-                            type="constant",
-                            line_number=top_level.lineno,
-                            layer=self._get_layer(target.id, "")
-                        ))
+                        symbols.append(
+                            Symbol(
+                                name=target.id,
+                                type="constant",
+                                line_number=top_level.lineno,
+                                layer=self._get_layer(target.id, ""),
+                            )
+                        )
         return symbols
 
     def _resolve_base_class(self, base_name: str) -> str:
         """Разрешает имя базового класса в полный путь импорта."""
         return self._current_imports.get(base_name, base_name)
 
-    def _build_symbol(self, node: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef, sym_type: str) -> Symbol:
+    def _build_symbol(
+        self, node: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef, sym_type: str
+    ) -> Symbol:
         """Создает объект Symbol из узла AST."""
         docstring = ast.get_docstring(node) or ""
-        summary = docstring.split('\n')[0] if docstring else ""
+        summary = docstring.split("\n")[0] if docstring else ""
 
         # Извлекаем сигнатуру
         signature = ""
@@ -343,8 +382,11 @@ class Indexer:
             elif isinstance(dec, ast.Call):
                 if isinstance(dec.func, ast.Name):
                     dec_name = dec.func.id
-                elif isinstance(dec, ast.Call) and isinstance(dec.func, ast.Attribute) and isinstance(dec.func.value,
-                                                                                                      ast.Name):
+                elif (
+                    isinstance(dec, ast.Call)
+                    and isinstance(dec.func, ast.Attribute)
+                    and isinstance(dec.func.value, ast.Name)
+                ):
                     dec_name = f"{dec.func.value.id}.{dec.func.attr}"
 
             if dec_name:
@@ -354,7 +396,7 @@ class Indexer:
 
         # Теги из docstring (:tag:)
         tags = re.findall(r":([\w-]+):", docstring)
-        breadcrumbs.tags = sorted(list(set(tags)))
+        breadcrumbs.tags = sorted(set(tags))
 
         if "thread-safe" in breadcrumbs.tags:
             breadcrumbs.is_thread_safe = True
@@ -369,7 +411,7 @@ class Indexer:
             docstring=docstring,
             breadcrumbs=breadcrumbs,
             line_number=node.lineno,
-            layer=self._get_layer(node.name, docstring)
+            layer=self._get_layer(node.name, docstring),
         )
 
         if isinstance(node, ast.ClassDef):
@@ -420,15 +462,15 @@ class Indexer:
 
 # Re-export metadata utilities to maintain backward compatibility
 from .project_metadata import (
-    collect_project_metadata,
     calculate_project_hash,
+    collect_project_metadata,
     save_context_metadata_cache,
 )
 
 __all__ = [
-    "Indexer",
     "GitIgnoreMatcher",
-    "collect_project_metadata",
+    "Indexer",
     "calculate_project_hash",
+    "collect_project_metadata",
     "save_context_metadata_cache",
 ]

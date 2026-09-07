@@ -1,7 +1,7 @@
 import asyncio
 import time
 
-from chutils import setup_logger, provide, inject, Inject
+from chutils import Inject, inject, provide, setup_logger
 
 # 1. Настраиваем логгер chutils
 logger = setup_logger(name="di_example")
@@ -39,9 +39,7 @@ class UserService:
 # 4. Внедрение зависимостей через @inject и маркер Inject() в синхронную функцию
 @inject()
 def process_user_request(
-        user_id: int,
-        user_service: UserService = Inject(),
-        ctx: RequestContext = Inject()
+    user_id: int, user_service: UserService = Inject(), ctx: RequestContext = Inject()
 ) -> None:
     logger.info(f"Processing request in {ctx.request_id} for user {user_id}")
     name = user_service.get_user_name(user_id)
@@ -51,8 +49,7 @@ def process_user_request(
 # 5. Внедрение зависимостей в асинхронную функцию
 @inject()
 async def process_async_task(
-        db: DatabaseService = Inject(),
-        user_service: UserService = Inject()
+    db: DatabaseService = Inject(), user_service: UserService = Inject()
 ) -> None:
     logger.info("Starting async background task...")
     await asyncio.sleep(0.1)

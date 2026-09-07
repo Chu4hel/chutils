@@ -72,7 +72,8 @@ def tg_rate_limit(
     rate: int = 1,
     per: float = 1.0,
     scope: str = "user_id",
-    warning_text: str | None = "⏱ Пожалуйста, подождите {wait_sec} сек. перед повторной отправкой.",
+    warning_text: str
+    | None = "⏱ Пожалуйста, подождите {wait_sec} сек. перед повторной отправкой.",
     silent: bool = False,
     raise_on_limit: bool = False,
 ) -> Callable[[F], F]:

@@ -5,7 +5,7 @@ import pytest
 
 from chutils.context import ContextFilter
 from chutils.logger.formatters import ChutilsJsonFormatter
-from chutils.tracing import trace, setup_tracing, get_current_trace_context
+from chutils.tracing import get_current_trace_context, setup_tracing, trace
 
 
 # Моки для структур OpenTelemetry
@@ -46,9 +46,11 @@ def mock_otel_modules():
         "opentelemetry.exporter.otlp.proto.grpc.trace_exporter": mock_exporter.otlp.proto.grpc.trace_exporter,
     }
 
-    with patch.dict("sys.modules", modules), \
-            patch("chutils.tracing.IS_OTEL_AVAILABLE", True), \
-            patch("chutils.tracing.otel_trace", mock_otel.trace):
+    with (
+        patch.dict("sys.modules", modules),
+        patch("chutils.tracing.IS_OTEL_AVAILABLE", True),
+        patch("chutils.tracing.otel_trace", mock_otel.trace),
+    ):
         # Настраиваем дефолтный невалидный спан
         invalid_context = MockSpanContext(0, 0, is_valid=False)
         mock_otel.trace.get_current_span.return_value = MockSpan(invalid_context)
@@ -66,7 +68,9 @@ def test_trace_decorator_sync(mock_otel_modules):
         return x * 2
 
     assert my_func(2) == 4
-    mock_tracer.start_as_current_span.assert_called_once_with("test_span", attributes={"attr": "val"})
+    mock_tracer.start_as_current_span.assert_called_once_with(
+        "test_span", attributes={"attr": "val"}
+    )
 
 
 @pytest.mark.asyncio
@@ -89,6 +93,7 @@ async def test_trace_decorator_async(mock_otel_modules):
 def test_trace_decorator_no_otel():
     """Проверяет, что декоратор не ломает код, если OTel не установлен."""
     with patch("chutils.tracing.IS_OTEL_AVAILABLE", False):
+
         @trace()
         def some_func():
             return "ok"
@@ -112,7 +117,10 @@ def test_logger_integration_text(mock_otel_modules):
     valid_context = MockSpanContext(0x1234, 0x5678)
     mock_otel_modules.trace.get_current_span.return_value = MockSpan(valid_context)
 
-    with patch("chutils.tracing.get_current_trace_context", side_effect=get_current_trace_context):
+    with patch(
+        "chutils.tracing.get_current_trace_context",
+        side_effect=get_current_trace_context,
+    ):
         log_filter = ContextFilter()
         record = logging.LogRecord("test", logging.INFO, "path", 10, "msg", (), None)
         log_filter.filter(record)
@@ -127,14 +135,18 @@ def test_logger_integration_json(mock_otel_modules):
     valid_context = MockSpanContext(0x1234, 0x5678)
     mock_otel_modules.trace.get_current_span.return_value = MockSpan(valid_context)
 
-    with patch("chutils.tracing.get_current_trace_context", side_effect=get_current_trace_context):
+    with patch(
+        "chutils.tracing.get_current_trace_context",
+        side_effect=get_current_trace_context,
+    ):
         log_filter = ContextFilter()
         record = logging.LogRecord("test", logging.INFO, "path", 10, "msg", (), None)
         log_filter.filter(record)
 
-        with patch("chutils.logger.formatters.JSON_LOGGER_AVAILABLE", True), \
-                patch("pythonjsonlogger.json.JsonFormatter.add_fields"):  # Исправлено на .json
-
+        with (
+            patch("chutils.logger.formatters.JSON_LOGGER_AVAILABLE", True),
+            patch("pythonjsonlogger.json.JsonFormatter.add_fields"),
+        ):  # Исправлено на .json
             formatter = ChutilsJsonFormatter()
             log_record = {}
             formatter.add_fields(log_record, record, {})

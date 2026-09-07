@@ -4,8 +4,9 @@ import os
 from chutils import setup_logger
 
 
-def test_setup_logger_with_custom_file_name(project_with_marker, mocker, caplog, reset_chutils_state,
-                                            force_chutils_logger):
+def test_setup_logger_with_custom_file_name(
+    project_with_marker, mocker, caplog, reset_chutils_state, force_chutils_logger
+):
     """
     Проверяет, что setup_logger создает лог-файл с указанным именем,
     игнорируя настройки из конфигурации, путем мокирования хендлера.
@@ -27,11 +28,15 @@ Logging:
     force_chutils_logger("custom_file_test")
 
     # Устанавливаем уровень логирования для chutils.config на DEBUG
-    logging.getLogger('chutils.config').setLevel(logging.DEBUG)
+    logging.getLogger("chutils.config").setLevel(logging.DEBUG)
 
     # Мокаем SafeTimedRotatingFileHandler
-    mock_file_handler = mocker.patch("chutils.logger.internal.builder.SafeTimedRotatingFileHandler")
-    mock_file_handler.return_value.level = logging.NOTSET  # Устанавливаем уровень для мока
+    mock_file_handler = mocker.patch(
+        "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+    )
+    mock_file_handler.return_value.level = (
+        logging.NOTSET
+    )  # Устанавливаем уровень для мока
 
     # Указываем кастомное имя файла
     custom_log_file = "my_custom_logger.log"
@@ -61,8 +66,9 @@ Logging:
     assert "Корень проекта автоматически определен" in caplog.text
 
 
-def test_multiple_loggers_different_files(project_with_marker, mocker, caplog, reset_chutils_state,
-                                          force_chutils_logger):
+def test_multiple_loggers_different_files(
+    project_with_marker, mocker, caplog, reset_chutils_state, force_chutils_logger
+):
     """
     Проверяет, что два логгера, созданные с разными `log_file_name`,
     пишут в разные файлы, путем мокирования хендлера.
@@ -78,7 +84,9 @@ def test_multiple_loggers_different_files(project_with_marker, mocker, caplog, r
     os.chdir(project_root)
 
     # Мокаем SafeTimedRotatingFileHandler
-    mock_file_handler = mocker.patch("chutils.logger.internal.builder.SafeTimedRotatingFileHandler")
+    mock_file_handler = mocker.patch(
+        "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
+    )
 
     # Настраиваем два логгера с разными файлами
     with caplog.at_level(logging.DEBUG):
@@ -96,6 +104,12 @@ def test_multiple_loggers_different_files(project_with_marker, mocker, caplog, r
     # Нормализуем пути перед сравнением
     normalized_call_args = [os.path.normpath(str(arg)) for arg in call_args]
 
-    assert normalized_call_args[0].endswith(expected_path1) or normalized_call_args[0].endswith(expected_path2)
-    assert normalized_call_args[1].endswith(expected_path1) or normalized_call_args[1].endswith(expected_path2)
-    assert normalized_call_args[0] != normalized_call_args[1]  # Убедимся, что пути разные
+    assert normalized_call_args[0].endswith(expected_path1) or normalized_call_args[
+        0
+    ].endswith(expected_path2)
+    assert normalized_call_args[1].endswith(expected_path1) or normalized_call_args[
+        1
+    ].endswith(expected_path2)
+    assert (
+        normalized_call_args[0] != normalized_call_args[1]
+    )  # Убедимся, что пути разные

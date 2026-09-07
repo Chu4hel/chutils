@@ -3,8 +3,8 @@ Pytest-фикстуры для тестирования приложений, и
 """
 
 import logging
-from typing import Any
 from collections.abc import Generator
+from typing import Any
 
 import pytest
 
@@ -126,7 +126,9 @@ class LogCapture:
 
 
 @pytest.fixture
-def mock_chutils_config(monkeypatch: pytest.MonkeyPatch) -> Generator[ConfigMock, None, None]:
+def mock_chutils_config(
+    monkeypatch: pytest.MonkeyPatch,
+) -> Generator[ConfigMock, None, None]:
     """
     Фикстура для мокирования конфигурации chutils.
 
@@ -144,7 +146,9 @@ def mock_chutils_config(monkeypatch: pytest.MonkeyPatch) -> Generator[ConfigMock
 
 
 @pytest.fixture
-def mock_chutils_secrets(monkeypatch: pytest.MonkeyPatch) -> Generator[MockSecretProvider, None, None]:
+def mock_chutils_secrets(
+    monkeypatch: pytest.MonkeyPatch,
+) -> Generator[MockSecretProvider, None, None]:
     """
     Фикстура для мокирования секретов chutils.
 
@@ -153,8 +157,9 @@ def mock_chutils_secrets(monkeypatch: pytest.MonkeyPatch) -> Generator[MockSecre
     """
     provider = MockSecretProvider()
 
-
-    monkeypatch.setattr("chutils.secret_manager.core._warn_about_missing_keyring", lambda: None)
+    monkeypatch.setattr(
+        "chutils.secret_manager.core._warn_about_missing_keyring", lambda: None
+    )
 
     original_init = SecretManager.__init__
 
@@ -172,7 +177,7 @@ def capture_chutils_logs() -> Generator[LogCapture, None, None]:
     """
     Фикстура для перехвата логов.
 
-    - Перехватывает все логи, проходящие через любой логгер (включая те, 
+    - Перехватывает все логи, проходящие через любой логгер (включая те,
       где `propagate=False`).
     - Позволяет проверять сообщения и поля контекста (например, добавленные через `bind_context`).
 
@@ -196,7 +201,7 @@ def capture_chutils_logs() -> Generator[LogCapture, None, None]:
         if not getattr(record, "_chutils_captured", False):
             handler.emit(record)
             try:
-                setattr(record, "_chutils_captured", True)
+                record._chutils_captured = True
             except (AttributeError, TypeError):
                 # В редких случаях record может быть неизменяемым (хотя в logging это не так)
                 pass
@@ -204,5 +209,7 @@ def capture_chutils_logs() -> Generator[LogCapture, None, None]:
 
     # Патчим метод callHandlers у базового класса Logger.
     # Это гарантирует перехват всех логов, даже если у них propagate=False.
-    with unittest.mock.patch.object(logging.Logger, "callHandlers", mocked_call_handlers):
+    with unittest.mock.patch.object(
+        logging.Logger, "callHandlers", mocked_call_handlers
+    ):
         yield LogCapture(handler)

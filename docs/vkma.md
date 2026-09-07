@@ -46,14 +46,19 @@ chutils init --template vk-miniapp
 ```python
 from chutils.vkma import validate_vkma_launch_params, parse_vkma_launch_params
 
-raw_init_data = "vk_user_id=123456&vk_app_id=7890&vk_is_app_user=1&vk_ts=1750000000&sign=..."
+raw_init_data = (
+    "vk_user_id=123456&vk_app_id=7890&vk_is_app_user=1&vk_ts=1750000000&sign=..."
+)
 
-# Валидация подписи (возвращает True или выбрасывает VKMAValidationError)
+# Валидация подписи (возвращает True; при невалидной подписи или подделке выбрасывает VKMAValidationError)
 try:
-    validate_vkma_launch_params(raw_init_data, client_secret="your_vk_app_secret", max_age_seconds=86400)
+    validate_vkma_launch_params(
+        raw_init_data, client_secret="your_vk_app_secret", max_age_seconds=86400
+    )
     print("Подпись валидна!")
 except VKMAValidationError as e:
-    print(f"Ошибка валидации: {e}")
+    # Функция не возвращает False при подделке, а выбрасывает исключение с детальным hint
+    print(f"Ошибка валидации / недействительная подпись: {e.message} (совет: {e.hint})")
 
 # Парсинг в Pydantic-модель
 params = parse_vkma_launch_params(raw_init_data, client_secret="your_vk_app_secret")
@@ -65,12 +70,19 @@ print(f"User ID: {params.user_id}, Platform: {params.platform}")
 ```python
 from fastapi import FastAPI, Depends
 from chutils.vkma import VKMALaunchParams
-from chutils.vkma.integrations.fastapi import VKMAAuthMiddleware, get_current_vkma_params
+from chutils.vkma.integrations.fastapi import (
+    VKMAAuthMiddleware,
+    get_current_vkma_params,
+)
 
 app = FastAPI()
 
 # Добавляем middleware для проверки заголовка Authorization: Bearer <initData> или query string
-app.add_middleware(VKMAAuthMiddleware, client_secret="YOUR_SECRET", exclude_paths=["/docs", "/openapi.json"])
+app.add_middleware(
+    VKMAAuthMiddleware,
+    client_secret="YOUR_SECRET",
+    exclude_paths=["/docs", "/openapi.json"],
+)
 
 
 @app.get("/api/me")
@@ -78,7 +90,7 @@ def get_me(params: VKMALaunchParams = Depends(get_current_vkma_params)):
     return {
         "user_id": params.user_id,
         "app_id": params.app_id,
-        "is_app_user": params.is_app_user
+        "is_app_user": params.is_app_user,
     }
 ```
 

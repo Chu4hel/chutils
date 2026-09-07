@@ -1,6 +1,7 @@
 """
 Подкоманда CLI для профилирования времени импортов.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -22,7 +23,6 @@ class ProfileImportsSubCommand(SubCommand):
             subparsers: Объект subparsers для добавления подкоманд.
         """
         # Аргументы уже зарегистрированы централизованно в DevCommand.register
-        pass
 
     def handle(self, args: argparse.Namespace) -> None:
         """Обработчик выполнения профилирования.
@@ -42,6 +42,8 @@ class ProfileImportsSubCommand(SubCommand):
                 console=self.console,
             )
         except Exception as e:
-            self.err_console.print(f"[bold red]Ошибка при профилировании импортов:[/bold red] {e}")
+            self.err_console.print(
+                f"[bold red]Ошибка при профилировании импортов:[/bold red] {e}"
+            )
             sys.exit(1)
         sys.exit(0)

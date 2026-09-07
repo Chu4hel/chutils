@@ -81,7 +81,7 @@ def test_parse_and_write_env_file(tmp_path: Path) -> None:
         "\n"
         "# Настройки базы\n"
         "DB_HOST=localhost\n"
-        "DB_PASS=\"pass#word\" # пароль от бд\n"
+        'DB_PASS="pass#word" # пароль от бд\n'
     )
     env_file = tmp_path / ".env"
     env_file.write_text(file_content, encoding="utf-8")
@@ -110,23 +110,20 @@ def test_parse_and_write_env_file(tmp_path: Path) -> None:
 
 
 def test_merge_env_structures() -> None:
-    source_content = (
-        "# Заголовок\n"
-        "A=1\n"
-        "\n"
-        "# Комментарий к B\n"
-        "B=2 # инлайн B\n"
-        "C=3\n"
-    )
-    target_content = (
-        "A=10\n"
-    )
+    source_content = "# Заголовок\nA=1\n\n# Комментарий к B\nB=2 # инлайн B\nC=3\n"
+    target_content = "A=10\n"
 
-    source_entries = [parse_env_line(line) for line in source_content.splitlines(keepends=True)]
-    target_entries = [parse_env_line(line) for line in target_content.splitlines(keepends=True)]
+    source_entries = [
+        parse_env_line(line) for line in source_content.splitlines(keepends=True)
+    ]
+    target_entries = [
+        parse_env_line(line) for line in target_content.splitlines(keepends=True)
+    ]
 
     # Слияние с обнулением значений (empty_values=True)
-    merged_empty = merge_env_structures(source_entries, target_entries, empty_values=True)
+    merged_empty = merge_env_structures(
+        source_entries, target_entries, empty_values=True
+    )
     # Ключи B и C должны быть добавлены. B должен перенести свои комментарии.
     keys = [e.key for e in merged_empty if e.key is not None]
     assert keys == ["A", "B", "C"]
@@ -147,6 +144,8 @@ def test_merge_env_structures() -> None:
     assert prev_entry.comment == "Комментарий к B"
 
     # Слияние без обнуления значений (empty_values=False)
-    merged_full = merge_env_structures(source_entries, target_entries, empty_values=False)
+    merged_full = merge_env_structures(
+        source_entries, target_entries, empty_values=False
+    )
     b_full_entry = [e for e in merged_full if e.key == "B"][0]
     assert b_full_entry.value == "2"

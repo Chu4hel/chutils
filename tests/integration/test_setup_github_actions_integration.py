@@ -12,15 +12,21 @@ def test_cli_setup_github_actions_e2e(tmp_path: Path) -> None:
 
     result = subprocess.run(
         [
-            sys.executable, "-m", "chutils", "dev", "setup-github-actions",
+            sys.executable,
+            "-m",
+            "chutils",
+            "dev",
+            "setup-github-actions",
             "--no-interactive",
-            "--python-versions", "3.11,3.12",
+            "--python-versions",
+            "3.11,3.12",
             "--without-pytest",
-            "--output-file", str(output_file)
+            "--output-file",
+            str(output_file),
         ],
         capture_output=True,
         text=True,
-        check=True
+        check=True,
     )
 
     assert result.returncode == 0

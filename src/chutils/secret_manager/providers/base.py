@@ -19,7 +19,6 @@ class SecretProvider(ABC):
         Returns:
             Значение секрета или None, если секрет не найден.
         """
-        pass
 
     @abstractmethod
     def set(self, key: str, value: str, service_name: str) -> bool:
@@ -34,7 +33,6 @@ class SecretProvider(ABC):
         Returns:
             True, если сохранение прошло успешно, иначе False.
         """
-        pass
 
     @abstractmethod
     def delete(self, key: str, service_name: str) -> bool:
@@ -48,4 +46,3 @@ class SecretProvider(ABC):
         Returns:
             True, если удаление прошло успешно, иначе False.
         """
-        pass

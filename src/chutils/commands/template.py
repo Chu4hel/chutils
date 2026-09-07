@@ -6,13 +6,13 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from .base import BaseCommand
 from ..config.generator import (
-    generate_yaml_template,
+    PYDANTIC_AVAILABLE,
     generate_env_template,
     generate_json_schema,
-    PYDANTIC_AVAILABLE
+    generate_yaml_template,
 )
+from .base import BaseCommand
 
 
 class TemplateCommand(BaseCommand):
@@ -29,22 +29,25 @@ class TemplateCommand(BaseCommand):
         template_parser = subparsers.add_parser(
             "template",
             help="Сгенерировать шаблон конфигурации",
-            description="Создает файл config.yml, .env или JSON-схему на основе вашей Pydantic модели."
+            description="Создает файл config.yml, .env или JSON-схему на основе вашей Pydantic модели.",
         )
         template_parser.add_argument(
-            "-m", "--model",
+            "-m",
+            "--model",
             required=True,
-            help="Путь к Pydantic модели (например, 'myapp.config:Settings')"
+            help="Путь к Pydantic модели (например, 'myapp.config:Settings')",
         )
         template_parser.add_argument(
-            "-f", "--format",
+            "-f",
+            "--format",
             choices=["yaml", "env", "json-schema"],
             default="yaml",
-            help="Формат вывода (по умолчанию: yaml)"
+            help="Формат вывода (по умолчанию: yaml)",
         )
         template_parser.add_argument(
-            "-o", "--output",
-            help="Путь к файлу для сохранения (по умолчанию: вывод в консоль)"
+            "-o",
+            "--output",
+            help="Путь к файлу для сохранения (по умолчанию: вывод в консоль)",
         )
         template_parser.set_defaults(handler=self.handle)
 
@@ -55,11 +58,12 @@ class TemplateCommand(BaseCommand):
             args: Объект Namespace с аргументами командной строки.
         """
         from ..exceptions import CommandError, OptionalDependencyError
+
         if not PYDANTIC_AVAILABLE:
             raise OptionalDependencyError(
                 "Pydantic не установлен.",
                 dependency="pydantic",
-                hint="Установите его: pip install chutils[pydantic] или poetry add pydantic"
+                hint="Установите его: pip install chutils[pydantic] или poetry add pydantic",
             )
 
         # 1. Динамический импорт модели
@@ -74,7 +78,7 @@ class TemplateCommand(BaseCommand):
                 else:
                     raise CommandError(
                         f"Некорректный формат пути к модели: '{args.model}'",
-                        hint="Используйте 'module:Class' или 'module.Class'. Пример: 'myapp.config:Settings'"
+                        hint="Используйте 'module:Class' или 'module.Class'. Пример: 'myapp.config:Settings'",
                     )
 
             # Добавляем текущую директорию в path, чтобы можно было импортировать локальные модули
@@ -83,10 +87,10 @@ class TemplateCommand(BaseCommand):
             model_class = getattr(module, class_name)
         except (ImportError, AttributeError, CommandError) as e:
             if isinstance(e, CommandError):
-                raise e
+                raise
             raise CommandError(
                 f"Не удалось импортировать модель '{args.model}': {e}",
-                hint="Убедитесь, что модуль существует и путь к классу указан верно."
+                hint="Убедитесь, что модуль существует и путь к классу указан верно.",
             ) from e
         except Exception as e:
             raise CommandError(f"Непредвиденная ошибка при импорте модели: {e}") from e
@@ -108,11 +112,13 @@ class TemplateCommand(BaseCommand):
             try:
                 with open(args.output, "w", encoding="utf-8") as f:
                     f.write(result)
-                self.console.print(f"[green][OK] Шаблон сохранен в {args.output}[/green]")
+                self.console.print(
+                    f"[green][OK] Шаблон сохранен в {args.output}[/green]"
+                )
             except Exception as e:
                 raise CommandError(
                     f"Не удалось сохранить файл '{args.output}': {e}",
-                    hint="Проверьте права доступа к директории и корректность пути."
+                    hint="Проверьте права доступа к директории и корректность пути.",
                 ) from e
         else:
             print(result)

@@ -7,6 +7,7 @@
 - semaphore для ограничения конкурентности
 - circuit_breaker при накоплении ошибок
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -17,7 +18,6 @@ from unittest.mock import patch
 import pytest
 
 from chutils.http.resilience import ResiliencePolicy
-
 
 # ─── Вспомогательные fixture ────────────────────────────────────────────────
 
@@ -92,7 +92,9 @@ def test_apply_sync_success_on_first_attempt() -> None:
 
 def test_apply_sync_retry_on_transient_error() -> None:
     """Повтор при временной ошибке, успех на 3-й попытке."""
-    policy = ResiliencePolicy(retries=3, retry_delay=0.0, retry_exceptions=(_TransientError,))
+    policy = ResiliencePolicy(
+        retries=3, retry_delay=0.0, retry_exceptions=(_TransientError,)
+    )
     call_count = 0
 
     def func() -> str:
@@ -109,7 +111,9 @@ def test_apply_sync_retry_on_transient_error() -> None:
 
 def test_apply_sync_exhausts_retries() -> None:
     """После исчерпания попыток пробрасывает последнее исключение."""
-    policy = ResiliencePolicy(retries=2, retry_delay=0.0, retry_exceptions=(_TransientError,))
+    policy = ResiliencePolicy(
+        retries=2, retry_delay=0.0, retry_exceptions=(_TransientError,)
+    )
     call_count = 0
 
     def func() -> str:
@@ -125,7 +129,9 @@ def test_apply_sync_exhausts_retries() -> None:
 
 def test_apply_sync_no_retry_on_non_matching_exception() -> None:
     """Не повторяет при исключении, не входящем в retry_exceptions."""
-    policy = ResiliencePolicy(retries=3, retry_delay=0.0, retry_exceptions=(_TransientError,))
+    policy = ResiliencePolicy(
+        retries=3, retry_delay=0.0, retry_exceptions=(_TransientError,)
+    )
     call_count = 0
 
     def func() -> str:
@@ -141,7 +147,9 @@ def test_apply_sync_no_retry_on_non_matching_exception() -> None:
 
 def test_apply_sync_retry_on_5xx_status() -> None:
     """Повтор при 5xx статусе HTTP."""
-    policy = ResiliencePolicy(retries=2, retry_delay=0.0, retry_on_status_codes=(500, 503))
+    policy = ResiliencePolicy(
+        retries=2, retry_delay=0.0, retry_on_status_codes=(500, 503)
+    )
     call_count = 0
 
     def func() -> str:
@@ -158,10 +166,13 @@ def test_apply_sync_retry_on_5xx_status() -> None:
 
 def test_apply_sync_backoff_between_retries() -> None:
     """Проверяет, что задержка увеличивается с backoff."""
-    policy = ResiliencePolicy(retries=2, retry_delay=0.1, retry_backoff=2.0, retry_exceptions=(_TransientError,))
+    policy = ResiliencePolicy(
+        retries=2,
+        retry_delay=0.1,
+        retry_backoff=2.0,
+        retry_exceptions=(_TransientError,),
+    )
     sleep_calls: list[float] = []
-
-    original_sleep = time.sleep
 
     def mock_sleep(seconds: float) -> None:
         sleep_calls.append(seconds)
@@ -224,8 +235,7 @@ def test_apply_sync_semaphore_limits_concurrency() -> None:
         nonlocal active_count, max_active
         with lock:
             active_count += 1
-            if active_count > max_active:
-                max_active = active_count
+            max_active = max(max_active, active_count)
         time.sleep(0.05)
         with lock:
             active_count -= 1
@@ -266,7 +276,9 @@ async def test_apply_async_success_on_first_attempt() -> None:
 @pytest.mark.asyncio
 async def test_apply_async_retry_on_transient_error() -> None:
     """Async: повтор при временной ошибке."""
-    policy = ResiliencePolicy(retries=2, retry_delay=0.0, retry_exceptions=(_TransientError,))
+    policy = ResiliencePolicy(
+        retries=2, retry_delay=0.0, retry_exceptions=(_TransientError,)
+    )
     call_count = 0
 
     async def func() -> str:
@@ -284,7 +296,9 @@ async def test_apply_async_retry_on_transient_error() -> None:
 @pytest.mark.asyncio
 async def test_apply_async_exhausts_retries() -> None:
     """Async: после исчерпания попыток пробрасывает исключение."""
-    policy = ResiliencePolicy(retries=1, retry_delay=0.0, retry_exceptions=(_TransientError,))
+    policy = ResiliencePolicy(
+        retries=1, retry_delay=0.0, retry_exceptions=(_TransientError,)
+    )
 
     async def func() -> str:
         raise _TransientError("always fails")
@@ -318,8 +332,7 @@ async def test_apply_async_semaphore_limits_concurrency() -> None:
     async def func() -> str:
         nonlocal active_count, max_active
         active_count += 1
-        if active_count > max_active:
-            max_active = active_count
+        max_active = max(max_active, active_count)
         await asyncio.sleep(0.05)
         active_count -= 1
         return "done"

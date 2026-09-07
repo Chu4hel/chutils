@@ -1,10 +1,16 @@
 import pytest
 
-from chutils.dev.ai_lint import Rule, LintResult, LinterEngine, load_custom_rules
+from chutils.dev.ai_lint import LinterEngine, LintResult, Rule, load_custom_rules
 from chutils.dev.rules import (
-    ManifestRule, DocstringQualityRule, SecurityHardcodeRule,
-    ChutilsIntegrationRule, APIMapRule, EnvSyncRule, CodeDecompositionRule,
-    APIMapHashRule, FileDependencySyncRule
+    APIMapHashRule,
+    APIMapRule,
+    ChutilsIntegrationRule,
+    CodeDecompositionRule,
+    DocstringQualityRule,
+    EnvSyncRule,
+    FileDependencySyncRule,
+    ManifestRule,
+    SecurityHardcodeRule,
 )
 
 
@@ -24,7 +30,7 @@ class DummyRule(Rule):
                         severity=self.severity,
                         file_path=file,
                         line_number=10,
-                        fix_suggestion="Rename file to not contain fail"
+                        fix_suggestion="Rename file to not contain fail",
                     )
                 )
         return results
@@ -41,7 +47,7 @@ def test_should_ignore(tmp_path):
     """Проверяет логику фильтрации игнорируемых путей."""
     config = {
         "base_dir": str(tmp_path),
-        "ignore": [".git", "node_modules", "*.tmp", "temp/"]
+        "ignore": [".git", "node_modules", "*.tmp", "temp/"],
     }
     engine = LinterEngine(config)
 
@@ -66,10 +72,7 @@ def test_collect_files(tmp_path):
     with open(tmp_path / "src" / "app.tmp", "w", encoding="utf-8") as f:
         f.write("")
 
-    config = {
-        "base_dir": str(tmp_path),
-        "ignore": [".git", "*.tmp"]
-    }
+    config = {"base_dir": str(tmp_path), "ignore": [".git", "*.tmp"]}
     engine = LinterEngine(config)
     files = engine.collect_files()
 
@@ -88,10 +91,7 @@ def test_engine_run(tmp_path):
     with open(tmp_path / "src" / "app_ok.py", "w", encoding="utf-8") as f:
         f.write("")
 
-    config = {
-        "base_dir": str(tmp_path),
-        "ignore": []
-    }
+    config = {"base_dir": str(tmp_path), "ignore": []}
     engine = LinterEngine(config)
     rule = DummyRule()
     engine.rules = [rule]
@@ -115,7 +115,7 @@ def test_print_results_exit_status(tmp_path):
         rule_name="WarnRule",
         message="Warning occurred",
         severity="warn",
-        file_path=str(tmp_path / "app.py")
+        file_path=str(tmp_path / "app.py"),
     )
     engine = LinterEngine({"base_dir": str(tmp_path), "strict": False})
     assert engine.print_results([warning_result]) is True
@@ -129,7 +129,7 @@ def test_print_results_exit_status(tmp_path):
         rule_name="ErrRule",
         message="Error occurred",
         severity="error",
-        file_path=str(tmp_path / "app.py")
+        file_path=str(tmp_path / "app.py"),
     )
     assert engine.print_results([error_result]) is False
 
@@ -161,15 +161,15 @@ class CustomRule(Rule):
     assert rules[0].severity == "warn"
 
     # Проверяем интеграцию с LinterEngine
-    engine = LinterEngine({
-        "base_dir": str(tmp_path),
-        "custom_rules_path": "my_rules.py"
-    })
+    engine = LinterEngine(
+        {"base_dir": str(tmp_path), "custom_rules_path": "my_rules.py"}
+    )
     engine.load_rules()
     assert any(r.name == "CustomRule" for r in engine.rules)
 
 
 # --- Тесты для встроенных правил ---
+
 
 def test_manifest_rule(tmp_path):
     """Тестирует ManifestRule."""
@@ -224,8 +224,13 @@ def doc_func(x: str) -> str:
     assert len(results) > 0
     assert any("MyClass" in r.message and "docstring" in r.message for r in results)
     assert any("my_func" in r.message and "docstring" in r.message for r in results)
-    assert any("параметра 'a'" in r.message and "аннотация типа" in r.message for r in results)
-    assert any("my_func" in r.message and "возвращаемого значения" in r.message for r in results)
+    assert any(
+        "параметра 'a'" in r.message and "аннотация типа" in r.message for r in results
+    )
+    assert any(
+        "my_func" in r.message and "возвращаемого значения" in r.message
+        for r in results
+    )
     assert any("doc_func" in r.message and "Args:" in r.message for r in results)
     assert any("doc_func" in r.message and "Returns:" in r.message for r in results)
 
@@ -322,7 +327,9 @@ class BadClassNoDoc:
     res_bad_init = rule.check(str(tmp_path), [str(file_bad_init)])
     # Ошибка docstring класса (ERROR) + предупреждение для __init__ (WARN)
     assert len(res_bad_init) == 2
-    assert any(r.severity == "error" and "BadClassNoDoc" in r.message for r in res_bad_init)
+    assert any(
+        r.severity == "error" and "BadClassNoDoc" in r.message for r in res_bad_init
+    )
     assert any(r.severity == "warn" and "__init__" in r.message for r in res_bad_init)
 
 
@@ -344,7 +351,10 @@ my_password = "super-secret-password-hardcoded" # Suspect variable + assignment
     assert len(results) >= 3
     assert any("AWS Access Key" in r.message or "AKIA" in r.file_path for r in results)
     assert any("Slack Token" in r.message for r in results)
-    assert any("my_password" in r.message or "секретной переменной" in r.message for r in results)
+    assert any(
+        "my_password" in r.message or "секретной переменной" in r.message
+        for r in results
+    )
 
     # Сценарий 2: Безопасный код
     good_code = """
@@ -441,12 +451,9 @@ def test_api_map_rule_formats(tmp_path):
 
     # 1. Формат JSON: файл отсутствует
     import json
+
     cache_path = chutils_dir / "context_metadata.json"
-    cache_data = {
-        "file_path": "my_api.json",
-        "format": "json",
-        "project_hash": "hash"
-    }
+    cache_data = {"file_path": "my_api.json", "format": "json", "project_hash": "hash"}
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(cache_data, f)
 
@@ -466,10 +473,7 @@ def test_api_map_rule_formats(tmp_path):
 
 def test_env_sync_rule(tmp_path, mocker):
     """Тестирует EnvSyncRule."""
-    mock_config = {
-        "env_path": "custom.env",
-        "example_path": "custom.env.example"
-    }
+    mock_config = {"env_path": "custom.env", "example_path": "custom.env.example"}
     mocker.patch("chutils.config.dev.load_ai_lint_config", return_value=mock_config)
 
     rule = EnvSyncRule()
@@ -509,10 +513,7 @@ def test_env_sync_rule(tmp_path, mocker):
 def test_code_decomposition_rule(tmp_path):
     """Тестирует CodeDecompositionRule."""
     rule = CodeDecompositionRule()
-    rule.config = {
-        "max_file_lines": 10,
-        "max_file_classes": 2
-    }
+    rule.config = {"max_file_lines": 10, "max_file_classes": 2}
 
     # 1. Файл в пределах нормы
     ok_code = """
@@ -598,10 +599,7 @@ def my_func():
     file_doc.write_text(doc_code, encoding="utf-8")
 
     # Без исключения - файл содержит 9 физических строк
-    rule.config = {
-        "max_file_lines": 5,
-        "max_file_classes": 5
-    }
+    rule.config = {"max_file_lines": 5, "max_file_classes": 5}
     results = rule.check(str(tmp_path), [str(file_doc)])
     assert len(results) == 1  # Должен ругнуться, так как 9 > 5
 
@@ -609,7 +607,7 @@ def my_func():
     rule.config = {
         "max_file_lines": 5,
         "max_file_classes": 5,
-        "decomposition_exclude_docstrings": True
+        "decomposition_exclude_docstrings": True,
     }
     results = rule.check(str(tmp_path), [str(file_doc)])
     assert len(results) == 0  # 3 <= 5
@@ -618,7 +616,7 @@ def my_func():
     rule.config = {
         "max_file_lines": 5,
         "max_file_classes": 5,
-        "decomposition_docstrings_weight": 0.5
+        "decomposition_docstrings_weight": 0.5,
     }
     results = rule.check(str(tmp_path), [str(file_doc)])
     assert len(results) == 1  # 6 > 5
@@ -627,7 +625,7 @@ def my_func():
     rule.config = {
         "max_file_lines": 5,
         "max_file_classes": 5,
-        "decomposition_docstrings_weight": 0.2
+        "decomposition_docstrings_weight": 0.2,
     }
     results = rule.check(str(tmp_path), [str(file_doc)])
     assert len(results) == 0  # 4 <= 5
@@ -669,16 +667,23 @@ def test_api_map_hash_rule(tmp_path):
 
     # 6. Хэш совпадает
     from chutils.dev.ast_indexer import calculate_project_hash
+
     # Создаем python файл для хэширования
-    (tmp_path / "src" / "chutils" / "helper.py").write_text("def run(): pass\n", encoding="utf-8")
+    (tmp_path / "src" / "chutils" / "helper.py").write_text(
+        "def run(): pass\n", encoding="utf-8"
+    )
     correct_hash = calculate_project_hash(tmp_path)
-    api_map_path.write_text(f"---\nproject_hash: {correct_hash}\n---\n", encoding="utf-8")
+    api_map_path.write_text(
+        f"---\nproject_hash: {correct_hash}\n---\n", encoding="utf-8"
+    )
     results = rule.check(str(tmp_path), [])
     assert len(results) == 0
 
     # 7. Хэш не совпадает
     # Изменяем файл, хэш меняется
-    (tmp_path / "src" / "chutils" / "helper.py").write_text("def run(): pass\n# Изменение\n", encoding="utf-8")
+    (tmp_path / "src" / "chutils" / "helper.py").write_text(
+        "def run(): pass\n# Изменение\n", encoding="utf-8"
+    )
     results = rule.check(str(tmp_path), [])
     assert len(results) == 1
     assert "Файл контекста (api_map.md) устарел" in results[0].message
@@ -705,11 +710,12 @@ def test_api_map_hash_rule_cache(tmp_path):
     chutils_dir.mkdir(exist_ok=True)
 
     import json
+
     cache_path = chutils_dir / "context_metadata.json"
     cache_data = {
         "file_path": "my_custom_index.json",
         "format": "json",
-        "project_hash": "some_old_hash"
+        "project_hash": "some_old_hash",
     }
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(cache_data, f)
@@ -720,14 +726,11 @@ def test_api_map_hash_rule_cache(tmp_path):
 
     # 2. Создаем файл my_custom_index.json с несовпадающим хэшем
     custom_file_path = tmp_path / "my_custom_index.json"
-    (tmp_path / "src" / "chutils" / "helper.py").write_text("def run(): pass\n", encoding="utf-8")
+    (tmp_path / "src" / "chutils" / "helper.py").write_text(
+        "def run(): pass\n", encoding="utf-8"
+    )
 
-    custom_data = {
-        "metadata": {
-            "project_hash": "mismatched_hash"
-        },
-        "api": []
-    }
+    custom_data = {"metadata": {"project_hash": "mismatched_hash"}, "api": []}
     with open(custom_file_path, "w", encoding="utf-8") as f:
         json.dump(custom_data, f)
 
@@ -736,7 +739,11 @@ def test_api_map_hash_rule_cache(tmp_path):
     assert "Файл контекста (my_custom_index.json) устарел" in results[0].message
 
     # 3. Совпадающий хэш
-    from chutils.dev.ast_indexer import calculate_project_hash, save_context_metadata_cache
+    from chutils.dev.ast_indexer import (
+        calculate_project_hash,
+        save_context_metadata_cache,
+    )
+
     correct_hash = calculate_project_hash(tmp_path)
 
     custom_data["metadata"]["project_hash"] = correct_hash
@@ -753,20 +760,14 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
     """Тестирует FileDependencySyncRule."""
     rule = FileDependencySyncRule()
     rule.config = {
-        "dependencies": {
-            "src/chutils/**/*.py": ["README.md", "docs/api_map.md"]
-        }
+        "dependencies": {"src/chutils/**/*.py": ["README.md", "docs/api_map.md"]}
     }
 
     # Сценарий 1: Нет измененных файлов
     mocker.patch(
-        "chutils.dev.rules.dependency_sync.get_git_changed_files",
-        return_value=[]
+        "chutils.dev.rules.dependency_sync.get_git_changed_files", return_value=[]
     )
-    mocker.patch(
-        "chutils.dev.rules.dependency_sync.get_git_new_files",
-        return_value=[]
-    )
+    mocker.patch("chutils.dev.rules.dependency_sync.get_git_new_files", return_value=[])
     results = rule.check(str(tmp_path), [])
     assert len(results) == 0
 
@@ -777,7 +778,7 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
 
     mocker.patch(
         "chutils.dev.rules.dependency_sync.get_git_changed_files",
-        return_value=[str(src_file.resolve())]
+        return_value=[str(src_file.resolve())],
     )
 
     results = rule.check(str(tmp_path), [])
@@ -791,7 +792,7 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
 
     mocker.patch(
         "chutils.dev.rules.dependency_sync.get_git_changed_files",
-        return_value=[str(src_file.resolve()), str(dep_file.resolve())]
+        return_value=[str(src_file.resolve()), str(dep_file.resolve())],
     )
 
     results = rule.check(str(tmp_path), [])
@@ -800,13 +801,12 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
     # Сценарий 4: Изменен исходный файл, но на него добавлена директива игнорирования
     src_file_ignored = tmp_path / "src" / "chutils" / "ignored.py"
     src_file_ignored.write_text(
-        "# chutils: ignore[FileDependencySyncRule]\nprint('ignore')",
-        encoding="utf-8"
+        "# chutils: ignore[FileDependencySyncRule]\nprint('ignore')", encoding="utf-8"
     )
 
     mocker.patch(
         "chutils.dev.rules.dependency_sync.get_git_changed_files",
-        return_value=[str(src_file_ignored.resolve())]
+        return_value=[str(src_file_ignored.resolve())],
     )
 
     results = rule.check(str(tmp_path), [])
@@ -814,9 +814,7 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
 
     # Сценарий 5: Использование new: префикса. Файл изменен, но не является новым
     rule.config = {
-        "dependencies": {
-            "new:src/chutils/dev/rules/*.py": ["docs/ai_lint.md"]
-        }
+        "dependencies": {"new:src/chutils/dev/rules/*.py": ["docs/ai_lint.md"]}
     }
     rules_file = tmp_path / "src" / "chutils" / "dev" / "rules" / "my_rule.py"
     rules_file.parent.mkdir(parents=True, exist_ok=True)
@@ -825,12 +823,9 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
     # Имитируем, что файл изменен, но get_git_new_files возвращает пустой список
     mocker.patch(
         "chutils.dev.rules.dependency_sync.get_git_changed_files",
-        return_value=[str(rules_file.resolve())]
+        return_value=[str(rules_file.resolve())],
     )
-    mocker.patch(
-        "chutils.dev.rules.dependency_sync.get_git_new_files",
-        return_value=[]
-    )
+    mocker.patch("chutils.dev.rules.dependency_sync.get_git_new_files", return_value=[])
 
     results = rule.check(str(tmp_path), [])
     assert len(results) == 0  # Срабатывать не должно, так как файл не новый
@@ -839,11 +834,11 @@ def test_file_dependency_sync_rule(tmp_path, mocker):
     # Имитируем, что файл и изменен, и является новым
     mocker.patch(
         "chutils.dev.rules.dependency_sync.get_git_changed_files",
-        return_value=[str(rules_file.resolve())]
+        return_value=[str(rules_file.resolve())],
     )
     mocker.patch(
         "chutils.dev.rules.dependency_sync.get_git_new_files",
-        return_value=[str(rules_file.resolve())]
+        return_value=[str(rules_file.resolve())],
     )
 
     results = rule.check(str(tmp_path), [])
@@ -857,12 +852,30 @@ def test_linter_output_formats(capsys):
 
     # Тестовые результаты
     results = [
-        LintResult(rule_name="RuleA", message="Message A", severity="error", file_path="file1.py", line_number=10,
-                   fix_suggestion="Fix A"),
-        LintResult(rule_name="RuleB", message="Message B", severity="warn", file_path="file2.py", line_number=20,
-                   fix_suggestion="Fix B"),
-        LintResult(rule_name="RuleA", message="Message A2", severity="warn", file_path="file1.py", line_number=30,
-                   fix_suggestion="Fix A2"),
+        LintResult(
+            rule_name="RuleA",
+            message="Message A",
+            severity="error",
+            file_path="file1.py",
+            line_number=10,
+            fix_suggestion="Fix A",
+        ),
+        LintResult(
+            rule_name="RuleB",
+            message="Message B",
+            severity="warn",
+            file_path="file2.py",
+            line_number=20,
+            fix_suggestion="Fix B",
+        ),
+        LintResult(
+            rule_name="RuleA",
+            message="Message A2",
+            severity="warn",
+            file_path="file1.py",
+            line_number=30,
+            fix_suggestion="Fix A2",
+        ),
     ]
 
     # 1. Default (обычный) формат, группировка по файлам
@@ -896,19 +909,23 @@ def test_linter_output_formats(capsys):
 
 def test_linter_exclude_rules():
     """Тестирует исключение правил (exclude_rules)."""
-    from chutils.dev.ai_lint import LinterEngine, Rule, LintResult
+    from chutils.dev.ai_lint import LinterEngine, LintResult, Rule
 
     class TestRuleA(Rule):
         name = "TestRuleA"
 
         def check(self, base_dir, files):
-            return [LintResult(rule_name=self.name, message="Error A", severity="error")]
+            return [
+                LintResult(rule_name=self.name, message="Error A", severity="error")
+            ]
 
     class TestRuleB(Rule):
         name = "TestRuleB"
 
         def check(self, base_dir, files):
-            return [LintResult(rule_name=self.name, message="Error B", severity="error")]
+            return [
+                LintResult(rule_name=self.name, message="Error B", severity="error")
+            ]
 
     # Без исключения: обе запускаются
     engine = LinterEngine({"exclude_rules": []})
@@ -931,10 +948,9 @@ def test_linter_should_ignore_slashes(tmp_path):
     from chutils.dev.ai_lint import LinterEngine
 
     # Передаем шаблоны с разными слэшами
-    engine = LinterEngine({
-        "base_dir": str(tmp_path),
-        "ignore": ["temp/build", "foo\\bar", "src/*.py"]
-    })
+    engine = LinterEngine(
+        {"base_dir": str(tmp_path), "ignore": ["temp/build", "foo\\bar", "src/*.py"]}
+    )
 
     # Проверяем пути с разными слэшами
     assert engine.should_ignore(tmp_path / "temp" / "build") is True

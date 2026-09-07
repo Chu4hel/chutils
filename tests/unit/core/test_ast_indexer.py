@@ -129,16 +129,22 @@ def test_indexer_gitignore_matching(tmp_path):
     project_dir = tmp_path / "my_project"
     project_dir.mkdir()
 
-    (project_dir / ".gitignore").write_text("""
+    (project_dir / ".gitignore").write_text(
+        """
     # comment
     *.log
     temp/
     /absolute_ignored.py
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
-    (project_dir / ".chutilsignore").write_text("""
+    (project_dir / ".chutilsignore").write_text(
+        """
     chutils_ignored.py
-    """, encoding="utf-8")
+    """,
+        encoding="utf-8",
+    )
 
     matcher = GitIgnoreMatcher(project_dir)
 

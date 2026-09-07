@@ -1,9 +1,9 @@
-import asyncio
-import pytest
 from unittest.mock import AsyncMock
 
-from chutils.telegram.rate_limit import TelegramRateLimiter, tg_rate_limit
+import pytest
+
 from chutils.exceptions.resilience import RateLimitExceededError
+from chutils.telegram.rate_limit import TelegramRateLimiter, tg_rate_limit
 
 
 def test_telegram_rate_limiter_basic():
@@ -23,6 +23,7 @@ def test_telegram_rate_limiter_basic():
 
 def test_tg_rate_limit_sync_raise():
     """Проверяет выброс ошибки при превышении лимита вызовов в синхронном декораторе."""
+
     @tg_rate_limit(rate=1, per=1.0, raise_on_limit=True)
     def sync_handler(user_id: int):
         return "OK"

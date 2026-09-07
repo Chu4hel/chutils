@@ -13,7 +13,6 @@ saved_path = await download_user_file(
     target_dir="./downloads",
     max_size_bytes=10 * 1024 * 1024,  # 10 MB лимит
 )
-
 ```
 
 ### 0.1 Безопасная отправка файлов и папок (`send_telegram_file`)
@@ -81,7 +80,9 @@ from chutils.exceptions import TelegramAccessDeniedError
 
 
 # Асинхронный хэндлер с кастомным сообщением об отказе
-@admin_only(admin_ids=[12345678], refusal_text="⛔ Функция доступна только администраторам")
+@admin_only(
+    admin_ids=[12345678], refusal_text="⛔ Функция доступна только администраторам"
+)
 async def secret_command(event):
     await event.answer("Секретные данные")
 
@@ -129,7 +130,9 @@ from chutils.telegram import tg_rate_limit
 
 
 # Разрешить не более 2 вызовов в 10 секунд
-@tg_rate_limit(rate=2, per=10.0, warning_text="⏱ Замедлитесь! Подождите {wait_sec} сек.")
+@tg_rate_limit(
+    rate=2, per=10.0, warning_text="⏱ Замедлитесь! Подождите {wait_sec} сек."
+)
 async def heavy_command(event):
     await event.answer("Тяжелый запрос выполнен!")
 ```
@@ -273,9 +276,7 @@ from chutils.telegram import send_alert, HealthCheckAlertBridge
 
 # Прямая отправка алерта
 send_alert(
-    title="High CPU Usage",
-    message="Загрузка процессора превысила 95%",
-    level="WARNING"
+    title="High CPU Usage", message="Загрузка процессора превысила 95%", level="WARNING"
 )
 
 # Мост алертов диагностики
@@ -295,7 +296,7 @@ from chutils.telegram import build_inline_keyboard
 buttons = [
     ("Купить", "buy_item_1"),
     ("Подробнее", "info_item_1"),
-    {"text": "Сайт", "url": "https://example.com"}
+    {"text": "Сайт", "url": "https://example.com"},
 ]
 
 # Возвращает структуру {'inline_keyboard': [...]} или aiogram InlineKeyboardMarkup (при as_aiogram=True)
@@ -316,8 +317,6 @@ paginator = PaginatorKeyboard(catalog_items, per_page=5, callback_prefix="catalo
 
 # Построение 2-й страницы с дополнительной кнопкой 'Закрыть'
 kb = paginator.build_keyboard(
-    page=2,
-    footer_buttons=[("Закрыть", "close_catalog")],
-    as_aiogram=True
+    page=2, footer_buttons=[("Закрыть", "close_catalog")], as_aiogram=True
 )
 ```

@@ -1,6 +1,7 @@
 """
 Модуль для получения чейнджлогов релизов пакета chutils с GitHub Releases API.
 """
+
 from __future__ import annotations
 
 import json
@@ -34,6 +35,7 @@ def _get_installed_version() -> str:
     """Возвращает текущую установленную версию chutils."""
     try:
         from chutils.dev.version_detector import get_current_version
+
         v = get_current_version(".")
         if v:
             return v
@@ -42,7 +44,9 @@ def _get_installed_version() -> str:
     return "unknown"
 
 
-def load_releases_from_cache(cache_file: Path, ignore_lifetime: bool = False) -> list[dict[str, Any]] | None:
+def load_releases_from_cache(
+    cache_file: Path, ignore_lifetime: bool = False
+) -> list[dict[str, Any]] | None:
     """Загружает список релизов из локального кэша, если он актуален.
 
     Args:
@@ -62,13 +66,17 @@ def load_releases_from_cache(cache_file: Path, ignore_lifetime: bool = False) ->
 
         content = cache_file.read_text(encoding="utf-8")
         data = json.loads(content)
-        
+
         # Поддержка нового формата с метаданными {installed_version, releases}
         if isinstance(data, dict) and "releases" in data:
             cached_version = data.get("installed_version")
             current_version = _get_installed_version()
             if not ignore_lifetime and cached_version != current_version:
-                logger.info("Версия chutils изменилась (%s -> %s), кэш чейнджлогов инвалидирован", cached_version, current_version)
+                logger.info(
+                    "Версия chutils изменилась (%s -> %s), кэш чейнджлогов инвалидирован",
+                    cached_version,
+                    current_version,
+                )
                 return None
             releases: list[dict[str, Any]] = data["releases"]
             return releases
@@ -83,7 +91,9 @@ def load_releases_from_cache(cache_file: Path, ignore_lifetime: bool = False) ->
     return None
 
 
-def save_releases_to_cache(cache_dir: Path, cache_file: Path, releases: list[dict[str, Any]]) -> None:
+def save_releases_to_cache(
+    cache_dir: Path, cache_file: Path, releases: list[dict[str, Any]]
+) -> None:
     """Сохраняет список релизов в локальный кэш с метаданными версии.
 
     Args:
@@ -92,7 +102,8 @@ def save_releases_to_cache(cache_dir: Path, cache_file: Path, releases: list[dic
         releases: Данные для сохранения.
     """
     try:
-        from chutils.fs import ensure_dir, atomic_write
+        from chutils.fs import atomic_write, ensure_dir
+
         ensure_dir(cache_dir)
         payload = {
             "installed_version": _get_installed_version(),
@@ -104,7 +115,9 @@ def save_releases_to_cache(cache_dir: Path, cache_file: Path, releases: list[dic
         logger.warning("Не удалось сохранить кэш чейнджлогов: %s", e)
 
 
-def fetch_changelogs(base_dir: str, repo: str = "Chu4hel/chutils") -> list[dict[str, Any]]:
+def fetch_changelogs(
+    base_dir: str, repo: str = "Chu4hel/chutils"
+) -> list[dict[str, Any]]:
     """Получает список релизов с описаниями из GitHub API с поддержкой кэширования.
 
     Args:
@@ -128,7 +141,7 @@ def fetch_changelogs(base_dir: str, repo: str = "Chu4hel/chutils") -> list[dict[
         headers={
             "User-Agent": "chutils-upgrade-client",
             "Accept": "application/vnd.github.v3+json",
-        }
+        },
     )
 
     try:
@@ -140,7 +153,10 @@ def fetch_changelogs(base_dir: str, repo: str = "Chu4hel/chutils") -> list[dict[
                 save_releases_to_cache(cache_dir, cache_file, data)
                 return data
     except Exception as e:
-        logger.warning("Не удалось получить релизы из GitHub API (%s). Попытка загрузить устаревший кэш...", e)
+        logger.warning(
+            "Не удалось получить релизы из GitHub API (%s). Попытка загрузить устаревший кэш...",
+            e,
+        )
 
     # 3. Резервный вариант: чтение любого (даже устаревшего) кэша при ошибках сети
     releases = load_releases_from_cache(cache_file, ignore_lifetime=True)

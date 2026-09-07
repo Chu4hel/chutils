@@ -8,7 +8,7 @@
 
 import asyncio
 
-from chutils.events import subscribe, publish, publish_async, ErrorStrategy, EventBus
+from chutils.events import ErrorStrategy, EventBus, publish, publish_async, subscribe
 from chutils.exceptions import EventBusExceptionGroup
 from chutils.logger import setup_logger
 
@@ -19,12 +19,10 @@ logger = setup_logger("event_bus_demo")
 try:
     import pydantic
 
-
     class UserCreatedEvent(pydantic.BaseModel):
         user_id: int
         username: str
         email: str
-
 
     HAS_PYDANTIC = True
 except ImportError:
@@ -53,6 +51,7 @@ async def initialize_user_workspace(user_id: int, username: str, **kwargs) -> No
 
 # 3. Обработчик, использующий Pydantic
 if HAS_PYDANTIC:
+
     @subscribe("user_created_model")
     def log_user_model(event: UserCreatedEvent) -> None:
         logger.info(

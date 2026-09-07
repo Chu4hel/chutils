@@ -75,14 +75,20 @@ class TemplateRenderer:
             "di": self._readme_di,
         }
         renderer = readmes.get(category)
-        return renderer() if renderer else f"# {category}\n\nNo description available.\n"
+        return (
+            renderer() if renderer else f"# {category}\n\nNo description available.\n"
+        )
 
     # ------------------------------------------------------------------
     # Use Cases
     # ------------------------------------------------------------------
 
     def _good_use_cases(self) -> str:
-        name = self._entities.use_cases[0] if self._entities.use_cases else "CreateOrderUseCase"
+        name = (
+            self._entities.use_cases[0]
+            if self._entities.use_cases
+            else "CreateOrderUseCase"
+        )
         return textwrap.dedent(f"""\
             \"\"\"Good pattern: Use Case с явной входной моделью и типизацией.\"\"\"
             from __future__ import annotations
@@ -134,8 +140,14 @@ class TemplateRenderer:
             """)
 
     def _bad_use_cases(self) -> str:
-        name = self._entities.use_cases[0] if self._entities.use_cases else "CreateOrderUseCase"
-        bad_name = name.replace("UseCase", "").replace("Interactor", "") or "CreateOrder"
+        name = (
+            self._entities.use_cases[0]
+            if self._entities.use_cases
+            else "CreateOrderUseCase"
+        )
+        bad_name = (
+            name.replace("UseCase", "").replace("Interactor", "") or "CreateOrder"
+        )
         return textwrap.dedent(f"""\
             \"\"\"Bad pattern: Use Case нарушает SRP и DIP.\"\"\"
             import sqlite3  # noqa: F401  — прямой доступ к инфраструктуре
@@ -151,7 +163,11 @@ class TemplateRenderer:
             """)
 
     def _readme_use_cases(self) -> str:
-        names = ", ".join(self._entities.use_cases[:3]) if self._entities.use_cases else "CreateOrderUseCase"
+        names = (
+            ", ".join(self._entities.use_cases[:3])
+            if self._entities.use_cases
+            else "CreateOrderUseCase"
+        )
         return textwrap.dedent(f"""\
             # Use Cases / Interactors
 
@@ -177,7 +193,11 @@ class TemplateRenderer:
     # ------------------------------------------------------------------
 
     def _good_repositories(self) -> str:
-        name = self._entities.repositories[0] if self._entities.repositories else "UserRepository"
+        name = (
+            self._entities.repositories[0]
+            if self._entities.repositories
+            else "UserRepository"
+        )
         return textwrap.dedent(f"""\
             \"\"\"Good pattern: Абстрактный репозиторий + конкретная реализация.\"\"\"
             from __future__ import annotations
@@ -229,7 +249,11 @@ class TemplateRenderer:
             """)
 
     def _bad_repositories(self) -> str:
-        name = self._entities.repositories[0] if self._entities.repositories else "UserRepository"
+        name = (
+            self._entities.repositories[0]
+            if self._entities.repositories
+            else "UserRepository"
+        )
         return textwrap.dedent(f"""\
             \"\"\"Bad pattern: репозиторий нарушает абстракцию и утекает БД в домен.\"\"\"
             import sqlite3
@@ -246,7 +270,11 @@ class TemplateRenderer:
             """)
 
     def _readme_repositories(self) -> str:
-        names = ", ".join(self._entities.repositories[:3]) if self._entities.repositories else "UserRepository"
+        names = (
+            ", ".join(self._entities.repositories[:3])
+            if self._entities.repositories
+            else "UserRepository"
+        )
         return textwrap.dedent(f"""\
             # Repositories (Репозитории)
 
@@ -309,7 +337,11 @@ class TemplateRenderer:
             """)
 
     def _readme_logging(self) -> str:
-        loggers = ", ".join(self._entities.loggers[:3]) if self._entities.loggers else "logger"
+        loggers = (
+            ", ".join(self._entities.loggers[:3])
+            if self._entities.loggers
+            else "logger"
+        )
         return textwrap.dedent(f"""\
             # Logging (Логирование)
 
@@ -370,7 +402,11 @@ class TemplateRenderer:
             """)
 
     def _readme_errors(self) -> str:
-        names = ", ".join(self._entities.errors[:3]) if self._entities.errors else "AppError"
+        names = (
+            ", ".join(self._entities.errors[:3])
+            if self._entities.errors
+            else "AppError"
+        )
         return textwrap.dedent(f"""\
             # Errors / Exceptions (Исключения)
 
@@ -439,7 +475,11 @@ class TemplateRenderer:
             """)
 
     def _readme_di(self) -> str:
-        files = ", ".join(self._entities.di_files[:3]) if self._entities.di_files else "container"
+        files = (
+            ", ".join(self._entities.di_files[:3])
+            if self._entities.di_files
+            else "container"
+        )
         return textwrap.dedent(f"""\
             # Dependency Injection (DI)
 

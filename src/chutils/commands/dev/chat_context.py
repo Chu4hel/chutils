@@ -61,7 +61,7 @@ class ChatContextSubCommand(SubCommand):
         if args.modules:
             modules_list = [m.strip() for m in args.modules.split(",") if m.strip()]
 
-        project_path = Path(".").resolve()
+        project_path = Path.cwd()
 
         # Если не указаны ни модули, ни задача, запускаем интерактивный режим
         if not modules_list and not args.task:
@@ -82,7 +82,8 @@ class ChatContextSubCommand(SubCommand):
             )
 
             if args.output:
-                from chutils.fs import ensure_dir, atomic_write
+                from chutils.fs import atomic_write, ensure_dir
+
                 output_path = Path(args.output).resolve()
                 ensure_dir(output_path.parent)
                 atomic_write(output_path, markdown_content)

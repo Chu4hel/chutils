@@ -3,8 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from chutils.exceptions.base import OptionalDependencyError
-from chutils.telegram.access import is_admin, _extract_user_info
+from chutils.telegram.access import _extract_user_info, is_admin
 
 try:
     from aiogram.filters import BaseFilter
@@ -109,7 +108,8 @@ class TelegramThrottlingMiddleware(BaseMiddleware):  # type: ignore[misc]
         rate: int = 1,
         per: float = 1.0,
         scope: str = "user_id",
-        warning_text: str | None = "⏱ Пожалуйста, подождите {wait_sec} сек. перед повторной отправкой.",
+        warning_text: str
+        | None = "⏱ Пожалуйста, подождите {wait_sec} сек. перед повторной отправкой.",
         silent: bool = False,
     ) -> None:
         if _HAS_AIOGRAM_MIDDLEWARE:
@@ -187,5 +187,7 @@ class TelegramLoggingMiddleware(BaseMiddleware):  # type: ignore[misc]
         """
         from chutils.telegram.logging import trace_telegram_update
 
-        async with trace_telegram_update(event=event, logger_instance=self.logger_instance):
+        async with trace_telegram_update(
+            event=event, logger_instance=self.logger_instance
+        ):
             return await handler(event, data)

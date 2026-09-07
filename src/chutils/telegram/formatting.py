@@ -126,10 +126,14 @@ def split_message(
             if current_chunk:
                 chunks.append(current_chunk)
                 current_chunk = ""
-            
+
             # Если элемент сам по себе превышает max_length, используем fallback
             if len(unit) > max_length:
-                sub_chunks = _split_by_lines(unit, max_length) if mode == "paragraph" else split_message(unit, max_length, mode="char")
+                sub_chunks = (
+                    _split_by_lines(unit, max_length)
+                    if mode == "paragraph"
+                    else split_message(unit, max_length, mode="char")
+                )
                 chunks.extend(sub_chunks[:-1])
                 current_chunk = sub_chunks[-1]
             else:

@@ -40,8 +40,10 @@ def test_cli_validate_auto_discovery(cli_runner, config_fs, mocker):
     fs.create_file("config.yml", contents="app_name: MyApp\nversion: 1.0")
 
     # Мокаем импорт модели для одного из путей автообнаружения
-    mocker.patch("chutils.commands.validate._import_string",
-                 side_effect=lambda x: Settings if "context:Settings" in x else None)
+    mocker.patch(
+        "chutils.commands.validate._import_string",
+        side_effect=lambda x: Settings if "context:Settings" in x else None,
+    )
 
     result = cli_runner.invoke(["validate"])
 
@@ -59,7 +61,10 @@ def test_cli_validate_model_not_found(cli_runner, config_fs, mocker):
     result = cli_runner.invoke(["validate"])
 
     assert result.exit_code == 1
-    assert "модель не найдена автоматически" in result.stdout or "модель не найдена автоматически" in result.stderr
+    assert (
+        "модель не найдена автоматически" in result.stdout
+        or "модель не найдена автоматически" in result.stderr
+    )
 
 
 def test_cli_validate_import_error(cli_runner, config_fs, mocker):
@@ -70,7 +75,10 @@ def test_cli_validate_import_error(cli_runner, config_fs, mocker):
     result = cli_runner.invoke(["validate", "-m", "non_existent:Model"])
 
     assert result.exit_code == 1
-    assert "Не удалось импортировать модель" in result.stderr or "Не удалось импортировать модель" in result.stdout
+    assert (
+        "Не удалось импортировать модель" in result.stderr
+        or "Не удалось импортировать модель" in result.stdout
+    )
 
 
 def test_cli_validate_no_pydantic(cli_runner, config_fs, mocker):
@@ -84,7 +92,10 @@ def test_cli_validate_no_pydantic(cli_runner, config_fs, mocker):
     with mock.patch.dict("sys.modules", {"pydantic": None}):
         result = cli_runner.invoke(["validate", "-m", "m:M"])
         assert result.exit_code == 1
-        assert "Пакет 'pydantic' не установлен" in result.stdout or "Пакет 'pydantic' не установлен" in result.stderr
+        assert (
+            "Пакет 'pydantic' не установлен" in result.stdout
+            or "Пакет 'pydantic' не установлен" in result.stderr
+        )
 
 
 def test_cli_validate_unexpected_error(cli_runner, config_fs, mocker):
@@ -92,7 +103,9 @@ def test_cli_validate_unexpected_error(cli_runner, config_fs, mocker):
     fs, project_root = config_fs
     fs.create_file("config.yml", contents="key: val")
     # Патчим _import_string, чтобы он бросал ошибку
-    mocker.patch("chutils.commands.validate._import_string", side_effect=RuntimeError("Boom"))
+    mocker.patch(
+        "chutils.commands.validate._import_string", side_effect=RuntimeError("Boom")
+    )
 
     result = cli_runner.invoke(["validate", "-m", "m:M"])
     assert result.exit_code == 1

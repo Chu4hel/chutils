@@ -1,6 +1,7 @@
 """Ядро шины событий (In-Memory Event Bus)."""
 
 import asyncio
+import concurrent.futures.thread  # noqa: F401
 import inspect
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import threading
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 # Безопасный импорт Pydantic
 try:
     import pydantic
+
     BaseModel = pydantic.BaseModel
 except ImportError:
     BaseModel = None  # type: ignore[assignment,misc]
@@ -27,6 +29,7 @@ _background_thread: threading.Thread | None = None
 """Поток фонового event loop."""
 _loop_lock = threading.Lock()
 
+
 def _start_background_loop() -> asyncio.AbstractEventLoop:
     """Лениво запускает фоновый event loop в отдельном демоническом потоке."""
     global _background_loop, _background_thread
@@ -34,14 +37,13 @@ def _start_background_loop() -> asyncio.AbstractEventLoop:
         if _background_loop is None:
             loop = asyncio.new_event_loop()
             thread = threading.Thread(
-                target=loop.run_forever,
-                name="ChutilsEventBusLoop",
-                daemon=True
+                target=loop.run_forever, name="ChutilsEventBusLoop", daemon=True
             )
             thread.start()
             _background_loop = loop
             _background_thread = thread
         return _background_loop
+
 
 def is_async_callable(obj: t.Any) -> bool:
     """Проверяет, является ли вызываемый объект асинхронным.
@@ -54,9 +56,10 @@ def is_async_callable(obj: t.Any) -> bool:
     """
     if inspect.iscoroutinefunction(obj):
         return True
-    if hasattr(obj, "__call__"):
+    if callable(obj):
         return inspect.iscoroutinefunction(obj.__call__)
     return False
+
 
 def _is_pydantic_model_instance(obj: t.Any) -> bool:
     """Проверяет, является ли объект экземпляром Pydantic-модели."""
@@ -64,16 +67,23 @@ def _is_pydantic_model_instance(obj: t.Any) -> bool:
         return False
     return isinstance(obj, BaseModel)
 
-async def _run_and_log_errors(coro: t.Coroutine[t.Any, t.Any, t.Any], event_name: str) -> None:
+
+async def _run_and_log_errors(
+    coro: t.Coroutine[t.Any, t.Any, t.Any], event_name: str
+) -> None:
     """Обертка для безопасного выполнения корутины и логирования ошибок."""
     try:
         await coro
-    except Exception as e:
-        logger.error("Ошибка в асинхронном фоновом обработчике события %s: %s", event_name, e, exc_info=True)
+    except Exception:
+        logger.exception(
+            "Ошибка в асинхронном фоновом обработчике события %s",
+            event_name,
+        )
 
 
 class ErrorStrategy(str, Enum):
     """Стратегия обработки ошибок при выполнении обработчиков событий."""
+
     IGNORE = "ignore"
     FAIL_FAST = "fail_fast"
     COLLECT = "collect"
@@ -96,7 +106,9 @@ class EventBus:
         self._lock = threading.Lock()
         self.error_strategy = error_strategy
 
-    def subscribe(self, event_name: str) -> Callable[[Callable[..., t.Any]], Callable[..., t.Any]]:
+    def subscribe(
+        self, event_name: str
+    ) -> Callable[[Callable[..., t.Any]], Callable[..., t.Any]]:
         """Декоратор для регистрации обработчика события на данном инстансе шины.
 
         Args:
@@ -105,11 +117,13 @@ class EventBus:
         Returns:
             Декоратор, который регистрирует функцию-обработчик и возвращает её.
         """
+
         def decorator(func: Callable[..., t.Any]) -> Callable[..., t.Any]:
             with self._lock:
                 if func not in self._subscribers[event_name]:
                     self._subscribers[event_name].append(func)
             return func
+
         return decorator
 
     def unsubscribe(self, event_name: str, func: Callable[..., t.Any]) -> None:
@@ -126,7 +140,14 @@ class EventBus:
                 except ValueError:
                     pass
 
-    def _resolve_payload(self, args: tuple[t.Any, ...], kwargs: dict[str, t.Any]) -> tuple[tuple[t.Any, ...], dict[str, t.Any]]:
+    def clear(self) -> None:
+        """Очищает всех подписчиков шины событий."""
+        with self._lock:
+            self._subscribers.clear()
+
+    def _resolve_payload(
+        self, args: tuple[t.Any, ...], kwargs: dict[str, t.Any]
+    ) -> tuple[tuple[t.Any, ...], dict[str, t.Any]]:
         """Определяет формат переданных аргументов.
 
         Если передан единственный аргумент, и это экземпляр Pydantic-модели,
@@ -136,7 +157,13 @@ class EventBus:
             return args, kwargs
         return args, kwargs
 
-    def publish(self, event_name: str, *args: t.Any, error_strategy: ErrorStrategy | None = None, **kwargs: t.Any) -> None:
+    def publish(
+        self,
+        event_name: str,
+        *args: t.Any,
+        error_strategy: ErrorStrategy | None = None,
+        **kwargs: t.Any,
+    ) -> None:
         """Синхронно публикует событие.
 
         Синхронные обработчики выполняются немедленно в текущем потоке.
@@ -163,25 +190,36 @@ class EventBus:
             if is_async_callable(func):
                 loop = _start_background_loop()
                 coro = func(*args, **kwargs)
-                asyncio.run_coroutine_threadsafe(_run_and_log_errors(coro, event_name), loop)
+                asyncio.run_coroutine_threadsafe(
+                    _run_and_log_errors(coro, event_name), loop
+                )
             else:
                 try:
                     func(*args, **kwargs)
                 except Exception as e:
                     if strategy == ErrorStrategy.FAIL_FAST:
-                        raise e
+                        raise
                     elif strategy == ErrorStrategy.COLLECT:
                         sync_errors.append(e)
                     else:  # IGNORE
-                        logger.error("Ошибка в синхронном обработчике события %s: %s", event_name, e, exc_info=True)
+                        logger.exception(
+                            "Ошибка в синхронном обработчике события %s",
+                            event_name,
+                        )
 
         if strategy == ErrorStrategy.COLLECT and sync_errors:
             raise EventBusExceptionGroup(
                 f"При синхронной публикации события '{event_name}' произошли ошибки.",
-                sync_errors
+                sync_errors,
             )
 
-    async def publish_async(self, event_name: str, *args: t.Any, error_strategy: ErrorStrategy | None = None, **kwargs: t.Any) -> None:
+    async def publish_async(
+        self,
+        event_name: str,
+        *args: t.Any,
+        error_strategy: ErrorStrategy | None = None,
+        **kwargs: t.Any,
+    ) -> None:
         """Асинхронно публикует событие.
 
         Дожидается выполнения всех подписчиков (как синхронных, так и асинхронных).
@@ -220,17 +258,25 @@ class EventBus:
                 if strategy == ErrorStrategy.COLLECT:
                     raise EventBusExceptionGroup(
                         f"При асинхронной публикации события '{event_name}' произошли ошибки.",
-                        errors
+                        errors,
                     )
                 else:  # IGNORE
                     for err in errors:
-                        logger.error("Ошибка в обработчике события %s: %s", event_name, err, exc_info=True)
+                        logger.error(
+                            "Ошибка в обработчике события %s: %s",
+                            event_name,
+                            err,
+                            exc_info=err,
+                        )
 
 
 _global_bus = EventBus()
 "Глобальный инстанс шины событий"
 
-def subscribe(event_name: str) -> Callable[[Callable[..., t.Any]], Callable[..., t.Any]]:
+
+def subscribe(
+    event_name: str,
+) -> Callable[[Callable[..., t.Any]], Callable[..., t.Any]]:
     """Декоратор для подписки на событие в глобальной шине.
 
     Args:
@@ -241,7 +287,13 @@ def subscribe(event_name: str) -> Callable[[Callable[..., t.Any]], Callable[...,
     """
     return _global_bus.subscribe(event_name)
 
-def publish(event_name: str, *args: t.Any, error_strategy: ErrorStrategy | None = None, **kwargs: t.Any) -> None:
+
+def publish(
+    event_name: str,
+    *args: t.Any,
+    error_strategy: ErrorStrategy | None = None,
+    **kwargs: t.Any,
+) -> None:
     """Синхронно публикует событие в глобальной шине.
 
     Args:
@@ -252,7 +304,13 @@ def publish(event_name: str, *args: t.Any, error_strategy: ErrorStrategy | None 
     """
     _global_bus.publish(event_name, *args, error_strategy=error_strategy, **kwargs)
 
-async def publish_async(event_name: str, *args: t.Any, error_strategy: ErrorStrategy | None = None, **kwargs: t.Any) -> None:
+
+async def publish_async(
+    event_name: str,
+    *args: t.Any,
+    error_strategy: ErrorStrategy | None = None,
+    **kwargs: t.Any,
+) -> None:
     """Асинхронно публикует событие в глобальной шине.
 
     Args:
@@ -261,4 +319,12 @@ async def publish_async(event_name: str, *args: t.Any, error_strategy: ErrorStra
         error_strategy: Стратегия обработки ошибок.
         **kwargs: Именованные аргументы.
     """
-    await _global_bus.publish_async(event_name, *args, error_strategy=error_strategy, **kwargs)
+    await _global_bus.publish_async(
+        event_name, *args, error_strategy=error_strategy, **kwargs
+    )
+
+
+def clear_event_bus() -> None:
+    """Очищает всех подписчиков глобальной шины событий."""
+    _global_bus.clear()
+

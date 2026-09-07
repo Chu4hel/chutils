@@ -5,7 +5,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 # Потребуется mock_ensure, чтобы исключить ошибки импорта библиотек
 @patch("chutils.scraping.humanize.antidetect._ensure_playwright")
 @patch("chutils.scraping.humanize.antidetect._ensure_selenium")
-def test_antidetect_helpers(mock_ensure_sel: MagicMock, mock_ensure_pw: MagicMock) -> None:
+def test_antidetect_helpers(
+    mock_ensure_sel: MagicMock, mock_ensure_pw: MagicMock
+) -> None:
     from chutils.scraping.humanize.antidetect import (
         apply_antidetect_playwright,
         apply_antidetect_selenium,
@@ -22,6 +24,7 @@ def test_antidetect_helpers(mock_ensure_sel: MagicMock, mock_ensure_pw: MagicMoc
     pw_context.add_init_script = AsyncMock()
 
     import asyncio
+
     asyncio.run(apply_antidetect_playwright(pw_context))
     pw_context.add_init_script.assert_called_once()
 
@@ -36,31 +39,35 @@ def test_antidetect_helpers(mock_ensure_sel: MagicMock, mock_ensure_pw: MagicMoc
 
     apply_antidetect_selenium(sel_driver)
     sel_driver.execute_cdp_cmd.assert_called_once_with(
-        "Page.addScriptToEvaluateOnNewDocument",
-        {"source": script_source}
+        "Page.addScriptToEvaluateOnNewDocument", {"source": script_source}
     )
 
 
 @patch("chutils.scraping.humanize.antidetect._ensure_playwright")
 @patch("chutils.scraping.humanize.antidetect._ensure_selenium")
-def test_antidetect_custom_params(mock_ensure_sel: MagicMock, mock_ensure_pw: MagicMock) -> None:
+def test_antidetect_custom_params(
+    mock_ensure_sel: MagicMock, mock_ensure_pw: MagicMock
+) -> None:
+    import asyncio
+
     from chutils.scraping.humanize.antidetect import (
         apply_antidetect_playwright,
         apply_antidetect_selenium,
     )
-    import asyncio
 
     # Тестируем кастомные параметры для Playwright
     pw_context = MagicMock()
     pw_context.add_init_script = AsyncMock()
 
-    asyncio.run(apply_antidetect_playwright(
-        pw_context,
-        webgl_vendor="AMD Inc.",
-        webgl_renderer="Radeon RX 6800",
-        hardware_concurrency=16,
-        device_memory=32
-    ))
+    asyncio.run(
+        apply_antidetect_playwright(
+            pw_context,
+            webgl_vendor="AMD Inc.",
+            webgl_renderer="Radeon RX 6800",
+            hardware_concurrency=16,
+            device_memory=32,
+        )
+    )
     pw_context.add_init_script.assert_called_once()
     script_source = pw_context.add_init_script.call_args[0][0]
 
@@ -80,7 +87,7 @@ def test_antidetect_custom_params(mock_ensure_sel: MagicMock, mock_ensure_pw: Ma
         webgl_vendor="Intel",
         webgl_renderer="Intel UHD Graphics",
         hardware_concurrency=4,
-        device_memory=16
+        device_memory=16,
     )
     sel_driver.execute_cdp_cmd.assert_called_once()
     sel_script = sel_driver.execute_cdp_cmd.call_args[0][1]["source"]
@@ -94,8 +101,11 @@ def test_antidetect_custom_params(mock_ensure_sel: MagicMock, mock_ensure_pw: Ma
 @patch("chutils.scraping.humanize.antidetect._ensure_nodriver")
 def test_antidetect_nodriver(mock_ensure: MagicMock) -> None:
     import sys
+
     mock_page = MagicMock()
-    mock_page.add_script_to_evaluate_on_new_document = MagicMock(return_value="mock_cdp_command")
+    mock_page.add_script_to_evaluate_on_new_document = MagicMock(
+        return_value="mock_cdp_command"
+    )
 
     mock_cdp = MagicMock()
     mock_cdp.page = mock_page
@@ -103,27 +113,32 @@ def test_antidetect_nodriver(mock_ensure: MagicMock) -> None:
     modules = {
         "nodriver": MagicMock(),
         "nodriver.cdp": mock_cdp,
-        "nodriver.cdp.page": mock_page
+        "nodriver.cdp.page": mock_page,
     }
 
     with patch.dict(sys.modules, modules):
-        from chutils.scraping.humanize.antidetect import apply_antidetect_nodriver
         import asyncio
+
+        from chutils.scraping.humanize.antidetect import apply_antidetect_nodriver
 
         tab = MagicMock()
         tab.send = AsyncMock()
 
-        asyncio.run(apply_antidetect_nodriver(
-            tab,
-            webgl_vendor="NVIDIA Corporation",
-            webgl_renderer="NVIDIA GeForce RTX 4090",
-            hardware_concurrency=24,
-            device_memory=64
-        ))
+        asyncio.run(
+            apply_antidetect_nodriver(
+                tab,
+                webgl_vendor="NVIDIA Corporation",
+                webgl_renderer="NVIDIA GeForce RTX 4090",
+                hardware_concurrency=24,
+                device_memory=64,
+            )
+        )
 
         # Проверяем, что CDP-метод вызван с правильным JS-кодом
         mock_page.add_script_to_evaluate_on_new_document.assert_called_once()
-        js_code = mock_page.add_script_to_evaluate_on_new_document.call_args[1]["source"]
+        js_code = mock_page.add_script_to_evaluate_on_new_document.call_args[1][
+            "source"
+        ]
         assert '"NVIDIA Corporation"' in js_code
         assert '"NVIDIA GeForce RTX 4090"' in js_code
         assert "24" in js_code

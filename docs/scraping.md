@@ -26,6 +26,21 @@ pip install "chutils[scraping]"
 
 Математический модуль работает автономно и не требует внешних зависимостей.
 
+### Физический генератор траекторий WindMouse (`WindMouseGenerator`)
+
+Имитирует движение руки человека на основе физической модели (гравитация, случайный ветер/дрейф, инерция и микродоводка у цели). Обеспечивает наилучший обход поведенческого антифрода (Cloudflare, DataDome, reCAPTCHA).
+
+```python
+from chutils.scraping.humanize import WindMouseGenerator
+
+generator = WindMouseGenerator(gravity=9.0, wind=3.0)
+start_point = (100, 150)
+end_point = (500, 450)
+
+# Генерирует список кортежей (x, y, delay) с реалистичными таймингами
+points = generator.generate(start_point, end_point)
+```
+
 ### Генератор траекторий Безье (`BezierCurveGenerator`)
 
 Позволяет рассчитывать плавные кривые перемещения мыши с естественным ускорением в начале и замедлением в конце
@@ -82,19 +97,25 @@ sequence = typo_gen.generate_sequence("Hello!", error_rate=0.1)
 ```python
 from chutils.scraping.humanize import (
     async_move_mouse,
+    async_click,
     async_scroll_to,
     async_type_text,
-    async_human_sleep
+    async_human_sleep,
 )
 
-# Плавное движение мыши
-await async_move_mouse(page, x=400, y=300, start=(0, 0))
+# Плавное движение мыши (по умолчанию используется WindMouse или Bezier)
+await async_move_mouse(page, x=400, y=300, start=(0, 0), algorithm="windmouse")
+
+# Реалистичный клик по селектору или координатам (с наведением, микропаузами и удержанием)
+await async_click(page, selector="#submit-btn")
 
 # Плавный скролл страницы по оси Y
 await async_scroll_to(page, x=0, y=800)
 
 # Ввод текста со скоростью 40 WPM и вероятностью опечаток 5%
-await async_type_text(page, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0)
+await async_type_text(
+    page, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0
+)
 
 # Асинхронная пауза "на чтение" от 1 до 3 секунд
 await async_human_sleep(1.0, 3.0)
@@ -107,18 +128,24 @@ await async_human_sleep(1.0, 3.0)
 ```python
 from chutils.scraping.humanize import (
     async_move_mouse,
+    async_click,
     async_scroll_to,
     async_type_text,
 )
 
 # Плавное движение мыши (транслируется в CDP dispatchMouseEvent)
-await async_move_mouse(tab, x=400, y=300, start=(0, 0))
+await async_move_mouse(tab, x=400, y=300, start=(0, 0), algorithm="windmouse")
+
+# Реалистичный клик через CDP с паузой фокусировки
+await async_click(tab, x=400, y=300)
 
 # Плавный скролл страницы через JS evaluate
 await async_scroll_to(tab, x=0, y=800)
 
 # Ввод текста с опечатками (через CDP dispatchKeyEvent)
-await async_type_text(tab, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0)
+await async_type_text(
+    tab, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0
+)
 ```
 
 ### Обертки для Selenium (синхронные)
@@ -126,19 +153,25 @@ await async_type_text(tab, selector="#username", text="my_user_login", error_rat
 ```python
 from chutils.scraping.humanize import (
     move_mouse,
+    click,
     scroll_to,
     type_text,
-    human_sleep
+    human_sleep,
 )
 
-# Плавное движение мыши
-move_mouse(driver, x=400, y=300, start=(0, 0))
+# Плавное движение мыши с физической моделью WindMouse
+move_mouse(driver, x=400, y=300, start=(0, 0), algorithm="windmouse")
+
+# Реалистичный клик
+click(driver, selector="#submit-btn")
 
 # Плавный скролл
 scroll_to(driver, x=0, y=800)
 
 # Ввод текста
-type_text(driver, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0)
+type_text(
+    driver, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0
+)
 
 # Синхронная пауза
 human_sleep(1.0, 3.0)
@@ -174,7 +207,7 @@ await apply_antidetect_playwright(
     webgl_vendor="AMD Inc.",
     webgl_renderer="Radeon RX 6800",
     hardware_concurrency=12,
-    device_memory=16
+    device_memory=16,
 )
 
 # Для Selenium (применяется к WebDriver через CDP)
@@ -183,7 +216,7 @@ apply_antidetect_selenium(
     webgl_vendor="Intel",
     webgl_renderer="Intel UHD Graphics",
     hardware_concurrency=4,
-    device_memory=8
+    device_memory=8,
 )
 
 # Для nodriver (применяется к вкладке Tab через CDP протокол)
@@ -192,7 +225,7 @@ await apply_antidetect_nodriver(
     webgl_vendor="NVIDIA Corporation",
     webgl_renderer="NVIDIA GeForce RTX 4090",
     hardware_concurrency=24,
-    device_memory=64
+    device_memory=64,
 )
 ```
 
@@ -228,9 +261,7 @@ warmer = ProfileWarmer(page_or_tab)
 # Прогрев: посетит 3 случайных сайта из встроенного списка
 # На каждом сайте проведет от 10 до 20 секунд, имитируя скроллинг, мышь и переходы по ссылкам
 await warmer.warm_up(
-    sites_count=3,
-    duration_per_site=(10.0, 20.0),
-    click_random_links=True
+    sites_count=3, duration_per_site=(10.0, 20.0), click_random_links=True
 )
 ```
 
@@ -242,11 +273,7 @@ from chutils.scraping.humanize import SyncProfileWarmer
 # Принимает экземпляр Selenium WebDriver
 warmer = SyncProfileWarmer(driver)
 
-warmer.warm_up(
-    sites_count=3,
-    duration_per_site=(10.0, 20.0),
-    click_random_links=True
-)
+warmer.warm_up(sites_count=3, duration_per_site=(10.0, 20.0), click_random_links=True)
 ```
 
 ---
@@ -264,12 +291,17 @@ from chutils.scraping.concurrency import (
     WorkerPool,
 )
 
+
 async def main():
     # Очередь с включенным трекингом Prometheus-метрических показателей
     queue = InMemoryTaskQueue(name="wiki_queue", enable_metrics=True)
-    await queue.push(ScrapingTask(url="https://ru.wikipedia.org/wiki/Python", priority=5))
+    await queue.push(
+        ScrapingTask(url="https://ru.wikipedia.org/wiki/Python", priority=5)
+    )
 
-    limiter = DomainRateLimiter(default_delay=0.5, domain_rules={"*.wikipedia.org": 1.0})
+    limiter = DomainRateLimiter(
+        default_delay=0.5, domain_rules={"*.wikipedia.org": 1.0}
+    )
 
     async def process(task):
         print(f"Обработка: {task.url}")

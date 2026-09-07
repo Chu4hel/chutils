@@ -4,8 +4,15 @@ from pathlib import Path
 import pytest
 
 from chutils.exceptions import PathTraversalError
-from chutils.fs import ensure_dir, atomic_write, resolve_safe_path, remove_path, cleanup_paths, safe_filename, \
-    zip_folder
+from chutils.fs import (
+    atomic_write,
+    cleanup_paths,
+    ensure_dir,
+    remove_path,
+    resolve_safe_path,
+    safe_filename,
+    zip_folder,
+)
 
 
 def test_resolve_safe_path_valid(tmp_path):
@@ -17,7 +24,9 @@ def test_resolve_safe_path_valid(tmp_path):
     result = resolve_safe_path(target, base)
 
     assert result.is_absolute()
-    assert str(result).endswith(Path(target).as_posix() if "/" in str(result) else str(Path(target)))
+    assert str(result).endswith(
+        Path(target).as_posix() if "/" in str(result) else str(Path(target))
+    )
     assert str(base) in str(result)
 
 
@@ -95,7 +104,7 @@ def test_atomic_write_text(tmp_path):
     atomic_write(target, data)
 
     assert target.exists()
-    assert target.read_text(encoding='utf-8') == data
+    assert target.read_text(encoding="utf-8") == data
 
 
 def test_atomic_write_bytes(tmp_path):
@@ -103,7 +112,7 @@ def test_atomic_write_bytes(tmp_path):
     target = tmp_path / "test.bin"
     data = b"\x00\x01\x02\x03"
 
-    atomic_write(target, data, mode='wb')
+    atomic_write(target, data, mode="wb")
 
     assert target.exists()
     assert target.read_bytes() == data
@@ -117,7 +126,7 @@ def test_atomic_write_json(tmp_path):
     atomic_write(target, data)
 
     assert target.exists()
-    assert json.loads(target.read_text(encoding='utf-8')) == data
+    assert json.loads(target.read_text(encoding="utf-8")) == data
 
 
 def test_atomic_write_yaml(tmp_path):
@@ -129,7 +138,8 @@ def test_atomic_write_yaml(tmp_path):
 
     assert target.exists()
     import yaml
-    assert yaml.safe_load(target.read_text(encoding='utf-8')) == data
+
+    assert yaml.safe_load(target.read_text(encoding="utf-8")) == data
 
 
 def test_atomic_write_failure(tmp_path, monkeypatch):
@@ -234,6 +244,7 @@ def test_remove_path_dir_retries(tmp_path, monkeypatch):
 
     call_count = 0
     import shutil
+
     original_rmtree = shutil.rmtree
 
     def mock_rmtree(path, *args, **kwargs):
@@ -330,7 +341,11 @@ def test_orphan_collision_raise(tmp_path, monkeypatch):
 
     with pytest.raises(FileExistsError, match="Орфан-путь уже существует"):
         remove_path(
-            f, retries=1, delay=0.01, on_locked="rename_orphan", orphan_collision="raise"
+            f,
+            retries=1,
+            delay=0.01,
+            on_locked="rename_orphan",
+            orphan_collision="raise",
         )
 
 
@@ -352,7 +367,11 @@ def test_orphan_collision_overwrite(tmp_path, monkeypatch):
     monkeypatch.setattr(Path, "unlink", mock_unlink)
 
     success = remove_path(
-        f, retries=1, delay=0.01, on_locked="rename_orphan", orphan_collision="overwrite"
+        f,
+        retries=1,
+        delay=0.01,
+        on_locked="rename_orphan",
+        orphan_collision="overwrite",
     )
     assert success is True
     assert not f.exists()
@@ -461,7 +480,11 @@ def test_orphan_collision_overwrite_fails_gracefully(tmp_path, monkeypatch):
     monkeypatch.setattr(Path, "rename", lambda self, target: None)
 
     success = remove_path(
-        f, retries=1, delay=0.01, on_locked="rename_orphan", orphan_collision="overwrite"
+        f,
+        retries=1,
+        delay=0.01,
+        on_locked="rename_orphan",
+        orphan_collision="overwrite",
     )
     assert success is True
 
@@ -535,7 +558,8 @@ def test_zip_folder_success(tmp_path):
 
     # Проверяем содержимое ZIP-архива
     import zipfile
-    with zipfile.ZipFile(zip_file, 'r') as zf:
+
+    with zipfile.ZipFile(zip_file, "r") as zf:
         namelist = zf.namelist()
         assert "file1.txt" in namelist
         assert "sub/file2.txt" in namelist
@@ -563,7 +587,8 @@ def test_zip_folder_exclude(tmp_path):
     zip_folder(src_dir, zip_file, exclude=["*.pyc", ".git", "build/*"])
 
     import zipfile
-    with zipfile.ZipFile(zip_file, 'r') as zf:
+
+    with zipfile.ZipFile(zip_file, "r") as zf:
         namelist = zf.namelist()
         assert "file1.txt" in namelist
         assert "file2.pyc" not in namelist

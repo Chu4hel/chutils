@@ -4,8 +4,6 @@
 
 from __future__ import annotations
 
-import hmac
-import hashlib
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -48,7 +46,7 @@ class TestFrameworkIntegrations:
                 secret_token="secret",
                 on_reload=on_reload,
             )
-            response = await handler(mock_request)
+            _response = await handler(mock_request)
             on_reload.assert_called_once()
 
     def test_flask_webhook_success(self) -> None:
@@ -63,16 +61,18 @@ class TestFrameworkIntegrations:
 
         on_reload = MagicMock()
 
-        with patch.dict("sys.modules", {"flask": mock_flask}):
-            with patch("chutils.config.integrations.request", mock_request, create=True):
-                handler = create_flask_webhook_route(
-                    secret_token="secret",
-                    on_reload=on_reload,
-                )
-                res_data, code = handler()
-                assert code == 200
-                assert res_data == {"status": "reloaded"}
-                on_reload.assert_called_once()
+        with (
+            patch.dict("sys.modules", {"flask": mock_flask}),
+            patch("chutils.config.integrations.request", mock_request, create=True),
+        ):
+            handler = create_flask_webhook_route(
+                secret_token="secret",
+                on_reload=on_reload,
+            )
+            res_data, code = handler()
+            assert code == 200
+            assert res_data == {"status": "reloaded"}
+            on_reload.assert_called_once()
 
 
 class TestConfigManagerWebhook:

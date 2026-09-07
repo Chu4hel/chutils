@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from chutils.typing import JSONDict
+
 from .providers import get_providers
 
 logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
@@ -31,15 +32,21 @@ def find_project_root(start_path: Path, markers: list[str]) -> Path | None:
         Объект Path, представляющий корневую директорию проекта, или None, если корень не найден.
     """
     current_path = start_path.resolve()
-    # Идем вверх до тех пор, пока не достигнем корня файловой системы
-    while current_path != current_path.parent:
+    while True:
         for marker in markers:
-            if (current_path / marker).exists():
-                logger.debug(
-                    "Найден маркер '%s' в директории: %s", marker, current_path
-                )
-                return current_path
+            try:
+                if (current_path / marker).exists():
+                    logger.debug(
+                        "Найден маркер '%s' в директории: %s", marker, current_path
+                    )
+                    return current_path
+            except (OSError, PermissionError):
+                continue
+
+        if current_path == current_path.parent:
+            break
         current_path = current_path.parent
+
     logger.debug("Корень проекта не найден.")
     return None
 
@@ -233,34 +240,33 @@ def _parse_pyproject_toml_fallback(path: str) -> JSONDict:
                 in_section = False
             continue
 
-        if in_section:
-            if "=" in line:
-                key, val_str = line.split("=", 1)
-                key = key.strip()
-                val_str = val_str.strip()
+        if in_section and "=" in line:
+            key, val_str = line.split("=", 1)
+            key = key.strip()
+            val_str = val_str.strip()
 
-                # Парсим базовые типы (bool, int, float, list, str)
-                try:
-                    val = ast.literal_eval(val_str)
-                    result[key] = val
-                except Exception:
-                    if val_str.lower() == "true":
-                        result[key] = True
-                    elif val_str.lower() == "false":
-                        result[key] = False
-                    elif val_str.startswith("[") and val_str.endswith("]"):
-                        items = [
-                            item.strip(" '\"")
-                            for item in val_str[1:-1].split(",")
-                            if item.strip()
-                        ]
-                        result[key] = items
-                    elif (val_str.startswith('"') and val_str.endswith('"')) or (
-                        val_str.startswith("'") and val_str.endswith("'")
-                    ):
-                        result[key] = val_str[1:-1]
-                    else:
-                        result[key] = val_str
+            # Парсим базовые типы (bool, int, float, list, str)
+            try:
+                val = ast.literal_eval(val_str)
+                result[key] = val
+            except Exception:
+                if val_str.lower() == "true":
+                    result[key] = True
+                elif val_str.lower() == "false":
+                    result[key] = False
+                elif val_str.startswith("[") and val_str.endswith("]"):
+                    items = [
+                        item.strip(" '\"")
+                        for item in val_str[1:-1].split(",")
+                        if item.strip()
+                    ]
+                    result[key] = items
+                elif (val_str.startswith('"') and val_str.endswith('"')) or (
+                    val_str.startswith("'") and val_str.endswith("'")
+                ):
+                    result[key] = val_str[1:-1]
+                else:
+                    result[key] = val_str
 
     return result
 
@@ -324,7 +330,7 @@ def _parse_pyproject_toml_section_fallback(path: str, target_section: str) -> JS
 
         if line.startswith("["):
             section_name = line.strip("[]").strip()
-            in_section = (section_name == target_section)
+            in_section = section_name == target_section
             continue
 
         if in_section and "=" in line:

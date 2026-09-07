@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from chutils.exceptions import OptionalDependencyError
-import chutils.qt.shim as shim
+from chutils.qt import shim
 
 
 def test_require_qt_without_qt() -> None:

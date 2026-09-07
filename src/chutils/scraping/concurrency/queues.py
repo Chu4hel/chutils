@@ -8,9 +8,9 @@ import asyncio
 import json
 import sqlite3
 from pathlib import Path
-from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
+
 from .base import BaseTaskQueue
 from .metrics import QueueMetricsCollector
 from .models import ScrapingTask
@@ -24,7 +24,9 @@ class InMemoryTaskQueue(BaseTaskQueue):
         self._seen: set[str] = set()
         self._queue: list[ScrapingTask] = []
         self._failed_tasks: list[ScrapingTask] = []
-        self.metrics = QueueMetricsCollector(queue_name=name, queue_type="in_memory", enabled=enable_metrics)
+        self.metrics = QueueMetricsCollector(
+            queue_name=name, queue_type="in_memory", enabled=enable_metrics
+        )
 
     async def push(self, task: ScrapingTask) -> bool:
         """Добавляет задачу в оперативную очередь.
@@ -63,7 +65,6 @@ class InMemoryTaskQueue(BaseTaskQueue):
         Args:
             task: Выполненная задача.
         """
-        pass
 
     async def fail(self, task: ScrapingTask, error: str) -> None:
         """Обрабатывает ошибку выполнения задачи.
@@ -109,9 +110,13 @@ class PersistentTaskQueue(BaseTaskQueue):
     ) -> None:
         self.db_path = str(db_path)
         self._lock = asyncio.Lock()
-        self._conn: sqlite3.Connection | None = sqlite3.connect(self.db_path, check_same_thread=False)
+        self._conn: sqlite3.Connection | None = sqlite3.connect(
+            self.db_path, check_same_thread=False
+        )
         self._conn.row_factory = sqlite3.Row
-        self.metrics = QueueMetricsCollector(queue_name=name, queue_type="sqlite", enabled=enable_metrics)
+        self.metrics = QueueMetricsCollector(
+            queue_name=name, queue_type="sqlite", enabled=enable_metrics
+        )
         self._init_db()
 
     def _init_db(self) -> None:
@@ -160,7 +165,9 @@ class PersistentTaskQueue(BaseTaskQueue):
 
             try:
                 with self._conn:
-                    self._conn.execute("INSERT INTO seen (dedup_key) VALUES (?)", (task.dedup_key,))
+                    self._conn.execute(
+                        "INSERT INTO seen (dedup_key) VALUES (?)", (task.dedup_key,)
+                    )
                     self._conn.execute(
                         """
                         INSERT INTO tasks (task_id, url, priority, payload_json, attempts,
@@ -183,7 +190,6 @@ class PersistentTaskQueue(BaseTaskQueue):
             except sqlite3.IntegrityError:
                 return False
 
-
     async def pop(self) -> ScrapingTask | None:
         """Извлекает следующую ожидающую задачу из базы данных SQLite.
 
@@ -205,7 +211,10 @@ class PersistentTaskQueue(BaseTaskQueue):
             if row is None:
                 return None
 
-            self._conn.execute("UPDATE tasks SET status = 'processing' WHERE task_id = ?", (row["task_id"],))
+            self._conn.execute(
+                "UPDATE tasks SET status = 'processing' WHERE task_id = ?",
+                (row["task_id"],),
+            )
             self._conn.commit()
 
             return ScrapingTask(
@@ -228,7 +237,10 @@ class PersistentTaskQueue(BaseTaskQueue):
         """
         async with self._lock:
             if self._conn is not None:
-                self._conn.execute("UPDATE tasks SET status = 'completed' WHERE task_id = ?", (task.task_id,))
+                self._conn.execute(
+                    "UPDATE tasks SET status = 'completed' WHERE task_id = ?",
+                    (task.task_id,),
+                )
                 self._conn.commit()
 
     async def fail(self, task: ScrapingTask, error: str) -> None:
@@ -242,7 +254,9 @@ class PersistentTaskQueue(BaseTaskQueue):
             if self._conn is not None:
                 task.last_error = error
                 task.attempts += 1
-                new_status = "pending" if task.attempts < task.max_attempts else "failed"
+                new_status = (
+                    "pending" if task.attempts < task.max_attempts else "failed"
+                )
 
                 self._conn.execute(
                     """
@@ -263,7 +277,9 @@ class PersistentTaskQueue(BaseTaskQueue):
         async with self._lock:
             if self._conn is None:
                 return 0
-            row = self._conn.execute("SELECT COUNT(*) FROM tasks WHERE status = 'pending'").fetchone()
+            row = self._conn.execute(
+                "SELECT COUNT(*) FROM tasks WHERE status = 'pending'"
+            ).fetchone()
             return int(row[0]) if row else 0
 
     async def clear(self) -> None:
@@ -301,7 +317,9 @@ class RedisTaskQueue(BaseTaskQueue):
             )
         self.redis_url = redis_url
         self.queue_name = queue_name
-        self.metrics = QueueMetricsCollector(queue_name=queue_name, queue_type="redis", enabled=enable_metrics)
+        self.metrics = QueueMetricsCollector(
+            queue_name=queue_name, queue_type="redis", enabled=enable_metrics
+        )
         self._client = redis_async.from_url(redis_url)
 
     async def push(self, task: ScrapingTask) -> bool:
@@ -347,7 +365,9 @@ class RedisTaskQueue(BaseTaskQueue):
         if not res:
             return None
 
-        task_id = res[0][0].decode("utf-8") if isinstance(res[0][0], bytes) else res[0][0]
+        task_id = (
+            res[0][0].decode("utf-8") if isinstance(res[0][0], bytes) else res[0][0]
+        )
         data_key = f"{self.queue_name}:task:{task_id}"
         raw_data = await self._client.get(data_key)
         if not raw_data:

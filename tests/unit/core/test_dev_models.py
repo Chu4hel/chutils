@@ -1,6 +1,6 @@
 import json
 
-from chutils.dev.models import ProjectIndex, Node, Symbol, Breadcrumbs, GraphEdge
+from chutils.dev.models import Breadcrumbs, GraphEdge, Node, ProjectIndex, Symbol
 
 
 def test_symbol_with_nested_structure():
@@ -10,7 +10,7 @@ def test_symbol_with_nested_structure():
         name="Database",
         type="class",
         bases=["BaseModel", "StorageMixin"],
-        children=[method]
+        children=[method],
     )
 
     data = cls_symbol.model_dump()
@@ -38,11 +38,11 @@ def test_project_index_serialization():
                     Symbol(
                         name="get_config",
                         type="function",
-                        breadcrumbs=Breadcrumbs(is_async=False, tags=["core"])
+                        breadcrumbs=Breadcrumbs(is_async=False, tags=["core"]),
                     )
-                ]
+                ],
             )
-        ]
+        ],
     )
 
     edge = GraphEdge(source="src/chutils/logger", target="src/chutils/config", weight=5)

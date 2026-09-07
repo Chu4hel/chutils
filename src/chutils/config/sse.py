@@ -83,8 +83,7 @@ def parse_sse_lines(lines: Iterable[str]) -> Iterator[SseEvent]:
         if ":" in line:
             field, _, value = line.partition(":")
             field = field.strip()
-            if value.startswith(" "):
-                value = value[1:]
+            value = value.removeprefix(" ")
 
             if field == "event":
                 current_event = value

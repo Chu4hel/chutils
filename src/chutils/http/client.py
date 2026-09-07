@@ -11,16 +11,20 @@
 - Контекстные менеджеры (with / async with).
 - JSON-тело запроса и ответа.
 """
+
 from __future__ import annotations
 
 import importlib.util
-from typing import Any, TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any
 
-from .fallback import HttpResponse, UrllibFallbackClient, _SENSITIVE_HEADERS
+from typing_extensions import Self
+
+from .fallback import _SENSITIVE_HEADERS, HttpResponse, UrllibFallbackClient
 
 if TYPE_CHECKING:
-    from .resilience import ResiliencePolicy
     from chutils.logger import ChutilsLogger
+
+    from .resilience import ResiliencePolicy
 
 # ─── Проверка доступности httpx ──────────────────────────────────────────────
 
@@ -41,10 +45,10 @@ _FALLBACK_WARNING_EMITTED: bool = False
 
 # ─── Ленивый логгер ──────────────────────────────────────────────────────────
 
-_module_logger: Optional["ChutilsLogger"] = None
+_module_logger: ChutilsLogger | None = None
 
 
-def _get_log() -> "ChutilsLogger":
+def _get_log() -> ChutilsLogger:
     """Возвращает лениво инициализированный логгер модуля.
 
     Returns:
@@ -53,6 +57,7 @@ def _get_log() -> "ChutilsLogger":
     global _module_logger
     if _module_logger is None:
         from chutils import logger as chutils_logger
+
         _module_logger = chutils_logger.setup_logger(__name__)
     if _module_logger is None:
         raise RuntimeError("Не удалось инициализировать логгер chutils.http.client")
@@ -128,13 +133,13 @@ class HttpClient:
     """
 
     def __init__(
-            self,
-            *,
-            base_url: str = "",
-            default_headers: dict[str, str] | None = None,
-            timeout: float | None = 30.0,
-            policy: ResiliencePolicy | None = None,
-            sensitive_headers: set[str] | None = None,
+        self,
+        *,
+        base_url: str = "",
+        default_headers: dict[str, str] | None = None,
+        timeout: float | None = 30.0,
+        policy: ResiliencePolicy | None = None,
+        sensitive_headers: set[str] | None = None,
     ) -> None:
         """Инициализирует HttpClient.
 
@@ -195,14 +200,14 @@ class HttpClient:
             )
 
     def request(
-            self,
-            method: str,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        method: str,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет HTTP-запрос.
 
@@ -220,7 +225,8 @@ class HttpClient:
         if not HTTPX_AVAILABLE or httpx is None:
             self._emit_fallback_warning()
             return self._get_fallback_client().request(
-                method, path,
+                method,
+                path,
                 headers=headers,
                 json_data=json_data,
                 data=data,
@@ -239,14 +245,16 @@ class HttpClient:
         )
 
         def _call() -> HttpResponse:
-            assert httpx is not None  # noqa: S101
+            assert httpx is not None
             if self._httpx_client is not None:
                 raw = self._httpx_client.request(
                     method.upper(),
                     url,
                     headers=merged_headers,
                     json=json_data,
-                    content=data if isinstance(data, bytes) else (data.encode() if data else None),
+                    content=data
+                    if isinstance(data, bytes)
+                    else (data.encode() if data else None),
                     timeout=effective_timeout,
                 )
             else:
@@ -256,7 +264,9 @@ class HttpClient:
                         url,
                         headers=merged_headers,
                         json=json_data,
-                        content=data if isinstance(data, bytes) else (data.encode() if data else None),
+                        content=data
+                        if isinstance(data, bytes)
+                        else (data.encode() if data else None),
                     )
             return _httpx_to_response(raw)
 
@@ -265,7 +275,7 @@ class HttpClient:
         else:
             resp = _call()
 
-        assert isinstance(resp, HttpResponse)  # noqa: S101
+        assert isinstance(resp, HttpResponse)
 
         _get_log().debug(
             "← %s %s  status=%d  elapsed=%.3fs",
@@ -276,7 +286,13 @@ class HttpClient:
         )
         return resp
 
-    def get(self, path: str, *, headers: dict[str, str] | None = None, timeout: float | None = None) -> HttpResponse:
+    def get(
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        timeout: float | None = None,
+    ) -> HttpResponse:
         """Выполняет GET-запрос.
 
         Args:
@@ -290,13 +306,13 @@ class HttpClient:
         return self.request("GET", path, headers=headers, timeout=timeout)
 
     def post(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет POST-запрос.
 
@@ -310,16 +326,23 @@ class HttpClient:
         Returns:
             Объект HttpResponse.
         """
-        return self.request("POST", path, headers=headers, json_data=json_data, data=data, timeout=timeout)
+        return self.request(
+            "POST",
+            path,
+            headers=headers,
+            json_data=json_data,
+            data=data,
+            timeout=timeout,
+        )
 
     def put(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет PUT-запрос.
 
@@ -333,9 +356,22 @@ class HttpClient:
         Returns:
             Объект HttpResponse.
         """
-        return self.request("PUT", path, headers=headers, json_data=json_data, data=data, timeout=timeout)
+        return self.request(
+            "PUT",
+            path,
+            headers=headers,
+            json_data=json_data,
+            data=data,
+            timeout=timeout,
+        )
 
-    def delete(self, path: str, *, headers: dict[str, str] | None = None, timeout: float | None = None) -> HttpResponse:
+    def delete(
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        timeout: float | None = None,
+    ) -> HttpResponse:
         """Выполняет DELETE-запрос.
 
         Args:
@@ -349,13 +385,13 @@ class HttpClient:
         return self.request("DELETE", path, headers=headers, timeout=timeout)
 
     def patch(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет PATCH-запрос.
 
@@ -369,20 +405,27 @@ class HttpClient:
         Returns:
             Объект HttpResponse.
         """
-        return self.request("PATCH", path, headers=headers, json_data=json_data, data=data, timeout=timeout)
+        return self.request(
+            "PATCH",
+            path,
+            headers=headers,
+            json_data=json_data,
+            data=data,
+            timeout=timeout,
+        )
 
     def close(self) -> None:
         """Закрывает клиент и освобождает ресурсы."""
         if self._httpx_client is not None:
             try:
                 self._httpx_client.close()
-            except Exception:  # noqa: BLE001
+            except Exception:
                 pass
             self._httpx_client = None
         if self._fallback is not None:
             self._fallback.close()
 
-    def __enter__(self) -> HttpClient:
+    def __enter__(self) -> Self:
         """Поддержка контекстного менеджера.
 
         Returns:
@@ -403,276 +446,6 @@ class HttpClient:
 
 # ─── AsyncHttpClient ──────────────────────────────────────────────────────────
 
+from .async_client import AsyncHttpClient
 
-class AsyncHttpClient:
-    """Асинхронный HTTP-клиент на базе httpx.AsyncClient.
-
-    Требует установленного `httpx`. При его отсутствии вызывает
-    `OptionalDependencyError` при инициализации.
-
-    Args:
-        base_url: Базовый URL-префикс для всех запросов.
-        default_headers: Заголовки по умолчанию.
-        timeout: Таймаут запросов в секундах.
-        policy: Политика отказоустойчивости.
-        sensitive_headers: Дополнительные заголовки для маскирования.
-
-    Example:
-        ```python
-        from chutils.http import AsyncHttpClient, ResiliencePolicy
-
-        policy = ResiliencePolicy(retries=2, timeout=5.0)
-        async with AsyncHttpClient(base_url="https://api.example.com", policy=policy) as client:
-            resp = await client.get("/status")
-            resp.raise_for_status()
-        ```
-    """
-
-    def __init__(
-            self,
-            *,
-            base_url: str = "",
-            default_headers: dict[str, str] | None = None,
-            timeout: float | None = 30.0,
-            policy: ResiliencePolicy | None = None,
-            sensitive_headers: set[str] | None = None,
-    ) -> None:
-        """Инициализирует AsyncHttpClient.
-
-        Args:
-            base_url: Базовый URL для всех запросов.
-            default_headers: Заголовки по умолчанию.
-            timeout: Таймаут в секундах.
-            policy: Политика отказоустойчивости.
-            sensitive_headers: Имена заголовков для маскирования.
-
-        Raises:
-            OptionalDependencyError: Если httpx не установлен.
-        """
-        if not HTTPX_AVAILABLE or httpx is None:
-            from chutils.exceptions import OptionalDependencyError
-            raise OptionalDependencyError(
-                "AsyncHttpClient требует httpx.",
-                dependency="httpx",
-                hint="Установите его: pip install chutils[http]",
-            )
-
-        self.base_url = base_url.rstrip("/")
-        self.default_headers: dict[str, str] = default_headers or {}
-        self.timeout = timeout
-        self.policy = policy
-        self._extra_sensitive: frozenset[str] = frozenset(
-            h.lower() for h in (sensitive_headers or set())
-        )
-        self._async_client: Any = None  # httpx.AsyncClient
-
-    def _build_url(self, path: str) -> str:
-        """Строит полный URL.
-
-        Args:
-            path: Путь или абсолютный URL.
-
-        Returns:
-            Полный URL.
-        """
-        if path.startswith(("http://", "https://")):
-            return path
-        return self.base_url + "/" + path.lstrip("/") if self.base_url else path
-
-    async def request(
-            self,
-            method: str,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
-    ) -> HttpResponse:
-        """Выполняет асинхронный HTTP-запрос.
-
-        Args:
-            method: HTTP-метод (GET, POST, PUT, DELETE, PATCH).
-            path: Путь или абсолютный URL.
-            headers: Дополнительные заголовки.
-            json_data: Данные для JSON-тела.
-            data: Сырое тело запроса.
-            timeout: Таймаут для этого конкретного запроса.
-
-        Returns:
-            Объект HttpResponse.
-        """
-        assert httpx is not None  # noqa: S101
-
-        url = self._build_url(path)
-        effective_timeout = timeout if timeout is not None else self.timeout
-        merged_headers = {**self.default_headers, **(headers or {})}
-
-        _get_log().debug(
-            "→ async %s %s  headers=%s",
-            method.upper(),
-            url,
-            _mask_headers(merged_headers, self._extra_sensitive),
-        )
-
-        async def _call() -> HttpResponse:
-            assert httpx is not None  # noqa: S101
-            if self._async_client is not None:
-                raw = await self._async_client.request(
-                    method.upper(),
-                    url,
-                    headers=merged_headers,
-                    json=json_data,
-                    content=data if isinstance(data, bytes) else (data.encode() if data else None),
-                    timeout=effective_timeout,
-                )
-            else:
-                async with httpx.AsyncClient(timeout=effective_timeout) as ahx:
-                    raw = await ahx.request(
-                        method.upper(),
-                        url,
-                        headers=merged_headers,
-                        json=json_data,
-                        content=data if isinstance(data, bytes) else (data.encode() if data else None),
-                    )
-            return _httpx_to_response(raw)
-
-        if self.policy is not None:
-            resp = await self.policy.apply_async(_call)
-        else:
-            resp = await _call()
-
-        assert isinstance(resp, HttpResponse)  # noqa: S101
-
-        _get_log().debug(
-            "← async %s %s  status=%d  elapsed=%.3fs",
-            method.upper(),
-            url,
-            resp.status_code,
-            resp.elapsed,
-        )
-        return resp
-
-    async def get(self, path: str, *, headers: dict[str, str] | None = None,
-                  timeout: float | None = None) -> HttpResponse:
-        """Выполняет async GET-запрос.
-
-        Args:
-            path: Путь или абсолютный URL.
-            headers: Дополнительные заголовки.
-            timeout: Таймаут запроса.
-
-        Returns:
-            Объект HttpResponse.
-        """
-        return await self.request("GET", path, headers=headers, timeout=timeout)
-
-    async def post(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
-    ) -> HttpResponse:
-        """Выполняет async POST-запрос.
-
-        Args:
-            path: Путь или абсолютный URL.
-            headers: Дополнительные заголовки.
-            json_data: Данные для JSON-тела.
-            data: Сырое тело.
-            timeout: Таймаут запроса.
-
-        Returns:
-            Объект HttpResponse.
-        """
-        return await self.request("POST", path, headers=headers, json_data=json_data, data=data, timeout=timeout)
-
-    async def put(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
-    ) -> HttpResponse:
-        """Выполняет async PUT-запрос.
-
-        Args:
-            path: Путь или абсолютный URL.
-            headers: Дополнительные заголовки.
-            json_data: Данные для JSON-тела.
-            data: Сырое тело.
-            timeout: Таймаут запроса.
-
-        Returns:
-            Объект HttpResponse.
-        """
-        return await self.request("PUT", path, headers=headers, json_data=json_data, data=data, timeout=timeout)
-
-    async def delete(self, path: str, *, headers: dict[str, str] | None = None,
-                     timeout: float | None = None) -> HttpResponse:
-        """Выполняет async DELETE-запрос.
-
-        Args:
-            path: Путь или абсолютный URL.
-            headers: Дополнительные заголовки.
-            timeout: Таймаут запроса.
-
-        Returns:
-            Объект HttpResponse.
-        """
-        return await self.request("DELETE", path, headers=headers, timeout=timeout)
-
-    async def patch(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
-    ) -> HttpResponse:
-        """Выполняет async PATCH-запрос.
-
-        Args:
-            path: Путь или абсолютный URL.
-            headers: Дополнительные заголовки.
-            json_data: Данные для JSON-тела.
-            data: Сырое тело.
-            timeout: Таймаут запроса.
-
-        Returns:
-            Объект HttpResponse.
-        """
-        return await self.request("PATCH", path, headers=headers, json_data=json_data, data=data, timeout=timeout)
-
-    async def aclose(self) -> None:
-        """Закрывает async-клиент и освобождает ресурсы."""
-        if self._async_client is not None:
-            try:
-                await self._async_client.aclose()
-            except Exception:  # noqa: BLE001
-                pass
-            self._async_client = None
-
-    async def __aenter__(self) -> AsyncHttpClient:
-        """Поддержка async-контекстного менеджера.
-
-        Returns:
-            Сам экземпляр клиента.
-        """
-        assert httpx is not None  # noqa: S101
-        self._async_client = httpx.AsyncClient(
-            base_url=self.base_url,
-            headers=self.default_headers,
-            timeout=self.timeout,
-        )
-        return self
-
-    async def __aexit__(self, *args: object) -> None:
-        """Закрывает async-клиент при выходе из контекстного менеджера."""
-        await self.aclose()
+__all__ = ["HTTPX_AVAILABLE", "AsyncHttpClient", "HttpClient", "httpx"]

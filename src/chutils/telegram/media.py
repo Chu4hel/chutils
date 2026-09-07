@@ -2,14 +2,22 @@
 
 from __future__ import annotations
 
+import asyncio
+import concurrent.futures.thread  # noqa: F401
 import os
 from pathlib import Path
 from typing import Any
 
-from chutils.exceptions import ChutilsException, PathTraversalError
-from chutils.fs import atomic_write, ensure_dir, get_temp_file, resolve_safe_path, safe_filename, zip_folder
+from chutils.exceptions import ChutilsException
+from chutils.fs import (
+    atomic_write,
+    ensure_dir,
+    resolve_safe_path,
+    safe_filename,
+    zip_folder,
+)
 from chutils.logger import setup_logger
-from chutils.telegram.formatting import escape_html, escape_markdown, smart_truncate
+from chutils.telegram.formatting import smart_truncate
 
 logger = setup_logger("chutils.telegram.media")
 
@@ -50,11 +58,17 @@ async def download_user_file(
 
     if isinstance(bot, str):
         import httpx  # chutils: ignore[ChutilsIntegrationRule]
+
         async with httpx.AsyncClient() as client:
-            resp = await client.get(f"https://api.telegram.org/bot{bot}/getFile", params={"file_id": file_id})
+            resp = await client.get(
+                f"https://api.telegram.org/bot{bot}/getFile",
+                params={"file_id": file_id},
+            )
             data = resp.json()
             if not data.get("ok"):
-                raise ChutilsException(f"Ошибка Telegram API getFile: {data.get('description')}")
+                raise ChutilsException(
+                    f"Ошибка Telegram API getFile: {data.get('description')}"
+                )
             result = data.get("result", {})
             file_path_on_server = result.get("file_path")
             file_size = result.get("file_size")
@@ -63,16 +77,24 @@ async def download_user_file(
         file_path_on_server = getattr(tg_file, "file_path", None)
         file_size = getattr(tg_file, "file_size", None)
     else:
-        raise ChutilsException(f"Неподдерживаемый тип объекта bot: {type(bot).__name__}")
+        raise ChutilsException(
+            f"Неподдерживаемый тип объекта bot: {type(bot).__name__}"
+        )
 
     # Проверка размера файла по метаданным
-    if max_size_bytes is not None and file_size is not None and file_size > max_size_bytes:
+    if (
+        max_size_bytes is not None
+        and file_size is not None
+        and file_size > max_size_bytes
+    ):
         raise ChutilsException(
             f"Размер файла ({file_size} байт) превышает допустимый лимит ({max_size_bytes} байт)."
         )
 
     # 2. Определение имени файла
-    raw_name = custom_filename or (Path(file_path_on_server).name if file_path_on_server else f"{file_id}.bin")
+    raw_name = custom_filename or (
+        Path(file_path_on_server).name if file_path_on_server else f"{file_id}.bin"
+    )
 
     if not allow_unsafe_path:
         sanitized_name = safe_filename(raw_name)
@@ -86,12 +108,15 @@ async def download_user_file(
     # 3. Скачивание содержимого файла
     if isinstance(bot, str):
         import httpx  # chutils: ignore[ChutilsIntegrationRule]
+
         url = f"https://api.telegram.org/file/bot{bot}/{file_path_on_server}"
         async with httpx.AsyncClient() as client:
             res = await client.get(url)
             content = res.content
             if max_size_bytes is not None and len(content) > max_size_bytes:
-                raise ChutilsException(f"Размер скачанного содержимого превысил лимит ({max_size_bytes} байт).")
+                raise ChutilsException(
+                    f"Размер скачанного содержимого превысил лимит ({max_size_bytes} байт)."
+                )
             atomic_write(destination_path, content)
     elif hasattr(bot, "download_file"):
         if file_path_on_server:
@@ -146,7 +171,10 @@ async def send_telegram_file(
 
     if path_obj.is_dir():
         import tempfile
-        fd, temp_zip_path_str = tempfile.mkstemp(suffix=".zip", prefix=f"{safe_filename(path_obj.name)}_")
+
+        fd, temp_zip_path_str = tempfile.mkstemp(
+            suffix=".zip", prefix=f"{safe_filename(path_obj.name)}_"
+        )
         os.close(fd)
         temp_zip_created = Path(temp_zip_path_str)
         file_to_send = zip_folder(path_obj, temp_zip_created)
@@ -157,7 +185,7 @@ async def send_telegram_file(
         if temp_zip_created and temp_zip_created.exists():
             temp_zip_created.unlink(missing_ok=True)
         raise ChutilsException(
-            f"Размер отправляемого файла ({file_size / (1024*1024):.2f} МБ) превышает лимит Telegram API (50 МБ)."
+            f"Размер отправляемого файла ({file_size / (1024 * 1024):.2f} МБ) превышает лимит Telegram API (50 МБ)."
         )
 
     # 4. Безопасная обработка подписи (caption limit 1024 chars)
@@ -170,6 +198,7 @@ async def send_telegram_file(
         if isinstance(bot, str):
             # Direct HTTP POST via httpx
             import httpx  # chutils: ignore[ChutilsIntegrationRule]
+
             url = f"https://api.telegram.org/bot{bot}/sendDocument"
             data = {"chat_id": str(chat_id)}
             if formatted_caption:
@@ -177,18 +206,21 @@ async def send_telegram_file(
             if parse_mode:
                 data["parse_mode"] = parse_mode
 
+            file_bytes = await asyncio.to_thread(file_to_send.read_bytes)
             async with httpx.AsyncClient() as client:
-                with open(file_to_send, "rb") as f:
-                    files = {"document": (file_to_send.name, f)}
-                    resp = await client.post(url, data=data, files=files)
-                    res_json = resp.json()
-                    if not res_json.get("ok"):
-                        raise ChutilsException(f"Ошибка Telegram sendDocument API: {res_json.get('description')}")
-                    return res_json.get("result")
+                files = {"document": (file_to_send.name, file_bytes)}
+                resp = await client.post(url, data=data, files=files)
+                res_json = resp.json()
+                if not res_json.get("ok"):
+                    raise ChutilsException(
+                        f"Ошибка Telegram sendDocument API: {res_json.get('description')}"
+                    )
+                return res_json.get("result")
         elif hasattr(bot, "send_document"):
             # aiogram / python-telegram-bot
             try:
                 from aiogram.types import FSInputFile
+
                 input_file = FSInputFile(str(file_to_send))
                 return await bot.send_document(
                     chat_id=chat_id,
@@ -197,15 +229,21 @@ async def send_telegram_file(
                     parse_mode=parse_mode,
                 )
             except ImportError:
-                with open(file_to_send, "rb") as f:
-                    return await bot.send_document(
-                        chat_id=chat_id,
-                        document=f,
-                        caption=formatted_caption,
-                        parse_mode=parse_mode,
-                    )
+                from io import BytesIO
+
+                file_bytes = await asyncio.to_thread(file_to_send.read_bytes)
+                buf = BytesIO(file_bytes)
+                buf.name = file_to_send.name
+                return await bot.send_document(
+                    chat_id=chat_id,
+                    document=buf,
+                    caption=formatted_caption,
+                    parse_mode=parse_mode,
+                )
         else:
-            raise ChutilsException(f"Неподдерживаемый тип объекта bot: {type(bot).__name__}")
+            raise ChutilsException(
+                f"Неподдерживаемый тип объекта bot: {type(bot).__name__}"
+            )
     finally:
         if temp_zip_created and temp_zip_created.exists():
             temp_zip_created.unlink(missing_ok=True)

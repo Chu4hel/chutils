@@ -4,9 +4,10 @@ import pytest
 
 import chutils
 from chutils.decorators import log_function_details
-from chutils.logger import core as logger_core
+
 # Импортируем нужные функции и классы из библиотеки
-from chutils.logger import setup_logger, DEVDEBUG_LEVEL_NUM
+from chutils.logger import DEVDEBUG_LEVEL_NUM, setup_logger
+from chutils.logger import core as logger_core
 
 
 @pytest.fixture(autouse=True)
@@ -23,6 +24,7 @@ def clean_logging_state(caplog, tmp_path):
 
     # Кэшируем глобальные состояния для логгера и декоратора
     from chutils.logger.internal import utils as logger_utils
+
     original_log_dir = logger_utils._LOG_DIR
     original_module_logger = chutils.decorators._module_logger
 
@@ -42,7 +44,11 @@ def clean_logging_state(caplog, tmp_path):
     # Очищаем все логгеры, которые были созданы в предыдущих тестах
     # Это предотвращает "протекание" обработчиков между тестами
     for logger_name in logging.root.manager.loggerDict:
-        if logger_name.startswith('chutils') or logger_name in ['main', 'audit', 'events']:
+        if logger_name.startswith("chutils") or logger_name in [
+            "main",
+            "audit",
+            "events",
+        ]:
             logger_instance = logging.getLogger(logger_name)
             logger_instance.handlers.clear()
             logger_instance.propagate = True
@@ -55,6 +61,7 @@ def clean_logging_state(caplog, tmp_path):
     chutils.config._cm.config_object = original_config_object
     chutils.config._cm.config_loaded = original_config_loaded
     from chutils.logger.internal import utils as logger_utils
+
     logger_utils._LOG_DIR = original_log_dir
     chutils.decorators._module_logger = original_module_logger
 
@@ -129,7 +136,7 @@ EventLogger:
     # Указываем chutils на нашу временную директорию как на корень проекта
     chutils.config._cm.base_dir = str(tmp_path)
     tmp_config_file = tmp_path / "config.yml"
-    tmp_config_file.write_text(example_config_content, encoding='utf-8')
+    tmp_config_file.write_text(example_config_content, encoding="utf-8")
     chutils.config._cm.config_file_path = str(tmp_config_file)
     chutils.config._cm.paths_initialized = True
 
@@ -156,4 +163,8 @@ EventLogger:
     # Проверяем, что все ожидаемые сообщения присутствуют
     assert ("main", "INFO", "Сообщение от основного логгера.") in log_tuples
     assert ("audit", "DEBUG", "Детальное сообщение для аудита.") in log_tuples
-    assert ("events", "INFO", "Логгер событий использует ротацию по времени.") in log_tuples
+    assert (
+        "events",
+        "INFO",
+        "Логгер событий использует ротацию по времени.",
+    ) in log_tuples

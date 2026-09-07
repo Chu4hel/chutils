@@ -1,6 +1,7 @@
 """
 Абстрактный базовый класс бэкендов Key-Value хранилища chutils.store.
 """
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -24,7 +25,7 @@ class BaseStoreBackend(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def set(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
+    def set(self, key: str, value: Any, ttl: float | None = None) -> bool:
         """Сохраняет значение по ключу с опциональным TTL (синхронно).
 
         Args:
@@ -84,7 +85,7 @@ class BaseStoreBackend(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def aset(self, key: str, value: Any, ttl: int | float | None = None) -> bool:
+    async def aset(self, key: str, value: Any, ttl: float | None = None) -> bool:
         """Сохраняет значение по ключу с опциональным TTL (асинхронно).
 
         Args:

@@ -6,14 +6,12 @@
 - Создания спанов для каждого HTTP-запроса.
 - Безопасного импорта opentelemetry (graceful fallback при отсутствии пакета).
 """
+
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from chutils.env import OTEL_AVAILABLE
-
-if TYPE_CHECKING:
-    pass
 
 # ─── Ленивый импорт OTEL ─────────────────────────────────────────────────────
 
@@ -23,10 +21,10 @@ _otel_context: Any = None
 
 if OTEL_AVAILABLE:
     try:
-        from opentelemetry import trace as _otel_trace
-        from opentelemetry import propagate as _otel_propagate
         from opentelemetry import context as _otel_context
-    except Exception:  # noqa: BLE001
+        from opentelemetry import propagate as _otel_propagate
+        from opentelemetry import trace as _otel_trace
+    except Exception:
         _otel_trace = None
         _otel_propagate = None
         _otel_context = None
@@ -66,16 +64,16 @@ def inject_trace_headers(headers: dict[str, str]) -> dict[str, str]:
         _otel_propagate.inject(carrier)
         if carrier:
             return {**headers, **carrier}
-    except Exception:  # noqa: BLE001
+    except Exception:
         pass
 
     return headers
 
 
 def create_http_span(
-        method: str,
-        url: str,
-        tracer_name: str = "chutils.http",
+    method: str,
+    url: str,
+    tracer_name: str = "chutils.http",
 ) -> object | None:
     """Создаёт OTEL-спан для исходящего HTTP-запроса.
 
@@ -112,7 +110,7 @@ def create_http_span(
             },
         )
         return span
-    except Exception:  # noqa: BLE001
+    except Exception:
         return None
 
 
@@ -135,5 +133,5 @@ def record_span_status(span: object | None, status_code: int) -> None:
             )
         else:
             span_any.set_status(_otel_trace.Status(_otel_trace.StatusCode.OK))
-    except Exception:  # noqa: BLE001
+    except Exception:
         pass

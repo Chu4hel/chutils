@@ -8,6 +8,7 @@
 Pydantic используется для валидации, но модуль импортируется безопасно:
 при отсутствии Pydantic сам по себе не ломает chutils.
 """
+
 from __future__ import annotations
 
 import os
@@ -63,7 +64,9 @@ def _build_audit_event_class() -> type:
 
         id: str = Field(default_factory=lambda: str(uuid.uuid4()))
         timestamp: datetime = Field(
-            default_factory=lambda: __import__("chutils.time", fromlist=["utc_now"]).utc_now()
+            default_factory=lambda: __import__(
+                "chutils.time", fromlist=["utc_now"]
+            ).utc_now()
         )
         actor: str
         action: str
@@ -75,7 +78,7 @@ def _build_audit_event_class() -> type:
         hash: str = ""
 
         @model_validator(mode="after")
-        def _compute_hash_field(self) -> "AuditEvent":
+        def _compute_hash_field(self) -> AuditEvent:
             """Вычисляет и устанавливает hash после валидации всех полей."""
             if not self.hash:
                 # mode="json" гарантирует datetime -> ISO-строка,
@@ -93,7 +96,7 @@ def _build_audit_event_class() -> type:
             return self.model_dump_json()
 
         @classmethod
-        def from_jsonl(cls, line: str) -> "AuditEvent":
+        def from_jsonl(cls, line: str) -> AuditEvent:
             """Десериализует запись из строки JSON Lines.
 
             Args:

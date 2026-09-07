@@ -1,6 +1,7 @@
 """Модели данных профилей и сессий браузеров."""
 
 from typing import Literal
+
 from pydantic import BaseModel, Field
 
 

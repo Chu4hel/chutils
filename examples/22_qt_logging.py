@@ -6,7 +6,13 @@ import logging
 import sys
 
 from chutils.qt import setup_qt_logging
-from chutils.qt.shim import QApplication, QPlainTextEdit, QVBoxLayout, QWidget, require_qt
+from chutils.qt.shim import (
+    QApplication,
+    QPlainTextEdit,
+    QVBoxLayout,
+    QWidget,
+    require_qt,
+)
 
 
 def main() -> None:

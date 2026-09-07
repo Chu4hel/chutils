@@ -33,12 +33,17 @@ def test_pypi_command_parsing(monkeypatch, cli_runner):
     mock_handle_check.reset_mock()
 
     # 2. Запуск с флагами
-    result = cli_runner.invoke([
-        "pypi", "check",
-        "-m", "https://mirror1.com,https://mirror2.com",
-        "--json",
-        "--package", "requests"
-    ])
+    result = cli_runner.invoke(
+        [
+            "pypi",
+            "check",
+            "-m",
+            "https://mirror1.com,https://mirror2.com",
+            "--json",
+            "--package",
+            "requests",
+        ]
+    )
     assert result.exit_code == 0
     mock_handle_check.assert_called_once()
 
@@ -59,13 +64,21 @@ def test_pypi_command_help_unknown(cli_runner):
 def test_normalize_mirror_url():
     """Проверяет нормализацию URL зеркал."""
     assert normalize_mirror_url("https://pypi.org/simple") == "https://pypi.org/simple/"
-    assert normalize_mirror_url("https://pypi.org/simple/ ") == "https://pypi.org/simple/"
+    assert (
+        normalize_mirror_url("https://pypi.org/simple/ ") == "https://pypi.org/simple/"
+    )
 
 
 def test_normalize_url():
     """Проверяет формирование URL для проверки пакета."""
-    assert normalize_url("https://pypi.org/simple", "six") == "https://pypi.org/simple/six/"
-    assert normalize_url("https://pypi.org/simple/", "six") == "https://pypi.org/simple/six/"
+    assert (
+        normalize_url("https://pypi.org/simple", "six")
+        == "https://pypi.org/simple/six/"
+    )
+    assert (
+        normalize_url("https://pypi.org/simple/", "six")
+        == "https://pypi.org/simple/six/"
+    )
 
 
 def test_get_current_index_url_env(monkeypatch):
@@ -160,7 +173,9 @@ def test_get_current_index_url_fallback_invalid_ini(monkeypatch, tmp_path):
 def test_measure_mirror_success(mocker):
     """Проверяет успешное измерение характеристик зеркала."""
     mock_response_index = MagicMock()
-    mock_response_index.read.return_value = b'<a href="six-1.16.0-py2.py3-none-any.whl">six-1.16.0-py2.py3-none-any.whl</a>'
+    mock_response_index.read.return_value = (
+        b'<a href="six-1.16.0-py2.py3-none-any.whl">six-1.16.0-py2.py3-none-any.whl</a>'
+    )
     mock_response_index.__enter__.return_value = mock_response_index
 
     mock_response_file = MagicMock()
@@ -174,7 +189,10 @@ def test_measure_mirror_success(mocker):
     assert res["available"] is True
     assert res["latency_ms"] is not None
     assert res["download_speed_kbs"] is not None
-    assert res["checked_file_url"] == "https://pypi.org/simple/six/six-1.16.0-py2.py3-none-any.whl"
+    assert (
+        res["checked_file_url"]
+        == "https://pypi.org/simple/six/six-1.16.0-py2.py3-none-any.whl"
+    )
 
 
 def test_measure_mirror_fallback_to_first_url(mocker):
@@ -192,13 +210,15 @@ def test_measure_mirror_fallback_to_first_url(mocker):
 
     res = measure_mirror("https://pypi.org/simple/", "six")
     assert res["available"] is True
-    assert res["checked_file_url"] == "https://pypi.org/simple/six/some-nonstandard-file"
+    assert (
+        res["checked_file_url"] == "https://pypi.org/simple/six/some-nonstandard-file"
+    )
 
 
 def test_measure_mirror_no_links(mocker):
     """Проверяет поведение, если в индексе нет ссылок."""
     mock_response_index = MagicMock()
-    mock_response_index.read.return_value = b'<html>No links here</html>'
+    mock_response_index.read.return_value = b"<html>No links here</html>"
     mock_response_index.__enter__.return_value = mock_response_index
 
     mock_urlopen = mocker.patch("urllib.request.urlopen")
@@ -213,12 +233,17 @@ def test_measure_mirror_no_links(mocker):
 def test_measure_mirror_download_exception(mocker):
     """Проверяет обработку ошибок в процессе скачивания файла."""
     mock_response_index = MagicMock()
-    mock_response_index.read.return_value = b'<a href="six-1.16.0.whl">six-1.16.0.whl</a>'
+    mock_response_index.read.return_value = (
+        b'<a href="six-1.16.0.whl">six-1.16.0.whl</a>'
+    )
     mock_response_index.__enter__.return_value = mock_response_index
 
     mock_urlopen = mocker.patch("urllib.request.urlopen")
     # Первый вызов успешен, второй вызывает ошибку при подключении для скачивания файла
-    mock_urlopen.side_effect = [mock_response_index, ConnectionResetError("Connection reset")]
+    mock_urlopen.side_effect = [
+        mock_response_index,
+        ConnectionResetError("Connection reset"),
+    ]
 
     res = measure_mirror("https://pypi.org/simple/", "six")
     assert res["available"] is True
@@ -238,7 +263,9 @@ def test_measure_mirror_network_error(mocker):
 def test_measure_mirror_http_error(mocker):
     """Проверяет поведение при ошибке HTTP."""
     mock_urlopen = mocker.patch("urllib.request.urlopen")
-    mock_urlopen.side_effect = urllib.error.HTTPError("https://url", 404, "Not Found", {}, None)
+    mock_urlopen.side_effect = urllib.error.HTTPError(
+        "https://url", 404, "Not Found", {}, None
+    )
 
     res = measure_mirror("https://pypi.org/simple/", "six")
     assert res["available"] is False
@@ -271,49 +298,107 @@ def test_find_best_mirror():
 
     # 1. Рекомендация не нужна, если текущее зеркало и так лучшее
     results = [
-        {"url": "https://pypi.org/simple/", "available": True, "latency_ms": 50, "download_speed_kbs": 1000},
-        {"url": "https://mirror1.com/simple/", "available": True, "latency_ms": 100, "download_speed_kbs": 500},
+        {
+            "url": "https://pypi.org/simple/",
+            "available": True,
+            "latency_ms": 50,
+            "download_speed_kbs": 1000,
+        },
+        {
+            "url": "https://mirror1.com/simple/",
+            "available": True,
+            "latency_ms": 100,
+            "download_speed_kbs": 500,
+        },
     ]
     assert find_best_mirror(results, current) is None
 
     # 2. Рекомендуем зеркало, если оно значительно быстрее (скорость больше на 50%+)
     results = [
-        {"url": "https://pypi.org/simple/", "available": True, "latency_ms": 50, "download_speed_kbs": 1000},
-        {"url": "https://mirror1.com/simple/", "available": True, "latency_ms": 30, "download_speed_kbs": 1600},
+        {
+            "url": "https://pypi.org/simple/",
+            "available": True,
+            "latency_ms": 50,
+            "download_speed_kbs": 1000,
+        },
+        {
+            "url": "https://mirror1.com/simple/",
+            "available": True,
+            "latency_ms": 30,
+            "download_speed_kbs": 1600,
+        },
     ]
     assert find_best_mirror(results, current) == "https://mirror1.com/simple/"
 
     # 3. Рекомендация не выдается при незначительной разнице в скорости
     results = [
-        {"url": "https://pypi.org/simple/", "available": True, "latency_ms": 50, "download_speed_kbs": 1000},
-        {"url": "https://mirror1.com/simple/", "available": True, "latency_ms": 45, "download_speed_kbs": 1100},
+        {
+            "url": "https://pypi.org/simple/",
+            "available": True,
+            "latency_ms": 50,
+            "download_speed_kbs": 1000,
+        },
+        {
+            "url": "https://mirror1.com/simple/",
+            "available": True,
+            "latency_ms": 45,
+            "download_speed_kbs": 1100,
+        },
     ]
     assert find_best_mirror(results, current) is None
 
     # 4. Рекомендуем по latency, если скорость не замерялась/одинаковая, но пинг лучше на 30%+ и разницу >= 50ms
     results = [
-        {"url": "https://pypi.org/simple/", "available": True, "latency_ms": 200, "download_speed_kbs": 100},
-        {"url": "https://mirror1.com/simple/", "available": True, "latency_ms": 100, "download_speed_kbs": 100},
+        {
+            "url": "https://pypi.org/simple/",
+            "available": True,
+            "latency_ms": 200,
+            "download_speed_kbs": 100,
+        },
+        {
+            "url": "https://mirror1.com/simple/",
+            "available": True,
+            "latency_ms": 100,
+            "download_speed_kbs": 100,
+        },
     ]
     assert find_best_mirror(results, current) == "https://mirror1.com/simple/"
 
     # 5. Рекомендуем любое доступное, если текущее недоступно (даже если текущее не представлено в результатах)
     results = [
-        {"url": "https://mirror1.com/simple/", "available": True, "latency_ms": 150, "download_speed_kbs": 200},
+        {
+            "url": "https://mirror1.com/simple/",
+            "available": True,
+            "latency_ms": 150,
+            "download_speed_kbs": 200,
+        },
     ]
     assert find_best_mirror(results, current) == "https://mirror1.com/simple/"
 
     # 6. Рекомендуем, если у текущего скорость 0, а у лучшего больше 0
     results = [
-        {"url": "https://pypi.org/simple/", "available": True, "latency_ms": 20, "download_speed_kbs": 0},
-        {"url": "https://mirror1.com/simple/", "available": True, "latency_ms": 150, "download_speed_kbs": 150},
+        {
+            "url": "https://pypi.org/simple/",
+            "available": True,
+            "latency_ms": 20,
+            "download_speed_kbs": 0,
+        },
+        {
+            "url": "https://mirror1.com/simple/",
+            "available": True,
+            "latency_ms": 150,
+            "download_speed_kbs": 150,
+        },
     ]
     assert find_best_mirror(results, current) == "https://mirror1.com/simple/"
 
 
 def test_cli_pypi_check_output_json(cli_runner, mocker):
     """Проверяет вывод команды chutils pypi check в формате JSON."""
-    mocker.patch("chutils.commands.pypi.get_current_index_url", return_value="https://pypi.org/simple/")
+    mocker.patch(
+        "chutils.commands.pypi.get_current_index_url",
+        return_value="https://pypi.org/simple/",
+    )
 
     mock_measure = mocker.patch("chutils.commands.pypi.measure_mirror")
     mock_measure.return_value = {
@@ -340,7 +425,10 @@ def test_cli_pypi_check_output_json(cli_runner, mocker):
 
 def test_cli_pypi_check_output_table(cli_runner, mocker):
     """Проверяет интерактивный вывод в виде таблицы."""
-    mocker.patch("chutils.commands.pypi.get_current_index_url", return_value="https://pypi.org/simple/")
+    mocker.patch(
+        "chutils.commands.pypi.get_current_index_url",
+        return_value="https://pypi.org/simple/",
+    )
 
     mock_measure = mocker.patch("chutils.commands.pypi.measure_mirror")
     mock_measure.return_value = {
@@ -372,7 +460,10 @@ def test_cli_pypi_check_output_table(cli_runner, mocker):
 
 def test_cli_pypi_check_with_custom_mirrors_and_recommendation(cli_runner, mocker):
     """Проверяет работу команды с кастомными зеркалами и выводом рекомендаций."""
-    mocker.patch("chutils.commands.pypi.get_current_index_url", return_value="https://pypi.org/simple/")
+    mocker.patch(
+        "chutils.commands.pypi.get_current_index_url",
+        return_value="https://pypi.org/simple/",
+    )
 
     def mock_measure_fn(url, package):
         if "custom-fast" in url:
@@ -382,7 +473,7 @@ def test_cli_pypi_check_with_custom_mirrors_and_recommendation(cli_runner, mocke
                 "latency_ms": 10.0,
                 "download_speed_kbs": 5000.0,
                 "error": None,
-                "checked_file_url": "https://custom-fast.org/file.whl"
+                "checked_file_url": "https://custom-fast.org/file.whl",
             }
         else:
             return {
@@ -391,14 +482,16 @@ def test_cli_pypi_check_with_custom_mirrors_and_recommendation(cli_runner, mocke
                 "latency_ms": 100.0,
                 "download_speed_kbs": 100.0,
                 "error": None,
-                "checked_file_url": "https://pypi.org/file.whl"
+                "checked_file_url": "https://pypi.org/file.whl",
             }
 
     mocker.patch("chutils.commands.pypi.measure_mirror", side_effect=mock_measure_fn)
     mocker.patch("chutils.commands.pypi.DEFAULT_MIRRORS", ["https://pypi.org/simple/"])
     mocker.patch("chutils.commands.pypi.is_rich_enabled", return_value=False)
 
-    result = cli_runner.invoke(["pypi", "check", "-m", "https://custom-fast.org/simple/"])
+    result = cli_runner.invoke(
+        ["pypi", "check", "-m", "https://custom-fast.org/simple/"]
+    )
     assert result.exit_code == 0
     assert "Рекомендация:" in result.stdout
     assert "https://custom-fast.org/simple/" in result.stdout
@@ -407,7 +500,10 @@ def test_cli_pypi_check_with_custom_mirrors_and_recommendation(cli_runner, mocke
 
 def test_cli_pypi_check_no_recommendation(cli_runner, mocker):
     """Проверяет вывод рекомендаций, когда текущее зеркало оптимально."""
-    mocker.patch("chutils.commands.pypi.get_current_index_url", return_value="https://pypi.org/simple/")
+    mocker.patch(
+        "chutils.commands.pypi.get_current_index_url",
+        return_value="https://pypi.org/simple/",
+    )
 
     mock_measure = mocker.patch("chutils.commands.pypi.measure_mirror")
     mock_measure.return_value = {
@@ -416,7 +512,7 @@ def test_cli_pypi_check_no_recommendation(cli_runner, mocker):
         "latency_ms": 10.0,
         "download_speed_kbs": 1000.0,
         "error": None,
-        "checked_file_url": "https://pypi.org/file.whl"
+        "checked_file_url": "https://pypi.org/file.whl",
     }
     mocker.patch("chutils.commands.pypi.DEFAULT_MIRRORS", ["https://pypi.org/simple/"])
     mocker.patch("chutils.commands.pypi.is_rich_enabled", return_value=False)

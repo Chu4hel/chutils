@@ -46,7 +46,9 @@ def _update_mask_re() -> None:
 
         # 1. Добавляем литеральные маски (экранированные)
         if _GLOBAL_MASKS:
-            sorted_masks = sorted([m for m in _GLOBAL_MASKS if m], key=len, reverse=True)
+            sorted_masks = sorted(
+                [m for m in _GLOBAL_MASKS if m], key=len, reverse=True
+            )
             if sorted_masks:
                 parts.append("|".join(re.escape(m) for m in sorted_masks))
 
@@ -124,7 +126,6 @@ class SecretMaskingFilter(logging.Filter):
         if secrets or patterns:
             _update_mask_re()
 
-
     def filter(self, record: logging.LogRecord) -> bool:
         """
         Применяет маскирование к записи лога.
@@ -136,7 +137,13 @@ class SecretMaskingFilter(logging.Filter):
             Всегда True (фильтр не отсеивает записи, а модифицирует их).
         """
         # Если маскирование отключено через окружение, ничего не делаем.
-        if os.getenv("CH_DISABLE_LOG_MASKING", "").lower() in ("true", "1", "yes", "y"):  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule]
+        if os.getenv("CH_DISABLE_LOG_MASKING", "").lower() in (
+            "true",
+            "1",
+            "yes",
+            "y",
+        ):
             return True
 
         if _MASK_RE is None:

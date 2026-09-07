@@ -8,7 +8,7 @@
 import asyncio
 import time
 
-from chutils import timeout, retry
+from chutils import retry, timeout
 
 
 # 1. Синхронная функция с таймаутом
