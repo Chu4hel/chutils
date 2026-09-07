@@ -68,24 +68,12 @@ def is_rich_enabled() -> bool:
     if not RICH_AVAILABLE:
         return False
 
-    no_color = os.getenv("NO_COLOR", "").lower() in [
-        "true",
-        "1",
-        "yes",
-        "y",
-    ]  # chutils: ignore[ChutilsIntegrationRule]
-    ch_no_color = os.getenv("CH_NO_COLOR", "").lower() in [
-        "true",
-        "1",
-        "yes",
-        "y",
-    ]  # chutils: ignore[ChutilsIntegrationRule]
-    ch_no_rich = os.getenv("CH_NO_RICH", "").lower() in [
-        "true",
-        "1",
-        "yes",
-        "y",
-    ]  # chutils: ignore[ChutilsIntegrationRule]
+    # chutils: ignore[ChutilsIntegrationRule]
+    no_color = os.getenv("NO_COLOR", "").lower() in ["true", "1", "yes", "y"]
+    # chutils: ignore[ChutilsIntegrationRule]
+    ch_no_color = os.getenv("CH_NO_COLOR", "").lower() in ["true", "1", "yes", "y"]
+    # chutils: ignore[ChutilsIntegrationRule]
+    ch_no_rich = os.getenv("CH_NO_RICH", "").lower() in ["true", "1", "yes", "y"]
 
     return not (no_color or ch_no_color or ch_no_rich)
 
@@ -103,12 +91,13 @@ def is_otel_enabled() -> bool:
     if not OTEL_AVAILABLE:
         return False
 
+    # chutils: ignore[ChutilsIntegrationRule]
     return os.getenv("CH_DISABLE_TRACING", "").lower() not in [
         "true",
         "1",
         "yes",
         "y",
-    ]  # chutils: ignore[ChutilsIntegrationRule]
+    ]
 
 
 if PYDANTIC_AVAILABLE:
@@ -145,9 +134,8 @@ if PYDANTIC_AVAILABLE:
                 pass
 
             for field_name, field_info in cls.model_fields.items():
-                val = os.environ.get(
-                    field_name
-                )  # chutils: ignore[ChutilsIntegrationRule]
+                # chutils: ignore[ChutilsIntegrationRule]
+                val = os.environ.get(field_name)
 
                 # Ищем в SecretManager, если переменная секретная и отсутствует в os.environ
                 if val is None and secret_mgr is not None:

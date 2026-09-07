@@ -82,12 +82,13 @@ def _enrich_config_data_with_pydantic_aliases(
     import os
     from typing import get_args, get_origin
 
+    # chutils: ignore[ChutilsIntegrationRule]
     disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in (
         "true",
         "1",
         "yes",
         "y",
-    )  # chutils: ignore[ChutilsIntegrationRule]
+    )
 
     fields = getattr(model, "model_fields", None)
     if fields is None:
@@ -163,12 +164,10 @@ def _enrich_config_data_with_pydantic_aliases(
 
                 env_val = None
                 for cand in candidates:
-                    if (
-                        cand in os.environ and os.environ[cand] != ""
-                    ):  # chutils: ignore[ChutilsIntegrationRule]
-                        env_val = os.environ[
-                            cand
-                        ]  # chutils: ignore[ChutilsIntegrationRule]
+                    # chutils: ignore[ChutilsIntegrationRule]
+                    if cand in os.environ and os.environ[cand] != "":
+                        # chutils: ignore[ChutilsIntegrationRule]
+                        env_val = os.environ[cand]
                         break
 
                 if env_val is not None:
@@ -303,18 +302,17 @@ def get_config(
                     sse_client.start()
 
             # 5. Переменные окружения (CH_SECTION_KEY)
+            # chutils: ignore[ChutilsIntegrationRule]
             disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in (
                 "true",
                 "1",
                 "yes",
                 "y",
-            )  # chutils: ignore[ChutilsIntegrationRule]
+            )
             if not disable_env_override:
                 env_overrides: JSONDict = {}
-                for (
-                    env_key,
-                    env_value,
-                ) in os.environ.items():  # chutils: ignore[ChutilsIntegrationRule]
+                # chutils: ignore[ChutilsIntegrationRule]
+                for env_key, env_value in os.environ.items():
                     if env_key.startswith("CH_") and env_key not in (
                         "CH_ENV",
                         "CH_DISABLE_ENV_OVERRIDE",
@@ -381,9 +379,8 @@ def get_config(
                         env_overrides[actual_sec][actual_key] = env_value
 
                 # Специфический ключ для secrets
-                secrets_env = os.getenv(
-                    "CH_DISABLE_KEYRING_WARNING"
-                )  # chutils: ignore[ChutilsIntegrationRule]
+                # chutils: ignore[ChutilsIntegrationRule]
+                secrets_env = os.getenv("CH_DISABLE_KEYRING_WARNING")
                 if secrets_env is not None:
                     if "secrets" not in env_overrides:
                         env_overrides["secrets"] = {}

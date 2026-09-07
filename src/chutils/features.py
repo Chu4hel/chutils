@@ -122,9 +122,8 @@ def _evaluate_complex_feature(
     # 2. Ограничение по окружению (environments: ['production', 'staging'])
     allowed_envs = config.get("environments")
     if allowed_envs:
-        current_env = os.getenv(
-            "CH_ENV", "development"
-        )  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule]
+        current_env = os.getenv("CH_ENV", "development")
         if current_env not in allowed_envs:
             return False
 

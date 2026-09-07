@@ -97,12 +97,13 @@ def get_config_value(
     if value is None or value == "":
         import os
 
+        # chutils: ignore[ChutilsIntegrationRule]
         disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in (
             "true",
             "1",
             "yes",
             "y",
-        )  # chutils: ignore[ChutilsIntegrationRule]
+        )
         if not disable_env_override:
             sec_up = section.upper()
             key_up = key.upper()
@@ -112,9 +113,8 @@ def get_config_value(
                 key_up,
             )
             for candidate in candidates:
-                env_val = os.environ.get(
-                    candidate
-                )  # chutils: ignore[ChutilsIntegrationRule]
+                # chutils: ignore[ChutilsIntegrationRule]
+                env_val = os.environ.get(candidate)
                 if env_val is not None and env_val != "":
                     value = env_val
                     if section.lower() == "secrets":

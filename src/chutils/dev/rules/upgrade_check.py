@@ -42,15 +42,17 @@ class UpgradeCheckRule(Rule):
         results: list[LintResult] = []
 
         # Проверяем отключение правила через ENV или конфигурационные файлы
+        # chutils: ignore[ChutilsIntegrationRule]
         disable_env = os.getenv("CHUTILS_DISABLE_UPGRADE_CHECK", "").lower() in (
             "1",
             "true",
             "yes",
             "on",
-        )  # chutils: ignore[ChutilsIntegrationRule]
+        )
         if disable_env:
             return results
 
+        # chutils: ignore[ChutilsIntegrationRule]
         generate_changelog = os.getenv(
             "CHUTILS_GENERATE_CHANGELOG", "1"
         ).lower() not in (
@@ -58,7 +60,7 @@ class UpgradeCheckRule(Rule):
             "false",
             "no",
             "off",
-        )  # chutils: ignore[ChutilsIntegrationRule]
+        )
 
         try:
             from chutils.config.dev import load_ai_lint_config

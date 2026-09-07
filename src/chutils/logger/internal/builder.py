@@ -275,12 +275,13 @@ class LoggerBuilder:
 
     def _get_formatter(self, json_format: bool | None) -> logging.Formatter:
         """Создает и возвращает подходящий форматер (текстовый или JSON)."""
+        # chutils: ignore[ChutilsIntegrationRule]
         env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in [
             "true",
             "1",
             "yes",
             "y",
-        ]  # chutils: ignore[ChutilsIntegrationRule]
+        ]
         log_format = (
             "%(name)s - %(levelname)s %(context)s- %(message)s"
             if env_no_time
@@ -300,9 +301,8 @@ class LoggerBuilder:
 
     def _should_use_json(self, explicit_json: bool | None) -> bool:
         """Определяет, нужно ли использовать JSON формат."""
-        env_json = os.getenv(
-            "CH_LOG_JSON", ""
-        ).lower()  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule]
+        env_json = os.getenv("CH_LOG_JSON", "").lower()
         if env_json:
             return env_json in ["true", "1", "yes", "y"]
         if explicit_json is not None:
@@ -318,12 +318,13 @@ class LoggerBuilder:
         self, level_int: int, formatter: logging.Formatter, json_format: bool | None
     ) -> logging.Handler:
         """Создает обработчик для вывода в консоль (Rich или стандартный)."""
+        # chutils: ignore[ChutilsIntegrationRule]
         env_no_time = os.getenv("CH_LOG_NO_TIME", "").lower() in [
             "true",
             "1",
             "yes",
             "y",
-        ]  # chutils: ignore[ChutilsIntegrationRule]
+        ]
 
         handler: logging.Handler
         if env_api.is_rich_enabled() and not self._should_use_json(json_format):
@@ -359,12 +360,13 @@ class LoggerBuilder:
         from ..core import _file_handler_cache
 
         # 1. Переменная окружения (высший приоритет)
+        # chutils: ignore[ChutilsIntegrationRule]
         env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in [
             "true",
             "1",
             "yes",
             "y",
-        ]  # chutils: ignore[ChutilsIntegrationRule]
+        ]
         if env_no_file:
             return None
 

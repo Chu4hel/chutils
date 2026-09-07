@@ -137,12 +137,13 @@ class SecretMaskingFilter(logging.Filter):
             Всегда True (фильтр не отсеивает записи, а модифицирует их).
         """
         # Если маскирование отключено через окружение, ничего не делаем.
+        # chutils: ignore[ChutilsIntegrationRule]
         if os.getenv("CH_DISABLE_LOG_MASKING", "").lower() in (
             "true",
             "1",
             "yes",
             "y",
-        ):  # chutils: ignore[ChutilsIntegrationRule]
+        ):
             return True
 
         if _MASK_RE is None:

@@ -393,9 +393,8 @@ class MockServerRunner:
                 f"Файл конфигурации '{output_path}' уже существует. "
                 "Удалите его или выберите другой путь."
             )
-        path.write_text(
-            DEFAULT_TEMPLATE, encoding="utf-8"
-        )  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule]
+        path.write_text(DEFAULT_TEMPLATE, encoding="utf-8")
         self.console.print(
             f"[bold green] [OK] [/bold green] Шаблон конфигурации успешно сохранен в: [cyan]{output_path}[/cyan]"
         )

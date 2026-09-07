@@ -134,9 +134,8 @@ class YamlConfigProvider(ConfigProvider):
             data[section][key] = value
 
             def writer(f: TextIO) -> None:
-                yaml.dump(
-                    data, f, allow_unicode=True, sort_keys=False
-                )  # chutils: ignore[ChutilsIntegrationRule]
+                # chutils: ignore[ChutilsIntegrationRule]
+                yaml.dump(data, f, allow_unicode=True, sort_keys=False)
 
             _atomic_write(path, writer)
             return True
@@ -209,9 +208,8 @@ class JsonConfigProvider(ConfigProvider):
             data[section][key] = value
 
             def writer(f: TextIO) -> None:
-                json.dump(
-                    data, f, indent=4, ensure_ascii=False
-                )  # chutils: ignore[ChutilsIntegrationRule]
+                # chutils: ignore[ChutilsIntegrationRule]
+                json.dump(data, f, indent=4, ensure_ascii=False)
 
             _atomic_write(path, writer)
             return True

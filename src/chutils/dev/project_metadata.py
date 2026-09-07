@@ -272,8 +272,7 @@ def save_context_metadata_cache(
         files_registry[file_path_str] = entry
 
         with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump(
-                {"files": files_registry}, f, indent=2, ensure_ascii=False
-            )  # chutils: ignore[ChutilsIntegrationRule]
+            # chutils: ignore[ChutilsIntegrationRule]
+            json.dump({"files": files_registry}, f, indent=2, ensure_ascii=False)
     except Exception:
         pass
