@@ -121,12 +121,11 @@ def qt_slot(
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T | None:
             try:
                 return func(*args, **kwargs)
-            except Exception as e:
+            except Exception:
                 logger = logging.getLogger(logger_name or func.__module__)
                 logger.exception(
-                    "Исключение в Qt слоте %s: %s",
+                    "Исключение в Qt слоте %s",
                     func.__qualname__,
-                    e,
                 )
                 if not catch_exceptions:
                     raise

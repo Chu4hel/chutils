@@ -123,12 +123,11 @@ class PluginRegistry:
                     plugin_instance = plugin_class
 
                 self.register(plugin_instance)
-            except Exception as e:
+            except Exception:
                 logger.exception(
-                    "Не удалось загрузить плагин '%s' из entry_point '%s': %s",
+                    "Не удалось загрузить плагин '%s' из entry_point '%s'",
                     ep.name,
                     ep.value,
-                    str(e),
                 )
 
         self._loaded_groups.add(group)

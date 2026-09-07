@@ -448,4 +448,4 @@ class HttpClient:
 
 from .async_client import AsyncHttpClient
 
-__all__ = ["AsyncHttpClient", "HTTPX_AVAILABLE", "HttpClient"]
+__all__ = ["AsyncHttpClient", "HTTPX_AVAILABLE", "HttpClient", "httpx"]

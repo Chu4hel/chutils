@@ -73,11 +73,10 @@ async def _run_and_log_errors(
     """Обертка для безопасного выполнения корутины и логирования ошибок."""
     try:
         await coro
-    except Exception as e:
+    except Exception:
         logger.exception(
-            "Ошибка в асинхронном фоновом обработчике события %s: %s",
+            "Ошибка в асинхронном фоновом обработчике события %s",
             event_name,
-            e,
         )
 
 
@@ -198,9 +197,8 @@ class EventBus:
                         sync_errors.append(e)
                     else:  # IGNORE
                         logger.exception(
-                            "Ошибка в синхронном обработчике события %s: %s",
+                            "Ошибка в синхронном обработчике события %s",
                             event_name,
-                            e,
                         )
 
         if strategy == ErrorStrategy.COLLECT and sync_errors:
@@ -262,7 +260,7 @@ class EventBus:
                             "Ошибка в обработчике события %s: %s",
                             event_name,
                             err,
-                            exc_info=True,
+                            exc_info=err,
                         )
 
 

@@ -126,7 +126,7 @@ class _WebhookRequestHandler(BaseHTTPRequestHandler):
 
             self._respond(200, {"status": "reloaded"})
         except Exception as exc:
-            logger.exception("Ошибка в do_POST: %s", exc)
+            logger.exception("Ошибка в do_POST")
             self._respond(500, {"error": str(exc)})
 
     def _respond(self, status_code: int, data: dict[str, str]) -> None:

@@ -204,11 +204,10 @@ class LifecycleManager:
                     "Успешно выполнена очистка: %s",
                     func.__name__ if hasattr(func, "__name__") else str(func),
                 )
-            except Exception as e:
+            except Exception:
                 logger.exception(
-                    "Ошибка при выполнении функции очистки %s: %s",
+                    "Ошибка при выполнении функции очистки %s",
                     func.__name__ if hasattr(func, "__name__") else str(func),
-                    e,
                 )
 
     def _clear_registry(self) -> None:

@@ -223,8 +223,8 @@ class TaskScheduler:
                     logger.info(
                         "Задача '%s' выполнена за %.2f сек.", task.name, elapsed
                     )
-                except Exception as e:
-                    logger.exception("Ошибка выполнения задачи '%s': %s", task.name, e)
+                except Exception:
+                    logger.exception("Ошибка выполнения задачи '%s'", task.name)
 
                     if task.error_strategy == ErrorStrategy.STOP_TASK:
                         logger.error(

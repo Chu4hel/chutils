@@ -308,7 +308,7 @@ async def test_scheduler_task_logging(caplog):
     )
     # Проверяем ошибку
     assert any(
-        "Ошибка выполнения задачи 'failing_sync': Oops" in record.message
+        "Ошибка выполнения задачи 'failing_sync'" in record.message
         for record in caplog.records
     )
 
