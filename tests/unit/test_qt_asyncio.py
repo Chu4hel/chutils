@@ -79,12 +79,14 @@ def test_run_async_task_callbacks() -> None:
 
     with patch("chutils.qt.asyncio.require_qt"):
         with patch("chutils.qt.asyncio._QtWorkerSignals", return_value=mock_signals):
-            from chutils.qt.asyncio import run_async_task
+            from chutils.qt.asyncio import QtAsyncWorker, run_async_task
 
-            run_async_task(lambda: 42, on_success=success_cb, on_error=error_cb)
+            with patch.object(QtAsyncWorker, "start") as mock_start:
+                run_async_task(lambda: 42, on_success=success_cb, on_error=error_cb)
 
-            mock_signals.finished.connect.assert_any_call(success_cb)
-            mock_signals.error.connect.assert_any_call(error_cb)
+                mock_signals.finished.connect.assert_any_call(success_cb)
+                mock_signals.error.connect.assert_any_call(error_cb)
+                mock_start.assert_called_once()
 
 
 def test_async_to_qt_decorator() -> None:
