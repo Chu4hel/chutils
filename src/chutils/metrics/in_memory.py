@@ -1,5 +1,5 @@
 import threading
-from typing import Any
+from typing import Any, ClassVar
 
 from .base import MetricsProvider
 
@@ -13,7 +13,7 @@ class InMemoryMetricsProvider(MetricsProvider):
     """
 
     # Стандартные бакеты для Histogram (в секундах/величинах)
-    DEFAULT_BUCKETS: list[float] = [
+    DEFAULT_BUCKETS: ClassVar[list[float]] = [
         0.005,
         0.01,
         0.025,

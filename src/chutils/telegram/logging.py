@@ -47,7 +47,7 @@ class trace_telegram_update:
 
     def __enter__(self) -> Self:
         self.start_time = time.perf_counter()
-        uid, uname = (
+        uid, _uname = (
             _extract_user_info((self.event,), {}) if self.event else (None, None)
         )
         cid = _extract_chat_id((self.event,), {}) if self.event else None

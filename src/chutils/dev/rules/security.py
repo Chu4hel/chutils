@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import re
 from pathlib import Path
+from typing import ClassVar
 
 from ..ai_lint import LintResult, Rule
 
@@ -16,7 +17,7 @@ class SecurityHardcodeRule(Rule):
     description = "Поиск захардкоженных токенов, паролей и приватных ключей."
     severity = "error"
 
-    SECRET_REGEXES = {
+    SECRET_REGEXES: ClassVar[dict[str, re.Pattern[str]]] = {
         "AWS Access Key": re.compile(r"AKIA[0-9A-Z]{16}"),
         "Private Key Header": re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
         "Slack Token": re.compile(r"xox[bapr]-[0-9]{12}"),

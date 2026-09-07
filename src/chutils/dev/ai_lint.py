@@ -143,7 +143,10 @@ class Rule:
     description: str = ""
     severity: str = "error"  # Может быть "error" или "warn"
     staged: bool = False
-    config: dict[str, Any] = {}
+    config: dict[str, Any]
+
+    def __init__(self) -> None:
+        self.config = {}
 
     def check(self, base_dir: str, files: list[str]) -> list[LintResult]:
         """

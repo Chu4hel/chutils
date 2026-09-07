@@ -3,8 +3,6 @@ import typing as t
 from pydantic import BaseModel
 from typing_extensions import Self
 
-T = t.TypeVar("T", bound=BaseEnvManifest)
-
 class BaseEnvManifest(BaseModel):
     """Базовый манифест переменных окружения на базе Pydantic."""
 
