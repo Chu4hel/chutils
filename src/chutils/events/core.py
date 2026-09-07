@@ -1,6 +1,7 @@
 """Ядро шины событий (In-Memory Event Bus)."""
 
 import asyncio
+import concurrent.futures  # noqa: F401
 import inspect
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import threading
@@ -138,6 +139,11 @@ class EventBus:
                     self._subscribers[event_name].remove(func)
                 except ValueError:
                     pass
+
+    def clear(self) -> None:
+        """Очищает всех подписчиков шины событий."""
+        with self._lock:
+            self._subscribers.clear()
 
     def _resolve_payload(
         self, args: tuple[t.Any, ...], kwargs: dict[str, t.Any]
@@ -316,3 +322,9 @@ async def publish_async(
     await _global_bus.publish_async(
         event_name, *args, error_strategy=error_strategy, **kwargs
     )
+
+
+def clear_event_bus() -> None:
+    """Очищает всех подписчиков глобальной шины событий."""
+    _global_bus.clear()
+

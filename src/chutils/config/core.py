@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures  # noqa: F401
 import functools
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import os

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures  # noqa: F401
 from typing import TYPE_CHECKING
 
 from chutils.exceptions import SecretError

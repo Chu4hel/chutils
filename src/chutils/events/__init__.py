@@ -12,6 +12,9 @@ from .core import (
     EventBus as EventBus,
 )
 from .core import (
+    clear_event_bus as clear_event_bus,
+)
+from .core import (
     publish as publish,
 )
 from .core import (
@@ -24,7 +27,9 @@ from .core import (
 __all__ = [
     "ErrorStrategy",
     "EventBus",
+    "clear_event_bus",
     "publish",
     "publish_async",
     "subscribe",
 ]
+

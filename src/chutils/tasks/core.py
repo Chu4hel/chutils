@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures  # noqa: F401
 import functools
 import inspect
 import logging  # chutils: ignore[ChutilsIntegrationRule]
@@ -188,6 +189,7 @@ class TaskScheduler:
         self._locks: dict[str, asyncio.Lock] = {}
         self._shutdown_event = asyncio.Event()
         self._tasks: list[PeriodicTask] = []
+        self._loop: asyncio.AbstractEventLoop | None = None
 
     async def _run_task(self, task: PeriodicTask) -> None:
         """Внутренний цикл выполнения отдельной периодической задачи."""
@@ -264,6 +266,7 @@ class TaskScheduler:
 
     async def start(self) -> None:
         """Запускает все зарегистрированные периодические задачи."""
+        self._loop = asyncio.get_running_loop()
         self._shutdown_event.clear()
         self._tasks = get_registered_tasks()
 
@@ -296,9 +299,22 @@ class TaskScheduler:
 
         if self._running_tasks:
             logger.debug("Ожидание завершения %d задач...", len(self._running_tasks))
-            await asyncio.gather(*self._running_tasks.values(), return_exceptions=True)
+            try:
+                current_loop = asyncio.get_running_loop()
+            except RuntimeError:
+                current_loop = None
+
+            tasks_to_wait = [
+                job
+                for job in self._running_tasks.values()
+                if not job.done()
+                and (current_loop is None or job.get_loop() is current_loop)
+            ]
+            if tasks_to_wait:
+                await asyncio.gather(*tasks_to_wait, return_exceptions=True)
 
         self._running_tasks.clear()
+        self._locks.clear()
         logger.info("Планировщик фоновых задач остановлен.")
 
 
@@ -311,10 +327,6 @@ def start_scheduler() -> None:
     Запускает глобальный планировщик фоновых задач в текущем Event Loop.
     """
     global _scheduler
-    if _scheduler is not None:
-        logger.warning("Планировщик фоновых задач уже запущен.")
-        return
-
     try:
         loop = asyncio.get_running_loop()
     except RuntimeError:
@@ -322,6 +334,17 @@ def start_scheduler() -> None:
             "Не удалось запустить планировщик: отсутствует активный Event Loop."
         )
         raise RuntimeError("No running event loop")
+
+    if _scheduler is not None:
+        if (
+            _scheduler._loop is not None
+            and not _scheduler._loop.is_closed()
+            and _scheduler._loop is loop
+            and not _scheduler._shutdown_event.is_set()
+        ):
+            logger.warning("Планировщик фоновых задач уже запущен.")
+            return
+        _scheduler = None
 
     _scheduler = TaskScheduler()
 
@@ -345,3 +368,4 @@ async def stop_scheduler() -> None:
     await _scheduler.stop()
     _scheduler = None
     logger.debug("stop_scheduler() завершен, _scheduler сброшен в None.")
+

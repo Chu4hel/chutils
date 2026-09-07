@@ -132,8 +132,10 @@ class CaptchaSolverPlugin(BasePlugin):
             Строка ответа.
         """
         import asyncio
+        import concurrent.futures  # noqa: F401
 
         loop = asyncio.get_running_loop()
+
         return await loop.run_in_executor(
             None,
             lambda: self.solve_recaptcha(

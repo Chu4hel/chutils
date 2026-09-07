@@ -18,15 +18,25 @@ pytestmark = pytest.mark.asyncio
 
 @pytest.fixture(autouse=True)
 def cleanup_registry():
+    import chutils.tasks.core
+
     clear_tasks_registry()
+    if chutils.tasks.core._scheduler is not None:
+        for job in list(chutils.tasks.core._scheduler._running_tasks.values()):
+            if not job.done():
+                job.cancel()
+        chutils.tasks.core._scheduler._running_tasks.clear()
+        chutils.tasks.core._scheduler = None
     yield
-    # Гарантируем остановку планировщика после каждого теста
-    try:
-        loop = asyncio.get_running_loop()
-        loop.create_task(stop_scheduler())
-    except RuntimeError:
-        pass
     clear_tasks_registry()
+    if chutils.tasks.core._scheduler is not None:
+        for job in list(chutils.tasks.core._scheduler._running_tasks.values()):
+            if not job.done():
+                job.cancel()
+        chutils.tasks.core._scheduler._running_tasks.clear()
+        chutils.tasks.core._scheduler = None
+
+
 
 
 async def test_scheduler_runs_sync_and_async_tasks():

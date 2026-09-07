@@ -5520,7 +5520,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 27,
+                "line_number": 28,
                 "bases": [],
                 "children": []
               },
@@ -5540,7 +5540,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 30,
+                "line_number": 31,
                 "bases": [],
                 "children": []
               },
@@ -5560,7 +5560,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 32,
+                "line_number": 33,
                 "bases": [],
                 "children": []
               },
@@ -5580,7 +5580,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 35,
+                "line_number": 36,
                 "bases": [],
                 "children": []
               },
@@ -5600,7 +5600,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 38,
+                "line_number": 39,
                 "bases": [],
                 "children": []
               },
@@ -5620,7 +5620,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 70,
+                "line_number": 71,
                 "bases": [],
                 "children": []
               },
@@ -5640,7 +5640,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 179,
+                "line_number": 180,
                 "bases": [],
                 "children": []
               },
@@ -5660,7 +5660,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 419,
+                "line_number": 420,
                 "bases": [],
                 "children": []
               },
@@ -5680,7 +5680,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 426,
+                "line_number": 427,
                 "bases": [],
                 "children": []
               },
@@ -5700,7 +5700,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 443,
+                "line_number": 444,
                 "bases": [],
                 "children": []
               },
@@ -5720,7 +5720,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 524,
+                "line_number": 525,
                 "bases": [],
                 "children": []
               }
@@ -6571,7 +6571,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 191,
+                "line_number": 192,
                 "bases": [],
                 "children": []
               },
@@ -6591,7 +6591,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 220,
+                "line_number": 221,
                 "bases": [],
                 "children": []
               },
@@ -6611,7 +6611,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 249,
+                "line_number": 250,
                 "bases": [],
                 "children": []
               },
@@ -6631,7 +6631,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 305,
+                "line_number": 306,
                 "bases": [],
                 "children": []
               },
@@ -6653,7 +6653,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 355,
+                "line_number": 356,
                 "bases": [],
                 "children": []
               },
@@ -6675,7 +6675,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 365,
+                "line_number": 366,
                 "bases": [],
                 "children": []
               },
@@ -6695,7 +6695,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 374,
+                "line_number": 375,
                 "bases": [],
                 "children": []
               },
@@ -6715,7 +6715,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 434,
+                "line_number": 435,
                 "bases": [],
                 "children": []
               },
@@ -6735,7 +6735,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 489,
+                "line_number": 490,
                 "bases": [],
                 "children": []
               }
@@ -18004,7 +18004,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 13,
+                "line_number": 14,
                 "bases": [],
                 "children": [
                   {
@@ -18023,7 +18023,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 20,
+                    "line_number": 21,
                     "bases": [],
                     "children": []
                   },
@@ -18043,7 +18043,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 38,
+                    "line_number": 39,
                     "bases": [],
                     "children": []
                   },
@@ -18063,7 +18063,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 86,
+                    "line_number": 87,
                     "bases": [],
                     "children": []
                   },
@@ -18083,7 +18083,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 113,
+                    "line_number": 114,
                     "bases": [],
                     "children": []
                   },
@@ -18103,7 +18103,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 190,
+                    "line_number": 191,
                     "bases": [],
                     "children": []
                   },
@@ -18123,7 +18123,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 226,
+                    "line_number": 227,
                     "bases": [],
                     "children": []
                   }
@@ -18145,7 +18145,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 251,
+                "line_number": 252,
                 "bases": [],
                 "children": []
               },
@@ -18167,7 +18167,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 256,
+                "line_number": 257,
                 "bases": [],
                 "children": []
               },
@@ -18189,7 +18189,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 291,
+                "line_number": 292,
                 "bases": [],
                 "children": []
               }
@@ -18564,7 +18564,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 14,
+                "line_number": 15,
                 "bases": [],
                 "children": []
               },
@@ -18584,7 +18584,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 29,
+                "line_number": 30,
                 "bases": [],
                 "children": []
               },
@@ -18604,7 +18604,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 32,
+                "line_number": 33,
                 "bases": [],
                 "children": []
               },
@@ -18624,7 +18624,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 47,
+                "line_number": 48,
                 "bases": [],
                 "children": []
               },
@@ -18644,7 +18644,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 63,
+                "line_number": 64,
                 "bases": [],
                 "children": []
               },
@@ -18664,7 +18664,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 70,
+                "line_number": 71,
                 "bases": [],
                 "children": []
               },
@@ -18684,7 +18684,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 83,
+                "line_number": 84,
                 "bases": [
                   "str",
                   "enum.Enum"
@@ -18707,7 +18707,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 91,
+                "line_number": 92,
                 "bases": [],
                 "children": [
                   {
@@ -18726,7 +18726,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 98,
+                    "line_number": 99,
                     "bases": [],
                     "children": []
                   },
@@ -18746,7 +18746,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 108,
+                    "line_number": 109,
                     "bases": [],
                     "children": []
                   },
@@ -18766,7 +18766,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 128,
+                    "line_number": 129,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "clear",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Очищает всех подписчиков шины событий.",
+                    "docstring": "Очищает всех подписчиков шины событий.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 143,
                     "bases": [],
                     "children": []
                   },
@@ -18786,7 +18806,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 142,
+                    "line_number": 148,
                     "bases": [],
                     "children": []
                   },
@@ -18806,7 +18826,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 154,
+                    "line_number": 160,
                     "bases": [],
                     "children": []
                   },
@@ -18826,7 +18846,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 210,
+                    "line_number": 216,
                     "bases": [],
                     "children": []
                   }
@@ -18848,7 +18868,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 267,
+                "line_number": 273,
                 "bases": [],
                 "children": []
               },
@@ -18868,7 +18888,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 271,
+                "line_number": 277,
                 "bases": [],
                 "children": []
               },
@@ -18888,7 +18908,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 285,
+                "line_number": 291,
                 "bases": [],
                 "children": []
               },
@@ -18908,7 +18928,27 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 302,
+                "line_number": 308,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "clear_event_bus",
+                "type": "function",
+                "layer": "internal",
+                "signature": "()",
+                "summary": "Очищает всех подписчиков глобальной шины событий.",
+                "docstring": "Очищает всех подписчиков глобальной шины событий.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 327,
                 "bases": [],
                 "children": []
               }
@@ -25346,7 +25386,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 145,
+                "line_number": 147,
                 "bases": [
                   "BasePlugin"
                 ],
@@ -25369,7 +25409,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 152,
+                    "line_number": 154,
                     "bases": [],
                     "children": []
                   }
@@ -25391,7 +25431,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 164,
+                "line_number": 166,
                 "bases": [
                   "BasePlugin"
                 ],
@@ -25414,7 +25454,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 172,
+                    "line_number": 174,
                     "bases": [],
                     "children": []
                   },
@@ -25436,7 +25476,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 181,
+                    "line_number": 183,
                     "bases": [],
                     "children": []
                   },
@@ -25458,7 +25498,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 190,
+                    "line_number": 192,
                     "bases": [],
                     "children": []
                   }
@@ -25480,7 +25520,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 199,
+                "line_number": 201,
                 "bases": [
                   "BasePlugin"
                 ],
@@ -25503,7 +25543,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 206,
+                    "line_number": 208,
                     "bases": [],
                     "children": []
                   },
@@ -25525,7 +25565,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 217,
+                    "line_number": 219,
                     "bases": [],
                     "children": []
                   }
@@ -27781,7 +27821,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 19,
+                    "line_number": 20,
                     "bases": [],
                     "children": [
                       {
@@ -27800,7 +27840,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 22,
+                        "line_number": 23,
                         "bases": [],
                         "children": []
                       },
@@ -27822,7 +27862,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 53,
+                        "line_number": 54,
                         "bases": [],
                         "children": []
                       },
@@ -27844,7 +27884,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 58,
+                        "line_number": 59,
                         "bases": [],
                         "children": []
                       },
@@ -27864,7 +27904,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 62,
+                        "line_number": 63,
                         "bases": [],
                         "children": []
                       },
@@ -27884,7 +27924,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 68,
+                        "line_number": 69,
                         "bases": [],
                         "children": []
                       },
@@ -27904,7 +27944,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 110,
+                        "line_number": 111,
                         "bases": [],
                         "children": []
                       },
@@ -27924,7 +27964,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 119,
+                        "line_number": 120,
                         "bases": [],
                         "children": []
                       },
@@ -27944,7 +27984,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 128,
+                        "line_number": 129,
                         "bases": [],
                         "children": []
                       }
@@ -30248,7 +30288,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 17,
+                "line_number": 18,
                 "bases": [],
                 "children": []
               },
@@ -30268,7 +30308,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 21,
+                "line_number": 22,
                 "bases": [],
                 "children": []
               },
@@ -30288,7 +30328,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 65,
+                "line_number": 66,
                 "bases": [],
                 "children": []
               },
@@ -30308,7 +30348,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 78,
+                "line_number": 79,
                 "bases": [],
                 "children": [
                   {
@@ -30327,7 +30367,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 88,
+                    "line_number": 89,
                     "bases": [],
                     "children": []
                   },
@@ -30347,7 +30387,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 157,
+                    "line_number": 158,
                     "bases": [],
                     "children": []
                   },
@@ -30367,7 +30407,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 170,
+                    "line_number": 171,
                     "bases": [],
                     "children": []
                   },
@@ -30387,7 +30427,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 185,
+                    "line_number": 186,
                     "bases": [],
                     "children": []
                   },
@@ -30407,7 +30447,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 215,
+                    "line_number": 216,
                     "bases": [],
                     "children": []
                   },
@@ -30427,7 +30467,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 231,
+                    "line_number": 232,
                     "bases": [],
                     "children": []
                   },
@@ -30447,7 +30487,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 247,
+                    "line_number": 248,
                     "bases": [],
                     "children": []
                   },
@@ -30467,7 +30507,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 260,
+                    "line_number": 261,
                     "bases": [],
                     "children": []
                   },
@@ -30487,7 +30527,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 275,
+                    "line_number": 276,
                     "bases": [],
                     "children": []
                   },
@@ -30507,7 +30547,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 287,
+                    "line_number": 288,
                     "bases": [],
                     "children": []
                   }
@@ -33221,7 +33261,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 19,
+                "line_number": 20,
                 "bases": [],
                 "children": []
               },
@@ -33241,7 +33281,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 22,
+                "line_number": 23,
                 "bases": [
                   "str",
                   "enum.Enum"
@@ -33266,7 +33306,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 31,
+                "line_number": 32,
                 "bases": [],
                 "children": [
                   {
@@ -33285,7 +33325,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 46,
+                    "line_number": 47,
                     "bases": [],
                     "children": []
                   }
@@ -33307,7 +33347,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 108,
+                "line_number": 109,
                 "bases": [],
                 "children": []
               },
@@ -33327,7 +33367,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 160,
+                "line_number": 161,
                 "bases": [],
                 "children": []
               },
@@ -33347,7 +33387,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 169,
+                "line_number": 170,
                 "bases": [],
                 "children": []
               },
@@ -33367,7 +33407,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 174,
+                "line_number": 175,
                 "bases": [
                   "Exception"
                 ],
@@ -33389,7 +33429,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 178,
+                "line_number": 179,
                 "bases": [
                   "Exception"
                 ],
@@ -33411,7 +33451,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 182,
+                "line_number": 183,
                 "bases": [],
                 "children": [
                   {
@@ -33430,7 +33470,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 185,
+                    "line_number": 186,
                     "bases": [],
                     "children": []
                   },
@@ -33450,7 +33490,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 192,
+                    "line_number": 194,
                     "bases": [],
                     "children": []
                   },
@@ -33470,7 +33510,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 265,
+                    "line_number": 267,
                     "bases": [],
                     "children": []
                   },
@@ -33490,7 +33530,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 283,
+                    "line_number": 286,
                     "bases": [],
                     "children": []
                   }
@@ -33512,7 +33552,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 309,
+                "line_number": 325,
                 "bases": [],
                 "children": []
               },
@@ -33532,7 +33572,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 335,
+                "line_number": 358,
                 "bases": [],
                 "children": []
               }
@@ -34305,7 +34345,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 21,
+                "line_number": 22,
                 "bases": [],
                 "children": []
               },
@@ -34325,7 +34365,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 23,
+                "line_number": 24,
                 "bases": [],
                 "children": []
               },
@@ -34345,7 +34385,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 26,
+                "line_number": 27,
                 "bases": [],
                 "children": []
               },
@@ -34365,7 +34405,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 129,
+                "line_number": 130,
                 "bases": [],
                 "children": []
               }
@@ -38705,7 +38745,7 @@
     {
       "source": "chutils/events",
       "target": "/core",
-      "weight": 5
+      "weight": 6
     },
     {
       "source": "chutils/events/core",
@@ -39882,8 +39922,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "3743f279f4a80e00b4e882920a78320f1411f079 (dirty)",
-    "generated_at": "2026-09-07T16:26:38.750760+00:00",
-    "project_hash": "f9d801547cd48686933ba391ad74499575ced5bbe87bd6c900fa060ad2a4e267"
+    "git_commit": "bd7258d5ba1c1aa101c739ea6b52e95a365b2e71 (dirty)",
+    "generated_at": "2026-09-07T17:14:56.324808+00:00",
+    "project_hash": "1bda1af8ff385efb83897c863f2d2a4276670f074b8f8c29c492ec0815c5c074"
   }
 }

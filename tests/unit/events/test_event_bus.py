@@ -7,6 +7,7 @@ from chutils.events.core import (
     ErrorStrategy,
     EventBus,
     _run_and_log_errors,
+    clear_event_bus,
     is_async_callable,
     publish,
     publish_async,
@@ -14,7 +15,16 @@ from chutils.events.core import (
 )
 from chutils.exceptions import EventBusExceptionGroup
 
+
+@pytest.fixture(autouse=True)
+def reset_global_bus():
+    clear_event_bus()
+    yield
+    clear_event_bus()
+
+
 # Опционально для Pydantic
+
 try:
     import pydantic
 
