@@ -25,7 +25,7 @@ def _format_button(button: ButtonSpec) -> dict[str, str]:
             res["callback_data"] = str(button[1])
         return res
     else:
-        raise ValueError(f"Unsupported button format: {type(button)}")
+        raise TypeError(f"Unsupported button format: {type(button)}")
 
 
 def build_inline_keyboard(

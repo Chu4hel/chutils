@@ -8,10 +8,10 @@ from typing import Any
 _chutils_context_var = getattr(sys, "_chutils_context_var", None)
 """Глобальная переменная контекста."""
 if _chutils_context_var is None:
-    _chutils_context_var = contextvars.ContextVar("_chutils_context", default={})
+    _chutils_context_var = contextvars.ContextVar("_chutils_context", default=None)
     setattr(sys, "_chutils_context_var", _chutils_context_var)
 
-_context: contextvars.ContextVar[dict[str, Any]] = _chutils_context_var
+_context: contextvars.ContextVar[dict[str, Any] | None] = _chutils_context_var
 
 
 def get_context() -> dict[str, Any]:
@@ -20,10 +20,11 @@ def get_context() -> dict[str, Any]:
     Returns:
         Словарь с текущими контекстными переменными.
     """
-    return _context.get().copy()
+    ctx = _context.get()
+    return ctx.copy() if ctx is not None else {}
 
 
-def bind_context(**kwargs: Any) -> contextvars.Token[dict[str, Any]]:
+def bind_context(**kwargs: Any) -> contextvars.Token[dict[str, Any] | None]:
     """Привязывает значения к текущему контексту.
 
     Args:
@@ -37,7 +38,7 @@ def bind_context(**kwargs: Any) -> contextvars.Token[dict[str, Any]]:
     return _context.set(current)
 
 
-def unbind_context(token: contextvars.Token[dict[str, Any]]) -> None:
+def unbind_context(token: contextvars.Token[dict[str, Any] | None]) -> None:
     """Восстанавливает контекст до состояния, предшествующего bind_context.
 
     Args:

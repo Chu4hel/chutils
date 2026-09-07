@@ -179,10 +179,10 @@ def profile_imports(
     cmd = [sys.executable, "-X", "importtime", "-c", f"import {target}"]
     process = subprocess.run(
         cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         text=True,
         env=env,
+        check=False,
     )
 
     if process.returncode != 0:

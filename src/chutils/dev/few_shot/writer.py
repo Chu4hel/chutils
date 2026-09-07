@@ -220,7 +220,7 @@ def _update_json_cursorrules(manifest_path: Path, categories: list[str]) -> bool
         data = json.loads(content)
         if not isinstance(data, dict):
             # Если это массив или примитив, обработаем как текст
-            raise ValueError("Root is not a JSON object")
+            raise TypeError("Root is not a JSON object")
     except Exception:
         # Невалидный JSON — обрабатываем как текст
         return _update_text_manifest(manifest_path, categories)

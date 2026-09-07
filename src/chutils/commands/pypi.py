@@ -45,6 +45,7 @@ def get_current_index_url() -> str:
             capture_output=True,
             text=True,
             timeout=3,
+            check=False,
         )
         if result.returncode == 0:
             url = result.stdout.strip()

@@ -4910,7 +4910,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 86,
+                "line_number": 87,
                 "bases": [],
                 "children": []
               },
@@ -4930,7 +4930,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 101,
+                "line_number": 102,
                 "bases": [],
                 "children": []
               },
@@ -4950,7 +4950,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 115,
+                "line_number": 116,
                 "bases": [],
                 "children": []
               },
@@ -4970,7 +4970,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 210,
+                "line_number": 211,
                 "bases": [],
                 "children": []
               },
@@ -4990,7 +4990,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 270,
+                "line_number": 271,
                 "bases": [
                   ".base.BaseCommand"
                 ],
@@ -5011,7 +5011,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 278,
+                    "line_number": 279,
                     "bases": [],
                     "children": []
                   },
@@ -5031,7 +5031,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 319,
+                    "line_number": 320,
                     "bases": [],
                     "children": []
                   },
@@ -5051,7 +5051,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 333,
+                    "line_number": 334,
                     "bases": [],
                     "children": []
                   }
@@ -10036,7 +10036,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 26,
+            "line_number": 27,
             "bases": [],
             "children": []
           },
@@ -10056,7 +10056,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 40,
+            "line_number": 41,
             "bases": [],
             "children": []
           },
@@ -10076,7 +10076,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 49,
+            "line_number": 50,
             "bases": [],
             "children": []
           },
@@ -10096,7 +10096,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 54,
+            "line_number": 55,
             "bases": [
               "logging.Filter"
             ],
@@ -10117,7 +10117,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 64,
+                "line_number": 65,
                 "bases": [],
                 "children": []
               }
@@ -39882,8 +39882,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "3a6695aacb5ee9f361fbd55975f9211f61b72580 (dirty)",
-    "generated_at": "2026-09-07T16:11:26.547752+00:00",
-    "project_hash": "076ad88886c786720934b57348263bf5b51b5b4a2dccf6022e72a79fc50d2743"
+    "git_commit": "b6d092d2d380054e7736e19f94e71305d3b128fd (dirty)",
+    "generated_at": "2026-09-07T16:16:42.215484+00:00",
+    "project_hash": "1b1a0e76b24d044b2a4488a821de6f137353e070ee06d4047a6b742e2f3eaa46"
   }
 }
