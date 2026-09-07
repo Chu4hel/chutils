@@ -80,49 +80,53 @@ class SecurityHardcodeRule(Rule):
                             for target in node.targets:
                                 if isinstance(target, ast.Name):
                                     var_name = target.id.lower()
-                                    if any(
-                                        k in var_name
-                                        for k in (
-                                            "key",
-                                            "secret",
-                                            "password",
-                                            "token",
-                                            "pwd",
+                                    if (
+                                        any(
+                                            k in var_name
+                                            for k in (
+                                                "key",
+                                                "secret",
+                                                "password",
+                                                "token",
+                                                "pwd",
+                                            )
                                         )
+                                        and isinstance(node.value, ast.Constant)
+                                        and isinstance(node.value.value, str)
                                     ):
-                                        if isinstance(
-                                            node.value, ast.Constant
-                                        ) and isinstance(node.value.value, str):
-                                            val = node.value.value
-                                            if (
-                                                val
-                                                and len(val) > 8
-                                                and not any(
-                                                    p in val.lower()
-                                                    for p in (
-                                                        "placeholder",
-                                                        "test",
-                                                        "your_",
-                                                        "default",
-                                                        "env",
-                                                        "config",
-                                                        "_key",
-                                                        "_token",
-                                                        "_password",
-                                                        "_pwd",
-                                                    )
+                                        val = node.value.value
+                                        if (
+                                            val
+                                            and len(val) > 8
+                                            and not any(
+                                                p in val.lower()
+                                                for p in (
+                                                    "placeholder",
+                                                    "test",
+                                                    "your_",
+                                                    "default",
+                                                    "env",
+                                                    "config",
+                                                    "_key",
+                                                    "_token",
+                                                    "_password",
+                                                    "_pwd",
                                                 )
-                                            ):
-                                                results.append(
-                                                    LintResult(
-                                                        rule_name=self.name,
-                                                        message=f"Обнаружено жестко заданное значение для секретной переменной '{target.id}'.",
-                                                        severity=self.severity,
-                                                        file_path=file_path,
-                                                        line_number=node.lineno,
-                                                        fix_suggestion=f"Не храните секреты в кодовой базе. Перенесите '{target.id}' в окружение.",
-                                                    )
+                                            )
+                                        ):
+                                            results.append(
+                                                LintResult(
+                                                    rule_name=self.name,
+                                                    message=(
+                                                        f"Возможная утечка секрета в переменной '{target.id}'. "
+                                                        "Рекомендуется использовать 'chutils.secret_manager'."
+                                                    ),
+                                                    severity=self.severity,
+                                                    file_path=file_path,
+                                                    line_number=node.lineno,
+                                                    fix_suggestion="Используйте SecretManager.get_secret() или переменные окружения.",
                                                 )
+                                            )
                 except Exception:
                     pass
         return results

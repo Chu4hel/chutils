@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
-from typing import Any
+from typing import Any, cast
+
+from typing_extensions import Self
 
 logger = logging.getLogger("chutils.plugins")
 
@@ -19,11 +21,11 @@ class PluginRegistry:
     _instance: PluginRegistry | None = None
     _initialized: bool = False
 
-    def __new__(cls) -> PluginRegistry:
+    def __new__(cls) -> Self:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._initialized = False
-        return cls._instance
+        return cast(Self, cls._instance)
 
     def __init__(self) -> None:
         """Инициализирует PluginRegistry."""
@@ -122,12 +124,11 @@ class PluginRegistry:
 
                 self.register(plugin_instance)
             except Exception as e:
-                logger.error(
+                logger.exception(
                     "Не удалось загрузить плагин '%s' из entry_point '%s': %s",
                     ep.name,
                     ep.value,
                     str(e),
-                    exc_info=True,
                 )
 
         self._loaded_groups.add(group)

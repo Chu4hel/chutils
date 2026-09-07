@@ -159,15 +159,15 @@ class Container:
                 found = self._find_provider(dependency_type)
 
             # Автоматическая регистрация конкретных классов (Auto-wiring)
-            if found is None:
-                if isinstance(dependency_type, type) and not inspect.isabstract(
-                    dependency_type
-                ):
-                    # Проверяем, что класс не является стандартным примитивом
-                    if dependency_type.__module__ != "builtins":
-                        self.register(dependency_type)
-                        with self._lock:
-                            found = self._find_provider(dependency_type)
+            if (
+                found is None
+                and isinstance(dependency_type, type)
+                and not inspect.isabstract(dependency_type)
+                and dependency_type.__module__ != "builtins"
+            ):
+                self.register(dependency_type)
+                with self._lock:
+                    found = self._find_provider(dependency_type)
 
             if found is None:
                 raise DependencyNotFoundError(
@@ -359,12 +359,18 @@ def _make_inject_decorator(
             # 2. Или параметр не имеет значения по умолчанию, но его тип зарегистрирован в контейнере
             if is_explicit_inject:
                 injectable_params.append((name, param))
-            elif param.default is inspect.Parameter.empty and has_annotation:
-                if target_container.has_provider(param.annotation) or (
-                    inspect.isclass(param.annotation)
-                    and not inspect.isabstract(param.annotation)
-                ):
-                    injectable_params.append((name, param))
+            elif (
+                param.default is inspect.Parameter.empty
+                and has_annotation
+                and (
+                    target_container.has_provider(param.annotation)
+                    or (
+                        inspect.isclass(param.annotation)
+                        and not inspect.isabstract(param.annotation)
+                    )
+                )
+            ):
+                injectable_params.append((name, param))
 
         if not injectable_params:
             return func

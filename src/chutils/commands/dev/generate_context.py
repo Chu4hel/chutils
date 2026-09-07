@@ -181,10 +181,10 @@ class GenerateContextSubCommand(SubCommand):
                         not inspect.isclass(obj)
                         and not inspect.isfunction(obj)
                         and not inspect.ismodule(obj)
+                        and isinstance(obj, (bool, int, float, str, type(None)))
+                        and doc == inspect.getdoc(type(obj))
                     ):
-                        if isinstance(obj, (bool, int, float, str, type(None))):
-                            if doc == inspect.getdoc(type(obj)):
-                                doc = ""
+                        doc = ""
 
                     summary = doc.split("\n")[0] if doc else ""
 

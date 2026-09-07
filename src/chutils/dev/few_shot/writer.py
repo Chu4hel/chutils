@@ -270,9 +270,8 @@ def update_ai_manifests(
     found_manifests: list[Path] = []
     try:
         for p in project_root.iterdir():
-            if p.is_file():
-                if p.name.lower() in [m.lower() for m in AI_MANIFEST_FILENAMES]:
-                    found_manifests.append(p)
+            if p.is_file() and p.name.lower() in [m.lower() for m in AI_MANIFEST_FILENAMES]:
+                found_manifests.append(p)
     except Exception as e:
         _warn(f"Ошибка сканирования корня проекта: {e}")
         return False

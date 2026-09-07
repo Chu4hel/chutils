@@ -5,7 +5,10 @@ import inspect
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import time
 from collections.abc import Callable
+from types import TracebackType
 from typing import Any, TypeVar
+
+from typing_extensions import Self
 
 from chutils.telegram.access import _extract_user_info
 from chutils.telegram.rate_limit import _extract_chat_id
@@ -42,7 +45,7 @@ class trace_telegram_update:
         self.logger = logger_instance or logger
         self.start_time: float = 0.0
 
-    def __enter__(self) -> trace_telegram_update:
+    def __enter__(self) -> Self:
         self.start_time = time.perf_counter()
         uid, uname = (
             _extract_user_info((self.event,), {}) if self.event else (None, None)
@@ -55,22 +58,32 @@ class trace_telegram_update:
         )
         return self
 
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         duration_ms = round((time.perf_counter() - self.start_time) * 1000, 2)
         if exc_val is not None:
             self.logger.error(
                 f"Error processing Telegram update in {duration_ms}ms: {exc_val}",
-                exc_info=(exc_type, exc_val, exc_tb),
+                exc_info=exc_val,
             )
         else:
             self.logger.info(
                 f"Telegram update processed successfully in {duration_ms}ms"
             )
 
-    async def __aenter__(self) -> trace_telegram_update:
+    async def __aenter__(self) -> Self:
         return self.__enter__()
 
-    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         self.__exit__(exc_type, exc_val, exc_tb)
 
     def __call__(self, func: F) -> F:

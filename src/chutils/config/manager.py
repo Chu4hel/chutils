@@ -10,7 +10,9 @@ import threading
 import time
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
+
+from typing_extensions import Self
 
 from chutils.typing import JSONDict
 
@@ -77,14 +79,14 @@ class _ConfigManager:
         ".windsurfrules",
     ]
 
-    def __new__(cls) -> _ConfigManager:
+    def __new__(cls) -> Self:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._lock = threading.RLock()
             cls._instance._loading_lock = threading.RLock()
             cls._instance._file_lock = threading.RLock()
             cls._instance._reset()
-        return cls._instance
+        return cast(Self, cls._instance)
 
     def _reset(self) -> None:
         """Сбрасывает состояние менеджера (полезно для тестов)."""

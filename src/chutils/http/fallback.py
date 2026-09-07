@@ -20,6 +20,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
+from typing_extensions import Self
+
 if TYPE_CHECKING:
     from chutils.logger import ChutilsLogger
 
@@ -480,7 +482,7 @@ class UrllibFallbackClient:
     def close(self) -> None:
         """Закрывает клиент (no-op для urllib-клиента, для совместимости API)."""
 
-    def __enter__(self) -> UrllibFallbackClient:
+    def __enter__(self) -> Self:
         """Поддержка контекстного менеджера.
 
         Returns:

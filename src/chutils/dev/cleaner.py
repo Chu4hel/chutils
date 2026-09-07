@@ -187,13 +187,12 @@ def scan_project(
         # Проверяем файлы
         for f in files:
             file_path = root_path / f
-            if match_pattern(f, target_patterns):
-                if file_path not in visited_paths:
-                    visited_paths.add(file_path)
-                    size = get_path_size(file_path)
-                    found_items.append(
-                        CleanItem(path=file_path, size_bytes=size, is_dir=False)
-                    )
+            if match_pattern(f, target_patterns) and file_path not in visited_paths:
+                visited_paths.add(file_path)
+                size = get_path_size(file_path)
+                found_items.append(
+                    CleanItem(path=file_path, size_bytes=size, is_dir=False)
+                )
 
     return found_items
 

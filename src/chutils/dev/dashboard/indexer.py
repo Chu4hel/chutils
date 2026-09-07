@@ -148,9 +148,8 @@ class CLICommandDiscoverer:
         commands: list[CLICommandInfo] = []
 
         for node in ast.walk(tree):
-            if isinstance(node, ast.FunctionDef):
-                if self._has_cli_decorator(node):
-                    commands.append(self._extract_command_info(node, file_path))
+            if isinstance(node, ast.FunctionDef) and self._has_cli_decorator(node):
+                commands.append(self._extract_command_info(node, file_path))
 
         return commands
 

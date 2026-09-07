@@ -14,7 +14,10 @@ import signal
 import sys
 import time
 from collections.abc import Awaitable, Callable
-from typing import TYPE_CHECKING, Any, Union, cast
+from types import TracebackType
+from typing import TYPE_CHECKING, Any, cast
+
+from typing_extensions import Self
 
 from chutils.config import get_config_int
 
@@ -23,7 +26,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
-CleanupCallback = Union[Callable[[], Any], Callable[[], Awaitable[Any]]]
+CleanupCallback = Callable[[], Any] | Callable[[], Awaitable[Any]]
 """Тип для функций очистки."""
 
 
@@ -202,11 +205,10 @@ class LifecycleManager:
                     func.__name__ if hasattr(func, "__name__") else str(func),
                 )
             except Exception as e:
-                logger.error(
+                logger.exception(
                     "Ошибка при выполнении функции очистки %s: %s",
                     func.__name__ if hasattr(func, "__name__") else str(func),
                     e,
-                    exc_info=True,
                 )
 
     def _clear_registry(self) -> None:
@@ -297,7 +299,7 @@ class AsyncLifecycleContext:
         self.auto_cleanup_subsystems = auto_cleanup_subsystems
         self._mgr = manager or _manager
 
-    def __enter__(self) -> AsyncLifecycleContext:
+    def __enter__(self) -> Self:
         """Вход в синхронный контекстный менеджер."""
         if self.setup_signals:
             self._mgr.setup_graceful_shutdown()
@@ -307,7 +309,7 @@ class AsyncLifecycleContext:
         self,
         exc_type: type[BaseException] | None,
         exc_val: BaseException | None,
-        exc_tb: Any | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         """Выход из синхронного контекстного менеджера."""
         try:
@@ -316,7 +318,7 @@ class AsyncLifecycleContext:
             if self.setup_signals:
                 self._mgr.restore_signals()
 
-    async def __aenter__(self) -> AsyncLifecycleContext:
+    async def __aenter__(self) -> Self:
         """Вход в асинхронный контекстный менеджер."""
         if self.setup_signals:
             self._mgr.setup_graceful_shutdown()
@@ -326,7 +328,7 @@ class AsyncLifecycleContext:
         self,
         exc_type: type[BaseException] | None,
         exc_val: BaseException | None,
-        exc_tb: Any | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         """Выход из асинхронного контекстного менеджера."""
         try:

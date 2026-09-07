@@ -87,7 +87,7 @@ class TemplateCommand(BaseCommand):
             model_class = getattr(module, class_name)
         except (ImportError, AttributeError, CommandError) as e:
             if isinstance(e, CommandError):
-                raise e
+                raise
             raise CommandError(
                 f"Не удалось импортировать модель '{args.model}': {e}",
                 hint="Убедитесь, что модуль существует и путь к классу указан верно.",

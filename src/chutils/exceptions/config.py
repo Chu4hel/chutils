@@ -1,5 +1,7 @@
 import typing as t
 
+from typing_extensions import Self
+
 from .base import ChutilsException, _BaseExceptionGroup
 
 
@@ -24,7 +26,7 @@ class ConfigValidationGroupError(_BaseExceptionGroup, ConfigError):
 
     def __new__(
         cls, message: str, exceptions: list[Exception], **context: t.Any
-    ) -> "ConfigValidationGroupError":
+    ) -> Self:
         # BaseExceptionGroup неизменяем, поэтому конструируем его через __new__
         self = _BaseExceptionGroup.__new__(cls, message, exceptions)
         return self

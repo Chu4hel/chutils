@@ -476,9 +476,9 @@ def get_config_path(
             from chutils.fs import resolve_safe_path
 
             return str(resolve_safe_path(path_str, base_dir))
-        except PathTraversalError as e:
+        except PathTraversalError:
             # Пробрасываем исключение безопасности выше для перехвата в CLI
-            raise e
+            raise
         except Exception as e:
             logger.error("Ошибка при разрешении пути '%s': %s", path_str, e)
             return fallback

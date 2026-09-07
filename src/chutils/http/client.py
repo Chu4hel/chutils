@@ -17,6 +17,8 @@ from __future__ import annotations
 import importlib.util
 from typing import TYPE_CHECKING, Any
 
+from typing_extensions import Self
+
 from .fallback import _SENSITIVE_HEADERS, HttpResponse, UrllibFallbackClient
 
 if TYPE_CHECKING:
@@ -423,7 +425,7 @@ class HttpClient:
         if self._fallback is not None:
             self._fallback.close()
 
-    def __enter__(self) -> HttpClient:
+    def __enter__(self) -> Self:
         """Поддержка контекстного менеджера.
 
         Returns:
@@ -736,7 +738,7 @@ class AsyncHttpClient:
                 pass
             self._async_client = None
 
-    async def __aenter__(self) -> AsyncHttpClient:
+    async def __aenter__(self) -> Self:
         """Поддержка async-контекстного менеджера.
 
         Returns:

@@ -5,16 +5,14 @@ import re
 import shutil
 import sys
 import typing as t
-from typing import Any, Union
+from typing import Any
 
 from .env import RICH_AVAILABLE, is_rich_enabled
 
 if t.TYPE_CHECKING:
     from rich.console import Console as _RichConsole
-
-    ConsoleLike = Union[_RichConsole, "FallbackConsole"]
 else:
-    ConsoleLike = Any
+    _RichConsole = Any  # type: ignore[misc, assignment]
 
 if RICH_AVAILABLE:
     from rich.console import Console
@@ -120,6 +118,8 @@ class FallbackConsole:
         f = sys.stderr if self._is_stderr else sys.stdout
         print(f"\n--- {title} ---\n", file=f)
 
+
+ConsoleLike = _RichConsole | FallbackConsole
 
 _console: ConsoleLike | None = None
 _err_console: ConsoleLike | None = None

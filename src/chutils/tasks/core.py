@@ -199,17 +199,16 @@ class TaskScheduler:
 
         while not self._shutdown_event.is_set():
             # Проверка перекрытия (overlapping)
-            if not task.overlap:
-                if self._locks[task.name].locked():
-                    logger.warning(
-                        "Запуск задачи '%s' пропущен, так как предыдущее выполнение еще не завершено.",
-                        task.name,
-                    )
-                    try:
-                        await asyncio.sleep(task.get_interval())
-                    except asyncio.CancelledError:
-                        break
-                    continue
+            if not task.overlap and self._locks[task.name].locked():
+                logger.warning(
+                    "Запуск задачи '%s' пропущен, так как предыдущее выполнение еще не завершено.",
+                    task.name,
+                )
+                try:
+                    await asyncio.sleep(task.get_interval())
+                except asyncio.CancelledError:
+                    break
+                continue
 
             # Локальная обертка для выполнения
             async def execute_and_handle_errors() -> None:

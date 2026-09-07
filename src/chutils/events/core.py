@@ -74,11 +74,10 @@ async def _run_and_log_errors(
     try:
         await coro
     except Exception as e:
-        logger.error(
+        logger.exception(
             "Ошибка в асинхронном фоновом обработчике события %s: %s",
             event_name,
             e,
-            exc_info=True,
         )
 
 
@@ -194,15 +193,14 @@ class EventBus:
                     func(*args, **kwargs)
                 except Exception as e:
                     if strategy == ErrorStrategy.FAIL_FAST:
-                        raise e
+                        raise
                     elif strategy == ErrorStrategy.COLLECT:
                         sync_errors.append(e)
                     else:  # IGNORE
-                        logger.error(
+                        logger.exception(
                             "Ошибка в синхронном обработчике события %s: %s",
                             event_name,
                             e,
-                            exc_info=True,
                         )
 
         if strategy == ErrorStrategy.COLLECT and sync_errors:

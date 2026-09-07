@@ -172,9 +172,8 @@ if PYDANTIC_AVAILABLE:
                                 if isinstance(extra, dict):
                                     is_secret = extra.get("secret") is True
 
-                                if is_secret:
-                                    if "input" in masked_err:
-                                        masked_err["input"] = "***"
+                                if is_secret and "input" in masked_err:
+                                    masked_err["input"] = "***"
                         masked_errors.append(masked_err)
 
                     raise EnvValidationError(
@@ -182,7 +181,7 @@ if PYDANTIC_AVAILABLE:
                         errors=masked_errors,
                         hint="Убедитесь, что все обязательные переменные окружения установлены и имеют корректные значения.",
                     ) from e
-                raise e
+                raise
 else:
 
     class BaseEnvManifest:

@@ -49,15 +49,18 @@ class ChutilsIntegrationRule(Rule):
             # Предварительный сбор вызовов tempfile в файле
             has_tempfile_call = False
             for subnode in ast.walk(tree):
-                if isinstance(subnode, ast.Call):
-                    if (
+                if isinstance(subnode, ast.Call) and (
+                    (
                         isinstance(subnode.func, ast.Attribute)
                         and subnode.func.attr in ("NamedTemporaryFile", "mkstemp")
-                        or isinstance(subnode.func, ast.Name)
+                    )
+                    or (
+                        isinstance(subnode.func, ast.Name)
                         and subnode.func.id in ("NamedTemporaryFile", "mkstemp")
-                    ):
-                        has_tempfile_call = True
-                        break
+                    )
+                ):
+                    has_tempfile_call = True
+                    break
 
             for node in ast.walk(tree):
                 # Проверка импорта logging/keyring/requests/httpx

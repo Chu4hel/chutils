@@ -240,34 +240,33 @@ def _parse_pyproject_toml_fallback(path: str) -> JSONDict:
                 in_section = False
             continue
 
-        if in_section:
-            if "=" in line:
-                key, val_str = line.split("=", 1)
-                key = key.strip()
-                val_str = val_str.strip()
+        if in_section and "=" in line:
+            key, val_str = line.split("=", 1)
+            key = key.strip()
+            val_str = val_str.strip()
 
-                # Парсим базовые типы (bool, int, float, list, str)
-                try:
-                    val = ast.literal_eval(val_str)
-                    result[key] = val
-                except Exception:
-                    if val_str.lower() == "true":
-                        result[key] = True
-                    elif val_str.lower() == "false":
-                        result[key] = False
-                    elif val_str.startswith("[") and val_str.endswith("]"):
-                        items = [
-                            item.strip(" '\"")
-                            for item in val_str[1:-1].split(",")
-                            if item.strip()
-                        ]
-                        result[key] = items
-                    elif (val_str.startswith('"') and val_str.endswith('"')) or (
-                        val_str.startswith("'") and val_str.endswith("'")
-                    ):
-                        result[key] = val_str[1:-1]
-                    else:
-                        result[key] = val_str
+            # Парсим базовые типы (bool, int, float, list, str)
+            try:
+                val = ast.literal_eval(val_str)
+                result[key] = val
+            except Exception:
+                if val_str.lower() == "true":
+                    result[key] = True
+                elif val_str.lower() == "false":
+                    result[key] = False
+                elif val_str.startswith("[") and val_str.endswith("]"):
+                    items = [
+                        item.strip(" '\"")
+                        for item in val_str[1:-1].split(",")
+                        if item.strip()
+                    ]
+                    result[key] = items
+                elif (val_str.startswith('"') and val_str.endswith('"')) or (
+                    val_str.startswith("'") and val_str.endswith("'")
+                ):
+                    result[key] = val_str[1:-1]
+                else:
+                    result[key] = val_str
 
     return result
 

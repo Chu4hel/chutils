@@ -2,7 +2,10 @@ import functools
 import inspect
 import time
 from collections.abc import Callable
+from types import TracebackType
 from typing import Any, TypeVar
+
+from typing_extensions import Self
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -41,11 +44,16 @@ class TimerContext:
         self.labels = labels
         self.start_time: float | None = None
 
-    def __enter__(self) -> "TimerContext":
+    def __enter__(self) -> Self:
         self.start_time = time.perf_counter()
         return self
 
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         if self.start_time is not None:
             duration = time.perf_counter() - self.start_time
             _observe_lazy(self.name, duration, self.labels)

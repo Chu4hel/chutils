@@ -287,19 +287,18 @@ def get_config(
                         "Ошибка загрузки удаленной конфигурации с %s: %s", remote_url, e
                     )
 
-            if sse_url:
-                if not _cm.sse_client or _cm.sse_client.url != sse_url:
-                    if _cm.sse_client:
-                        _cm.sse_client.stop()
-                    from .sse import SseConfigClient
+            if sse_url and (not _cm.sse_client or _cm.sse_client.url != sse_url):
+                if _cm.sse_client:
+                    _cm.sse_client.stop()
+                from .sse import SseConfigClient
 
-                    sse_client = SseConfigClient(
-                        url=sse_url,
-                        headers=sse_headers,
-                        on_reload=_cm.trigger_reload,
-                    )
-                    _cm.sse_client = sse_client
-                    sse_client.start()
+                sse_client = SseConfigClient(
+                    url=sse_url,
+                    headers=sse_headers,
+                    on_reload=_cm.trigger_reload,
+                )
+                _cm.sse_client = sse_client
+                sse_client.start()
 
             # 5. Переменные окружения (CH_SECTION_KEY)
             # chutils: ignore[ChutilsIntegrationRule]

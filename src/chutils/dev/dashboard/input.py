@@ -6,6 +6,8 @@ from __future__ import annotations
 
 import sys
 
+from typing_extensions import Self
+
 
 class RawTerminalUnix:
     """Контекстный менеджер для перевода Unix терминала в raw режим."""
@@ -17,7 +19,7 @@ class RawTerminalUnix:
         self.fd = sys.stdin.fileno()
         self.old_settings = getattr(termios, "tcgetattr")(self.fd)
 
-    def __enter__(self) -> RawTerminalUnix:
+    def __enter__(self) -> Self:
         """Включает raw режим для терминала."""
         import tty
 
@@ -41,7 +43,7 @@ class InputReader:
         self.is_win = sys.platform == "win32"
         self.raw_term: RawTerminalUnix | None = None
 
-    def __enter__(self) -> InputReader:
+    def __enter__(self) -> Self:
         """Входит в контекст, подготавливая терминал (для Unix)."""
         if not self.is_win:
             self.raw_term = RawTerminalUnix()

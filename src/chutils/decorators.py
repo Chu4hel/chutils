@@ -548,21 +548,20 @@ class CircuitBreakerState:
         with self._lock:
             self.failure_count += 1
             self.last_failure_time = time.time()
-            if self.state in ("CLOSED", "HALF_OPEN"):
-                if (
-                    self.state == "HALF_OPEN"
-                    or self.failure_count >= self.failure_threshold
-                ):
-                    logger = _get_logger()
-                    logger.warning(
-                        "CircuitBreaker [%s]: цепь разомкнута (OPEN). Ошибка: %s: %s. Блокировка на %s сек.",
-                        self.name,
-                        type(exc).__name__,
-                        exc,
-                        self.recovery_timeout,
-                    )
-                    self.state = "OPEN"
-                    self._report_metrics_state()
+            if self.state in ("CLOSED", "HALF_OPEN") and (
+                self.state == "HALF_OPEN"
+                or self.failure_count >= self.failure_threshold
+            ):
+                logger = _get_logger()
+                logger.warning(
+                    "CircuitBreaker [%s]: цепь разомкнута (OPEN). Ошибка: %s: %s. Блокировка на %s сек.",
+                    self.name,
+                    type(exc).__name__,
+                    exc,
+                    self.recovery_timeout,
+                )
+                self.state = "OPEN"
+                self._report_metrics_state()
             self._half_open_in_progress = False
 
     def _report_metrics_state(self) -> None:
@@ -644,7 +643,7 @@ def circuit_breaker(
                     return res
                 except Exception as e:
                     state.record_failure(e)
-                    raise e
+                    raise
 
             return cast(Callable[P, R], async_wrapper)
         else:
@@ -661,7 +660,7 @@ def circuit_breaker(
                     return res
                 except Exception as e:
                     state.record_failure(e)
-                    raise e
+                    raise
 
             return sync_wrapper
 

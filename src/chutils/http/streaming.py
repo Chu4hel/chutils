@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from types import TracebackType
 from typing import Any
 
+from typing_extensions import Self
+
 import httpx  # chutils: ignore[ChutilsIntegrationRule]
 
 from chutils.exceptions import OptionalDependencyError
@@ -154,7 +156,7 @@ class AsyncEventStreamClient:
         self._reconnect_strategy_input = reconnect_strategy
         self._client: httpx.AsyncClient | None = None
 
-    async def __aenter__(self) -> AsyncEventStreamClient:
+    async def __aenter__(self) -> Self:
         self._client = httpx.AsyncClient(timeout=self.timeout)
         await self._client.__aenter__()
         return self
@@ -247,7 +249,7 @@ class EventStreamClient:
         self._reconnect_strategy_input = reconnect_strategy
         self._client: httpx.Client | None = None
 
-    def __enter__(self) -> EventStreamClient:
+    def __enter__(self) -> Self:
         self._client = httpx.Client(timeout=self.timeout)
         self._client.__enter__()
         return self
@@ -355,7 +357,7 @@ class AsyncWebSocketClient:
         if self._delay_iter is None:
             self._reset_reconnect_strategy()
 
-    async def __aenter__(self) -> AsyncWebSocketClient:
+    async def __aenter__(self) -> Self:
         await self.connect()
         return self
 
@@ -476,7 +478,7 @@ class WebSocketClient:
         if self._delay_iter is None:
             self._reset_reconnect_strategy()
 
-    def __enter__(self) -> WebSocketClient:
+    def __enter__(self) -> Self:
         self.connect()
         return self
 

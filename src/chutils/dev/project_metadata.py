@@ -207,21 +207,12 @@ def save_context_metadata_cache(
     import json
     import sys
 
-    if "pytest" in sys.modules:
-        # Не пишем на реальный диск из тестов
-        if (
-            "pytest-" in str(output_file)
-            or "Temp" in str(output_file)
-            or "temp" in str(output_file)
-            or "tmp" in str(output_file)
-        ):
-            if (
-                "pytest-" not in str(project_path)
-                and "Temp" not in str(project_path)
-                and "temp" not in str(project_path)
-                and "tmp" not in str(project_path)
-            ):
-                return
+    if (
+        "pytest" in sys.modules
+        and any(t in str(output_file) for t in ("pytest-", "Temp", "temp", "tmp"))
+        and not any(t in str(project_path) for t in ("pytest-", "Temp", "temp", "tmp"))
+    ):
+        return
 
     chutils_dir = project_path / ".chutils"
     try:

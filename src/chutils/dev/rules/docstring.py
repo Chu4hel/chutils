@@ -97,9 +97,8 @@ class DocstringVisitor(ast.NodeVisitor):
         old_class_doc = self._current_class_doc
         self._current_class_doc = ast.get_docstring(node)
 
-        if not node.name.startswith("_"):
-            if not self._current_class_doc:
-                self.issues.append(
+        if not node.name.startswith("_") and not self._current_class_doc:
+            self.issues.append(
                     LintResult(
                         rule_name=self.rule_name,
                         message=f"У публичного класса {node.name} отсутствует docstring.",

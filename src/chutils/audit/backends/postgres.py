@@ -16,6 +16,7 @@ from chutils.audit.backends.base import BaseAuditBackend
 
 if TYPE_CHECKING:
     from typing import Any, Protocol
+    from typing_extensions import Self
 
     class _DBAPICursor(Protocol):
         def execute(
@@ -24,19 +25,19 @@ if TYPE_CHECKING:
             """Выполняет SQL-запрос.
 
             Args:
-                query: Строка SQL-запроса.
-                params: Опциональные параметры запроса.
+                query: Текст SQL-запроса.
+                params: Параметры запроса (кортеж или словарь).
 
             Returns:
-                Результат выполнения запроса.
+                Результат выполнения запроса драйвером.
             """
             ...
 
-        def fetchone(self) -> Any:
-            """Возвращает одну строку результата.
+        def fetchone(self) -> tuple[Any, ...] | None:
+            """Возвращает одну строку результата или None.
 
             Returns:
-                Одна строка из результата запроса.
+                Кортеж значений строки или None, если данных нет.
             """
             ...
 
@@ -48,7 +49,7 @@ if TYPE_CHECKING:
             """
             ...
 
-        def __enter__(self) -> _DBAPICursor: ...
+        def __enter__(self) -> Self: ...
 
         def __exit__(
             self, exc_type: object, exc_val: object, exc_tb: object

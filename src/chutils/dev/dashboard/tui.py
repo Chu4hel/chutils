@@ -334,9 +334,8 @@ class DashboardTUI:
                 self.selected_cmd_idx += 1
         elif key in ("f", "F"):
             self.mode = "search"
-        elif key == "enter":
-            if self.filtered_commands:
-                self._enter_form_mode()
+        elif key == "enter" and self.filtered_commands:
+            self._enter_form_mode()
         return True
 
     def _handle_search_key(self, key: str) -> None:

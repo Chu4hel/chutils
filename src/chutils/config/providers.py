@@ -41,10 +41,10 @@ def _atomic_write(path: str, content_writer_func: Callable[[TextIO], None]) -> N
 
         # Атомарная замена (на Windows заменит существующий файл)
         os.replace(temp_path, path)  # chutils: ignore[ChutilsIntegrationRule]
-    except Exception as e:
+    except Exception:
         if os.path.exists(temp_path):
             os.remove(temp_path)
-        raise e
+        raise
 
 
 class ConfigProvider(ABC):
@@ -423,7 +423,7 @@ class HttpConfigProvider:
                     "Не удалось обновить удаленный конфиг (%s). Используем кэш.", e
                 )
                 return self._cache
-            raise e
+            raise
 
     def start_polling(self, interval: int = 60) -> None:
         """
@@ -486,14 +486,17 @@ class HttpConfigProvider:
                     if isinstance(remote_meta, dict):
                         dynamic_interval = remote_meta.get("interval")
 
-                if isinstance(dynamic_interval, (int, float)) and dynamic_interval > 0:
-                    if float(dynamic_interval) != f_interval:
-                        logger.info(
-                            "Интервал опроса изменен динамически: %ss -> %ss",
-                            f_interval,
-                            dynamic_interval,
-                        )
-                        f_interval = float(dynamic_interval)
+                if (
+                    isinstance(dynamic_interval, (int, float))
+                    and dynamic_interval > 0
+                    and float(dynamic_interval) != f_interval
+                ):
+                    logger.info(
+                        "Интервал опроса изменен динамически: %ss -> %ss",
+                        f_interval,
+                        dynamic_interval,
+                    )
+                    f_interval = float(dynamic_interval)
 
             except Exception as e:
                 logger.error(

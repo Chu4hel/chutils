@@ -40,9 +40,8 @@ class APIMapRule(Rule):
 
         # Если включен режим staged, проверяем, изменились ли Python-файлы.
         # Если изменений нет, пропускаем проверку.
-        if getattr(self, "staged", False):
-            if not any(f.endswith(".py") for f in files):
-                return results
+        if getattr(self, "staged", False) and not any(f.endswith(".py") for f in files):
+            return results
 
         targets = []
         cache_path = base_path / ".chutils" / "context_metadata.json"
@@ -105,10 +104,10 @@ class APIMapRule(Rule):
                         not inspect.isclass(obj)
                         and not inspect.isfunction(obj)
                         and not inspect.ismodule(obj)
+                        and isinstance(obj, (bool, int, float, str, type(None)))
+                        and doc == inspect.getdoc(type(obj))
                     ):
-                        if isinstance(obj, (bool, int, float, str, type(None))):
-                            if doc == inspect.getdoc(type(obj)):
-                                doc = ""
+                        doc = ""
 
                     summary = doc.split("\n")[0] if doc else ""
 
@@ -353,9 +352,8 @@ class APIMapHashRule(Rule):
 
         # Если включен режим staged, проверяем, изменились ли Python-файлы.
         # Если изменений нет, пропускаем проверку.
-        if getattr(self, "staged", False):
-            if not any(f.endswith(".py") for f in files):
-                return results
+        if getattr(self, "staged", False) and not any(f.endswith(".py") for f in files):
+            return results
 
         targets = []
         cache_path = base_path / ".chutils" / "context_metadata.json"

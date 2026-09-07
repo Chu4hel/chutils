@@ -28,7 +28,6 @@ import functools
 import inspect
 from collections.abc import Callable, Generator
 from contextlib import contextmanager
-from typing import Union
 
 # ---------------------------------------------------------------------------
 # Вспомогательный класс контекста
@@ -102,8 +101,8 @@ def audit_context(
 # audit_event — декоратор
 # ---------------------------------------------------------------------------
 
-_ActorOrCallable = Union[str, Callable[..., str]]
-_TargetOrCallable = Union[str, Callable[..., str], None]
+_ActorOrCallable = str | Callable[..., str]
+_TargetOrCallable = str | Callable[..., str] | None
 
 
 def audit_event(
