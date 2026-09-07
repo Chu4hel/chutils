@@ -20,8 +20,8 @@ from ..logger import setup_logger
 
 logger = setup_logger()
 
-# Проверяем доступность библиотеки watchdog
 HAS_WATCHDOG: bool = importlib.util.find_spec("watchdog") is not None
+"""Флаг доступности библиотеки watchdog в текущем окружении."""
 
 DEFAULT_EXTENSIONS = ["py", "yaml", "yml", "json", "toml", "ini"]
 DEFAULT_IGNORE_PATTERNS = [

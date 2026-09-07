@@ -405,9 +405,9 @@ class MockServerRunner:
         Args:
             message: Текст лог-сообщения.
         """
-        from datetime import datetime, timezone
+        from chutils.time import utc_now
 
-        time_str = datetime.now(timezone.utc).astimezone().strftime("%H:%M:%S")
+        time_str = utc_now().astimezone().strftime("%H:%M:%S")
         self.console.print(f"[dim][{time_str}][/dim] {message}")
 
     def load_config(self) -> None:
