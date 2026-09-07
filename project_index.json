@@ -6818,7 +6818,7 @@
             "type": "module",
             "layer": "internal",
             "summary": "Менеджер состояния конфигурации.",
-            "docstring": "Менеджер состояния конфигурации.\nИнкапсулирует глобальные переменные и логику инициализации путей.",
+            "docstring": "Менеджер состояния конфигурации.\nИнкапсулирует глобальные переменные и логику управления состоянием конфигурации.",
             "children": [],
             "symbols": [
               {
@@ -6837,7 +6837,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 21,
+                "line_number": 23,
                 "bases": [],
                 "children": []
               },
@@ -6847,7 +6847,7 @@
                 "layer": "private",
                 "signature": "",
                 "summary": "Менеджер состояния конфигурации (Синглтон).",
-                "docstring": "Менеджер состояния конфигурации (Синглтон).\nУправляет путями к файлам и кэшированием загруженного объекта конфигурации.",
+                "docstring": "Менеджер состояния конфигурации (Синглтон).\nУправляет путями к файлам, кэшированием, провайдерами и трассировкой.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -6857,8 +6857,11 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 24,
-                "bases": [],
+                "line_number": 26,
+                "bases": [
+                  ".paths._ConfigPathsMixin",
+                  ".tracing._ConfigTracingMixin"
+                ],
                 "children": [
                   {
                     "name": "_reset",
@@ -6876,7 +6879,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 91,
+                    "line_number": 60,
                     "bases": [],
                     "children": []
                   },
@@ -6896,7 +6899,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 138,
+                    "line_number": 103,
                     "bases": [],
                     "children": []
                   },
@@ -6916,7 +6919,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 150,
+                    "line_number": 115,
                     "bases": [],
                     "children": []
                   },
@@ -6938,7 +6941,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 160,
+                    "line_number": 125,
                     "bases": [],
                     "children": []
                   },
@@ -6960,7 +6963,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 165,
+                    "line_number": 130,
                     "bases": [],
                     "children": []
                   },
@@ -6982,7 +6985,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 170,
+                    "line_number": 135,
                     "bases": [],
                     "children": []
                   },
@@ -7004,7 +7007,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 175,
+                    "line_number": 140,
                     "bases": [],
                     "children": []
                   },
@@ -7026,7 +7029,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 180,
+                    "line_number": 145,
                     "bases": [],
                     "children": []
                   },
@@ -7048,7 +7051,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 185,
+                    "line_number": 150,
                     "bases": [],
                     "children": []
                   },
@@ -7068,7 +7071,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 189,
+                    "line_number": 154,
                     "bases": [],
                     "children": []
                   },
@@ -7088,7 +7091,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 228,
+                    "line_number": 193,
                     "bases": [],
                     "children": []
                   },
@@ -7108,263 +7111,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 235,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "tracing_enabled",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "property"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 251,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "tracing_enabled",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, value)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "tracing_enabled.setter"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 256,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "record_trace",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, section, key, value, source)",
-                    "summary": "Записывает историю изменения значения ключа.",
-                    "docstring": "Записывает историю изменения значения ключа.\n\nArgs:\n    section: Имя секции конфигурации.\n    key: Ключ внутри секции.\n    value: Устанавливаемое значение.\n    source: Источник изменения.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 262,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "get_trace",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "Возвращает собранные данные трассировки.",
-                    "docstring": "Возвращает собранные данные трассировки.\n\nReturns:\n    Словарь со всеми данными трассировки параметров.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 286,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "record_trace_dict",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, data, source)",
-                    "summary": "Записывает все значения из словаря в трассировку.",
-                    "docstring": "Записывает все значения из словаря в трассировку.\n\nArgs:\n    data: Данные конфигурации в формате словаря.\n    source: Имя источника конфигурации.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 297,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "trace_env_vars",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "Сканирует переменные окружения и записывает их в трассировку.",
-                    "docstring": "Сканирует переменные окружения и записывает их в трассировку.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 318,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "base_dir",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "property"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 362,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "base_dir",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, value)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "base_dir.setter"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 367,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "config_file_path",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "property"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 372,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "config_file_path",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, value)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "config_file_path.setter"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 377,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "paths_initialized",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "property"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 382,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "paths_initialized",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, value)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "paths_initialized.setter"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 387,
+                    "line_number": 200,
                     "bases": [],
                     "children": []
                   },
@@ -7386,7 +7133,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 392,
+                    "line_number": 216,
                     "bases": [],
                     "children": []
                   },
@@ -7408,7 +7155,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 397,
+                    "line_number": 221,
                     "bases": [],
                     "children": []
                   },
@@ -7430,7 +7177,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 402,
+                    "line_number": 226,
                     "bases": [],
                     "children": []
                   },
@@ -7452,7 +7199,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 407,
+                    "line_number": 231,
                     "bases": [],
                     "children": []
                   },
@@ -7474,7 +7221,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 412,
+                    "line_number": 236,
                     "bases": [],
                     "children": []
                   },
@@ -7496,7 +7243,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 417,
+                    "line_number": 241,
                     "bases": [],
                     "children": []
                   },
@@ -7518,7 +7265,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 422,
+                    "line_number": 246,
                     "bases": [],
                     "children": []
                   },
@@ -7540,51 +7287,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 427,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "features_file_path",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "property"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 432,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "features_file_path",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, value)",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "features_file_path.setter"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 437,
+                    "line_number": 251,
                     "bases": [],
                     "children": []
                   },
@@ -7606,7 +7309,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 442,
+                    "line_number": 256,
                     "bases": [],
                     "children": []
                   },
@@ -7628,7 +7331,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 447,
+                    "line_number": 261,
                     "bases": [],
                     "children": []
                   },
@@ -7650,7 +7353,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 452,
+                    "line_number": 266,
                     "bases": [],
                     "children": []
                   },
@@ -7672,7 +7375,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 457,
+                    "line_number": 271,
                     "bases": [],
                     "children": []
                   },
@@ -7692,7 +7395,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 461,
+                    "line_number": 275,
                     "bases": [],
                     "children": []
                   },
@@ -7712,7 +7415,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 471,
+                    "line_number": 285,
                     "bases": [],
                     "children": []
                   },
@@ -7732,7 +7435,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 481,
+                    "line_number": 295,
                     "bases": [],
                     "children": []
                   },
@@ -7752,7 +7455,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 497,
+                    "line_number": 311,
                     "bases": [],
                     "children": []
                   },
@@ -7772,7 +7475,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 502,
+                    "line_number": 316,
                     "bases": [],
                     "children": []
                   },
@@ -7792,67 +7495,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 511,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "initialize_paths",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, find_root_func)",
-                    "summary": "Инициализирует пути к корню проекта и основному файлу конфигурации.",
-                    "docstring": "Инициализирует пути к корню проекта и основному файлу конфигурации.\n\nИспользует loading_lock для предотвращения конкурентной инициализации.\n\nArgs:\n    find_root_func: Функция поиска корня проекта.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 526,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "get_config_paths",
-                    "type": "method",
-                    "layer": "public",
-                    "signature": "(self, cfg_file)",
-                    "summary": "Возвращает пути к основному и локальному файлам конфигурации (Legacy API).",
-                    "docstring": "Возвращает пути к основному и локальному файлам конфигурации (Legacy API).\n\nДля получения всех путей (включая env) используйте get_all_config_paths().\n\nArgs:\n    cfg_file: Явно указанный путь к основному файлу конфигурации.\n\nReturns:\n    Кортеж путей (основной, локальный).",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 578,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "get_all_config_paths",
-                    "type": "method",
-                    "layer": "public",
-                    "signature": "(self, cfg_file)",
-                    "summary": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.",
-                    "docstring": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.\n\nArgs:\n    cfg_file: Явно указанный путь к файлу конфигурации.\n\nReturns:\n    Кортеж (main_path, env_path, local_path).",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 594,
+                    "line_number": 325,
                     "bases": [],
                     "children": []
                   },
@@ -7872,7 +7515,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 646,
+                    "line_number": 340,
                     "bases": [],
                     "children": []
                   },
@@ -7892,7 +7535,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 653,
+                    "line_number": 347,
                     "bases": [],
                     "children": []
                   },
@@ -7912,7 +7555,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 659,
+                    "line_number": 353,
                     "bases": [],
                     "children": []
                   },
@@ -7932,7 +7575,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 686,
+                    "line_number": 377,
                     "bases": [],
                     "children": []
                   },
@@ -7952,7 +7595,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 713,
+                    "line_number": 401,
                     "bases": [],
                     "children": []
                   },
@@ -7972,7 +7615,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 717,
+                    "line_number": 405,
                     "bases": [],
                     "children": []
                   }
@@ -7994,9 +7637,317 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 722,
+                "line_number": 410,
                 "bases": [],
                 "children": []
+              }
+            ]
+          },
+          {
+            "name": "paths",
+            "path": "chutils/config/paths",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Миксин для управления путями конфигурации и поиска корня проекта.",
+            "docstring": "Миксин для управления путями конфигурации и поиска корня проекта.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "logger",
+                "type": "constant",
+                "layer": "public",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 14,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_ConfigPathsMixin",
+                "type": "class",
+                "layer": "private",
+                "signature": "",
+                "summary": "Миксин для управления путями к файлам конфигурации.",
+                "docstring": "Миксин для управления путями к файлам конфигурации.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 17,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "_init_paths",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Инициализирует состояние путей.",
+                    "docstring": "Инициализирует состояние путей.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 52,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "base_dir",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Базовая директория (корень проекта).",
+                    "docstring": "Базовая директория (корень проекта).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 60,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "base_dir",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "base_dir.setter"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 66,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "config_file_path",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Путь к основному файлу конфигурации.",
+                    "docstring": "Путь к основному файлу конфигурации.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 71,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "config_file_path",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "config_file_path.setter"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 77,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "features_file_path",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Путь к файлу фича-флагов.",
+                    "docstring": "Путь к файлу фича-флагов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 82,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "features_file_path",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "features_file_path.setter"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 88,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "paths_initialized",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Флаг инициализации путей.",
+                    "docstring": "Флаг инициализации путей.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 93,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "paths_initialized",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "paths_initialized.setter"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 99,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "initialize_paths",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, find_root_func)",
+                    "summary": "Инициализирует пути к корню проекта и основному файлу конфигурации.",
+                    "docstring": "Инициализирует пути к корню проекта и основному файлу конфигурации.\n\nИспользует loading_lock для предотвращения конкурентной инициализации.\n\nArgs:\n    find_root_func: Функция поиска корня проекта.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 103,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_config_paths",
+                    "type": "method",
+                    "layer": "public",
+                    "signature": "(self, cfg_file)",
+                    "summary": "Возвращает пути к основному и локальному файлам конфигурации (Legacy API).",
+                    "docstring": "Возвращает пути к основному и локальному файлам конфигурации (Legacy API).\n\nДля получения всех путей (включая env) используйте get_all_config_paths().\n\nArgs:\n    cfg_file: Явно указанный путь к основному файлу конфигурации.\n\nReturns:\n    Кортеж путей (основной, локальный).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 151,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_all_config_paths",
+                    "type": "method",
+                    "layer": "public",
+                    "signature": "(self, cfg_file)",
+                    "summary": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.",
+                    "docstring": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.\n\nArgs:\n    cfg_file: Явно указанный путь к файлу конфигурации.\n\nReturns:\n    Кортеж (main_path, env_path, local_path).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 167,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
               }
             ]
           },
@@ -8847,6 +8798,182 @@
                       "custom_metadata": {}
                     },
                     "line_number": 251,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "tracing",
+            "path": "chutils/config/tracing",
+            "type": "module",
+            "layer": "public",
+            "summary": "Миксин для трассировки параметров конфигурации.",
+            "docstring": "Миксин для трассировки параметров конфигурации.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_ConfigTracingMixin",
+                "type": "class",
+                "layer": "private",
+                "signature": "",
+                "summary": "Миксин для отслеживания истории изменений значений параметров конфигурации.",
+                "docstring": "Миксин для отслеживания истории изменений значений параметров конфигурации.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 15,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "_init_tracing",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Инициализирует состояние трассировки.",
+                    "docstring": "Инициализирует состояние трассировки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 22,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "tracing_enabled",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Флаг включения трассировки.",
+                    "docstring": "Флаг включения трассировки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 28,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "tracing_enabled",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, value)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "tracing_enabled.setter"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 34,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "record_trace",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, section, key, value, source)",
+                    "summary": "Записывает историю изменения значения ключа.",
+                    "docstring": "Записывает историю изменения значения ключа.\n\nArgs:\n    section: Имя секции конфигурации.\n    key: Ключ внутри секции.\n    value: Устанавливаемое значение.\n    source: Источник изменения.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 40,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_trace",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает собранные данные трассировки.",
+                    "docstring": "Возвращает собранные данные трассировки.\n\nReturns:\n    Словарь со всеми данными трассировки параметров.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 64,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "record_trace_dict",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, data, source)",
+                    "summary": "Записывает все значения из словаря в трассировку.",
+                    "docstring": "Записывает все значения из словаря в трассировку.\n\nArgs:\n    data: Данные конфигурации в формате словаря.\n    source: Имя источника конфигурации.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 73,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "trace_env_vars",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Сканирует переменные окружения и записывает их в трассировку.",
+                    "docstring": "Сканирует переменные окружения и записывает их в трассировку.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 91,
                     "bases": [],
                     "children": []
                   }
@@ -20279,6 +20406,218 @@
             ]
           },
           {
+            "name": "async_client",
+            "path": "chutils/http/async_client",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Модуль chutils.http.async_client — AsyncHttpClient.",
+            "docstring": "Модуль chutils.http.async_client — AsyncHttpClient.\n\nПредоставляет:\n- `AsyncHttpClient` — асинхронный HTTP-клиент на httpx (требует httpx).",
+            "children": [],
+            "symbols": [
+              {
+                "name": "AsyncHttpClient",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Асинхронный HTTP-клиент на базе httpx.AsyncClient.",
+                "docstring": "Асинхронный HTTP-клиент на базе httpx.AsyncClient.\n\nТребует установленного `httpx`. При его отсутствии вызывает\n`OptionalDependencyError` при инициализации.\n\nArgs:\n    base_url: Базовый URL-префикс для всех запросов.\n    default_headers: Заголовки по умолчанию.\n    timeout: Таймаут запросов в секундах.\n    policy: Политика отказоустойчивости.\n    sensitive_headers: Дополнительные заголовки для маскирования.\n\nExample:\n    ```python\n    from chutils.http import AsyncHttpClient, ResiliencePolicy\n\n    policy = ResiliencePolicy(retries=2, timeout=5.0)\n    async with AsyncHttpClient(\n        base_url=\"https://api.example.com\", policy=policy\n    ) as client:\n        resp = await client.get(\"/status\")\n        resp.raise_for_status()\n    ```",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 24,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Инициализирует AsyncHttpClient.",
+                    "docstring": "Инициализирует AsyncHttpClient.\n\nArgs:\n    base_url: Базовый URL для всех запросов.\n    default_headers: Заголовки по умолчанию.\n    timeout: Таймаут в секундах.\n    policy: Политика отказоустойчивости.\n    sensitive_headers: Имена заголовков для маскирования.\n\nRaises:\n    OptionalDependencyError: Если httpx не установлен.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 50,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_build_url",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, path)",
+                    "summary": "Строит полный URL.",
+                    "docstring": "Строит полный URL.\n\nArgs:\n    path: Путь или абсолютный URL.\n\nReturns:\n    Полный URL.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 89,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "request",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, method, path)",
+                    "summary": "Выполняет асинхронный HTTP-запрос.",
+                    "docstring": "Выполняет асинхронный HTTP-запрос.\n\nArgs:\n    method: HTTP-метод (GET, POST, PUT, DELETE, PATCH).\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    json_data: Данные для JSON-тела.\n    data: Сырое тело запроса.\n    timeout: Таймаут для этого конкретного запроса.\n\nReturns:\n    Объект HttpResponse.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 102,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, path)",
+                    "summary": "Выполняет async GET-запрос.",
+                    "docstring": "Выполняет async GET-запрос.\n\nArgs:\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    timeout: Таймаут запроса.\n\nReturns:\n    Объект HttpResponse.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 182,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "post",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, path)",
+                    "summary": "Выполняет async POST-запрос.",
+                    "docstring": "Выполняет async POST-запрос.\n\nArgs:\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    json_data: Данные для JSON-тела.\n    data: Сырое тело.\n    timeout: Таймаут запроса.\n\nReturns:\n    Объект HttpResponse.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 201,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "put",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, path)",
+                    "summary": "Выполняет async PUT-запрос.",
+                    "docstring": "Выполняет async PUT-запрос.\n\nArgs:\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    json_data: Данные для JSON-тела.\n    data: Сырое тело.\n    timeout: Таймаут запроса.\n\nReturns:\n    Объект HttpResponse.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 231,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "delete",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, path)",
+                    "summary": "Выполняет async DELETE-запрос.",
+                    "docstring": "Выполняет async DELETE-запрос.\n\nArgs:\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    timeout: Таймаут запроса.\n\nReturns:\n    Объект HttpResponse.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 261,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "patch",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, path)",
+                    "summary": "Выполняет async PATCH-запрос.",
+                    "docstring": "Выполняет async PATCH-запрос.\n\nArgs:\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    json_data: Данные для JSON-тела.\n    data: Сырое тело.\n    timeout: Таймаут запроса.\n\nReturns:\n    Объект HttpResponse.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 280,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "aclose",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Закрывает async-клиент и освобождает ресурсы.",
+                    "docstring": "Закрывает async-клиент и освобождает ресурсы.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 310,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "client",
             "path": "chutils/http/client",
             "type": "module",
@@ -20583,207 +20922,6 @@
                       "custom_metadata": {}
                     },
                     "line_number": 417,
-                    "bases": [],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "AsyncHttpClient",
-                "type": "class",
-                "layer": "public",
-                "signature": "",
-                "summary": "Асинхронный HTTP-клиент на базе httpx.AsyncClient.",
-                "docstring": "Асинхронный HTTP-клиент на базе httpx.AsyncClient.\n\nТребует установленного `httpx`. При его отсутствии вызывает\n`OptionalDependencyError` при инициализации.\n\nArgs:\n    base_url: Базовый URL-префикс для всех запросов.\n    default_headers: Заголовки по умолчанию.\n    timeout: Таймаут запросов в секундах.\n    policy: Политика отказоустойчивости.\n    sensitive_headers: Дополнительные заголовки для маскирования.\n\nExample:\n    ```python\n    from chutils.http import AsyncHttpClient, ResiliencePolicy\n\n    policy = ResiliencePolicy(retries=2, timeout=5.0)\n    async with AsyncHttpClient(base_url=\"https://api.example.com\", policy=policy) as client:\n        resp = await client.get(\"/status\")\n        resp.raise_for_status()\n    ```",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 450,
-                "bases": [],
-                "children": [
-                  {
-                    "name": "__init__",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self)",
-                    "summary": "Инициализирует AsyncHttpClient.",
-                    "docstring": "Инициализирует AsyncHttpClient.\n\nArgs:\n    base_url: Базовый URL для всех запросов.\n    default_headers: Заголовки по умолчанию.\n    timeout: Таймаут в секундах.\n    policy: Политика отказоустойчивости.\n    sensitive_headers: Имена заголовков для маскирования.\n\nRaises:\n    OptionalDependencyError: Если httpx не установлен.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 474,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "_build_url",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self, path)",
-                    "summary": "Строит полный URL.",
-                    "docstring": "Строит полный URL.\n\nArgs:\n    path: Путь или абсолютный URL.\n\nReturns:\n    Полный URL.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 513,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "request",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, method, path)",
-                    "summary": "Выполняет асинхронный HTTP-запрос.",
-                    "docstring": "Выполняет асинхронный HTTP-запрос.\n\nArgs:\n    method: HTTP-метод (GET, POST, PUT, DELETE, PATCH).\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    json_data: Данные для JSON-тела.\n    data: Сырое тело запроса.\n    timeout: Таймаут для этого конкретного запроса.\n\nReturns:\n    Объект HttpResponse.",
-                    "breadcrumbs": {
-                      "is_async": true,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 526,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "get",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, path)",
-                    "summary": "Выполняет async GET-запрос.",
-                    "docstring": "Выполняет async GET-запрос.\n\nArgs:\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    timeout: Таймаут запроса.\n\nReturns:\n    Объект HttpResponse.",
-                    "breadcrumbs": {
-                      "is_async": true,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 604,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "post",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, path)",
-                    "summary": "Выполняет async POST-запрос.",
-                    "docstring": "Выполняет async POST-запрос.\n\nArgs:\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    json_data: Данные для JSON-тела.\n    data: Сырое тело.\n    timeout: Таймаут запроса.\n\nReturns:\n    Объект HttpResponse.",
-                    "breadcrumbs": {
-                      "is_async": true,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 623,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "put",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, path)",
-                    "summary": "Выполняет async PUT-запрос.",
-                    "docstring": "Выполняет async PUT-запрос.\n\nArgs:\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    json_data: Данные для JSON-тела.\n    data: Сырое тело.\n    timeout: Таймаут запроса.\n\nReturns:\n    Объект HttpResponse.",
-                    "breadcrumbs": {
-                      "is_async": true,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 653,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "delete",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, path)",
-                    "summary": "Выполняет async DELETE-запрос.",
-                    "docstring": "Выполняет async DELETE-запрос.\n\nArgs:\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    timeout: Таймаут запроса.\n\nReturns:\n    Объект HttpResponse.",
-                    "breadcrumbs": {
-                      "is_async": true,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 683,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "patch",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, path)",
-                    "summary": "Выполняет async PATCH-запрос.",
-                    "docstring": "Выполняет async PATCH-запрос.\n\nArgs:\n    path: Путь или абсолютный URL.\n    headers: Дополнительные заголовки.\n    json_data: Данные для JSON-тела.\n    data: Сырое тело.\n    timeout: Таймаут запроса.\n\nReturns:\n    Объект HttpResponse.",
-                    "breadcrumbs": {
-                      "is_async": true,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 702,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "aclose",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "Закрывает async-клиент и освобождает ресурсы.",
-                    "docstring": "Закрывает async-клиент и освобождает ресурсы.",
-                    "breadcrumbs": {
-                      "is_async": true,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 732,
                     "bases": [],
                     "children": []
                   }
@@ -38060,6 +38198,16 @@
       "weight": 1
     },
     {
+      "source": "chutils/config/manager",
+      "target": "/paths",
+      "weight": 1
+    },
+    {
+      "source": "chutils/config/manager",
+      "target": "/tracing",
+      "weight": 1
+    },
+    {
       "source": "chutils/config/providers",
       "target": "chutils/exceptions",
       "weight": 2
@@ -38078,6 +38226,11 @@
       "source": "chutils/config/schema",
       "target": "//exceptions",
       "weight": 2
+    },
+    {
+      "source": "chutils/config/tracing",
+      "target": "chutils/typing",
+      "weight": 1
     },
     {
       "source": "chutils/config/utils",
@@ -38720,9 +38873,24 @@
       "weight": 1
     },
     {
+      "source": "chutils/http/async_client",
+      "target": ".",
+      "weight": 1
+    },
+    {
+      "source": "chutils/http/async_client",
+      "target": "/fallback",
+      "weight": 1
+    },
+    {
       "source": "chutils/http/client",
       "target": "/fallback",
       "weight": 3
+    },
+    {
+      "source": "chutils/http/client",
+      "target": "/async_client",
+      "weight": 1
     },
     {
       "source": "chutils/http/streaming",
@@ -39674,8 +39842,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "fedac1136dd987bcd3ef9fa74d4e50cffab6814e (dirty)",
-    "generated_at": "2026-09-07T14:12:37.673471+00:00",
-    "project_hash": "ad778b8e6b8d2301e39bcc23c05aea93b0f114c3eb3270b797c45150f7dbb1dd"
+    "git_commit": "33a1197aec30242c3a17fb8e8c6690a54c5e6da3 (dirty)",
+    "generated_at": "2026-09-07T14:29:25.210317+00:00",
+    "project_hash": "bcc3f7c183655e4998756873eeab02bfb31c4b5a9a98c32223d2c77f83ddafbb"
   }
 }
