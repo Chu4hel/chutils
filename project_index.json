@@ -30453,6 +30453,121 @@
             "docstring": "Модуль управления прокси-серверами и аутентификацией.",
             "children": [
               {
+                "name": "adapters",
+                "path": "chutils/scraping/proxy/adapters",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Адаптеры и фабрики конфигурации прокси для Playwright, Selenium и nodriver.",
+                "docstring": "Адаптеры и фабрики конфигурации прокси для Playwright, Selenium и nodriver.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "get_playwright_proxy",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(proxy)",
+                    "summary": "Формирует словарь параметров прокси для передачи в Playwright BrowserType.launch.",
+                    "docstring": "Формирует словарь параметров прокси для передачи в Playwright BrowserType.launch.\n\nArgs:\n    proxy: Конфигурация прокси (ProxyConfig, строка или dict).\n\nReturns:\n    Словарь с параметрами server, username, password для Playwright.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 13,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_selenium_proxy",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(proxy, options)",
+                    "summary": "Формирует параметры прокси для Selenium или добавляет их в переданный объект Options.",
+                    "docstring": "Формирует параметры прокси для Selenium или добавляет их в переданный объект Options.\n\nArgs:\n    proxy: Конфигурация прокси (ProxyConfig, строка или dict).\n    options: Опциональный экземпляр webdriver Options (например, ChromeOptions).\n\nReturns:\n    Словарь capabilities прокси, если options не передан, иначе None.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 28,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_nodriver_proxy_args",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(proxy)",
+                    "summary": "Возвращает список аргументов запуска браузера для nodriver.",
+                    "docstring": "Возвращает список аргументов запуска браузера для nodriver.\n\nЕсли прокси не требует авторизации, возвращает флаг `--proxy-server`.\nЕсли прокси требует авторизацию, генерирует Manifest v3 расширение через\n`ChromeProxyExtension` с авто-очисткой при завершении приложения.\n\nArgs:\n    proxy: Конфигурация прокси (ProxyConfig, строка или dict).\n\nReturns:\n    Список флагов командной строки для запуска Chromium.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 48,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "nodriver_proxy",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(proxy)",
+                    "summary": "Контекстный менеджер аргументов запуска nodriver с авто-очисткой расширения.",
+                    "docstring": "Контекстный менеджер аргументов запуска nodriver с авто-очисткой расширения.\n\nArgs:\n    proxy: Конфигурация прокси (ProxyConfig, строка или dict).\n\nYields:\n    Список флагов командной строки для nodriver.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "contextmanager"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 72,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "async_nodriver_proxy",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(proxy, mode)",
+                    "summary": "Асинхронный контекстный менеджер прокси для nodriver.",
+                    "docstring": "Асинхронный контекстный менеджер прокси для nodriver.\n\nПоддерживает режим авто-расширения (`extension`) или локального туннеля (`tunnel`).\n\nArgs:\n    proxy: Конфигурация прокси (ProxyConfig, строка или dict).\n    mode: Режим проксирования ('auto', 'extension', 'tunnel').\n\nYields:\n    Список флагов командной строки для nodriver.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "asynccontextmanager"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 92,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "extension",
                 "path": "chutils/scraping/proxy/extension",
                 "type": "module",
@@ -31645,7 +31760,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 16,
+                "line_number": 21,
                 "bases": [],
                 "children": []
               },
@@ -31665,7 +31780,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 28,
+                "line_number": 38,
                 "bases": [],
                 "children": []
               },
@@ -31685,7 +31800,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 36,
+                "line_number": 46,
                 "bases": [],
                 "children": []
               }
@@ -31709,7 +31824,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 22,
+            "line_number": 27,
             "bases": [],
             "children": []
           },
@@ -31729,7 +31844,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 34,
+            "line_number": 44,
             "bases": [],
             "children": []
           },
@@ -31749,7 +31864,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 42,
+            "line_number": 52,
             "bases": [],
             "children": []
           }
@@ -40918,6 +41033,26 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/proxy/adapters",
+      "target": "chutils/scraping/proxy/extension",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/adapters",
+      "target": "chutils/scraping/proxy/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/adapters",
+      "target": "chutils/scraping/proxy/parser",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/adapters",
+      "target": "chutils/scraping/proxy/tunnel",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/proxy/extension",
       "target": "chutils/fs",
       "weight": 2
@@ -41492,8 +41627,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "2ec20a0098d7c1008ffe86f9a204368fac2de62a (dirty)",
-    "generated_at": "2026-09-10T00:48:28.916622+00:00",
-    "project_hash": "0572c708c86febae365534755e61af03864e6785143eb8e6d1462b565928d8b2"
+    "git_commit": "a7ebabe2aac40e04ac56b7067c5581f95b674860 (dirty)",
+    "generated_at": "2026-09-10T00:50:57.524460+00:00",
+    "project_hash": "b002e726a7a84d4e67cd0a780e7ed9d8b901cb18e3d2f46dd176d8e81a56941e"
   }
 }

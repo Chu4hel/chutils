@@ -15,7 +15,12 @@ if TYPE_CHECKING:
         ChromeProxyExtension as ChromeProxyExtension,
         ProxyConfig as ProxyConfig,
         ProxyPool as ProxyPool,
+        async_nodriver_proxy as async_nodriver_proxy,
         check_proxy as check_proxy,
+        get_nodriver_proxy_args as get_nodriver_proxy_args,
+        get_playwright_proxy as get_playwright_proxy,
+        get_selenium_proxy as get_selenium_proxy,
+        nodriver_proxy as nodriver_proxy,
         parse_proxy as parse_proxy,
     )
 
@@ -26,7 +31,12 @@ _LAZY_MAPPING = {
     "ProfileManager": (".profiles", "ProfileManager"),
     "ProxyConfig": (".proxy", "ProxyConfig"),
     "ProxyPool": (".proxy", "ProxyPool"),
+    "async_nodriver_proxy": (".proxy", "async_nodriver_proxy"),
     "check_proxy": (".proxy", "check_proxy"),
+    "get_nodriver_proxy_args": (".proxy", "get_nodriver_proxy_args"),
+    "get_playwright_proxy": (".proxy", "get_playwright_proxy"),
+    "get_selenium_proxy": (".proxy", "get_selenium_proxy"),
+    "nodriver_proxy": (".proxy", "nodriver_proxy"),
     "parse_proxy": (".proxy", "parse_proxy"),
 }
 
@@ -53,10 +63,15 @@ __all__ = [
     "ProfileManager",
     "ProxyConfig",
     "ProxyPool",
+    "async_nodriver_proxy",
     "captcha",
     "check_proxy",
     "concurrency",
+    "get_nodriver_proxy_args",
+    "get_playwright_proxy",
+    "get_selenium_proxy",
     "humanize",
+    "nodriver_proxy",
     "parse_proxy",
     "proxy",
 ]

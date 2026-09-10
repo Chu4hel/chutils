@@ -4,6 +4,11 @@ import importlib
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from .adapters import async_nodriver_proxy as async_nodriver_proxy
+    from .adapters import get_nodriver_proxy_args as get_nodriver_proxy_args
+    from .adapters import get_playwright_proxy as get_playwright_proxy
+    from .adapters import get_selenium_proxy as get_selenium_proxy
+    from .adapters import nodriver_proxy as nodriver_proxy
     from .extension import ChromeProxyExtension as ChromeProxyExtension
     from .models import ProxyConfig as ProxyConfig
     from .models import ProxyHealthResult as ProxyHealthResult
@@ -19,8 +24,13 @@ _LAZY_MAPPING = {
     "ProxyConfig": (".models", "ProxyConfig"),
     "ProxyHealthResult": (".models", "ProxyHealthResult"),
     "ProxyPool": (".pool", "ProxyPool"),
+    "async_nodriver_proxy": (".adapters", "async_nodriver_proxy"),
     "check_proxy": (".pool", "check_proxy"),
     "check_proxy_async": (".pool", "check_proxy_async"),
+    "get_nodriver_proxy_args": (".adapters", "get_nodriver_proxy_args"),
+    "get_playwright_proxy": (".adapters", "get_playwright_proxy"),
+    "get_selenium_proxy": (".adapters", "get_selenium_proxy"),
+    "nodriver_proxy": (".adapters", "nodriver_proxy"),
     "parse_proxy": (".parser", "parse_proxy"),
 }
 
@@ -43,7 +53,12 @@ __all__ = [
     "ProxyConfig",
     "ProxyHealthResult",
     "ProxyPool",
+    "async_nodriver_proxy",
     "check_proxy",
     "check_proxy_async",
+    "get_nodriver_proxy_args",
+    "get_playwright_proxy",
+    "get_selenium_proxy",
+    "nodriver_proxy",
     "parse_proxy",
 ]

@@ -472,4 +472,34 @@ if health.is_alive:
     print(f"IP: {health.external_ip}, Latency: {health.latency_ms} ms")
 ```
 
+### Фабрики адаптеров для браузерных движков (`nodriver_proxy`, `get_playwright_proxy`, `get_selenium_proxy`)
+
+Для быстрого подключения прокси (как с авторизацией, так и без) к браузерам предоставляются специализированные функции-фабрики и контекстные менеджеры:
+
+```python
+from chutils.scraping import (
+    async_nodriver_proxy,
+    get_playwright_proxy,
+    get_selenium_proxy,
+    nodriver_proxy,
+)
+
+# 1. Playwright
+browser = await playwright.chromium.launch(
+    proxy=get_playwright_proxy("http://user:pass@1.2.3.4:8080")
+)
+
+# 2. Selenium
+get_selenium_proxy("http://1.2.3.4:8080", options=chrome_options)
+
+# 3. nodriver (через синхронный контекстный менеджер с расширением)
+with nodriver_proxy("http://user:pass@1.2.3.4:8080") as browser_args:
+    browser = await nodriver.start(browser_args=browser_args)
+
+# 4. nodriver (через асинхронный туннель)
+async with async_nodriver_proxy("socks5://user:pass@1.2.3.4:1080", mode="tunnel") as browser_args:
+    browser = await nodriver.start(browser_args=browser_args)
+```
+
+
 
