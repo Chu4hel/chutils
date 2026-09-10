@@ -31926,6 +31926,169 @@
                 ]
               },
               {
+                "name": "fixtures",
+                "path": "chutils/scraping/testing/fixtures",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Pytest плагин и фикстуры для автотестирования парсеров и скраперов.",
+                "docstring": "Pytest плагин и фикстуры для автотестирования парсеров и скраперов.\n\nАвтоматически регистрируется pytest через entry_point `pytest11`\nи предоставляет готовые фикстуры для мок- и live-тестирования.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "pytest_configure",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(config)",
+                    "summary": "Регистрирует кастомные маркеры chutils для pytest.",
+                    "docstring": "Регистрирует кастомные маркеры chutils для pytest.\n\nArgs:\n    config: Объект конфигурации pytest.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 26,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "local_test_server",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "()",
+                    "summary": "Предоставляет запущенный локальный тестовый HTTP-сервер песочницы.",
+                    "docstring": "Предоставляет запущенный локальный тестовый HTTP-сервер песочницы.\n\nYields:\n    Запущенный экземпляр LocalTestServer.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "pytest.fixture"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 39,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "live_browser_session",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "()",
+                    "summary": "Предоставляет сессию реального браузера с гарантированным teardown зомби-процессов.",
+                    "docstring": "Предоставляет сессию реального браузера с гарантированным teardown зомби-процессов.\n\nYields:\n    Активный экземпляр LiveBrowserSession.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "pytest.fixture"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 50,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "html_snapshot_recorder",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(tmp_path)",
+                    "summary": "Предоставляет менеджер снапшотов SnapshotRecorder во временном каталоге.",
+                    "docstring": "Предоставляет менеджер снапшотов SnapshotRecorder во временном каталоге.\n\nArgs:\n    tmp_path: Временная папка теста от pytest.\n\nReturns:\n    Экземпляр SnapshotRecorder.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "pytest.fixture"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 61,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "mock_nodriver_tab",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "()",
+                    "summary": "Фабрика для создания легковесного мока вкладки nodriver.",
+                    "docstring": "Фабрика для создания легковесного мока вкладки nodriver.\n\nReturns:\n    Функция, принимающая HTML строку и возвращающая MockNodriverTab.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "pytest.fixture"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 74,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "mock_playwright_page",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "()",
+                    "summary": "Фабрика для создания мока страницы Playwright.",
+                    "docstring": "Фабрика для создания мока страницы Playwright.\n\nReturns:\n    Функция, принимающая HTML строку и возвращающая MockPlaywrightPage.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "pytest.fixture"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 84,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "mock_selenium_driver",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "()",
+                    "summary": "Фабрика для создания мока драйвера Selenium.",
+                    "docstring": "Фабрика для создания мока драйвера Selenium.\n\nReturns:\n    Функция, принимающая HTML строку и возвращающая MockSeleniumDriver.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "pytest.fixture"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 94,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "mocks",
                 "path": "chutils/scraping/testing/mocks",
                 "type": "package",
@@ -43822,6 +43985,26 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/testing/fixtures",
+      "target": "chutils/scraping/testing/mocks",
+      "weight": 3
+    },
+    {
+      "source": "chutils/scraping/testing/fixtures",
+      "target": "chutils/scraping/testing/server",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/testing/fixtures",
+      "target": "chutils/scraping/testing/session",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/testing/fixtures",
+      "target": "chutils/scraping/testing/snapshot",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/testing/mocks",
       "target": "chutils/scraping/testing/mocks/dom",
       "weight": 2
@@ -44406,8 +44589,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "a38bacd5f86b93ae17fc3988676d05c609a51bfa (dirty)",
-    "generated_at": "2026-09-10T01:09:13.180728+00:00",
-    "project_hash": "a963441e505ae172e63a8e116b80a5d977d710d27dbd3d092669fb56b42b7cf1"
+    "git_commit": "d61d07e553b611823010ff2f73d8f6d765f31141 (dirty)",
+    "generated_at": "2026-09-10T01:16:34.564509+00:00",
+    "project_hash": "4908e8503d2fc292e8e9882261244b584999348a880e8901ca0f13a6546faa3a"
   }
 }

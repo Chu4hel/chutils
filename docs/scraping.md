@@ -655,6 +655,29 @@ assert_valid_price(item["price"], min_value=100.0, max_value=100000.0)
 assert_schema_match(item, ProductSchema)
 ```
 
+### Встроенные фикстуры Pytest (`chutils.scraping.testing.fixtures`)
+
+При установленном `chutils` pytest автоматически подхватывает плагин со следующими фикстурами:
+
+- `local_test_server`: запущенный экземпляр `LocalTestServer` (автоматическая остановка при teardown).
+- `live_browser_session`: экземпляр `LiveBrowserSession` с изолированным временным каталогом и уничтожением зомби-процессов.
+- `html_snapshot_recorder`: настроенный `SnapshotRecorder` с каталогом во временной папке теста.
+- `mock_nodriver_tab`, `mock_playwright_page`, `mock_selenium_driver`: фабрики для мгновенного создания моков из переданной HTML-строки.
+
+Пример использования в тестах:
+
+```python
+async def test_scraper_with_fixtures(local_test_server, mock_playwright_page):
+    # Тест через сервер песочницы
+    local_test_server.serve_html("/item", "<h1>Товар</h1>")
+    resp = local_test_server.fetch("/item")
+    assert resp.status == 200
+
+    # Быстрый мок Playwright
+    page = mock_playwright_page("<h1>Товар</h1>")
+    assert await page.locator("h1").inner_text() == "Товар"
+```
+
 
 
 

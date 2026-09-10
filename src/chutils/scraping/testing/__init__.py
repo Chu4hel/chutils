@@ -62,7 +62,7 @@ def __getattr__(name: str) -> Any:
 def __dir__() -> list[str]:
     return sorted(
         list(_LAZY_MAPPING.keys())
-        + ["assertions", "mocks", "server", "session", "snapshot", "__all__", "__doc__"]
+        + ["assertions", "fixtures", "mocks", "server", "session", "snapshot", "__all__", "__doc__"]
     )
 
 
@@ -83,6 +83,7 @@ __all__ = [
     "assert_schema_match",
     "assert_valid_price",
     "assert_valid_url",
+    "fixtures",
     "mocks",
     "server",
     "session",
