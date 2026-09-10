@@ -158,6 +158,7 @@ class TLSSession:
         self.is_fallback: bool = False
         self._standard_client: HttpClient | None = None
         self._session: Any = None
+        self.default_headers: dict[str, str] = dict(kwargs.pop("headers", {}) or {})
 
         proxy_url = _resolve_proxy_url(proxy, proxy_pool)
 
@@ -168,7 +169,9 @@ class TLSSession:
                     "Библиотека 'curl-cffi' не установлена. Используется fallback на HttpClient (httpx/urllib). "
                     "TLS Impersonation отключен. Установите: pip install 'chutils[tls]'"
                 )
-                self._standard_client = HttpClient(timeout=timeout, **kwargs)
+                self._standard_client = HttpClient(
+                    timeout=timeout, default_headers=self.default_headers, **kwargs
+                )
                 return
             raise OptionalDependencyError(
                 "Для работы TLS Client Impersonation требуется библиотека 'curl-cffi'.\n"
@@ -177,8 +180,48 @@ class TLSSession:
             )
 
         self._session = create_curl_session(
-            impersonate=impersonate, proxy=proxy_url, **kwargs
+            impersonate=impersonate,
+            proxy=proxy_url,
+            headers=self.default_headers if self.default_headers else None,
+            **kwargs,
         )
+
+    @classmethod
+    def from_browser_session(
+        cls,
+        target: Any,
+        impersonate: str = DEFAULT_IMPERSONATE_PROFILE,
+        **kwargs: Any,
+    ) -> Self:
+        """Создает сессию TLSSession, предзаполненную cookies и User-Agent из браузера.
+
+        Args:
+            target: Экземпляр Selenium WebDriver.
+            impersonate: Профиль маскировки браузера.
+            **kwargs: Дополнительные параметры для TLSSession.
+
+        Returns:
+            Экземпляр TLSSession.
+        """
+        from chutils.scraping.humanize.antidetect import extract_clearance_cookies
+
+        extracted = extract_clearance_cookies(target)
+        # Если случайно передали асинхронный объект синхронно
+        if hasattr(extracted, "__await__"):
+            raise ValueError(
+                "Для асинхронных сессий (Playwright, Nodriver) используйте 'await TLSAsyncClient.from_browser_session(...)'"
+            )
+
+        headers = dict(kwargs.pop("headers", {}) or {})
+        if extracted.get("user_agent"):
+            headers["User-Agent"] = extracted["user_agent"]
+
+        cookies = extracted.get("cookies", {})
+        if cookies:
+            cookie_str = "; ".join(f"{k}={v}" for k, v in cookies.items())
+            headers["Cookie"] = cookie_str
+
+        return cls(impersonate=impersonate, headers=headers, **kwargs)
 
     def request(self, method: str, url: str, **kwargs: Any) -> HttpResponse:
         """Выполняет синхронный HTTP-запрос.
@@ -326,6 +369,7 @@ class TLSAsyncClient:
         self.is_fallback: bool = False
         self._standard_client: AsyncHttpClient | None = None
         self._session: Any = None
+        self.default_headers: dict[str, str] = dict(kwargs.pop("headers", {}) or {})
 
         proxy_url = _resolve_proxy_url(proxy, proxy_pool)
 
@@ -336,7 +380,9 @@ class TLSAsyncClient:
                     "Библиотека 'curl-cffi' не установлена. Используется fallback на AsyncHttpClient (httpx). "
                     "TLS Impersonation отключен. Установите: pip install 'chutils[tls]'"
                 )
-                self._standard_client = AsyncHttpClient(timeout=timeout, **kwargs)
+                self._standard_client = AsyncHttpClient(
+                    timeout=timeout, default_headers=self.default_headers, **kwargs
+                )
                 return
             raise OptionalDependencyError(
                 "Для работы TLS Client Impersonation требуется библиотека 'curl-cffi'.\n"
@@ -345,8 +391,47 @@ class TLSAsyncClient:
             )
 
         self._session = create_curl_async_session(
-            impersonate=impersonate, proxy=proxy_url, **kwargs
+            impersonate=impersonate,
+            proxy=proxy_url,
+            headers=self.default_headers if self.default_headers else None,
+            **kwargs,
         )
+
+    @classmethod
+    async def from_browser_session(
+        cls,
+        target: Any,
+        impersonate: str = DEFAULT_IMPERSONATE_PROFILE,
+        **kwargs: Any,
+    ) -> Self:
+        """Создает асинхронный клиент TLSAsyncClient, предзаполненный cookies и User-Agent из браузера.
+
+        Args:
+            target: Экземпляр Playwright (Page, Context), Nodriver Tab или Selenium WebDriver.
+            impersonate: Профиль маскировки браузера.
+            **kwargs: Дополнительные параметры для TLSAsyncClient.
+
+        Returns:
+            Экземпляр TLSAsyncClient.
+        """
+        from chutils.scraping.humanize.antidetect import extract_clearance_cookies
+
+        extracted_or_coro = extract_clearance_cookies(target)
+        if hasattr(extracted_or_coro, "__await__"):
+            extracted = await extracted_or_coro
+        else:
+            extracted = extracted_or_coro
+
+        headers = dict(kwargs.pop("headers", {}) or {})
+        if extracted.get("user_agent"):
+            headers["User-Agent"] = extracted["user_agent"]
+
+        cookies = extracted.get("cookies", {})
+        if cookies:
+            cookie_str = "; ".join(f"{k}={v}" for k, v in cookies.items())
+            headers["Cookie"] = cookie_str
+
+        return cls(impersonate=impersonate, headers=headers, **kwargs)
 
     async def request(self, method: str, url: str, **kwargs: Any) -> HttpResponse:
         """Выполняет асинхронный HTTP-запрос.

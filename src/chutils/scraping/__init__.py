@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from .camoufox import (
         launch_camoufox as launch_camoufox,
     )
+    from .humanize.antidetect import (
+        extract_clearance_cookies as extract_clearance_cookies,
+    )
     from .profiles import (
         BrowserProfile as BrowserProfile,
     )
@@ -106,6 +109,7 @@ _LAZY_MAPPING = {
     "assert_valid_url": (".testing", "assert_valid_url"),
     "async_nodriver_proxy": (".proxy", "async_nodriver_proxy"),
     "check_proxy": (".proxy", "check_proxy"),
+    "extract_clearance_cookies": (".humanize.antidetect", "extract_clearance_cookies"),
     "get_async_camoufox_class": (".camoufox", "get_async_camoufox_class"),
     "get_nodriver_proxy_args": (".proxy", "get_nodriver_proxy_args"),
     "get_playwright_proxy": (".proxy", "get_playwright_proxy"),
@@ -164,6 +168,7 @@ __all__ = [
     "captcha",
     "check_proxy",
     "concurrency",
+    "extract_clearance_cookies",
     "get_async_camoufox_class",
     "get_nodriver_proxy_args",
     "get_playwright_proxy",

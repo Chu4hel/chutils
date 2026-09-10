@@ -1,4 +1,5 @@
 import importlib.util
+import inspect
 import json
 import re
 from typing import Any
@@ -75,16 +76,77 @@ def _get_antidetect_js(
     hints_js = json.dumps(client_hints) if client_hints is not None else "null"
 
     return f"""(function() {{
-    // Утилита для маскировки функций под нативные [native code]
+    // Утилита для маскировки функций под нативные [native code] с чистым V8 stack trace
     const makeNative = (fn, name) => {{
         try {{
             Object.defineProperty(fn, 'name', {{ value: name, configurable: true }});
             const fnToString = function toString() {{ return `function ${{name}}() {{ [native code] }}`; }};
             fn.toString = fnToString;
             fn.toString.toString = function toString() {{ return "function toString() {{ [native code] }}"; }};
+            if (Error.captureStackTrace) {{
+                const origCapture = Error.captureStackTrace;
+                Error.captureStackTrace = function(targetObj, constructorOpt) {{
+                    origCapture(targetObj, constructorOpt || fn);
+                    if (targetObj && targetObj.stack && typeof targetObj.stack === 'string') {{
+                        targetObj.stack = targetObj.stack.replace(/at patched.*\\(eval at.*?\\)/g, `at ${{name}} (<anonymous>)`);
+                    }}
+                }};
+            }}
         }} catch (e) {{}}
         return fn;
     }};
+
+    // 0. Защита изолированных Web Workers и SharedWorkers
+    try {{
+        const workerPreamble = `
+            try {{
+                const navProto = Navigator.prototype || Object.getPrototypeOf(navigator);
+                delete navProto.webdriver;
+                delete navigator.webdriver;
+                Object.defineProperty(navProto, 'webdriver', {{
+                    get: () => undefined,
+                    enumerable: true,
+                    configurable: true
+                }});
+            }} catch (e) {{}}
+        `;
+        if (typeof window !== 'undefined' && window.Worker) {{
+            const OriginalWorker = window.Worker;
+            const PatchedWorker = function Worker(scriptURL, options) {{
+                if (typeof scriptURL === 'string') {{
+                    try {{
+                        const blobContent = `${{workerPreamble}}\\nimportScripts("${{scriptURL}}");`;
+                        const blob = new Blob([blobContent], {{ type: 'application/javascript' }});
+                        const blobURL = URL.createObjectURL(blob);
+                        return new OriginalWorker(blobURL, options);
+                    }} catch (e) {{
+                        return new OriginalWorker(scriptURL, options);
+                    }}
+                }}
+                return new OriginalWorker(scriptURL, options);
+            }};
+            PatchedWorker.prototype = OriginalWorker.prototype;
+            window.Worker = makeNative(PatchedWorker, 'Worker');
+        }}
+        if (typeof window !== 'undefined' && window.SharedWorker) {{
+            const OriginalSharedWorker = window.SharedWorker;
+            const PatchedSharedWorker = function SharedWorker(scriptURL, options) {{
+                if (typeof scriptURL === 'string') {{
+                    try {{
+                        const blobContent = `${{workerPreamble}}\\nimportScripts("${{scriptURL}}");`;
+                        const blob = new Blob([blobContent], {{ type: 'application/javascript' }});
+                        const blobURL = URL.createObjectURL(blob);
+                        return new OriginalSharedWorker(blobURL, options);
+                    }} catch (e) {{
+                        return new OriginalSharedWorker(scriptURL, options);
+                    }}
+                }}
+                return new OriginalSharedWorker(scriptURL, options);
+            }};
+            PatchedSharedWorker.prototype = OriginalSharedWorker.prototype;
+            window.SharedWorker = makeNative(PatchedSharedWorker, 'SharedWorker');
+        }}
+    }} catch (e) {{}}
 
     // Детерминированный LCG PRNG для Canvas шума
     const sessionSeed = {seed_js};
@@ -427,3 +489,117 @@ def get_browser_launch_args() -> list[str]:
         "--no-default-browser-check",
         "--password-store=basic",
     ]
+
+
+async def _extract_clearance_cookies_async(target: Any) -> dict[str, Any]:
+    """Асинхронное извлечение кук и user-agent из Playwright / Nodriver."""
+    cookies_dict: dict[str, str] = {}
+    ua: str = ""
+
+    send_method = getattr(target, "send", None)
+    is_nodriver = callable(send_method) and inspect.iscoroutinefunction(send_method)
+
+    if is_nodriver:
+        # Nodriver Tab
+        try:
+            from nodriver.cdp import network
+
+            cmd_res = await target.send(network.get_cookies())
+            raw_cookies = getattr(cmd_res, "cookies", [])
+            for c in raw_cookies:
+                if isinstance(c, dict):
+                    c_name = c.get("name")
+                    c_val = c.get("value")
+                else:
+                    c_name = getattr(c, "name", None)
+                    c_val = getattr(c, "value", None)
+                if c_name and c_val:
+                    cookies_dict[str(c_name)] = str(c_val)
+        except Exception:
+            pass
+
+        evaluate_method = getattr(target, "evaluate", None)
+        if callable(evaluate_method):
+            try:
+                res = evaluate_method("navigator.userAgent")
+                ua = await res if inspect.isawaitable(res) else str(res)
+            except Exception:
+                ua = ""
+    else:
+        # Playwright Page / BrowserContext
+        cookies_method = None
+        context_attr = getattr(target, "context", None)
+        if context_attr is not None and hasattr(context_attr, "cookies"):
+            cookies_method = getattr(context_attr, "cookies", None)
+        elif hasattr(target, "cookies"):
+            cookies_method = getattr(target, "cookies", None)
+
+        if callable(cookies_method):
+            raw_cookies = cookies_method()
+            if inspect.isawaitable(raw_cookies):
+                raw_cookies = await raw_cookies
+            for c in raw_cookies:
+                if isinstance(c, dict) and "name" in c and "value" in c:
+                    cookies_dict[c["name"]] = c["value"]
+
+        evaluate_method = getattr(target, "evaluate", None)
+        if callable(evaluate_method):
+            try:
+                res = evaluate_method("navigator.userAgent")
+                ua = await res if inspect.isawaitable(res) else str(res)
+            except Exception:
+                ua = ""
+
+    return {"cookies": cookies_dict, "user_agent": ua}
+
+
+def _extract_clearance_cookies_sync(target: Any) -> dict[str, Any]:
+    """Синхронное извлечение кук и user-agent из Selenium WebDriver."""
+    cookies_dict: dict[str, str] = {}
+    ua: str = ""
+
+    if hasattr(target, "get_cookies") and callable(target.get_cookies):
+        raw_cookies = target.get_cookies()
+        for c in raw_cookies:
+            if isinstance(c, dict) and "name" in c and "value" in c:
+                cookies_dict[c["name"]] = c["value"]
+
+    if hasattr(target, "execute_script") and callable(target.execute_script):
+        try:
+            ua = str(target.execute_script("return navigator.userAgent;"))
+        except Exception:
+            ua = ""
+
+    return {"cookies": cookies_dict, "user_agent": ua}
+
+
+def extract_clearance_cookies(target: Any) -> Any:
+    """Извлекает cookies (включая cf_clearance) и User-Agent из сессии браузера.
+
+    Поддерживает Playwright Page/BrowserContext (асинхронно), Nodriver Tab (асинхронно)
+    и Selenium WebDriver (синхронно).
+
+    Args:
+        target: Экземпляр Playwright (Page, Context), Selenium WebDriver или Nodriver Tab.
+
+    Returns:
+        Словарь вида {'cookies': {'cf_clearance': '...', ...}, 'user_agent': '...'},
+        либо корутина, возвращающая данный словарь.
+    """
+    send_method = getattr(target, "send", None)
+    context_attr = getattr(target, "context", None)
+    cookies_method = (
+        getattr(context_attr, "cookies", None)
+        if context_attr
+        else getattr(target, "cookies", None)
+    )
+
+    is_async = (callable(send_method) and inspect.iscoroutinefunction(send_method)) or (
+        callable(cookies_method) and inspect.iscoroutinefunction(cookies_method)
+    )
+
+    if not is_async and hasattr(target, "get_cookies"):
+        return _extract_clearance_cookies_sync(target)
+
+    # Для асинхронных драйверов (Playwright, Nodriver)
+    return _extract_clearance_cookies_async(target)

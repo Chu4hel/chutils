@@ -323,6 +323,10 @@ _LAZY_MAPPING = {
     "apply_antidetect_nodriver": (".scraping.humanize", "apply_antidetect_nodriver"),
     "get_browser_launch_args": (".scraping.humanize", "get_browser_launch_args"),
     "get_client_hints": (".scraping.humanize", "get_client_hints"),
+    "extract_clearance_cookies": (
+        ".scraping.humanize.antidetect",
+        "extract_clearance_cookies",
+    ),
     # scraping captcha
     "RuCaptchaSolver": (".scraping.captcha", "RuCaptchaSolver"),
     "AsyncRuCaptchaSolver": (".scraping.captcha", "AsyncRuCaptchaSolver"),
