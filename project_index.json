@@ -28756,9 +28756,9 @@
                     "name": "async_type_text",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(page, selector, text, error_rate, speed_wpm)",
+                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time)",
                     "summary": "Имитирует ввод текста с опечатками Playwright или nodriver.",
-                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).",
+                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -28788,7 +28788,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 382,
+                    "line_number": 388,
                     "bases": [],
                     "children": []
                   },
@@ -28808,7 +28808,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 434,
+                    "line_number": 440,
                     "bases": [],
                     "children": []
                   },
@@ -28828,7 +28828,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 474,
+                    "line_number": 480,
                     "bases": [],
                     "children": []
                   },
@@ -28836,9 +28836,9 @@
                     "name": "async_click",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(page, selector, x, y, start, algorithm, button)",
+                    "signature": "(page, selector, x, y, start, algorithm, button, hold_time)",
                     "summary": "Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).",
-                    "docstring": "Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор целевого элемента (если x, y не заданы).\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты курсора.\n    algorithm: Алгоритм движения ('windmouse' или 'bezier').\n    button: Кнопка мыши ('left', 'right', 'middle').",
+                    "docstring": "Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор целевого элемента (если x, y не заданы).\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты курсора.\n    algorithm: Алгоритм движения ('windmouse' или 'bezier').\n    button: Кнопка мыши ('left', 'right', 'middle').\n    hold_time: Диапазон задержки удержания кнопки мыши (в секундах).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -28848,7 +28848,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 513,
+                    "line_number": 519,
                     "bases": [],
                     "children": []
                   },
@@ -28856,9 +28856,9 @@
                     "name": "click",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(driver, selector, x, y, start, algorithm)",
+                    "signature": "(driver, selector, x, y, start, algorithm, hold_time)",
                     "summary": "Имитирует реалистичный клик мышью Selenium.",
-                    "docstring": "Имитирует реалистичный клик мышью Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор целевого элемента (если x, y не заданы).\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты курсора.\n    algorithm: Алгоритм движения ('windmouse' или 'bezier').",
+                    "docstring": "Имитирует реалистичный клик мышью Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор целевого элемента (если x, y не заданы).\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты курсора.\n    algorithm: Алгоритм движения ('windmouse' или 'bezier').\n    hold_time: Диапазон задержки удержания кнопки мыши (в секундах).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -28868,7 +28868,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 616,
+                    "line_number": 629,
                     "bases": [],
                     "children": []
                   }
@@ -28967,7 +28967,7 @@
                     "name": "_get_antidetect_js",
                     "type": "function",
                     "layer": "private",
-                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory)",
+                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal)",
                     "summary": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
                     "docstring": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
                     "breadcrumbs": {
@@ -28999,7 +28999,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 81,
+                    "line_number": 146,
                     "bases": [],
                     "children": []
                   },
@@ -29019,7 +29019,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 90,
+                    "line_number": 155,
                     "bases": [],
                     "children": []
                   },
@@ -29039,7 +29039,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 100,
+                    "line_number": 165,
                     "bases": [],
                     "children": []
                   },
@@ -29059,7 +29059,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 110,
+                    "line_number": 175,
                     "bases": [],
                     "children": []
                   },
@@ -29079,7 +29079,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 120,
+                    "line_number": 185,
                     "bases": [],
                     "children": []
                   },
@@ -29099,7 +29099,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 147,
+                    "line_number": 212,
                     "bases": [],
                     "children": []
                   },
@@ -29109,7 +29109,7 @@
                     "layer": "public",
                     "signature": "(tab)",
                     "summary": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.\n\nArgs:\n    tab: Объект вкладки nodriver Tab.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.",
+                    "docstring": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.\n\nArgs:\n    tab: Объект вкладки nodriver Tab.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL,\n        сохраняя естественный отпечаток установленного браузера Google Chrome.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -29119,7 +29119,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 179,
+                    "line_number": 244,
                     "bases": [],
                     "children": []
                   },
@@ -29139,7 +29139,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 208,
+                    "line_number": 277,
                     "bases": [],
                     "children": []
                   }
@@ -39922,8 +39922,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "a622ebf7170639f85d8e299bf4763768c2e87719 (dirty)",
-    "generated_at": "2026-09-07T19:30:18.319246+00:00",
-    "project_hash": "fb14b689767aaa8d9826e388bf1bc7b7627bbc60d975d32d8e73cbab59a05758"
+    "git_commit": "ca9b4a304d7838ef5d34dd69cae3f173c6c6f13c (dirty)",
+    "generated_at": "2026-09-09T23:59:49.193272+00:00",
+    "project_hash": "0201ec34e0c2b90ffcfce2b090305bd86206060a8b1241c32dd7a07552fab710"
   }
 }

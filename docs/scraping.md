@@ -136,15 +136,20 @@ from chutils.scraping.humanize import (
 # Плавное движение мыши (транслируется в CDP dispatchMouseEvent)
 await async_move_mouse(tab, x=400, y=300, start=(0, 0), algorithm="windmouse")
 
-# Реалистичный клик через CDP с паузой фокусировки
-await async_click(tab, x=400, y=300)
+# Реалистичный клик через CDP с паузой фокусировки и настраиваемым удержанием (hold_time)
+await async_click(tab, x=400, y=300, hold_time=(0.05, 0.12))
 
 # Плавный скролл страницы через JS evaluate
 await async_scroll_to(tab, x=0, y=800)
 
-# Ввод текста с опечатками (через CDP dispatchKeyEvent)
+# Ввод текста с опечатками и физиологической задержкой нажатия клавиш (key_hold_time)
 await async_type_text(
-    tab, selector="#username", text="my_user_login", error_rate=0.05, speed_wpm=40.0
+    tab,
+    selector="#username",
+    text="my_user_login",
+    error_rate=0.05,
+    speed_wpm=40.0,
+    key_hold_time=(0.04, 0.09),
 )
 ```
 
@@ -188,9 +193,11 @@ JS-инъекции и флаги запуска.
 
 Инъекция скрывает автоматизацию на низком уровне JavaScript до загрузки веб-страницы:
 
-- Удаляет и переопределяет свойство `navigator.webdriver`.
+- Защита от детекта вмешательства (Anti-Tampering): все подмененные методы возвращают `[native code]` при вызове `Function.prototype.toString`.
+- Удаляет и переопределяет свойство `navigator.webdriver` с сохранением корректных атрибутов дескриптора.
 - Добавляет минимальный псевдослучайный шум к пикселям Canvas (`getImageData`), искажая статический Canvas-отпечаток.
-- Маскирует WebGL параметры видеокарты (переопределяет рендерер и вендор на стандартный `Google Inc. (NVIDIA)`).
+- Маскирует WebGL параметры видеокарты одновременно для `WebGLRenderingContext` (WebGL 1) и `WebGL2RenderingContext` (WebGL 2).
+- Синхронизирует `navigator.permissions.query` с `Notification.permission`.
 - Эмулирует список установленных системных плагинов и количество ядер процессора.
 
 ```python
@@ -220,24 +227,23 @@ apply_antidetect_selenium(
 )
 
 # Для nodriver (применяется к вкладке Tab через CDP протокол)
+# Флаг stealth_minimal=True отключает синтетический шум Canvas/WebGL,
+# сохраняя естественный отпечаток установленного браузера Google Chrome:
 await apply_antidetect_nodriver(
     tab,
-    webgl_vendor="NVIDIA Corporation",
-    webgl_renderer="NVIDIA GeForce RTX 4090",
-    hardware_concurrency=24,
-    device_memory=64,
+    stealth_minimal=True,
 )
 ```
 
 ### Флаги запуска браузера (`get_browser_launch_args`)
 
-Возвращает оптимизированный список аргументов для запуска Chromium:
+Возвращает оптимизированный список аргументов для запуска Chromium (включая подавление первого запуска, детекта автоматизации и предупреждений профиля):
 
 ```python
 from chutils.scraping.humanize import get_browser_launch_args
 
 # Возвращает список флагов запуска, таких как:
-# '--disable-blink-features=AutomationControlled', '--disable-infobars' и т.д.
+# '--disable-blink-features=AutomationControlled', '--no-first-run', '--password-store=basic' и т.д.
 launch_flags = get_browser_launch_args()
 ```
 
