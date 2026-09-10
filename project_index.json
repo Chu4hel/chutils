@@ -29727,7 +29727,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 293,
+                    "line_number": 294,
                     "bases": [],
                     "children": []
                   },
@@ -29747,7 +29747,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 355,
+                    "line_number": 356,
                     "bases": [],
                     "children": []
                   },
@@ -29767,7 +29767,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 375,
+                    "line_number": 376,
                     "bases": [],
                     "children": []
                   }
@@ -30477,7 +30477,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 107,
+                    "line_number": 132,
                     "bases": [],
                     "children": []
                   },
@@ -30497,7 +30497,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 119,
+                    "line_number": 144,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_ensure_tab_focus",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(tab)",
+                    "summary": "Обеспечивает активный фокус вкладки (bring to front) для корректной доставки событий мыши.",
+                    "docstring": "Обеспечивает активный фокус вкладки (bring to front) для корректной доставки событий мыши.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 198,
                     "bases": [],
                     "children": []
                   },
@@ -30517,7 +30537,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 172,
+                    "line_number": 218,
                     "bases": [],
                     "children": []
                   },
@@ -30537,7 +30557,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 201,
+                    "line_number": 247,
                     "bases": [],
                     "children": []
                   },
@@ -30557,7 +30577,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 229,
+                    "line_number": 275,
                     "bases": [],
                     "children": []
                   }
@@ -45812,8 +45832,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "438c263f360470d6cb0d98ee6414d2a9d323350b (dirty)",
-    "generated_at": "2026-09-10T16:13:15.644552+00:00",
-    "project_hash": "2cdfcf1efbaeb5518cdd7b5e123f59bdf553808959ff2cce0992024f3333e8b6"
+    "git_commit": "573a0f84bf09732259a6a91f1d0877c2b721139f (dirty)",
+    "generated_at": "2026-09-10T16:23:06.131483+00:00",
+    "project_hash": "a8096a494d78e10198be724ebe0fe84b99d788809446992d736f426f1bff9d4f"
   }
 }
