@@ -30871,6 +30871,28 @@
                         "children": []
                       }
                     ]
+                  },
+                  {
+                    "name": "ProxyHealthResult",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Результат проверки работоспособности (Health Check) прокси-сервера.",
+                    "docstring": "Результат проверки работоспособности (Health Check) прокси-сервера.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 118,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
                   }
                 ]
               },
@@ -30923,6 +30945,343 @@
                       "custom_metadata": {}
                     },
                     "line_number": 12,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "pool",
+                "path": "chutils/scraping/proxy/pool",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Пул прокси-серверов со стратегиями ротации, failover и проверкой доступности.",
+                "docstring": "Пул прокси-серверов со стратегиями ротации, failover и проверкой доступности.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 18,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "RotationStrategy",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 20,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_ProxyEntry",
+                    "type": "class",
+                    "layer": "private",
+                    "signature": "",
+                    "summary": "Внутреннее состояние прокси в пуле.",
+                    "docstring": "Внутреннее состояние прокси в пуле.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "dataclass"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 24,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "is_available",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Проверяет доступность прокси с учетом таймаута бана.",
+                        "docstring": "Проверяет доступность прокси с учетом таймаута бана.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 33,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "ProxyPool",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Потокобезопасный пул прокси-серверов с поддержкой ротации и автоматического failover.",
+                    "docstring": "Потокобезопасный пул прокси-серверов с поддержкой ротации и автоматического failover.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 40,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, proxies, strategy, sticky_ttl, ban_timeout, max_fails)",
+                        "summary": "Инициализирует пул прокси.",
+                        "docstring": "Инициализирует пул прокси.\n\nArgs:\n    proxies: Начальный список прокси (объекты, строки или словари).\n    strategy: Стратегия ротации ('round_robin', 'random', 'sticky', 'failover').\n    sticky_ttl: Время жизни привязки сессии/пользователя в секундах для sticky.\n    ban_timeout: Время временного исключения сбойного прокси из пула (в секундах).\n    max_fails: Максимальное количество ошибок до временного отключения прокси.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 43,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "add",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, proxy)",
+                        "summary": "Добавляет прокси в пул.",
+                        "docstring": "Добавляет прокси в пул.\n\nArgs:\n    proxy: Конфигурация прокси (ProxyConfig, строка или dict).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 75,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "remove",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, proxy)",
+                        "summary": "Удаляет прокси из пула.",
+                        "docstring": "Удаляет прокси из пула.\n\nArgs:\n    proxy: Удаляемый прокси (ProxyConfig или строка).\n\nReturns:\n    True, если прокси был найден и удален, иначе False.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 90,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_all",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает список всех зарегистрированных прокси в пуле.",
+                        "docstring": "Возвращает список всех зарегистрированных прокси в пуле.\n\nReturns:\n    Список экземпляров ProxyConfig.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 107,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_available",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает список только доступных (не забаненных) прокси.",
+                        "docstring": "Возвращает список только доступных (не забаненных) прокси.\n\nReturns:\n    Список доступных экземпляров ProxyConfig.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 116,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_next",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Возвращает следующий прокси согласно выбранной стратегии.",
+                        "docstring": "Возвращает следующий прокси согласно выбранной стратегии.\n\nArgs:\n    key: Идентификатор сессии/пользователя для стратегии 'sticky'.\n\nReturns:\n    Экземпляр ProxyConfig или None, если нет доступных прокси.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 125,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "report_failure",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, proxy)",
+                        "summary": "Фиксирует ошибку при обращении через прокси.",
+                        "docstring": "Фиксирует ошибку при обращении через прокси.\n\nArgs:\n    proxy: Прокси, на котором произошел сбой.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 165,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "report_success",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, proxy)",
+                        "summary": "Фиксирует успешный запрос через прокси, сбрасывая счетчик ошибок.",
+                        "docstring": "Фиксирует успешный запрос через прокси, сбрасывая счетчик ошибок.\n\nArgs:\n    proxy: Успешно отработавший прокси.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 186,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "reset_status",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Сбрасывает счетчики ошибок и разблокирует все временно отключенные прокси.",
+                        "docstring": "Сбрасывает счетчики ошибок и разблокирует все временно отключенные прокси.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 201,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "check_proxy",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(proxy, target_url, timeout)",
+                    "summary": "Синхронно проверяет доступность прокси, замеряет RTT и определяет внешний IP.",
+                    "docstring": "Синхронно проверяет доступность прокси, замеряет RTT и определяет внешний IP.\n\nArgs:\n    proxy: Проверяемый прокси (ProxyConfig или строка).\n    target_url: URL проверочного эндпоинта.\n    timeout: Таймаут соединения в секундах.\n\nReturns:\n    Экземпляр ProxyHealthResult с результатами проверки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 209,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "check_proxy_async",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(proxy, target_url, timeout)",
+                    "summary": "Асинхронно проверяет доступность прокси в отдельном потоке.",
+                    "docstring": "Асинхронно проверяет доступность прокси в отдельном потоке.\n\nArgs:\n    proxy: Проверяемый прокси.\n    target_url: URL проверочного эндпоинта.\n    timeout: Таймаут соединения в секундах.\n\nReturns:\n    Экземпляр ProxyHealthResult с результатами проверки.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 272,
                     "bases": [],
                     "children": []
                   }
@@ -31286,7 +31645,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 12,
+                "line_number": 16,
                 "bases": [],
                 "children": []
               },
@@ -31306,7 +31665,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 20,
+                "line_number": 28,
                 "bases": [],
                 "children": []
               },
@@ -31326,7 +31685,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 28,
+                "line_number": 36,
                 "bases": [],
                 "children": []
               }
@@ -31350,7 +31709,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 20,
+            "line_number": 22,
             "bases": [],
             "children": []
           },
@@ -31370,7 +31729,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 30,
+            "line_number": 34,
             "bases": [],
             "children": []
           },
@@ -31390,7 +31749,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 38,
+            "line_number": 42,
             "bases": [],
             "children": []
           }
@@ -40589,6 +40948,21 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/proxy/pool",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/pool",
+      "target": "chutils/scraping/proxy/models",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/proxy/pool",
+      "target": "chutils/scraping/proxy/parser",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/proxy/tunnel",
       "target": "chutils/logger",
       "weight": 1
@@ -41118,8 +41492,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "e42e4d64e914b858f8b15f943b4e7eeffea5472b (dirty)",
-    "generated_at": "2026-09-10T00:45:43.411434+00:00",
-    "project_hash": "27680f13e7314f8aee19c54ad96633126ed70f93369bd50dc1700d12ae3da7a6"
+    "git_commit": "2ec20a0098d7c1008ffe86f9a204368fac2de62a (dirty)",
+    "generated_at": "2026-09-10T00:48:28.916622+00:00",
+    "project_hash": "0572c708c86febae365534755e61af03864e6785143eb8e6d1462b565928d8b2"
   }
 }

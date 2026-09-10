@@ -436,3 +436,40 @@ async with AsyncProxyTunnel("socks5://user:pass@remote-proxy.com:1080") as tunne
     # nodriver.start(browser_args=[browser_arg])
 ```
 
+### Пул прокси и стратегии ротации (`ProxyPool`)
+
+Класс `ProxyPool` управляет набором прокси, обеспечивая потокобезопасную ротацию, закрепление сессий и автоматический вывод из строя сбойных узлов (failover):
+
+```python
+from chutils.scraping import ProxyPool, check_proxy
+
+# Инициализация пула с авто-баном при 3 сбоях на 5 минут
+pool = ProxyPool(
+    proxies=[
+        "http://user:pass@proxy1.com:8080",
+        "socks5://user:pass@proxy2.com:1080",
+        "proxy3.com:8080:login:pass",
+    ],
+    strategy="sticky",  # 'round_robin', 'random', 'sticky', 'failover'
+    sticky_ttl=600.0,
+    ban_timeout=300.0,
+    max_fails=3,
+)
+
+# Получение прокси для конкретной пользовательской сессии
+proxy = pool.get_next(key="session_user_42")
+
+try:
+    # Выполнение запроса через прокси...
+    pool.report_success(proxy)
+except Exception:
+    # При ошибке фиксируем сбой
+    pool.report_failure(proxy)
+
+# Проверка работоспособности и замер задержки (Health Check)
+health = check_proxy(proxy, timeout=5.0)
+if health.is_alive:
+    print(f"IP: {health.external_ip}, Latency: {health.latency_ms} ms")
+```
+
+

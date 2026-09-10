@@ -113,3 +113,13 @@ class ProxyConfig(BaseModel):
                 return self.server_url
             case _:
                 return self.url
+
+
+class ProxyHealthResult(BaseModel):
+    """Результат проверки работоспособности (Health Check) прокси-сервера."""
+
+    is_alive: bool
+    latency_ms: float = 0.0
+    external_ip: str | None = None
+    error: str | None = None
+

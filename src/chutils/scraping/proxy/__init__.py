@@ -6,13 +6,21 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from .extension import ChromeProxyExtension as ChromeProxyExtension
     from .models import ProxyConfig as ProxyConfig
+    from .models import ProxyHealthResult as ProxyHealthResult
     from .parser import parse_proxy as parse_proxy
+    from .pool import ProxyPool as ProxyPool
+    from .pool import check_proxy as check_proxy
+    from .pool import check_proxy_async as check_proxy_async
     from .tunnel import AsyncProxyTunnel as AsyncProxyTunnel
 
 _LAZY_MAPPING = {
     "AsyncProxyTunnel": (".tunnel", "AsyncProxyTunnel"),
     "ChromeProxyExtension": (".extension", "ChromeProxyExtension"),
     "ProxyConfig": (".models", "ProxyConfig"),
+    "ProxyHealthResult": (".models", "ProxyHealthResult"),
+    "ProxyPool": (".pool", "ProxyPool"),
+    "check_proxy": (".pool", "check_proxy"),
+    "check_proxy_async": (".pool", "check_proxy_async"),
     "parse_proxy": (".parser", "parse_proxy"),
 }
 
@@ -33,5 +41,9 @@ __all__ = [
     "AsyncProxyTunnel",
     "ChromeProxyExtension",
     "ProxyConfig",
+    "ProxyHealthResult",
+    "ProxyPool",
+    "check_proxy",
+    "check_proxy_async",
     "parse_proxy",
 ]

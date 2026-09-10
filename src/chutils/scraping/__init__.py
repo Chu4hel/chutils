@@ -14,6 +14,8 @@ if TYPE_CHECKING:
         AsyncProxyTunnel as AsyncProxyTunnel,
         ChromeProxyExtension as ChromeProxyExtension,
         ProxyConfig as ProxyConfig,
+        ProxyPool as ProxyPool,
+        check_proxy as check_proxy,
         parse_proxy as parse_proxy,
     )
 
@@ -23,6 +25,8 @@ _LAZY_MAPPING = {
     "ChromeProxyExtension": (".proxy", "ChromeProxyExtension"),
     "ProfileManager": (".profiles", "ProfileManager"),
     "ProxyConfig": (".proxy", "ProxyConfig"),
+    "ProxyPool": (".proxy", "ProxyPool"),
+    "check_proxy": (".proxy", "check_proxy"),
     "parse_proxy": (".proxy", "parse_proxy"),
 }
 
@@ -48,7 +52,9 @@ __all__ = [
     "ChromeProxyExtension",
     "ProfileManager",
     "ProxyConfig",
+    "ProxyPool",
     "captcha",
+    "check_proxy",
     "concurrency",
     "humanize",
     "parse_proxy",
