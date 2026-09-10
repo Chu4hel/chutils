@@ -22357,7 +22357,7 @@
                     "layer": "internal",
                     "signature": "(self, url)",
                     "summary": "Выполняет GET запрос.",
-                    "docstring": "Выполняет GET запрос.",
+                    "docstring": "Выполняет GET запрос.\n\nArgs:\n    url: Целевой URL.\n    **kwargs: Дополнительные параметры запроса.\n\nReturns:\n    Объект HttpResponse.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -22377,47 +22377,7 @@
                     "layer": "internal",
                     "signature": "(self, url)",
                     "summary": "Выполняет POST запрос.",
-                    "docstring": "Выполняет POST запрос.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 224,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "put",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, url)",
-                    "summary": "Выполняет PUT запрос.",
-                    "docstring": "Выполняет PUT запрос.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 228,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "delete",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, url)",
-                    "summary": "Выполняет DELETE запрос.",
-                    "docstring": "Выполняет DELETE запрос.",
+                    "docstring": "Выполняет POST запрос.\n\nArgs:\n    url: Целевой URL.\n    **kwargs: Дополнительные параметры запроса.\n\nReturns:\n    Объект HttpResponse.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -22432,12 +22392,12 @@
                     "children": []
                   },
                   {
-                    "name": "patch",
+                    "name": "put",
                     "type": "method",
                     "layer": "internal",
                     "signature": "(self, url)",
-                    "summary": "Выполняет PATCH запрос.",
-                    "docstring": "Выполняет PATCH запрос.",
+                    "summary": "Выполняет PUT запрос.",
+                    "docstring": "Выполняет PUT запрос.\n\nArgs:\n    url: Целевой URL.\n    **kwargs: Дополнительные параметры запроса.\n\nReturns:\n    Объект HttpResponse.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -22447,7 +22407,47 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 236,
+                    "line_number": 244,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "delete",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет DELETE запрос.",
+                    "docstring": "Выполняет DELETE запрос.\n\nArgs:\n    url: Целевой URL.\n    **kwargs: Дополнительные параметры запроса.\n\nReturns:\n    Объект HttpResponse.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 256,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "patch",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет PATCH запрос.",
+                    "docstring": "Выполняет PATCH запрос.\n\nArgs:\n    url: Целевой URL.\n    **kwargs: Дополнительные параметры запроса.\n\nReturns:\n    Объект HttpResponse.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 268,
                     "bases": [],
                     "children": []
                   },
@@ -22467,7 +22467,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 240,
+                    "line_number": 280,
                     "bases": [],
                     "children": []
                   }
@@ -22489,7 +22489,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 259,
+                "line_number": 299,
                 "bases": [],
                 "children": [
                   {
@@ -22508,7 +22508,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 262,
+                    "line_number": 302,
                     "bases": [],
                     "children": []
                   },
@@ -22528,7 +22528,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 311,
+                    "line_number": 351,
                     "bases": [],
                     "children": []
                   },
@@ -22538,7 +22538,7 @@
                     "layer": "internal",
                     "signature": "(self, url)",
                     "summary": "Выполняет асинхронный GET запрос.",
-                    "docstring": "Выполняет асинхронный GET запрос.",
+                    "docstring": "Выполняет асинхронный GET запрос.\n\nArgs:\n    url: Целевой URL.\n    **kwargs: Дополнительные параметры запроса.\n\nReturns:\n    Объект HttpResponse.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -22548,7 +22548,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 348,
+                    "line_number": 388,
                     "bases": [],
                     "children": []
                   },
@@ -22558,7 +22558,7 @@
                     "layer": "internal",
                     "signature": "(self, url)",
                     "summary": "Выполняет асинхронный POST запрос.",
-                    "docstring": "Выполняет асинхронный POST запрос.",
+                    "docstring": "Выполняет асинхронный POST запрос.\n\nArgs:\n    url: Целевой URL.\n    **kwargs: Дополнительные параметры запроса.\n\nReturns:\n    Объект HttpResponse.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -22568,7 +22568,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 352,
+                    "line_number": 400,
                     "bases": [],
                     "children": []
                   },
@@ -22578,7 +22578,7 @@
                     "layer": "internal",
                     "signature": "(self, url)",
                     "summary": "Выполняет асинхронный PUT запрос.",
-                    "docstring": "Выполняет асинхронный PUT запрос.",
+                    "docstring": "Выполняет асинхронный PUT запрос.\n\nArgs:\n    url: Целевой URL.\n    **kwargs: Дополнительные параметры запроса.\n\nReturns:\n    Объект HttpResponse.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -22588,7 +22588,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 356,
+                    "line_number": 412,
                     "bases": [],
                     "children": []
                   },
@@ -22598,7 +22598,7 @@
                     "layer": "internal",
                     "signature": "(self, url)",
                     "summary": "Выполняет асинхронный DELETE запрос.",
-                    "docstring": "Выполняет асинхронный DELETE запрос.",
+                    "docstring": "Выполняет асинхронный DELETE запрос.\n\nArgs:\n    url: Целевой URL.\n    **kwargs: Дополнительные параметры запроса.\n\nReturns:\n    Объект HttpResponse.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -22608,7 +22608,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 360,
+                    "line_number": 424,
                     "bases": [],
                     "children": []
                   },
@@ -22618,7 +22618,7 @@
                     "layer": "internal",
                     "signature": "(self, url)",
                     "summary": "Выполняет асинхронный PATCH запрос.",
-                    "docstring": "Выполняет асинхронный PATCH запрос.",
+                    "docstring": "Выполняет асинхронный PATCH запрос.\n\nArgs:\n    url: Целевой URL.\n    **kwargs: Дополнительные параметры запроса.\n\nReturns:\n    Объект HttpResponse.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -22628,7 +22628,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 364,
+                    "line_number": 436,
                     "bases": [],
                     "children": []
                   },
@@ -22648,7 +22648,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 368,
+                    "line_number": 448,
                     "bases": [],
                     "children": []
                   },
@@ -22668,7 +22668,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 375,
+                    "line_number": 455,
                     "bases": [],
                     "children": []
                   }
@@ -45203,8 +45203,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "a5209b78c4fecdbff306fdbbe28be5f9be46c3cb (dirty)",
-    "generated_at": "2026-09-10T12:34:19.453384+00:00",
-    "project_hash": "2a609c918c6a9235597647ca3f35d83ae4b09460817e61dc51f2a83930bfd6c8"
+    "git_commit": "4902141318be2fd26c8e9e4c0afe37bb1072b3a7 (dirty)",
+    "generated_at": "2026-09-10T12:46:46.549320+00:00",
+    "project_hash": "c5c5fc99f493c111b2208625b32a7255bac9a192a94ebed52f955fb83a8ef8fe"
   }
 }

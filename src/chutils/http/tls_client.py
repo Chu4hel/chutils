@@ -218,23 +218,63 @@ class TLSSession:
         return _curl_resp_to_http_response(resp)
 
     def get(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Выполняет GET запрос."""
+        """Выполняет GET запрос.
+
+        Args:
+            url: Целевой URL.
+            **kwargs: Дополнительные параметры запроса.
+
+        Returns:
+            Объект HttpResponse.
+        """
         return self.request("GET", url, **kwargs)
 
     def post(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Выполняет POST запрос."""
+        """Выполняет POST запрос.
+
+        Args:
+            url: Целевой URL.
+            **kwargs: Дополнительные параметры запроса.
+
+        Returns:
+            Объект HttpResponse.
+        """
         return self.request("POST", url, **kwargs)
 
     def put(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Выполняет PUT запрос."""
+        """Выполняет PUT запрос.
+
+        Args:
+            url: Целевой URL.
+            **kwargs: Дополнительные параметры запроса.
+
+        Returns:
+            Объект HttpResponse.
+        """
         return self.request("PUT", url, **kwargs)
 
     def delete(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Выполняет DELETE запрос."""
+        """Выполняет DELETE запрос.
+
+        Args:
+            url: Целевой URL.
+            **kwargs: Дополнительные параметры запроса.
+
+        Returns:
+            Объект HttpResponse.
+        """
         return self.request("DELETE", url, **kwargs)
 
     def patch(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Выполняет PATCH запрос."""
+        """Выполняет PATCH запрос.
+
+        Args:
+            url: Целевой URL.
+            **kwargs: Дополнительные параметры запроса.
+
+        Returns:
+            Объект HttpResponse.
+        """
         return self.request("PATCH", url, **kwargs)
 
     def close(self) -> None:
@@ -346,23 +386,63 @@ class TLSAsyncClient:
         return _curl_resp_to_http_response(resp)
 
     async def get(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Выполняет асинхронный GET запрос."""
+        """Выполняет асинхронный GET запрос.
+
+        Args:
+            url: Целевой URL.
+            **kwargs: Дополнительные параметры запроса.
+
+        Returns:
+            Объект HttpResponse.
+        """
         return await self.request("GET", url, **kwargs)
 
     async def post(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Выполняет асинхронный POST запрос."""
+        """Выполняет асинхронный POST запрос.
+
+        Args:
+            url: Целевой URL.
+            **kwargs: Дополнительные параметры запроса.
+
+        Returns:
+            Объект HttpResponse.
+        """
         return await self.request("POST", url, **kwargs)
 
     async def put(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Выполняет асинхронный PUT запрос."""
+        """Выполняет асинхронный PUT запрос.
+
+        Args:
+            url: Целевой URL.
+            **kwargs: Дополнительные параметры запроса.
+
+        Returns:
+            Объект HttpResponse.
+        """
         return await self.request("PUT", url, **kwargs)
 
     async def delete(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Выполняет асинхронный DELETE запрос."""
+        """Выполняет асинхронный DELETE запрос.
+
+        Args:
+            url: Целевой URL.
+            **kwargs: Дополнительные параметры запроса.
+
+        Returns:
+            Объект HttpResponse.
+        """
         return await self.request("DELETE", url, **kwargs)
 
     async def patch(self, url: str, **kwargs: Any) -> HttpResponse:
-        """Выполняет асинхронный PATCH запрос."""
+        """Выполняет асинхронный PATCH запрос.
+
+        Args:
+            url: Целевой URL.
+            **kwargs: Дополнительные параметры запроса.
+
+        Returns:
+            Объект HttpResponse.
+        """
         return await self.request("PATCH", url, **kwargs)
 
     async def aclose(self) -> None:
