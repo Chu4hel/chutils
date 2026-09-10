@@ -29403,6 +29403,97 @@
                 ]
               },
               {
+                "name": "search",
+                "path": "chutils/scraping/humanize/search",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Банк поисковых запросов и вспомогательные утилиты для органического серфинга.",
+                "docstring": "Банк поисковых запросов и вспомогательные утилиты для органического серфинга.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "get_random_search_queries",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(count, category)",
+                    "summary": "Возвращает список случайных реалистичных поисковых запросов.",
+                    "docstring": "Возвращает список случайных реалистичных поисковых запросов.\n\nArgs:\n    count: Количество запрашиваемых поисковых запросов.\n    category: Необязательная категория ('tech', 'news', 'science', 'lifestyle').\n\nReturns:\n    Список строк с поисковыми запросами.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 36,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_search_engine_config",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(engine)",
+                    "summary": "Возвращает конфигурацию для органического поиска в указанной поисковой системе.",
+                    "docstring": "Возвращает конфигурацию для органического поиска в указанной поисковой системе.\n\nArgs:\n    engine: Имя поисковой системы ('google' или 'yandex').\n\nReturns:\n    Словарь с параметрами (base_url, search_url, input_selector, submit_selector, organic_selector).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 64,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_organic_url",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(url, engine)",
+                    "summary": "Проверяет, является ли URL органической внешней ссылкой из поисковой выдачи,",
+                    "docstring": "Проверяет, является ли URL органической внешней ссылкой из поисковой выдачи,\nисключая рекламу, внутренние сервисы поисковика и трекинговые редиректы.\n\nArgs:\n    url: Проверяемый URL.\n    engine: Имя поисковой системы ('google' или 'yandex').\n\nReturns:\n    True, если ссылка является валидной органической внешней ссылкой, иначе False.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 96,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_is_bot_detection",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(url, content)",
+                    "summary": "Проверяет признаки страницы проверки на роботов или капчи.",
+                    "docstring": "Проверяет признаки страницы проверки на роботов или капчи.\n\nArgs:\n    url: URL страницы.\n    content: Опциональное текстовое содержимое страницы.\n\nReturns:\n    True, если обнаружены признаки капчи или проверки на бота.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 152,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "warmer",
                 "path": "chutils/scraping/humanize/warmer",
                 "type": "module",
@@ -29411,6 +29502,26 @@
                 "docstring": "",
                 "children": [],
                 "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 31,
+                    "bases": [],
+                    "children": []
+                  },
                   {
                     "name": "DEFAULT_TRUST_SITES",
                     "type": "constant",
@@ -29427,7 +29538,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 18,
+                    "line_number": 33,
                     "bases": [],
                     "children": []
                   },
@@ -29447,7 +29558,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 28,
+                    "line_number": 44,
                     "bases": [],
                     "children": [
                       {
@@ -29466,7 +29577,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 36,
+                        "line_number": 52,
                         "bases": [],
                         "children": []
                       },
@@ -29486,7 +29597,47 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 44,
+                        "line_number": 60,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "warm_up_search",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, queries, category, queries_count, search_engine, click_result, surf_result_duration)",
+                        "summary": "Симулирует органический поиск и серфинг по результатам выдачи.",
+                        "docstring": "Симулирует органический поиск и серфинг по результатам выдачи.\n\nArgs:\n    queries: Список поисковых запросов. Если None, выбираются случайные запросы из банка.\n    category: Категория запросов ('tech', 'news', 'science', 'lifestyle'), если queries is None.\n    queries_count: Количество запросов для поиска.\n    search_engine: Поисковая система ('google' или 'yandex').\n    click_result: Переходить ли по органической ссылке из выдачи.\n    surf_result_duration: Время пребывания на целевом сайте после перехода (мин, макс в секундах).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 157,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "save_profile",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, filepath, password, metadata)",
+                        "summary": "Экспортирует сессию после прогрева и сохраняет её в .chprofile файл через ProfileManager.",
+                        "docstring": "Экспортирует сессию после прогрева и сохраняет её в .chprofile файл через ProfileManager.\n\nArgs:\n    filepath: Путь к сохраняемому файлу (.chprofile).\n    password: Опциональный пароль для шифрования данных профиля.\n    metadata: Пользовательские метаданные.\n\nReturns:\n    Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 334,
                         "bases": [],
                         "children": []
                       }
@@ -29508,7 +29659,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 142,
+                    "line_number": 364,
                     "bases": [],
                     "children": [
                       {
@@ -29527,7 +29678,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 147,
+                        "line_number": 369,
                         "bases": [],
                         "children": []
                       },
@@ -29547,7 +29698,47 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 155,
+                        "line_number": 377,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "warm_up_search",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, queries, category, queries_count, search_engine, click_result, surf_result_duration)",
+                        "summary": "Синхронно симулирует органический поиск и серфинг по результатам выдачи Selenium.",
+                        "docstring": "Синхронно симулирует органический поиск и серфинг по результатам выдачи Selenium.\n\nArgs:\n    queries: Список поисковых запросов. Если None, выбираются случайные запросы из банка.\n    category: Категория запросов ('tech', 'news', 'science', 'lifestyle'), если queries is None.\n    queries_count: Количество запросов для поиска.\n    search_engine: Поисковая система ('google' или 'yandex').\n    click_result: Переходить ли по органической ссылке из выдачи.\n    surf_result_duration: Время пребывания на целевом сайте после перехода (мин, макс в секундах).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 456,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "save_profile",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, filepath, password, metadata)",
+                        "summary": "Синхронно экспортирует сессию Selenium и сохраняет в .chprofile файл через ProfileManager.",
+                        "docstring": "Синхронно экспортирует сессию Selenium и сохраняет в .chprofile файл через ProfileManager.\n\nArgs:\n    filepath: Путь к сохраняемому файлу (.chprofile).\n    password: Опциональный пароль для шифрования.\n    metadata: Пользовательские метаданные.\n\nReturns:\n    Экземпляр BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 591,
                         "bases": [],
                         "children": []
                       }
@@ -29781,7 +29972,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 60,
+                        "line_number": 62,
                         "bases": [],
                         "children": []
                       }
@@ -30011,6 +30202,28 @@
                           "custom_metadata": {}
                         },
                         "line_number": 116,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "save_profile_after_warmup",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, browser_obj, filepath, password, metadata, driver_type)",
+                        "summary": "Экспортирует состояние сессии после прогрева и сохраняет в `.chprofile` файл.",
+                        "docstring": "Экспортирует состояние сессии после прогрева и сохраняет в `.chprofile` файл.\n\nПоддерживает Playwright (BrowserContext или Page), nodriver (Tab) и Selenium WebDriver.\n\nArgs:\n    browser_obj: Сессия (Playwright BrowserContext/Page, nodriver Tab или Selenium WebDriver).\n    filepath: Путь к сохраняемому файлу (.chprofile).\n    password: Опциональный пароль для шифрования данных профиля.\n    metadata: Дополнительные метаданные для сохранения в профиле.\n    driver_type: Необязательный тип драйвера ('playwright', 'nodriver', 'selenium'). Если None, определяется автоматически.\n\nReturns:\n    Экземпляр сохраненного BrowserProfile.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 132,
                         "bases": [],
                         "children": []
                       }
@@ -39280,7 +39493,7 @@
     {
       "source": "chutils/scraping/humanize",
       "target": "/warmer",
-      "weight": 2
+      "weight": 6
     },
     {
       "source": "chutils/scraping/humanize/actions",
@@ -39299,8 +39512,18 @@
     },
     {
       "source": "chutils/scraping/humanize/warmer",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/humanize/warmer",
       "target": "/actions",
-      "weight": 8
+      "weight": 11
+    },
+    {
+      "source": "chutils/scraping/humanize/warmer",
+      "target": "/search",
+      "weight": 5
     },
     {
       "source": "chutils/scraping/profiles",
@@ -39922,8 +40145,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "ca9b4a304d7838ef5d34dd69cae3f173c6c6f13c (dirty)",
-    "generated_at": "2026-09-09T23:59:49.193272+00:00",
-    "project_hash": "0201ec34e0c2b90ffcfce2b090305bd86206060a8b1241c32dd7a07552fab710"
+    "git_commit": "1251d87ffe3a1f498a450f3605cf2d2212be0cd2 (dirty)",
+    "generated_at": "2026-09-10T00:30:59.792261+00:00",
+    "project_hash": "5df1a61dfcd4141a196c61a9e0256a06011ac3079a8e9925e1b021aed7caa986"
   }
 }

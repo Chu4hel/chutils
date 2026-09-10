@@ -264,11 +264,25 @@ from chutils.scraping.humanize import ProfileWarmer
 # или для nodriver (принимает объект Tab)
 warmer = ProfileWarmer(page_or_tab)
 
-# Прогрев: посетит 3 случайных сайта из встроенного списка
-# На каждом сайте проведет от 10 до 20 секунд, имитируя скроллинг, мышь и переходы по ссылкам
+# 1. Обычный прогрев по сайтам (посетит 3 случайных сайта из встроенного списка)
 await warmer.warm_up(
     sites_count=3, duration_per_site=(10.0, 20.0), click_random_links=True
 )
+
+# 2. Органический поиск (Google / Yandex Search Surfing)
+# Вводит запросы из банка категорий ('tech', 'news', 'science', 'lifestyle'),
+# скроллит выдачу, находит органические результаты (исключая рекламу и внутренние ссылки),
+# переходит на целевой сайт и имитирует естественное чтение/скроллинг
+await warmer.warm_up_search(
+    category="tech",
+    queries_count=2,
+    search_engine="google",
+    click_result=True,
+    surf_result_duration=(10.0, 25.0),
+)
+
+# 3. Сохранение прогретой сессии в .chprofile через ProfileManager
+await warmer.save_profile("warmed_profile.chprofile", password="secret_password")
 ```
 
 ### Синхронный прогрев (Selenium)
@@ -279,7 +293,37 @@ from chutils.scraping.humanize import SyncProfileWarmer
 # Принимает экземпляр Selenium WebDriver
 warmer = SyncProfileWarmer(driver)
 
+# Обычный прогрев
 warmer.warm_up(sites_count=3, duration_per_site=(10.0, 20.0), click_random_links=True)
+
+# Органический поиск в Selenium
+warmer.warm_up_search(
+    queries=["python async tutorials", "fastapi performance"],
+    search_engine="google",
+    click_result=True,
+    surf_result_duration=(5.0, 15.0),
+)
+
+# Сохранение прогретой сессии
+warmer.save_profile("warmed_selenium.chprofile", password="secret_password")
+```
+
+### Вспомогательные утилиты органического поиска
+
+```python
+from chutils.scraping.humanize import (
+    DEFAULT_SEARCH_QUERIES,
+    get_random_search_queries,
+    get_search_engine_config,
+    is_organic_url,
+)
+
+# Получение реалистичных запросов по категории
+queries = get_random_search_queries(count=3, category="tech")
+
+# Проверка, является ли ссылка органической (отсекает Google Ads, Yandex Direct и трекинговые редиректы)
+assert is_organic_url("https://en.wikipedia.org/wiki/Python", "google")
+assert not is_organic_url("https://googleads.g.doubleclick.net/...", "google")
 ```
 
 ---
