@@ -29547,7 +29547,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 17,
+                    "line_number": 21,
                     "bases": [],
                     "children": []
                   },
@@ -29567,7 +29567,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 60,
+                    "line_number": 64,
                     "bases": [],
                     "children": []
                   },
@@ -29587,7 +29587,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 69,
+                    "line_number": 73,
                     "bases": [],
                     "children": []
                   },
@@ -29607,7 +29607,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 79,
+                    "line_number": 88,
                     "bases": [],
                     "children": []
                   },
@@ -29627,7 +29627,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 89,
+                    "line_number": 103,
                     "bases": [],
                     "children": []
                   },
@@ -29637,7 +29637,7 @@
                     "layer": "public",
                     "signature": "(context)",
                     "summary": "Применяет JS-инъекции анти-детекта к контексту Playwright.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к контексту Playwright.\n\nArgs:\n    context: Объект контекста Playwright BrowserContext.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
+                    "docstring": "Применяет JS-инъекции анти-детекта к контексту Playwright.\n\nArgs:\n    context: Объект контекста Playwright BrowserContext.\n    config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -29647,7 +29647,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 99,
+                    "line_number": 118,
                     "bases": [],
                     "children": []
                   },
@@ -29657,7 +29657,7 @@
                     "layer": "public",
                     "signature": "(driver)",
                     "summary": "Применяет JS-инъекции анти-детекта к сессии Selenium.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к сессии Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
+                    "docstring": "Применяет JS-инъекции анти-детекта к сессии Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29667,7 +29667,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 132,
+                    "line_number": 165,
                     "bases": [],
                     "children": []
                   },
@@ -29677,7 +29677,7 @@
                     "layer": "public",
                     "signature": "(tab)",
                     "summary": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.\n\nArgs:\n    tab: Объект вкладки nodriver Tab.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL,\n        сохраняя естественный отпечаток установленного браузера Google Chrome.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
+                    "docstring": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.\n\nПо умолчанию stealth_minimal=True для сохранения естественного отпечатка\nреального Chromium и предотвращения детекта искусственного шума Canvas/WebGL.\n\nArgs:\n    tab: Объект вкладки nodriver Tab.\n    config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL,\n        сохраняя естественный отпечаток установленного браузера Google Chrome (True по умолчанию).\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -29687,7 +29687,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 170,
+                    "line_number": 217,
                     "bases": [],
                     "children": []
                   },
@@ -29707,7 +29707,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 209,
+                    "line_number": 270,
                     "bases": [],
                     "children": []
                   },
@@ -29727,7 +29727,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 232,
+                    "line_number": 293,
                     "bases": [],
                     "children": []
                   },
@@ -29747,7 +29747,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 294,
+                    "line_number": 355,
                     "bases": [],
                     "children": []
                   },
@@ -29767,7 +29767,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 314,
+                    "line_number": 375,
                     "bases": [],
                     "children": []
                   }
@@ -29881,6 +29881,186 @@
                     "line_number": 16,
                     "bases": [],
                     "children": []
+                  }
+                ]
+              },
+              {
+                "name": "config",
+                "path": "chutils/scraping/humanize/config",
+                "type": "module",
+                "layer": "public",
+                "summary": "Декларативная конфигурация антидетекта для браузерных движков.",
+                "docstring": "Декларативная конфигурация антидетекта для браузерных движков.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "AntidetectConfig",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Конфигурация параметров маскировки браузера (антидетект).",
+                    "docstring": "Конфигурация параметров маскировки браузера (антидетект).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 17,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": [
+                      {
+                        "name": "preset_stealth_nodriver",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls)",
+                        "summary": "Рекомендуемый пресет для nodriver: zero-footprint (без синтетического шума Canvas/WebGL).",
+                        "docstring": "Рекомендуемый пресет для nodriver: zero-footprint (без синтетического шума Canvas/WebGL).\n\nArgs:\n    session_seed: Сид для детерминированного генератора псевдослучайных чисел.\n    client_hints: Опциональный словарь с параметрами Client Hints.\n\nReturns:\n    Экземпляр AntidetectConfig с конфигурацией zero-footprint.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 59,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "preset_aggressive",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls)",
+                        "summary": "Агрессивный пресет с рандомизацией Canvas/WebGL/Audio (для Playwright/Selenium в headless).",
+                        "docstring": "Агрессивный пресет с рандомизацией Canvas/WebGL/Audio (для Playwright/Selenium в headless).\n\nArgs:\n    webgl_vendor: Эмулируемый производитель WebGL.\n    webgl_renderer: Эмулируемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер CPU.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    session_seed: Сид для рандомизации шума Canvas/Audio.\n    client_hints: Дополнительные параметры Client Hints.\n\nReturns:\n    Экземпляр AntidetectConfig с агрессивной рандомизацией.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 81,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "preset_minimal",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls)",
+                        "summary": "Минимальный пресет: отключен шум, только базовая защита от утечек и скрытие webdriver.",
+                        "docstring": "Минимальный пресет: отключен шум, только базовая защита от утечек и скрытие webdriver.\n\nArgs:\n    session_seed: Сид для инициализации сессии.\n\nReturns:\n    Экземпляр AntidetectConfig с минимальной модификацией.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 115,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_init_script",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Генерирует JavaScript-скрипт антидетекта на основе настроек конфигурации.",
+                        "docstring": "Генерирует JavaScript-скрипт антидетекта на основе настроек конфигурации.\n\nReturns:\n    Строка исполняемого JavaScript-кода для инъекции в браузер.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 133,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "apply_to_nodriver",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, tab)",
+                        "summary": "Применяет данную конфигурацию антидетекта к вкладке nodriver Tab.",
+                        "docstring": "Применяет данную конфигурацию антидетекта к вкладке nodriver Tab.\n\nArgs:\n    tab: Экземпляр вкладки nodriver Tab.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 151,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "apply_to_playwright",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, target)",
+                        "summary": "Применяет данную конфигурацию антидетекта к Playwright Page или BrowserContext.",
+                        "docstring": "Применяет данную конфигурацию антидетекта к Playwright Page или BrowserContext.\n\nArgs:\n    target: Экземпляр Playwright BrowserContext или Page.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 161,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "apply_to_selenium",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, driver)",
+                        "summary": "Применяет данную конфигурацию антидетекта к Selenium WebDriver.",
+                        "docstring": "Применяет данную конфигурацию антидетекта к Selenium WebDriver.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 171,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
                   }
                 ]
               },
@@ -30227,6 +30407,137 @@
                       "custom_metadata": {}
                     },
                     "line_number": 144,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "turnstile",
+                "path": "chutils/scraping/humanize/turnstile",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Модуль автоматического обнаружения и решения Cloudflare Turnstile капчи.",
+                "docstring": "Модуль автоматического обнаружения и решения Cloudflare Turnstile капчи.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "TURNSTILE_INSPECT_JS",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 18,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_evaluate_js",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(tab, script)",
+                    "summary": "Выполняет JavaScript в контексте nodriver Tab или Playwright Page.",
+                    "docstring": "Выполняет JavaScript в контексте nodriver Tab или Playwright Page.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 65,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "detect_cf_turnstile",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(tab)",
+                    "summary": "Обнаруживает присутствие и координаты виджета Cloudflare Turnstile.",
+                    "docstring": "Обнаруживает присутствие и координаты виджета Cloudflare Turnstile.\n\nArgs:\n    tab: Объект вкладки nodriver Tab или Playwright Page.\n\nReturns:\n    Словарь с параметрами виджета ('found', 'solved', 'x', 'y', 'width', 'height')\n    либо None, если Turnstile не найден.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 77,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_cf_turnstile_solved",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(tab)",
+                    "summary": "Проверяет, решен ли челендж Cloudflare Turnstile в сессии.",
+                    "docstring": "Проверяет, решен ли челендж Cloudflare Turnstile в сессии.\n\nArgs:\n    tab: Объект вкладки nodriver Tab или Playwright Page.\n\nReturns:\n    True, если в DOM присутствует токен ответа или установлена cookie cf_clearance.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 96,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_cf_turnstile",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(tab)",
+                    "summary": "Автоматически обнаруживает и решает капчу Cloudflare Turnstile.",
+                    "docstring": "Автоматически обнаруживает и решает капчу Cloudflare Turnstile.\n\nНаходит интерактивную область чекбокса, выполняет реалистичное наведение\nкурсора мыши по кривой Безье/WindMouse и клик, после чего ожидает\nполучения токена валидации.\n\nArgs:\n    tab: Объект вкладки nodriver Tab или Playwright Page.\n    timeout: Максимальное время ожидания решения капчи в секундах.\n    check_interval: Интервал проверки состояния капчи в секундах.\n    click_delay: Задержка перед кликом после наведения (min, max).\n    raise_on_failure: Если True, при таймауте выбрасывает RuntimeError.\n\nReturns:\n    True, если капча успешно решена, иначе False.\n\nRaises:\n    RuntimeError: Если raise_on_failure=True и капча не была решена за время таймаута.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 124,
                     "bases": [],
                     "children": []
                   }
@@ -35390,7 +35701,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 92,
+            "line_number": 104,
             "bases": [],
             "children": []
           },
@@ -35410,7 +35721,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 124,
+            "line_number": 140,
             "bases": [],
             "children": []
           },
@@ -35430,7 +35741,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 132,
+            "line_number": 148,
             "bases": [],
             "children": []
           }
@@ -44485,8 +44796,18 @@
     },
     {
       "source": "chutils/scraping/humanize",
+      "target": "/config",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/humanize",
       "target": "/math_utils",
       "weight": 4
+    },
+    {
+      "source": "chutils/scraping/humanize",
+      "target": "/turnstile",
+      "weight": 3
     },
     {
       "source": "chutils/scraping/humanize",
@@ -44512,6 +44833,31 @@
       "source": "chutils/scraping/humanize/antidetect",
       "target": "/antidetect_scripts",
       "weight": 5
+    },
+    {
+      "source": "chutils/scraping/humanize/antidetect",
+      "target": "/config",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/humanize/config",
+      "target": "/antidetect_scripts",
+      "weight": 4
+    },
+    {
+      "source": "chutils/scraping/humanize/turnstile",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/humanize/turnstile",
+      "target": "/actions",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/humanize/turnstile",
+      "target": "/antidetect",
+      "weight": 1
     },
     {
       "source": "chutils/scraping/humanize/warmer",
@@ -45323,8 +45669,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "8f1e342d6fefb0218ed6a1cfebb07da8e8720717 (dirty)",
-    "generated_at": "2026-09-10T15:23:14.635960+00:00",
-    "project_hash": "276723797df76f69357e354f48e50868dd0424d36b9ab5563c157ce9b08a637d"
+    "git_commit": "09caf6442aa9fe8bcf3573b619f4263077a7498a (dirty)",
+    "generated_at": "2026-09-10T15:43:46.516040+00:00",
+    "project_hash": "4eaaf07ae70dd00868871368f0ac3fed45504b1821df9cc4608593c3e4914713"
   }
 }

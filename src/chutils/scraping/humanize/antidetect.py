@@ -1,17 +1,21 @@
+from __future__ import annotations
+
 import importlib.util
 import inspect
 import re
+import sys
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
 
 from .antidetect_scripts import (
-    DEFAULT_DEVICE_MEMORY as DEFAULT_DEVICE_MEMORY,
-    DEFAULT_HARDWARE_CONCURRENCY as DEFAULT_HARDWARE_CONCURRENCY,
-    DEFAULT_WEBGL_RENDERER as DEFAULT_WEBGL_RENDERER,
-    DEFAULT_WEBGL_VENDOR as DEFAULT_WEBGL_VENDOR,
-    _get_antidetect_js as _get_antidetect_js,
+    DEFAULT_DEVICE_MEMORY,
+    DEFAULT_HARDWARE_CONCURRENCY,
+    DEFAULT_WEBGL_RENDERER,
+    DEFAULT_WEBGL_VENDOR,
+    _get_antidetect_js,
 )
+from .config import AntidetectConfig
 
 
 def get_client_hints(user_agent: str | None = None) -> dict[str, Any]:
@@ -67,7 +71,12 @@ ANTIDETECT_JS_SCRIPT = _get_antidetect_js(
 
 
 def _ensure_playwright() -> None:
-    if importlib.util.find_spec("playwright") is None:
+    if "playwright" in sys.modules:
+        return
+    try:
+        if importlib.util.find_spec("playwright") is None:
+            raise ImportError()
+    except (ImportError, ValueError):
         raise OptionalDependencyError(
             "Для использования Playwright-функций требуется библиотека 'playwright'.\n"
             "Установите её: pip install chutils[scraping]",
@@ -77,7 +86,12 @@ def _ensure_playwright() -> None:
 
 
 def _ensure_selenium() -> None:
-    if importlib.util.find_spec("selenium") is None:
+    if "selenium" in sys.modules:
+        return
+    try:
+        if importlib.util.find_spec("selenium") is None:
+            raise ImportError()
+    except (ImportError, ValueError):
         raise OptionalDependencyError(
             "Для использования Selenium-функций требуется библиотека 'selenium'.\n"
             "Установите её: pip install chutils[scraping]",
@@ -87,7 +101,12 @@ def _ensure_selenium() -> None:
 
 
 def _ensure_nodriver() -> None:
-    if importlib.util.find_spec("nodriver") is None:
+    if "nodriver" in sys.modules:
+        return
+    try:
+        if importlib.util.find_spec("nodriver") is None:
+            raise ImportError()
+    except (ImportError, ValueError):
         raise OptionalDependencyError(
             "Для использования nodriver-функций требуется библиотека 'nodriver'.\n"
             "Установите её: pip install nodriver",
@@ -99,10 +118,12 @@ def _ensure_nodriver() -> None:
 async def apply_antidetect_playwright(
     context: Any,
     *,
+    config: AntidetectConfig | None = None,
     webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
     webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
     hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
     device_memory: int = DEFAULT_DEVICE_MEMORY,
+    stealth_minimal: bool = False,
     session_seed: str | int = 1337,
     client_hints: dict[str, Any] | None = None,
 ) -> None:
@@ -110,19 +131,31 @@ async def apply_antidetect_playwright(
 
     Args:
         context: Объект контекста Playwright BrowserContext.
+        config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).
         webgl_vendor: Подменяемый производитель WebGL.
         webgl_renderer: Подменяемая видеокарта WebGL.
         hardware_concurrency: Эмулируемое количество ядер процессора.
         device_memory: Эмулируемый объем оперативной памяти в ГБ.
+        stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.
         session_seed: Сид для детерминированного шума Canvas.
         client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
     """
     _ensure_playwright()
+    if config is not None:
+        webgl_vendor = config.webgl_vendor
+        webgl_renderer = config.webgl_renderer
+        hardware_concurrency = config.hardware_concurrency
+        device_memory = config.device_memory
+        stealth_minimal = config.stealth_minimal
+        session_seed = config.session_seed
+        client_hints = config.client_hints
+
     script = _get_antidetect_js(
         webgl_vendor=webgl_vendor,
         webgl_renderer=webgl_renderer,
         hardware_concurrency=hardware_concurrency,
         device_memory=device_memory,
+        stealth_minimal=stealth_minimal,
         session_seed=session_seed,
         client_hints=client_hints,
     )
@@ -132,10 +165,12 @@ async def apply_antidetect_playwright(
 def apply_antidetect_selenium(
     driver: Any,
     *,
+    config: AntidetectConfig | None = None,
     webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
     webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
     hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
     device_memory: int = DEFAULT_DEVICE_MEMORY,
+    stealth_minimal: bool = False,
     session_seed: str | int = 1337,
     client_hints: dict[str, Any] | None = None,
 ) -> None:
@@ -143,19 +178,31 @@ def apply_antidetect_selenium(
 
     Args:
         driver: Экземпляр Selenium WebDriver.
+        config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).
         webgl_vendor: Подменяемый производитель WebGL.
         webgl_renderer: Подменяемая видеокарта WebGL.
         hardware_concurrency: Эмулируемое количество ядер процессора.
         device_memory: Эмулируемый объем оперативной памяти в ГБ.
+        stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.
         session_seed: Сид для детерминированного шума Canvas.
         client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
     """
     _ensure_selenium()
+    if config is not None:
+        webgl_vendor = config.webgl_vendor
+        webgl_renderer = config.webgl_renderer
+        hardware_concurrency = config.hardware_concurrency
+        device_memory = config.device_memory
+        stealth_minimal = config.stealth_minimal
+        session_seed = config.session_seed
+        client_hints = config.client_hints
+
     script = _get_antidetect_js(
         webgl_vendor=webgl_vendor,
         webgl_renderer=webgl_renderer,
         hardware_concurrency=hardware_concurrency,
         device_memory=device_memory,
+        stealth_minimal=stealth_minimal,
         session_seed=session_seed,
         client_hints=client_hints,
     )
@@ -170,29 +217,43 @@ def apply_antidetect_selenium(
 async def apply_antidetect_nodriver(
     tab: Any,
     *,
+    config: AntidetectConfig | None = None,
     webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
     webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
     hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
     device_memory: int = DEFAULT_DEVICE_MEMORY,
-    stealth_minimal: bool = False,
+    stealth_minimal: bool = True,
     session_seed: str | int = 1337,
     client_hints: dict[str, Any] | None = None,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.
 
+    По умолчанию stealth_minimal=True для сохранения естественного отпечатка
+    реального Chromium и предотвращения детекта искусственного шума Canvas/WebGL.
+
     Args:
         tab: Объект вкладки nodriver Tab.
+        config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).
         webgl_vendor: Подменяемый производитель WebGL.
         webgl_renderer: Подменяемая видеокарта WebGL.
         hardware_concurrency: Эмулируемое количество ядер процессора.
         device_memory: Эмулируемый объем оперативной памяти в ГБ.
         stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL,
-            сохраняя естественный отпечаток установленного браузера Google Chrome.
+            сохраняя естественный отпечаток установленного браузера Google Chrome (True по умолчанию).
         session_seed: Сид для детерминированного шума Canvas.
         client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
     """
     _ensure_nodriver()
     from nodriver.cdp import page
+
+    if config is not None:
+        webgl_vendor = config.webgl_vendor
+        webgl_renderer = config.webgl_renderer
+        hardware_concurrency = config.hardware_concurrency
+        device_memory = config.device_memory
+        stealth_minimal = config.stealth_minimal
+        session_seed = config.session_seed
+        client_hints = config.client_hints
 
     script = _get_antidetect_js(
         webgl_vendor=webgl_vendor,
@@ -341,3 +402,19 @@ def extract_clearance_cookies(target: Any) -> Any:
 
     # Для асинхронных драйверов (Playwright, Nodriver)
     return _extract_clearance_cookies_async(target)
+
+
+__all__ = [
+    "ANTIDETECT_JS_SCRIPT",
+    "DEFAULT_DEVICE_MEMORY",
+    "DEFAULT_HARDWARE_CONCURRENCY",
+    "DEFAULT_WEBGL_RENDERER",
+    "DEFAULT_WEBGL_VENDOR",
+    "_get_antidetect_js",
+    "apply_antidetect_nodriver",
+    "apply_antidetect_playwright",
+    "apply_antidetect_selenium",
+    "extract_clearance_cookies",
+    "get_browser_launch_args",
+    "get_client_hints",
+]

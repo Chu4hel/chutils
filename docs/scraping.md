@@ -233,12 +233,62 @@ apply_antidetect_selenium(
 )
 
 # Для nodriver (применяется к вкладке Tab через CDP протокол)
-# Флаг stealth_minimal=True отключает синтетический шум Canvas/WebGL,
+# По умолчанию stealth_minimal=True: отключает синтетический шум Canvas/WebGL,
 # сохраняя естественный отпечаток установленного браузера Google Chrome:
-await apply_antidetect_nodriver(
-    tab,
-    stealth_minimal=True,
+await apply_antidetect_nodriver(tab)
+```
+
+### Декларативная конфигурация `AntidetectConfig`
+
+Для унифицированного управления параметрами антидетекта во внешних проектах используется Pydantic-модель `AntidetectConfig`. Она валидирует параметры, предоставляет готовые фабричные пресеты и позволяет применять маскировку к любому браузерному движку в одну строчку:
+
+```python
+from chutils.scraping.humanize import AntidetectConfig
+
+# 1. Рекомендуемый пресет для nodriver (Zero-Footprint Stealth)
+# Сохраняет 100% нативный WebGL и Canvas, предотвращая обнаружение искусственного шума WAF-системами:
+cfg_nodriver = AntidetectConfig.preset_stealth_nodriver()
+await cfg_nodriver.apply_to_nodriver(tab)
+
+# 2. Агрессивный пресет для Playwright/Selenium в Headless-режиме (рандомизация Canvas, Audio, WebGL):
+cfg_aggressive = AntidetectConfig.preset_aggressive(
+    hardware_concurrency=16,
+    device_memory=16,
 )
+await cfg_aggressive.apply_to_playwright(browser_context)
+
+# 3. Пользовательская конфигурация:
+custom_cfg = AntidetectConfig(
+    webgl_vendor="Google Inc. (NVIDIA)",
+    webgl_renderer="ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    hardware_concurrency=8,
+    device_memory=16,
+    stealth_minimal=True,
+    session_seed="custom_seed_42",
+)
+await apply_antidetect_nodriver(tab, config=custom_cfg)
+```
+
+### Автоматическое решение Cloudflare Turnstile (`solve_cf_turnstile`)
+
+Функция `solve_cf_turnstile` автоматически обнаруживает появление интерактивного виджета Turnstile (включая контейнеры `.cf-turnstile`, `#turnstile-wrapper` и iframe `challenges.cloudflare.com`), рассчитывает координаты интерактивного чекбокса, выполняет плавное наведение курсора мыши по модели `WindMouse` и осуществляет физический клик с ожиданием токена валидации:
+
+```python
+from chutils.scraping.humanize import (
+    detect_cf_turnstile,
+    is_cf_turnstile_solved,
+    solve_cf_turnstile,
+)
+
+# Проверить наличие и координаты виджета на странице
+widget_info = await detect_cf_turnstile(tab)
+if widget_info and widget_info.get("visible"):
+    print(f"Turnstile обнаружен в координатах ({widget_info['x']}, {widget_info['y']})")
+
+# Автоматически навести мышь, кликнуть и дождаться прохождения проверки
+solved = await solve_cf_turnstile(tab, timeout=15.0, check_interval=0.5)
+if solved:
+    print("Капча успешно пройдена, токен валидирован!")
 ```
 
 ### Флаги запуска браузера (`get_browser_launch_args`)

@@ -16,6 +16,18 @@ if TYPE_CHECKING:
     from .humanize.antidetect import (
         extract_clearance_cookies as extract_clearance_cookies,
     )
+    from .humanize.config import (
+        AntidetectConfig as AntidetectConfig,
+    )
+    from .humanize.turnstile import (
+        detect_cf_turnstile as detect_cf_turnstile,
+    )
+    from .humanize.turnstile import (
+        is_cf_turnstile_solved as is_cf_turnstile_solved,
+    )
+    from .humanize.turnstile import (
+        solve_cf_turnstile as solve_cf_turnstile,
+    )
     from .profiles import (
         BrowserProfile as BrowserProfile,
     )
@@ -90,6 +102,7 @@ if TYPE_CHECKING:
     )
 
 _LAZY_MAPPING = {
+    "AntidetectConfig": (".humanize.config", "AntidetectConfig"),
     "AsyncProxyTunnel": (".proxy", "AsyncProxyTunnel"),
     "BrowserProfile": (".profiles", "BrowserProfile"),
     "CAMOUFOX_AVAILABLE": (".camoufox", "CAMOUFOX_AVAILABLE"),
@@ -109,14 +122,17 @@ _LAZY_MAPPING = {
     "assert_valid_url": (".testing", "assert_valid_url"),
     "async_nodriver_proxy": (".proxy", "async_nodriver_proxy"),
     "check_proxy": (".proxy", "check_proxy"),
+    "detect_cf_turnstile": (".humanize.turnstile", "detect_cf_turnstile"),
     "extract_clearance_cookies": (".humanize.antidetect", "extract_clearance_cookies"),
     "get_async_camoufox_class": (".camoufox", "get_async_camoufox_class"),
     "get_nodriver_proxy_args": (".proxy", "get_nodriver_proxy_args"),
     "get_playwright_proxy": (".proxy", "get_playwright_proxy"),
     "get_selenium_proxy": (".proxy", "get_selenium_proxy"),
+    "is_cf_turnstile_solved": (".humanize.turnstile", "is_cf_turnstile_solved"),
     "launch_camoufox": (".camoufox", "launch_camoufox"),
     "nodriver_proxy": (".proxy", "nodriver_proxy"),
     "parse_proxy": (".proxy", "parse_proxy"),
+    "solve_cf_turnstile": (".humanize.turnstile", "solve_cf_turnstile"),
     "use_html_snapshot": (".testing", "use_html_snapshot"),
 }
 
@@ -147,6 +163,7 @@ def __dir__() -> list[str]:
 
 __all__ = [
     "CAMOUFOX_AVAILABLE",
+    "AntidetectConfig",
     "AsyncProxyTunnel",
     "BrowserProfile",
     "ChromeProxyExtension",
@@ -168,16 +185,19 @@ __all__ = [
     "captcha",
     "check_proxy",
     "concurrency",
+    "detect_cf_turnstile",
     "extract_clearance_cookies",
     "get_async_camoufox_class",
     "get_nodriver_proxy_args",
     "get_playwright_proxy",
     "get_selenium_proxy",
     "humanize",
+    "is_cf_turnstile_solved",
     "launch_camoufox",
     "nodriver_proxy",
     "parse_proxy",
     "proxy",
+    "solve_cf_turnstile",
     "testing",
     "use_html_snapshot",
 ]
