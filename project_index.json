@@ -30477,17 +30477,17 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 65,
+                    "line_number": 107,
                     "bases": [],
                     "children": []
                   },
                   {
-                    "name": "detect_cf_turnstile",
+                    "name": "_detect_cf_turnstile_cdp_fallback",
                     "type": "function",
-                    "layer": "internal",
+                    "layer": "private",
                     "signature": "(tab)",
-                    "summary": "Обнаруживает присутствие и координаты виджета Cloudflare Turnstile.",
-                    "docstring": "Обнаруживает присутствие и координаты виджета Cloudflare Turnstile.\n\nArgs:\n    tab: Объект вкладки nodriver Tab или Playwright Page.\n\nReturns:\n    Словарь с параметрами виджета ('found', 'solved', 'x', 'y', 'width', 'height')\n    либо None, если Turnstile не найден.",
+                    "summary": "Fallback-поиск виджета через CDP методы вкладки (nodriver Tab.find / get_position).",
+                    "docstring": "Fallback-поиск виджета через CDP методы вкладки (nodriver Tab.find / get_position).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -30497,7 +30497,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 77,
+                    "line_number": 119,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "detect_cf_turnstile",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(tab)",
+                    "summary": "Обнаруживает присутствие и координаты виджета Cloudflare Turnstile.",
+                    "docstring": "Обнаруживает присутствие и координаты виджета Cloudflare Turnstile.\n\nArgs:\n    tab: Объект вкладки nodriver Tab или Playwright Page.\n\nReturns:\n    Словарь с параметрами виджета ('found', 'solved', 'x', 'y', 'width', 'height', 'interactive')\n    либо None, если Turnstile не найден.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 172,
                     "bases": [],
                     "children": []
                   },
@@ -30517,7 +30537,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 96,
+                    "line_number": 201,
                     "bases": [],
                     "children": []
                   },
@@ -30537,7 +30557,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 124,
+                    "line_number": 229,
                     "bases": [],
                     "children": []
                   }
@@ -30798,6 +30818,99 @@
               }
             ],
             "symbols": []
+          },
+          {
+            "name": "nodriver",
+            "path": "chutils/scraping/nodriver",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Фабрики и контекстные менеджеры для запуска браузера nodriver с антидетектом.",
+            "docstring": "Фабрики и контекстные менеджеры для запуска браузера nodriver с антидетектом.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "logger",
+                "type": "constant",
+                "layer": "public",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 18,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_get_nodriver_module",
+                "type": "function",
+                "layer": "private",
+                "signature": "()",
+                "summary": "Безопасно импортирует библиотеку nodriver.",
+                "docstring": "Безопасно импортирует библиотеку nodriver.\n\nReturns:\n    Модуль nodriver.\n\nRaises:\n    ImportError: Если nodriver не установлен.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 21,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "launch_nodriver",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(config)",
+                "summary": "Запускает браузер nodriver с рекомендуемыми стелс-аргументами и AntidetectConfig.",
+                "docstring": "Запускает браузер nodriver с рекомендуемыми стелс-аргументами и AntidetectConfig.\n\nArgs:\n    config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().\n    proxy: Настройки прокси (строка, ProxyConfig или dict). Если требуется авторизация,\n        автоматически создается временное Manifest v3 расширение.\n    headless: Флаг запуска в фоновом (headless) режиме.\n    browser_args: Дополнительные аргументы командной строки Chromium.\n    apply_config_to_tab: Если True, автоматически применяет конфигурацию антидетекта к первой вкладке.\n    **kwargs: Дополнительные параметры для передачи в nodriver.start().\n\nReturns:\n    Экземпляр nodriver.Browser.",
+                "breadcrumbs": {
+                  "is_async": true,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 41,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "nodriver_session",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(config)",
+                "summary": "Асинхронный контекстный менеджер сессии браузера nodriver с гарантированным закрытием.",
+                "docstring": "Асинхронный контекстный менеджер сессии браузера nodriver с гарантированным закрытием.\n\nArgs:\n    config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().\n    proxy: Настройки прокси.\n    headless: Флаг запуска в headless режиме.\n    browser_args: Дополнительные флаги Chromium.\n    apply_config_to_tab: Автоматически применить AntidetectConfig к вкладке.\n    **kwargs: Дополнительные параметры nodriver.start().\n\nYields:\n    Экземпляр nodriver.Browser.",
+                "breadcrumbs": {
+                  "is_async": true,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [
+                    "asynccontextmanager"
+                  ],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 132,
+                "bases": [],
+                "children": []
+              }
+            ]
           },
           {
             "name": "profiles",
@@ -35701,7 +35814,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 104,
+            "line_number": 110,
             "bases": [],
             "children": []
           },
@@ -35721,7 +35834,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 140,
+            "line_number": 148,
             "bases": [],
             "children": []
           },
@@ -35741,7 +35854,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 148,
+            "line_number": 156,
             "bases": [],
             "children": []
           }
@@ -44875,6 +44988,36 @@
       "weight": 5
     },
     {
+      "source": "chutils/scraping/nodriver",
+      "target": "chutils/lifecycle",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/nodriver",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/nodriver",
+      "target": "chutils/scraping/humanize/antidetect",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/nodriver",
+      "target": "chutils/scraping/humanize/config",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/nodriver",
+      "target": "chutils/scraping/proxy/adapters",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/nodriver",
+      "target": "chutils/scraping/proxy/models",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/profiles",
       "target": "chutils/scraping/profiles/manager",
       "weight": 1
@@ -45669,8 +45812,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "09caf6442aa9fe8bcf3573b619f4263077a7498a (dirty)",
-    "generated_at": "2026-09-10T15:43:46.516040+00:00",
-    "project_hash": "4eaaf07ae70dd00868871368f0ac3fed45504b1821df9cc4608593c3e4914713"
+    "git_commit": "3e42a602180428fcfc4ae680d5384ef5497b63fc (dirty)",
+    "generated_at": "2026-09-10T16:01:30.606540+00:00",
+    "project_hash": "149d542306726842599fa78fd25fbcd6a486766fe53c92de77b8e3cfcab99806"
   }
 }

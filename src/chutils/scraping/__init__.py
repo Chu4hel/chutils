@@ -28,6 +28,12 @@ if TYPE_CHECKING:
     from .humanize.turnstile import (
         solve_cf_turnstile as solve_cf_turnstile,
     )
+    from .nodriver import (
+        launch_nodriver as launch_nodriver,
+    )
+    from .nodriver import (
+        nodriver_session as nodriver_session,
+    )
     from .profiles import (
         BrowserProfile as BrowserProfile,
     )
@@ -130,7 +136,9 @@ _LAZY_MAPPING = {
     "get_selenium_proxy": (".proxy", "get_selenium_proxy"),
     "is_cf_turnstile_solved": (".humanize.turnstile", "is_cf_turnstile_solved"),
     "launch_camoufox": (".camoufox", "launch_camoufox"),
+    "launch_nodriver": (".nodriver", "launch_nodriver"),
     "nodriver_proxy": (".proxy", "nodriver_proxy"),
+    "nodriver_session": (".nodriver", "nodriver_session"),
     "parse_proxy": (".proxy", "parse_proxy"),
     "solve_cf_turnstile": (".humanize.turnstile", "solve_cf_turnstile"),
     "use_html_snapshot": (".testing", "use_html_snapshot"),
@@ -194,7 +202,9 @@ __all__ = [
     "humanize",
     "is_cf_turnstile_solved",
     "launch_camoufox",
+    "launch_nodriver",
     "nodriver_proxy",
+    "nodriver_session",
     "parse_proxy",
     "proxy",
     "solve_cf_turnstile",

@@ -177,3 +177,136 @@ async def test_solve_cf_turnstile_timeout_raise_error() -> None:
             check_interval=0.02,
             raise_on_failure=True,
         )
+
+
+def test_turnstile_inspect_js_script_structure() -> None:
+    """Проверка структуры JavaScript-инспектора Turnstile: Shadow DOM, viewport и scrollIntoView."""
+    from chutils.scraping.humanize.turnstile import TURNSTILE_INSPECT_JS
+
+    # 1. Не должно быть scrollX или scrollY, так как CDP клики используют Client Viewport
+    assert "window.scrollX" not in TURNSTILE_INSPECT_JS
+    assert "window.scrollY" not in TURNSTILE_INSPECT_JS
+
+    # 2. Должен использовать координаты rect.left и rect.top (Viewport)
+    assert "rect.left" in TURNSTILE_INSPECT_JS
+    assert "rect.top" in TURNSTILE_INSPECT_JS
+
+    # 3. Должен присутствовать рекурсивный поиск в shadowRoot
+    assert "shadowRoot" in TURNSTILE_INSPECT_JS
+
+    # 4. Должен присутствовать вызов scrollIntoView для центрирования
+    assert "scrollIntoView" in TURNSTILE_INSPECT_JS
+
+    # 5. Должна проверяться интерактивность (стили, pointer-events, data-state)
+    assert "pointerEvents" in TURNSTILE_INSPECT_JS
+    assert "data-state" in TURNSTILE_INSPECT_JS
+
+
+@pytest.mark.asyncio
+async def test_solve_cf_turnstile_waits_for_interactive() -> None:
+    """Проверка, что solve_cf_turnstile не кликает, пока виджет non-interactive (например, spinner)."""
+    mock_tab = MagicMock()
+    interactions = {"clicks": 0, "eval_count": 0}
+
+    async def mock_eval(script: str) -> dict[str, object] | None:
+        interactions["eval_count"] += 1
+        # На первом вызове виджет найден, но non-interactive (спиннер / checking)
+        if interactions["eval_count"] == 1:
+            return {
+                "found": True,
+                "solved": False,
+                "type": "container",
+                "x": 100,
+                "y": 200,
+                "width": 300,
+                "height": 65,
+                "visible": True,
+                "interactive": False,
+            }
+        # На втором вызове виджет стал interactive
+        if interactions["eval_count"] == 2:
+            return {
+                "found": True,
+                "solved": False,
+                "type": "iframe",
+                "x": 100,
+                "y": 200,
+                "width": 300,
+                "height": 65,
+                "visible": True,
+                "interactive": True,
+            }
+        # На третьем вызове капча решена
+        return {"found": True, "solved": True, "token": "0.solution_token"}
+
+    mock_tab.evaluate = mock_eval
+
+    async def mock_click(tab: object, **kwargs: object) -> None:
+        interactions["clicks"] += 1
+
+    with (
+        patch(
+            "chutils.scraping.humanize.turnstile.async_click", side_effect=mock_click
+        ),
+        patch("chutils.scraping.humanize.turnstile.async_human_sleep", AsyncMock()),
+    ):
+        result = await solve_cf_turnstile(
+            mock_tab,
+            timeout=5.0,
+            check_interval=0.01,
+            click_delay=(0.0, 0.0),
+        )
+        assert result is True
+        # Клик должен быть вызван ровно 1 раз, когда виджет стал interactive
+        assert interactions["clicks"] == 1
+        assert interactions["eval_count"] >= 3
+
+
+@pytest.mark.asyncio
+async def test_solve_cf_turnstile_box_model_fallback() -> None:
+    """Проверка fallback на CDP get_box_model, если JS возвращает нулевые размеры."""
+    mock_tab = MagicMock()
+    mock_tab.evaluate = AsyncMock(
+        return_value={
+            "found": True,
+            "solved": False,
+            "type": "iframe",
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "visible": False,
+            "interactive": False,
+        }
+    )
+
+    # Мокируем CDP fallback метод tab.get_position или find
+    mock_element = MagicMock()
+    mock_element.get_position = AsyncMock(
+        return_value=MagicMock(x=120, y=220, width=300, height=65)
+    )
+    mock_tab.find = AsyncMock(return_value=mock_element)
+
+    # После клика статус solved
+    state = {"clicked": False}
+
+    async def mock_click(tab: object, **kwargs: object) -> None:
+        state["clicked"] = True
+        mock_tab.evaluate = AsyncMock(
+            return_value={"found": True, "solved": True, "token": "0.token"}
+        )
+
+    with (
+        patch(
+            "chutils.scraping.humanize.turnstile.async_click", side_effect=mock_click
+        ),
+        patch("chutils.scraping.humanize.turnstile.async_human_sleep", AsyncMock()),
+    ):
+        result = await solve_cf_turnstile(
+            mock_tab,
+            timeout=2.0,
+            check_interval=0.01,
+            click_delay=(0.0, 0.0),
+        )
+        assert result is True
+        assert state["clicked"] is True

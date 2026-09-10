@@ -16,45 +16,87 @@ from .antidetect import extract_clearance_cookies
 logger = setup_logger(__name__)
 
 TURNSTILE_INSPECT_JS = """(function() {
+    // 0. Рекурсивный поиск элементов с учетом открытых shadowRoot
+    function findElementsDeep(root, selector) {
+        let results = [];
+        if (!root) return results;
+        try {
+            const matches = root.querySelectorAll(selector);
+            for (let i = 0; i < matches.length; i++) {
+                results.push(matches[i]);
+            }
+        } catch (e) {}
+        try {
+            const children = root.querySelectorAll('*');
+            for (let i = 0; i < children.length; i++) {
+                const child = children[i];
+                if (child && child.shadowRoot) {
+                    results = results.concat(findElementsDeep(child.shadowRoot, selector));
+                }
+            }
+        } catch (e) {}
+        return results;
+    }
+
     // 1. Проверка наличия решения через token input
-    const responseInputs = document.querySelectorAll(
+    const responseInputs = findElementsDeep(
+        document,
         'input[name="cf-turnstile-response"], [name="cf_challenge_response"], input[id*="turnstile"][name*="response"]'
     );
-    for (const inp of responseInputs) {
+    for (let i = 0; i < responseInputs.length; i++) {
+        const inp = responseInputs[i];
         if (inp && inp.value && inp.value.trim().length > 10) {
             return { found: true, solved: true, token: inp.value.trim() };
         }
     }
 
-    // 2. Поиск интерактивного iframe Turnstile
-    const iframe = document.querySelector('iframe[src*="challenges.cloudflare.com"], iframe[src*="turnstile"]');
-    if (iframe) {
-        const rect = iframe.getBoundingClientRect();
-        return {
-            found: true,
-            solved: false,
-            type: 'iframe',
-            x: rect.x + window.scrollX,
-            y: rect.y + window.scrollY,
-            width: rect.width,
-            height: rect.height,
-            visible: rect.width > 20 && rect.height > 20
-        };
-    }
+    // 2. Поиск кандидатов: интерактивный iframe или контейнер Turnstile
+    const iframes = findElementsDeep(document, 'iframe[src*="challenges.cloudflare.com"], iframe[src*="turnstile"]');
+    const containers = findElementsDeep(document, '.cf-turnstile, #turnstile-wrapper, [data-sitekey]');
+    const candidates = iframes.concat(containers);
 
-    // 3. Поиск контейнера виджета Turnstile
-    const container = document.querySelector('.cf-turnstile, #turnstile-wrapper, [data-sitekey]');
-    if (container) {
-        const rect = container.getBoundingClientRect();
+    for (let i = 0; i < candidates.length; i++) {
+        const el = candidates[i];
+        if (!el) continue;
+
+        const style = window.getComputedStyle(el);
+        const isHidden = (
+            style.display === 'none' ||
+            style.visibility === 'hidden' ||
+            parseFloat(style.opacity || '1') < 0.1 ||
+            style.pointerEvents === 'none'
+        );
+
+        // Прокрутка элемента в центр видимой области экрана (Client Viewport)
+        if (typeof el.scrollIntoView === 'function') {
+            try {
+                el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' });
+            } catch (e) {
+                try { el.scrollIntoView(); } catch (e2) {}
+            }
+        }
+
+        const rect = el.getBoundingClientRect();
+        const isVisible = !isHidden && rect.width >= 20 && rect.height >= 20;
+
+        // Проверка состояния интерактивности виджета (не спиннер / checking)
+        const stateAttr = el.getAttribute('data-state') || '';
+        const isChecking = stateAttr === 'checking' || stateAttr === 'verifying';
+        const isInteractive = isVisible && !isChecking;
+
+        const isIframe = el.tagName && el.tagName.toLowerCase() === 'iframe';
+
         return {
             found: true,
             solved: false,
-            type: 'container',
-            x: rect.x + window.scrollX,
-            y: rect.y + window.scrollY,
+            type: isIframe ? 'iframe' : 'container',
+            x: rect.left,
+            y: rect.top,
             width: rect.width,
             height: rect.height,
-            visible: rect.width > 20 && rect.height > 20
+            visible: isVisible,
+            interactive: isInteractive,
+            data_state: stateAttr
         };
     }
 
@@ -74,6 +116,59 @@ async def _evaluate_js(tab: Any, script: str) -> Any:
     return res
 
 
+async def _detect_cf_turnstile_cdp_fallback(tab: Any) -> dict[str, Any] | None:
+    """Fallback-поиск виджета через CDP методы вкладки (nodriver Tab.find / get_position)."""
+    find_method = getattr(tab, "find", None)
+    if not callable(find_method):
+        return None
+
+    selectors = [
+        "iframe[src*='challenges.cloudflare.com']",
+        "iframe[src*='turnstile']",
+        ".cf-turnstile",
+        "#turnstile-wrapper",
+    ]
+
+    for sel in selectors:
+        try:
+            res = find_method(sel)
+            if inspect.isawaitable(res):
+                el = await res
+            else:
+                el = res
+
+            if el is None:
+                continue
+
+            get_pos = getattr(el, "get_position", None)
+            if callable(get_pos):
+                pos_res = get_pos()
+                if inspect.isawaitable(pos_res):
+                    pos = await pos_res
+                else:
+                    pos = pos_res
+
+                if (
+                    pos
+                    and getattr(pos, "width", 0) >= 20
+                    and getattr(pos, "height", 0) >= 20
+                ):
+                    return {
+                        "found": True,
+                        "solved": False,
+                        "type": "iframe" if "iframe" in sel else "container",
+                        "x": float(getattr(pos, "x", 0.0)),
+                        "y": float(getattr(pos, "y", 0.0)),
+                        "width": float(getattr(pos, "width", 300.0)),
+                        "height": float(getattr(pos, "height", 65.0)),
+                        "visible": True,
+                        "interactive": True,
+                    }
+        except Exception as exc:
+            logger.debug(f"CDP fallback error for {sel}: {exc}")
+    return None
+
+
 async def detect_cf_turnstile(tab: Any) -> dict[str, Any] | None:
     """Обнаруживает присутствие и координаты виджета Cloudflare Turnstile.
 
@@ -81,16 +176,26 @@ async def detect_cf_turnstile(tab: Any) -> dict[str, Any] | None:
         tab: Объект вкладки nodriver Tab или Playwright Page.
 
     Returns:
-        Словарь с параметрами виджета ('found', 'solved', 'x', 'y', 'width', 'height')
+        Словарь с параметрами виджета ('found', 'solved', 'x', 'y', 'width', 'height', 'interactive')
         либо None, если Turnstile не найден.
     """
     try:
         raw_res = await _evaluate_js(tab, TURNSTILE_INSPECT_JS)
         if isinstance(raw_res, dict) and raw_res.get("found"):
+            if (
+                raw_res.get("width", 0) < 20 or raw_res.get("height", 0) < 20
+            ) and not raw_res.get("solved"):
+                cdp_res = await _detect_cf_turnstile_cdp_fallback(tab)
+                if cdp_res:
+                    return cdp_res
             return raw_res
     except Exception as exc:
         logger.debug(f"Ошибка при инспекции Turnstile: {exc}")
-    return None
+
+    try:
+        return await _detect_cf_turnstile_cdp_fallback(tab)
+    except Exception:
+        return None
 
 
 async def is_cf_turnstile_solved(tab: Any) -> bool:
@@ -161,7 +266,12 @@ async def solve_cf_turnstile(
 
         # Проверка 2: обнаружен ли виджет Turnstile для клика?
         info = await detect_cf_turnstile(tab)
-        if info and not clicked and info.get("visible"):
+        if (
+            info
+            and not clicked
+            and info.get("visible")
+            and info.get("interactive", True)
+        ):
             x = float(info.get("x", 0.0))
             y = float(info.get("y", 0.0))
             width = float(info.get("width", 300.0))

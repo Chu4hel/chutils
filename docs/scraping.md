@@ -796,7 +796,59 @@ client = await TLSAsyncClient.from_browser_session(page, impersonate="chrome120"
 resp = await client.get("https://protected-site.com/api/data")
 ```
 
+---
+
+## 9. Запуск Nodriver с антидетектом (`launch_nodriver`, `nodriver_session`)
+
+Для браузерной автоматизации без следов веб-драйвера модуль `chutils.scraping` предоставляет фабрику `launch_nodriver` и асинхронный контекстный менеджер `nodriver_session`. Они автоматически накладывают рекомендованные флаги запуска Chromium (`--disable-blink-features=AutomationControlled` и др.), настраивают прокси (с прозрачной поддержкой авторизации через расширение) и применяют `AntidetectConfig`.
+
+```python
+import asyncio
+from chutils.scraping import AntidetectConfig, nodriver_session
 
 
+async def main():
+    # Запуск браузера с нулевым вмешательством в Chromium (рекомендовано для nodriver)
+    config = AntidetectConfig.preset_stealth_nodriver()
+
+    async with nodriver_session(config=config, headless=False) as browser:
+        tab = await browser.get("https://nowecurity.com")
+        print("Заголовок страницы:", await tab.evaluate("document.title"))
 
 
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+---
+
+## 10. Автоматическое решение Cloudflare Turnstile (`solve_cf_turnstile`)
+
+Функция `solve_cf_turnstile` автоматически обнаруживает виджет Turnstile на странице (включая контейнеры внутри Shadow DOM), проверяет его интерактивность (отсутствие спиннеров/состояния проверки), центрирует в области вьюпорта (`scrollIntoView`), перемещает курсор по физической модели `windmouse` и производит клик с микропаузами удержания клавиши.
+
+```python
+import asyncio
+from chutils.scraping import nodriver_session, solve_cf_turnstile
+
+
+async def main():
+    async with nodriver_session(headless=False) as browser:
+        tab = await browser.get("https://peet.ws/turnstile-test/staging-turnstile.html")
+
+        # Автоматическое ожидание и решение капчи Turnstile
+        solved = await solve_cf_turnstile(tab, timeout=15.0)
+        if solved:
+            print("Turnstile успешно пройден!")
+        else:
+            print("Не удалось решить капчу Turnstile.")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### Ключевые возможности `solve_cf_turnstile`:
+- **Точные экранные координаты Viewport**: Клик передается в координатах видимой области браузера без смещения при скролле.
+- **Поддержка Shadow DOM**: Рекурсивный поиск iframe и контейнеров капчи внутри открытых `shadowRoot`.
+- **Проверка интерактивности**: Ожидание готовности виджета и пропуск неинтерактивных состояний (`opacity: 0`, `data-state="checking"`).
+- **CDP Fallback**: Автоматический резервный расчет границ через Box Model CDP при нулевых размерах DOM-прямоугольника.

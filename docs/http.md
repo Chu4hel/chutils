@@ -90,15 +90,11 @@ client = TLSAsyncClient(proxy_pool=pool, impersonate="chrome120")
 from chutils.http import TLSAsyncClient, TLSSession
 
 # Асинхронно из Playwright Page или Nodriver Tab:
-client = await TLSAsyncClient.from_browser_session(
-    page, impersonate="chrome120"
-)
+client = await TLSAsyncClient.from_browser_session(page, impersonate="chrome120")
 resp = await client.get("https://api.example.com/protected/data")
 
 # Синхронно из Selenium WebDriver:
-session = TLSSession.from_browser_session(
-    driver, impersonate="chrome120"
-)
+session = TLSSession.from_browser_session(driver, impersonate="chrome120")
 resp = session.get("https://api.example.com/protected/data")
 ```
 
