@@ -717,26 +717,28 @@ if __name__ == "__main__":
 
 ---
 
-## 8. Улучшенный JS-антидетект и Client Hints
+## 8. Улучшенный JS-антидетект, Web Workers и Client Hints
 
-В модуль `chutils.scraping.humanize.antidetect` добавлены следующие механизмы:
+В модуль `chutils.scraping.humanize.antidetect` добавлены следующие передовые механизмы защиты:
 
-1. **Детерминированный Canvas Noise (`session_seed`)**: Шум накладывается через псевдослучайный алгоритм на базе стабильного сида сессии. Это исключает обнаружение антифрод-скриптами частой мутации канваса при многократном чтении `getImageData`.
-2. **Cross-realm iframe prototype protection**: Перехват создания элементов `iframe` и предотвращение извлечения чистых непатченных прототипов (`Function.prototype.toString`, `navigator.webdriver`).
-3. **Генерация Client Hints (`get_client_hints`)**: Формирование согласованной структуры `navigator.userAgentData` (brands, platform, mobile, entropy values) под указанный User-Agent:
+1. **Защита изолированных Web Workers и SharedWorkers**: Антифрод-системы (Cloudflare Turnstile, Kasada, CreepJS) часто создают фоновые воркеры (`new Worker(...)`), чтобы проверить чистый контекст `self.navigator.webdriver` в обход основных инъекций в страницу. Модуль перехватывает конструкторы `Worker` и `SharedWorker`, автоматически оборачивает исходный скрипт в защитную преамбулу через `Blob` и `URL.createObjectURL`, полностью скрывая автоматизацию внутри воркеров.
+2. **Маскировка V8 Stack Traces (`makeNative`)**: При инспекции стектрейсов ошибок (`Error().stack` или `Error.captureStackTrace`) антифрод обнаруживает следы monkey-patching (`at patched... (eval at...)`). Функция `makeNative` маскирует стек вызовов под нативные вызовы браузера (`at FunctionName (<anonymous>)`).
+3. **Детерминированный Canvas Noise (`session_seed`)**: Шум накладывается через псевдослучайный алгоритм на базе стабильного сида сессии. Это исключает обнаружение антифрод-скриптами частой мутации канваса при многократном чтении `getImageData`.
+4. **Cross-realm iframe prototype protection**: Перехват создания элементов `iframe` и предотвращение извлечения чистых непатченных прототипов (`Function.prototype.toString`, `navigator.webdriver`).
+5. **Генерация Client Hints (`get_client_hints`)**: Формирование согласованной структуры `navigator.userAgentData` (brands, platform, mobile, entropy values) под указанный User-Agent.
+6. **Мост Cookie и Clearance токенов (`extract_clearance_cookies`)**: Извлечение сессионных токенов (включая `cf_clearance`) и User-Agent из браузера для последующей передачи в быстрый сетевой клиент `TLSAsyncClient` / `TLSSession`:
 
 ```python
-from chutils.scraping.humanize import (
-    apply_antidetect_playwright,
-    get_client_hints,
-)
+from chutils.scraping import extract_clearance_cookies
+from chutils.http import TLSAsyncClient
 
-hints = get_client_hints("Mozilla/5.0 (Windows NT 10.0; Win64; x64)... Chrome/120.0.0.0 Safari/537.36")
-await apply_antidetect_playwright(
-    context,
-    session_seed="unique_session_123",
-    client_hints=hints,
-)
+# Извлечение из Playwright Page / Nodriver Tab
+clearance_data = await extract_clearance_cookies(page)
+print(clearance_data["cookies"])  # {'cf_clearance': '...', ...}
+
+# Прямая инициализация быстрого TLS-клиента из браузерной сессии
+client = await TLSAsyncClient.from_browser_session(page, impersonate="chrome120")
+resp = await client.get("https://protected-site.com/api/data")
 ```
 
 

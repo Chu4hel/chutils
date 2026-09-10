@@ -22332,6 +22332,28 @@
                     "children": []
                   },
                   {
+                    "name": "from_browser_session",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(cls, target, impersonate)",
+                    "summary": "Создает сессию TLSSession, предзаполненную cookies и User-Agent из браузера.",
+                    "docstring": "Создает сессию TLSSession, предзаполненную cookies и User-Agent из браузера.\n\nArgs:\n    target: Экземпляр Selenium WebDriver.\n    impersonate: Профиль маскировки браузера.\n    **kwargs: Дополнительные параметры для TLSSession.\n\nReturns:\n    Экземпляр TLSSession.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "classmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 190,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
                     "name": "request",
                     "type": "method",
                     "layer": "internal",
@@ -22347,7 +22369,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 183,
+                    "line_number": 226,
                     "bases": [],
                     "children": []
                   },
@@ -22367,7 +22389,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 220,
+                    "line_number": 263,
                     "bases": [],
                     "children": []
                   },
@@ -22387,7 +22409,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 232,
+                    "line_number": 275,
                     "bases": [],
                     "children": []
                   },
@@ -22407,7 +22429,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 244,
+                    "line_number": 287,
                     "bases": [],
                     "children": []
                   },
@@ -22427,7 +22449,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 256,
+                    "line_number": 299,
                     "bases": [],
                     "children": []
                   },
@@ -22447,7 +22469,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 268,
+                    "line_number": 311,
                     "bases": [],
                     "children": []
                   },
@@ -22467,7 +22489,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 280,
+                    "line_number": 323,
                     "bases": [],
                     "children": []
                   }
@@ -22489,7 +22511,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 299,
+                "line_number": 342,
                 "bases": [],
                 "children": [
                   {
@@ -22508,7 +22530,29 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 302,
+                    "line_number": 345,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "from_browser_session",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(cls, target, impersonate)",
+                    "summary": "Создает асинхронный клиент TLSAsyncClient, предзаполненный cookies и User-Agent из браузера.",
+                    "docstring": "Создает асинхронный клиент TLSAsyncClient, предзаполненный cookies и User-Agent из браузера.\n\nArgs:\n    target: Экземпляр Playwright (Page, Context), Nodriver Tab или Selenium WebDriver.\n    impersonate: Профиль маскировки браузера.\n    **kwargs: Дополнительные параметры для TLSAsyncClient.\n\nReturns:\n    Экземпляр TLSAsyncClient.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "classmethod"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 401,
                     "bases": [],
                     "children": []
                   },
@@ -22528,7 +22572,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 351,
+                    "line_number": 436,
                     "bases": [],
                     "children": []
                   },
@@ -22548,7 +22592,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 388,
+                    "line_number": 473,
                     "bases": [],
                     "children": []
                   },
@@ -22568,7 +22612,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 400,
+                    "line_number": 485,
                     "bases": [],
                     "children": []
                   },
@@ -22588,7 +22632,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 412,
+                    "line_number": 497,
                     "bases": [],
                     "children": []
                   },
@@ -22608,7 +22652,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 424,
+                    "line_number": 509,
                     "bases": [],
                     "children": []
                   },
@@ -22628,7 +22672,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 436,
+                    "line_number": 521,
                     "bases": [],
                     "children": []
                   },
@@ -22648,7 +22692,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 448,
+                    "line_number": 533,
                     "bases": [],
                     "children": []
                   },
@@ -22668,7 +22712,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 455,
+                    "line_number": 540,
                     "bases": [],
                     "children": []
                   }
@@ -29503,7 +29547,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 8,
+                    "line_number": 9,
                     "bases": [],
                     "children": []
                   },
@@ -29523,7 +29567,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 9,
+                    "line_number": 10,
                     "bases": [],
                     "children": []
                   },
@@ -29543,7 +29587,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 12,
+                    "line_number": 13,
                     "bases": [],
                     "children": []
                   },
@@ -29563,7 +29607,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 13,
+                    "line_number": 14,
                     "bases": [],
                     "children": []
                   },
@@ -29583,7 +29627,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 16,
+                    "line_number": 17,
                     "bases": [],
                     "children": []
                   },
@@ -29603,7 +29647,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 59,
+                    "line_number": 60,
                     "bases": [],
                     "children": []
                   },
@@ -29623,7 +29667,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 263,
+                    "line_number": 325,
                     "bases": [],
                     "children": []
                   },
@@ -29643,7 +29687,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 272,
+                    "line_number": 334,
                     "bases": [],
                     "children": []
                   },
@@ -29663,7 +29707,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 282,
+                    "line_number": 344,
                     "bases": [],
                     "children": []
                   },
@@ -29683,7 +29727,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 292,
+                    "line_number": 354,
                     "bases": [],
                     "children": []
                   },
@@ -29703,7 +29747,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 302,
+                    "line_number": 364,
                     "bases": [],
                     "children": []
                   },
@@ -29723,7 +29767,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 335,
+                    "line_number": 397,
                     "bases": [],
                     "children": []
                   },
@@ -29743,7 +29787,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 373,
+                    "line_number": 435,
                     "bases": [],
                     "children": []
                   },
@@ -29763,7 +29807,67 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 412,
+                    "line_number": 474,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_extract_clearance_cookies_async",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(target)",
+                    "summary": "Асинхронное извлечение кук и user-agent из Playwright / Nodriver.",
+                    "docstring": "Асинхронное извлечение кук и user-agent из Playwright / Nodriver.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 494,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_extract_clearance_cookies_sync",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(target)",
+                    "summary": "Синхронное извлечение кук и user-agent из Selenium WebDriver.",
+                    "docstring": "Синхронное извлечение кук и user-agent из Selenium WebDriver.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 556,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "extract_clearance_cookies",
+                    "type": "function",
+                    "layer": "public",
+                    "signature": "(target)",
+                    "summary": "Извлекает cookies (включая cf_clearance) и User-Agent из сессии браузера.",
+                    "docstring": "Извлекает cookies (включая cf_clearance) и User-Agent из сессии браузера.\n\nПоддерживает Playwright Page/BrowserContext (асинхронно), Nodriver Tab (асинхронно)\nи Selenium WebDriver (синхронно).\n\nArgs:\n    target: Экземпляр Playwright (Page, Context), Selenium WebDriver или Nodriver Tab.\n\nReturns:\n    Словарь вида {'cookies': {'cf_clearance': '...', ...}, 'user_agent': '...'},\n    либо корутина, возвращающая данный словарь.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 576,
                     "bases": [],
                     "children": []
                   }
@@ -35275,7 +35379,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 89,
+            "line_number": 92,
             "bases": [],
             "children": []
           },
@@ -35295,7 +35399,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 120,
+            "line_number": 124,
             "bases": [],
             "children": []
           },
@@ -35315,7 +35419,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 128,
+            "line_number": 132,
             "bases": [],
             "children": []
           }
@@ -42801,7 +42905,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 357,
+        "line_number": 361,
         "bases": [],
         "children": []
       },
@@ -42821,7 +42925,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 390,
+        "line_number": 394,
         "bases": [],
         "children": []
       },
@@ -42841,7 +42945,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 410,
+        "line_number": 414,
         "bases": [],
         "children": []
       }
@@ -45203,8 +45307,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "4902141318be2fd26c8e9e4c0afe37bb1072b3a7 (dirty)",
-    "generated_at": "2026-09-10T12:46:46.549320+00:00",
-    "project_hash": "c5c5fc99f493c111b2208625b32a7255bac9a192a94ebed52f955fb83a8ef8fe"
+    "git_commit": "c7b7c40dbad52a07dc65d0a4fe7e1f31e70c922e (dirty)",
+    "generated_at": "2026-09-10T15:06:39.695004+00:00",
+    "project_hash": "3388191a36bf8de513532feedb7cb7d629948c7926b5a58943bcbeb6d422b445"
   }
 }

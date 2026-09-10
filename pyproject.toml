@@ -123,6 +123,9 @@ build-backend = "hatchling.build"
 pythonpath = [
     "src"
 ]
+markers = [
+    "e2e: End-to-end integration and antidetect tests",
+]
 filterwarnings = [
     "ignore:Using `httpx` with `starlette.testclient` is deprecated"
 ]

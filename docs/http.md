@@ -82,6 +82,26 @@ pool = ProxyPool.from_urls(["http://user:pass@1.2.3.4:8080"])
 client = TLSAsyncClient(proxy_pool=pool, impersonate="chrome120")
 ```
 
+### 4. Мост браузерных сессий (`from_browser_session`)
+
+Позволяет переносить куки (включая `cf_clearance`) и `User-Agent` из браузера (Playwright, Nodriver, Selenium) напрямую в легковесный TLS-клиент. После прохождения интерактивного челленджа в браузере вся остальная работа может продолжаться на максимальной скорости без накладных расходов браузера:
+
+```python
+from chutils.http import TLSAsyncClient, TLSSession
+
+# Асинхронно из Playwright Page или Nodriver Tab:
+client = await TLSAsyncClient.from_browser_session(
+    page, impersonate="chrome120"
+)
+resp = await client.get("https://api.example.com/protected/data")
+
+# Синхронно из Selenium WebDriver:
+session = TLSSession.from_browser_session(
+    driver, impersonate="chrome120"
+)
+resp = session.get("https://api.example.com/protected/data")
+```
+
 ---
 
 ## Server-Sent Events (SSE)
