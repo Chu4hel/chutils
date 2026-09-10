@@ -30403,6 +30403,380 @@
               }
             ],
             "symbols": []
+          },
+          {
+            "name": "proxy",
+            "path": "chutils/scraping/proxy",
+            "type": "package",
+            "layer": "internal",
+            "summary": "Модуль управления прокси-серверами и аутентификацией.",
+            "docstring": "Модуль управления прокси-серверами и аутентификацией.",
+            "children": [
+              {
+                "name": "models",
+                "path": "chutils/scraping/proxy/models",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Модели данных конфигурации прокси-серверов.",
+                "docstring": "Модели данных конфигурации прокси-серверов.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "ProxyConfig",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Конфигурация прокси-сервера с поддержкой аутентификации.",
+                    "docstring": "Конфигурация прокси-сервера с поддержкой аутентификации.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 9,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": [
+                      {
+                        "name": "has_auth",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Проверяет наличие учетных данных аутентификации.",
+                        "docstring": "Проверяет наличие учетных данных аутентификации.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 22,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "auth_str",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает строку аутентификации user:password или None.",
+                        "docstring": "Возвращает строку аутентификации user:password или None.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 27,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "server_url",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает базовый URL прокси-сервера без учетных данных.",
+                        "docstring": "Возвращает базовый URL прокси-сервера без учетных данных.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 34,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "url",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает полный URL прокси с учетными данными, если они есть.",
+                        "docstring": "Возвращает полный URL прокси с учетными данными, если они есть.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 39,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "masked_url",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает безопасный URL для логирования со скрытым паролем.",
+                        "docstring": "Возвращает безопасный URL для логирования со скрытым паролем.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 46,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "basic_auth_header",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает значение заголовка Proxy-Authorization Basic или None.",
+                        "docstring": "Возвращает значение заголовка Proxy-Authorization Basic или None.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 53,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "to_playwright",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Преобразует конфигурацию в словарь параметров прокси для Playwright.",
+                        "docstring": "Преобразует конфигурацию в словарь параметров прокси для Playwright.\n\nReturns:\n    Словарь с ключами server, username и password для playwright.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 60,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "to_chrome_arg",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает CLI аргумент --proxy-server для Chromium.",
+                        "docstring": "Возвращает CLI аргумент --proxy-server для Chromium.\n\nReturns:\n    Строка флага командной строки для запуска Chromium.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 73,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "to_selenium",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Преобразует конфигурацию в словарь capabilities прокси для Selenium.",
+                        "docstring": "Преобразует конфигурацию в словарь capabilities прокси для Selenium.\n\nReturns:\n    Словарь параметров прокси для передачи в Selenium Capabilities.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 81,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "to_string",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, format)",
+                        "summary": "Форматирует прокси в строковое представление по заданному шаблону.",
+                        "docstring": "Форматирует прокси в строковое представление по заданному шаблону.\n\nArgs:\n    format: Шаблон формата ('url', 'host:port', 'host:port:user:pass', 'server').\n\nReturns:\n    Строковое представление прокси.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [
+                            "port"
+                          ],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 94,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "parser",
+                "path": "chutils/scraping/proxy/parser",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Парсер строковых представлений и параметров прокси.",
+                "docstring": "Парсер строковых представлений и параметров прокси.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "ProxyProtocol",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 9,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "parse_proxy",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(proxy, default_protocol)",
+                    "summary": "Парсит строку, словарь или существующий объект в экземпляр ProxyConfig.",
+                    "docstring": "Парсит строку, словарь или существующий объект в экземпляр ProxyConfig.\n\nПоддерживает распространенные форматы:\n- URL: `http://user:pass@host:port`, `socks5://host:port`\n- Без схемы с @: `user:pass@host:port`\n- Колоночные: `host:port`, `host:port:user:pass`, `user:pass:host:port`\n\nArgs:\n    proxy: Строка прокси, словарь параметров или экземпляр ProxyConfig.\n    default_protocol: Протокол по умолчанию, если схема не указана.\n\nReturns:\n    Экземпляр ProxyConfig с валидированными полями.\n\nRaises:\n    TypeError: Если передан неподдерживаемый тип данных.\n    ValueError: Если строку прокси не удалось распознать или порт некорректен.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [
+                        "pass",
+                        "port"
+                      ],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 12,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "symbols": [
+              {
+                "name": "_LAZY_MAPPING",
+                "type": "constant",
+                "layer": "private",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 10,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "__getattr__",
+                "type": "function",
+                "layer": "private",
+                "signature": "(name)",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 16,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "__dir__",
+                "type": "function",
+                "layer": "private",
+                "signature": "()",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 24,
+                "bases": [],
+                "children": []
+              }
+            ]
           }
         ],
         "symbols": [
@@ -30422,7 +30796,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 14,
+            "line_number": 18,
             "bases": [],
             "children": []
           },
@@ -30442,7 +30816,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 20,
+            "line_number": 26,
             "bases": [],
             "children": []
           },
@@ -30462,7 +30836,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 28,
+            "line_number": 34,
             "bases": [],
             "children": []
           }
@@ -39631,6 +40005,11 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/proxy/parser",
+      "target": "chutils/scraping/proxy/models",
+      "weight": 1
+    },
+    {
       "source": "chutils/secret_manager",
       "target": "/core",
       "weight": 1
@@ -40145,8 +40524,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "1251d87ffe3a1f498a450f3605cf2d2212be0cd2 (dirty)",
-    "generated_at": "2026-09-10T00:30:59.792261+00:00",
-    "project_hash": "5df1a61dfcd4141a196c61a9e0256a06011ac3079a8e9925e1b021aed7caa986"
+    "git_commit": "34ad2a8532611ade989a5f7b153639848c7ee6ab (dirty)",
+    "generated_at": "2026-09-10T00:38:23.016627+00:00",
+    "project_hash": "7b4712e479910affa117f0e06655e3f181a65cef8d82e1605036fe7a9cf14955"
   }
 }

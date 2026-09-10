@@ -382,6 +382,27 @@ loaded_profile = ProfileManager.load("my_session.chprofile", password="secret_pa
 await ProfileManager.import_to_nodriver(nodriver_tab, loaded_profile)
 ```
 
+---
 
+## 7. Конфигурация и парсинг прокси (`ProxyConfig`, `parse_proxy`)
 
+Модуль `chutils.scraping.proxy` предоставляет Pydantic-модель `ProxyConfig` и функцию `parse_proxy` для гибкой работы с прокси-серверами, поддерживая аутентификацию и форматы аргументов для различных браузеров:
 
+```python
+from chutils.scraping import ProxyConfig, parse_proxy
+
+# Парсинг строки любого распространенного формата
+proxy = parse_proxy("socks5://user:pass@proxy.example.com:1080")
+# Или из колоночной строки
+proxy2 = parse_proxy("192.168.1.100:8080:login:password")
+
+# Получение параметров для различных движков:
+# Playwright
+pw_proxy = proxy.to_playwright()  # {"server": "socks5://...", "username": "user", ...}
+
+# Chrome CLI (Chromium/nodriver)
+chrome_arg = proxy.to_chrome_arg()  # "--proxy-server=socks5://proxy.example.com:1080"
+
+# Selenium Capabilities
+selenium_proxy = proxy.to_selenium()  # {"proxyType": "MANUAL", "httpProxy": ..., ...}
+```

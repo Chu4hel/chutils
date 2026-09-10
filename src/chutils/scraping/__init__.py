@@ -10,10 +10,16 @@ if TYPE_CHECKING:
     from .profiles import (
         ProfileManager as ProfileManager,
     )
+    from .proxy import (
+        ProxyConfig as ProxyConfig,
+        parse_proxy as parse_proxy,
+    )
 
 _LAZY_MAPPING = {
     "BrowserProfile": (".profiles", "BrowserProfile"),
     "ProfileManager": (".profiles", "ProfileManager"),
+    "ProxyConfig": (".proxy", "ProxyConfig"),
+    "parse_proxy": (".proxy", "parse_proxy"),
 }
 
 
@@ -28,8 +34,17 @@ def __getattr__(name: str) -> Any:
 def __dir__() -> list[str]:
     return sorted(
         list(_LAZY_MAPPING.keys())
-        + ["captcha", "concurrency", "humanize", "__all__", "__doc__"]
+        + ["captcha", "concurrency", "humanize", "proxy", "__all__", "__doc__"]
     )
 
 
-__all__ = ["BrowserProfile", "ProfileManager", "captcha", "concurrency", "humanize"]
+__all__ = [
+    "BrowserProfile",
+    "ProfileManager",
+    "ProxyConfig",
+    "captcha",
+    "concurrency",
+    "humanize",
+    "parse_proxy",
+    "proxy",
+]
