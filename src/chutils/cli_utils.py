@@ -147,9 +147,8 @@ def _get_default_width() -> int | None:
     width, _ = shutil.get_terminal_size(fallback=(80, 24))
 
     # Специфичное поведение для PyCharm (часто ограничивает ширину в 80 символов при запуске логов)
-    is_pycharm = (
-        os.getenv("PYCHARM_HOSTED") == "1"
-    )  # chutils: ignore[ChutilsIntegrationRule]
+    # chutils: ignore[ChutilsIntegrationRule] -- переменная окружения IDE PyCharm
+    is_pycharm = os.getenv("PYCHARM_HOSTED") == "1"
     if is_pycharm and width == 80:
         return 140
 

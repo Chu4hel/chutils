@@ -2,6 +2,7 @@
 Кастомные обработчики логов.
 """
 
+# chutils: ignore[ChutilsIntegrationRule] -- кастомные обработчики для стандартной библиотеки logging
 import logging
 import logging.handlers
 import os

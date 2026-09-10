@@ -60,9 +60,8 @@ def get_current_index_url() -> str:
         appdata = os.environ.get("APPDATA")  # chutils: ignore[ChutilsIntegrationRule]
         if appdata:
             paths.append(Path(appdata) / "pip" / "pip.ini")
-        userprofile = os.environ.get(
-            "USERPROFILE"
-        )  # chutils: ignore[ChutilsIntegrationRule]
+        # chutils: ignore[ChutilsIntegrationRule] -- системная переменная Windows USERPROFILE
+        userprofile = os.environ.get("USERPROFILE")
         if userprofile:
             paths.append(Path(userprofile) / "pip" / "pip.ini")
             paths.append(Path(userprofile) / "AppData" / "Roaming" / "pip" / "pip.ini")
