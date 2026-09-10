@@ -24,6 +24,8 @@ if TYPE_CHECKING:
         parse_proxy as parse_proxy,
     )
     from .testing import (
+        LiveBrowserSession as LiveBrowserSession,
+        LocalTestServer as LocalTestServer,
         MockNodriverTab as MockNodriverTab,
         MockPlaywrightPage as MockPlaywrightPage,
         MockSeleniumDriver as MockSeleniumDriver,
@@ -33,6 +35,8 @@ _LAZY_MAPPING = {
     "AsyncProxyTunnel": (".proxy", "AsyncProxyTunnel"),
     "BrowserProfile": (".profiles", "BrowserProfile"),
     "ChromeProxyExtension": (".proxy", "ChromeProxyExtension"),
+    "LiveBrowserSession": (".testing", "LiveBrowserSession"),
+    "LocalTestServer": (".testing", "LocalTestServer"),
     "MockNodriverTab": (".testing", "MockNodriverTab"),
     "MockPlaywrightPage": (".testing", "MockPlaywrightPage"),
     "MockSeleniumDriver": (".testing", "MockSeleniumDriver"),
@@ -76,6 +80,8 @@ __all__ = [
     "AsyncProxyTunnel",
     "BrowserProfile",
     "ChromeProxyExtension",
+    "LiveBrowserSession",
+    "LocalTestServer",
     "MockNodriverTab",
     "MockPlaywrightPage",
     "MockSeleniumDriver",

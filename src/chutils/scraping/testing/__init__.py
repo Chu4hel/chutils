@@ -6,30 +6,32 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from .mocks import (
         MockNodriverElement as MockNodriverElement,
-    )
-    from .mocks import (
         MockNodriverTab as MockNodriverTab,
-    )
-    from .mocks import (
         MockPlaywrightLocator as MockPlaywrightLocator,
-    )
-    from .mocks import (
         MockPlaywrightPage as MockPlaywrightPage,
-    )
-    from .mocks import (
         MockSeleniumDriver as MockSeleniumDriver,
-    )
-    from .mocks import (
         MockSeleniumElement as MockSeleniumElement,
+    )
+    from .server import (
+        LocalTestServer as LocalTestServer,
+        RecordedRequest as RecordedRequest,
+        TestResponse as TestResponse,
+    )
+    from .session import (
+        LiveBrowserSession as LiveBrowserSession,
     )
 
 _LAZY_MAPPING = {
+    "LiveBrowserSession": (".session", "LiveBrowserSession"),
+    "LocalTestServer": (".server", "LocalTestServer"),
     "MockNodriverElement": (".mocks", "MockNodriverElement"),
     "MockNodriverTab": (".mocks", "MockNodriverTab"),
     "MockPlaywrightLocator": (".mocks", "MockPlaywrightLocator"),
     "MockPlaywrightPage": (".mocks", "MockPlaywrightPage"),
     "MockSeleniumDriver": (".mocks", "MockSeleniumDriver"),
     "MockSeleniumElement": (".mocks", "MockSeleniumElement"),
+    "RecordedRequest": (".server", "RecordedRequest"),
+    "TestResponse": (".server", "TestResponse"),
 }
 
 
@@ -42,15 +44,24 @@ def __getattr__(name: str) -> Any:
 
 
 def __dir__() -> list[str]:
-    return sorted(list(_LAZY_MAPPING.keys()) + ["mocks", "__all__", "__doc__"])
+    return sorted(
+        list(_LAZY_MAPPING.keys())
+        + ["mocks", "server", "session", "__all__", "__doc__"]
+    )
 
 
 __all__ = [
+    "LiveBrowserSession",
+    "LocalTestServer",
     "MockNodriverElement",
     "MockNodriverTab",
     "MockPlaywrightLocator",
     "MockPlaywrightPage",
     "MockSeleniumDriver",
     "MockSeleniumElement",
+    "RecordedRequest",
+    "TestResponse",
     "mocks",
+    "server",
+    "session",
 ]

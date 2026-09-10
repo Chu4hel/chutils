@@ -33318,6 +33318,729 @@
                   }
                 ],
                 "symbols": []
+              },
+              {
+                "name": "server",
+                "path": "chutils/scraping/testing/server",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Локальный тестовый HTTP-сервер (песочница) для тестирования парсеров и браузеров.",
+                "docstring": "Локальный тестовый HTTP-сервер (песочница) для тестирования парсеров и браузеров.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 18,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "RecordedRequest",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Запись входящего HTTP-запроса от браузера или клиента.",
+                    "docstring": "Запись входящего HTTP-запроса от браузера или клиента.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "dataclass"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 22,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "TestResponse",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Ответ локального сервера на тестовый запрос клиента.",
+                    "docstring": "Ответ локального сервера на тестовый запрос клиента.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "dataclass"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 33,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "text",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self)",
+                        "summary": "Возвращает декодированное текстовое содержимое ответа.",
+                        "docstring": "Возвращает декодированное текстовое содержимое ответа.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 41,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "json",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Десериализует JSON из тела ответа.",
+                        "docstring": "Десериализует JSON из тела ответа.\n\nReturns:\n    Десериализованные данные (словарь, список или примитив).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 45,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "_TestHandler",
+                    "type": "class",
+                    "layer": "private",
+                    "signature": "",
+                    "summary": "Внутренний обработчик HTTP-запросов тестового сервера.",
+                    "docstring": "Внутренний обработчик HTTP-запросов тестового сервера.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 54,
+                    "bases": [
+                      "http.server.BaseHTTPRequestHandler"
+                    ],
+                    "children": [
+                      {
+                        "name": "do_GET",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Обрабатывает входящий HTTP GET запрос.",
+                        "docstring": "Обрабатывает входящий HTTP GET запрос.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 59,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "do_POST",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Обрабатывает входящий HTTP POST запрос.",
+                        "docstring": "Обрабатывает входящий HTTP POST запрос.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 63,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "do_HEAD",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Обрабатывает входящий HTTP HEAD запрос.",
+                        "docstring": "Обрабатывает входящий HTTP HEAD запрос.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 67,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "do_PUT",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Обрабатывает входящий HTTP PUT запрос.",
+                        "docstring": "Обрабатывает входящий HTTP PUT запрос.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 71,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "do_DELETE",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Обрабатывает входящий HTTP DELETE запрос.",
+                        "docstring": "Обрабатывает входящий HTTP DELETE запрос.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 75,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_handle_request",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, method)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 79,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "log_message",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, format)",
+                        "summary": "Подавляет стандартный вывод BaseHTTPRequestHandler в stderr.",
+                        "docstring": "Подавляет стандартный вывод BaseHTTPRequestHandler в stderr.\n\nArgs:\n    format: Строка формата сообщения.\n    *args: Аргументы форматирования.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 117,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "_CustomHTTPServer",
+                    "type": "class",
+                    "layer": "private",
+                    "signature": "",
+                    "summary": "Расширение ThreadingHTTPServer со ссылкой на экземпляр LocalTestServer.",
+                    "docstring": "Расширение ThreadingHTTPServer со ссылкой на экземпляр LocalTestServer.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 127,
+                    "bases": [
+                      "http.server.ThreadingHTTPServer"
+                    ],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, server_address, RequestHandlerClass, owner)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 130,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "LocalTestServer",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Локальный тестовый HTTP-сервер песочницы для отдачи HTML/JSON браузерам в тестах.",
+                    "docstring": "Локальный тестовый HTTP-сервер песочницы для отдачи HTML/JSON браузерам в тестах.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 140,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, host, port)",
+                        "summary": "Инициализирует сервер.",
+                        "docstring": "Инициализирует сервер.\n\nArgs:\n    host: Хост прослушивания (по умолчанию 127.0.0.1).\n    port: Порт (0 для авто-выбора свободного порта ОС).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 143,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "is_running",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Проверяет, запущен ли сервер.",
+                        "docstring": "Проверяет, запущен ли сервер.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 160,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "port",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает актуальный порт работающего сервера.",
+                        "docstring": "Возвращает актуальный порт работающего сервера.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 165,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "url_for",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, path)",
+                        "summary": "Формирует абсолютный URL для указанного относительного пути.",
+                        "docstring": "Формирует абсолютный URL для указанного относительного пути.\n\nArgs:\n    path: Путь маршрута (например, '/page').\n\nReturns:\n    Полный HTTP URL на локальном сервере.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 169,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "serve_html",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, path, html, content_type)",
+                        "summary": "Регистрирует HTML-маршрут.",
+                        "docstring": "Регистрирует HTML-маршрут.\n\nArgs:\n    path: Путь URL (например, '/index').\n    html: HTML-содержимое.\n    content_type: Заголовок Content-Type.\n\nReturns:\n    Абсолютный URL зарегистрированного маршрута.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 181,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "serve_json",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, path, data)",
+                        "summary": "Регистрирует маршрут, отдающий JSON данные.",
+                        "docstring": "Регистрирует маршрут, отдающий JSON данные.\n\nArgs:\n    path: Путь URL.\n    data: Данные для сериализации в JSON.\n\nReturns:\n    Абсолютный URL зарегистрированного маршрута.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 198,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "fetch",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, path_or_url, method, headers, data)",
+                        "summary": "Выполняет прямой HTTP-запрос к серверу в обход системных прокси.",
+                        "docstring": "Выполняет прямой HTTP-запрос к серверу в обход системных прокси.\n\nArgs:\n    path_or_url: Путь маршрута (например, '/page') или полный URL.\n    method: Метод HTTP (GET, POST и т.д.).\n    headers: Опциональные HTTP-заголовки.\n    data: Опциональное тело запроса в байтах.\n\nReturns:\n    Экземпляр TestResponse с кодом, заголовками и телом ответа.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 213,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "start",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Запускает HTTP-сервер в фоновом потоке.",
+                        "docstring": "Запускает HTTP-сервер в фоновом потоке.\n\nReturns:\n    Экземпляр сервера.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 260,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "stop",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Останавливает сервер и фоновый поток.",
+                        "docstring": "Останавливает сервер и фоновый поток.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 285,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "session",
+                "path": "chutils/scraping/testing/session",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Менеджер живых браузерных сессий для сквозного (live) тестирования скраперов.",
+                "docstring": "Менеджер живых браузерных сессий для сквозного (live) тестирования скраперов.\n\nОбеспечивает создание изолированных временных профилей (user_data_dir),\nотслеживание запущенных процессов браузеров (nodriver, Playwright, Selenium)\nи их гарантированное завершение (teardown / kill zombies) даже при сбоях тестов.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 24,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "LiveBrowserSession",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Контекстный менеджер изолированной сессии реального браузера.",
+                    "docstring": "Контекстный менеджер изолированной сессии реального браузера.\n\nСоздает временный каталог профиля (`user_data_dir`), регистрирует запущенные\nпроцессы браузера и гарантирует их принудительное уничтожение при выходе или\nаварийном завершении приложения через `chutils.lifecycle`.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 27,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, browser_name, user_data_dir, auto_cleanup_dir, keep_profile_on_failure)",
+                        "summary": "Инициализирует сессию живого браузера.",
+                        "docstring": "Инициализирует сессию живого браузера.\n\nArgs:\n    browser_name: Название браузера (например, \"chromium\", \"chrome\", \"firefox\").\n    user_data_dir: Пользовательский путь к каталогу профиля. Если None,\n        создается временный каталог с префиксом `chutils_live_browser_`.\n    auto_cleanup_dir: Автоматически удалять каталог профиля при очистке.\n    keep_profile_on_failure: Не удалять профиль при возникновении исключения\n        в контекстном менеджере (для отладки упавших тестов).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 36,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "is_active",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает флаг активности текущей сессии.",
+                        "docstring": "Возвращает флаг активности текущей сессии.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 69,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "track_process",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, process_or_pid)",
+                        "summary": "Регистрирует процесс браузера для отслеживания и гарантированного teardown.",
+                        "docstring": "Регистрирует процесс браузера для отслеживания и гарантированного teardown.\n\nArgs:\n    process_or_pid: Объект процесса (subprocess.Popen, nodriver Browser,\n        playwright process) или числовой PID.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 73,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "cleanup",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Принудительно останавливает все отслеживаемые процессы и удаляет профиль.",
+                        "docstring": "Принудительно останавливает все отслеживаемые процессы и удаляет профиль.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 88,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_terminate_process",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, proc)",
+                        "summary": "Завершает переданный процесс или PID с гарантированным fallback на kill.",
+                        "docstring": "Завершает переданный процесс или PID с гарантированным fallback на kill.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 106,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_remove_directory",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, path)",
+                        "summary": "Удаляет каталог с retry механизмом для файловых блокировок Windows.",
+                        "docstring": "Удаляет каталог с retry механизмом для файловых блокировок Windows.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 151,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_on_lifecycle_shutdown",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "Callback для аварийного завершения приложения через chutils.lifecycle.",
+                        "docstring": "Callback для аварийного завершения приложения через chutils.lifecycle.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 162,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
               }
             ],
             "symbols": [
@@ -33337,7 +34060,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 26,
+                "line_number": 24,
                 "bases": [],
                 "children": []
               },
@@ -33357,7 +34080,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 36,
+                "line_number": 38,
                 "bases": [],
                 "children": []
               },
@@ -33377,7 +34100,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 44,
+                "line_number": 46,
                 "bases": [],
                 "children": []
               }
@@ -33401,7 +34124,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 32,
+            "line_number": 34,
             "bases": [],
             "children": []
           },
@@ -33421,7 +34144,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 52,
+            "line_number": 56,
             "bases": [],
             "children": []
           },
@@ -33441,7 +34164,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 60,
+            "line_number": 64,
             "bases": [],
             "children": []
           }
@@ -42725,6 +43448,26 @@
       "weight": 2
     },
     {
+      "source": "chutils/scraping/testing/server",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/testing/session",
+      "target": "chutils/fs",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/testing/session",
+      "target": "chutils/lifecycle",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/testing/session",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
       "source": "chutils/secret_manager",
       "target": "/core",
       "weight": 1
@@ -43239,8 +43982,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "6613b44af5ffd47bbcd6e00a5d76721c5315a1b2 (dirty)",
-    "generated_at": "2026-09-10T00:57:16.932499+00:00",
-    "project_hash": "150b36e0b531358611018056cb210c52287463f7352f409e7c37f469b4186de9"
+    "git_commit": "9b0ce668f9ae472228fbb825eaf5b41f356bc154 (dirty)",
+    "generated_at": "2026-09-10T01:03:50.327274+00:00",
+    "project_hash": "79cb64a20724aeb2db34bc25478ae4f8f44b655612fda8f61845c6cfb5d2f4ac"
   }
 }

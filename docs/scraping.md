@@ -544,6 +544,50 @@ elem = driver.find_element("css selector", "#content")
 assert elem.text == "Привет"
 ```
 
+### Локальный тестовый HTTP-сервер песочницы (`LocalTestServer`)
+
+Для тестирования парсеров в реальных сетевых условиях без обращения к внешним сайтам используется легковесный сервер:
+
+```python
+from chutils.scraping import LocalTestServer
+
+with LocalTestServer() as server:
+    # Регистрация страниц и API фикстур
+    html_url = server.serve_html("/catalog", "<h1>Каталог товаров</h1>")
+    json_url = server.serve_json("/api/items", [{"id": 1, "title": "Товар"}])
+
+    # Прямой запрос в обход системных прокси
+    response = server.fetch("/catalog")
+    assert response.status == 200
+    assert "Каталог товаров" in response.text
+
+    # Проверка журнала входящих запросов от браузера
+    assert len(server.requests_log) == 1
+    assert server.requests_log[0].path == "/catalog"
+```
+
+### Менеджер живых браузерных сессий (`LiveBrowserSession`)
+
+При сквозном тестировании реальных браузеров часто возникают висячие зомби-процессы (`chrome.exe`) и остаточные временные папки профилей. `LiveBrowserSession` гарантирует их полное удаление:
+
+```python
+from chutils.scraping import LiveBrowserSession
+import nodriver
+
+async with LiveBrowserSession(browser_name="chromium") as session:
+    # Автоматически создается временный изолированный user_data_dir
+    browser = await nodriver.start(user_data_dir=str(session.user_data_dir))
+    
+    # Регистрируем процесс браузера для отслеживания
+    session.track_process(browser)
+
+    tab = await browser.get("http://127.0.0.1:8080/test")
+    # ... выполнение скрапинга ...
+
+# При выходе: браузер гарантированно завершается (SIGTERM -> SIGKILL),
+# а временный каталог профиля удаляется с диска даже при падении теста!
+```
+
 
 
 
