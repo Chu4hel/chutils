@@ -23,11 +23,19 @@ if TYPE_CHECKING:
         nodriver_proxy as nodriver_proxy,
         parse_proxy as parse_proxy,
     )
+    from .testing import (
+        MockNodriverTab as MockNodriverTab,
+        MockPlaywrightPage as MockPlaywrightPage,
+        MockSeleniumDriver as MockSeleniumDriver,
+    )
 
 _LAZY_MAPPING = {
     "AsyncProxyTunnel": (".proxy", "AsyncProxyTunnel"),
     "BrowserProfile": (".profiles", "BrowserProfile"),
     "ChromeProxyExtension": (".proxy", "ChromeProxyExtension"),
+    "MockNodriverTab": (".testing", "MockNodriverTab"),
+    "MockPlaywrightPage": (".testing", "MockPlaywrightPage"),
+    "MockSeleniumDriver": (".testing", "MockSeleniumDriver"),
     "ProfileManager": (".profiles", "ProfileManager"),
     "ProxyConfig": (".proxy", "ProxyConfig"),
     "ProxyPool": (".proxy", "ProxyPool"),
@@ -52,7 +60,15 @@ def __getattr__(name: str) -> Any:
 def __dir__() -> list[str]:
     return sorted(
         list(_LAZY_MAPPING.keys())
-        + ["captcha", "concurrency", "humanize", "proxy", "__all__", "__doc__"]
+        + [
+            "captcha",
+            "concurrency",
+            "humanize",
+            "proxy",
+            "testing",
+            "__all__",
+            "__doc__",
+        ]
     )
 
 
@@ -60,6 +76,9 @@ __all__ = [
     "AsyncProxyTunnel",
     "BrowserProfile",
     "ChromeProxyExtension",
+    "MockNodriverTab",
+    "MockPlaywrightPage",
+    "MockSeleniumDriver",
     "ProfileManager",
     "ProxyConfig",
     "ProxyPool",
@@ -74,4 +93,5 @@ __all__ = [
     "nodriver_proxy",
     "parse_proxy",
     "proxy",
+    "testing",
 ]

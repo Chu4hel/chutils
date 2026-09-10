@@ -501,5 +501,49 @@ async with async_nodriver_proxy("socks5://user:pass@1.2.3.4:1080", mode="tunnel"
     browser = await nodriver.start(browser_args=browser_args)
 ```
 
+---
+
+## 8. Автотестирование парсеров и моки страниц (`chutils.scraping.testing`)
+
+Модуль `chutils.scraping.testing` предоставляет легковесные in-memory моки страниц для мгновенного модульного тестирования парсеров без необходимости запуска реального браузера:
+
+### Мок nodriver (`MockNodriverTab`)
+
+```python
+from chutils.scraping import MockNodriverTab
+
+tab = MockNodriverTab("""
+    <div class="product">
+        <h1 class="title">Ноутбук</h1>
+        <span class="price">99990 ₽</span>
+    </div>
+""")
+
+# Тестирование парсера nodriver
+title = await tab.select(".title")
+print(title.text)  # "Ноутбук"
+```
+
+### Мок Playwright (`MockPlaywrightPage`)
+
+```python
+from chutils.scraping import MockPlaywrightPage
+
+page = MockPlaywrightPage("<ul><li>Элемент 1</li><li>Элемент 2</li></ul>")
+items = await page.locator("li").all()
+assert len(items) == 2
+```
+
+### Мок Selenium (`MockSeleniumDriver`)
+
+```python
+from chutils.scraping import MockSeleniumDriver
+
+driver = MockSeleniumDriver("<div id='content'>Привет</div>")
+elem = driver.find_element("css selector", "#content")
+assert elem.text == "Привет"
+```
+
+
 
 

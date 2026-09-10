@@ -31805,6 +31805,1583 @@
                 "children": []
               }
             ]
+          },
+          {
+            "name": "testing",
+            "path": "chutils/scraping/testing",
+            "type": "package",
+            "layer": "public",
+            "summary": "Модуль инструментов автотестирования скраперов и парсеров (chutils.scraping.testing).",
+            "docstring": "Модуль инструментов автотестирования скраперов и парсеров (chutils.scraping.testing).",
+            "children": [
+              {
+                "name": "mocks",
+                "path": "chutils/scraping/testing/mocks",
+                "type": "package",
+                "layer": "internal",
+                "summary": "Моки страниц браузеров для автономного тестирования скраперов.",
+                "docstring": "Моки страниц браузеров для автономного тестирования скраперов.",
+                "children": [
+                  {
+                    "name": "dom",
+                    "path": "chutils/scraping/testing/mocks/dom",
+                    "type": "module",
+                    "layer": "internal",
+                    "summary": "Легковесное DOM-дерево и парсер HTML для мокирования браузерных страниц.",
+                    "docstring": "Легковесное DOM-дерево и парсер HTML для мокирования браузерных страниц.",
+                    "children": [],
+                    "symbols": [
+                      {
+                        "name": "DOMNode",
+                        "type": "class",
+                        "layer": "internal",
+                        "signature": "",
+                        "summary": "Узел легковесного DOM-дерева.",
+                        "docstring": "Узел легковесного DOM-дерева.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 8,
+                        "bases": [],
+                        "children": [
+                          {
+                            "name": "__init__",
+                            "type": "method",
+                            "layer": "private",
+                            "signature": "(self, tag, attrs, parent)",
+                            "summary": "Инициализирует узел DOM.",
+                            "docstring": "Инициализирует узел DOM.\n\nArgs:\n    tag: Название тега.\n    attrs: Словарь HTML-атрибутов.\n    parent: Родительский узел или None для корня.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 11,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "text",
+                            "type": "method",
+                            "layer": "public",
+                            "signature": "(self)",
+                            "summary": "Возвращает весь видимый текстовый контент узла и его потомков.",
+                            "docstring": "Возвращает весь видимый текстовый контент узла и его потомков.\n\nReturns:\n    Строка с объединенным текстовым контентом.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [
+                                "property"
+                              ],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 31,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "select",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, selector)",
+                            "summary": "Находит первый узел, соответствующий CSS селектору.",
+                            "docstring": "Находит первый узел, соответствующий CSS селектору.\n\nArgs:\n    selector: CSS селектор.\n\nReturns:\n    Найденный узел DOMNode или None.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 50,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "select_all",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, selector)",
+                            "summary": "Находит все узлы, соответствующие CSS селектору.",
+                            "docstring": "Находит все узлы, соответствующие CSS селектору.\n\nArgs:\n    selector: CSS селектор.\n\nReturns:\n    Список найденных узлов DOMNode.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 62,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "_collect_descendants",
+                            "type": "method",
+                            "layer": "private",
+                            "signature": "(self)",
+                            "summary": "Рекурсивно собирает всех потомков узла.",
+                            "docstring": "Рекурсивно собирает всех потомков узла.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 96,
+                            "bases": [],
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "_matches_simple_selector",
+                        "type": "function",
+                        "layer": "private",
+                        "signature": "(node, selector)",
+                        "summary": "Проверяет совпадение простого селектора (тег, id, класс, атрибуты).",
+                        "docstring": "Проверяет совпадение простого селектора (тег, id, класс, атрибуты).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 109,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_matches_compound_selector",
+                        "type": "function",
+                        "layer": "private",
+                        "signature": "(node, selector, root_scope)",
+                        "summary": "Проверяет соответствие узла составному селектору (включая цепочки предков).",
+                        "docstring": "Проверяет соответствие узла составному селектору (включая цепочки предков).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 150,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_TreeBuilder",
+                        "type": "class",
+                        "layer": "private",
+                        "signature": "",
+                        "summary": "Парсер HTML для построения дерева DOMNode.",
+                        "docstring": "Парсер HTML для построения дерева DOMNode.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 174,
+                        "bases": [
+                          "html.parser.HTMLParser"
+                        ],
+                        "children": [
+                          {
+                            "name": "__init__",
+                            "type": "method",
+                            "layer": "private",
+                            "signature": "(self)",
+                            "summary": "",
+                            "docstring": "",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 177,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "handle_starttag",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, tag, attrs)",
+                            "summary": "Обрабатывает открывающий HTML тег и создает узел в DOM.",
+                            "docstring": "Обрабатывает открывающий HTML тег и создает узел в DOM.\n\nArgs:\n    tag: Имя тега.\n    attrs: Список пар атрибутов (имя, значение).",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 182,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "handle_endtag",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, tag)",
+                            "summary": "Обрабатывает закрывающий HTML тег, схлопывая стек.",
+                            "docstring": "Обрабатывает закрывающий HTML тег, схлопывая стек.\n\nArgs:\n    tag: Имя закрываемого тега.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 201,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "handle_data",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, data)",
+                            "summary": "Обрабатывает текстовые фрагменты внутри текущего узла.",
+                            "docstring": "Обрабатывает текстовые фрагменты внутри текущего узла.\n\nArgs:\n    data: Текстовые данные.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 212,
+                            "bases": [],
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "parse_html_dom",
+                        "type": "function",
+                        "layer": "internal",
+                        "signature": "(html_content)",
+                        "summary": "Парсит HTML-строку и возвращает корневой узел DOM.",
+                        "docstring": "Парсит HTML-строку и возвращает корневой узел DOM.\n\nArgs:\n    html_content: Сырая строка HTML.\n\nReturns:\n    Корневой узел DOMNode.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 222,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "nodriver",
+                    "path": "chutils/scraping/testing/mocks/nodriver",
+                    "type": "module",
+                    "layer": "internal",
+                    "summary": "Мок реализации вкладки nodriver.Tab и элементов nodriver.Element.",
+                    "docstring": "Мок реализации вкладки nodriver.Tab и элементов nodriver.Element.",
+                    "children": [],
+                    "symbols": [
+                      {
+                        "name": "MockNodriverElement",
+                        "type": "class",
+                        "layer": "internal",
+                        "signature": "",
+                        "summary": "Мок HTML-элемента в стиле nodriver.Element.",
+                        "docstring": "Мок HTML-элемента в стиле nodriver.Element.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 8,
+                        "bases": [],
+                        "children": [
+                          {
+                            "name": "__init__",
+                            "type": "method",
+                            "layer": "private",
+                            "signature": "(self, node)",
+                            "summary": "Инициализирует мок элемента.",
+                            "docstring": "Инициализирует мок элемента.\n\nArgs:\n    node: Внутренний узел DOMNode.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 11,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "text",
+                            "type": "method",
+                            "layer": "public",
+                            "signature": "(self)",
+                            "summary": "Возвращает текстовое содержимое элемента.",
+                            "docstring": "Возвращает текстовое содержимое элемента.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [
+                                "property"
+                              ],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 20,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "attrs",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает словарь атрибутов элемента.",
+                            "docstring": "Возвращает словарь атрибутов элемента.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [
+                                "property"
+                              ],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 25,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "tag",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает имя тега элемента.",
+                            "docstring": "Возвращает имя тега элемента.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [
+                                "property"
+                              ],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 30,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "select",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, selector)",
+                            "summary": "Находит первый дочерний элемент по CSS-селектору.",
+                            "docstring": "Находит первый дочерний элемент по CSS-селектору.\n\nArgs:\n    selector: CSS-селектор.\n\nReturns:\n    Экземпляр MockNodriverElement или None.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 34,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "select_all",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, selector)",
+                            "summary": "Находит все дочерние элементы по CSS-селектору.",
+                            "docstring": "Находит все дочерние элементы по CSS-селектору.\n\nArgs:\n    selector: CSS-селектор.\n\nReturns:\n    Список найденных элементов MockNodriverElement.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 46,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "click",
+                            "type": "method",
+                            "layer": "public",
+                            "signature": "(self)",
+                            "summary": "Имитирует клик по элементу (no-op).",
+                            "docstring": "Имитирует клик по элементу (no-op).",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 58,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "send_keys",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, text)",
+                            "summary": "Имитирует ввод текста в элемент.",
+                            "docstring": "Имитирует ввод текста в элемент.\n\nArgs:\n    text: Вводимый текст.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 62,
+                            "bases": [],
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "MockNodriverTab",
+                        "type": "class",
+                        "layer": "internal",
+                        "signature": "",
+                        "summary": "Мок вкладки браузера nodriver.Tab для автономного тестирования парсеров.",
+                        "docstring": "Мок вкладки браузера nodriver.Tab для автономного тестирования парсеров.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 71,
+                        "bases": [],
+                        "children": [
+                          {
+                            "name": "__init__",
+                            "type": "method",
+                            "layer": "private",
+                            "signature": "(self, html, url)",
+                            "summary": "Инициализирует мок вкладки nodriver.",
+                            "docstring": "Инициализирует мок вкладки nodriver.\n\nArgs:\n    html: HTML-содержимое страницы.\n    url: URL страницы.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 74,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "get_content",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает исходный HTML страницы.",
+                            "docstring": "Возвращает исходный HTML страницы.\n\nReturns:\n    HTML-код страницы.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 85,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "select",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, selector)",
+                            "summary": "Находит первый элемент по CSS-селектору.",
+                            "docstring": "Находит первый элемент по CSS-селектору.\n\nArgs:\n    selector: CSS-селектор.\n\nReturns:\n    Экземпляр MockNodriverElement или None.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 93,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "select_all",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, selector)",
+                            "summary": "Находит все элементы по CSS-селектору.",
+                            "docstring": "Находит все элементы по CSS-селектору.\n\nArgs:\n    selector: CSS-селектор.\n\nReturns:\n    Список элементов MockNodriverElement.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 105,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "find",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, text)",
+                            "summary": "Находит наиболее специфичный элемент, содержащий указанный текст.",
+                            "docstring": "Находит наиболее специфичный элемент, содержащий указанный текст.\n\nArgs:\n    text: Искомая подстрока.\n\nReturns:\n    Найденный элемент MockNodriverElement или None.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 117,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "evaluate",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, expression)",
+                            "summary": "Имитирует выполнение простого JavaScript выражения.",
+                            "docstring": "Имитирует выполнение простого JavaScript выражения.\n\nArgs:\n    expression: Строка выражения (например, document.title).\n\nReturns:\n    Результат выполнения выражения.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 135,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "sleep",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, seconds)",
+                            "summary": "Имитирует ожидание (no-op в тестах).",
+                            "docstring": "Имитирует ожидание (no-op в тестах).\n\nArgs:\n    seconds: Количество секунд.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 152,
+                            "bases": [],
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "playwright",
+                    "path": "chutils/scraping/testing/mocks/playwright",
+                    "type": "module",
+                    "layer": "internal",
+                    "summary": "Мок реализации Playwright Page и Locator для оффлайн-тестирования.",
+                    "docstring": "Мок реализации Playwright Page и Locator для оффлайн-тестирования.",
+                    "children": [],
+                    "symbols": [
+                      {
+                        "name": "MockPlaywrightLocator",
+                        "type": "class",
+                        "layer": "internal",
+                        "signature": "",
+                        "summary": "Мок Playwright Locator, инкапсулирующий один или несколько найденных узлов.",
+                        "docstring": "Мок Playwright Locator, инкапсулирующий один или несколько найденных узлов.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 8,
+                        "bases": [],
+                        "children": [
+                          {
+                            "name": "__init__",
+                            "type": "method",
+                            "layer": "private",
+                            "signature": "(self, nodes)",
+                            "summary": "Инициализирует локатор списком узлов.",
+                            "docstring": "Инициализирует локатор списком узлов.\n\nArgs:\n    nodes: Список узлов DOMNode.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 11,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "locator",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, selector)",
+                            "summary": "Возвращает вложенный локатор относительно текущих узлов.",
+                            "docstring": "Возвращает вложенный локатор относительно текущих узлов.\n\nArgs:\n    selector: CSS-селектор.\n\nReturns:\n    Экземпляр MockPlaywrightLocator.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 19,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "count",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает количество найденных элементов.",
+                            "docstring": "Возвращает количество найденных элементов.\n\nReturns:\n    Число элементов в выборке локатора.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 33,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "all",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает список локаторов для каждого отдельного элемента.",
+                            "docstring": "Возвращает список локаторов для каждого отдельного элемента.\n\nReturns:\n    Список MockPlaywrightLocator.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 41,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "first",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает первый элемент выборки.",
+                            "docstring": "Возвращает первый элемент выборки.\n\nReturns:\n    MockPlaywrightLocator с первым узлом.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [
+                                "property"
+                              ],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 50,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "last",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает последний элемент выборки.",
+                            "docstring": "Возвращает последний элемент выборки.\n\nReturns:\n    MockPlaywrightLocator с последним узлом.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [
+                                "property"
+                              ],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 59,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "nth",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, index)",
+                            "summary": "Возвращает n-й элемент выборки.",
+                            "docstring": "Возвращает n-й элемент выборки.\n\nArgs:\n    index: Индекс элемента (0-based).\n\nReturns:\n    MockPlaywrightLocator для n-го узла.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 67,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "inner_text",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает видимый текст первого элемента.",
+                            "docstring": "Возвращает видимый текст первого элемента.\n\nReturns:\n    Текст элемента.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 80,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "text_content",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает текстовое содержимое элемента.",
+                            "docstring": "Возвращает текстовое содержимое элемента.\n\nReturns:\n    Текст элемента или None.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 90,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "get_attribute",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, name)",
+                            "summary": "Возвращает значение атрибута первого элемента.",
+                            "docstring": "Возвращает значение атрибута первого элемента.\n\nArgs:\n    name: Имя атрибута.\n\nReturns:\n    Значение атрибута или None.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 100,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "is_visible",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Проверяет видимость элемента.",
+                            "docstring": "Проверяет видимость элемента.\n\nReturns:\n    True, если элемент присутствует в DOM.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 113,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "click",
+                            "type": "method",
+                            "layer": "public",
+                            "signature": "(self)",
+                            "summary": "Имитирует клик (no-op).",
+                            "docstring": "Имитирует клик (no-op).",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 121,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "fill",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, value)",
+                            "summary": "Имитирует заполнение поля значением.",
+                            "docstring": "Имитирует заполнение поля значением.\n\nArgs:\n    value: Вводимое значение.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 125,
+                            "bases": [],
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "MockPlaywrightPage",
+                        "type": "class",
+                        "layer": "internal",
+                        "signature": "",
+                        "summary": "Мок объекта playwright.async_api.Page для автономного тестирования парсеров.",
+                        "docstring": "Мок объекта playwright.async_api.Page для автономного тестирования парсеров.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 135,
+                        "bases": [],
+                        "children": [
+                          {
+                            "name": "__init__",
+                            "type": "method",
+                            "layer": "private",
+                            "signature": "(self, html, url)",
+                            "summary": "Инициализирует мок страницы Playwright.",
+                            "docstring": "Инициализирует мок страницы Playwright.\n\nArgs:\n    html: HTML-содержимое страницы.\n    url: URL страницы.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 138,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "locator",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, selector)",
+                            "summary": "Возвращает объект Locator по указанному селектору.",
+                            "docstring": "Возвращает объект Locator по указанному селектору.\n\nArgs:\n    selector: CSS-селектор.\n\nReturns:\n    Экземпляр MockPlaywrightLocator.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 149,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "title",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает заголовок страницы (title).",
+                            "docstring": "Возвращает заголовок страницы (title).\n\nReturns:\n    Текст из тега title или пустая строка.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 161,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "content",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает HTML-код страницы.",
+                            "docstring": "Возвращает HTML-код страницы.\n\nReturns:\n    Исходный HTML.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 170,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "evaluate",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, expression, arg)",
+                            "summary": "Имитирует выполнение простого JS выражения.",
+                            "docstring": "Имитирует выполнение простого JS выражения.\n\nArgs:\n    expression: Выражение JS.\n    arg: Опциональный аргумент.\n\nReturns:\n    Результат выражения.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 178,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "goto",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, url)",
+                            "summary": "Имитирует переход по URL.",
+                            "docstring": "Имитирует переход по URL.\n\nArgs:\n    url: Целевой адрес.",
+                            "breadcrumbs": {
+                              "is_async": true,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 192,
+                            "bases": [],
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "selenium",
+                    "path": "chutils/scraping/testing/mocks/selenium",
+                    "type": "module",
+                    "layer": "internal",
+                    "summary": "Синхронный мок Selenium WebDriver и WebElement для оффлайн-тестирования.",
+                    "docstring": "Синхронный мок Selenium WebDriver и WebElement для оффлайн-тестирования.",
+                    "children": [],
+                    "symbols": [
+                      {
+                        "name": "MockSeleniumElement",
+                        "type": "class",
+                        "layer": "internal",
+                        "signature": "",
+                        "summary": "Мок веб-элемента Selenium WebElement.",
+                        "docstring": "Мок веб-элемента Selenium WebElement.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 8,
+                        "bases": [],
+                        "children": [
+                          {
+                            "name": "__init__",
+                            "type": "method",
+                            "layer": "private",
+                            "signature": "(self, node)",
+                            "summary": "Инициализирует мок элемента Selenium.",
+                            "docstring": "Инициализирует мок элемента Selenium.\n\nArgs:\n    node: Внутренний узел DOMNode.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 11,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "text",
+                            "type": "method",
+                            "layer": "public",
+                            "signature": "(self)",
+                            "summary": "Возвращает видимый текст элемента.",
+                            "docstring": "Возвращает видимый текст элемента.\n\nReturns:\n    Текст элемента.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [
+                                "property"
+                              ],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 20,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "tag_name",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает имя тега элемента.",
+                            "docstring": "Возвращает имя тега элемента.\n\nReturns:\n    Имя тега.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [
+                                "property"
+                              ],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 29,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "get_attribute",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, name)",
+                            "summary": "Возвращает значение атрибута.",
+                            "docstring": "Возвращает значение атрибута.\n\nArgs:\n    name: Имя атрибута.\n\nReturns:\n    Значение атрибута или None.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 37,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "find_element",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, by, value)",
+                            "summary": "Находит первый вложенный элемент по указанному селектору.",
+                            "docstring": "Находит первый вложенный элемент по указанному селектору.\n\nArgs:\n    by: Стратегия поиска (css selector, id, xpath и т.д.).\n    value: Значение селектора.\n\nReturns:\n    Экземпляр MockSeleniumElement.\n\nRaises:\n    ValueError: Если элемент не найден.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 48,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "find_elements",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, by, value)",
+                            "summary": "Находит все вложенные элементы по указанному селектору.",
+                            "docstring": "Находит все вложенные элементы по указанному селектору.\n\nArgs:\n    by: Стратегия поиска.\n    value: Значение селектора.\n\nReturns:\n    Список MockSeleniumElement.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 67,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "click",
+                            "type": "method",
+                            "layer": "public",
+                            "signature": "(self)",
+                            "summary": "Имитирует клик по элементу.",
+                            "docstring": "Имитирует клик по элементу.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 81,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "send_keys",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, keys)",
+                            "summary": "Имитирует ввод текста в элемент.",
+                            "docstring": "Имитирует ввод текста в элемент.\n\nArgs:\n    keys: Вводимый текст.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 85,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "is_displayed",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Проверяет отображение элемента.",
+                            "docstring": "Проверяет отображение элемента.\n\nReturns:\n    True, если элемент присутствует.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 93,
+                            "bases": [],
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "MockSeleniumDriver",
+                        "type": "class",
+                        "layer": "internal",
+                        "signature": "",
+                        "summary": "Синхронный мок Selenium WebDriver для автономного тестирования.",
+                        "docstring": "Синхронный мок Selenium WebDriver для автономного тестирования.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 102,
+                        "bases": [],
+                        "children": [
+                          {
+                            "name": "__init__",
+                            "type": "method",
+                            "layer": "private",
+                            "signature": "(self, html, url)",
+                            "summary": "Инициализирует мок драйвера Selenium.",
+                            "docstring": "Инициализирует мок драйвера Selenium.\n\nArgs:\n    html: HTML-код страницы.\n    url: Начальный URL.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 105,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "page_source",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает исходный код страницы.",
+                            "docstring": "Возвращает исходный код страницы.\n\nReturns:\n    HTML-код страницы.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [
+                                "property"
+                              ],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 117,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "title",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self)",
+                            "summary": "Возвращает заголовок страницы.",
+                            "docstring": "Возвращает заголовок страницы.\n\nReturns:\n    Текст из тега title или пустая строка.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [
+                                "property"
+                              ],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 126,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "get",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, url)",
+                            "summary": "Имитирует переход по URL.",
+                            "docstring": "Имитирует переход по URL.\n\nArgs:\n    url: Целевой URL.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 135,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "find_element",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, by, value)",
+                            "summary": "Находит первый элемент на странице.",
+                            "docstring": "Находит первый элемент на странице.\n\nArgs:\n    by: Стратегия поиска (например, 'css selector', 'id').\n    value: Селектор.\n\nReturns:\n    Найденный элемент MockSeleniumElement.\n\nRaises:\n    ValueError: Если элемент не найден.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 143,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "find_elements",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, by, value)",
+                            "summary": "Находит все подходящие элементы на странице.",
+                            "docstring": "Находит все подходящие элементы на странице.\n\nArgs:\n    by: Стратегия поиска.\n    value: Селектор.\n\nReturns:\n    Список найденных элементов MockSeleniumElement.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 162,
+                            "bases": [],
+                            "children": []
+                          },
+                          {
+                            "name": "execute_script",
+                            "type": "method",
+                            "layer": "internal",
+                            "signature": "(self, script)",
+                            "summary": "Имитирует выполнение скрипта.",
+                            "docstring": "Имитирует выполнение скрипта.\n\nArgs:\n    script: Строка JavaScript.\n    args: Передаваемые аргументы.\n\nReturns:\n    Результат выполнения.",
+                            "breadcrumbs": {
+                              "is_async": false,
+                              "is_thread_safe": false,
+                              "is_heavy": false,
+                              "is_abstract": false,
+                              "decorators": [],
+                              "tags": [],
+                              "custom_metadata": {}
+                            },
+                            "line_number": 176,
+                            "bases": [],
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "name": "_normalize_selector",
+                        "type": "function",
+                        "layer": "private",
+                        "signature": "(by, value)",
+                        "summary": "Нормализует стратегию By в CSS-селектор.",
+                        "docstring": "Нормализует стратегию By в CSS-селектор.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 191,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ],
+                "symbols": []
+              }
+            ],
+            "symbols": [
+              {
+                "name": "_LAZY_MAPPING",
+                "type": "constant",
+                "layer": "private",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 26,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "__getattr__",
+                "type": "function",
+                "layer": "private",
+                "signature": "(name)",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 36,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "__dir__",
+                "type": "function",
+                "layer": "private",
+                "signature": "()",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 44,
+                "bases": [],
+                "children": []
+              }
+            ]
           }
         ],
         "symbols": [
@@ -31824,7 +33401,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 27,
+            "line_number": 32,
             "bases": [],
             "children": []
           },
@@ -31844,7 +33421,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 44,
+            "line_number": 52,
             "bases": [],
             "children": []
           },
@@ -31864,7 +33441,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 52,
+            "line_number": 60,
             "bases": [],
             "children": []
           }
@@ -41113,6 +42690,41 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/testing/mocks",
+      "target": "chutils/scraping/testing/mocks/dom",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/testing/mocks",
+      "target": "chutils/scraping/testing/mocks/nodriver",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/testing/mocks",
+      "target": "chutils/scraping/testing/mocks/playwright",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/testing/mocks",
+      "target": "chutils/scraping/testing/mocks/selenium",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/testing/mocks/nodriver",
+      "target": "chutils/scraping/testing/mocks/dom",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/testing/mocks/playwright",
+      "target": "chutils/scraping/testing/mocks/dom",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/testing/mocks/selenium",
+      "target": "chutils/scraping/testing/mocks/dom",
+      "weight": 2
+    },
+    {
       "source": "chutils/secret_manager",
       "target": "/core",
       "weight": 1
@@ -41627,8 +43239,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "a7ebabe2aac40e04ac56b7067c5581f95b674860 (dirty)",
-    "generated_at": "2026-09-10T00:50:57.524460+00:00",
-    "project_hash": "b002e726a7a84d4e67cd0a780e7ed9d8b901cb18e3d2f46dd176d8e81a56941e"
+    "git_commit": "6613b44af5ffd47bbcd6e00a5d76721c5315a1b2 (dirty)",
+    "generated_at": "2026-09-10T00:57:16.932499+00:00",
+    "project_hash": "150b36e0b531358611018056cb210c52287463f7352f409e7c37f469b4186de9"
   }
 }
