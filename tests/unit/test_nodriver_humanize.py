@@ -156,3 +156,62 @@ async def test_ensure_nodriver_raises_dependency_error(mocker: MockerFixture) ->
         # Восстанавливаем nodriver
         if old_nodriver is not None:
             sys.modules["nodriver"] = old_nodriver
+
+
+@pytest.mark.asyncio
+async def test_async_click_nodriver_hold_time(mocker: MockerFixture) -> None:
+    """Проверяет удержание кнопки мыши в async_click для nodriver."""
+    from chutils.scraping.humanize.actions import async_click
+
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.send = AsyncMock()
+
+    sleep_mock = mocker.patch("asyncio.sleep", new_callable=AsyncMock)
+
+    await async_click(
+        tab,
+        x=150,
+        y=250,
+        hold_time=(0.07, 0.11),
+    )
+
+    # Должны быть отправлены события mousePressed и mouseReleased
+    assert tab.send.call_count >= 2
+    sent_types = [c[0][0][1]["type_"] for c in tab.send.call_args_list if c[0][0][0] == "dispatch_mouse_event"]
+    assert "mousePressed" in sent_types
+    assert "mouseReleased" in sent_types
+
+    # Проверяем, что был вызван asyncio.sleep с задержкой в диапазоне hold_time
+    sleep_calls = [c[0][0] for c in sleep_mock.call_args_list if isinstance(c[0][0], (int, float))]
+    hold_sleeps = [s for s in sleep_calls if 0.069 <= s <= 0.111]
+    assert len(hold_sleeps) >= 1
+
+
+@pytest.mark.asyncio
+async def test_async_type_text_key_hold_time(mocker: MockerFixture) -> None:
+    """Проверяет паузу удержания клавиши (key_hold_time) в async_type_text для nodriver."""
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.find = AsyncMock()
+    tab.send = AsyncMock()
+
+    mock_element = AsyncMock()
+    mock_element._is_nodriver = True
+    tab.find.return_value = mock_element
+
+    sleep_mock = mocker.patch("asyncio.sleep", new_callable=AsyncMock)
+
+    await async_type_text(
+        tab,
+        selector="#input",
+        text="a",
+        error_rate=0.0,
+        speed_wpm=300.0,
+        key_hold_time=(0.05, 0.08),
+    )
+
+    # Проверяем, что был sleep в диапазоне key_hold_time между keyDown и keyUp
+    sleep_calls = [c[0][0] for c in sleep_mock.call_args_list if isinstance(c[0][0], (int, float))]
+    key_hold_sleeps = [s for s in sleep_calls if 0.049 <= s <= 0.081]
+    assert len(key_hold_sleeps) >= 1
