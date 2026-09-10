@@ -29532,86 +29532,6 @@
                 "children": [],
                 "symbols": [
                   {
-                    "name": "DEFAULT_WEBGL_VENDOR",
-                    "type": "constant",
-                    "layer": "internal",
-                    "signature": null,
-                    "summary": "",
-                    "docstring": null,
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 9,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "DEFAULT_WEBGL_RENDERER",
-                    "type": "constant",
-                    "layer": "internal",
-                    "signature": null,
-                    "summary": "",
-                    "docstring": null,
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 10,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "DEFAULT_HARDWARE_CONCURRENCY",
-                    "type": "constant",
-                    "layer": "internal",
-                    "signature": null,
-                    "summary": "",
-                    "docstring": null,
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 13,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "DEFAULT_DEVICE_MEMORY",
-                    "type": "constant",
-                    "layer": "internal",
-                    "signature": null,
-                    "summary": "",
-                    "docstring": null,
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 14,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
                     "name": "get_client_hints",
                     "type": "function",
                     "layer": "public",
@@ -29632,26 +29552,6 @@
                     "children": []
                   },
                   {
-                    "name": "_get_antidetect_js",
-                    "type": "function",
-                    "layer": "private",
-                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal, session_seed, client_hints)",
-                    "summary": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
-                    "docstring": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 60,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
                     "name": "ANTIDETECT_JS_SCRIPT",
                     "type": "constant",
                     "layer": "internal",
@@ -29667,7 +29567,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 325,
+                    "line_number": 60,
                     "bases": [],
                     "children": []
                   },
@@ -29687,7 +29587,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 334,
+                    "line_number": 69,
                     "bases": [],
                     "children": []
                   },
@@ -29707,7 +29607,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 344,
+                    "line_number": 79,
                     "bases": [],
                     "children": []
                   },
@@ -29727,7 +29627,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 354,
+                    "line_number": 89,
                     "bases": [],
                     "children": []
                   },
@@ -29747,7 +29647,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 364,
+                    "line_number": 99,
                     "bases": [],
                     "children": []
                   },
@@ -29767,7 +29667,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 397,
+                    "line_number": 132,
                     "bases": [],
                     "children": []
                   },
@@ -29787,7 +29687,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 435,
+                    "line_number": 170,
                     "bases": [],
                     "children": []
                   },
@@ -29796,8 +29696,8 @@
                     "type": "function",
                     "layer": "public",
                     "signature": "()",
-                    "summary": "Возвращает набор аргументов запуска браузера для скрытия автоматизации.",
-                    "docstring": "Возвращает набор аргументов запуска браузера для скрытия автоматизации.\n\nReturns:\n    Список аргументов командной строки запуска браузера.",
+                    "summary": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.",
+                    "docstring": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.\n\nReturns:\n    Список аргументов командной строки запуска браузера.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29807,7 +29707,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 474,
+                    "line_number": 209,
                     "bases": [],
                     "children": []
                   },
@@ -29827,7 +29727,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 494,
+                    "line_number": 232,
                     "bases": [],
                     "children": []
                   },
@@ -29847,7 +29747,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 556,
+                    "line_number": 294,
                     "bases": [],
                     "children": []
                   },
@@ -29867,7 +29767,118 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 576,
+                    "line_number": 314,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "antidetect_scripts",
+                "path": "chutils/scraping/humanize/antidetect_scripts",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Генератор JavaScript-инъекций антидетекта для браузеров.",
+                "docstring": "Генератор JavaScript-инъекций антидетекта для браузеров.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "DEFAULT_WEBGL_VENDOR",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 8,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "DEFAULT_WEBGL_RENDERER",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 9,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "DEFAULT_HARDWARE_CONCURRENCY",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 12,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "DEFAULT_DEVICE_MEMORY",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 13,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_get_antidetect_js",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal, session_seed, client_hints)",
+                    "summary": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
+                    "docstring": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
                     "bases": [],
                     "children": []
                   }
@@ -44498,6 +44509,11 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/humanize/antidetect",
+      "target": "/antidetect_scripts",
+      "weight": 5
+    },
+    {
       "source": "chutils/scraping/humanize/warmer",
       "target": "chutils/logger",
       "weight": 1
@@ -45307,8 +45323,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "c7b7c40dbad52a07dc65d0a4fe7e1f31e70c922e (dirty)",
-    "generated_at": "2026-09-10T15:06:39.695004+00:00",
-    "project_hash": "3388191a36bf8de513532feedb7cb7d629948c7926b5a58943bcbeb6d422b445"
+    "git_commit": "8f1e342d6fefb0218ed6a1cfebb07da8e8720717 (dirty)",
+    "generated_at": "2026-09-10T15:23:14.635960+00:00",
+    "project_hash": "276723797df76f69357e354f48e50868dd0424d36b9ab5563c157ce9b08a637d"
   }
 }

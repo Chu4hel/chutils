@@ -80,6 +80,14 @@ def test_antidetect_worker_and_stack_cloaking_e2e() -> None:
     assert "12" in js
     assert "16" in js
 
+    # 4. Проверяем новые слои антидетекта
+    assert "window.chrome" in js
+    assert "RTCPeerConnection" in js
+    assert "getChannelData" in js
+    assert "outerHeight" in js
+    assert "connection" in js
+    assert "getBattery" in js
+
 
 @pytest.mark.e2e
 @pytest.mark.asyncio

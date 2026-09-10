@@ -10,6 +10,7 @@ from chutils.exceptions import OptionalDependencyError
 from chutils.scraping.camoufox import launch_camoufox
 from chutils.scraping.humanize.antidetect import (
     _get_antidetect_js,
+    get_browser_launch_args,
     get_client_hints,
 )
 
@@ -92,3 +93,44 @@ def test_antidetect_v8_stack_trace_cloaking() -> None:
     """makeNative маскирует stack trace при вызове ошибок внутри пропатченных функций."""
     js = _get_antidetect_js("Vendor", "Renderer", 8, 8)
     assert "stack" in js or "prepareStackTrace" in js or "Error.captureStackTrace" in js
+
+
+def test_antidetect_window_chrome_emulation() -> None:
+    """Скрипт антидетекта полноценно эмулирует объект window.chrome с loadTimes, csi и runtime."""
+    js = _get_antidetect_js("Vendor", "Renderer", 8, 8)
+    assert "window.chrome" in js
+    assert "loadTimes" in js
+    assert "csi" in js
+    assert "runtime" in js
+    assert "app" in js
+
+
+def test_antidetect_webrtc_protection() -> None:
+    """Скрипт антидетекта защищает от утечек локального и реального IP через WebRTC RTCPeerConnection."""
+    js = _get_antidetect_js("Vendor", "Renderer", 8, 8)
+    assert "RTCPeerConnection" in js
+    assert "createOffer" in js or "onicecandidate" in js
+
+
+def test_antidetect_audio_noise() -> None:
+    """Скрипт антидетекта добавляет детерминированный микрошум в AudioContext/OfflineAudioContext."""
+    js = _get_antidetect_js("Vendor", "Renderer", 8, 8, session_seed="audio_seed_42")
+    assert "AudioContext" in js or "OfflineAudioContext" in js
+    assert "getChannelData" in js or "startRendering" in js
+
+
+def test_antidetect_screen_and_navigator_properties() -> None:
+    """Скрипт антидетекта эмулирует параметры экрана, connection и getBattery."""
+    js = _get_antidetect_js("Vendor", "Renderer", 8, 8)
+    assert "outerHeight" in js
+    assert "connection" in js
+    assert "getBattery" in js
+
+
+def test_get_browser_launch_args_enhanced() -> None:
+    """get_browser_launch_args возвращает актуальный набор флагов против детекта автоматизации."""
+    args = get_browser_launch_args()
+    assert "--disable-blink-features=AutomationControlled" in args
+    assert "--no-sandbox" in args
+    assert any("--lang=" in a for a in args)
+    assert any("IsolateOrigins" in a or "disable-features" in a for a in args)

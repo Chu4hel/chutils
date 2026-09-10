@@ -723,10 +723,15 @@ if __name__ == "__main__":
 
 1. **Защита изолированных Web Workers и SharedWorkers**: Антифрод-системы (Cloudflare Turnstile, Kasada, CreepJS) часто создают фоновые воркеры (`new Worker(...)`), чтобы проверить чистый контекст `self.navigator.webdriver` в обход основных инъекций в страницу. Модуль перехватывает конструкторы `Worker` и `SharedWorker`, автоматически оборачивает исходный скрипт в защитную преамбулу через `Blob` и `URL.createObjectURL`, полностью скрывая автоматизацию внутри воркеров.
 2. **Маскировка V8 Stack Traces (`makeNative`)**: При инспекции стектрейсов ошибок (`Error().stack` или `Error.captureStackTrace`) антифрод обнаруживает следы monkey-patching (`at patched... (eval at...)`). Функция `makeNative` маскирует стек вызовов под нативные вызовы браузера (`at FunctionName (<anonymous>)`).
-3. **Детерминированный Canvas Noise (`session_seed`)**: Шум накладывается через псевдослучайный алгоритм на базе стабильного сида сессии. Это исключает обнаружение антифрод-скриптами частой мутации канваса при многократном чтении `getImageData`.
-4. **Cross-realm iframe prototype protection**: Перехват создания элементов `iframe` и предотвращение извлечения чистых непатченных прототипов (`Function.prototype.toString`, `navigator.webdriver`).
-5. **Генерация Client Hints (`get_client_hints`)**: Формирование согласованной структуры `navigator.userAgentData` (brands, platform, mobile, entropy values) под указанный User-Agent.
-6. **Мост Cookie и Clearance токенов (`extract_clearance_cookies`)**: Извлечение сессионных токенов (включая `cf_clearance`) и User-Agent из браузера для последующей передачи в быстрый сетевой клиент `TLSAsyncClient` / `TLSSession`:
+3. **Полноценная эмуляция `window.chrome`**: В headless-режиме и Playwright свойство `window.chrome` отсутствует или пустое. Антидетект эмулирует нативные методы `chrome.loadTimes()`, `chrome.csi()`, `chrome.runtime` и `chrome.app` с сохранением правильных сигнатур и `[native code]`.
+4. **Защита от утечки IP через WebRTC (`RTCPeerConnection`)**: Блокирует утечку локальных (LAN) и прямых IP через STUN/TURN SDP кандидаты при работе через прокси.
+5. **Детерминированный микрошум AudioContext**: Внедряет микрошум в `AudioBuffer.prototype.getChannelData` на базе `session_seed`, исключая снятие стабильного аудио-отпечатка антифрод-системами без искажения звука.
+6. **Эмуляция геометрии окна и экрана**: В headless-браузерах `outerWidth` и `outerHeight` равны 0 либо строго равны `innerWidth`/`innerHeight`. Модуль выставляет реалистичные габариты с учетом тулбаров браузера и панели задач ОС.
+7. **Эмуляция свойств `navigator.connection` и `navigator.getBattery`**: Предоставляет согласованные данные сетевого статуса (4G, RTT) и Battery API.
+8. **Детерминированный Canvas Noise (`session_seed`)**: Шум накладывается через псевдослучайный алгоритм на базе стабильного сида сессии. Это исключает обнаружение антифрод-скриптами частой мутации канваса при многократном чтении `getImageData`.
+9. **Cross-realm iframe prototype protection**: Перехват создания элементов `iframe` и предотвращение извлечения чистых непатченных прототипов (`Function.prototype.toString`, `navigator.webdriver`).
+10. **Генерация Client Hints (`get_client_hints`)**: Формирование согласованной структуры `navigator.userAgentData` (brands, platform, mobile, entropy values) под указанный User-Agent.
+11. **Мост Cookie и Clearance токенов (`extract_clearance_cookies`)**: Извлечение сессионных токенов (включая `cf_clearance`) и User-Agent из браузера для последующей передачи в быстрый сетевой клиент `TLSAsyncClient` / `TLSSession`:
 
 ```python
 from chutils.scraping import extract_clearance_cookies
