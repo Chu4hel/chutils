@@ -103,7 +103,7 @@ def test_thread_safety_registry():
         t.join()
 
     # Все подписки должны быть корректно добавлены/удалены
-    for event_name, handlers in bus._subscribers.items():
+    for handlers in bus._subscribers.values():
         assert len(handlers) == 0
 
 

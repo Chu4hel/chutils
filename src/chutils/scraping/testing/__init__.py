@@ -4,30 +4,52 @@ import importlib
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from .assertions import (
+        assert_extraction_complete as assert_extraction_complete,
+    )
+    from .assertions import (
+        assert_schema_match as assert_schema_match,
+    )
+    from .assertions import (
+        assert_valid_price as assert_valid_price,
+    )
+    from .assertions import (
+        assert_valid_url as assert_valid_url,
+    )
     from .mocks import (
         MockNodriverElement as MockNodriverElement,
+    )
+    from .mocks import (
         MockNodriverTab as MockNodriverTab,
+    )
+    from .mocks import (
         MockPlaywrightLocator as MockPlaywrightLocator,
+    )
+    from .mocks import (
         MockPlaywrightPage as MockPlaywrightPage,
+    )
+    from .mocks import (
         MockSeleniumDriver as MockSeleniumDriver,
+    )
+    from .mocks import (
         MockSeleniumElement as MockSeleniumElement,
     )
     from .server import (
         LocalTestServer as LocalTestServer,
-        RecordedRequest as RecordedRequest,
-        TestResponse as TestResponse,
     )
-    from .assertions import (
-        assert_extraction_complete as assert_extraction_complete,
-        assert_schema_match as assert_schema_match,
-        assert_valid_price as assert_valid_price,
-        assert_valid_url as assert_valid_url,
+    from .server import (
+        RecordedRequest as RecordedRequest,
+    )
+    from .server import (
+        TestResponse as TestResponse,
     )
     from .session import (
         LiveBrowserSession as LiveBrowserSession,
     )
     from .snapshot import (
         SnapshotRecorder as SnapshotRecorder,
+    )
+    from .snapshot import (
         use_html_snapshot as use_html_snapshot,
     )
 
@@ -62,7 +84,16 @@ def __getattr__(name: str) -> Any:
 def __dir__() -> list[str]:
     return sorted(
         list(_LAZY_MAPPING.keys())
-        + ["assertions", "fixtures", "mocks", "server", "session", "snapshot", "__all__", "__doc__"]
+        + [
+            "assertions",
+            "fixtures",
+            "mocks",
+            "server",
+            "session",
+            "snapshot",
+            "__all__",
+            "__doc__",
+        ]
     )
 
 
@@ -78,11 +109,11 @@ __all__ = [
     "RecordedRequest",
     "SnapshotRecorder",
     "TestResponse",
-    "assertions",
     "assert_extraction_complete",
     "assert_schema_match",
     "assert_valid_price",
     "assert_valid_url",
+    "assertions",
     "fixtures",
     "mocks",
     "server",

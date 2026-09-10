@@ -63,9 +63,8 @@ def test_keyboard_typo_generator() -> None:
     for action in sequence:
         if action.action == "type":
             typed_text.append(action.char)
-        elif action.action == "backspace":
-            if typed_text:
-                typed_text.pop()
+        elif action.action == "backspace" and typed_text:
+            typed_text.pop()
 
     # Результат симуляции должен в точности соответствовать исходному тексту
     final_text = "".join(typed_text)

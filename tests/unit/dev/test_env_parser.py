@@ -129,11 +129,11 @@ def test_merge_env_structures() -> None:
     assert keys == ["A", "B", "C"]
 
     # Проверим, что A сохранило значение 10
-    a_entry = [e for e in merged_empty if e.key == "A"][0]
+    a_entry = next(e for e in merged_empty if e.key == "A")
     assert a_entry.value == "10"
 
     # Проверим, что B имеет пустое значение, но комментарии перенесены
-    b_entry = [e for e in merged_empty if e.key == "B"][0]
+    b_entry = next(e for e in merged_empty if e.key == "B")
     assert b_entry.value == ""
     assert b_entry.comment == "инлайн B"
 
@@ -147,5 +147,5 @@ def test_merge_env_structures() -> None:
     merged_full = merge_env_structures(
         source_entries, target_entries, empty_values=False
     )
-    b_full_entry = [e for e in merged_full if e.key == "B"][0]
+    b_full_entry = next(e for e in merged_full if e.key == "B")
     assert b_full_entry.value == "2"

@@ -3,6 +3,7 @@ from __future__ import annotations
 import subprocess
 from collections.abc import Generator
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -12,7 +13,7 @@ from chutils.dev.rules import APIMapRule, EnvSyncRule, ManifestRule
 
 
 @pytest.fixture
-def mock_git_diff(mocker: MockerFixture) -> Generator[mocker.MagicMock, None, None]:
+def mock_git_diff(mocker: MockerFixture) -> Generator[MagicMock, None, None]:
     """Фикстура для мокания вызова git diff."""
     mock_run = mocker.patch("subprocess.run")
     yield mock_run

@@ -8,7 +8,7 @@ from chutils.exceptions import EventBusExceptionGroup
 def test_event_bus_exception_group_inheritance():
     """Проверяет, что EventBusExceptionGroup наследуется от ExceptionGroup."""
     if sys.version_info >= (3, 11):
-        expected_base = ExceptionGroup
+        expected_base = ExceptionGroup  # noqa: F821
     else:
         from exceptiongroup import ExceptionGroup as expected_base
 

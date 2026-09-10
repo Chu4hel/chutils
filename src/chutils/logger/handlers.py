@@ -96,7 +96,9 @@ class CompressingRotatingFileHandler(logging.handlers.RotatingFileHandler):
                 else:
                     os.remove(dfn_uncompressed)
             except Exception as e:
-                self.handleError(f"Ошибка при сжатии или удалении {dfn_uncompressed}: {e}")  # type: ignore[arg-type]
+                self.handleError(
+                    f"Ошибка при сжатии или удалении {dfn_uncompressed}: {e}"
+                )  # type: ignore[arg-type]
 
 
 class CompressingTimedRotatingFileHandler(SafeTimedRotatingFileHandler):

@@ -51,7 +51,9 @@ def assert_extraction_complete(
     if required_keys:
         for key in required_keys:
             if key not in data:
-                raise AssertionError(f"Отсутствует обязательный ключ: {key!r} в {data!r}")
+                raise AssertionError(
+                    f"Отсутствует обязательный ключ: {key!r} в {data!r}"
+                )
 
     # Проверка значений
     for key, val in data.items():
@@ -99,7 +101,7 @@ def assert_valid_url(
 
 
 def assert_valid_price(
-    price: int | float | Decimal | str,
+    price: float | Decimal | str,
     min_value: float = 0.0,
     max_value: float | None = None,
 ) -> None:
@@ -134,7 +136,7 @@ def assert_valid_price(
                 f"Не удалось преобразовать значение {raw_num!r} в число из цены {price!r}"
             )
     else:
-        raise AssertionError(f"Неподдерживаемый тип для цены: {type(price).__name__}")
+        raise TypeError(f"Неподдерживаемый тип для цены: {type(price).__name__}")
 
     if numeric_price < min_value:
         raise AssertionError(

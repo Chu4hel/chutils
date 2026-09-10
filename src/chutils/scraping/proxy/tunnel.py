@@ -146,13 +146,9 @@ class AsyncProxyTunnel:
             target = parts[1]
 
             if method == "CONNECT":
-                await self._handle_connect(
-                    target, client_reader, client_writer
-                )
+                await self._handle_connect(target, client_reader, client_writer)
             else:
-                await self._handle_http(
-                    header_bytes, client_reader, client_writer
-                )
+                await self._handle_http(header_bytes, client_reader, client_writer)
         except (ConnectionResetError, BrokenPipeError, asyncio.CancelledError):
             pass
         except Exception as e:
@@ -184,9 +180,7 @@ class AsyncProxyTunnel:
         try:
             if self.proxy.protocol.startswith("socks"):
                 # SOCKS5 Handshake
-                await self._socks5_handshake(
-                    remote_reader, remote_writer, target
-                )
+                await self._socks5_handshake(remote_reader, remote_writer, target)
             else:
                 # HTTP CONNECT Forwarding
                 connect_req = f"CONNECT {target} HTTP/1.1\r\nHost: {target}\r\n"
@@ -200,7 +194,7 @@ class AsyncProxyTunnel:
 
                 # Читаем ответ upstream прокси
                 resp = await remote_reader.readuntil(b"\r\n\r\n")
-                if not (resp.startswith(b"HTTP/1.1 200") or resp.startswith(b"HTTP/1.0 200")):
+                if not resp.startswith((b"HTTP/1.1 200", b"HTTP/1.0 200")):
                     client_writer.write(resp)
                     await client_writer.drain()
                     remote_writer.close()
@@ -304,7 +298,9 @@ class AsyncProxyTunnel:
             if auth_resp[1] != 0x00:
                 raise PermissionError("Ошибка аутентификации в SOCKS5 прокси")
         elif method_resp[1] != 0x00:
-            raise ConnectionError(f"Неподдерживаемый метод аутентификации SOCKS5: {method_resp[1]}")
+            raise ConnectionError(
+                f"Неподдерживаемый метод аутентификации SOCKS5: {method_resp[1]}"
+            )
 
         # 3. Запрос CONNECT
         if ":" in target:

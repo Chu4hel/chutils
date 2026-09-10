@@ -1,7 +1,6 @@
 """Тесты локального асинхронного туннеля авторизации прокси (AsyncProxyTunnel)."""
 
 import asyncio
-from typing import Any
 
 import pytest
 
@@ -34,9 +33,7 @@ async def test_async_proxy_tunnel_connect_auth_injection() -> None:
         writer.close()
         await writer.wait_closed()
 
-    upstream_server = await asyncio.start_server(
-        mock_upstream_handler, "127.0.0.1", 0
-    )
+    upstream_server = await asyncio.start_server(mock_upstream_handler, "127.0.0.1", 0)
     upstream_port = upstream_server.sockets[0].getsockname()[1]
 
     proxy_cfg = ProxyConfig(
@@ -53,7 +50,9 @@ async def test_async_proxy_tunnel_connect_auth_injection() -> None:
     try:
         assert tunnel.port > 0
         assert tunnel.local_url == f"http://127.0.0.1:{tunnel.port}"
-        assert tunnel.to_chrome_arg() == f"--proxy-server=http://127.0.0.1:{tunnel.port}"
+        assert (
+            tunnel.to_chrome_arg() == f"--proxy-server=http://127.0.0.1:{tunnel.port}"
+        )
         assert tunnel.to_proxy_config().port == tunnel.port
 
         # Подключаемся клиентом к локальному туннелю БЕЗ авторизации
@@ -195,4 +194,3 @@ async def test_async_proxy_tunnel_socks5_upstream() -> None:
         await tunnel.stop()
         socks_server.close()
         await socks_server.wait_closed()
-

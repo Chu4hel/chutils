@@ -140,7 +140,9 @@ class ArchitectureDetector:
                 # Логгеры — по вызовам функций и присваиваниям
                 elif isinstance(node, ast.Assign):
                     for target in node.targets:
-                        if isinstance(target, ast.Name) and isinstance(node.value, ast.Call):
+                        if isinstance(target, ast.Name) and isinstance(
+                            node.value, ast.Call
+                        ):
                             func_name = self._call_func_name(node.value)
                             if any(kw in func_name for kw in self._LOGGING_CALLS):
                                 var_name = target.id

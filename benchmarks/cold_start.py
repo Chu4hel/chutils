@@ -35,13 +35,13 @@ loaded_chutils = [m for m in sys.modules if m.startswith('chutils.')]
 print(json.dumps({{"duration": end - start, "modules": loaded_chutils}}))
 """
     result = subprocess.run(
-        [sys.executable, "-c", script], capture_output=True, text=True
+        [sys.executable, "-c", script], capture_output=True, text=True, check=False
     )
     if result.returncode != 0:
         print(f"Error: {result.stderr}")
         try:
             return json.loads(result.stdout)
-        except:
+        except Exception:
             return None
     return json.loads(result.stdout)
 

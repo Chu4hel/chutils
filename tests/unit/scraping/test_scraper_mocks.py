@@ -3,12 +3,9 @@
 import pytest
 
 from chutils.scraping.testing.mocks import (
-    MockNodriverElement,
     MockNodriverTab,
-    MockPlaywrightLocator,
     MockPlaywrightPage,
     MockSeleniumDriver,
-    MockSeleniumElement,
 )
 
 SAMPLE_HTML = """
@@ -94,9 +91,7 @@ async def test_mock_playwright_page() -> None:
     first_item = items[0]
     assert await first_item.locator(".title").inner_text() == "Product Alpha"
     assert await first_item.locator(".price").inner_text() == "$19.99"
-    assert (
-        await first_item.locator("a").get_attribute("href") == "/items/101"
-    )
+    assert await first_item.locator("a").get_attribute("href") == "/items/101"
 
     # 3. First, Last, Nth
     assert await locator.first.locator(".title").inner_text() == "Product Alpha"

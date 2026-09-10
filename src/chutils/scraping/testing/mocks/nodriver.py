@@ -1,7 +1,5 @@
 """Мок реализации вкладки nodriver.Tab и элементов nodriver.Element."""
 
-from typing import TYPE_CHECKING
-
 from chutils.scraping.testing.mocks.dom import DOMNode, parse_html_dom
 
 
@@ -57,7 +55,6 @@ class MockNodriverElement:
 
     async def click(self) -> None:
         """Имитирует клик по элементу (no-op)."""
-        pass
 
     async def send_keys(self, text: str) -> None:
         """Имитирует ввод текста в элемент.
@@ -155,4 +152,3 @@ class MockNodriverTab:
         Args:
             seconds: Количество секунд.
         """
-        pass

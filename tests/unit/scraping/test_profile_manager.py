@@ -85,7 +85,9 @@ async def test_save_profile_after_warmup(tmp_path):
     context_mock = AsyncMock()
     page_mock.context = context_mock
     context_mock.storage_state.return_value = {
-        "cookies": [{"name": "pw_warm", "value": "1", "domain": "example.com", "path": "/"}],
+        "cookies": [
+            {"name": "pw_warm", "value": "1", "domain": "example.com", "path": "/"}
+        ],
         "origins": [],
     }
 
@@ -111,4 +113,3 @@ async def test_save_profile_after_warmup(tmp_path):
     assert saved_sel.metadata["warmed_up"] == "true"
     assert saved_sel.metadata["tag"] == "warmed_selenium"
     assert sel_path.exists()
-

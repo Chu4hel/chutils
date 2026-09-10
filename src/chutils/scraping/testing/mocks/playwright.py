@@ -1,7 +1,5 @@
 """Мок реализации Playwright Page и Locator для оффлайн-тестирования."""
 
-from typing import TYPE_CHECKING
-
 from chutils.scraping.testing.mocks.dom import DOMNode, parse_html_dom
 
 
@@ -53,7 +51,11 @@ class MockPlaywrightLocator:
         Returns:
             MockPlaywrightLocator с первым узлом.
         """
-        return MockPlaywrightLocator([self._nodes[0]]) if self._nodes else MockPlaywrightLocator([])
+        return (
+            MockPlaywrightLocator([self._nodes[0]])
+            if self._nodes
+            else MockPlaywrightLocator([])
+        )
 
     @property
     def last(self) -> "MockPlaywrightLocator":
@@ -62,7 +64,11 @@ class MockPlaywrightLocator:
         Returns:
             MockPlaywrightLocator с последним узлом.
         """
-        return MockPlaywrightLocator([self._nodes[-1]]) if self._nodes else MockPlaywrightLocator([])
+        return (
+            MockPlaywrightLocator([self._nodes[-1]])
+            if self._nodes
+            else MockPlaywrightLocator([])
+        )
 
     def nth(self, index: int) -> "MockPlaywrightLocator":
         """Возвращает n-й элемент выборки.
@@ -120,7 +126,6 @@ class MockPlaywrightLocator:
 
     async def click(self) -> None:
         """Имитирует клик (no-op)."""
-        pass
 
     async def fill(self, value: str) -> None:
         """Имитирует заполнение поля значением.

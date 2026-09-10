@@ -1,7 +1,5 @@
 """Синхронный мок Selenium WebDriver и WebElement для оффлайн-тестирования."""
 
-from typing import TYPE_CHECKING
-
 from chutils.scraping.testing.mocks.dom import DOMNode, parse_html_dom
 
 
@@ -80,7 +78,6 @@ class MockSeleniumElement:
 
     def click(self) -> None:
         """Имитирует клик по элементу."""
-        pass
 
     def send_keys(self, keys: str) -> None:
         """Имитирует ввод текста в элемент.

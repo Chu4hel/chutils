@@ -23,7 +23,9 @@ QAction: Any = None
 def _load_qt() -> None:
     global QT_BINDING, QtCore, QtGui, QtWidgets, Signal, Slot, Property, QAction
 
-    api_env = os.getenv("CHUTILS_QT_API") or os.getenv("QT_API") or ""  # chutils: ignore[ChutilsIntegrationRule]
+    api_env = (
+        os.getenv("CHUTILS_QT_API") or os.getenv("QT_API") or ""
+    )  # chutils: ignore[ChutilsIntegrationRule]
     preferred = api_env.lower()
 
     bindings: list[str] = []

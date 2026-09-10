@@ -2,14 +2,6 @@
 
 import pytest
 
-from chutils.scraping.testing.fixtures import (
-    html_snapshot_recorder,
-    live_browser_session,
-    local_test_server,
-    mock_nodriver_tab,
-    mock_playwright_page,
-    mock_selenium_driver,
-)
 from chutils.scraping.testing.mocks import (
     MockNodriverTab,
     MockPlaywrightPage,
@@ -35,7 +27,9 @@ def test_fixture_live_browser_session(live_browser_session: LiveBrowserSession) 
     assert live_browser_session.user_data_dir.exists()
 
 
-def test_fixture_html_snapshot_recorder(html_snapshot_recorder: SnapshotRecorder) -> None:
+def test_fixture_html_snapshot_recorder(
+    html_snapshot_recorder: SnapshotRecorder,
+) -> None:
     """Проверяет фикстуру html_snapshot_recorder."""
     assert html_snapshot_recorder.snapshot_dir.exists()
     html_snapshot_recorder.save("plugin_test", "<p>Hello</p>")

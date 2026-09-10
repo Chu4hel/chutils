@@ -2,7 +2,6 @@
 
 import re
 from html.parser import HTMLParser
-from typing import TYPE_CHECKING
 
 
 class DOMNode:
@@ -88,9 +87,11 @@ class DOMNode:
         # Фильтруем результаты относительно исходного корня
         final_results: list[DOMNode] = []
         for cand in self._collect_descendants():
-            if _matches_compound_selector(cand, selector, self):
-                if cand not in final_results:
-                    final_results.append(cand)
+            if (
+                _matches_compound_selector(cand, selector, self)
+                and cand not in final_results
+            ):
+                final_results.append(cand)
         return final_results
 
     def _collect_descendants(self) -> list["DOMNode"]:
@@ -130,7 +131,9 @@ def _matches_simple_selector(node: DOMNode, selector: str) -> bool:
         return True
 
     # 4. Tag with class or id: e.g. a.btn or h1#header or div.product-card
-    tag_match = re.match(r"^([a-zA-Z0-9]+)?(?:#([a-zA-Z0-9_-]+))?(?:\.([a-zA-Z0-9_.-]+))?$", selector)
+    tag_match = re.match(
+        r"^([a-zA-Z0-9]+)?(?:#([a-zA-Z0-9_-]+))?(?:\.([a-zA-Z0-9_.-]+))?$", selector
+    )
     if tag_match:
         tag_name, elem_id, class_names = tag_match.groups()
         if tag_name and node.tag != tag_name.lower():
@@ -147,7 +150,9 @@ def _matches_simple_selector(node: DOMNode, selector: str) -> bool:
     return False
 
 
-def _matches_compound_selector(node: DOMNode, selector: str, root_scope: DOMNode) -> bool:
+def _matches_compound_selector(
+    node: DOMNode, selector: str, root_scope: DOMNode
+) -> bool:
     """Проверяет соответствие узла составному селектору (включая цепочки предков)."""
     parts = [p.strip() for p in selector.split() if p.strip()]
     if not parts:
@@ -192,8 +197,20 @@ class _TreeBuilder(HTMLParser):
         parent.children.append(node)
         # Самозакрывающиеся теги не добавляем в стек
         void_tags = {
-            "area", "base", "br", "col", "embed", "hr", "img", "input",
-            "link", "meta", "param", "source", "track", "wbr"
+            "area",
+            "base",
+            "br",
+            "col",
+            "embed",
+            "hr",
+            "img",
+            "input",
+            "link",
+            "meta",
+            "param",
+            "source",
+            "track",
+            "wbr",
         }
         if tag.lower() not in void_tags:
             self._stack.append(node)

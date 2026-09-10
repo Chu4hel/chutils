@@ -101,7 +101,7 @@ class _ConfigPathsMixin:
             self._paths_initialized = value
 
     def initialize_paths(
-            self, find_root_func: Callable[[Path, list[str]], Path | None]
+        self, find_root_func: Callable[[Path, list[str]], Path | None]
     ) -> None:
         """Инициализирует пути к корню проекта и основному файлу конфигурации.
 
@@ -130,7 +130,7 @@ class _ConfigPathsMixin:
                 self.base_dir = str(project_root)
                 for marker in self.CONFIG_MARKERS:
                     if (project_root / marker).is_file() and marker.startswith(
-                            "config"
+                        "config"
                     ):
                         self.config_file_path = str(project_root / marker)
                         break
@@ -149,7 +149,7 @@ class _ConfigPathsMixin:
             self.paths_initialized = True
 
     def get_config_paths(
-            self, cfg_file: str | None = None
+        self, cfg_file: str | None = None
     ) -> tuple[str | None, str | None]:
         """Возвращает пути к основному и локальному файлам конфигурации (Legacy API).
 
@@ -165,7 +165,7 @@ class _ConfigPathsMixin:
         return main, local
 
     def get_all_config_paths(
-            self, cfg_file: str | None = None
+        self, cfg_file: str | None = None
     ) -> tuple[str | None, str | None, str | None]:
         """Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
 

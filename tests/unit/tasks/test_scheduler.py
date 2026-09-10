@@ -37,8 +37,6 @@ def cleanup_registry():
         chutils.tasks.core._scheduler = None
 
 
-
-
 async def test_scheduler_runs_sync_and_async_tasks():
     """Проверяет запуск sync и async задач планировщиком."""
     sync_called = 0

@@ -20,15 +20,23 @@ def test_assert_extraction_complete_single_dict() -> None:
 
     # Ошибка: пропущен обязательный ключ
     with pytest.raises(AssertionError, match="Отсутствует обязательный ключ: 'price'"):
-        assert_extraction_complete({"title": "Ноутбук"}, required_keys=["title", "price"])
+        assert_extraction_complete(
+            {"title": "Ноутбук"}, required_keys=["title", "price"]
+        )
 
     # Ошибка: значение None
-    with pytest.raises(AssertionError, match="Поле 'price' содержит недопустимое пустое значение"):
+    with pytest.raises(
+        AssertionError, match="Поле 'price' содержит недопустимое пустое значение"
+    ):
         assert_extraction_complete({"title": "Ноутбук", "price": None})
 
     # Ошибка: пустая строка
-    with pytest.raises(AssertionError, match="Поле 'title' содержит недопустимое пустое значение"):
-        assert_extraction_complete({"title": "   ", "price": 100}, allow_empty_strings=False)
+    with pytest.raises(
+        AssertionError, match="Поле 'title' содержит недопустимое пустое значение"
+    ):
+        assert_extraction_complete(
+            {"title": "   ", "price": 100}, allow_empty_strings=False
+        )
 
     # Пустая строка разрешена
     assert_extraction_complete({"title": "", "price": 100}, allow_empty_strings=True)
@@ -47,7 +55,10 @@ def test_assert_extraction_complete_list_of_dicts() -> None:
         {"id": 1, "title": "Товар 1"},
         {"id": 2, "title": None},
     ]
-    with pytest.raises(AssertionError, match="Элемент \\[1\\]: Поле 'title' содержит недопустимое пустое значение"):
+    with pytest.raises(
+        AssertionError,
+        match="Элемент \\[1\\]: Поле 'title' содержит недопустимое пустое значение",
+    ):
         assert_extraction_complete(bad_items)
 
 
@@ -86,12 +97,15 @@ def test_assert_valid_price() -> None:
         assert_valid_price(100000, max_value=50000)
 
     # Ошибка: нечисловой мусор
-    with pytest.raises(AssertionError, match="Не удалось распознать числовое значение цены"):
+    with pytest.raises(
+        AssertionError, match="Не удалось распознать числовое значение цены"
+    ):
         assert_valid_price("Нет в наличии")
 
 
 def test_assert_schema_match() -> None:
     """Проверяет валидацию извлеченных данных по Pydantic схеме."""
+
     class ProductItem(BaseModel):
         id: int
         name: str

@@ -48,13 +48,13 @@ class AsyncHttpClient:
     """
 
     def __init__(
-            self,
-            *,
-            base_url: str = "",
-            default_headers: dict[str, str] | None = None,
-            timeout: float | None = 30.0,
-            policy: ResiliencePolicy | None = None,
-            sensitive_headers: set[str] | None = None,
+        self,
+        *,
+        base_url: str = "",
+        default_headers: dict[str, str] | None = None,
+        timeout: float | None = 30.0,
+        policy: ResiliencePolicy | None = None,
+        sensitive_headers: set[str] | None = None,
     ) -> None:
         """Инициализирует AsyncHttpClient.
 
@@ -100,14 +100,14 @@ class AsyncHttpClient:
         return self.base_url + "/" + path.lstrip("/") if self.base_url else path
 
     async def request(
-            self,
-            method: str,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        method: str,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет асинхронный HTTP-запрос.
 
@@ -149,9 +149,7 @@ class AsyncHttpClient:
                     timeout=effective_timeout,
                 )
             else:
-                async with client.httpx.AsyncClient(
-                        timeout=effective_timeout
-                ) as ahx:
+                async with client.httpx.AsyncClient(timeout=effective_timeout) as ahx:
                     raw = await ahx.request(
                         method.upper(),
                         url,
@@ -180,11 +178,11 @@ class AsyncHttpClient:
         return resp
 
     async def get(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет async GET-запрос.
 
@@ -199,13 +197,13 @@ class AsyncHttpClient:
         return await self.request("GET", path, headers=headers, timeout=timeout)
 
     async def post(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет async POST-запрос.
 
@@ -229,13 +227,13 @@ class AsyncHttpClient:
         )
 
     async def put(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет async PUT-запрос.
 
@@ -259,11 +257,11 @@ class AsyncHttpClient:
         )
 
     async def delete(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет async DELETE-запрос.
 
@@ -278,13 +276,13 @@ class AsyncHttpClient:
         return await self.request("DELETE", path, headers=headers, timeout=timeout)
 
     async def patch(
-            self,
-            path: str,
-            *,
-            headers: dict[str, str] | None = None,
-            json_data: object | None = None,
-            data: bytes | str | None = None,
-            timeout: float | None = None,
+        self,
+        path: str,
+        *,
+        headers: dict[str, str] | None = None,
+        json_data: object | None = None,
+        data: bytes | str | None = None,
+        timeout: float | None = None,
     ) -> HttpResponse:
         """Выполняет async PATCH-запрос.
 

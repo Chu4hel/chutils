@@ -345,9 +345,7 @@ def get_config(
                                     actual_key = k_candidate.lower()
 
                                     if isinstance(config_data[existing_sec], dict):
-                                        for existing_key in config_data[
-                                            existing_sec
-                                        ]:
+                                        for existing_key in config_data[existing_sec]:
                                             if (
                                                 existing_key.lower()
                                                 == k_candidate.lower()

@@ -497,7 +497,9 @@ with nodriver_proxy("http://user:pass@1.2.3.4:8080") as browser_args:
     browser = await nodriver.start(browser_args=browser_args)
 
 # 4. nodriver (через асинхронный туннель)
-async with async_nodriver_proxy("socks5://user:pass@1.2.3.4:1080", mode="tunnel") as browser_args:
+async with async_nodriver_proxy(
+    "socks5://user:pass@1.2.3.4:1080", mode="tunnel"
+) as browser_args:
     browser = await nodriver.start(browser_args=browser_args)
 ```
 
@@ -600,6 +602,7 @@ with use_html_snapshot("product_card", as_mock="playwright") as page:
     # page имеет тип MockPlaywrightPage с загруженной разметкой из tests/fixtures/snapshots/product_card.html
     title = page.locator("h1").text_content()
 
+
 # 2. Использование в качестве декоратора тестовой функции
 @use_html_snapshot("catalog_listing", as_mock="nodriver")
 async def test_parse_catalog(tab):
@@ -607,10 +610,12 @@ async def test_parse_catalog(tab):
     items = await tab.select_all(".catalog-item")
     assert len(items) > 0
 
+
 # 3. Автоматическая запись при отсутствии снапшота (fetcher)
 def fetch_real_page():
     # Реальный сетевой запрос или вызов браузера
     return "<div class='price'>1000 ₽</div>"
+
 
 with use_html_snapshot("price_page", fetcher=fetch_real_page) as html:
     # Сохраняется в tests/fixtures/snapshots/price_page.html и не пересоздается при повторных тестах
@@ -630,10 +635,12 @@ from chutils.scraping import (
 )
 from pydantic import BaseModel
 
+
 class ProductSchema(BaseModel):
     id: int
     title: str
     price: float
+
 
 item = {
     "id": 1,

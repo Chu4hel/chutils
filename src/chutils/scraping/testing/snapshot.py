@@ -14,7 +14,6 @@ from collections.abc import Awaitable, Callable
 from pathlib import Path
 from types import TracebackType
 from typing import Any, Literal
-from typing_extensions import Self
 
 from chutils.fs import atomic_write, ensure_dir
 from chutils.logger import setup_logger
@@ -223,7 +222,6 @@ class use_html_snapshot:
             exc_val: Экземпляр исключения.
             exc_tb: Трассировка стека.
         """
-        pass
 
     async def __aenter__(self) -> Any:
         """Вход в асинхронный контекстный менеджер.
@@ -248,7 +246,6 @@ class use_html_snapshot:
             exc_val: Экземпляр исключения.
             exc_tb: Трассировка стека.
         """
-        pass
 
     def __call__(self, fn: Callable[..., Any]) -> Callable[..., Any]:
         """Декорирует синхронную или асинхронную тестовую функцию.

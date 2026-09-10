@@ -58,11 +58,11 @@ class TestAuditEventSchema:
     def _make_event(self, **kwargs: object) -> object:
         from chutils.audit.schema import AuditEvent
 
-        defaults = dict(
-            actor="user_42",
-            action="user.login",
-            status="success",
-        )
+        defaults = {
+            "actor": "user_42",
+            "action": "user.login",
+            "status": "success",
+        }
         defaults.update(kwargs)  # type: ignore[arg-type]
         return AuditEvent(**defaults)  # type: ignore[arg-type]
 

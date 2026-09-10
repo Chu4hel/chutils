@@ -33,8 +33,6 @@ except ImportError:
 
 try:
     from aiohttp import web
-    from aiohttp.test_utils import TestClient as AioTestClient
-    from aiohttp.test_utils import TestServer
 
     from chutils.vkma.integrations.aiohttp import vkma_auth_middleware
 

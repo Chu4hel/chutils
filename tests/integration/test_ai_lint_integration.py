@@ -1,4 +1,4 @@
-from chutils.dev.ai_lint import LinterEngine, LintResult
+from chutils.dev.ai_lint import LinterEngine
 
 
 def test_ai_lint_integration_with_real_rule(tmp_path) -> None:

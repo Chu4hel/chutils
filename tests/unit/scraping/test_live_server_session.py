@@ -1,10 +1,8 @@
 """Тесты локального тестового HTTP-сервера и менеджера живых браузерных сессий."""
 
 import asyncio
-import json
-import urllib.request
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 

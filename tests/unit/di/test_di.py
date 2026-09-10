@@ -286,7 +286,7 @@ def test_string_dependencies():
 
     # 3. Разрешение строковой аннотации в сигнатуре класса (forward ref)
     class Service:
-        def __init__(self, repo: "Repository") -> None:
+        def __init__(self, repo: "Repository") -> None:  # noqa: F821
             self.repo = repo
 
     container.register(Service)

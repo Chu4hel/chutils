@@ -138,6 +138,24 @@ ignore = [
     "S110",   # try-except-pass
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "B008",    # Do not perform function call in argument defaults (FastAPI Depends / DI Inject)
+    "B017",    # Do not assert blind exception
+    "SIM117",  # Use a single `with` statement (nested mock patches)
+    "RUF059",  # Unused unpacked variable
+    "S101",    # Use of assert
+    "S102",    # Use of exec (test_events_exception_group)
+]
+"examples/*" = [
+    "B008",    # Do not perform function call in argument defaults (DI Inject)
+]
+"docs/ai_examples/*" = [
+    "TRY002",  # Create your own exception (bad patterns)
+    "TRY003",  # Avoid specifying long messages outside the exception class
+    "B904",    # raise ... from err
+]
+
 [tool.mypy]
 python_version = "3.10"
 strict = true

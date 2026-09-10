@@ -47,6 +47,7 @@ def mock_find_specs(mocker: MockerFixture) -> None:
 
 def get_warmers():
     import chutils.scraping.humanize.warmer as warmer_mod
+
     return warmer_mod.ProfileWarmer, warmer_mod.SyncProfileWarmer
 
 
@@ -199,8 +200,12 @@ def test_default_search_queries_and_helper() -> None:
     assert is_organic_url("https://habr.com/ru/articles/12345/", "yandex")
 
     # Реклама и трекинг
-    assert not is_organic_url("https://googleads.g.doubleclick.net/pagead/ads?client=ca", "google")
-    assert not is_organic_url("https://www.googleadservices.com/pagead/aclk?sa=L", "google")
+    assert not is_organic_url(
+        "https://googleads.g.doubleclick.net/pagead/ads?client=ca", "google"
+    )
+    assert not is_organic_url(
+        "https://www.googleadservices.com/pagead/aclk?sa=L", "google"
+    )
     assert not is_organic_url("https://yabs.yandex.ru/count/12345", "yandex")
 
     # Внутренние ссылки поисковика
@@ -229,7 +234,9 @@ async def test_profile_warmer_playwright_warm_up_search() -> None:
     )
 
     with (
-        patch("chutils.scraping.humanize.warmer.async_type_text", AsyncMock()) as mock_type,
+        patch(
+            "chutils.scraping.humanize.warmer.async_type_text", AsyncMock()
+        ) as mock_type,
         patch("chutils.scraping.humanize.warmer.async_move_mouse", AsyncMock()),
         patch("chutils.scraping.humanize.warmer.async_scroll_to", AsyncMock()),
         patch("chutils.scraping.humanize.warmer.async_human_sleep", AsyncMock()),
@@ -263,7 +270,9 @@ async def test_profile_warmer_nodriver_warm_up_search() -> None:
     )
 
     with (
-        patch("chutils.scraping.humanize.warmer.async_type_text", AsyncMock()) as mock_type,
+        patch(
+            "chutils.scraping.humanize.warmer.async_type_text", AsyncMock()
+        ) as mock_type,
         patch("chutils.scraping.humanize.warmer.async_move_mouse", AsyncMock()),
         patch("chutils.scraping.humanize.warmer.async_scroll_to", AsyncMock()),
         patch("chutils.scraping.humanize.warmer.async_human_sleep", AsyncMock()),
@@ -369,6 +378,3 @@ def test_sync_warmer_save_profile(tmp_path) -> None:
     assert profile.metadata["warmed_up"] == "true"
     assert profile.metadata["run"] == "sync"
     assert file_path.exists()
-
-
-

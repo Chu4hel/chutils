@@ -41,7 +41,9 @@ def test_get_selenium_proxy() -> None:
     # С передачей mock Options
     mock_options = MagicMock()
     get_selenium_proxy(p, options=mock_options)
-    mock_options.add_argument.assert_called_once_with("--proxy-server=http://1.2.3.4:8080")
+    mock_options.add_argument.assert_called_once_with(
+        "--proxy-server=http://1.2.3.4:8080"
+    )
 
 
 def test_get_nodriver_proxy_args_no_auth() -> None:

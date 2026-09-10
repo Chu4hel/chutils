@@ -40,7 +40,6 @@ DEFAULT_TRUST_SITES = [
 ]
 
 
-
 class ProfileWarmer:
     """
     Класс для асинхронного прогрева браузерных профилей (Playwright, nodriver).
@@ -216,9 +215,7 @@ class ProfileWarmer:
                     )
                     typed = True
                 except Exception as ex:
-                    logger.debug(
-                        "Не удалось ввести запрос в поисковую строку: %s", ex
-                    )
+                    logger.debug("Не удалось ввести запрос в поисковую строку: %s", ex)
 
                 if typed:
                     if _is_playwright(self.browser_or_tab):
@@ -349,9 +346,7 @@ class ProfileWarmer:
         """
         from chutils.scraping.profiles.manager import ProfileManager
 
-        driver_type = (
-            "nodriver" if _is_nodriver(self.browser_or_tab) else "playwright"
-        )
+        driver_type = "nodriver" if _is_nodriver(self.browser_or_tab) else "playwright"
         return await ProfileManager.save_profile_after_warmup(
             self.browser_or_tab,
             filepath=filepath,
@@ -584,9 +579,7 @@ class SyncProfileWarmer:
                                 )
                                 human_sleep(1.5, 3.0)
             except Exception as ex:
-                logger.debug(
-                    "Ошибка в ходе синхронного прогрева поиска: %s", ex
-                )
+                logger.debug("Ошибка в ходе синхронного прогрева поиска: %s", ex)
 
     def save_profile(
         self,
@@ -605,13 +598,14 @@ class SyncProfileWarmer:
             Экземпляр BrowserProfile.
         """
         import datetime
+
         from chutils.scraping.profiles.manager import ProfileManager
 
         profile = ProfileManager.export_from_selenium(self.driver)
         profile.metadata["warmed_up"] = "true"
-        profile.metadata["last_warmed_up_at"] = (
-            datetime.datetime.now(datetime.timezone.utc).isoformat()
-        )
+        profile.metadata["last_warmed_up_at"] = datetime.datetime.now(
+            datetime.timezone.utc
+        ).isoformat()
         if metadata:
             profile.metadata.update(metadata)
         ProfileManager.save(profile, filepath=filepath, password=password)
@@ -626,6 +620,3 @@ __all__ = [
     "get_search_engine_config",
     "is_organic_url",
 ]
-
-
-

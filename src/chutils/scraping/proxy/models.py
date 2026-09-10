@@ -54,7 +54,7 @@ class ProxyConfig(BaseModel):
         """Возвращает значение заголовка Proxy-Authorization Basic или None."""
         if not self.has_auth or self.username is None or self.password is None:
             return None
-        creds = f"{self.username}:{self.password}".encode("utf-8")
+        creds = f"{self.username}:{self.password}".encode()
         return f"Basic {base64.b64encode(creds).decode('utf-8')}"
 
     def to_playwright(self) -> dict[str, str]:
@@ -122,4 +122,3 @@ class ProxyHealthResult(BaseModel):
     latency_ms: float = 0.0
     external_ip: str | None = None
     error: str | None = None
-

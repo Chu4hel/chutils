@@ -74,7 +74,7 @@ async def main() -> None:
     # Использование таймера как контекстного менеджера
     logger.info("Замеряем блок кода через контекстный менеджер...")
     with timer("db_query_duration_seconds", labels={"query": "select_users"}):
-        time.sleep(0.03)  # Имитируем запрос к БД
+        await asyncio.sleep(0.03)  # Имитируем запрос к БД
 
     # 6. Генерация дампа метрик
     logger.info("Генерируем текстовый отчет по метрикам в формате Prometheus:")

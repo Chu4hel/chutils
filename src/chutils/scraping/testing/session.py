@@ -15,6 +15,7 @@ import time
 from pathlib import Path
 from types import TracebackType
 from typing import Any
+
 from typing_extensions import Self
 
 from chutils.fs import ensure_dir
@@ -146,7 +147,9 @@ class LiveBrowserSession:
                 except OSError:
                     pass
         except Exception as exc:
-            logger.warning("Ошибка при принудительном завершении процесса %s: %s", proc, exc)
+            logger.warning(
+                "Ошибка при принудительном завершении процесса %s: %s", proc, exc
+            )
 
     def _remove_directory(self, path: Path) -> None:
         """Удаляет каталог с retry механизмом для файловых блокировок Windows."""

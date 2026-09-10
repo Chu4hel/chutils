@@ -152,6 +152,7 @@ class ProfileManager:
             Экземпляр сохраненного BrowserProfile.
         """
         import datetime
+
         from chutils.scraping.humanize.actions import _is_nodriver
 
         if driver_type == "selenium":
@@ -194,12 +195,11 @@ class ProfileManager:
                     profile = await cls.export_from_playwright(context)
 
         profile.metadata["warmed_up"] = "true"
-        profile.metadata["last_warmed_up_at"] = (
-            datetime.datetime.now(datetime.timezone.utc).isoformat()
-        )
+        profile.metadata["last_warmed_up_at"] = datetime.datetime.now(
+            datetime.timezone.utc
+        ).isoformat()
         if metadata:
             profile.metadata.update(metadata)
 
         cls.save(profile, filepath, password=password)
         return profile
-

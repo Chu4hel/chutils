@@ -12,7 +12,6 @@ if getattr(concurrent.futures, "ProcessPoolExecutor", None) is not _ProcessPoolE
     concurrent.futures.ProcessPoolExecutor = _ProcessPoolExecutor  # type: ignore[misc]
 
 
-
 pytest_plugins = ["chutils.testing.fixtures"]
 
 try:
@@ -104,4 +103,3 @@ def project_with_marker(config_fs):
     fs, project_root = config_fs
     fs.create_file(project_root / "pyproject.toml")
     return fs, project_root
-

@@ -178,12 +178,18 @@ async def test_async_click_nodriver_hold_time(mocker: MockerFixture) -> None:
 
     # Должны быть отправлены события mousePressed и mouseReleased
     assert tab.send.call_count >= 2
-    sent_types = [c[0][0][1]["type_"] for c in tab.send.call_args_list if c[0][0][0] == "dispatch_mouse_event"]
+    sent_types = [
+        c[0][0][1]["type_"]
+        for c in tab.send.call_args_list
+        if c[0][0][0] == "dispatch_mouse_event"
+    ]
     assert "mousePressed" in sent_types
     assert "mouseReleased" in sent_types
 
     # Проверяем, что был вызван asyncio.sleep с задержкой в диапазоне hold_time
-    sleep_calls = [c[0][0] for c in sleep_mock.call_args_list if isinstance(c[0][0], (int, float))]
+    sleep_calls = [
+        c[0][0] for c in sleep_mock.call_args_list if isinstance(c[0][0], (int, float))
+    ]
     hold_sleeps = [s for s in sleep_calls if 0.069 <= s <= 0.111]
     assert len(hold_sleeps) >= 1
 
@@ -212,6 +218,8 @@ async def test_async_type_text_key_hold_time(mocker: MockerFixture) -> None:
     )
 
     # Проверяем, что был sleep в диапазоне key_hold_time между keyDown и keyUp
-    sleep_calls = [c[0][0] for c in sleep_mock.call_args_list if isinstance(c[0][0], (int, float))]
+    sleep_calls = [
+        c[0][0] for c in sleep_mock.call_args_list if isinstance(c[0][0], (int, float))
+    ]
     key_hold_sleeps = [s for s in sleep_calls if 0.049 <= s <= 0.081]
     assert len(key_hold_sleeps) >= 1

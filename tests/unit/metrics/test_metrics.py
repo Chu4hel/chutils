@@ -1,4 +1,5 @@
 import asyncio
+import importlib.util
 import sys
 import time
 from unittest.mock import MagicMock, patch
@@ -6,9 +7,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 # Создаем мок для prometheus_client до импортов, чтобы тесты проходили независимо от окружения
-try:
-    import prometheus_client
-except ImportError:
+if not importlib.util.find_spec("prometheus_client"):
     mock_prom = MagicMock()
     mock_prom.generate_latest.return_value = b"test_prometheus_counter 1.0\ntest_prometheus_gauge 99.0\ntest_prometheus_histogram 0.123"
     sys.modules["prometheus_client"] = mock_prom

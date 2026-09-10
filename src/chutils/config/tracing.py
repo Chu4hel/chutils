@@ -107,9 +107,9 @@ class _ConfigTracingMixin:
             # chutils: ignore[ChutilsIntegrationRule]
             for env_key, env_value in os.environ.items():
                 if env_key.startswith("CH_") and env_key not in (
-                        "CH_ENV",
-                        "CH_DISABLE_ENV_OVERRIDE",
-                        "CH_DISABLE_KEYRING_WARNING",
+                    "CH_ENV",
+                    "CH_DISABLE_ENV_OVERRIDE",
+                    "CH_DISABLE_KEYRING_WARNING",
                 ):
                     parts = env_key[3:].split("_", 1)
                     if len(parts) == 2:

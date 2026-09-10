@@ -33,9 +33,7 @@ DEFAULT_SEARCH_QUERIES: dict[str, list[str]] = {
 }
 
 
-def get_random_search_queries(
-    count: int = 3, category: str | None = None
-) -> list[str]:
+def get_random_search_queries(count: int = 3, category: str | None = None) -> list[str]:
     """Возвращает список случайных реалистичных поисковых запросов.
 
     Args:
@@ -53,9 +51,7 @@ def get_random_search_queries(
             )
         pool = DEFAULT_SEARCH_QUERIES[category]
     else:
-        pool = [
-            q for queries in DEFAULT_SEARCH_QUERIES.values() for q in queries
-        ]
+        pool = [q for queries in DEFAULT_SEARCH_QUERIES.values() for q in queries]
 
     chosen = random.sample(pool, min(count, len(pool)))
     return chosen
@@ -108,7 +104,7 @@ def is_organic_url(url: str, engine: str = "google") -> bool:
         return False
 
     url_clean = url.strip()
-    if not (url_clean.startswith("http://") or url_clean.startswith("https://")):
+    if not url_clean.startswith(("http://", "https://")):
         return False
 
     parsed = urllib.parse.urlparse(url_clean)
@@ -135,15 +131,11 @@ def is_organic_url(url: str, engine: str = "google") -> bool:
     engine_lower = engine.strip().lower()
     if engine_lower == "google":
         google_internal = ["google.com", "google.ru", "gstatic.com"]
-        if any(
-            netloc == d or netloc.endswith("." + d) for d in google_internal
-        ):
+        if any(netloc == d or netloc.endswith("." + d) for d in google_internal):
             return False
     elif engine_lower == "yandex":
         yandex_internal = ["yandex.ru", "ya.ru", "yandex.com", "yastatic.net"]
-        if any(
-            netloc == d or netloc.endswith("." + d) for d in yandex_internal
-        ):
+        if any(netloc == d or netloc.endswith("." + d) for d in yandex_internal):
             return False
 
     return True
@@ -182,4 +174,3 @@ __all__ = [
     "get_search_engine_config",
     "is_organic_url",
 ]
-
