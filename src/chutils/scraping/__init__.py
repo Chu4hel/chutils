@@ -4,6 +4,15 @@ import importlib
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from .camoufox import (
+        CAMOUFOX_AVAILABLE as CAMOUFOX_AVAILABLE,
+    )
+    from .camoufox import (
+        get_async_camoufox_class as get_async_camoufox_class,
+    )
+    from .camoufox import (
+        launch_camoufox as launch_camoufox,
+    )
     from .profiles import (
         BrowserProfile as BrowserProfile,
     )
@@ -80,6 +89,7 @@ if TYPE_CHECKING:
 _LAZY_MAPPING = {
     "AsyncProxyTunnel": (".proxy", "AsyncProxyTunnel"),
     "BrowserProfile": (".profiles", "BrowserProfile"),
+    "CAMOUFOX_AVAILABLE": (".camoufox", "CAMOUFOX_AVAILABLE"),
     "ChromeProxyExtension": (".proxy", "ChromeProxyExtension"),
     "LiveBrowserSession": (".testing", "LiveBrowserSession"),
     "LocalTestServer": (".testing", "LocalTestServer"),
@@ -95,13 +105,15 @@ _LAZY_MAPPING = {
     "assert_valid_price": (".testing", "assert_valid_price"),
     "assert_valid_url": (".testing", "assert_valid_url"),
     "async_nodriver_proxy": (".proxy", "async_nodriver_proxy"),
-    "use_html_snapshot": (".testing", "use_html_snapshot"),
     "check_proxy": (".proxy", "check_proxy"),
+    "get_async_camoufox_class": (".camoufox", "get_async_camoufox_class"),
     "get_nodriver_proxy_args": (".proxy", "get_nodriver_proxy_args"),
     "get_playwright_proxy": (".proxy", "get_playwright_proxy"),
     "get_selenium_proxy": (".proxy", "get_selenium_proxy"),
+    "launch_camoufox": (".camoufox", "launch_camoufox"),
     "nodriver_proxy": (".proxy", "nodriver_proxy"),
     "parse_proxy": (".proxy", "parse_proxy"),
+    "use_html_snapshot": (".testing", "use_html_snapshot"),
 }
 
 
@@ -117,6 +129,7 @@ def __dir__() -> list[str]:
     return sorted(
         list(_LAZY_MAPPING.keys())
         + [
+            "camoufox",
             "captcha",
             "concurrency",
             "humanize",
@@ -129,6 +142,7 @@ def __dir__() -> list[str]:
 
 
 __all__ = [
+    "CAMOUFOX_AVAILABLE",
     "AsyncProxyTunnel",
     "BrowserProfile",
     "ChromeProxyExtension",
@@ -146,13 +160,16 @@ __all__ = [
     "assert_valid_price",
     "assert_valid_url",
     "async_nodriver_proxy",
+    "camoufox",
     "captcha",
     "check_proxy",
     "concurrency",
+    "get_async_camoufox_class",
     "get_nodriver_proxy_args",
     "get_playwright_proxy",
     "get_selenium_proxy",
     "humanize",
+    "launch_camoufox",
     "nodriver_proxy",
     "parse_proxy",
     "proxy",

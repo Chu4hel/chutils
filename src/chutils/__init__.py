@@ -105,6 +105,10 @@ _LAZY_MAPPING = {
     "AsyncWebSocketClient": (".http", "AsyncWebSocketClient"),
     "WebSocketClient": (".http", "WebSocketClient"),
     "ServerSentEvent": (".http", "ServerSentEvent"),
+    "TLSSession": (".http", "TLSSession"),
+    "TLSAsyncClient": (".http", "TLSAsyncClient"),
+    "create_curl_session": (".http", "create_curl_session"),
+    "create_curl_async_session": (".http", "create_curl_async_session"),
     # config
     "get_config": (".config", "get_config"),
     "get_config_value": (".config", "get_config_value"),
@@ -294,6 +298,7 @@ _LAZY_MAPPING = {
     "PaginatorKeyboard": (".telegram", "PaginatorKeyboard"),
     # scraping
     "scraping": (".scraping", None),
+    "launch_camoufox": (".scraping.camoufox", "launch_camoufox"),
     "BrowserProfile": (".scraping.profiles", "BrowserProfile"),
     "ProfileManager": (".scraping.profiles", "ProfileManager"),
     "BezierCurveGenerator": (".scraping.humanize", "BezierCurveGenerator"),
@@ -317,6 +322,7 @@ _LAZY_MAPPING = {
     "apply_antidetect_selenium": (".scraping.humanize", "apply_antidetect_selenium"),
     "apply_antidetect_nodriver": (".scraping.humanize", "apply_antidetect_nodriver"),
     "get_browser_launch_args": (".scraping.humanize", "get_browser_launch_args"),
+    "get_client_hints": (".scraping.humanize", "get_client_hints"),
     # scraping captcha
     "RuCaptchaSolver": (".scraping.captcha", "RuCaptchaSolver"),
     "AsyncRuCaptchaSolver": (".scraping.captcha", "AsyncRuCaptchaSolver"),

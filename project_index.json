@@ -20352,7 +20352,7 @@
         "type": "package",
         "layer": "public",
         "summary": "chutils.http — Лёгковесный HTTP-клиент с батареями.",
-        "docstring": "chutils.http — Лёгковесный HTTP-клиент с батареями.\n\nПредоставляет синхронный и асинхронный HTTP-клиенты с встроенной\nподдержкой отказоустойчивости, трассировки и маскирования секретов.\n\nОсновное использование:\n-----------------------\n    from chutils.http import HttpClient, ResiliencePolicy\n\n    policy = ResiliencePolicy(retries=3, timeout=10.0)\n    with HttpClient(base_url=\"https://api.example.com\", policy=policy) as client:\n        resp = client.get(\"/users/1\")\n        resp.raise_for_status()\n        data = resp.json()\n\nStandalone-функции:\n-------------------\n    from chutils import http\n    resp = http.get(\"https://httpbin.org/get\")\n\nAsync-использование:\n--------------------\n    from chutils.http import AsyncHttpClient\n\n    async with AsyncHttpClient(base_url=\"https://api.example.com\") as client:\n        resp = await client.get(\"/status\")",
+        "docstring": "chutils.http — Лёгковесный HTTP-клиент с батареями.\n\nПредоставляет синхронный и асинхронный HTTP-клиенты с встроенной\nподдержкой отказоустойчивости, трассировки и маскирования секретов.\n\nОсновное использование:\n-----------------------\n    from chutils.http import HttpClient, ResiliencePolicy\n\n    policy = ResiliencePolicy(retries=3, timeout=10.0)\n    with HttpClient(base_url=\"https://api.example.com\", policy=policy) as client:\n        resp = client.get(\"/users/1\")\n        resp.raise_for_status()\n        data = resp.json()\n\nStand-alone функции:\n-------------------\n    from chutils import http\n    resp = http.get(\"https://httpbin.org/get\")\n\nAsync-использование:\n--------------------\n    from chutils.http import AsyncHttpClient\n\n    async with AsyncHttpClient(base_url=\"https://api.example.com\") as client:\n        resp = await client.get(\"/status\")",
         "children": [
           {
             "name": "api",
@@ -22176,6 +22176,499 @@
                       "custom_metadata": {}
                     },
                     "line_number": 532,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "tls_client",
+            "path": "chutils/http/tls_client",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Модуль chutils.http.tls_client — HTTP-клиент с TLS/HTTP2 Client Impersonation на базе curl-cffi.",
+            "docstring": "Модуль chutils.http.tls_client — HTTP-клиент с TLS/HTTP2 Client Impersonation на базе curl-cffi.\n\nПредоставляет:\n- `TLSSession` — синхронный клиент с маскировкой сетевого стека (JA3/JA4, HTTP/2).\n- `TLSAsyncClient` — асинхронный клиент для высокопроизводительного скрапинга в обход WAF/Cloudflare.\n- Автоматический fallback на стандартный HTTP-клиент при отсутствии curl-cffi.\n- Полную интеграцию с ProxyPool и туннелями аутентификации прокси.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "logger",
+                "type": "constant",
+                "layer": "public",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 28,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_resolve_proxy_url",
+                "type": "function",
+                "layer": "private",
+                "signature": "(proxy, proxy_pool)",
+                "summary": "Извлекает URL прокси-сервера из переданных параметров или пула.",
+                "docstring": "Извлекает URL прокси-сервера из переданных параметров или пула.\n\nArgs:\n    proxy: Экземпляр ProxyConfig или строковый URL.\n    proxy_pool: Пул прокси для автоматического получения следующего адреса.\n\nReturns:\n    Строка URL прокси или None.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 37,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "create_curl_session",
+                "type": "function",
+                "layer": "public",
+                "signature": "(impersonate, proxy)",
+                "summary": "Создает синхронную сессию curl_cffi с заданным профилем impersonate.",
+                "docstring": "Создает синхронную сессию curl_cffi с заданным профилем impersonate.\n\nArgs:\n    impersonate: Имя профиля браузера (например, 'chrome120').\n    proxy: URL прокси-сервера.\n    **kwargs: Дополнительные параметры для Session.\n\nReturns:\n    Экземпляр curl_cffi.requests.Session.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 61,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "create_curl_async_session",
+                "type": "function",
+                "layer": "public",
+                "signature": "(impersonate, proxy)",
+                "summary": "Создает асинхронную сессию curl_cffi с заданным профилем impersonate.",
+                "docstring": "Создает асинхронную сессию curl_cffi с заданным профилем impersonate.\n\nArgs:\n    impersonate: Имя профиля браузера (например, 'chrome120').\n    proxy: URL прокси-сервера.\n    **kwargs: Дополнительные параметры для AsyncSession.\n\nReturns:\n    Экземпляр curl_cffi.requests.AsyncSession.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 84,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_curl_resp_to_http_response",
+                "type": "function",
+                "layer": "private",
+                "signature": "(resp)",
+                "summary": "Конвертирует ответ curl_cffi.Response в унифицированный HttpResponse.",
+                "docstring": "Конвертирует ответ curl_cffi.Response в унифицированный HttpResponse.\n\nArgs:\n    resp: Объект ответа curl_cffi.\n\nReturns:\n    Экземпляр HttpResponse.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 107,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "TLSSession",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Синхронный HTTP-клиент с поддержкой TLS/HTTP2 Client Impersonation (curl-cffi).",
+                "docstring": "Синхронный HTTP-клиент с поддержкой TLS/HTTP2 Client Impersonation (curl-cffi).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 131,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, impersonate, proxy, proxy_pool, fallback_to_standard, timeout)",
+                    "summary": "Инициализирует TLSSession.",
+                    "docstring": "Инициализирует TLSSession.\n\nArgs:\n    impersonate: Профиль маскировки браузера (напр. 'chrome120', 'safari17_0').\n    proxy: Прокси-сервер (ProxyConfig или строка).\n    proxy_pool: Пул прокси chutils.\n    fallback_to_standard: Флаг автоматического отката на HttpClient при отсутствии curl-cffi.\n    timeout: Таймаут запросов в секундах.\n    **kwargs: Дополнительные параметры конфигурации.\n\nRaises:\n    OptionalDependencyError: Если curl-cffi отсутствует и fallback_to_standard=False.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 134,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "request",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, method, url)",
+                    "summary": "Выполняет синхронный HTTP-запрос.",
+                    "docstring": "Выполняет синхронный HTTP-запрос.\n\nArgs:\n    method: HTTP метод (GET, POST, etc.).\n    url: Целевой URL.\n    **kwargs: Параметры запроса (headers, params, data, json, timeout).\n\nReturns:\n    Унифицированный объект ответа HttpResponse.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 183,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет GET запрос.",
+                    "docstring": "Выполняет GET запрос.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 220,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "post",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет POST запрос.",
+                    "docstring": "Выполняет POST запрос.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 224,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "put",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет PUT запрос.",
+                    "docstring": "Выполняет PUT запрос.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 228,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "delete",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет DELETE запрос.",
+                    "docstring": "Выполняет DELETE запрос.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 232,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "patch",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет PATCH запрос.",
+                    "docstring": "Выполняет PATCH запрос.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 236,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "close",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Закрывает базовую сессию.",
+                    "docstring": "Закрывает базовую сессию.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 240,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "TLSAsyncClient",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Асинхронный HTTP-клиент с поддержкой TLS/HTTP2 Client Impersonation (curl-cffi).",
+                "docstring": "Асинхронный HTTP-клиент с поддержкой TLS/HTTP2 Client Impersonation (curl-cffi).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 259,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, impersonate, proxy, proxy_pool, fallback_to_standard, timeout)",
+                    "summary": "Инициализирует TLSAsyncClient.",
+                    "docstring": "Инициализирует TLSAsyncClient.\n\nArgs:\n    impersonate: Профиль маскировки браузера (напр. 'chrome120', 'safari17_0').\n    proxy: Прокси-сервер (ProxyConfig или строка).\n    proxy_pool: Пул прокси chutils.\n    fallback_to_standard: Флаг автоматического отката на AsyncHttpClient при отсутствии curl-cffi.\n    timeout: Таймаут запросов в секундах.\n    **kwargs: Дополнительные параметры конфигурации.\n\nRaises:\n    OptionalDependencyError: Если curl-cffi отсутствует и fallback_to_standard=False.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 262,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "request",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, method, url)",
+                    "summary": "Выполняет асинхронный HTTP-запрос.",
+                    "docstring": "Выполняет асинхронный HTTP-запрос.\n\nArgs:\n    method: HTTP метод (GET, POST, etc.).\n    url: Целевой URL.\n    **kwargs: Параметры запроса (headers, params, data, json, timeout).\n\nReturns:\n    Унифицированный объект ответа HttpResponse.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 311,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет асинхронный GET запрос.",
+                    "docstring": "Выполняет асинхронный GET запрос.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 348,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "post",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет асинхронный POST запрос.",
+                    "docstring": "Выполняет асинхронный POST запрос.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 352,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "put",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет асинхронный PUT запрос.",
+                    "docstring": "Выполняет асинхронный PUT запрос.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 356,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "delete",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет асинхронный DELETE запрос.",
+                    "docstring": "Выполняет асинхронный DELETE запрос.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 360,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "patch",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, url)",
+                    "summary": "Выполняет асинхронный PATCH запрос.",
+                    "docstring": "Выполняет асинхронный PATCH запрос.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 364,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "aclose",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Закрывает асинхронную сессию.",
+                    "docstring": "Закрывает асинхронную сессию.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 368,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "close",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Псевдоним для aclose.",
+                    "docstring": "Псевдоним для aclose.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 375,
                     "bases": [],
                     "children": []
                   }
@@ -26491,6 +26984,77 @@
         "docstring": "Модуль скрейпинга, автоматизации и утилиты антидетекта.",
         "children": [
           {
+            "name": "camoufox",
+            "path": "chutils/scraping/camoufox",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Интеграция с антидетект-браузером Camoufox (Playwright Firefox wrapper).",
+            "docstring": "Интеграция с антидетект-браузером Camoufox (Playwright Firefox wrapper).",
+            "children": [],
+            "symbols": [
+              {
+                "name": "CAMOUFOX_AVAILABLE",
+                "type": "constant",
+                "layer": "internal",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 10,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "get_async_camoufox_class",
+                "type": "function",
+                "layer": "internal",
+                "signature": "()",
+                "summary": "Возвращает класс AsyncCamoufox из библиотеки camoufox.",
+                "docstring": "Возвращает класс AsyncCamoufox из библиотеки camoufox.\n\nReturns:\n    Класс AsyncCamoufox.\n\nRaises:\n    OptionalDependencyError: Если библиотека camoufox не установлена.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 13,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "launch_camoufox",
+                "type": "function",
+                "layer": "public",
+                "signature": "(headless, os)",
+                "summary": "Создает и возвращает контекстный менеджер / сессию браузера AsyncCamoufox.",
+                "docstring": "Создает и возвращает контекстный менеджер / сессию браузера AsyncCamoufox.\n\nArgs:\n    headless: Режим запуска без GUI (True) или с окном (False).\n    os: Целевая ОС для подделки отпечатка ('windows', 'macos', 'linux').\n    **kwargs: Дополнительные аргументы, передаваемые в конструктор AsyncCamoufox.\n\nReturns:\n    Экземпляр AsyncCamoufox, готовый к использованию через async with.\n\nRaises:\n    OptionalDependencyError: Если библиотека camoufox не установлена.",
+                "breadcrumbs": {
+                  "is_async": true,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 34,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
             "name": "captcha",
             "path": "chutils/scraping/captcha",
             "type": "package",
@@ -28939,7 +29503,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 7,
+                    "line_number": 8,
                     "bases": [],
                     "children": []
                   },
@@ -28959,7 +29523,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 8,
+                    "line_number": 9,
                     "bases": [],
                     "children": []
                   },
@@ -28979,7 +29543,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 11,
+                    "line_number": 12,
                     "bases": [],
                     "children": []
                   },
@@ -28999,7 +29563,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 12,
+                    "line_number": 13,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_client_hints",
+                    "type": "function",
+                    "layer": "public",
+                    "signature": "(user_agent)",
+                    "summary": "Генерирует словарь согласованных Client Hints (navigator.userAgentData) на основе User-Agent.",
+                    "docstring": "Генерирует словарь согласованных Client Hints (navigator.userAgentData) на основе User-Agent.\n\nArgs:\n    user_agent: Строка User-Agent. Если None, используется стандартный Chrome на Windows.\n\nReturns:\n    Словарь с параметрами Client Hints: platform, mobile, brands.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
                     "bases": [],
                     "children": []
                   },
@@ -29007,7 +29591,7 @@
                     "name": "_get_antidetect_js",
                     "type": "function",
                     "layer": "private",
-                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal)",
+                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal, session_seed, client_hints)",
                     "summary": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
                     "docstring": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
                     "breadcrumbs": {
@@ -29019,7 +29603,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 15,
+                    "line_number": 59,
                     "bases": [],
                     "children": []
                   },
@@ -29039,7 +29623,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 146,
+                    "line_number": 263,
                     "bases": [],
                     "children": []
                   },
@@ -29059,7 +29643,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 155,
+                    "line_number": 272,
                     "bases": [],
                     "children": []
                   },
@@ -29079,7 +29663,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 165,
+                    "line_number": 282,
                     "bases": [],
                     "children": []
                   },
@@ -29099,7 +29683,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 175,
+                    "line_number": 292,
                     "bases": [],
                     "children": []
                   },
@@ -29109,7 +29693,7 @@
                     "layer": "public",
                     "signature": "(context)",
                     "summary": "Применяет JS-инъекции анти-детекта к контексту Playwright.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к контексту Playwright.\n\nArgs:\n    context: Объект контекста Playwright BrowserContext.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.",
+                    "docstring": "Применяет JS-инъекции анти-детекта к контексту Playwright.\n\nArgs:\n    context: Объект контекста Playwright BrowserContext.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -29119,7 +29703,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 185,
+                    "line_number": 302,
                     "bases": [],
                     "children": []
                   },
@@ -29129,7 +29713,7 @@
                     "layer": "public",
                     "signature": "(driver)",
                     "summary": "Применяет JS-инъекции анти-детекта к сессии Selenium.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к сессии Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.",
+                    "docstring": "Применяет JS-инъекции анти-детекта к сессии Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29139,7 +29723,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 212,
+                    "line_number": 335,
                     "bases": [],
                     "children": []
                   },
@@ -29149,7 +29733,7 @@
                     "layer": "public",
                     "signature": "(tab)",
                     "summary": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.\n\nArgs:\n    tab: Объект вкладки nodriver Tab.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL,\n        сохраняя естественный отпечаток установленного браузера Google Chrome.",
+                    "docstring": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.\n\nArgs:\n    tab: Объект вкладки nodriver Tab.\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL,\n        сохраняя естественный отпечаток установленного браузера Google Chrome.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -29159,7 +29743,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 244,
+                    "line_number": 373,
                     "bases": [],
                     "children": []
                   },
@@ -29179,7 +29763,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 277,
+                    "line_number": 412,
                     "bases": [],
                     "children": []
                   }
@@ -34691,7 +35275,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 80,
+            "line_number": 89,
             "bases": [],
             "children": []
           },
@@ -34711,7 +35295,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 108,
+            "line_number": 120,
             "bases": [],
             "children": []
           },
@@ -34731,7 +35315,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 116,
+            "line_number": 128,
             "bases": [],
             "children": []
           }
@@ -42217,7 +42801,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 351,
+        "line_number": 357,
         "bases": [],
         "children": []
       },
@@ -42237,7 +42821,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 384,
+        "line_number": 390,
         "bases": [],
         "children": []
       },
@@ -42257,7 +42841,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 404,
+        "line_number": 410,
         "bases": [],
         "children": []
       }
@@ -43416,6 +44000,11 @@
     },
     {
       "source": "chutils/http",
+      "target": "/tls_client",
+      "weight": 6
+    },
+    {
+      "source": "chutils/http",
       "target": "/tracing",
       "weight": 2
     },
@@ -43457,6 +44046,26 @@
     {
       "source": "chutils/http/streaming",
       "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/http/tls_client",
+      "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/http/tls_client",
+      "target": "chutils/http/client",
+      "weight": 2
+    },
+    {
+      "source": "chutils/http/tls_client",
+      "target": "chutils/http/fallback",
+      "weight": 1
+    },
+    {
+      "source": "chutils/http/tls_client",
+      "target": "chutils/logger",
       "weight": 1
     },
     {
@@ -43645,6 +44254,11 @@
       "weight": 3
     },
     {
+      "source": "chutils/scraping/camoufox",
+      "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/captcha",
       "target": "chutils/exceptions",
       "weight": 1
@@ -43752,7 +44366,7 @@
     {
       "source": "chutils/scraping/humanize",
       "target": "/antidetect",
-      "weight": 4
+      "weight": 5
     },
     {
       "source": "chutils/scraping/humanize",
@@ -44589,8 +45203,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "291fe88a761f69835d2f8c416801f047fd23d8ae (dirty)",
-    "generated_at": "2026-09-10T11:55:24.095401+00:00",
-    "project_hash": "f30df094aabde767b3b1ad8f0aff6d130ae0a1524e5c155c51eff31172f7a0d3"
+    "git_commit": "a5209b78c4fecdbff306fdbbe28be5f9be46c3cb (dirty)",
+    "generated_at": "2026-09-10T12:34:19.453384+00:00",
+    "project_hash": "2a609c918c6a9235597647ca3f35d83ae4b09460817e61dc51f2a83930bfd6c8"
   }
 }
