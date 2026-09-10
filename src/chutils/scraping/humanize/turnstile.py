@@ -232,6 +232,8 @@ async def solve_cf_turnstile(
     timeout: float = 15.0,
     check_interval: float = 0.5,
     click_delay: tuple[float, float] = (0.5, 1.2),
+    click_offset: tuple[float, float] | None = None,
+    natural_hover: bool = True,
     raise_on_failure: bool = False,
 ) -> bool:
     """Автоматически обнаруживает и решает капчу Cloudflare Turnstile.
@@ -245,6 +247,9 @@ async def solve_cf_turnstile(
         timeout: Максимальное время ожидания решения капчи в секундах.
         check_interval: Интервал проверки состояния капчи в секундах.
         click_delay: Задержка перед кликом после наведения (min, max).
+        click_offset: Пользовательские смещения (offset_x, offset_y) относительно
+            левого верхнего угла виджета. Если None, рассчитываются адаптивно.
+        natural_hover: Если True, моделирует естественный старт движения курсора из случайной точки экрана.
         raise_on_failure: Если True, при таймауте выбрасывает RuntimeError.
 
     Returns:
@@ -259,13 +264,32 @@ async def solve_cf_turnstile(
     logger.debug("Начало ожидания и решения Cloudflare Turnstile...")
 
     while time.monotonic() - start_time < timeout:
-        # Проверка 1: капча уже решена?
-        if await is_cf_turnstile_solved(tab):
+        # Проверка состояния виджета за один вызов инспекции
+        info = await detect_cf_turnstile(tab)
+        if info and info.get("solved"):
             logger.info("Cloudflare Turnstile успешно решен.")
             return True
 
-        # Проверка 2: обнаружен ли виджет Turnstile для клика?
-        info = await detect_cf_turnstile(tab)
+        # Проверка наличия cookies cf_clearance
+        try:
+            cookies_data = extract_clearance_cookies(tab)
+            if inspect.isawaitable(cookies_data):
+                cookies_data = await cookies_data
+            if isinstance(cookies_data, dict):
+                cookies_dict = cookies_data.get("cookies", {})
+                if "cf_clearance" in cookies_dict:
+                    logger.info("Cloudflare Turnstile успешно решен.")
+                    return True
+        except Exception:
+            pass
+
+        # Сброс состояния clicked, если виджет проэкспайрился или выдал ошибку, требующую повтора
+        if info and clicked and info.get("data_state") in ("expired", "error"):
+            logger.debug(
+                f"Виджет Turnstile перешел в состояние {info.get('data_state')}, сброс для повторного клика."
+            )
+            clicked = False
+
         if (
             info
             and not clicked
@@ -277,16 +301,23 @@ async def solve_cf_turnstile(
             width = float(info.get("width", 300.0))
             height = float(info.get("height", 65.0))
 
-            # Чекбокс Turnstile обычно располагается в левой части виджета
-            # Смещение X ~ 25-45px, Y по центру (~ height / 2)
-            offset_x = min(width * 0.12, 35.0) + random.uniform(-3.0, 3.0)
-            offset_y = (height / 2.0) + random.uniform(-4.0, 4.0)
+            if click_offset is not None:
+                offset_x, offset_y = click_offset
+            else:
+                # Адаптивный расчет геометрии чекбокса (Compact режим vs Обычный широкий)
+                is_compact = width <= 165 or (height > 90 and width < 220)
+                if is_compact:
+                    offset_x = (width * 0.22) + random.uniform(-2.0, 2.0)
+                    offset_y = (height * 0.32) + random.uniform(-2.0, 2.0)
+                else:
+                    offset_x = min(width * 0.12, 38.0) + random.uniform(-3.0, 3.0)
+                    offset_y = (height / 2.0) + random.uniform(-4.0, 4.0)
 
             target_x = max(1, int(x + offset_x))
             target_y = max(1, int(y + offset_y))
 
             logger.debug(
-                f"Обнаружен Turnstile виджет ({info.get('type')}), "
+                f"Обнаружен Turnstile виджет ({info.get('type')}, width={width}, height={height}), "
                 f"координаты клика: ({target_x}, {target_y})"
             )
 
@@ -294,11 +325,18 @@ async def solve_cf_turnstile(
             if click_delay and click_delay[0] > 0:
                 await async_human_sleep(click_delay[0], click_delay[1])
 
+            start_coords = (
+                (random.randint(100, 600), random.randint(100, 500))
+                if natural_hover
+                else None
+            )
+
             try:
                 await async_click(
                     tab,
                     x=target_x,
                     y=target_y,
+                    start=start_coords,
                     algorithm="windmouse",
                     hold_time=(0.06, 0.14),
                 )

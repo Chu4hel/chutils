@@ -310,3 +310,157 @@ async def test_solve_cf_turnstile_box_model_fallback() -> None:
         )
         assert result is True
         assert state["clicked"] is True
+
+
+@pytest.mark.asyncio
+async def test_solve_cf_turnstile_custom_click_offset() -> None:
+    """Проверка переопределения смещения клика через параметр click_offset."""
+    mock_tab = MagicMock()
+    mock_tab.evaluate = AsyncMock(
+        return_value={
+            "found": True,
+            "solved": False,
+            "type": "iframe",
+            "x": 100,
+            "y": 200,
+            "width": 300,
+            "height": 65,
+            "visible": True,
+            "interactive": True,
+        }
+    )
+
+    clicked_coords: dict[str, int] = {}
+
+    async def mock_click(tab: object, **kwargs: object) -> None:
+        clicked_coords["x"] = int(kwargs["x"])
+        clicked_coords["y"] = int(kwargs["y"])
+        # Сразу отмечаем решенной
+        mock_tab.evaluate = AsyncMock(
+            return_value={"found": True, "solved": True, "token": "0.token"}
+        )
+
+    with (
+        patch(
+            "chutils.scraping.humanize.turnstile.async_click", side_effect=mock_click
+        ),
+        patch("chutils.scraping.humanize.turnstile.async_human_sleep", AsyncMock()),
+    ):
+        result = await solve_cf_turnstile(
+            mock_tab,
+            timeout=2.0,
+            check_interval=0.01,
+            click_delay=(0.0, 0.0),
+            click_offset=(60.0, 30.0),
+        )
+        assert result is True
+        # x = 100 + 60 = 160, y = 200 + 30 = 230
+        assert clicked_coords["x"] == 160
+        assert clicked_coords["y"] == 230
+
+
+@pytest.mark.asyncio
+async def test_solve_cf_turnstile_compact_widget() -> None:
+    """Проверка адаптивного смещения для компактного виджета (compact mode)."""
+    mock_tab = MagicMock()
+    # Компактный виджет 130x120
+    mock_tab.evaluate = AsyncMock(
+        return_value={
+            "found": True,
+            "solved": False,
+            "type": "container",
+            "x": 50,
+            "y": 80,
+            "width": 130,
+            "height": 120,
+            "visible": True,
+            "interactive": True,
+        }
+    )
+
+    clicked_coords: dict[str, int] = {}
+
+    async def mock_click(tab: object, **kwargs: object) -> None:
+        clicked_coords["x"] = int(kwargs["x"])
+        clicked_coords["y"] = int(kwargs["y"])
+        mock_tab.evaluate = AsyncMock(
+            return_value={"found": True, "solved": True, "token": "0.token"}
+        )
+
+    with (
+        patch(
+            "chutils.scraping.humanize.turnstile.async_click", side_effect=mock_click
+        ),
+        patch("chutils.scraping.humanize.turnstile.async_human_sleep", AsyncMock()),
+    ):
+        result = await solve_cf_turnstile(
+            mock_tab,
+            timeout=2.0,
+            check_interval=0.01,
+            click_delay=(0.0, 0.0),
+        )
+        assert result is True
+        # В компактном режиме смещение X ~ 130 * 0.22 ~ 28px, Y ~ 120 * 0.32 ~ 38px
+        assert 70 <= clicked_coords["x"] <= 90
+        assert 110 <= clicked_coords["y"] <= 130
+
+
+@pytest.mark.asyncio
+async def test_solve_cf_turnstile_retry_on_expired() -> None:
+    """Проверка сброса состояния clicked и повторного клика при переходе виджета в expired."""
+    mock_tab = MagicMock()
+    step = {"count": 0, "clicks": 0}
+
+    async def mock_eval(script: str) -> dict[str, object] | None:
+        step["count"] += 1
+        # 1-й вызов: интерактивный виджет
+        if step["count"] == 1:
+            return {
+                "found": True,
+                "solved": False,
+                "type": "iframe",
+                "x": 100,
+                "y": 200,
+                "width": 300,
+                "height": 65,
+                "visible": True,
+                "interactive": True,
+                "data_state": "",
+            }
+        # 2-й вызов (после первого клика): виджет проэкспайрился
+        if step["count"] == 2:
+            return {
+                "found": True,
+                "solved": False,
+                "type": "iframe",
+                "x": 100,
+                "y": 200,
+                "width": 300,
+                "height": 65,
+                "visible": True,
+                "interactive": True,
+                "data_state": "expired",
+            }
+        # 3-й вызов (после второго клика): решено
+        return {"found": True, "solved": True, "token": "0.solution_token"}
+
+    mock_tab.evaluate = mock_eval
+
+    async def mock_click(tab: object, **kwargs: object) -> None:
+        step["clicks"] += 1
+
+    with (
+        patch(
+            "chutils.scraping.humanize.turnstile.async_click", side_effect=mock_click
+        ),
+        patch("chutils.scraping.humanize.turnstile.async_human_sleep", AsyncMock()),
+    ):
+        result = await solve_cf_turnstile(
+            mock_tab,
+            timeout=5.0,
+            check_interval=0.01,
+            click_delay=(0.0, 0.0),
+        )
+        assert result is True
+        # Было произведено 2 клика: первоначальный и повторный после expired
+        assert step["clicks"] == 2

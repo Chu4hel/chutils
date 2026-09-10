@@ -30547,7 +30547,7 @@
                     "layer": "internal",
                     "signature": "(tab)",
                     "summary": "Автоматически обнаруживает и решает капчу Cloudflare Turnstile.",
-                    "docstring": "Автоматически обнаруживает и решает капчу Cloudflare Turnstile.\n\nНаходит интерактивную область чекбокса, выполняет реалистичное наведение\nкурсора мыши по кривой Безье/WindMouse и клик, после чего ожидает\nполучения токена валидации.\n\nArgs:\n    tab: Объект вкладки nodriver Tab или Playwright Page.\n    timeout: Максимальное время ожидания решения капчи в секундах.\n    check_interval: Интервал проверки состояния капчи в секундах.\n    click_delay: Задержка перед кликом после наведения (min, max).\n    raise_on_failure: Если True, при таймауте выбрасывает RuntimeError.\n\nReturns:\n    True, если капча успешно решена, иначе False.\n\nRaises:\n    RuntimeError: Если raise_on_failure=True и капча не была решена за время таймаута.",
+                    "docstring": "Автоматически обнаруживает и решает капчу Cloudflare Turnstile.\n\nНаходит интерактивную область чекбокса, выполняет реалистичное наведение\nкурсора мыши по кривой Безье/WindMouse и клик, после чего ожидает\nполучения токена валидации.\n\nArgs:\n    tab: Объект вкладки nodriver Tab или Playwright Page.\n    timeout: Максимальное время ожидания решения капчи в секундах.\n    check_interval: Интервал проверки состояния капчи в секундах.\n    click_delay: Задержка перед кликом после наведения (min, max).\n    click_offset: Пользовательские смещения (offset_x, offset_y) относительно\n        левого верхнего угла виджета. Если None, рассчитываются адаптивно.\n    natural_hover: Если True, моделирует естественный старт движения курсора из случайной точки экрана.\n    raise_on_failure: Если True, при таймауте выбрасывает RuntimeError.\n\nReturns:\n    True, если капча успешно решена, иначе False.\n\nRaises:\n    RuntimeError: Если raise_on_failure=True и капча не была решена за время таймаута.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -30844,7 +30844,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 18,
+                "line_number": 19,
                 "bases": [],
                 "children": []
               },
@@ -30864,7 +30864,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 21,
+                "line_number": 22,
                 "bases": [],
                 "children": []
               },
@@ -30874,7 +30874,7 @@
                 "layer": "internal",
                 "signature": "(config)",
                 "summary": "Запускает браузер nodriver с рекомендуемыми стелс-аргументами и AntidetectConfig.",
-                "docstring": "Запускает браузер nodriver с рекомендуемыми стелс-аргументами и AntidetectConfig.\n\nArgs:\n    config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().\n    proxy: Настройки прокси (строка, ProxyConfig или dict). Если требуется авторизация,\n        автоматически создается временное Manifest v3 расширение.\n    headless: Флаг запуска в фоновом (headless) режиме.\n    browser_args: Дополнительные аргументы командной строки Chromium.\n    apply_config_to_tab: Если True, автоматически применяет конфигурацию антидетекта к первой вкладке.\n    **kwargs: Дополнительные параметры для передачи в nodriver.start().\n\nReturns:\n    Экземпляр nodriver.Browser.",
+                "docstring": "Запускает браузер nodriver с рекомендуемыми стелс-аргументами и AntidetectConfig.\n\nArgs:\n    config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().\n    user_data_dir: Путь к постоянному каталогу профиля браузера (куки, сессии, история).\n    browser_executable_path: Пользовательский путь к бинарному файлу Chromium/Chrome/Brave.\n    proxy: Настройки прокси (строка, ProxyConfig или dict). Если требуется авторизация,\n        автоматически создается временное Manifest v3 расширение.\n    headless: Флаг запуска в фоновом (headless) режиме.\n    browser_args: Дополнительные аргументы командной строки Chromium.\n    apply_config_to_tab: Если True, автоматически применяет конфигурацию антидетекта к первой вкладке.\n    **kwargs: Дополнительные параметры для передачи в nodriver.start().\n\nReturns:\n    Экземпляр nodriver.Browser.",
                 "breadcrumbs": {
                   "is_async": true,
                   "is_thread_safe": false,
@@ -30884,7 +30884,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 41,
+                "line_number": 42,
                 "bases": [],
                 "children": []
               },
@@ -30894,7 +30894,7 @@
                 "layer": "internal",
                 "signature": "(config)",
                 "summary": "Асинхронный контекстный менеджер сессии браузера nodriver с гарантированным закрытием.",
-                "docstring": "Асинхронный контекстный менеджер сессии браузера nodriver с гарантированным закрытием.\n\nArgs:\n    config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().\n    proxy: Настройки прокси.\n    headless: Флаг запуска в headless режиме.\n    browser_args: Дополнительные флаги Chromium.\n    apply_config_to_tab: Автоматически применить AntidetectConfig к вкладке.\n    **kwargs: Дополнительные параметры nodriver.start().\n\nYields:\n    Экземпляр nodriver.Browser.",
+                "docstring": "Асинхронный контекстный менеджер сессии браузера nodriver с гарантированным закрытием.\n\nArgs:\n    config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().\n    user_data_dir: Путь к постоянному каталогу профиля браузера (куки, сессии, история).\n    browser_executable_path: Пользовательский путь к бинарному файлу Chromium/Chrome/Brave.\n    proxy: Настройки прокси.\n    headless: Флаг запуска в headless режиме.\n    browser_args: Дополнительные флаги Chromium.\n    apply_config_to_tab: Автоматически применить AntidetectConfig к вкладке.\n    **kwargs: Дополнительные параметры nodriver.start().\n\nYields:\n    Экземпляр nodriver.Browser.",
                 "breadcrumbs": {
                   "is_async": true,
                   "is_thread_safe": false,
@@ -30906,7 +30906,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 132,
+                "line_number": 143,
                 "bases": [],
                 "children": []
               }
@@ -45812,8 +45812,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "3e42a602180428fcfc4ae680d5384ef5497b63fc (dirty)",
-    "generated_at": "2026-09-10T16:01:30.606540+00:00",
-    "project_hash": "149d542306726842599fa78fd25fbcd6a486766fe53c92de77b8e3cfcab99806"
+    "git_commit": "438c263f360470d6cb0d98ee6414d2a9d323350b (dirty)",
+    "generated_at": "2026-09-10T16:13:15.644552+00:00",
+    "project_hash": "2cdfcf1efbaeb5518cdd7b5e123f59bdf553808959ff2cce0992024f3333e8b6"
   }
 }

@@ -6,6 +6,7 @@ import asyncio
 import inspect
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 
 from chutils.lifecycle import register_cleanup
@@ -41,6 +42,8 @@ def _get_nodriver_module() -> Any:
 async def launch_nodriver(
     config: AntidetectConfig | None = None,
     *,
+    user_data_dir: Path | str | None = None,
+    browser_executable_path: Path | str | None = None,
     proxy: ProxyConfig | str | dict[str, object] | None = None,
     headless: bool = False,
     browser_args: list[str] | None = None,
@@ -51,6 +54,8 @@ async def launch_nodriver(
 
     Args:
         config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().
+        user_data_dir: Путь к постоянному каталогу профиля браузера (куки, сессии, история).
+        browser_executable_path: Пользовательский путь к бинарному файлу Chromium/Chrome/Brave.
         proxy: Настройки прокси (строка, ProxyConfig или dict). Если требуется авторизация,
             автоматически создается временное Manifest v3 расширение.
         headless: Флаг запуска в фоновом (headless) режиме.
@@ -85,10 +90,16 @@ async def launch_nodriver(
                 merged_args.append(b_arg)
 
     # Запуск браузера
+    start_kwargs: dict[str, Any] = dict(kwargs)
+    if user_data_dir is not None:
+        start_kwargs["user_data_dir"] = str(user_data_dir)
+    if browser_executable_path is not None:
+        start_kwargs["browser_executable_path"] = str(browser_executable_path)
+
     browser = await uc.start(
         browser_args=merged_args,
         headless=headless,
-        **kwargs,
+        **start_kwargs,
     )
 
     # Регистрация очистки в жизненном цикле
@@ -132,6 +143,8 @@ async def launch_nodriver(
 async def nodriver_session(
     config: AntidetectConfig | None = None,
     *,
+    user_data_dir: Path | str | None = None,
+    browser_executable_path: Path | str | None = None,
     proxy: ProxyConfig | str | dict[str, object] | None = None,
     headless: bool = False,
     browser_args: list[str] | None = None,
@@ -142,6 +155,8 @@ async def nodriver_session(
 
     Args:
         config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().
+        user_data_dir: Путь к постоянному каталогу профиля браузера (куки, сессии, история).
+        browser_executable_path: Пользовательский путь к бинарному файлу Chromium/Chrome/Brave.
         proxy: Настройки прокси.
         headless: Флаг запуска в headless режиме.
         browser_args: Дополнительные флаги Chromium.
@@ -153,6 +168,8 @@ async def nodriver_session(
     """
     browser = await launch_nodriver(
         config=config,
+        user_data_dir=user_data_dir,
+        browser_executable_path=browser_executable_path,
         proxy=proxy,
         headless=headless,
         browser_args=browser_args,

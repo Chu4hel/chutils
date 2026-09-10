@@ -793,6 +793,201 @@ print(clearance_data["cookies"])  # {'cf_clearance': '...', ...}
 
 # Прямая инициализация быстрого TLS-клиента из браузерной сессии
 client = await TLSAsyncClient.from_browser_session(page, impersonate="chrome120")
+elem = driver.find_element("css selector", "#content")
+assert elem.text == "Привет"
+```
+
+### Локальный тестовый HTTP-сервер песочницы (`LocalTestServer`)
+
+Для тестирования парсеров в реальных сетевых условиях без обращения к внешним сайтам используется легковесный сервер:
+
+```python
+from chutils.scraping import LocalTestServer
+
+with LocalTestServer() as server:
+    # Регистрация страниц и API фикстур
+    html_url = server.serve_html("/catalog", "<h1>Каталог товаров</h1>")
+    json_url = server.serve_json("/api/items", [{"id": 1, "title": "Товар"}])
+
+    # Прямой запрос в обход системных прокси
+    response = server.fetch("/catalog")
+    assert response.status == 200
+    assert "Каталог товаров" in response.text
+
+    # Проверка журнала входящих запросов от браузера
+    assert len(server.requests_log) == 1
+    assert server.requests_log[0].path == "/catalog"
+```
+
+### Менеджер живых браузерных сессий (`LiveBrowserSession`)
+
+При сквозном тестировании реальных браузеров часто возникают висячие зомби-процессы (`chrome.exe`) и остаточные временные папки профилей. `LiveBrowserSession` гарантирует их полное удаление:
+
+```python
+from chutils.scraping import LiveBrowserSession
+import nodriver
+
+async with LiveBrowserSession(browser_name="chromium") as session:
+    # Автоматически создается временный изолированный user_data_dir
+    browser = await nodriver.start(user_data_dir=str(session.user_data_dir))
+    
+    # Регистрируем процесс браузера для отслеживания
+    session.track_process(browser)
+
+    tab = await browser.get("http://127.0.0.1:8080/test")
+    # ... выполнение скрапинга ...
+
+# При выходе: браузер гарантированно завершается (SIGTERM -> SIGKILL),
+# а временный каталог профиля удаляется с диска даже при падении теста!
+```
+
+### Оффлайн-снапшоты страниц (`SnapshotRecorder`, `@use_html_snapshot`)
+
+Позволяет сохранять разметку страниц реального сайта при первом обращении (`fetcher`) и мгновенно воспроизводить ее в оффлайн-режиме в тестах без обращения к сети и без запуска браузера:
+
+```python
+from chutils.scraping import use_html_snapshot, MockPlaywrightPage
+
+# 1. Использование в качестве контекстного менеджера с моком Playwright/nodriver/Selenium
+with use_html_snapshot("product_card", as_mock="playwright") as page:
+    # page имеет тип MockPlaywrightPage с загруженной разметкой из tests/fixtures/snapshots/product_card.html
+    title = page.locator("h1").text_content()
+
+
+# 2. Использование в качестве декоратора тестовой функции
+@use_html_snapshot("catalog_listing", as_mock="nodriver")
+async def test_parse_catalog(tab):
+    # tab - это MockNodriverTab
+    items = await tab.select_all(".catalog-item")
+    assert len(items) > 0
+
+
+# 3. Автоматическая запись при отсутствии снапшота (fetcher)
+def fetch_real_page():
+    # Реальный сетевой запрос или вызов браузера
+    return "<div class='price'>1000 ₽</div>"
+
+
+with use_html_snapshot("price_page", fetcher=fetch_real_page) as html:
+    # Сохраняется в tests/fixtures/snapshots/price_page.html и не пересоздается при повторных тестах
+    assert "1000" in html
+```
+
+### Валидация качества извлечения данных (`Extraction Quality Assertions`)
+
+Для быстрой и надежной верификации структуры и качества распарсенных данных модуль предоставляет специализированные ассерты с информативными сообщениями об ошибках:
+
+```python
+from chutils.scraping import (
+    assert_extraction_complete,
+    assert_valid_url,
+    assert_valid_price,
+    assert_schema_match,
+)
+from pydantic import BaseModel
+
+
+class ProductSchema(BaseModel):
+    id: int
+    title: str
+    price: float
+
+
+item = {
+    "id": 1,
+    "title": "Умные часы",
+    "price": 14990.0,
+    "url": "https://example.com/item/1",
+}
+
+# 1. Проверка полноты и отсутствия None / пустых строк
+assert_extraction_complete(item, required_keys=["id", "title", "price", "url"])
+
+# 2. Проверка корректности ссылок
+assert_valid_url(item["url"])
+
+# 3. Проверка числовых или текстовых цен ("14 990 ₽", "$199.99") и диапазонов
+assert_valid_price(item["price"], min_value=100.0, max_value=100000.0)
+
+# 4. Проверка соответствия Pydantic-схеме (для одиночных элементов или списков)
+assert_schema_match(item, ProductSchema)
+```
+
+### Встроенные фикстуры Pytest (`chutils.scraping.testing.fixtures`)
+
+При установленном `chutils` pytest автоматически подхватывает плагин со следующими фикстурами:
+
+- `local_test_server`: запущенный экземпляр `LocalTestServer` (автоматическая остановка при teardown).
+- `live_browser_session`: экземпляр `LiveBrowserSession` с изолированным временным каталогом и уничтожением зомби-процессов.
+- `html_snapshot_recorder`: настроенный `SnapshotRecorder` с каталогом во временной папке теста.
+- `mock_nodriver_tab`, `mock_playwright_page`, `mock_selenium_driver`: фабрики для мгновенного создания моков из переданной HTML-строки.
+
+Пример использования в тестах:
+
+```python
+async def test_scraper_with_fixtures(local_test_server, mock_playwright_page):
+    # Тест через сервер песочницы
+    local_test_server.serve_html("/item", "<h1>Товар</h1>")
+    resp = local_test_server.fetch("/item")
+    assert resp.status == 200
+
+    # Быстрый мок Playwright
+    page = mock_playwright_page("<h1>Товар</h1>")
+    assert await page.locator("h1").inner_text() == "Товар"
+```
+
+---
+
+## 7. Антидетект-браузер Camoufox (`chutils.scraping.camoufox`)
+
+Для сценариев, где инъекций в CDP/JS недостаточно (например, при сложной проверке C++ рендеринга и WebGL Cloudflare Turnstile), рекомендуется использовать антидетект-браузер Camoufox (модифицированный Playwright Firefox со встроенной защитой на уровне ядра движка).
+
+Фабрика `launch_camoufox` возвращает асинхронный контекстный менеджер браузера:
+
+```python
+import asyncio
+from chutils.scraping import launch_camoufox
+
+
+async def main():
+    async with await launch_camoufox(headless=True, os="windows") as browser:
+        page = await browser.new_page()
+        await page.goto("https://nowecurity.com")
+        print(await page.title())
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+---
+
+## 8. Улучшенный JS-антидетект, Web Workers и Client Hints
+
+В модуль `chutils.scraping.humanize.antidetect` добавлены следующие передовые механизмы защиты:
+
+1. **Защита изолированных Web Workers и SharedWorkers**: Антифрод-системы (Cloudflare Turnstile, Kasada, CreepJS) часто создают фоновые воркеры (`new Worker(...)`), чтобы проверить чистый контекст `self.navigator.webdriver` в обход основных инъекций в страницу. Модуль перехватывает конструкторы `Worker` и `SharedWorker`, автоматически оборачивает исходный скрипт в защитную преамбулу через `Blob` и `URL.createObjectURL`, полностью скрывая автоматизацию внутри воркеров.
+2. **Маскировка V8 Stack Traces (`makeNative`)**: При инспекции стектрейсов ошибок (`Error().stack` или `Error.captureStackTrace`) антифрод обнаруживает следы monkey-patching (`at patched... (eval at...)`). Функция `makeNative` маскирует стек вызовов под нативные вызовы браузера (`at FunctionName (<anonymous>)`).
+3. **Полноценная эмуляция `window.chrome`**: В headless-режиме и Playwright свойство `window.chrome` отсутствует или пустое. Антидетект эмулирует нативные методы `chrome.loadTimes()`, `chrome.csi()`, `chrome.runtime` и `chrome.app` с сохранением правильных сигнатур и `[native code]`.
+4. **Защита от утечки IP через WebRTC (`RTCPeerConnection`)**: Блокирует утечку локальных (LAN) и прямых IP через STUN/TURN SDP кандидаты при работе через прокси.
+5. **Детерминированный микрошум AudioContext**: Внедряет микрошум в `AudioBuffer.prototype.getChannelData` на базе `session_seed`, исключая снятие стабильного аудио-отпечатка антифрод-системами без искажения звука.
+6. **Эмуляция геометрии окна и экрана**: В headless-браузерах `outerWidth` и `outerHeight` равны 0 либо строго равны `innerWidth`/`innerHeight`. Модуль выставляет реалистичные габариты с учетом тулбаров браузера и панели задач ОС.
+7. **Эмуляция свойств `navigator.connection` и `navigator.getBattery`**: Предоставляет согласованные данные сетевого статуса (4G, RTT) и Battery API.
+8. **Детерминированный Canvas Noise (`session_seed`)**: Шум накладывается через псевдослучайный алгоритм на базе стабильного сида сессии. Это исключает обнаружение антифрод-скриптами частой мутации канваса при многократном чтении `getImageData`.
+9. **Cross-realm iframe prototype protection**: Перехват создания элементов `iframe` и предотвращение извлечения чистых непатченных прототипов (`Function.prototype.toString`, `navigator.webdriver`).
+10. **Генерация Client Hints (`get_client_hints`)**: Формирование согласованной структуры `navigator.userAgentData` (brands, platform, mobile, entropy values) под указанный User-Agent.
+11. **Мост Cookie и Clearance токенов (`extract_clearance_cookies`)**: Извлечение сессионных токенов (включая `cf_clearance`) и User-Agent из браузера для последующей передачи в быстрый сетевой клиент `TLSAsyncClient` / `TLSSession`:
+
+```python
+from chutils.scraping import extract_clearance_cookies
+from chutils.http import TLSAsyncClient
+
+# Извлечение из Playwright Page / Nodriver Tab
+clearance_data = await extract_clearance_cookies(page)
+print(clearance_data["cookies"])  # {'cf_clearance': '...', ...}
+
+# Прямая инициализация быстрого TLS-клиента из браузерной сессии
+client = await TLSAsyncClient.from_browser_session(page, impersonate="chrome120")
 resp = await client.get("https://protected-site.com/api/data")
 ```
 
@@ -802,16 +997,22 @@ resp = await client.get("https://protected-site.com/api/data")
 
 Для браузерной автоматизации без следов веб-драйвера модуль `chutils.scraping` предоставляет фабрику `launch_nodriver` и асинхронный контекстный менеджер `nodriver_session`. Они автоматически накладывают рекомендованные флаги запуска Chromium (`--disable-blink-features=AutomationControlled` и др.), настраивают прокси (с прозрачной поддержкой авторизации через расширение) и применяют `AntidetectConfig`.
 
+Фабрика поддерживает передачу постоянного каталога профиля (`user_data_dir`) для сохранения сессий, авторизаций и прогретых куки, а также кастомного пути к бинарнику браузера (`browser_executable_path`):
+
 ```python
 import asyncio
 from chutils.scraping import AntidetectConfig, nodriver_session
 
 
 async def main():
-    # Запуск браузера с нулевым вмешательством в Chromium (рекомендовано для nodriver)
+    # Запуск браузера с нулевым вмешательством в Chromium и прогретым профилем
     config = AntidetectConfig.preset_stealth_nodriver()
 
-    async with nodriver_session(config=config, headless=False) as browser:
+    async with nodriver_session(
+        config=config,
+        user_data_dir="./chrome_profile",
+        headless=False,
+    ) as browser:
         tab = await browser.get("https://nowecurity.com")
         print("Заголовок страницы:", await tab.evaluate("document.title"))
 
@@ -836,7 +1037,11 @@ async def main():
         tab = await browser.get("https://peet.ws/turnstile-test/staging-turnstile.html")
 
         # Автоматическое ожидание и решение капчи Turnstile
-        solved = await solve_cf_turnstile(tab, timeout=15.0)
+        solved = await solve_cf_turnstile(
+            tab,
+            timeout=15.0,
+            natural_hover=True,  # Естественная траектория наведения курсора из случайной точки
+        )
         if solved:
             print("Turnstile успешно пройден!")
         else:
@@ -850,5 +1055,8 @@ if __name__ == "__main__":
 ### Ключевые возможности `solve_cf_turnstile`:
 - **Точные экранные координаты Viewport**: Клик передается в координатах видимой области браузера без смещения при скролле.
 - **Поддержка Shadow DOM**: Рекурсивный поиск iframe и контейнеров капчи внутри открытых `shadowRoot`.
+- **Адаптивная геометрия и `click_offset`**: Автоматическое определение компактного режима виджета (Compact mode) или возможность ручной передачи смещения клика `click_offset=(offset_x, offset_y)`.
+- **Авто-повтор при Expired/Error**: Автоматический сброс состояния клика при переходе виджета в `data-state="expired"`, что позволяет повторно обновить решение.
+- **Естественное наведение (`natural_hover`)**: Старт траектории WindMouse из случайной точки экрана вместо телепортации курсора в виджет.
 - **Проверка интерактивности**: Ожидание готовности виджета и пропуск неинтерактивных состояний (`opacity: 0`, `data-state="checking"`).
 - **CDP Fallback**: Автоматический резервный расчет границ через Box Model CDP при нулевых размерах DOM-прямоугольника.
