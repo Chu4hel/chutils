@@ -530,3 +530,18 @@ members:
 
 - DatabaseManager
 - DatabaseConfig
+
+## Модуль `lifecycle` (Управление жизненным циклом и graceful shutdown)
+
+::: chutils.lifecycle
+options:
+members:
+
+- register_cleanup
+- unregister_cleanup
+- run_cleanup
+- async_run_cleanup
+- setup_graceful_shutdown
+- lifecycle
+- AsyncLifecycleContext
+

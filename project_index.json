@@ -22366,6 +22366,26 @@
                 "children": []
               },
               {
+                "name": "unregister_cleanup",
+                "type": "method",
+                "layer": "internal",
+                "signature": "(self, func)",
+                "summary": "Удаляет функцию из реестра функций очистки.",
+                "docstring": "Удаляет функцию из реестра функций очистки.\n\nArgs:\n    func: Функция или корутина для удаления.\n\nReturns:\n    True, если функция была найдена и удалена, иначе False.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 66,
+                "bases": [],
+                "children": []
+              },
+              {
                 "name": "get_cleanup_callbacks",
                 "type": "method",
                 "layer": "internal",
@@ -22381,7 +22401,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 66,
+                "line_number": 80,
                 "bases": [],
                 "children": []
               },
@@ -22401,7 +22421,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 74,
+                "line_number": 88,
                 "bases": [],
                 "children": []
               },
@@ -22421,7 +22441,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 104,
+                "line_number": 118,
                 "bases": [],
                 "children": []
               },
@@ -22441,7 +22461,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 114,
+                "line_number": 128,
                 "bases": [],
                 "children": []
               },
@@ -22461,7 +22481,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 138,
+                "line_number": 152,
                 "bases": [],
                 "children": []
               },
@@ -22481,7 +22501,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 166,
+                "line_number": 180,
                 "bases": [],
                 "children": []
               },
@@ -22501,7 +22521,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 180,
+                "line_number": 194,
                 "bases": [],
                 "children": []
               },
@@ -22521,7 +22541,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 213,
+                "line_number": 227,
                 "bases": [],
                 "children": []
               }
@@ -22543,7 +22563,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 222,
+            "line_number": 236,
             "bases": [],
             "children": []
           },
@@ -22563,7 +22583,27 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 226,
+            "line_number": 240,
+            "bases": [],
+            "children": []
+          },
+          {
+            "name": "unregister_cleanup",
+            "type": "function",
+            "layer": "internal",
+            "signature": "(func)",
+            "summary": "Удаляет функцию из реестра функций очистки.",
+            "docstring": "Удаляет функцию из реестра функций очистки.\n\nArgs:\n    func: Функция или корутина для удаления.\n\nReturns:\n    True, если функция была найдена и удалена, иначе False.",
+            "breadcrumbs": {
+              "is_async": false,
+              "is_thread_safe": false,
+              "is_heavy": false,
+              "is_abstract": false,
+              "decorators": [],
+              "tags": [],
+              "custom_metadata": {}
+            },
+            "line_number": 268,
             "bases": [],
             "children": []
           },
@@ -22583,7 +22623,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 254,
+            "line_number": 280,
             "bases": [],
             "children": []
           },
@@ -22603,7 +22643,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 263,
+            "line_number": 289,
             "bases": [],
             "children": []
           },
@@ -22623,7 +22663,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 270,
+            "line_number": 296,
             "bases": [],
             "children": []
           },
@@ -22643,7 +22683,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 277,
+            "line_number": 303,
             "bases": [],
             "children": [
               {
@@ -22662,7 +22702,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 284,
+                "line_number": 310,
                 "bases": [],
                 "children": []
               }
@@ -22684,7 +22724,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 340,
+            "line_number": 366,
             "bases": [],
             "children": []
           },
@@ -22704,7 +22744,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 365,
+            "line_number": 391,
             "bases": [],
             "children": []
           }
@@ -30413,6 +30453,180 @@
             "docstring": "Модуль управления прокси-серверами и аутентификацией.",
             "children": [
               {
+                "name": "extension",
+                "path": "chutils/scraping/proxy/extension",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Генератор расширения Chrome (Manifest v3) для авторизации прокси в Chromium.",
+                "docstring": "Генератор расширения Chrome (Manifest v3) для авторизации прокси в Chromium.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 17,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "ChromeProxyExtension",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Генератор временного расширения Chrome для аутентификации прокси.",
+                    "docstring": "Генератор временного расширения Chrome для аутентификации прокси.\n\nРешает проблему отсутствия встроенной поддержки аутентификации (`user:password`)\nпри запуске Chromium через аргумент `--proxy-server` (например, в nodriver).\nСоздает расширение Manifest v3 с перехватом `chrome.webRequest.onAuthRequired`.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 20,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, proxy, output_dir, register_lifecycle_cleanup)",
+                        "summary": "Инициализирует генератор расширения.",
+                        "docstring": "Инициализирует генератор расширения.\n\nArgs:\n    proxy: Конфигурация прокси или строка формата прокси.\n    output_dir: Опциональная директория для размещения расширения.\n    register_lifecycle_cleanup: Автоматически регистрировать удаление директории в chutils.lifecycle.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 28,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "path",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает путь к директории расширения (генерирует, если еще не создано).",
+                        "docstring": "Возвращает путь к директории расширения (генерирует, если еще не создано).\n\nReturns:\n    Путь к директории расширения на диске.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 50,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, output_dir)",
+                        "summary": "Генерирует файлы manifest.json и background.js расширения.",
+                        "docstring": "Генерирует файлы manifest.json и background.js расширения.\n\nArgs:\n    output_dir: Целевая папка для файлов расширения.\n\nReturns:\n    Путь к сгенерированной директории расширения.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 61,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_chrome_args",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает CLI аргументы для запуска Chromium с данным расширением.",
+                        "docstring": "Возвращает CLI аргументы для запуска Chromium с данным расширением.\n\nReturns:\n    Список флагов командной строки (--load-extension, --disable-extensions-except).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 164,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_cleanup_callback",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "Callback для вызова из реестра lifecycle при завершении процесса.",
+                        "docstring": "Callback для вызова из реестра lifecycle при завершении процесса.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 176,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "cleanup",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Удаляет директорию расширения и отменяет регистрацию в lifecycle.",
+                        "docstring": "Удаляет директорию расширения и отменяет регистрацию в lifecycle.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 180,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
                 "name": "models",
                 "path": "chutils/scraping/proxy/models",
                 "type": "module",
@@ -30713,6 +30927,346 @@
                     "children": []
                   }
                 ]
+              },
+              {
+                "name": "tunnel",
+                "path": "chutils/scraping/proxy/tunnel",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Локальный асинхронный туннель-прокси с автоматической инъекцией учетных данных.",
+                "docstring": "Локальный асинхронный туннель-прокси с автоматической инъекцией учетных данных.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 12,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "AsyncProxyTunnel",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Локальный асинхронный HTTP/CONNECT форвардер для авторизации в удаленных прокси.",
+                    "docstring": "Локальный асинхронный HTTP/CONNECT форвардер для авторизации в удаленных прокси.\n\nПозволяет запускать Chromium или браузеры в headless-режимах без расширений,\nнаправляя трафик на локальный адрес `127.0.0.1:<port>`. Туннель прозрачно\nперехватывает запросы и добавляет заголовок `Proxy-Authorization` в удаленный прокси.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 15,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, proxy, local_host, local_port)",
+                        "summary": "Инициализирует туннель.",
+                        "docstring": "Инициализирует туннель.\n\nArgs:\n    proxy: Удаленный прокси-сервер (ProxyConfig или строка).\n    local_host: Локальный адрес для прослушивания (по умолчанию 127.0.0.1).\n    local_port: Локальный порт для прослушивания (0 для выбора свободного порта).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 23,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "is_running",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Проверяет, запущен ли локальный сервер туннеля.",
+                        "docstring": "Проверяет, запущен ли локальный сервер туннеля.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 44,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "host",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает локальный хост прослушивания.",
+                        "docstring": "Возвращает локальный хост прослушивания.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 49,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "port",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает фактический локальный порт туннеля.",
+                        "docstring": "Возвращает фактический локальный порт туннеля.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 54,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "local_url",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает локальный HTTP URL туннеля.",
+                        "docstring": "Возвращает локальный HTTP URL туннеля.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 59,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "to_proxy_config",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает конфигурацию локального прокси без авторизации.",
+                        "docstring": "Возвращает конфигурацию локального прокси без авторизации.\n\nReturns:\n    Экземпляр ProxyConfig для подключения к локальному туннелю.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 63,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "to_chrome_arg",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает флаг командной строки --proxy-server для запуска Chromium.",
+                        "docstring": "Возвращает флаг командной строки --proxy-server для запуска Chromium.\n\nReturns:\n    Строка флага --proxy-server с локальным адресом туннеля.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 71,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "start",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Запускает локальный сервер прокси-туннеля.",
+                        "docstring": "Запускает локальный сервер прокси-туннеля.\n\nReturns:\n    Экземпляр туннеля.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 79,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "stop",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Останавливает локальный сервер туннеля и завершает активные соединения.",
+                        "docstring": "Останавливает локальный сервер туннеля и завершает активные соединения.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 104,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_handle_client",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, client_reader, client_writer)",
+                        "summary": "Обрабатывает входящее соединение от клиента (браузера).",
+                        "docstring": "Обрабатывает входящее соединение от клиента (браузера).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 119,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_handle_connect",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, target, client_reader, client_writer)",
+                        "summary": "Обрабатывает CONNECT запрос для HTTPS соединений.",
+                        "docstring": "Обрабатывает CONNECT запрос для HTTPS соединений.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 167,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_handle_http",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, initial_headers, client_reader, client_writer)",
+                        "summary": "Обрабатывает стандартные HTTP запросы (GET, POST и др.).",
+                        "docstring": "Обрабатывает стандартные HTTP запросы (GET, POST и др.).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 226,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_socks5_handshake",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, writer_reader, writer, target)",
+                        "summary": "Выполняет рукопожатие по протоколу SOCKS5 (RFC 1928 / RFC 1929).",
+                        "docstring": "Выполняет рукопожатие по протоколу SOCKS5 (RFC 1928 / RFC 1929).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 272,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_pipe",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, reader, writer)",
+                        "summary": "Передает поток байтов из reader в writer до достижения EOF.",
+                        "docstring": "Передает поток байтов из reader в writer до достижения EOF.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 341,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
               }
             ],
             "symbols": [
@@ -30732,7 +31286,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 10,
+                "line_number": 12,
                 "bases": [],
                 "children": []
               },
@@ -30752,7 +31306,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 16,
+                "line_number": 20,
                 "bases": [],
                 "children": []
               },
@@ -30772,7 +31326,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 24,
+                "line_number": 28,
                 "bases": [],
                 "children": []
               }
@@ -30796,7 +31350,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 18,
+            "line_number": 20,
             "bases": [],
             "children": []
           },
@@ -30816,7 +31370,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 26,
+            "line_number": 30,
             "bases": [],
             "children": []
           },
@@ -30836,7 +31390,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 34,
+            "line_number": 38,
             "bases": [],
             "children": []
           }
@@ -40005,8 +40559,48 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/proxy/extension",
+      "target": "chutils/fs",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/proxy/extension",
+      "target": "chutils/lifecycle",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/proxy/extension",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/extension",
+      "target": "chutils/scraping/proxy/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/extension",
+      "target": "chutils/scraping/proxy/parser",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/proxy/parser",
       "target": "chutils/scraping/proxy/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/tunnel",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/tunnel",
+      "target": "chutils/scraping/proxy/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/tunnel",
+      "target": "chutils/scraping/proxy/parser",
       "weight": 1
     },
     {
@@ -40524,8 +41118,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "34ad2a8532611ade989a5f7b153639848c7ee6ab (dirty)",
-    "generated_at": "2026-09-10T00:38:23.016627+00:00",
-    "project_hash": "7b4712e479910affa117f0e06655e3f181a65cef8d82e1605036fe7a9cf14955"
+    "git_commit": "e42e4d64e914b858f8b15f943b4e7eeffea5472b (dirty)",
+    "generated_at": "2026-09-10T00:45:43.411434+00:00",
+    "project_hash": "27680f13e7314f8aee19c54ad96633126ed70f93369bd50dc1700d12ae3da7a6"
   }
 }

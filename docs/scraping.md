@@ -406,3 +406,33 @@ chrome_arg = proxy.to_chrome_arg()  # "--proxy-server=socks5://proxy.example.com
 # Selenium Capabilities
 selenium_proxy = proxy.to_selenium()  # {"proxyType": "MANUAL", "httpProxy": ..., ...}
 ```
+
+### Авторизация прокси в nodriver / Chromium через расширение (`ChromeProxyExtension`)
+
+Так как флаг Chromium `--proxy-server` не поддерживает передачу логина и пароля, `ChromeProxyExtension` автоматически формирует временное Manifest v3 расширение с обработчиком `chrome.webRequest.onAuthRequired`:
+
+```python
+from chutils.scraping import ChromeProxyExtension
+
+# Создание расширения в контекстном менеджере с авто-очисткой
+with ChromeProxyExtension("http://user:pass@1.2.3.4:8080") as ext:
+    # Получение аргументов для запуска Chromium / nodriver
+    args = ext.get_chrome_args()
+    # ['--load-extension=...', '--disable-extensions-except=...']
+    # nodriver.start(browser_args=args)
+```
+
+### Локальный асинхронный туннель-форвардер (`AsyncProxyTunnel`)
+
+Для headless-окружений, где расширения браузера могут быть отключены, используется легковесный асинхронный локальный сервер `AsyncProxyTunnel`. Браузер подключается к локальному адресу без авторизации, а туннель прозрачно инжектирует заголовок `Proxy-Authorization` в удаленный HTTP/SOCKS5 прокси:
+
+```python
+from chutils.scraping import AsyncProxyTunnel
+
+# Запуск туннеля
+async with AsyncProxyTunnel("socks5://user:pass@remote-proxy.com:1080") as tunnel:
+    # Браузер направляется на локальный туннель:
+    browser_arg = tunnel.to_chrome_arg()  # "--proxy-server=http://127.0.0.1:54321"
+    # nodriver.start(browser_args=[browser_arg])
+```
+

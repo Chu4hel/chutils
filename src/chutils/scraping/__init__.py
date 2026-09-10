@@ -11,12 +11,16 @@ if TYPE_CHECKING:
         ProfileManager as ProfileManager,
     )
     from .proxy import (
+        AsyncProxyTunnel as AsyncProxyTunnel,
+        ChromeProxyExtension as ChromeProxyExtension,
         ProxyConfig as ProxyConfig,
         parse_proxy as parse_proxy,
     )
 
 _LAZY_MAPPING = {
+    "AsyncProxyTunnel": (".proxy", "AsyncProxyTunnel"),
     "BrowserProfile": (".profiles", "BrowserProfile"),
+    "ChromeProxyExtension": (".proxy", "ChromeProxyExtension"),
     "ProfileManager": (".profiles", "ProfileManager"),
     "ProxyConfig": (".proxy", "ProxyConfig"),
     "parse_proxy": (".proxy", "parse_proxy"),
@@ -39,7 +43,9 @@ def __dir__() -> list[str]:
 
 
 __all__ = [
+    "AsyncProxyTunnel",
     "BrowserProfile",
+    "ChromeProxyExtension",
     "ProfileManager",
     "ProxyConfig",
     "captcha",
