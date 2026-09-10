@@ -20,6 +20,10 @@ if TYPE_CHECKING:
     from .session import (
         LiveBrowserSession as LiveBrowserSession,
     )
+    from .snapshot import (
+        SnapshotRecorder as SnapshotRecorder,
+        use_html_snapshot as use_html_snapshot,
+    )
 
 _LAZY_MAPPING = {
     "LiveBrowserSession": (".session", "LiveBrowserSession"),
@@ -31,7 +35,9 @@ _LAZY_MAPPING = {
     "MockSeleniumDriver": (".mocks", "MockSeleniumDriver"),
     "MockSeleniumElement": (".mocks", "MockSeleniumElement"),
     "RecordedRequest": (".server", "RecordedRequest"),
+    "SnapshotRecorder": (".snapshot", "SnapshotRecorder"),
     "TestResponse": (".server", "TestResponse"),
+    "use_html_snapshot": (".snapshot", "use_html_snapshot"),
 }
 
 
@@ -46,7 +52,7 @@ def __getattr__(name: str) -> Any:
 def __dir__() -> list[str]:
     return sorted(
         list(_LAZY_MAPPING.keys())
-        + ["mocks", "server", "session", "__all__", "__doc__"]
+        + ["mocks", "server", "session", "snapshot", "__all__", "__doc__"]
     )
 
 
@@ -60,8 +66,11 @@ __all__ = [
     "MockSeleniumDriver",
     "MockSeleniumElement",
     "RecordedRequest",
+    "SnapshotRecorder",
     "TestResponse",
     "mocks",
     "server",
     "session",
+    "snapshot",
+    "use_html_snapshot",
 ]

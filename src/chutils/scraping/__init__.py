@@ -29,6 +29,8 @@ if TYPE_CHECKING:
         MockNodriverTab as MockNodriverTab,
         MockPlaywrightPage as MockPlaywrightPage,
         MockSeleniumDriver as MockSeleniumDriver,
+        SnapshotRecorder as SnapshotRecorder,
+        use_html_snapshot as use_html_snapshot,
     )
 
 _LAZY_MAPPING = {
@@ -43,6 +45,8 @@ _LAZY_MAPPING = {
     "ProfileManager": (".profiles", "ProfileManager"),
     "ProxyConfig": (".proxy", "ProxyConfig"),
     "ProxyPool": (".proxy", "ProxyPool"),
+    "SnapshotRecorder": (".testing", "SnapshotRecorder"),
+    "use_html_snapshot": (".testing", "use_html_snapshot"),
     "async_nodriver_proxy": (".proxy", "async_nodriver_proxy"),
     "check_proxy": (".proxy", "check_proxy"),
     "get_nodriver_proxy_args": (".proxy", "get_nodriver_proxy_args"),
@@ -88,6 +92,7 @@ __all__ = [
     "ProfileManager",
     "ProxyConfig",
     "ProxyPool",
+    "SnapshotRecorder",
     "async_nodriver_proxy",
     "captcha",
     "check_proxy",
@@ -100,4 +105,5 @@ __all__ = [
     "parse_proxy",
     "proxy",
     "testing",
+    "use_html_snapshot",
 ]

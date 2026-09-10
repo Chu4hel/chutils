@@ -588,6 +588,35 @@ async with LiveBrowserSession(browser_name="chromium") as session:
 # а временный каталог профиля удаляется с диска даже при падении теста!
 ```
 
+### Оффлайн-снапшоты страниц (`SnapshotRecorder`, `@use_html_snapshot`)
+
+Позволяет сохранять разметку страниц реального сайта при первом обращении (`fetcher`) и мгновенно воспроизводить ее в оффлайн-режиме в тестах без обращения к сети и без запуска браузера:
+
+```python
+from chutils.scraping import use_html_snapshot, MockPlaywrightPage
+
+# 1. Использование в качестве контекстного менеджера с моком Playwright/nodriver/Selenium
+with use_html_snapshot("product_card", as_mock="playwright") as page:
+    # page имеет тип MockPlaywrightPage с загруженной разметкой из tests/fixtures/snapshots/product_card.html
+    title = page.locator("h1").text_content()
+
+# 2. Использование в качестве декоратора тестовой функции
+@use_html_snapshot("catalog_listing", as_mock="nodriver")
+async def test_parse_catalog(tab):
+    # tab - это MockNodriverTab
+    items = await tab.select_all(".catalog-item")
+    assert len(items) > 0
+
+# 3. Автоматическая запись при отсутствии снапшота (fetcher)
+def fetch_real_page():
+    # Реальный сетевой запрос или вызов браузера
+    return "<div class='price'>1000 ₽</div>"
+
+with use_html_snapshot("price_page", fetcher=fetch_real_page) as html:
+    # Сохраняется в tests/fixtures/snapshots/price_page.html и не пересоздается при повторных тестах
+    assert "1000" in html
+```
+
 
 
 
