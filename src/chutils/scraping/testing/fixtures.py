@@ -71,30 +71,42 @@ def html_snapshot_recorder(tmp_path: Path) -> SnapshotRecorder:
 
 
 @pytest.fixture
-def mock_nodriver_tab() -> Callable[[str], MockNodriverTab]:
+def mock_nodriver_tab() -> Callable[..., MockNodriverTab]:
     """Фабрика для создания легковесного мока вкладки nodriver.
 
     Returns:
         Функция, принимающая HTML строку и возвращающая MockNodriverTab.
     """
-    return lambda html="": MockNodriverTab(html)
+
+    def _factory(html: str = "") -> MockNodriverTab:
+        return MockNodriverTab(html)
+
+    return _factory
 
 
 @pytest.fixture
-def mock_playwright_page() -> Callable[[str], MockPlaywrightPage]:
+def mock_playwright_page() -> Callable[..., MockPlaywrightPage]:
     """Фабрика для создания мока страницы Playwright.
 
     Returns:
         Функция, принимающая HTML строку и возвращающая MockPlaywrightPage.
     """
-    return lambda html="": MockPlaywrightPage(html)
+
+    def _factory(html: str = "") -> MockPlaywrightPage:
+        return MockPlaywrightPage(html)
+
+    return _factory
 
 
 @pytest.fixture
-def mock_selenium_driver() -> Callable[[str], MockSeleniumDriver]:
+def mock_selenium_driver() -> Callable[..., MockSeleniumDriver]:
     """Фабрика для создания мока драйвера Selenium.
 
     Returns:
         Функция, принимающая HTML строку и возвращающая MockSeleniumDriver.
     """
-    return lambda html="": MockSeleniumDriver(html)
+
+    def _factory(html: str = "") -> MockSeleniumDriver:
+        return MockSeleniumDriver(html)
+
+    return _factory

@@ -161,7 +161,13 @@ class use_html_snapshot:
             return self.recorder.load(self.name)
 
         res = self.fetcher()
+        html: str
         if inspect.isawaitable(res):
+
+            async def _resolve(coro: Any) -> str:
+                val = await coro
+                return str(val)
+
             try:
                 loop = asyncio.get_running_loop()
             except RuntimeError:
@@ -169,9 +175,9 @@ class use_html_snapshot:
 
             if loop is not None and loop.is_running():
                 # Если уже внутри loop, создаем задачу в потоке
-                html = asyncio.run_coroutine_threadsafe(res, loop).result()
+                html = asyncio.run_coroutine_threadsafe(_resolve(res), loop).result()
             else:
-                html = asyncio.run(res)
+                html = asyncio.run(_resolve(res))
         else:
             html = str(res)
 
@@ -191,8 +197,10 @@ class use_html_snapshot:
             return self.recorder.load(self.name)
 
         res = self.fetcher()
+        html: str
         if inspect.isawaitable(res):
-            html = await res
+            resolved = await res
+            html = str(resolved)
         else:
             html = str(res)
 

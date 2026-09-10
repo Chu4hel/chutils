@@ -22952,7 +22952,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 9,
+                "line_number": 10,
                 "bases": [
                   "logging.handlers.TimedRotatingFileHandler"
                 ],
@@ -22973,7 +22973,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 18,
+                    "line_number": 19,
                     "bases": [],
                     "children": []
                   }
@@ -22995,7 +22995,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 28,
+                "line_number": 29,
                 "bases": [
                   "logging.handlers.RotatingFileHandler"
                 ],
@@ -23016,7 +23016,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 35,
+                    "line_number": 36,
                     "bases": [],
                     "children": []
                   }
@@ -23038,7 +23038,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 104,
+                "line_number": 106,
                 "bases": [
                   "SafeTimedRotatingFileHandler"
                 ],
@@ -23059,7 +23059,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 109,
+                    "line_number": 111,
                     "bases": [],
                     "children": []
                   }
@@ -32060,7 +32060,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 84,
+                    "line_number": 88,
                     "bases": [],
                     "children": []
                   },
@@ -32082,7 +32082,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 94,
+                    "line_number": 102,
                     "bases": [],
                     "children": []
                   }
@@ -34601,7 +34601,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 181,
+                        "line_number": 187,
                         "bases": [],
                         "children": []
                       }
@@ -44589,8 +44589,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "20803c071410643e96f904c04a2bf625846bbfe8 (dirty)",
-    "generated_at": "2026-09-10T11:44:41.573621+00:00",
-    "project_hash": "46cc51a01384ab91e7510c99caf201f11fb6f1032abb9b9d9c4ae4ab6f6fbfd5"
+    "git_commit": "b2771f2ae310a2a1b61b5dc80f84dd1625919c0f (dirty)",
+    "generated_at": "2026-09-10T11:49:23.451989+00:00",
+    "project_hash": "60e5d96232ed78531b54911a072de0f33b5309cb6456e0cfcb583cd6a4c059b5"
   }
 }

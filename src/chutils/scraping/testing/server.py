@@ -54,7 +54,7 @@ class TestResponse:
 class _TestHandler(BaseHTTPRequestHandler):
     """Внутренний обработчик HTTP-запросов тестового сервера."""
 
-    server: "_CustomHTTPServer"  # type: ignore[assignment]
+    server: "_CustomHTTPServer"
 
     def do_GET(self) -> None:
         """Обрабатывает входящий HTTP GET запрос."""
