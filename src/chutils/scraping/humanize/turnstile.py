@@ -50,7 +50,14 @@ TURNSTILE_INSPECT_JS = """(function() {
         }
     }
 
-    // 2. Поиск кандидатов: интерактивный iframe или контейнер Turnstile
+    // 2. Проверка наличия Hard Challenge (интерактивный челлендж с выбором картинок/аудио)
+    const hardChallengeElements = findElementsDeep(
+        document,
+        'iframe[src*="challenges.cloudflare.com"][src*="interactive"], iframe[src*="challenge-platform"][src*="interactive"], #challenge-stage .interactive-challenge, div[id*="cf-challenge"][class*="interactive"]'
+    );
+    const hasHardChallenge = hardChallengeElements.length > 0;
+
+    // 3. Поиск кандидатов: интерактивный iframe или контейнер Turnstile
     const iframes = findElementsDeep(document, 'iframe[src*="challenges.cloudflare.com"], iframe[src*="turnstile"]');
     const containers = findElementsDeep(document, '.cf-turnstile, #turnstile-wrapper, [data-sitekey]');
     const candidates = iframes.concat(containers);
@@ -82,6 +89,7 @@ TURNSTILE_INSPECT_JS = """(function() {
         // Проверка состояния интерактивности виджета (не спиннер / checking)
         const stateAttr = el.getAttribute('data-state') || '';
         const isChecking = stateAttr === 'checking' || stateAttr === 'verifying';
+        const isInteractiveChallenge = hasHardChallenge || stateAttr === 'interactive' || stateAttr === 'challenge';
         const isInteractive = isVisible && !isChecking;
 
         const isIframe = el.tagName && el.tagName.toLowerCase() === 'iframe';
@@ -96,7 +104,24 @@ TURNSTILE_INSPECT_JS = """(function() {
             height: rect.height,
             visible: isVisible,
             interactive: isInteractive,
+            interactive_challenge_required: isInteractiveChallenge,
             data_state: stateAttr
+        };
+    }
+
+    if (hasHardChallenge) {
+        return {
+            found: true,
+            solved: false,
+            type: 'hard_challenge',
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+            visible: true,
+            interactive: false,
+            interactive_challenge_required: true,
+            data_state: 'interactive'
         };
     }
 
@@ -163,10 +188,31 @@ async def _detect_cf_turnstile_cdp_fallback(tab: Any) -> dict[str, Any] | None:
                         "height": float(getattr(pos, "height", 65.0)),
                         "visible": True,
                         "interactive": True,
+                        "interactive_challenge_required": False,
                     }
         except Exception as exc:
             logger.debug(f"CDP fallback error for {sel}: {exc}")
     return None
+
+
+async def _ensure_tab_focus(tab: Any) -> None:
+    """Обеспечивает активный фокус вкладки (bring to front) для корректной доставки событий мыши."""
+    try:
+        if hasattr(tab, "bring_to_front") and callable(tab.bring_to_front):
+            res = tab.bring_to_front()
+            if inspect.isawaitable(res):
+                await res
+        elif hasattr(tab, "send") and callable(tab.send):
+            try:
+                from nodriver.cdp import page
+
+                res = tab.send(page.bring_to_front())
+                if inspect.isawaitable(res):
+                    await res
+            except Exception:
+                pass
+    except Exception as exc:
+        logger.debug(f"Не удалось перевести вкладку на передний план: {exc}")
 
 
 async def detect_cf_turnstile(tab: Any) -> dict[str, Any] | None:
@@ -260,15 +306,25 @@ async def solve_cf_turnstile(
     """
     start_time = time.monotonic()
     clicked = False
+    last_info: dict[str, Any] | None = None
 
     logger.debug("Начало ожидания и решения Cloudflare Turnstile...")
+    await _ensure_tab_focus(tab)
 
     while time.monotonic() - start_time < timeout:
         # Проверка состояния виджета за один вызов инспекции
         info = await detect_cf_turnstile(tab)
+        if info:
+            last_info = info
         if info and info.get("solved"):
             logger.info("Cloudflare Turnstile успешно решен.")
             return True
+
+        if info and info.get("interactive_challenge_required"):
+            logger.warning(
+                "Обнаружен интерактивный Cloudflare Hard Challenge (капча с выбором картинок/аудио). "
+                "Автоматический клик недостаточен."
+            )
 
         # Проверка наличия cookies cf_clearance
         try:
@@ -331,6 +387,7 @@ async def solve_cf_turnstile(
                 else None
             )
 
+            await _ensure_tab_focus(tab)
             try:
                 await async_click(
                     tab,
@@ -353,6 +410,10 @@ async def solve_cf_turnstile(
         return True
 
     if raise_on_failure:
+        if last_info and last_info.get("interactive_challenge_required"):
+            raise RuntimeError(
+                f"Обнаружен интерактивный Cloudflare Hard Challenge (требуется ручное решение или внешний сервис) за отведенное время ({timeout} сек.)."
+            )
         raise RuntimeError(
             f"Не удалось решить Cloudflare Turnstile за отведенное время ({timeout} сек.)."
         )

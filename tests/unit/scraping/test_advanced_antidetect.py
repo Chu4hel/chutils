@@ -132,5 +132,6 @@ def test_get_browser_launch_args_enhanced() -> None:
     args = get_browser_launch_args()
     assert "--disable-blink-features=AutomationControlled" in args
     assert "--no-sandbox" in args
+    assert "--disable-dev-shm-usage" in args
     assert any("--lang=" in a for a in args)
     assert any("IsolateOrigins" in a or "disable-features" in a for a in args)

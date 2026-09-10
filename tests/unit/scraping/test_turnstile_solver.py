@@ -464,3 +464,78 @@ async def test_solve_cf_turnstile_retry_on_expired() -> None:
         assert result is True
         # Было произведено 2 клика: первоначальный и повторный после expired
         assert step["clicks"] == 2
+
+
+@pytest.mark.asyncio
+async def test_detect_cf_turnstile_hard_challenge() -> None:
+    """Проверка обнаружения режима Hard Challenge (требуется интерактивное решение)."""
+    mock_tab = MagicMock()
+    mock_tab.evaluate = AsyncMock(
+        return_value={
+            "found": True,
+            "solved": False,
+            "type": "hard_challenge",
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "visible": True,
+            "interactive": False,
+            "interactive_challenge_required": True,
+            "data_state": "interactive",
+        }
+    )
+
+    info = await detect_cf_turnstile(mock_tab)
+    assert info is not None
+    assert info["interactive_challenge_required"] is True
+    assert info["type"] == "hard_challenge"
+
+
+@pytest.mark.asyncio
+async def test_solve_cf_turnstile_hard_challenge_raises() -> None:
+    """Проверка выброса RuntimeError с описанием Hard Challenge при raise_on_failure=True."""
+    mock_tab = MagicMock()
+    mock_tab.evaluate = AsyncMock(
+        return_value={
+            "found": True,
+            "solved": False,
+            "type": "hard_challenge",
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "visible": True,
+            "interactive": False,
+            "interactive_challenge_required": True,
+            "data_state": "interactive",
+        }
+    )
+
+    with (
+        patch(
+            "chutils.scraping.humanize.turnstile.extract_clearance_cookies",
+            return_value={"cookies": {}},
+        ),
+        pytest.raises(RuntimeError, match="Hard Challenge"),
+    ):
+        await solve_cf_turnstile(
+            mock_tab,
+            timeout=0.1,
+            check_interval=0.05,
+            raise_on_failure=True,
+        )
+
+
+@pytest.mark.asyncio
+async def test_solve_cf_turnstile_ensures_tab_focus() -> None:
+    """Проверка вызова bring_to_front при старте решения капчи."""
+    mock_tab = MagicMock()
+    mock_tab.bring_to_front = AsyncMock()
+    mock_tab.evaluate = AsyncMock(
+        return_value={"found": True, "solved": True, "token": "solved_token"}
+    )
+
+    result = await solve_cf_turnstile(mock_tab, timeout=1.0)
+    assert result is True
+    assert mock_tab.bring_to_front.called

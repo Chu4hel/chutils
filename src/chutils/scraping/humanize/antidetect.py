@@ -279,6 +279,7 @@ def get_browser_launch_args() -> list[str]:
         "--disable-infobars",
         "--no-sandbox",
         "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
         "--excludeSwitches=enable-automation",
         "--use-fake-ui-for-media-stream",
         "--use-fake-device-for-media-stream",
