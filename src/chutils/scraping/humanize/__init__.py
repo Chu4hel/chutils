@@ -15,6 +15,7 @@ from .antidetect import (
     apply_antidetect_playwright,
     apply_antidetect_selenium,
     get_browser_launch_args,
+    get_client_hints,
 )
 from .math_utils import (
     BezierCurveGenerator,
@@ -49,6 +50,7 @@ __all__ = [
     "async_type_text",
     "click",
     "get_browser_launch_args",
+    "get_client_hints",
     "get_random_search_queries",
     "get_search_engine_config",
     "human_sleep",

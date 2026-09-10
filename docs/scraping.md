@@ -17,6 +17,12 @@ Playwright и Selenium.
 pip install "chutils[scraping]"
 ```
 
+Для использования антидетект-браузера нового поколения Camoufox (Playwright Firefox с C++ инъекциями):
+
+```bash
+pip install "chutils[camoufox]"
+```
+
 *Примечание: Если вам нужны только математические генераторы (траектории, задержки, опечатки), вы можете использовать их
 без установки дополнительных библиотек автоматизации.*
 
@@ -684,6 +690,55 @@ async def test_scraper_with_fixtures(local_test_server, mock_playwright_page):
     page = mock_playwright_page("<h1>Товар</h1>")
     assert await page.locator("h1").inner_text() == "Товар"
 ```
+
+---
+
+## 7. Антидетект-браузер Camoufox (`chutils.scraping.camoufox`)
+
+Для сценариев, где инъекций в CDP/JS недостаточно (например, при сложной проверке C++ рендеринга и WebGL Cloudflare Turnstile), рекомендуется использовать антидетект-браузер Camoufox (модифицированный Playwright Firefox со встроенной защитой на уровне ядра движка).
+
+Фабрика `launch_camoufox` возвращает асинхронный контекстный менеджер браузера:
+
+```python
+import asyncio
+from chutils.scraping import launch_camoufox
+
+
+async def main():
+    async with await launch_camoufox(headless=True, os="windows") as browser:
+        page = await browser.new_page()
+        await page.goto("https://nowecurity.com")
+        print(await page.title())
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+---
+
+## 8. Улучшенный JS-антидетект и Client Hints
+
+В модуль `chutils.scraping.humanize.antidetect` добавлены следующие механизмы:
+
+1. **Детерминированный Canvas Noise (`session_seed`)**: Шум накладывается через псевдослучайный алгоритм на базе стабильного сида сессии. Это исключает обнаружение антифрод-скриптами частой мутации канваса при многократном чтении `getImageData`.
+2. **Cross-realm iframe prototype protection**: Перехват создания элементов `iframe` и предотвращение извлечения чистых непатченных прототипов (`Function.prototype.toString`, `navigator.webdriver`).
+3. **Генерация Client Hints (`get_client_hints`)**: Формирование согласованной структуры `navigator.userAgentData` (brands, platform, mobile, entropy values) под указанный User-Agent:
+
+```python
+from chutils.scraping.humanize import (
+    apply_antidetect_playwright,
+    get_client_hints,
+)
+
+hints = get_client_hints("Mozilla/5.0 (Windows NT 10.0; Win64; x64)... Chrome/120.0.0.0 Safari/537.36")
+await apply_antidetect_playwright(
+    context,
+    session_seed="unique_session_123",
+    client_hints=hints,
+)
+```
+
 
 
 

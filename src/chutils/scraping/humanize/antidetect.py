@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import re
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
@@ -12,12 +13,57 @@ DEFAULT_HARDWARE_CONCURRENCY = 8
 DEFAULT_DEVICE_MEMORY = 8
 
 
+def get_client_hints(user_agent: str | None = None) -> dict[str, Any]:
+    """Генерирует словарь согласованных Client Hints (navigator.userAgentData) на основе User-Agent.
+
+    Args:
+        user_agent: Строка User-Agent. Если None, используется стандартный Chrome на Windows.
+
+    Returns:
+        Словарь с параметрами Client Hints: platform, mobile, brands.
+    """
+    ua = user_agent or (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    )
+
+    platform = "Windows"
+    if "Macintosh" in ua or "Mac OS X" in ua:
+        platform = "macOS"
+    elif "Android" in ua:
+        platform = "Android"
+    elif "Linux" in ua:
+        platform = "Linux"
+    elif "iPhone" in ua or "iPad" in ua:
+        platform = "iOS"
+
+    mobile = platform in ("Android", "iOS") or "Mobile" in ua
+
+    # Извлечение версии Chrome
+    chrome_match = re.search(r"Chrome/(\d+)", ua)
+    chrome_version = chrome_match.group(1) if chrome_match else "120"
+
+    brands = [
+        {"brand": "Not_A Brand", "version": "8"},
+        {"brand": "Chromium", "version": chrome_version},
+        {"brand": "Google Chrome", "version": chrome_version},
+    ]
+
+    return {
+        "platform": platform,
+        "mobile": mobile,
+        "brands": brands,
+    }
+
+
 def _get_antidetect_js(
-    webgl_vendor: str,
-    webgl_renderer: str,
-    hardware_concurrency: int,
-    device_memory: int,
+    webgl_vendor: str = DEFAULT_WEBGL_VENDOR,
+    webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
+    hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
+    device_memory: int = DEFAULT_DEVICE_MEMORY,
     stealth_minimal: bool = False,
+    session_seed: str | int = 1337,
+    client_hints: dict[str, Any] | None = None,
 ) -> str:
     """Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами."""
     vendor_js = json.dumps(webgl_vendor)
@@ -25,6 +71,8 @@ def _get_antidetect_js(
     concurrency_js = int(hardware_concurrency)
     memory_js = int(device_memory)
     minimal_js = "true" if stealth_minimal else "false"
+    seed_js = json.dumps(str(session_seed))
+    hints_js = json.dumps(client_hints) if client_hints is not None else "null"
 
     return f"""(function() {{
     // Утилита для маскировки функций под нативные [native code]
@@ -36,6 +84,17 @@ def _get_antidetect_js(
             fn.toString.toString = function toString() {{ return "function toString() {{ [native code] }}"; }};
         }} catch (e) {{}}
         return fn;
+    }};
+
+    // Детерминированный LCG PRNG для Canvas шума
+    const sessionSeed = {seed_js};
+    let seedNum = 0;
+    for (let i = 0; i < sessionSeed.length; i++) {{
+        seedNum = ((seedNum << 5) - seedNum + sessionSeed.charCodeAt(i)) & 0xffffffff;
+    }}
+    const pseudoRandom = (offset) => {{
+        const x = Math.sin(seedNum + offset) * 10000;
+        return x - Math.floor(x);
     }};
 
     // 1. Скрытие и очистка navigator.webdriver
@@ -58,13 +117,14 @@ def _get_antidetect_js(
     const isMinimal = {minimal_js};
 
     if (!isMinimal) {{
-        // 2. Рандомизация отпечатка Canvas (шум в getImageData) с маскировкой toString
+        // 2. Рандомизация отпечатка Canvas с детерминированным шумом
         try {{
             const originalGetImageData = CanvasRenderingContext2D.prototype.getImageData;
             const patchedGetImageData = function getImageData(x, y, w, h) {{
                 const imageData = originalGetImageData.apply(this, arguments);
                 if (imageData && imageData.data && imageData.data.length >= 4) {{
-                    imageData.data[0] = (imageData.data[0] + (Math.random() > 0.5 ? 1 : -1)) % 256;
+                    const delta = pseudoRandom(x + y * 57) > 0.5 ? 1 : -1;
+                    imageData.data[0] = (imageData.data[0] + delta) % 256;
                 }}
                 return imageData;
             }};
@@ -140,6 +200,63 @@ def _get_antidetect_js(
             navigator.permissions.query = makeNative(patchedQuery, 'query');
         }}
     }} catch (e) {{}}
+
+    // 7. Защита от извлечения прототипов через скрытый iframe (Cross-realm prototype inspection)
+    try {{
+        const originalCreateElement = Document.prototype.createElement;
+        Document.prototype.createElement = makeNative(function createElement(tagName, options) {{
+            const element = originalCreateElement.apply(this, arguments);
+            if (element && typeof tagName === 'string' && tagName.toLowerCase() === 'iframe') {{
+                element.addEventListener('load', function() {{
+                    try {{
+                        if (element.contentWindow) {{
+                            const cw = element.contentWindow;
+                            if (cw.Function && cw.Function.prototype) {{
+                                cw.Function.prototype.toString = window.Function.prototype.toString;
+                            }}
+                            if (cw.navigator) {{
+                                Object.defineProperty(cw.navigator, 'webdriver', {{
+                                    get: makeNative(() => undefined, 'get webdriver'),
+                                    enumerable: true,
+                                    configurable: true
+                                }});
+                            }}
+                        }}
+                    }} catch (err) {{}}
+                }});
+            }}
+            return element;
+        }}, 'createElement');
+    }} catch (e) {{}}
+
+    // 8. Эмуляция Client Hints (navigator.userAgentData) при наличии hints
+    const clientHintsData = {hints_js};
+    if (clientHintsData) {{
+        try {{
+            const uaData = {{
+                brands: clientHintsData.brands || [],
+                mobile: Boolean(clientHintsData.mobile),
+                platform: clientHintsData.platform || 'Windows',
+                getHighEntropyValues: makeNative(function getHighEntropyValues(hints) {{
+                    return Promise.resolve({{
+                        brands: clientHintsData.brands || [],
+                        mobile: Boolean(clientHintsData.mobile),
+                        platform: clientHintsData.platform || 'Windows',
+                        architecture: 'x86',
+                        bitness: '64',
+                        model: '',
+                        platformVersion: '15.0.0',
+                        uaFullVersion: (clientHintsData.brands && clientHintsData.brands[2] ? clientHintsData.brands[2].version : '120') + '.0.0.0'
+                    }});
+                }}, 'getHighEntropyValues')
+            }};
+            Object.defineProperty(navigator, 'userAgentData', {{
+                get: makeNative(() => uaData, 'get userAgentData'),
+                enumerable: true,
+                configurable: true
+            }});
+        }} catch (e) {{}}
+    }}
 }})();"""
 
 
@@ -189,6 +306,8 @@ async def apply_antidetect_playwright(
     webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
     hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
     device_memory: int = DEFAULT_DEVICE_MEMORY,
+    session_seed: str | int = 1337,
+    client_hints: dict[str, Any] | None = None,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к контексту Playwright.
 
@@ -198,6 +317,8 @@ async def apply_antidetect_playwright(
         webgl_renderer: Подменяемая видеокарта WebGL.
         hardware_concurrency: Эмулируемое количество ядер процессора.
         device_memory: Эмулируемый объем оперативной памяти в ГБ.
+        session_seed: Сид для детерминированного шума Canvas.
+        client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
     """
     _ensure_playwright()
     script = _get_antidetect_js(
@@ -205,6 +326,8 @@ async def apply_antidetect_playwright(
         webgl_renderer=webgl_renderer,
         hardware_concurrency=hardware_concurrency,
         device_memory=device_memory,
+        session_seed=session_seed,
+        client_hints=client_hints,
     )
     await context.add_init_script(script)
 
@@ -216,6 +339,8 @@ def apply_antidetect_selenium(
     webgl_renderer: str = DEFAULT_WEBGL_RENDERER,
     hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
     device_memory: int = DEFAULT_DEVICE_MEMORY,
+    session_seed: str | int = 1337,
+    client_hints: dict[str, Any] | None = None,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к сессии Selenium.
 
@@ -225,6 +350,8 @@ def apply_antidetect_selenium(
         webgl_renderer: Подменяемая видеокарта WebGL.
         hardware_concurrency: Эмулируемое количество ядер процессора.
         device_memory: Эмулируемый объем оперативной памяти в ГБ.
+        session_seed: Сид для детерминированного шума Canvas.
+        client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
     """
     _ensure_selenium()
     script = _get_antidetect_js(
@@ -232,6 +359,8 @@ def apply_antidetect_selenium(
         webgl_renderer=webgl_renderer,
         hardware_concurrency=hardware_concurrency,
         device_memory=device_memory,
+        session_seed=session_seed,
+        client_hints=client_hints,
     )
     if hasattr(driver, "execute_cdp_cmd"):
         driver.execute_cdp_cmd(
@@ -249,6 +378,8 @@ async def apply_antidetect_nodriver(
     hardware_concurrency: int = DEFAULT_HARDWARE_CONCURRENCY,
     device_memory: int = DEFAULT_DEVICE_MEMORY,
     stealth_minimal: bool = False,
+    session_seed: str | int = 1337,
+    client_hints: dict[str, Any] | None = None,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.
 
@@ -260,6 +391,8 @@ async def apply_antidetect_nodriver(
         device_memory: Эмулируемый объем оперативной памяти в ГБ.
         stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL,
             сохраняя естественный отпечаток установленного браузера Google Chrome.
+        session_seed: Сид для детерминированного шума Canvas.
+        client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
     """
     _ensure_nodriver()
     from nodriver.cdp import page
@@ -270,6 +403,8 @@ async def apply_antidetect_nodriver(
         hardware_concurrency=hardware_concurrency,
         device_memory=device_memory,
         stealth_minimal=stealth_minimal,
+        session_seed=session_seed,
+        client_hints=client_hints,
     )
     await tab.send(page.add_script_to_evaluate_on_new_document(source=script))
 
