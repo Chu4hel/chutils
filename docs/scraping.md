@@ -617,6 +617,44 @@ with use_html_snapshot("price_page", fetcher=fetch_real_page) as html:
     assert "1000" in html
 ```
 
+### Валидация качества извлечения данных (`Extraction Quality Assertions`)
+
+Для быстрой и надежной верификации структуры и качества распарсенных данных модуль предоставляет специализированные ассерты с информативными сообщениями об ошибках:
+
+```python
+from chutils.scraping import (
+    assert_extraction_complete,
+    assert_valid_url,
+    assert_valid_price,
+    assert_schema_match,
+)
+from pydantic import BaseModel
+
+class ProductSchema(BaseModel):
+    id: int
+    title: str
+    price: float
+
+item = {
+    "id": 1,
+    "title": "Умные часы",
+    "price": 14990.0,
+    "url": "https://example.com/item/1",
+}
+
+# 1. Проверка полноты и отсутствия None / пустых строк
+assert_extraction_complete(item, required_keys=["id", "title", "price", "url"])
+
+# 2. Проверка корректности ссылок
+assert_valid_url(item["url"])
+
+# 3. Проверка числовых или текстовых цен ("14 990 ₽", "$199.99") и диапазонов
+assert_valid_price(item["price"], min_value=100.0, max_value=100000.0)
+
+# 4. Проверка соответствия Pydantic-схеме (для одиночных элементов или списков)
+assert_schema_match(item, ProductSchema)
+```
+
 
 
 

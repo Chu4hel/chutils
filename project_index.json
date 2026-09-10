@@ -31815,6 +31815,117 @@
             "docstring": "Модуль инструментов автотестирования скраперов и парсеров (chutils.scraping.testing).",
             "children": [
               {
+                "name": "assertions",
+                "path": "chutils/scraping/testing/assertions",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Утверждения (assertions) качества и полноты извлеченных скрапером данных.",
+                "docstring": "Утверждения (assertions) качества и полноты извлеченных скрапером данных.\n\nПредоставляет специализированные валидаторы для автотестов:\n- Полнота извлечения (`assert_extraction_complete`)\n- Валидность HTTP(S) ссылок (`assert_valid_url`)\n- Корректность цен и валют (`assert_valid_price`)\n- Соответствие Pydantic-схемам (`assert_schema_match`)",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 20,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "assert_extraction_complete",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(data, required_keys, allow_empty_strings)",
+                    "summary": "Проверяет полноту и отсутствие пустых значений в распарсенных данных.",
+                    "docstring": "Проверяет полноту и отсутствие пустых значений в распарсенных данных.\n\nArgs:\n    data: Распарсенный словарь или список словарей.\n    required_keys: Список обязательных ключей, которые должны присутствовать.\n    allow_empty_strings: Разрешать ли пустые строки в качестве валидных значений.\n\nRaises:\n    AssertionError: Если обнаружен отсутствующий ключ, значение None или пустая строка.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 23,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "assert_valid_url",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(url, allowed_schemes, require_netloc)",
+                    "summary": "Проверяет корректность извлеченного URL адреса.",
+                    "docstring": "Проверяет корректность извлеченного URL адреса.\n\nArgs:\n    url: Строка URL для проверки.\n    allowed_schemes: Допустимые схемы протоколов (по умолчанию http, https).\n    require_netloc: Требовать ли наличие доменного имени или сетевого хоста.\n\nRaises:\n    AssertionError: Если URL невалиден, относителен или имеет недопустимую схему.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 68,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "assert_valid_price",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(price, min_value, max_value)",
+                    "summary": "Проверяет корректность и границы цены товара.",
+                    "docstring": "Проверяет корректность и границы цены товара.\n\nArgs:\n    price: Значение цены в виде числа, Decimal или форматированной строки (\"1 499 ₽\", \"$19.99\").\n    min_value: Минимально допустимое значение цены (по умолчанию 0.0).\n    max_value: Опциональное максимально допустимое значение цены.\n\nRaises:\n    AssertionError: Если цена нераспознаваема или выходит за установленные границы.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 101,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "assert_schema_match",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(data, schema_cls)",
+                    "summary": "Проверяет соответствие извлеченных данных Pydantic схеме или классу модели.",
+                    "docstring": "Проверяет соответствие извлеченных данных Pydantic схеме или классу модели.\n\nArgs:\n    data: Распарсенный словарь или список словарей.\n    schema_cls: Класс модели (например, Pydantic BaseModel или dataclass).\n\nRaises:\n    AssertionError: Если данные не соответствуют сигнатуре схемы.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 150,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "mocks",
                 "path": "chutils/scraping/testing/mocks",
                 "type": "package",
@@ -34353,7 +34464,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 28,
+                "line_number": 34,
                 "bases": [],
                 "children": []
               },
@@ -34373,7 +34484,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 44,
+                "line_number": 54,
                 "bases": [],
                 "children": []
               },
@@ -34393,7 +34504,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 52,
+                "line_number": 62,
                 "bases": [],
                 "children": []
               }
@@ -34417,7 +34528,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 36,
+            "line_number": 40,
             "bases": [],
             "children": []
           },
@@ -34437,7 +34548,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 60,
+            "line_number": 68,
             "bases": [],
             "children": []
           },
@@ -34457,7 +34568,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 68,
+            "line_number": 76,
             "bases": [],
             "children": []
           }
@@ -43706,6 +43817,11 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/testing/assertions",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/testing/mocks",
       "target": "chutils/scraping/testing/mocks/dom",
       "weight": 2
@@ -44290,8 +44406,8 @@
   "metadata": {
     "chutils_version": "3.6.0",
     "project_version": "3.6.0",
-    "git_commit": "09baee2d775be9f0db474ca7b4fbc6ebac790198 (dirty)",
-    "generated_at": "2026-09-10T01:06:08.917923+00:00",
-    "project_hash": "f16c1d81350e143e049b57c945943657236b6a9f9a24bae4f53bb55cee3ff473"
+    "git_commit": "a38bacd5f86b93ae17fc3988676d05c609a51bfa (dirty)",
+    "generated_at": "2026-09-10T01:09:13.180728+00:00",
+    "project_hash": "a963441e505ae172e63a8e116b80a5d977d710d27dbd3d092669fb56b42b7cf1"
   }
 }

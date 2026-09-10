@@ -17,6 +17,12 @@ if TYPE_CHECKING:
         RecordedRequest as RecordedRequest,
         TestResponse as TestResponse,
     )
+    from .assertions import (
+        assert_extraction_complete as assert_extraction_complete,
+        assert_schema_match as assert_schema_match,
+        assert_valid_price as assert_valid_price,
+        assert_valid_url as assert_valid_url,
+    )
     from .session import (
         LiveBrowserSession as LiveBrowserSession,
     )
@@ -37,6 +43,10 @@ _LAZY_MAPPING = {
     "RecordedRequest": (".server", "RecordedRequest"),
     "SnapshotRecorder": (".snapshot", "SnapshotRecorder"),
     "TestResponse": (".server", "TestResponse"),
+    "assert_extraction_complete": (".assertions", "assert_extraction_complete"),
+    "assert_schema_match": (".assertions", "assert_schema_match"),
+    "assert_valid_price": (".assertions", "assert_valid_price"),
+    "assert_valid_url": (".assertions", "assert_valid_url"),
     "use_html_snapshot": (".snapshot", "use_html_snapshot"),
 }
 
@@ -52,7 +62,7 @@ def __getattr__(name: str) -> Any:
 def __dir__() -> list[str]:
     return sorted(
         list(_LAZY_MAPPING.keys())
-        + ["mocks", "server", "session", "snapshot", "__all__", "__doc__"]
+        + ["assertions", "mocks", "server", "session", "snapshot", "__all__", "__doc__"]
     )
 
 
@@ -68,6 +78,11 @@ __all__ = [
     "RecordedRequest",
     "SnapshotRecorder",
     "TestResponse",
+    "assertions",
+    "assert_extraction_complete",
+    "assert_schema_match",
+    "assert_valid_price",
+    "assert_valid_url",
     "mocks",
     "server",
     "session",
