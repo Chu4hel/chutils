@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+import datetime
 import importlib.util
 import types
 from typing import TYPE_CHECKING, Any
@@ -114,11 +115,15 @@ def _curl_resp_to_http_response(resp: Any) -> HttpResponse:
         Экземпляр HttpResponse.
     """
     headers = dict(resp.headers) if hasattr(resp, "headers") else {}
-    elapsed = (
-        float(resp.elapsed)
-        if hasattr(resp, "elapsed") and resp.elapsed is not None
-        else 0.0
-    )
+    elapsed: float = 0.0
+    if hasattr(resp, "elapsed") and resp.elapsed is not None:
+        if isinstance(resp.elapsed, datetime.timedelta):
+            elapsed = resp.elapsed.total_seconds()
+        else:
+            try:
+                elapsed = float(resp.elapsed)
+            except (TypeError, ValueError):
+                elapsed = 0.0
     return HttpResponse(
         status_code=int(resp.status_code),
         headers=headers,

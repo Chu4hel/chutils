@@ -16,7 +16,7 @@ def _is_installed(package_name: str) -> bool:
     """Проверяет наличие пакета в системе без его импорта."""
     try:
         return importlib.util.find_spec(package_name) is not None
-    except (ImportError, ModuleNotFoundError):
+    except (ImportError, ModuleNotFoundError, ValueError, AttributeError):
         return False
 
 
