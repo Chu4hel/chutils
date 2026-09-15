@@ -98,14 +98,16 @@ async def test_persistent_task_queue_sqlite() -> None:
 @pytest.mark.asyncio
 async def test_persistent_task_queue_push_serialization_error() -> None:
     """Проверяет откат транзакции дедупликации при ошибке сериализации payload."""
-    from datetime import datetime
+    from datetime import datetime, timezone
 
     with tempfile.TemporaryDirectory() as tmpdir:
         db_path = os.path.join(tmpdir, "test_leak.db")
         queue = PersistentTaskQueue(db_path=db_path)
 
         bad_task = ScrapingTask(
-            url="https://e.com", dedup_key="key1", payload={"t": datetime.now()}
+            url="https://e.com",
+            dedup_key="key1",
+            payload={"t": datetime.now(timezone.utc)},
         )
         with pytest.raises(TypeError):
             await queue.push(bad_task)

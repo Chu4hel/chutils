@@ -53,7 +53,9 @@ def export_selenium_profile(driver: Any) -> BrowserProfile:
         engine_origin="selenium",
         cookies=cookies_list,
         storage=StorageData(),
-        headers=HeaderData(user_agent=user_agent),
+        headers=HeaderData(
+            user_agent=user_agent if isinstance(user_agent, str) else None
+        ),
     )
 
 

@@ -368,4 +368,3 @@ async def stop_scheduler() -> None:
     await _scheduler.stop()
     _scheduler = None
     logger.debug("stop_scheduler() завершен, _scheduler сброшен в None.")
-

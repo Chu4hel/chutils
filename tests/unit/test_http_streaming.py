@@ -172,10 +172,8 @@ def test_sync_event_stream_client_success() -> None:
 
     with patch("httpx.Client", return_value=mock_client):
         client = EventStreamClient("http://example.com/sse")
-        events: list[ServerSentEvent] = []
         with client:
-            for event in client:
-                events.append(event)
+            events = list(client)
 
     assert len(events) == 1
     assert events[0].data == "hello"
@@ -331,8 +329,7 @@ def test_sync_websocket_iterator() -> None:
         received = []
         try:
             with client as ws:
-                for msg in ws:
-                    received.append(msg)
+                received.extend(ws)
         except Exception:
             pass
 

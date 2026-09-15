@@ -1,10 +1,10 @@
-# HTTP-клиент и долгоживущие соединения (chutils.http)
+# HTTP-клиент, долгоживущие соединения и TLS Impersonation (chutils.http)
 
-Модуль `chutils.http` предоставляет гибкий и мощный HTTP-клиент на базе `httpx`, а также инструменты для работы с
-долгоживущими соединениями в подмодуле `chutils.http.streaming`:
+Модуль `chutils.http` предоставляет гибкий и мощный HTTP-клиент на базе `httpx`, TLS-клиент для обхода защиты Cloudflare/WAF на базе `curl-cffi`, а также инструменты для работы с долгоживущими соединениями в подмодуле `chutils.http.streaming`:
 
-1. **HTTP Streaming и SSE (Server-Sent Events)** (на стандартных зависимостях `httpx`).
-2. **WebSockets** (требует опциональной установки `chutils[websockets]`).
+1. **TLS Client Impersonation (`TLSSession`, `TLSAsyncClient`)**: Эмуляция отпечатков браузеров JA3/JA4/HTTP2 (Chrome, Safari) для обхода Cloudflare/WAF (опциональная установка `chutils[tls]`).
+2. **HTTP Streaming и SSE (Server-Sent Events)** (на стандартных зависимостях `httpx`).
+3. **WebSockets** (требует опциональной установки `chutils[websockets]`).
 
 ---
 
@@ -16,10 +16,86 @@
 pip install "chutils[web]"
 ```
 
+Для поддержки TLS Client Impersonation (`curl-cffi`):
+
+```bash
+pip install "chutils[tls]"
+```
+
 Для поддержки WebSockets:
 
 ```bash
 pip install "chutils[websockets]"
+```
+
+---
+
+## TLS Client Impersonation (curl-cffi)
+
+Подмодуль `chutils.http.tls_client` позволяет выполнять HTTP-запросы с полной подменой параметров TLS/JA3/JA4/HTTP2 под реальные браузеры, что позволяет обходить защиту WAF (Cloudflare, Akamai, DataDome) без запуска тяжелых headless-браузеров.
+
+При отсутствии установленной библиотеки `curl-cffi` клиенты автоматически выполняют graceful fallback на `httpx` (с сохранением базовой работоспособности) либо выбрасывают информативный `OptionalDependencyError` при прямом вызове фабрик.
+
+### 1. Асинхронный TLS-клиент (`TLSAsyncClient`)
+
+```python
+import asyncio
+from chutils.http import TLSAsyncClient
+
+
+async def main():
+    # impersonate может быть 'chrome120', 'safari17_0' и др.
+    client = TLSAsyncClient(impersonate="chrome120", timeout=15.0)
+
+    # Выполнение GET-запроса
+    resp = await client.get("https://tls.peet.ws/api/all")
+    print(f"Статус: {resp.status_code}")
+    print(f"JA3/JA4 Fingerprint: {resp.text}")
+
+    # Закрытие клиента
+    await client.aclose()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### 2. Синхронная сессия (`TLSSession`)
+
+```python
+from chutils.http import TLSSession
+
+with TLSSession(impersonate="chrome120") as session:
+    resp = session.get("https://httpbin.org/get")
+    print(resp.json())
+```
+
+### 3. Интеграция с ProxyPool и туннелированием
+
+Клиенты `TLSAsyncClient` и `TLSSession` прозрачно интегрированы с подсистемой `chutils.scraping.proxy`:
+
+```python
+from chutils.http import TLSAsyncClient
+from chutils.scraping.proxy import ProxyPool
+
+pool = ProxyPool.from_urls(["http://user:pass@1.2.3.4:8080"])
+client = TLSAsyncClient(proxy_pool=pool, impersonate="chrome120")
+```
+
+### 4. Мост браузерных сессий (`from_browser_session`)
+
+Позволяет переносить куки (включая `cf_clearance`) и `User-Agent` из браузера (Playwright, Nodriver, Selenium) напрямую в легковесный TLS-клиент. После прохождения интерактивного челленджа в браузере вся остальная работа может продолжаться на максимальной скорости без накладных расходов браузера:
+
+```python
+from chutils.http import TLSAsyncClient, TLSSession
+
+# Асинхронно из Playwright Page или Nodriver Tab:
+client = await TLSAsyncClient.from_browser_session(page, impersonate="chrome120")
+resp = await client.get("https://api.example.com/protected/data")
+
+# Синхронно из Selenium WebDriver:
+session = TLSSession.from_browser_session(driver, impersonate="chrome120")
+resp = session.get("https://api.example.com/protected/data")
 ```
 
 ---
@@ -59,11 +135,11 @@ from chutils.http.streaming import EventStreamClient
 
 def main():
     url = "https://api.example.com/events"
+    client = EventStreamClient(url)
 
-    client = EventStreamClient(url, filter_heartbeats=True)
     with client:
         for event in client:
-            print(f"Data: {event.data}")
+            print(f"Event: {event.event}, Data: {event.data}")
 
 
 if __name__ == "__main__":
@@ -74,8 +150,7 @@ if __name__ == "__main__":
 
 ## WebSockets
 
-Для работы с WebSockets используются клиенты `AsyncWebSocketClient` (асинхронный) и `WebSocketClient` (синхронный). При
-отсутствии установленной библиотеки `websockets` выбрасывается `OptionalDependencyError`.
+Для работы с WebSocket-соединениями используются клиенты `AsyncWebSocketClient` (асинхронный) и `WebSocketClient` (синхронный).
 
 ### 1. Асинхронный WebSocket-клиент (AsyncWebSocketClient)
 
@@ -87,14 +162,9 @@ from chutils.http.streaming import AsyncWebSocketClient
 async def main():
     url = "ws://echo.websocket.org"
 
-    # Авто-реконнект с бэкоффом по умолчанию включен.
-    # filter_heartbeats=True отфильтровывает пустые кадры-пинги.
-    client = AsyncWebSocketClient(url, filter_heartbeats=True)
-
+    client = AsyncWebSocketClient(url)
     async with client as ws:
         await ws.send("Привет, WebSocket!")
-
-        # Получение сообщений через recv()
         response = await ws.recv()
         print(f"Ответ: {response}")
 

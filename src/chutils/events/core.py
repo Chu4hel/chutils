@@ -327,4 +327,3 @@ async def publish_async(
 def clear_event_bus() -> None:
     """Очищает всех подписчиков глобальной шины событий."""
     _global_bus.clear()
-

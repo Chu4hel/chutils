@@ -9,8 +9,8 @@ def test_func(
     name: str,
     age: int,
     is_admin: bool = False,
-    tags: list[str] = None,
-    home: Path = None,
+    tags: list[str] | None = None,
+    home: Path | None = None,
 ):
     """
     Тестовая функция для CLI Booster.

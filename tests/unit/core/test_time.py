@@ -26,7 +26,7 @@ def test_ensure_aware_utc_already_aware():
 
 def test_ensure_aware_utc_naive():
     # Наивный объект
-    dt_naive = datetime(2023, 1, 1, 12, 0)
+    dt_naive = datetime(2023, 1, 1, 12, 0)  # noqa: DTZ001
     aware_utc = _ensure_aware_utc(dt_naive)
 
     assert aware_utc.tzinfo == timezone.utc

@@ -55,15 +55,8 @@ def time_machine(monkeypatch):
                 yield self[i]
 
     def mock_stat(path, *args, **kwargs):
-        # pyfakefs может не создать файл к моменту вызова stat, если мы только настраиваем логгер
-        # но для теста это обычно не критично, если файл создается логгером.
-        # Если используете pyfakefs, original_os_stat уже пропатчен им, так что это безопасно.
-        try:
-            res = original_os_stat(path, *args, **kwargs)
-            return MockStatResult(res)
-        except FileNotFoundError:
-            # Если файла нет, пробрасываем ошибку дальше
-            raise
+        res = original_os_stat(path, *args, **kwargs)
+        return MockStatResult(res)
 
     monkeypatch.setattr(os, "stat", mock_stat)
 

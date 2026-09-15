@@ -210,7 +210,10 @@ class LoggerBuilder:
         from ..core import _file_handler_cache
 
         for handler in self.logger.handlers[:]:
-            if isinstance(handler, logging.FileHandler) and handler.baseFilename in _file_handler_cache:
+            if (
+                isinstance(handler, logging.FileHandler)
+                and handler.baseFilename in _file_handler_cache
+            ):
                 del _file_handler_cache[handler.baseFilename]
             handler.close()
             self.logger.removeHandler(handler)

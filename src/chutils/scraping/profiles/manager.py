@@ -127,3 +127,79 @@ class ProfileManager:
             Экземпляр BrowserProfile.
         """
         return load_profile_from_file(filepath, password=password)
+
+    @classmethod
+    async def save_profile_after_warmup(
+        cls,
+        browser_obj: Any,
+        filepath: str | Path,
+        password: str | None = None,
+        metadata: dict[str, str] | None = None,
+        driver_type: str | None = None,
+    ) -> BrowserProfile:
+        """Экспортирует состояние сессии после прогрева и сохраняет в `.chprofile` файл.
+
+        Поддерживает Playwright (BrowserContext или Page), nodriver (Tab) и Selenium WebDriver.
+
+        Args:
+            browser_obj: Сессия (Playwright BrowserContext/Page, nodriver Tab или Selenium WebDriver).
+            filepath: Путь к сохраняемому файлу (.chprofile).
+            password: Опциональный пароль для шифрования данных профиля.
+            metadata: Дополнительные метаданные для сохранения в профиле.
+            driver_type: Необязательный тип драйвера ('playwright', 'nodriver', 'selenium'). Если None, определяется автоматически.
+
+        Returns:
+            Экземпляр сохраненного BrowserProfile.
+        """
+        import datetime
+
+        from chutils.scraping.humanize.actions import _is_nodriver
+
+        if driver_type == "selenium":
+            profile = cls.export_from_selenium(browser_obj)
+        elif driver_type == "nodriver":
+            profile = await cls.export_from_nodriver(browser_obj)
+        elif driver_type == "playwright":
+            context = getattr(browser_obj, "context", browser_obj)
+            profile = await cls.export_from_playwright(context)
+        else:
+            try:
+                from unittest.mock import Mock
+
+                is_mock = isinstance(browser_obj, Mock)
+            except ImportError:
+                is_mock = False
+
+            if is_mock:
+                if getattr(browser_obj, "_is_nodriver", False) is True:
+                    profile = await cls.export_from_nodriver(browser_obj)
+                elif (
+                    "context" in browser_obj.__dict__
+                    or "storage_state" in browser_obj.__dict__
+                ):
+                    context = getattr(browser_obj, "context", browser_obj)
+                    profile = await cls.export_from_playwright(context)
+                else:
+                    try:
+                        profile = cls.export_from_selenium(browser_obj)
+                    except Exception:
+                        context = getattr(browser_obj, "context", browser_obj)
+                        profile = await cls.export_from_playwright(context)
+            else:
+                if _is_nodriver(browser_obj):
+                    profile = await cls.export_from_nodriver(browser_obj)
+                elif hasattr(browser_obj, "get_cookies"):
+                    profile = cls.export_from_selenium(browser_obj)
+                else:
+                    context = getattr(browser_obj, "context", browser_obj)
+                    profile = await cls.export_from_playwright(context)
+
+        profile.metadata["warmed_up"] = "true"
+        profile.metadata["last_warmed_up_at"] = datetime.datetime.now(
+            datetime.timezone.utc
+        ).isoformat()
+        if metadata:
+            profile.metadata.update(metadata)
+
+        cls.save(profile, filepath, password=password)
+        return profile

@@ -2,6 +2,8 @@
 Кастомные обработчики логов.
 """
 
+# chutils: ignore[ChutilsIntegrationRule] -- кастомные обработчики для стандартной библиотеки logging
+import logging
 import logging.handlers
 import os
 
@@ -96,7 +98,10 @@ class CompressingRotatingFileHandler(logging.handlers.RotatingFileHandler):
                 else:
                     os.remove(dfn_uncompressed)
             except Exception as e:
-                self.handleError(f"Ошибка при сжатии или удалении {dfn_uncompressed}: {e}")  # type: ignore[arg-type]
+                record = logging.makeLogRecord(
+                    {"msg": f"Ошибка при сжатии или удалении {dfn_uncompressed}: {e}"}
+                )
+                self.handleError(record)
 
 
 class CompressingTimedRotatingFileHandler(SafeTimedRotatingFileHandler):

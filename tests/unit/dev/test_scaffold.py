@@ -130,6 +130,7 @@ def test_scaffolder_generated_code_quality(tmp_path: Path) -> None:
             ["ruff", "check", str(module_dir)],
             capture_output=True,
             text=True,
+            check=False,
         )
         assert result.returncode == 0, (
             f"Ruff linting failed on generated module:\n{result.stdout}\n{result.stderr}"
@@ -143,6 +144,7 @@ def test_scaffolder_generated_code_quality(tmp_path: Path) -> None:
             [sys.executable, "-m", "mypy", "--strict", str(module_dir)],
             capture_output=True,
             text=True,
+            check=False,
         )
         assert result.returncode == 0, (
             f"Mypy strict validation failed on generated module:\n{result.stdout}\n{result.stderr}"

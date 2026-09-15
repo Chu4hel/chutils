@@ -1,6 +1,10 @@
 import concurrent.futures
+import os
 from concurrent.futures.process import ProcessPoolExecutor as _ProcessPoolExecutor
 from concurrent.futures.thread import ThreadPoolExecutor as _ThreadPoolExecutor
+
+# Предотвращаем маршрутизацию локального трафика через внешние прокси в тестах
+os.environ.setdefault("NO_PROXY", "127.0.0.1,localhost")
 
 import keyring
 import pytest
@@ -10,7 +14,6 @@ if getattr(concurrent.futures, "ThreadPoolExecutor", None) is not _ThreadPoolExe
     concurrent.futures.ThreadPoolExecutor = _ThreadPoolExecutor  # type: ignore[misc]
 if getattr(concurrent.futures, "ProcessPoolExecutor", None) is not _ProcessPoolExecutor:
     concurrent.futures.ProcessPoolExecutor = _ProcessPoolExecutor  # type: ignore[misc]
-
 
 
 pytest_plugins = ["chutils.testing.fixtures"]
@@ -104,4 +107,3 @@ def project_with_marker(config_fs):
     fs, project_root = config_fs
     fs.create_file(project_root / "pyproject.toml")
     return fs, project_root
-

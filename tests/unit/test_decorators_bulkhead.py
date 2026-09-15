@@ -154,24 +154,31 @@ def test_sync_bulkhead_fast_fail() -> None:
 
 def test_sync_bulkhead_waiting_queue() -> None:
     """Проверяет работу очереди ожидания в синхронном @bulkhead."""
+    block_event = threading.Event()
+    t1_started = threading.Event()
 
     @bulkhead(max_concurrent=1, max_waiting=1)
     def worker() -> None:
-        time.sleep(0.05)
+        t1_started.set()
+        block_event.wait(timeout=1.0)
 
     t1 = threading.Thread(target=worker)
     t1.start()
-    time.sleep(0.01)
+    assert t1_started.wait(timeout=1.0)
 
+    # Запускаем второй поток, который встанет в очередь ожидания
     t2 = threading.Thread(target=worker)
     t2.start()
-    time.sleep(0.01)
+    time.sleep(0.05)
 
-    with pytest.raises(BulkheadLimitExceeded):
-        worker()
-
-    t1.join()
-    t2.join()
+    # Третий вызов должен превысить очередь ожидания и вызвать BulkheadLimitExceeded
+    try:
+        with pytest.raises(BulkheadLimitExceeded):
+            worker()
+    finally:
+        block_event.set()
+        t1.join()
+        t2.join()
 
 
 def test_sync_bulkhead_timeout() -> None:

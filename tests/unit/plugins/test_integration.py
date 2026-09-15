@@ -105,7 +105,7 @@ def test_lazy_loading_config_manager(mock_entry_points, tmp_path):
 
     class MockConfigPlugin(ConfigProviderPlugin):
         name = "toml"
-        supported_extensions = [".toml"]
+        supported_extensions = (".toml",)
 
         def load(self, path: str) -> dict[str, Any]:
             return {"toml_key": "toml_value"}

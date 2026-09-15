@@ -146,3 +146,77 @@ def test_antidetect_nodriver(mock_ensure: MagicMock) -> None:
 
         # Проверяем, что команда отправлена вкладке
         tab.send.assert_called_once_with("mock_cdp_command")
+
+
+def test_antidetect_js_tampering_protection() -> None:
+    from chutils.scraping.humanize.antidetect import _get_antidetect_js
+
+    js = _get_antidetect_js("Custom Vendor", "Custom Renderer", 8, 16)
+
+    # 1. Проверка маскировки [native code] для Function.prototype.toString
+    assert "[native code]" in js
+    assert "makeNative" in js or "toString" in js
+
+    # 2. Проверка одновременного патчинга WebGL1 и WebGL2
+    assert "WebGLRenderingContext" in js
+    assert "WebGL2RenderingContext" in js
+    assert "37445" in js  # UNMASKED_VENDOR_WEBGL
+    assert "37446" in js  # UNMASKED_RENDERER_WEBGL
+    assert '"Custom Vendor"' in js
+    assert '"Custom Renderer"' in js
+
+    # 3. Проверка синхронизации Permissions API и Notification
+    assert "permissions.query" in js
+    assert "Notification.permission" in js
+
+    # 4. Проверка корректного удаления / маскировки navigator.webdriver
+    assert "webdriver" in js
+    assert "Navigator.prototype" in js or "Object.getPrototypeOf(navigator)" in js
+
+
+@patch("chutils.scraping.humanize.antidetect._ensure_nodriver")
+def test_antidetect_nodriver_stealth_minimal(mock_ensure: MagicMock) -> None:
+    import asyncio
+    import sys
+
+    mock_page = MagicMock()
+    mock_page.add_script_to_evaluate_on_new_document = MagicMock(
+        return_value="mock_cdp_command"
+    )
+
+    mock_cdp = MagicMock()
+    mock_cdp.page = mock_page
+
+    modules = {
+        "nodriver": MagicMock(),
+        "nodriver.cdp": mock_cdp,
+        "nodriver.cdp.page": mock_page,
+    }
+
+    with patch.dict(sys.modules, modules):
+        from chutils.scraping.humanize.antidetect import apply_antidetect_nodriver
+
+        tab = MagicMock()
+        tab.send = AsyncMock()
+
+        asyncio.run(apply_antidetect_nodriver(tab, stealth_minimal=True))
+
+        mock_page.add_script_to_evaluate_on_new_document.assert_called_once()
+        js_code = mock_page.add_script_to_evaluate_on_new_document.call_args[1][
+            "source"
+        ]
+
+        # В минимальном режиме не должны подменяться Canvas и WebGL
+        assert "isMinimal = true" in js_code
+        assert "webdriver" in js_code
+        assert "permissions.query" in js_code
+
+
+def test_browser_launch_args_enhanced() -> None:
+    from chutils.scraping.humanize.antidetect import get_browser_launch_args
+
+    args = get_browser_launch_args()
+    assert "--disable-blink-features=AutomationControlled" in args
+    assert "--no-first-run" in args
+    assert "--no-default-browser-check" in args
+    assert "--password-store=basic" in args

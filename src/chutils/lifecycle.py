@@ -63,6 +63,20 @@ class LifecycleManager:
             )
         return func
 
+    def unregister_cleanup(self, func: CleanupCallback) -> bool:
+        """Удаляет функцию из реестра функций очистки.
+
+        Args:
+            func: Функция или корутина для удаления.
+
+        Returns:
+            True, если функция была найдена и удалена, иначе False.
+        """
+        if func in self._cleanup_callbacks:
+            self._cleanup_callbacks.remove(func)
+            return True
+        return False
+
     def get_cleanup_callbacks(self) -> list[CleanupCallback]:
         """Возвращает список зарегистрированных функций в порядке LIFO.
 
@@ -249,6 +263,18 @@ def register_cleanup(func: CleanupCallback) -> CleanupCallback:
             register_cleanup(cleanup_logs)
     """
     return _manager.register_cleanup(func)
+
+
+def unregister_cleanup(func: CleanupCallback) -> bool:
+    """Удаляет функцию из реестра функций очистки.
+
+    Args:
+        func: Функция или корутина для удаления.
+
+    Returns:
+        True, если функция была найдена и удалена, иначе False.
+    """
+    return _manager.unregister_cleanup(func)
 
 
 def setup_graceful_shutdown() -> None:

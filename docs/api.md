@@ -530,3 +530,45 @@ members:
 
 - DatabaseManager
 - DatabaseConfig
+
+## Модуль `lifecycle` (Управление жизненным циклом и graceful shutdown)
+
+::: chutils.lifecycle
+options:
+members:
+
+- register_cleanup
+- unregister_cleanup
+- run_cleanup
+- async_run_cleanup
+- setup_graceful_shutdown
+- lifecycle
+- AsyncLifecycleContext
+
+## Модуль `http` (HTTP-клиент и TLS Impersonation)
+
+::: chutils.http
+options:
+members:
+
+- HttpClient
+- AsyncHttpClient
+- TLSSession
+- TLSAsyncClient
+- create_curl_session
+- create_curl_async_session
+- HttpResponse
+- ResiliencePolicy
+- UrllibFallbackClient
+- AsyncEventStreamClient
+- EventStreamClient
+- AsyncWebSocketClient
+- WebSocketClient
+- ServerSentEvent
+- get
+- post
+- put
+- delete
+- patch
+
+

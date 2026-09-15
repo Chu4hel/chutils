@@ -56,7 +56,7 @@ def _patch_template_everywhere(mocker, val=None, side_effect=None):
                 mocker.patch(t, side_effect=side_effect)
             else:
                 mocker.patch(t, return_value=val or "key: val")
-        except:
+        except Exception:
             pass
 
 

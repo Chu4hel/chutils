@@ -85,7 +85,7 @@ def test_cli_init_with_model_success(cli_runner, config_fs, mocker):
     for t in targets:
         try:
             mocker.patch(t, return_value="api_key: default_key")
-        except:
+        except Exception:
             pass
 
     mocker.patch("chutils.config.generator.PYDANTIC_AVAILABLE", True)

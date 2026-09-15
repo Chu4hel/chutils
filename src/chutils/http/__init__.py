@@ -14,7 +14,7 @@ chutils.http — Лёгковесный HTTP-клиент с батареями.
         resp.raise_for_status()
         data = resp.json()
 
-Standalone-функции:
+Stand-alone функции:
 -------------------
     from chutils import http
     resp = http.get("https://httpbin.org/get")
@@ -40,9 +40,19 @@ from .streaming import (
     ServerSentEvent,
     WebSocketClient,
 )
+from .tls_client import (
+    CURL_CFFI_AVAILABLE,
+    DEFAULT_IMPERSONATE_PROFILE,
+    TLSAsyncClient,
+    TLSSession,
+    create_curl_async_session,
+    create_curl_session,
+)
 from .tracing import create_http_span, inject_trace_headers
 
 __all__ = [
+    "CURL_CFFI_AVAILABLE",
+    "DEFAULT_IMPERSONATE_PROFILE",
     "AsyncEventStreamClient",
     "AsyncHttpClient",
     "AsyncWebSocketClient",
@@ -51,8 +61,12 @@ __all__ = [
     "HttpResponse",
     "ResiliencePolicy",
     "ServerSentEvent",
+    "TLSAsyncClient",
+    "TLSSession",
     "UrllibFallbackClient",
     "WebSocketClient",
+    "create_curl_async_session",
+    "create_curl_session",
     "create_http_span",
     "delete",
     "get",

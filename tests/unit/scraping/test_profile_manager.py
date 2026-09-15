@@ -76,3 +76,40 @@ def test_profile_manager_save_and_load(tmp_path):
     loaded = ProfileManager.load(saved, password="pass")
     assert loaded.engine_origin == "playwright"
     assert loaded.cookies[0].value == "v"
+
+
+@pytest.mark.asyncio
+async def test_save_profile_after_warmup(tmp_path):
+    # 1. Playwright
+    page_mock = MagicMock()
+    context_mock = AsyncMock()
+    page_mock.context = context_mock
+    context_mock.storage_state.return_value = {
+        "cookies": [
+            {"name": "pw_warm", "value": "1", "domain": "example.com", "path": "/"}
+        ],
+        "origins": [],
+    }
+
+    pw_path = tmp_path / "pw_warm.chprofile"
+    saved_pw = await ProfileManager.save_profile_after_warmup(
+        page_mock, pw_path, metadata={"tag": "warmed_playwright"}
+    )
+    assert saved_pw.metadata["warmed_up"] == "true"
+    assert saved_pw.metadata["tag"] == "warmed_playwright"
+    assert pw_path.exists()
+
+    # 2. Selenium
+    driver_mock = MagicMock()
+    driver_mock.get_cookies.return_value = [
+        {"name": "sel_warm", "value": "2", "domain": "example.com", "path": "/"}
+    ]
+    driver_mock.execute_script.return_value = "Chrome UA"
+
+    sel_path = tmp_path / "sel_warm.chprofile"
+    saved_sel = await ProfileManager.save_profile_after_warmup(
+        driver_mock, sel_path, metadata={"tag": "warmed_selenium"}
+    )
+    assert saved_sel.metadata["warmed_up"] == "true"
+    assert saved_sel.metadata["tag"] == "warmed_selenium"
+    assert sel_path.exists()

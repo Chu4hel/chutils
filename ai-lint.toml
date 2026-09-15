@@ -128,7 +128,9 @@
 # ---------------------------------------------------------------------------
 
 "src/chutils/scraping/**/*.py" = ["docs/scraping.md"]
+"new:src/chutils/scraping/nodriver.py" = ["docs/scraping.md"]
 "src/chutils/scraping/captcha/**/*.py" = ["docs/captcha.md"]
+
 
 # ---------------------------------------------------------------------------
 # Модуль аудита

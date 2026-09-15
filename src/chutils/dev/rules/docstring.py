@@ -99,15 +99,15 @@ class DocstringVisitor(ast.NodeVisitor):
 
         if not node.name.startswith("_") and not self._current_class_doc:
             self.issues.append(
-                    LintResult(
-                        rule_name=self.rule_name,
-                        message=f"У публичного класса {node.name} отсутствует docstring.",
-                        severity="error",
-                        file_path=self.file_path,
-                        line_number=node.lineno,
-                        fix_suggestion=f"Добавьте docstring для класса {node.name}.",
-                    )
+                LintResult(
+                    rule_name=self.rule_name,
+                    message=f"У публичного класса {node.name} отсутствует docstring.",
+                    severity="error",
+                    file_path=self.file_path,
+                    line_number=node.lineno,
+                    fix_suggestion=f"Добавьте docstring для класса {node.name}.",
                 )
+            )
         self.generic_visit(node)
         self._current_class_doc = old_class_doc
 

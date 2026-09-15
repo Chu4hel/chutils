@@ -292,6 +292,7 @@ async def async_type_text(
     text: str,
     error_rate: float = 0.05,
     speed_wpm: float = 40.0,
+    key_hold_time: tuple[float, float] = (0.04, 0.09),
 ) -> None:
     """Имитирует ввод текста с опечатками Playwright или nodriver.
 
@@ -301,6 +302,7 @@ async def async_type_text(
         text: Текст для ввода.
         error_rate: Вероятность совершения опечатки (0.0 - 1.0).
         speed_wpm: Скорость ввода в словах в минуту (WPM).
+        key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.
     """
     if _is_nodriver(page):
         _ensure_nodriver()
@@ -325,6 +327,8 @@ async def async_type_text(
                         key=char,
                     )
                 )
+                if key_hold_time and key_hold_time[1] > 0:
+                    await asyncio.sleep(random.uniform(*key_hold_time))
                 await page.send(
                     cdp_input.dispatch_key_event(
                         type_="keyUp",
@@ -341,6 +345,8 @@ async def async_type_text(
                         code="Backspace",
                     )
                 )
+                if key_hold_time and key_hold_time[1] > 0:
+                    await asyncio.sleep(random.uniform(*key_hold_time))
                 await page.send(
                     cdp_input.dispatch_key_event(
                         type_="keyUp",
@@ -518,6 +524,7 @@ async def async_click(
     start: tuple[int, int] | None = None,
     algorithm: str = "windmouse",
     button: str = "left",
+    hold_time: tuple[float, float] = (0.05, 0.12),
 ) -> None:
     """Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).
 
@@ -529,6 +536,7 @@ async def async_click(
         start: Начальные координаты курсора.
         algorithm: Алгоритм движения ('windmouse' или 'bezier').
         button: Кнопка мыши ('left', 'right', 'middle').
+        hold_time: Диапазон задержки удержания кнопки мыши (в секундах).
     """
     target_x = x
     target_y = y
@@ -577,6 +585,11 @@ async def async_click(
     await asyncio.sleep(random.uniform(0.04, 0.12))
 
     # 3. Нажатие, удержание и отпускание кнопки
+    hold_delay = (
+        random.uniform(*hold_time)
+        if hold_time and hold_time[1] > 0
+        else random.uniform(0.04, 0.09)
+    )
     if _is_nodriver(page):
         _ensure_nodriver()
         from nodriver.cdp import input as cdp_input
@@ -593,7 +606,7 @@ async def async_click(
                 click_count=1,
             )
         )
-        await asyncio.sleep(random.uniform(0.04, 0.09))
+        await asyncio.sleep(hold_delay)
         await page.send(
             cdp_input.dispatch_mouse_event(
                 type_="mouseReleased",
@@ -606,7 +619,7 @@ async def async_click(
     elif _is_playwright(page):
         _ensure_playwright()
         await page.mouse.down(button=button)
-        await asyncio.sleep(random.uniform(0.04, 0.09))
+        await asyncio.sleep(hold_delay)
         await page.mouse.up(button=button)
 
     # 4. Пауза после клика
@@ -620,6 +633,7 @@ def click(
     y: int | None = None,
     start: tuple[int, int] | None = None,
     algorithm: str = "windmouse",
+    hold_time: tuple[float, float] = (0.05, 0.12),
 ) -> None:
     """Имитирует реалистичный клик мышью Selenium.
 
@@ -630,6 +644,7 @@ def click(
         y: Конечная координата Y.
         start: Начальные координаты курсора.
         algorithm: Алгоритм движения ('windmouse' или 'bezier').
+        hold_time: Диапазон задержки удержания кнопки мыши (в секундах).
     """
     _ensure_selenium()
     from selenium.webdriver.common.action_chains import ActionChains
@@ -652,6 +667,11 @@ def click(
     move_mouse(driver, x=target_x, y=target_y, start=start, algorithm=algorithm)
     time.sleep(random.uniform(0.04, 0.12))
 
+    hold_delay = (
+        random.uniform(*hold_time)
+        if hold_time and hold_time[1] > 0
+        else random.uniform(0.04, 0.09)
+    )
     actions = ActionChains(driver)
-    actions.click_and_hold().pause(random.uniform(0.04, 0.09)).release().perform()
+    actions.click_and_hold().pause(hold_delay).release().perform()
     time.sleep(random.uniform(0.03, 0.08))
