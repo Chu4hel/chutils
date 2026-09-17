@@ -144,3 +144,59 @@ def test_get_config_value_with_double_underscore(config_fs, monkeypatch):
 
     val = get_config_value("telegram", "bot_token")
     assert val == "val_123"
+
+
+class TelegramAdminConfig(BaseModel):
+    bot_token: str = "default_token"
+    superadmin_ids: list[str] = Field(default_factory=list)
+
+
+class AppAdminConfig(BaseModel):
+    telegram: TelegramAdminConfig = Field(default_factory=TelegramAdminConfig)
+
+
+def test_env_list_json_parsing_for_pydantic_model(config_fs, monkeypatch):
+    """Тест: строка вида ['...'] из env парсится как list[str] и не вызывает ValidationError."""
+    fs, project_root = config_fs
+    fs.create_file(project_root / "config.yml", contents="")
+    fs.create_file(project_root / "pyproject.toml", contents="")
+    config._cm._reset()
+
+    monkeypatch.setenv("CH_TELEGRAM__SUPERADMIN_IDS", '["123456789", "987654321"]')
+
+    cfg = get_config(model=AppAdminConfig)
+    assert isinstance(cfg.telegram.superadmin_ids, list)
+    assert cfg.telegram.superadmin_ids == ["123456789", "987654321"]
+
+
+def test_env_override_empty_string_in_yaml(config_fs, monkeypatch):
+    """Тест: значение из переменной окружения перекрывает пустое значение из YAML (bot_token: '')."""
+    fs, project_root = config_fs
+    yaml_content = """
+telegram:
+  bot_token: ""
+"""
+    fs.create_file(project_root / "config.yml", contents=yaml_content)
+    fs.create_file(project_root / "pyproject.toml", contents="")
+    config._cm._reset()
+
+    monkeypatch.setenv("CH_TELEGRAM__BOT_TOKEN", "live_token_from_env")
+
+    cfg = get_config(model=AppConfig)
+    assert cfg.telegram.bot_token == "live_token_from_env"
+
+
+def test_get_config_list_with_env_json(config_fs, monkeypatch):
+    """Тест: get_config_list корректно читает список из переменной окружения."""
+    fs, project_root = config_fs
+    fs.create_file(project_root / "config.yml", contents="")
+    fs.create_file(project_root / "pyproject.toml", contents="")
+    config._cm._reset()
+
+    from chutils.config import get_config_list
+
+    monkeypatch.setenv("CH_TELEGRAM__PROXIES", '["http://proxy1:8080", "http://proxy2:8080"]')
+
+    proxies = get_config_list("telegram", "proxies")
+    assert proxies == ["http://proxy1:8080", "http://proxy2:8080"]
+

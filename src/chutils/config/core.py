@@ -68,88 +68,6 @@ def _ensure_config_plugins_loaded() -> None:
             logger.error("Ошибка при загрузке плагинов конфигурации: %s", str(e))
 
 
-def _extract_model_sections_and_keys(
-    model: type[Any] | None,
-) -> tuple[dict[str, str], dict[str, dict[str, str]]]:
-    """Извлекает имена секций и ключей (включая алиасы) из Pydantic модели.
-
-    Args:
-        model: Класс Pydantic модели или None.
-
-    Returns:
-        Кортеж из двух словарей:
-        - sec_map: маппинг имени секции в нижнем регистре на оригинальное имя/алиас.
-        - keys_map: маппинг имени секции в нижнем регистре на словарь (ключ в нижнем регистре -> оригинальный ключ/алиас).
-    """
-    sec_map: dict[str, str] = {}
-    keys_map: dict[str, dict[str, str]] = {}
-    if model is None:
-        return sec_map, keys_map
-
-    fields = getattr(model, "model_fields", None)
-    if fields is None:
-        fields = getattr(model, "__fields__", None)
-    if not isinstance(fields, dict):
-        return sec_map, keys_map
-
-    from typing import get_args, get_origin
-
-    for field_name, field_info in fields.items():
-        aliases: list[str] = [field_name]
-        val_alias = getattr(field_info, "validation_alias", None)
-        if val_alias is None:
-            val_alias = getattr(field_info, "alias", None)
-        if isinstance(val_alias, str):
-            if val_alias not in aliases:
-                aliases.append(val_alias)
-        elif hasattr(val_alias, "choices"):
-            for c in getattr(val_alias, "choices", []):
-                if isinstance(c, str) and c not in aliases:
-                    aliases.append(c)
-
-        pref_sec = aliases[-1] if len(aliases) > 1 else field_name
-        for a in aliases:
-            sec_map[a.lower()] = pref_sec
-
-        annotation = getattr(field_info, "annotation", None)
-        if annotation is None:
-            annotation = getattr(field_info, "type_", None)
-
-        origin = get_origin(annotation)
-        if origin is not None:
-            args = [arg for arg in get_args(annotation) if arg is not type(None)]
-            if args:
-                annotation = args[0]
-
-        if isinstance(annotation, type) and (
-            hasattr(annotation, "model_fields") or hasattr(annotation, "__fields__")
-        ):
-            sub_fields = getattr(annotation, "model_fields", None)
-            if sub_fields is None:
-                sub_fields = getattr(annotation, "__fields__", {})
-            if isinstance(sub_fields, dict):
-                sub_keys: dict[str, str] = {}
-                for sub_name, sub_info in sub_fields.items():
-                    sub_aliases: list[str] = [sub_name]
-                    sub_alias = getattr(sub_info, "validation_alias", None)
-                    if sub_alias is None:
-                        sub_alias = getattr(sub_info, "alias", None)
-                    if isinstance(sub_alias, str):
-                        if sub_alias not in sub_aliases:
-                            sub_aliases.append(sub_alias)
-                    elif hasattr(sub_alias, "choices"):
-                        for sc in getattr(sub_alias, "choices", []):
-                            if isinstance(sc, str) and sc not in sub_aliases:
-                                sub_aliases.append(sc)
-                    pref_sub = sub_aliases[-1] if len(sub_aliases) > 1 else sub_name
-                    for sa in sub_aliases:
-                        sub_keys[sa.lower()] = pref_sub
-                for a in aliases:
-                    keys_map[a.lower()] = sub_keys
-
-    return sec_map, keys_map
-
-
 def _enrich_config_data_with_pydantic_aliases(
     config_data: JSONDict, model: type[Any], section_prefix: str = ""
 ) -> None:
@@ -240,7 +158,7 @@ def _enrich_config_data_with_pydantic_aliases(
             if found_key:
                 break
 
-        if found_key is None and not disable_env_override:
+        if not disable_env_override:
             for alias in aliases:
                 key_up = alias.upper()
                 candidates: list[str] = []
@@ -259,8 +177,21 @@ def _enrich_config_data_with_pydantic_aliases(
                         break
 
                 if env_val is not None:
+                    if isinstance(env_val, str) and env_val.strip().startswith(
+                        ("[", "{")
+                    ):
+                        try:
+                            import json
+
+                            env_val = json.loads(env_val)
+                        except Exception:
+                            pass
+
+                    target_key = found_key if found_key is not None else aliases[0]
+                    config_data[target_key] = env_val
                     for a in aliases:
-                        config_data[a] = env_val
+                        if a != target_key and a in config_data:
+                            config_data[a] = env_val
                     break
 
 
@@ -397,7 +328,9 @@ def get_config(
                 "y",
             )
             if not disable_env_override:
-                model_sec_map, model_keys_map = _extract_model_sections_and_keys(model)
+                model_sec_map, model_keys_map = utils.extract_model_sections_and_keys(
+                    model
+                )
                 known_sections_map: dict[str, str] = dict(model_sec_map)
                 known_keys_map: dict[str, dict[str, str]] = {
                     k: dict(v) for k, v in model_keys_map.items()
@@ -426,6 +359,17 @@ def get_config(
                         if not full_content:
                             continue
 
+                        val_to_store: Any = env_value
+                        if isinstance(env_value, str) and env_value.strip().startswith(
+                            ("[", "{")
+                        ):
+                            try:
+                                import json
+
+                                val_to_store = json.loads(env_value)
+                            except Exception:
+                                pass
+
                         # 1. Первоочередная проверка на двойное подчёркивание __ (Pydantic / 12-Factor)
                         if "__" in full_content:
                             parts = [
@@ -446,7 +390,7 @@ def get_config(
                                     )
                                     if actual_sec not in env_overrides:
                                         env_overrides[actual_sec] = {}
-                                    env_overrides[actual_sec][actual_key] = env_value
+                                    env_overrides[actual_sec][actual_key] = val_to_store
                                 else:
                                     # Многоуровневая вложенность (len(parts) > 2)
                                     curr = env_overrides
@@ -459,7 +403,7 @@ def get_config(
                                             else part.lower()
                                         )
                                         curr = curr.setdefault(node_name, {})
-                                    curr[parts[-1].lower()] = env_value
+                                    curr[parts[-1].lower()] = val_to_store
                                 continue
 
                         # 2. Обратная совместимость: перебор одиночных '_' с учетом known_sections_map
@@ -501,7 +445,7 @@ def get_config(
 
                         if actual_sec not in env_overrides:
                             env_overrides[actual_sec] = {}
-                        env_overrides[actual_sec][actual_key] = env_value
+                        env_overrides[actual_sec][actual_key] = val_to_store
 
                 # Специфический ключ для secrets
                 # chutils: ignore[ChutilsIntegrationRule]

@@ -117,12 +117,21 @@ def get_config_value(
                 # chutils: ignore[ChutilsIntegrationRule]
                 env_val = os.environ.get(candidate)
                 if env_val is not None and env_val != "":
+                    if isinstance(env_val, str) and env_val.strip().startswith(
+                        ("[", "{")
+                    ):
+                        try:
+                            import json
+
+                            env_val = json.loads(env_val)
+                        except Exception:
+                            pass
                     value = env_val
                     if section.lower() == "secrets":
                         try:
                             from chutils.logger import setup_logger
 
-                            setup_logger().add_mask(env_val)
+                            setup_logger().add_mask(str(env_val))
                         except Exception:
                             pass
                     break
@@ -330,6 +339,15 @@ def get_config_list(
     def list_converter(v: Any) -> list[Any]:
         if isinstance(v, list):
             return v
+        if isinstance(v, str) and v.strip().startswith("["):
+            try:
+                import json
+
+                parsed = json.loads(v)
+                if isinstance(parsed, list):
+                    return parsed
+            except Exception:
+                pass
         raise ConfigParseError(
             f"Значение для '{key}' не является списком: {v}",
             hint="Убедитесь, что в конфигурации это поле представлено в виде списка (YAML: - item).",
