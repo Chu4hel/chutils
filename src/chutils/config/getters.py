@@ -108,6 +108,7 @@ def get_config_value(
             sec_up = section.upper()
             key_up = key.upper()
             candidates = (
+                f"CH_{sec_up}__{key_up}",
                 f"CH_{sec_up}_{key_up}",
                 f"CH_{key_up}",
                 key_up,
