@@ -109,6 +109,7 @@ def _enrich_config_data_with_pydantic_aliases(
         if isinstance(annotation, type) and (
             hasattr(annotation, "model_fields") or hasattr(annotation, "__fields__")
         ):
+            created_empty = False
             sec_dict = config_data.get(field_name)
             if not isinstance(sec_dict, dict):
                 for k, v in config_data.items():
@@ -117,6 +118,7 @@ def _enrich_config_data_with_pydantic_aliases(
                         break
                 else:
                     sec_dict = {}
+                    created_empty = True
                     config_data[field_name] = sec_dict
 
             new_prefix = (
@@ -125,6 +127,8 @@ def _enrich_config_data_with_pydantic_aliases(
             _enrich_config_data_with_pydantic_aliases(
                 sec_dict, annotation, section_prefix=new_prefix
             )
+            if created_empty and not sec_dict:
+                config_data.pop(field_name, None)
             continue
 
         aliases: list[str] = [field_name]
@@ -154,12 +158,13 @@ def _enrich_config_data_with_pydantic_aliases(
             if found_key:
                 break
 
-        if found_key is None and not disable_env_override:
+        if not disable_env_override:
             for alias in aliases:
                 key_up = alias.upper()
                 candidates: list[str] = []
                 if section_prefix:
                     sec_up = section_prefix.upper()
+                    candidates.append(f"CH_{sec_up}__{key_up}")
                     candidates.append(f"CH_{sec_up}_{key_up}")
                 candidates.extend([f"CH_{key_up}", key_up])
 
@@ -172,6 +177,16 @@ def _enrich_config_data_with_pydantic_aliases(
                         break
 
                 if env_val is not None:
+                    if isinstance(env_val, str) and env_val.strip().startswith(
+                        ("[", "{")
+                    ):
+                        try:
+                            import json
+
+                            env_val = json.loads(env_val)
+                        except Exception:
+                            pass
+
                     for a in aliases:
                         config_data[a] = env_val
                     break
@@ -301,7 +316,7 @@ def get_config(
                 _cm.sse_client = sse_client
                 sse_client.start()
 
-            # 5. Переменные окружения (CH_SECTION_KEY)
+            # 5. Переменные окружения (CH_SECTION_KEY / CH_SECTION__KEY)
             # chutils: ignore[ChutilsIntegrationRule]
             disable_env_override = os.getenv("CH_DISABLE_ENV_OVERRIDE", "").lower() in (
                 "true",
@@ -310,6 +325,25 @@ def get_config(
                 "y",
             )
             if not disable_env_override:
+                model_sec_map, model_keys_map = utils.extract_model_sections_and_keys(
+                    model
+                )
+                known_sections_map: dict[str, str] = dict(model_sec_map)
+                known_keys_map: dict[str, dict[str, str]] = {
+                    k: dict(v) for k, v in model_keys_map.items()
+                }
+
+                # Секции из уже загруженных данных конфигурации имеют приоритет регистра
+                for existing_sec, sec_val in config_data.items():
+                    known_sections_map[existing_sec.lower()] = existing_sec
+                    if isinstance(sec_val, dict):
+                        if existing_sec.lower() not in known_keys_map:
+                            known_keys_map[existing_sec.lower()] = {}
+                        for existing_key in sec_val:
+                            known_keys_map[existing_sec.lower()][
+                                existing_key.lower()
+                            ] = existing_key
+
                 env_overrides: JSONDict = {}
                 # chutils: ignore[ChutilsIntegrationRule]
                 for env_key, env_value in os.environ.items():
@@ -322,40 +356,74 @@ def get_config(
                         if not full_content:
                             continue
 
-                        # Поиск подходящего разбиения на секцию и ключ
-                        # Находим все индексы '_'
+                        val_to_store: Any = env_value
+                        if isinstance(env_value, str) and env_value.strip().startswith(
+                            ("[", "{")
+                        ):
+                            try:
+                                import json
+
+                                val_to_store = json.loads(env_value)
+                            except Exception:
+                                pass
+
+                        # 1. Первоочередная проверка на двойное подчёркивание __ (Pydantic / 12-Factor)
+                        if "__" in full_content:
+                            parts = [
+                                p.strip("_")
+                                for p in full_content.split("__")
+                                if p.strip("_")
+                            ]
+                            if len(parts) >= 2:
+                                sec_cand = parts[0]
+                                actual_sec = known_sections_map.get(
+                                    sec_cand.lower(), sec_cand.lower()
+                                )
+                                if len(parts) == 2:
+                                    key_cand = parts[1]
+                                    sec_keys = known_keys_map.get(actual_sec.lower(), {})
+                                    actual_key = sec_keys.get(
+                                        key_cand.lower(), key_cand.lower()
+                                    )
+                                    if actual_sec not in env_overrides:
+                                        env_overrides[actual_sec] = {}
+                                    env_overrides[actual_sec][actual_key] = val_to_store
+                                else:
+                                    # Многоуровневая вложенность (len(parts) > 2)
+                                    curr = env_overrides
+                                    for i, part in enumerate(parts[:-1]):
+                                        node_name = (
+                                            known_sections_map.get(
+                                                part.lower(), part.lower()
+                                            )
+                                            if i == 0
+                                            else part.lower()
+                                        )
+                                        curr = curr.setdefault(node_name, {})
+                                    curr[parts[-1].lower()] = val_to_store
+                                continue
+
+                        # 2. Обратная совместимость: перебор одиночных '_' с учетом known_sections_map
                         indices = [
                             i for i, char in enumerate(full_content) if char == "_"
                         ]
 
                         best_match = None
                         # Проверяем варианты от самого длинного имени секции к самому короткому
-                        # (это позволяет корректно обрабатывать вложенность или длинные имена)
                         for idx in reversed(indices):
                             s_candidate = full_content[:idx]
                             k_candidate = full_content[idx + 1 :]
                             if not s_candidate or not k_candidate:
                                 continue
 
-                            # Проверяем, есть ли такая секция (регистронезависимо)
-                            for existing_sec in config_data:
-                                if existing_sec.lower() == s_candidate.lower():
-                                    # Нашли существующую секцию. Теперь поищем ключ в ней.
-                                    actual_sec = existing_sec
-                                    actual_key = k_candidate.lower()
-
-                                    if isinstance(config_data[existing_sec], dict):
-                                        for existing_key in config_data[existing_sec]:
-                                            if (
-                                                existing_key.lower()
-                                                == k_candidate.lower()
-                                            ):
-                                                actual_key = existing_key
-                                                break
-
-                                    best_match = (actual_sec, actual_key)
-                                    break
-                            if best_match:
+                            # Проверяем, есть ли такая секция в известных секциях
+                            if s_candidate.lower() in known_sections_map:
+                                actual_sec = known_sections_map[s_candidate.lower()]
+                                sec_keys = known_keys_map.get(s_candidate.lower(), {})
+                                actual_key = sec_keys.get(
+                                    k_candidate.lower(), k_candidate.lower()
+                                )
+                                best_match = (actual_sec, actual_key)
                                 break
 
                         if best_match:
@@ -374,7 +442,7 @@ def get_config(
 
                         if actual_sec not in env_overrides:
                             env_overrides[actual_sec] = {}
-                        env_overrides[actual_sec][actual_key] = env_value
+                        env_overrides[actual_sec][actual_key] = val_to_store
 
                 # Специфический ключ для secrets
                 # chutils: ignore[ChutilsIntegrationRule]

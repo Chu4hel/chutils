@@ -136,6 +136,10 @@ Each example focuses on a specific task.
    db_cfg = get_config_section("Database", model=MyDbModel)
    ```
 
+   #### Overriding via Environment Variables
+
+   You can override any setting using environment variables following the `CH_[SECTION]__[KEY]` pattern (recommended) or `CH_[SECTION]_[KEY]`. Double underscore `__` is the standard separator for nested levels (12-Factor / Pydantic). For example, `CH_DATABASE__PORT=6000` or `CH_DATABASE_PORT=6000` overrides the `port` in the `Database` section.
+
    #### Overriding Configuration with Local Files (`config.local.yml`)
 
    You can create a `config.local.yml` next to your main file. Values from the local file will **override**
