@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import json
 import logging  # chutils: ignore[ChutilsIntegrationRule]
+import re
 import time
 import urllib.request
+from collections.abc import Sequence
 from typing import Any
 
 from chutils.telegram.formatting import escape_html, smart_truncate
@@ -18,12 +20,55 @@ class TelegramLogHandler(logging.Handler):
         chat_id: int | str | None = None,
         level: int = logging.ERROR,
         rate_limit_per_min: int = 10,
+        flapping_patterns: str | re.Pattern[str] | Sequence[str | re.Pattern[str]] | None = None,
+        flapping_threshold: int = 3,
+        flapping_timeout: float = 60.0,
     ) -> None:
         super().__init__(level=level)
         self.bot_token = bot_token
         self.chat_id = chat_id
         self.rate_limit_per_min = rate_limit_per_min
         self._sent_timestamps: list[float] = []
+
+        if flapping_patterns is not None:
+            self.add_flapping_filter(
+                patterns=flapping_patterns,
+                threshold=flapping_threshold,
+                failure_timeout=flapping_timeout,
+            )
+
+    def add_flapping_filter(
+        self,
+        patterns: str | re.Pattern[str] | Sequence[str | re.Pattern[str]],
+        threshold: int = 3,
+        failure_timeout: float = 60.0,
+    ) -> TelegramLogHandler:
+        """Добавляет фильтр подавления кратковременных транзиентных ошибок (флаппинга).
+
+        Сообщения об ошибках, совпадающие с patterns, будут отсекаться до тех пор,
+        пока количество последовательных сбоев не достигнет threshold или время
+        сбоя не превысит failure_timeout.
+
+        Args:
+            patterns: Шаблоны ошибок (подстрока, регулярное выражение или список таковых).
+            threshold: Порог последовательных ошибок до отправки алерта в Telegram.
+            failure_timeout: Таймаут сбоя в секундах до отправки алерта.
+
+        Returns:
+            Текущий экземпляр обработчика.
+        """
+        from chutils.logger.filters import FlappingFilter
+
+        self.addFilter(
+            FlappingFilter(
+                patterns=patterns,
+                threshold=threshold,
+                failure_timeout=failure_timeout,
+                action="drop",
+                enrich_message=True,
+            )
+        )
+        return self
 
     def _resolve_credentials(self) -> tuple[str | None, int | str | None]:
         token = self.bot_token

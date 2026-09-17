@@ -73,3 +73,37 @@ def test_health_check_alert_bridge():
         # Degraded - отправляем
         assert bridge.on_health_check("redis", "DEGRADED", {"latency": "200ms"}) is True
         assert mock_send.call_count == 1
+
+
+def test_telegram_log_handler_flapping_filter():
+    """Проверяет работу подавления флаппинг-ошибок в TelegramLogHandler."""
+    handler = TelegramLogHandler(
+        bot_token="TEST_TOKEN",
+        chat_id=12345,
+        flapping_patterns=["Unable to make request to BotPolling"],
+        flapping_threshold=3,
+    )
+    logger = logging.getLogger("test_flapping_telegram")
+    logger.handlers.clear()
+    logger.addHandler(handler)
+    logger.setLevel(logging.ERROR)
+
+    with patch("urllib.request.urlopen") as mock_urlopen:
+        mock_urlopen.return_value.__enter__.return_value = MagicMock()
+
+        # 1-я ошибка поллинга -> отсекается (нет сетевого запроса в Telegram)
+        logger.error("Unable to make request to BotPolling, retrying...")
+        assert mock_urlopen.call_count == 0
+
+        # 2-я ошибка поллинга -> отсекается
+        logger.error("Unable to make request to BotPolling, retrying...")
+        assert mock_urlopen.call_count == 0
+
+        # Другая несовпадающая ошибка -> сразу отправляется
+        logger.error("Database connection lost")
+        assert mock_urlopen.call_count == 1
+
+        # 3-я ошибка поллинга -> достигла порога, отправляется с контекстом простоя!
+        logger.error("Unable to make request to BotPolling, retrying...")
+        assert mock_urlopen.call_count == 2
+
