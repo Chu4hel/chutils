@@ -73,6 +73,9 @@ members:
 - ChutilsLogger
 - DEVDEBUG_LEVEL_NUM
 - MEDIUMDEBUG_LEVEL_NUM
+- FlappingFilter
+- VKPollingFilter
+- suppress_vkbottle_polling_flapping
 
 ## Модуль `context`
 

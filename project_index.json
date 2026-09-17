@@ -23431,6 +23431,247 @@
             ]
           },
           {
+            "name": "filters",
+            "path": "chutils/logger/filters",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Фильтры для логирования.",
+            "docstring": "Фильтры для логирования.\n\nСодержит специализированные фильтры logging.Filter, включая FlappingFilter для\nподавления ложных транзиентных сбоев (флаппинга) и защиты от спама алертов.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "FlappingFilter",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Интеллектуальный фильтр для подавления кратковременных транзиентных ошибок (флаппинга).",
+                "docstring": "Интеллектуальный фильтр для подавления кратковременных транзиентных ошибок (флаппинга).\n\nПри возникновении ошибок, соответствующих заданным шаблонам, фильтр отслеживает\nколичество непрерывных сбоев и их длительность. До достижения заданного порога\n(по количеству попыток или времени) ошибки либо понижаются в уровне (например,\nдо INFO, чтобы не триггерить ERROR-алерты в Telegram, но оставаться в файловом логе),\nлибо полностью отсекаются.\n\nЕсли порог превышен (сервис действительно недоступен), фильтр пропускает ошибку\nкак полноценный ERROR (или исходный уровень) и опционально обогащает сообщение\nданными о длительности сбоя и количестве неудачных попыток.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 23,
+                "bases": [
+                  "logging.Filter"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, patterns, threshold, failure_timeout, action, downgrade_level, enrich_message, auto_reset_on_success, on_escalated, on_recovered)",
+                    "summary": "Инициализирует фильтр флаппинга.",
+                    "docstring": "Инициализирует фильтр флаппинга.\n\nArgs:\n    patterns: Строка, регулярное выражение или последовательность строк/регулярок,\n        совпадение с которыми классифицирует сообщение как флаппинг-ошибку.\n    threshold: Количество непрерывных сбоев до эскалации (по умолчанию 3).\n    failure_timeout: Максимальное время в секундах от первого сбоя до эскалации\n        (по умолчанию 60.0).\n    action: Действие до достижения порога: 'downgrade' (понизить уровень)\n        или 'drop' (полностью отбросить запись).\n    downgrade_level: Числовой уровень логирования для действия 'downgrade'\n        (по умолчанию logging.INFO).\n    enrich_message: Добавлять ли в сообщение префикс с диагностикой сбоя\n        при превышении порога.\n    auto_reset_on_success: Автоматически сбрасывать счётчик сбоев при получении\n        любой другой записи лога с уровнем ниже ERROR.\n    on_escalated: Опциональный callback(record, consecutive_failures, duration),\n        вызываемый при первом превышении порога.\n    on_recovered: Опциональный callback(downtime_duration), вызываемый\n        при успешном восстановлении после подтвержденной аварии.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 38,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "consecutive_failures",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Текущее количество последовательных сбоев.",
+                    "docstring": "Текущее количество последовательных сбоев.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 94,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_escalated",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Флаг того, что сбой в данный момент превысил порог и эскалирован.",
+                    "docstring": "Флаг того, что сбой в данный момент превысил порог и эскалирован.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 100,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_matches",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, message)",
+                    "summary": "Проверяет, совпадает ли сообщение с одним из шаблонов.",
+                    "docstring": "Проверяет, совпадает ли сообщение с одним из шаблонов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 105,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "reset",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Сбрасывает состояние счетчиков и таймеров сбоев.",
+                    "docstring": "Сбрасывает состояние счетчиков и таймеров сбоев.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 115,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_do_reset",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Внутренний сброс без захвата блокировки.",
+                    "docstring": "Внутренний сброс без захвата блокировки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 122,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "filter",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, record)",
+                    "summary": "Фильтрует или модифицирует запись лога.",
+                    "docstring": "Фильтрует или модифицирует запись лога.\n\nArgs:\n    record: Объект LogRecord стандартной библиотеки logging.\n\nReturns:\n    True, если запись должна быть сохранена/передана дальше, False для отсечения.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 135,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "VKPollingFilter",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Специализированный фильтр для подавления ложных алертов LongPoll VK (vkbottle).",
+                "docstring": "Специализированный фильтр для подавления ложных алертов LongPoll VK (vkbottle).\n\nПо умолчанию реагирует на стандартное сообщение vkbottle:\n'Unable to make request to BotPolling'\nи понижает первые попытки до уровня INFO, не допуская ложных ночных алертов.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 204,
+                "bases": [
+                  "FlappingFilter"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, patterns, threshold, failure_timeout, action, downgrade_level, enrich_message, auto_reset_on_success, on_escalated, on_recovered)",
+                    "summary": "Инициализирует фильтр для поллинга ВКонтакте.",
+                    "docstring": "Инициализирует фильтр для поллинга ВКонтакте.\n\nArgs:\n    patterns: Шаблоны ошибок (по умолчанию 'Unable to make request to BotPolling').\n    threshold: Порог последовательных ошибок (по умолчанию 3).\n    failure_timeout: Время сбоя в секундах до эскалации (по умолчанию 60.0).\n    action: Действие ('downgrade' или 'drop').\n    downgrade_level: Уровень понижения (по умолчанию logging.INFO).\n    enrich_message: Обогащать ли сообщение при аварии.\n    auto_reset_on_success: Сбрасывать ли счетчик при нормальных событиях.\n    on_escalated: Callback при эскалации аварии.\n    on_recovered: Callback при восстановлении.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 215,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "suppress_vkbottle_polling_flapping",
+                "type": "function",
+                "layer": "public",
+                "signature": "(logger_name, threshold, failure_timeout, action)",
+                "summary": "Удобная функция подключения фильтра флаппинга к логгеру vkbottle.",
+                "docstring": "Удобная функция подключения фильтра флаппинга к логгеру vkbottle.\n\nArgs:\n    logger_name: Имя логгера vkbottle (по умолчанию 'vkbottle').\n    threshold: Количество попыток ретрая до генерации алертов (по умолчанию 3).\n    failure_timeout: Таймаут сбоя в секундах (по умолчанию 60.0).\n    action: Действие до достижения порога ('downgrade' или 'drop').\n\nReturns:\n    Созданный и подключенный к логгеру экземпляр VKPollingFilter.\n\nExample:\n    ```python\n    from chutils.logger import suppress_vkbottle_polling_flapping\n\n    # Одна строчка при старте приложения:\n    suppress_vkbottle_polling_flapping()\n    ```",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 255,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
             "name": "formatters",
             "path": "chutils/logger/formatters",
             "type": "module",
@@ -24465,7 +24706,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 43,
+            "line_number": 52,
             "bases": [],
             "children": []
           },
@@ -24485,7 +24726,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 65,
+            "line_number": 80,
             "bases": [],
             "children": []
           },
@@ -24505,7 +24746,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 73,
+            "line_number": 88,
             "bases": [],
             "children": []
           }
@@ -40081,7 +40322,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 12,
+                "line_number": 14,
                 "bases": [
                   "logging.Handler"
                 ],
@@ -40090,7 +40331,7 @@
                     "name": "__init__",
                     "type": "method",
                     "layer": "private",
-                    "signature": "(self, bot_token, chat_id, level, rate_limit_per_min)",
+                    "signature": "(self, bot_token, chat_id, level, rate_limit_per_min, flapping_patterns, flapping_threshold, flapping_timeout)",
                     "summary": "",
                     "docstring": "",
                     "breadcrumbs": {
@@ -40102,7 +40343,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 15,
+                    "line_number": 17,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "add_flapping_filter",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, patterns, threshold, failure_timeout)",
+                    "summary": "Добавляет фильтр подавления кратковременных транзиентных ошибок (флаппинга).",
+                    "docstring": "Добавляет фильтр подавления кратковременных транзиентных ошибок (флаппинга).\n\nСообщения об ошибках, совпадающие с patterns, будут отсекаться до тех пор,\nпока количество последовательных сбоев не достигнет threshold или время\nсбоя не превысит failure_timeout.\n\nArgs:\n    patterns: Шаблоны ошибок (подстрока, регулярное выражение или список таковых).\n    threshold: Порог последовательных ошибок до отправки алерта в Telegram.\n    failure_timeout: Таймаут сбоя в секундах до отправки алерта.\n\nReturns:\n    Текущий экземпляр обработчика.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 40,
                     "bases": [],
                     "children": []
                   },
@@ -40122,7 +40383,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 28,
+                    "line_number": 73,
                     "bases": [],
                     "children": []
                   },
@@ -40142,7 +40403,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 47,
+                    "line_number": 92,
                     "bases": [],
                     "children": []
                   },
@@ -40162,7 +40423,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 56,
+                    "line_number": 101,
                     "bases": [],
                     "children": []
                   }
@@ -40184,7 +40445,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 99,
+                "line_number": 144,
                 "bases": [],
                 "children": []
               },
@@ -40204,7 +40465,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 169,
+                "line_number": 214,
                 "bases": [],
                 "children": [
                   {
@@ -40223,7 +40484,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 172,
+                    "line_number": 217,
                     "bases": [],
                     "children": []
                   },
@@ -40243,7 +40504,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 182,
+                    "line_number": 227,
                     "bases": [],
                     "children": []
                   }
@@ -43380,7 +43641,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 361,
+        "line_number": 367,
         "bases": [],
         "children": []
       },
@@ -43400,7 +43661,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 394,
+        "line_number": 400,
         "bases": [],
         "children": []
       },
@@ -43420,7 +43681,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 414,
+        "line_number": 420,
         "bases": [],
         "children": []
       }
@@ -45852,8 +46113,8 @@
   "metadata": {
     "chutils_version": "3.7.1",
     "project_version": "3.7.1",
-    "git_commit": "bf465315bcadd5ab4b53ed8386bae33ef5dfc8fd (dirty)",
-    "generated_at": "2026-09-17T12:37:27.451138+00:00",
-    "project_hash": "f3bde5b850a22fc6f42bf70a67f76cff2bf7271c103231d3a9e7b9a34e013f22"
+    "git_commit": "405a25c840221b8b9a74a696a5e246494cb6967b (dirty)",
+    "generated_at": "2026-09-17T22:28:22.827048+00:00",
+    "project_hash": "295f864a962f1e42f65babd8942292e14ae87d695d253ffdf7e484010c98ce49"
   }
 }
