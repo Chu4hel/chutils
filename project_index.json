@@ -46111,10 +46111,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.7.1",
-    "project_version": "3.7.1",
-    "git_commit": "405a25c840221b8b9a74a696a5e246494cb6967b (dirty)",
-    "generated_at": "2026-09-17T22:28:22.827048+00:00",
+    "chutils_version": "3.7.2",
+    "project_version": "3.7.2",
+    "git_commit": "bd15a748c2a31a4f653336f30d6d87a4fbe1e70c (dirty)",
+    "generated_at": "2026-09-17T22:40:04.541404+00:00",
     "project_hash": "295f864a962f1e42f65babd8942292e14ae87d695d253ffdf7e484010c98ce49"
   }
 }
