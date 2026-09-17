@@ -5605,6 +5605,26 @@
                 "children": []
               },
               {
+                "name": "_extract_model_sections_and_keys",
+                "type": "function",
+                "layer": "private",
+                "signature": "(model)",
+                "summary": "Извлекает имена секций и ключей (включая алиасы) из Pydantic модели.",
+                "docstring": "Извлекает имена секций и ключей (включая алиасы) из Pydantic модели.\n\nArgs:\n    model: Класс Pydantic модели или None.\n\nReturns:\n    Кортеж из двух словарей:\n    - sec_map: маппинг имени секции в нижнем регистре на оригинальное имя/алиас.\n    - keys_map: маппинг имени секции в нижнем регистре на словарь (ключ в нижнем регистре -> оригинальный ключ/алиас).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 71,
+                "bases": [],
+                "children": []
+              },
+              {
                 "name": "_enrich_config_data_with_pydantic_aliases",
                 "type": "function",
                 "layer": "private",
@@ -5620,7 +5640,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 71,
+                "line_number": 153,
                 "bases": [],
                 "children": []
               },
@@ -5640,7 +5660,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 180,
+                "line_number": 267,
                 "bases": [],
                 "children": []
               },
@@ -5660,7 +5680,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 418,
+                "line_number": 545,
                 "bases": [],
                 "children": []
               },
@@ -5680,7 +5700,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 425,
+                "line_number": 552,
                 "bases": [],
                 "children": []
               },
@@ -5700,7 +5720,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 442,
+                "line_number": 569,
                 "bases": [],
                 "children": []
               },
@@ -5720,7 +5740,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 523,
+                "line_number": 650,
                 "bases": [],
                 "children": []
               }
@@ -6551,7 +6571,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 142,
+                "line_number": 143,
                 "bases": [],
                 "children": []
               },
@@ -6571,7 +6591,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 192,
+                "line_number": 193,
                 "bases": [],
                 "children": []
               },
@@ -6591,7 +6611,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 221,
+                "line_number": 222,
                 "bases": [],
                 "children": []
               },
@@ -6611,7 +6631,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 250,
+                "line_number": 251,
                 "bases": [],
                 "children": []
               },
@@ -6631,7 +6651,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 306,
+                "line_number": 307,
                 "bases": [],
                 "children": []
               },
@@ -6653,7 +6673,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 356,
+                "line_number": 357,
                 "bases": [],
                 "children": []
               },
@@ -6675,7 +6695,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 366,
+                "line_number": 367,
                 "bases": [],
                 "children": []
               },
@@ -6695,7 +6715,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 375,
+                "line_number": 376,
                 "bases": [],
                 "children": []
               },
@@ -6715,7 +6735,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 435,
+                "line_number": 436,
                 "bases": [],
                 "children": []
               },
@@ -6735,7 +6755,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 490,
+                "line_number": 491,
                 "bases": [],
                 "children": []
               }
@@ -45832,8 +45852,8 @@
   "metadata": {
     "chutils_version": "3.7.0",
     "project_version": "3.7.0",
-    "git_commit": "5cb29a30832f6b1d6e3af1c4572da491e9a76968 (dirty)",
-    "generated_at": "2026-09-15T14:49:13.056085+00:00",
-    "project_hash": "58ba4b8fbabcd20573314c01c78c3ef9decdf6006d6aac4c12d7be9c84989f7a"
+    "git_commit": "ad454faa9559b63557688a428d14df5fe6d4c81b (dirty)",
+    "generated_at": "2026-09-17T12:11:21.053354+00:00",
+    "project_hash": "82b5b7414d953b1ff5d659afed6c9389afdcbec949b84c08821aa48af9b7a5cc"
   }
 }
