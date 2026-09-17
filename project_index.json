@@ -45850,10 +45850,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.7.0",
-    "project_version": "3.7.0",
-    "git_commit": "a6205adc73f5e6eec6782012ead50b46526d8b4a (dirty)",
-    "generated_at": "2026-09-17T12:19:35.529847+00:00",
+    "chutils_version": "3.7.1",
+    "project_version": "3.7.1",
+    "git_commit": "183fa4b4d073877ca9f1b19ed4104c9d01f12a8c (dirty)",
+    "generated_at": "2026-09-17T12:27:01.778580+00:00",
     "project_hash": "74ffe9737bdbe013edb8e27dbfed57b19588031effeaf17ae2a39806f868a642"
   }
 }
