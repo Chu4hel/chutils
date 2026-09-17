@@ -187,11 +187,8 @@ def _enrich_config_data_with_pydantic_aliases(
                         except Exception:
                             pass
 
-                    target_key = found_key if found_key is not None else aliases[0]
-                    config_data[target_key] = env_val
                     for a in aliases:
-                        if a != target_key and a in config_data:
-                            config_data[a] = env_val
+                        config_data[a] = env_val
                     break
 
 
