@@ -13,11 +13,7 @@ import threading
 import time
 from collections.abc import Callable, Sequence
 
-__all__ = [
-    "FlappingFilter",
-    "VKPollingFilter",
-    "suppress_vkbottle_polling_flapping",
-]
+__all__ = ["FlappingFilter"]
 
 
 class FlappingFilter(logging.Filter):
@@ -201,88 +197,5 @@ class FlappingFilter(logging.Filter):
             return True
 
 
-class VKPollingFilter(FlappingFilter):
-    """
-    Специализированный фильтр для подавления ложных алертов LongPoll VK (vkbottle).
+            return True
 
-    По умолчанию реагирует на стандартное сообщение vkbottle:
-    'Unable to make request to BotPolling'
-    и понижает первые попытки до уровня INFO, не допуская ложных ночных алертов.
-    """
-
-    DEFAULT_PATTERN = "Unable to make request to BotPolling"
-
-    def __init__(
-        self,
-        patterns: str | re.Pattern[str] | Sequence[str | re.Pattern[str]] | None = None,
-        threshold: int = 3,
-        failure_timeout: float = 60.0,
-        action: str = "downgrade",
-        downgrade_level: int = logging.INFO,
-        enrich_message: bool = True,
-        auto_reset_on_success: bool = True,
-        on_escalated: Callable[[logging.LogRecord, int, float], None] | None = None,
-        on_recovered: Callable[[float], None] | None = None,
-    ) -> None:
-        """
-        Инициализирует фильтр для поллинга ВКонтакте.
-
-        Args:
-            patterns: Шаблоны ошибок (по умолчанию 'Unable to make request to BotPolling').
-            threshold: Порог последовательных ошибок (по умолчанию 3).
-            failure_timeout: Время сбоя в секундах до эскалации (по умолчанию 60.0).
-            action: Действие ('downgrade' или 'drop').
-            downgrade_level: Уровень понижения (по умолчанию logging.INFO).
-            enrich_message: Обогащать ли сообщение при аварии.
-            auto_reset_on_success: Сбрасывать ли счетчик при нормальных событиях.
-            on_escalated: Callback при эскалации аварии.
-            on_recovered: Callback при восстановлении.
-        """
-        resolved_patterns = patterns if patterns is not None else self.DEFAULT_PATTERN
-        super().__init__(
-            patterns=resolved_patterns,
-            threshold=threshold,
-            failure_timeout=failure_timeout,
-            action=action,
-            downgrade_level=downgrade_level,
-            enrich_message=enrich_message,
-            auto_reset_on_success=auto_reset_on_success,
-            on_escalated=on_escalated,
-            on_recovered=on_recovered,
-        )
-
-
-def suppress_vkbottle_polling_flapping(
-    logger_name: str = "vkbottle",
-    threshold: int = 3,
-    failure_timeout: float = 60.0,
-    action: str = "downgrade",
-) -> VKPollingFilter:
-    """
-    Удобная функция подключения фильтра флаппинга к логгеру vkbottle.
-
-    Args:
-        logger_name: Имя логгера vkbottle (по умолчанию 'vkbottle').
-        threshold: Количество попыток ретрая до генерации алертов (по умолчанию 3).
-        failure_timeout: Таймаут сбоя в секундах (по умолчанию 60.0).
-        action: Действие до достижения порога ('downgrade' или 'drop').
-
-    Returns:
-        Созданный и подключенный к логгеру экземпляр VKPollingFilter.
-
-    Example:
-        ```python
-        from chutils.logger import suppress_vkbottle_polling_flapping
-
-        # Одна строчка при старте приложения:
-        suppress_vkbottle_polling_flapping()
-        ```
-    """
-    target_logger = logging.getLogger(logger_name)
-    flapping_filter = VKPollingFilter(
-        threshold=threshold,
-        failure_timeout=failure_timeout,
-        action=action,
-    )
-    target_logger.addFilter(flapping_filter)
-    return flapping_filter

@@ -21,12 +21,6 @@ if TYPE_CHECKING:
     from .filters import (
         FlappingFilter as FlappingFilter,
     )
-    from .filters import (
-        VKPollingFilter as VKPollingFilter,
-    )
-    from .filters import (
-        suppress_vkbottle_polling_flapping as suppress_vkbottle_polling_flapping,
-    )
     from .formatters import JSON_LOGGER_AVAILABLE as JSON_LOGGER_AVAILABLE
     from .formatters import ChutilsJsonFormatter as ChutilsJsonFormatter
     from .handlers import (
@@ -57,11 +51,6 @@ _LAZY_MAPPING = {
     "DEVDEBUG_LEVEL_NUM": (".core", "DEVDEBUG_LEVEL_NUM"),
     "MEDIUMDEBUG_LEVEL_NUM": (".core", "MEDIUMDEBUG_LEVEL_NUM"),
     "FlappingFilter": (".filters", "FlappingFilter"),
-    "VKPollingFilter": (".filters", "VKPollingFilter"),
-    "suppress_vkbottle_polling_flapping": (
-        ".filters",
-        "suppress_vkbottle_polling_flapping",
-    ),
     "ChutilsJsonFormatter": (".formatters", "ChutilsJsonFormatter"),
     "JSON_LOGGER_AVAILABLE": (".formatters", "JSON_LOGGER_AVAILABLE"),
     "SafeTimedRotatingFileHandler": (".handlers", "SafeTimedRotatingFileHandler"),

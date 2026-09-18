@@ -9,11 +9,7 @@ import re
 import threading
 import time
 
-from chutils.logger import (
-    FlappingFilter,
-    VKPollingFilter,
-    suppress_vkbottle_polling_flapping,
-)
+from chutils.logger import FlappingFilter
 
 
 def _make_record(
@@ -181,39 +177,3 @@ def test_flapping_filter_thread_safety() -> None:
     assert f.consecutive_failures == 50
     assert f.is_escalated
 
-
-def test_vk_polling_filter_defaults() -> None:
-    """Проверяет настройки по умолчанию для VKPollingFilter."""
-    vk_filter = VKPollingFilter()
-    assert vk_filter.threshold == 3
-    assert vk_filter.failure_timeout == 60.0
-    assert vk_filter.action == "downgrade"
-
-    # Проверка реакции на стандартное сообщение vkbottle
-    rec = _make_record(
-        "Unable to make request to BotPolling, retrying...",
-        level=logging.ERROR,
-        name="vkbottle.polling.base",
-    )
-    assert vk_filter.filter(rec) is True
-    assert rec.levelno == logging.INFO
-    assert rec.levelname == "INFO"
-    assert vk_filter.consecutive_failures == 1
-
-
-def test_suppress_vkbottle_polling_flapping() -> None:
-    """Проверяет helper suppress_vkbottle_polling_flapping."""
-    logger_name = "test_vkbottle_helper"
-    test_logger = logging.getLogger(logger_name)
-    test_logger.filters.clear()
-
-    flt = suppress_vkbottle_polling_flapping(logger_name=logger_name, threshold=2)
-    assert flt in test_logger.filters
-
-    rec1 = _make_record("Unable to make request to BotPolling", name=logger_name)
-    assert flt.filter(rec1) is True
-    assert rec1.levelno == logging.INFO
-
-    rec2 = _make_record("Unable to make request to BotPolling", name=logger_name)
-    assert flt.filter(rec2) is True
-    assert rec2.levelno == logging.ERROR

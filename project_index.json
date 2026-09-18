@@ -23455,7 +23455,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 23,
+                "line_number": 19,
                 "bases": [
                   "logging.Filter"
                 ],
@@ -23476,7 +23476,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 38,
+                    "line_number": 34,
                     "bases": [],
                     "children": []
                   },
@@ -23498,7 +23498,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 94,
+                    "line_number": 90,
                     "bases": [],
                     "children": []
                   },
@@ -23520,7 +23520,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 100,
+                    "line_number": 96,
                     "bases": [],
                     "children": []
                   },
@@ -23540,7 +23540,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 105,
+                    "line_number": 101,
                     "bases": [],
                     "children": []
                   },
@@ -23560,7 +23560,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 115,
+                    "line_number": 111,
                     "bases": [],
                     "children": []
                   },
@@ -23580,7 +23580,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 122,
+                    "line_number": 118,
                     "bases": [],
                     "children": []
                   },
@@ -23600,74 +23600,11 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 135,
+                    "line_number": 131,
                     "bases": [],
                     "children": []
                   }
                 ]
-              },
-              {
-                "name": "VKPollingFilter",
-                "type": "class",
-                "layer": "public",
-                "signature": "",
-                "summary": "Специализированный фильтр для подавления ложных алертов LongPoll VK (vkbottle).",
-                "docstring": "Специализированный фильтр для подавления ложных алертов LongPoll VK (vkbottle).\n\nПо умолчанию реагирует на стандартное сообщение vkbottle:\n'Unable to make request to BotPolling'\nи понижает первые попытки до уровня INFO, не допуская ложных ночных алертов.",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 204,
-                "bases": [
-                  "FlappingFilter"
-                ],
-                "children": [
-                  {
-                    "name": "__init__",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self, patterns, threshold, failure_timeout, action, downgrade_level, enrich_message, auto_reset_on_success, on_escalated, on_recovered)",
-                    "summary": "Инициализирует фильтр для поллинга ВКонтакте.",
-                    "docstring": "Инициализирует фильтр для поллинга ВКонтакте.\n\nArgs:\n    patterns: Шаблоны ошибок (по умолчанию 'Unable to make request to BotPolling').\n    threshold: Порог последовательных ошибок (по умолчанию 3).\n    failure_timeout: Время сбоя в секундах до эскалации (по умолчанию 60.0).\n    action: Действие ('downgrade' или 'drop').\n    downgrade_level: Уровень понижения (по умолчанию logging.INFO).\n    enrich_message: Обогащать ли сообщение при аварии.\n    auto_reset_on_success: Сбрасывать ли счетчик при нормальных событиях.\n    on_escalated: Callback при эскалации аварии.\n    on_recovered: Callback при восстановлении.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 215,
-                    "bases": [],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "suppress_vkbottle_polling_flapping",
-                "type": "function",
-                "layer": "public",
-                "signature": "(logger_name, threshold, failure_timeout, action)",
-                "summary": "Удобная функция подключения фильтра флаппинга к логгеру vkbottle.",
-                "docstring": "Удобная функция подключения фильтра флаппинга к логгеру vkbottle.\n\nArgs:\n    logger_name: Имя логгера vkbottle (по умолчанию 'vkbottle').\n    threshold: Количество попыток ретрая до генерации алертов (по умолчанию 3).\n    failure_timeout: Таймаут сбоя в секундах (по умолчанию 60.0).\n    action: Действие до достижения порога ('downgrade' или 'drop').\n\nReturns:\n    Созданный и подключенный к логгеру экземпляр VKPollingFilter.\n\nExample:\n    ```python\n    from chutils.logger import suppress_vkbottle_polling_flapping\n\n    # Одна строчка при старте приложения:\n    suppress_vkbottle_polling_flapping()\n    ```",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 255,
-                "bases": [],
-                "children": []
               }
             ]
           },
@@ -24706,7 +24643,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 52,
+            "line_number": 46,
             "bases": [],
             "children": []
           },
@@ -24726,7 +24663,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 80,
+            "line_number": 69,
             "bases": [],
             "children": []
           },
@@ -24746,7 +24683,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 88,
+            "line_number": 77,
             "bases": [],
             "children": []
           }
@@ -43641,7 +43578,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 367,
+        "line_number": 362,
         "bases": [],
         "children": []
       },
@@ -43661,7 +43598,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 400,
+        "line_number": 395,
         "bases": [],
         "children": []
       },
@@ -43681,7 +43618,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 420,
+        "line_number": 415,
         "bases": [],
         "children": []
       }
@@ -46113,8 +46050,8 @@
   "metadata": {
     "chutils_version": "3.7.2",
     "project_version": "3.7.2",
-    "git_commit": "bd15a748c2a31a4f653336f30d6d87a4fbe1e70c (dirty)",
-    "generated_at": "2026-09-17T22:40:04.541404+00:00",
-    "project_hash": "295f864a962f1e42f65babd8942292e14ae87d695d253ffdf7e484010c98ce49"
+    "git_commit": "f398dda4f6ef6e798a7c2a6e2ea12f05b5f989e8 (dirty)",
+    "generated_at": "2026-09-18T15:00:52.198704+00:00",
+    "project_hash": "6d6ce9bb9f81a4e4d7bf44112585670bb3f08ab604fb7821988503435e79bf40"
   }
 }

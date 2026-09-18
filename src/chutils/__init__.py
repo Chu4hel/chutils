@@ -158,11 +158,6 @@ _LAZY_MAPPING = {
     "LogLevel": (".logger", "LogLevel"),
     "SecretMaskingFilter": (".logger", "SecretMaskingFilter"),
     "FlappingFilter": (".logger", "FlappingFilter"),
-    "VKPollingFilter": (".logger", "VKPollingFilter"),
-    "suppress_vkbottle_polling_flapping": (
-        ".logger",
-        "suppress_vkbottle_polling_flapping",
-    ),
     "ChutilsJsonFormatter": (".logger", "ChutilsJsonFormatter"),
     "SafeTimedRotatingFileHandler": (".logger", "SafeTimedRotatingFileHandler"),
     "CompressingRotatingFileHandler": (".logger", "CompressingRotatingFileHandler"),
