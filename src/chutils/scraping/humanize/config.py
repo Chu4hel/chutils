@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any, cast
+
+if TYPE_CHECKING:
+    from chutils.scraping.fingerprint.models import FingerprintProfile
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -70,7 +73,6 @@ class AntidetectConfig(BaseModel):
         default=None,
         description="Эмулируемый коэффициент масштабирования (window.devicePixelRatio).",
     )
-
 
     @classmethod
     def preset_stealth_nodriver(
@@ -150,7 +152,7 @@ class AntidetectConfig(BaseModel):
     @classmethod
     def from_fingerprint(
         cls,
-        profile: Any,
+        profile: FingerprintProfile | Any,
         *,
         stealth_minimal: bool = True,
     ) -> AntidetectConfig:
@@ -163,7 +165,8 @@ class AntidetectConfig(BaseModel):
         Returns:
             Сконфигурированный экземпляр AntidetectConfig.
         """
-        return profile.to_antidetect_config(stealth_minimal=stealth_minimal)
+        res = profile.to_antidetect_config(stealth_minimal=stealth_minimal)
+        return cast(AntidetectConfig, res)
 
     @classmethod
     def from_seed(
@@ -190,7 +193,9 @@ class AntidetectConfig(BaseModel):
         """
         from chutils.scraping.fingerprint import FingerprintSynthesizer
 
-        fp = FingerprintSynthesizer(mode="procedural", os_target=os_target, locale=locale).synthesize(seed)
+        fp = FingerprintSynthesizer(
+            mode="procedural", os_target=os_target, locale=locale
+        ).synthesize(seed)
         return fp.to_antidetect_config(stealth_minimal=stealth_minimal)
 
     @classmethod
@@ -240,9 +245,10 @@ class AntidetectConfig(BaseModel):
         """
         from chutils.scraping.fingerprint import FingerprintSynthesizer
 
-        fp = FingerprintSynthesizer(mode="procedural", os_target=os_target, locale=locale).synthesize(seed)
+        fp = FingerprintSynthesizer(
+            mode="procedural", os_target=os_target, locale=locale
+        ).synthesize(seed)
         return fp.to_antidetect_config(stealth_minimal=stealth_minimal)
-
 
     def get_behavioral_profile(self) -> Any:
         """Возвращает детерминированный биометрический профиль моторики на основе session_seed.
@@ -275,7 +281,6 @@ class AntidetectConfig(BaseModel):
             screen_avail_height=self.screen_avail_height,
             device_pixel_ratio=self.device_pixel_ratio,
         )
-
 
     async def apply_to_nodriver(self, tab: Any) -> None:
         """Применяет данную конфигурацию антидетекта к вкладке nodriver Tab.

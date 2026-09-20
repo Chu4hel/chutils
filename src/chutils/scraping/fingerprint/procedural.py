@@ -4,10 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import random
-from typing import Any
 
 from .database import (
-    ALL_TIERS,
     AUDIO_INPUTS_EN,
     AUDIO_INPUTS_RU,
     AUDIO_OUTPUTS_EN,

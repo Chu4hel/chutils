@@ -141,9 +141,7 @@ class FingerprintProfile(BaseModel):
         description="Источник генерации: 'procedural', 'browserforge' или 'fpgen'.",
     )
 
-    def to_antidetect_config(
-        self, stealth_minimal: bool = True
-    ) -> AntidetectConfig:
+    def to_antidetect_config(self, stealth_minimal: bool = True) -> AntidetectConfig:
         """Конвертирует профиль в AntidetectConfig для браузерных движков.
 
         Args:
@@ -219,10 +217,8 @@ class FingerprintProfile(BaseModel):
         Args:
             tab: Вкладка nodriver (Tab).
         """
-        from chutils.scraping.humanize.antidetect import apply_stealth
-
         config = self.to_antidetect_config()
-        await apply_stealth(tab, config=config)
+        await config.apply_to_nodriver(tab)
 
     async def apply_to_page(self, page: Any) -> None:
         """Применяет параметры отпечатка к странице Playwright Page.
@@ -230,7 +226,5 @@ class FingerprintProfile(BaseModel):
         Args:
             page: Страница Playwright (Page).
         """
-        from chutils.scraping.humanize.antidetect import apply_stealth
-
         config = self.to_antidetect_config()
-        await apply_stealth(page, config=config)
+        await config.apply_to_playwright(page)

@@ -2,6 +2,7 @@ from chutils.scraping.humanize.math_utils import (
     BezierCurveGenerator,
     JitterDelayGenerator,
     KeyboardTypoGenerator,
+    TypoAction,
     WindMouseGenerator,
 )
 
@@ -87,7 +88,9 @@ def test_keyboard_typo_generator_cyrillic() -> None:
 
     # Должны появиться опечатки и backspace
     has_backspace = any(action.action == "backspace" for action in sequence)
-    assert has_backspace, "Ожидались опечатки с последующим исправлением backspace для кириллицы"
+    assert has_backspace, (
+        "Ожидались опечатки с последующим исправлением backspace для кириллицы"
+    )
 
     # Итоговый результат после воспроизведения действий должен совпадать с исходным
     typed_text: list[str] = []
@@ -105,8 +108,12 @@ def test_jcuken_neighbors_coverage() -> None:
 
     cyrillic_alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
     for letter in cyrillic_alphabet:
-        assert letter in _JCUKEN_NEIGHBORS, f"Буква {letter} отсутствует в _JCUKEN_NEIGHBORS"
-        assert len(_JCUKEN_NEIGHBORS[letter]) > 0, f"У буквы {letter} нет соседних клавиш"
+        assert letter in _JCUKEN_NEIGHBORS, (
+            f"Буква {letter} отсутствует в _JCUKEN_NEIGHBORS"
+        )
+        assert len(_JCUKEN_NEIGHBORS[letter]) > 0, (
+            f"У буквы {letter} нет соседних клавиш"
+        )
 
 
 def test_keyboard_typo_generator_cyrillic_uppercase() -> None:
@@ -172,6 +179,7 @@ def test_keyboard_layout_typo_latin() -> None:
 
     # Первые err_count символов должны быть кириллицей
     from chutils.scraping.humanize.math_utils import _JCUKEN_NEIGHBORS
+
     for i in range(err_count):
         assert sequence[i].action == "type"
         assert sequence[i].char.lower() in _JCUKEN_NEIGHBORS
@@ -239,11 +247,11 @@ def test_keyboard_delayed_fix_sequence() -> None:
     assert len(arrow_lefts) > 0, "Должна быть серия нажатий ArrowLeft"
 
     end_or_right = [
-        a
-        for a in sequence
-        if a.action == "key" and a.char in ("End", "ArrowRight")
+        a for a in sequence if a.action == "key" and a.char in ("End", "ArrowRight")
     ]
-    assert len(end_or_right) > 0, "Должно быть возвращение в конец строки через End или ArrowRight"
+    assert len(end_or_right) > 0, (
+        "Должно быть возвращение в конец строки через End или ArrowRight"
+    )
 
     # Эмуляция текстового редактора должна дать исходный текст без искажений
     typed_result = _simulate_typing(sequence)
@@ -280,6 +288,8 @@ def test_keyboard_delayed_fix_latin() -> None:
 
     # Идеальный результат после исправления
     assert _simulate_typing(sequence) == text
+
+
 def test_wind_mouse_generator() -> None:
     """Тестирует генератор траекторий WindMouse."""
     generator = WindMouseGenerator()

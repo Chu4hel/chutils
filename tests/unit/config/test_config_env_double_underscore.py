@@ -48,8 +48,12 @@ class MultiLevelConfig(BaseModel):
 
 
 class AppConfig(BaseModel):
-    telegram: TelegramConfig = Field(default_factory=lambda: TelegramConfig(bot_token="default"))
-    database: DbConfig = Field(default_factory=lambda: DbConfig(host="localhost", port=5432))
+    telegram: TelegramConfig = Field(
+        default_factory=lambda: TelegramConfig(bot_token="default")
+    )
+    database: DbConfig = Field(
+        default_factory=lambda: DbConfig(host="localhost", port=5432)
+    )
 
 
 def test_env_double_underscore_without_yaml_section(config_fs, monkeypatch):
@@ -195,8 +199,9 @@ def test_get_config_list_with_env_json(config_fs, monkeypatch):
 
     from chutils.config import get_config_list
 
-    monkeypatch.setenv("CH_TELEGRAM__PROXIES", '["http://proxy1:8080", "http://proxy2:8080"]')
+    monkeypatch.setenv(
+        "CH_TELEGRAM__PROXIES", '["http://proxy1:8080", "http://proxy2:8080"]'
+    )
 
     proxies = get_config_list("telegram", "proxies")
     assert proxies == ["http://proxy1:8080", "http://proxy2:8080"]
-

@@ -182,3 +182,37 @@ def _generate_scroll_points(
     return points
 
 
+async def _resolve_async_element_coordinates(
+    page: Any, selector: str
+) -> tuple[int, int]:
+    """Определяет координаты клика внутри элемента для Playwright или nodriver."""
+    if _is_nodriver(page):
+        _ensure_nodriver()
+        elem = await page.find(selector)
+        box = await elem.get_position() if hasattr(elem, "get_position") else None
+        if box:
+            return (
+                int(box.x + box.width * random.uniform(0.3, 0.7)),
+                int(box.y + box.height * random.uniform(0.3, 0.7)),
+            )
+        return (100, 100)
+    elif _is_playwright(page):
+        _ensure_playwright()
+        elem = (
+            await page.query_selector(selector)
+            if hasattr(page, "query_selector")
+            else None
+        )
+        if elem is not None:
+            box = await elem.bounding_box()
+            if box:
+                return (
+                    int(box["x"] + box["width"] * random.uniform(0.3, 0.7)),
+                    int(box["y"] + box["height"] * random.uniform(0.3, 0.7)),
+                )
+        return (100, 100)
+    else:
+        raise ValueError(
+            f"Не удалось определить тип переданного объекта: {type(page)}. "
+            "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
+        )

@@ -1170,3 +1170,58 @@ if __name__ == "__main__":
 - **Детекция Hard Challenge**: Автоматическое распознавание интерактивных челленджей с предупреждением в лог и детализированной ошибкой при `raise_on_failure=True`.
 - **Проверка интерактивности**: Ожидание готовности виджета и пропуск неинтерактивных состояний (`opacity: 0`, `data-state="checking"`).
 - **CDP Fallback**: Автоматический резервный расчет границ через Box Model CDP при нулевых размерах DOM-прямоугольника.
+
+---
+
+## 11. Синтезатор цифровой личности и генератор отпечатков (`chutils.scraping.fingerprint`)
+
+Модуль `chutils.scraping.fingerprint` обеспечивает генерацию физически согласованных и статистически достоверных цифровых личностей (Browser Fingerprints) для обхода систем антифрода и фингерпринтинга (CreepJS, Pixelscan, BrowserLeaks).
+
+### Концепция архитектуры
+1. **Физическая валидность параметров**: Видеокарта, процессор, объем памяти, Client Hints и разрешение экрана строго взаимосвязаны (например, исключены аномалии вроде видеокарты Apple Metal на Windows или нечетного количества ядер).
+2. **Детерминизм по сиду**: Один и тот же сид (`seed="session_123"`) генерирует абсолютно идентичный отпечаток цифровой личности в любое время.
+3. **Два независимых движка**:
+   - **`ProceduralFingerprintEngine` (Zero-Dependency)**: Встроенный комбинаторный генератор с детерминированным расчетом геометрии дисплея, вычетом системной панели задач и валидными ANGLE WebGL строками. Не требует сторонних библиотек.
+   - **`BrowserForgeProvider` (Байесовская сеть)**: Опциональный провайдер на базе пакета `browserforge` (`pip install chutils[fingerprint]`), использующий генеративную байесовскую сеть, обученную на миллионах реальных пользовательских сессий.
+4. **Бесшовная интеграция с `nodriver` и `Playwright`**: Прямое применение параметров через методы профиля или `AntidetectConfig`.
+
+### Быстрый старт
+
+```python
+import asyncio
+from chutils.scraping import FingerprintSynthesizer, AntidetectConfig
+
+# 1. Детерминированный синтез по сиду
+synthesizer = FingerprintSynthesizer(os_target="windows")
+profile = synthesizer.synthesize(seed="user_account_42")
+
+print(f"Платформа: {profile.platform}")
+print(f"User-Agent: {profile.user_agent}")
+print(f"Экран: {profile.screen.width}x{profile.screen.height} (доступно: {profile.screen.avail_width}x{profile.screen.avail_height})")
+print(f"GPU: {profile.webgl.renderer}")
+print(f"Ядра CPU: {profile.hardware_concurrency}, RAM: {profile.device_memory} GB")
+
+# 2. Быстрое создание AntidetectConfig через сид
+config = AntidetectConfig.from_seed("user_account_42")
+# или из готового профиля:
+config = AntidetectConfig.from_fingerprint(profile)
+
+# 3. Прямое применение профиля к вкладке nodriver или странице Playwright
+# await profile.apply_to_tab(tab)
+# await profile.apply_to_page(page)
+```
+
+### Сохранение и сериализация профиля
+
+Сгенерированные отпечатки можно сериализовать в JSON / Dict и восстанавливать для долгосрочного использования сессий:
+
+```python
+# Экспорт в словарь / JSON
+data = profile.to_dict()
+
+# Восстановление профиля
+from chutils.scraping import FingerprintProfile
+restored_profile = FingerprintProfile.from_dict(data)
+assert restored_profile.user_agent == profile.user_agent
+```
+

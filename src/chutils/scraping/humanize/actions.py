@@ -1,19 +1,7 @@
 import asyncio
-import importlib.util
 import random
-import sys
 import time
 from typing import Any
-
-from chutils.exceptions import OptionalDependencyError
-
-from .math_utils import (
-    BezierCurveGenerator,
-    JitterDelayGenerator,
-    KeyboardTypoGenerator,
-    WindMouseGenerator,
-)
-
 
 from ._actions_helpers import (
     _build_selenium_key_map,
@@ -21,14 +9,38 @@ from ._actions_helpers import (
     _ensure_playwright,
     _ensure_selenium,
     _generate_scroll_points,
-    _get_lognormal_delay,
     _is_nodriver,
     _is_playwright,
+    _resolve_async_element_coordinates,
     async_human_sleep,
     human_sleep,
 )
+from .math_utils import (
+    BezierCurveGenerator,
+    JitterDelayGenerator,
+    KeyboardTypoGenerator,
+    WindMouseGenerator,
+)
 
-
+__all__ = [
+    "_build_selenium_key_map",
+    "_ensure_nodriver",
+    "_ensure_playwright",
+    "_ensure_selenium",
+    "_generate_scroll_points",
+    "_is_nodriver",
+    "_is_playwright",
+    "async_click",
+    "async_human_sleep",
+    "async_move_mouse",
+    "async_scroll_to",
+    "async_type_text",
+    "click",
+    "human_sleep",
+    "move_mouse",
+    "scroll_to",
+    "type_text",
+]
 
 
 async def async_move_mouse(
@@ -448,7 +460,6 @@ def scroll_to(
             time.sleep(delay_between_steps)
 
 
-
 def type_text(
     driver: Any,
     selector: str,
@@ -566,34 +577,7 @@ async def async_click(
                 "Необходимо указать координаты (x, y) или CSS-селектор selector."
             )
 
-        if _is_nodriver(page):
-            _ensure_nodriver()
-            elem = await page.find(selector)
-            box = await elem.get_position() if hasattr(elem, "get_position") else None
-            if box:
-                target_x = int(box.x + box.width * random.uniform(0.3, 0.7))
-                target_y = int(box.y + box.height * random.uniform(0.3, 0.7))
-            else:
-                target_x, target_y = 100, 100
-        elif _is_playwright(page):
-            _ensure_playwright()
-            elem = (
-                await page.query_selector(selector)
-                if hasattr(page, "query_selector")
-                else None
-            )
-            if elem is not None:
-                box = await elem.bounding_box()
-                if box:
-                    target_x = int(box["x"] + box["width"] * random.uniform(0.3, 0.7))
-                    target_y = int(box["y"] + box["height"] * random.uniform(0.3, 0.7))
-            if target_x is None or target_y is None:
-                target_x, target_y = 100, 100
-        else:
-            raise ValueError(
-                f"Не удалось определить тип переданного объекта: {type(page)}. "
-                "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
-            )
+        target_x, target_y = await _resolve_async_element_coordinates(page, selector)
 
     # 1. Плавное перемещение к цели
     await async_move_mouse(

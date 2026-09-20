@@ -135,7 +135,6 @@ async def test_async_type_text_delayed_fix() -> None:
 
 
 @pytest.mark.asyncio
-
 async def test_async_move_mouse_windmouse() -> None:
     """Проверяет перемещение мыши Playwright с алгоритмом WindMouse."""
     page = MagicMock()

@@ -328,3 +328,27 @@ kb = paginator.build_keyboard(
     page=2, footer_buttons=[("Закрыть", "close_catalog")], as_aiogram=True
 )
 ```
+
+---
+
+## 16. Логирование критических ошибок в Telegram (`TelegramLogHandler`)
+
+`TelegramLogHandler` направляет логи (по умолчанию уровня `ERROR` и выше) напрямую в указанный чат Telegram с поддержкой ограничения частоты (Rate Limiting) и подавления флэппинга:
+
+```python
+import logging
+from chutils.telegram import TelegramLogHandler
+
+handler = TelegramLogHandler(
+    bot_token="BOT_TOKEN",
+    chat_id=12345678,
+    level=logging.ERROR,
+    rate_limit_per_min=10,
+    flapping_threshold=3,
+    flapping_timeout=60.0,
+)
+
+logger = logging.getLogger("my_app")
+logger.addHandler(handler)
+```
+

@@ -106,4 +106,3 @@ def test_telegram_log_handler_flapping_filter():
         # 3-я ошибка поллинга -> достигла порога, отправляется с контекстом простоя!
         logger.error("Unable to make request to BotPolling, retrying...")
         assert mock_urlopen.call_count == 2
-

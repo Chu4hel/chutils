@@ -18,9 +18,7 @@ mock_input.dispatch_mouse_event = MagicMock(
 mock_input.dispatch_key_event = MagicMock(
     side_effect=lambda **kwargs: ("dispatch_key_event", kwargs)
 )
-mock_input.insert_text = MagicMock(
-    side_effect=lambda **kwargs: ("insert_text", kwargs)
-)
+mock_input.insert_text = MagicMock(side_effect=lambda **kwargs: ("insert_text", kwargs))
 
 
 from chutils.scraping.humanize.actions import (
@@ -85,9 +83,7 @@ async def test_async_move_mouse_nodriver_windmouse() -> None:
     tab._is_nodriver = True
     tab.send = AsyncMock()
 
-    await async_move_mouse(
-        tab, x=200, y=300, start=(0, 0), algorithm="windmouse"
-    )
+    await async_move_mouse(tab, x=200, y=300, start=(0, 0), algorithm="windmouse")
 
     assert tab.send.call_count > 0
     last_call = tab.send.call_args_list[-1][0][0]
@@ -95,7 +91,6 @@ async def test_async_move_mouse_nodriver_windmouse() -> None:
     assert last_call[1]["x"] == 200
     assert last_call[1]["y"] == 300
     assert last_call[1]["type_"] == "mouseMoved"
-
 
 
 @pytest.mark.asyncio
@@ -224,7 +219,6 @@ async def test_async_type_text_nodriver_delayed_fix(mocker: MockerFixture) -> No
 
 
 @pytest.mark.asyncio
-
 async def test_invalid_type_raises_value_error() -> None:
     """Проверяет, что передача объекта неизвестного типа выбрасывает ValueError."""
     with pytest.raises(ValueError, match="Не удалось определить тип"):

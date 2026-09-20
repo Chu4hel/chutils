@@ -176,4 +176,3 @@ def test_flapping_filter_thread_safety() -> None:
 
     assert f.consecutive_failures == 50
     assert f.is_escalated
-

@@ -55,7 +55,6 @@ def mock_selenium_modules(mocker: MockerFixture) -> None:
         },
     )
 
-
     # Патчим find_spec, чтобы он возвращал фиктивный spec для selenium
     orig_find_spec = importlib.util.find_spec
 
@@ -115,7 +114,7 @@ def test_type_text_paste_threshold(mocker: MockerFixture) -> None:
     driver = MagicMock()
     element = MagicMock()
     driver.find_element.return_value = element
-    sleep_mock = mocker.patch("time.sleep")
+    mocker.patch("time.sleep")
 
     long_text = "Длинный текст для проверки вставки Selenium" * 2
     type_text(
@@ -162,7 +161,6 @@ def test_type_text_delayed_fix(mocker: MockerFixture) -> None:
     assert mock_keys.ARROW_LEFT in sent_keys
     assert mock_keys.BACKSPACE in sent_keys
     assert (mock_keys.END in sent_keys) or (mock_keys.ARROW_RIGHT in sent_keys)
-
 
 
 def test_move_mouse_windmouse() -> None:

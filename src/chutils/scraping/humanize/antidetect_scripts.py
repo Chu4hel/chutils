@@ -39,7 +39,6 @@ def _get_antidetect_js(
     screen_avail_h_js = json.dumps(screen_avail_height)
     dpr_js = json.dumps(device_pixel_ratio)
 
-
     return f"""(function() {{
     // Утилита для маскировки функций под нативные [native code] с чистым V8 stack trace
     const makeNative = (fn, name) => {{

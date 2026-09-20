@@ -15,9 +15,6 @@ from chutils.exceptions import OptionalDependencyError
 from chutils.scraping.fingerprint.external import BrowserForgeProvider
 from chutils.scraping.fingerprint.models import (
     FingerprintProfile,
-    HardwareFingerprint,
-    ScreenFingerprint,
-    WebGLFingerprint,
 )
 from chutils.scraping.fingerprint.synthesizer import FingerprintSynthesizer
 from chutils.scraping.humanize.config import AntidetectConfig
@@ -75,21 +72,34 @@ def test_procedural_synthesizer_hardware_consistency() -> None:
         fp = synthesizer.synthesize(f"consistency_test_seed_{i}")
 
         # 1. Валидный синтаксис ANGLE Direct3D11
-        assert angle_regex.match(fp.webgl.renderer), f"Невалидный ANGLE: {fp.webgl.renderer}"
+        assert angle_regex.match(fp.webgl.renderer), (
+            f"Невалидный ANGLE: {fp.webgl.renderer}"
+        )
 
         # 2. Согласованность экрана и панели задач
-        assert fp.screen.avail_height < fp.screen.height, "Панель задач должна уменьшать availHeight"
+        assert fp.screen.avail_height < fp.screen.height, (
+            "Панель задач должна уменьшать availHeight"
+        )
         assert fp.screen.avail_width == fp.screen.width
         assert fp.screen.device_pixel_ratio in (1.0, 1.25, 1.5, 1.75, 2.0)
 
         # 3. Согласованность High-End GPU с памятью и процессором
-        if any(top_gpu in fp.webgl.renderer for top_gpu in ("RTX 4090", "RTX 4080", "RX 7900 XTX")):
-            assert fp.hardware.memory_gb >= 16, "Топовый GPU не может работать с < 16 ГБ RAM"
-            assert fp.hardware.concurrency >= 12, "Топовый GPU не может работать с < 12 ядрами CPU"
+        if any(
+            top_gpu in fp.webgl.renderer
+            for top_gpu in ("RTX 4090", "RTX 4080", "RX 7900 XTX")
+        ):
+            assert fp.hardware.memory_gb >= 16, (
+                "Топовый GPU не может работать с < 16 ГБ RAM"
+            )
+            assert fp.hardware.concurrency >= 12, (
+                "Топовый GPU не может работать с < 12 ядрами CPU"
+            )
 
         # 4. Согласованность встроенной графики
         if "Iris" in fp.webgl.renderer or "UHD Graphics" in fp.webgl.renderer:
-            assert fp.hardware.concurrency <= 16, "Ноутбучная встроенная графика не должна иметь > 16 ядер"
+            assert fp.hardware.concurrency <= 16, (
+                "Ноутбучная встроенная графика не должна иметь > 16 ядер"
+            )
 
 
 def test_fingerprint_profile_serialization(tmp_path: Path) -> None:
@@ -159,7 +169,9 @@ def test_browserforge_mock_provider(mocker: MockerFixture) -> None:
     """Проверяет адаптер BrowserForgeProvider при установленной библиотеке."""
     mock_fg_instance = MagicMock()
     mock_fp = MagicMock()
-    mock_fp.navigator.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0"
+    mock_fp.navigator.userAgent = (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0"
+    )
     mock_fp.navigator.hardwareConcurrency = 16
     mock_fp.navigator.deviceMemory = 32
     mock_fp.screen.width = 2560
@@ -174,7 +186,11 @@ def test_browserforge_mock_provider(mocker: MockerFixture) -> None:
 
     mock_fg_instance.generate.return_value = mock_fp
 
-    with patch("chutils.scraping.fingerprint.external.FingerprintGenerator", return_value=mock_fg_instance, create=True):
+    with patch(
+        "chutils.scraping.fingerprint.external.FingerprintGenerator",
+        return_value=mock_fg_instance,
+        create=True,
+    ):
         with patch("importlib.util.find_spec", return_value=MagicMock()):
             synthesizer = FingerprintSynthesizer(mode="browserforge")
             fp = synthesizer.synthesize()
@@ -201,7 +217,7 @@ def test_browserforge_seed_determinism() -> None:
     import random
 
     random.seed(12345)
-    baseline_val = random.random()
+    _ = random.random()
 
     provider = BrowserForgeProvider(browser="chrome", os="windows")
     fp1 = provider.generate(seed="deterministic_acc_1")

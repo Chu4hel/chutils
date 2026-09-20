@@ -117,7 +117,11 @@ class FlappingFilter(logging.Filter):
 
     def _do_reset(self) -> None:
         """Внутренний сброс без захвата блокировки."""
-        if self._has_escalated and self.on_recovered and self._first_failure_time is not None:
+        if (
+            self._has_escalated
+            and self.on_recovered
+            and self._first_failure_time is not None
+        ):
             duration = time.monotonic() - self._first_failure_time
             try:
                 self.on_recovered(duration)
@@ -191,11 +195,11 @@ class FlappingFilter(logging.Filter):
                     f"[DOWNTIME THRESHOLD EXCEEDED "
                     f"(сбоев: {self._consecutive_failures}, длительность: {duration:.1f}с)] "
                 )
-                if isinstance(record.msg, str) and not record.msg.startswith("[DOWNTIME THRESHOLD EXCEEDED"):
+                if isinstance(record.msg, str) and not record.msg.startswith(
+                    "[DOWNTIME THRESHOLD EXCEEDED"
+                ):
                     record.msg = f"{prefix}{record.msg}"
 
             return True
 
-
             return True
-

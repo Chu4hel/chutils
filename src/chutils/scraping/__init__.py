@@ -15,6 +15,8 @@ if TYPE_CHECKING:
     )
     from .fingerprint import (
         FingerprintProfile as FingerprintProfile,
+    )
+    from .fingerprint import (
         FingerprintSynthesizer as FingerprintSynthesizer,
     )
     from .humanize.antidetect import (

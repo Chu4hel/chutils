@@ -614,4 +614,17 @@ options:
     - scroll_to
     - human_sleep
 
+## Модуль `telegram`
+
+::: chutils.telegram
+options:
+  members:
+    - TelegramLogHandler
+    - download_user_file
+    - send_telegram_file
+    - build_inline_keyboard
+    - PaginatorKeyboard
+    - HealthCheckAlertBridge
+
+
 

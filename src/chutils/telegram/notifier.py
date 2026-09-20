@@ -20,7 +20,10 @@ class TelegramLogHandler(logging.Handler):
         chat_id: int | str | None = None,
         level: int = logging.ERROR,
         rate_limit_per_min: int = 10,
-        flapping_patterns: str | re.Pattern[str] | Sequence[str | re.Pattern[str]] | None = None,
+        flapping_patterns: str
+        | re.Pattern[str]
+        | Sequence[str | re.Pattern[str]]
+        | None = None,
         flapping_threshold: int = 3,
         flapping_timeout: float = 60.0,
     ) -> None:

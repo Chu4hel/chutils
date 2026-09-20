@@ -443,4 +443,3 @@ def extract_model_sections_and_keys(
                     keys_map[a.lower()] = sub_keys
 
     return sec_map, keys_map
-

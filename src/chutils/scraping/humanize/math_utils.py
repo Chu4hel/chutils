@@ -422,9 +422,7 @@ class KeyboardTypoGenerator:
             return sequence
 
         eff_layout_rate = (
-            self.layout_error_rate
-            if layout_error_rate is None
-            else layout_error_rate
+            self.layout_error_rate if layout_error_rate is None else layout_error_rate
         )
 
         # Ошибка раскладки возможна СТРОГО в начале ввода
@@ -458,9 +456,7 @@ class KeyboardTypoGenerator:
 
         n = len(text)
         eff_delayed_rate = (
-            self.delayed_fix_rate
-            if delayed_fix_rate is None
-            else delayed_fix_rate
+            self.delayed_fix_rate if delayed_fix_rate is None else delayed_fix_rate
         )
 
         # Планируем отложенное исправление опечатки, если текст достаточно длинный
@@ -479,7 +475,7 @@ class KeyboardTypoGenerator:
                 remaining = n - cand_pos - 1
                 max_drift = min(14, remaining)
                 min_drift = min(4, max_drift)
-                if max_drift >= min_drift and min_drift > 0:
+                if max_drift >= min_drift > 0:
                     delayed_fix_pos = cand_pos
                     delayed_drift_len = random.randint(min_drift, max_drift)
                     if (
@@ -523,7 +519,9 @@ class KeyboardTypoGenerator:
                     # Одиночная опечатка в символе
                     char = text[i]
                     lowered = char.lower()
-                    neighbors = _QWERTY_NEIGHBORS.get(lowered) or _JCUKEN_NEIGHBORS.get(lowered)
+                    neighbors = _QWERTY_NEIGHBORS.get(lowered) or _JCUKEN_NEIGHBORS.get(
+                        lowered
+                    )
                     wrong_char = random.choice(neighbors) if neighbors else char
                     if char.isupper():
                         wrong_char = wrong_char.upper()
@@ -592,4 +590,3 @@ class KeyboardTypoGenerator:
                 i += 1
 
         return sequence
-
