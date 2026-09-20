@@ -18,6 +18,9 @@ if TYPE_CHECKING:
     from .core import LogLevel as LogLevel
     from .core import setup_logger as setup_logger
     from .core import setup_logger_from_config as setup_logger_from_config
+    from .filters import (
+        FlappingFilter as FlappingFilter,
+    )
     from .formatters import JSON_LOGGER_AVAILABLE as JSON_LOGGER_AVAILABLE
     from .formatters import ChutilsJsonFormatter as ChutilsJsonFormatter
     from .handlers import (
@@ -47,6 +50,7 @@ _LAZY_MAPPING = {
     "LogLevel": (".core", "LogLevel"),
     "DEVDEBUG_LEVEL_NUM": (".core", "DEVDEBUG_LEVEL_NUM"),
     "MEDIUMDEBUG_LEVEL_NUM": (".core", "MEDIUMDEBUG_LEVEL_NUM"),
+    "FlappingFilter": (".filters", "FlappingFilter"),
     "ChutilsJsonFormatter": (".formatters", "ChutilsJsonFormatter"),
     "JSON_LOGGER_AVAILABLE": (".formatters", "JSON_LOGGER_AVAILABLE"),
     "SafeTimedRotatingFileHandler": (".handlers", "SafeTimedRotatingFileHandler"),

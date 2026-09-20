@@ -17,7 +17,11 @@ mock_action_chains_class.__spec__ = MagicMock()
 
 mock_keys = MagicMock()
 mock_keys.BACKSPACE = "\ue003"
+mock_keys.ARROW_LEFT = "\ue012"
+mock_keys.ARROW_RIGHT = "\ue014"
+mock_keys.END = "\ue010"
 mock_keys.__spec__ = MagicMock()
+
 
 mock_by = MagicMock()
 mock_by.CSS_SELECTOR = "css selector"
@@ -36,6 +40,8 @@ def mock_selenium_modules(mocker: MockerFixture) -> None:
 
     mock_common = MagicMock()
     mock_common.__spec__ = MagicMock()
+    mock_common.keys = mock_keys
+    mock_keys.Keys = mock_keys
 
     mocker.patch.dict(
         "sys.modules",
@@ -101,6 +107,60 @@ def test_type_text() -> None:
     driver.find_element.assert_called_once()
     element.click.assert_called_once()
     assert element.send_keys.call_count == 5
+
+
+def test_type_text_paste_threshold(mocker: MockerFixture) -> None:
+    """Проверяет адаптивную вставку текста через paste_threshold в Selenium."""
+    driver = MagicMock()
+    element = MagicMock()
+    driver.find_element.return_value = element
+    mocker.patch("time.sleep")
+
+    long_text = "Длинный текст для проверки вставки Selenium" * 2
+    type_text(
+        driver,
+        selector="#input",
+        text=long_text,
+        paste_threshold=30,
+        paste_delay_before=(0.4, 0.7),
+        paste_delay_after=(0.3, 0.5),
+    )
+
+    driver.find_element.assert_called_once()
+    element.click.assert_called_once()
+    # Посимвольный send_keys не должен вызываться
+    assert element.send_keys.call_count == 0
+    # Должен быть вызван execute_script с insertText
+    assert driver.execute_script.call_count == 1
+    script_call = driver.execute_script.call_args[0]
+    assert "insertText" in script_call[0]
+
+
+def test_type_text_delayed_fix(mocker: MockerFixture) -> None:
+    """Проверяет отправку клавиш ARROW_LEFT и END при delayed_fix_rate в Selenium."""
+    driver = MagicMock()
+    element = MagicMock()
+    driver.find_element.return_value = element
+    mocker.patch("time.sleep")
+
+    long_text = "Тестирование имитации Selenium с исправлением опечаток стрелками"
+    type_text(
+        driver,
+        selector="#input",
+        text=long_text,
+        error_rate=0.0,
+        delayed_fix_rate=1.0,
+        speed_wpm=500.0,
+    )
+
+    driver.find_element.assert_called_once()
+    element.click.assert_called_once()
+
+    # Проверяем, что были вызовы send_keys с Keys.ARROW_LEFT и Keys.END или Keys.ARROW_RIGHT
+    sent_keys = [c[0][0] for c in element.send_keys.call_args_list]
+    assert mock_keys.ARROW_LEFT in sent_keys
+    assert mock_keys.BACKSPACE in sent_keys
+    assert (mock_keys.END in sent_keys) or (mock_keys.ARROW_RIGHT in sent_keys)
 
 
 def test_move_mouse_windmouse() -> None:

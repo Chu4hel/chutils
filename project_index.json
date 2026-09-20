@@ -5660,7 +5660,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 486,
+                "line_number": 488,
                 "bases": [],
                 "children": []
               },
@@ -5680,7 +5680,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 493,
+                "line_number": 495,
                 "bases": [],
                 "children": []
               },
@@ -5700,7 +5700,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 510,
+                "line_number": 512,
                 "bases": [],
                 "children": []
               },
@@ -5720,7 +5720,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 591,
+                "line_number": 593,
                 "bases": [],
                 "children": []
               }
@@ -23431,6 +23431,184 @@
             ]
           },
           {
+            "name": "filters",
+            "path": "chutils/logger/filters",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Фильтры для логирования.",
+            "docstring": "Фильтры для логирования.\n\nСодержит специализированные фильтры logging.Filter, включая FlappingFilter для\nподавления ложных транзиентных сбоев (флаппинга) и защиты от спама алертов.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "FlappingFilter",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Интеллектуальный фильтр для подавления кратковременных транзиентных ошибок (флаппинга).",
+                "docstring": "Интеллектуальный фильтр для подавления кратковременных транзиентных ошибок (флаппинга).\n\nПри возникновении ошибок, соответствующих заданным шаблонам, фильтр отслеживает\nколичество непрерывных сбоев и их длительность. До достижения заданного порога\n(по количеству попыток или времени) ошибки либо понижаются в уровне (например,\nдо INFO, чтобы не триггерить ERROR-алерты в Telegram, но оставаться в файловом логе),\nлибо полностью отсекаются.\n\nЕсли порог превышен (сервис действительно недоступен), фильтр пропускает ошибку\nкак полноценный ERROR (или исходный уровень) и опционально обогащает сообщение\nданными о длительности сбоя и количестве неудачных попыток.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 19,
+                "bases": [
+                  "logging.Filter"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, patterns, threshold, failure_timeout, action, downgrade_level, enrich_message, auto_reset_on_success, on_escalated, on_recovered)",
+                    "summary": "Инициализирует фильтр флаппинга.",
+                    "docstring": "Инициализирует фильтр флаппинга.\n\nArgs:\n    patterns: Строка, регулярное выражение или последовательность строк/регулярок,\n        совпадение с которыми классифицирует сообщение как флаппинг-ошибку.\n    threshold: Количество непрерывных сбоев до эскалации (по умолчанию 3).\n    failure_timeout: Максимальное время в секундах от первого сбоя до эскалации\n        (по умолчанию 60.0).\n    action: Действие до достижения порога: 'downgrade' (понизить уровень)\n        или 'drop' (полностью отбросить запись).\n    downgrade_level: Числовой уровень логирования для действия 'downgrade'\n        (по умолчанию logging.INFO).\n    enrich_message: Добавлять ли в сообщение префикс с диагностикой сбоя\n        при превышении порога.\n    auto_reset_on_success: Автоматически сбрасывать счётчик сбоев при получении\n        любой другой записи лога с уровнем ниже ERROR.\n    on_escalated: Опциональный callback(record, consecutive_failures, duration),\n        вызываемый при первом превышении порога.\n    on_recovered: Опциональный callback(downtime_duration), вызываемый\n        при успешном восстановлении после подтвержденной аварии.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 34,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "consecutive_failures",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Текущее количество последовательных сбоев.",
+                    "docstring": "Текущее количество последовательных сбоев.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 90,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_escalated",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Флаг того, что сбой в данный момент превысил порог и эскалирован.",
+                    "docstring": "Флаг того, что сбой в данный момент превысил порог и эскалирован.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 96,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_matches",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, message)",
+                    "summary": "Проверяет, совпадает ли сообщение с одним из шаблонов.",
+                    "docstring": "Проверяет, совпадает ли сообщение с одним из шаблонов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 101,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "reset",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Сбрасывает состояние счетчиков и таймеров сбоев.",
+                    "docstring": "Сбрасывает состояние счетчиков и таймеров сбоев.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 111,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_do_reset",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Внутренний сброс без захвата блокировки.",
+                    "docstring": "Внутренний сброс без захвата блокировки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 118,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "filter",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, record)",
+                    "summary": "Фильтрует или модифицирует запись лога.",
+                    "docstring": "Фильтрует или модифицирует запись лога.\n\nArgs:\n    record: Объект LogRecord стандартной библиотеки logging.\n\nReturns:\n    True, если запись должна быть сохранена/передана дальше, False для отсечения.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 135,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "formatters",
             "path": "chutils/logger/formatters",
             "type": "module",
@@ -24465,7 +24643,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 43,
+            "line_number": 46,
             "bases": [],
             "children": []
           },
@@ -24485,7 +24663,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 65,
+            "line_number": 69,
             "bases": [],
             "children": []
           },
@@ -24505,7 +24683,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 73,
+            "line_number": 77,
             "bases": [],
             "children": []
           }
@@ -29204,29 +29382,51 @@
             "symbols": []
           },
           {
-            "name": "humanize",
-            "path": "chutils/scraping/humanize",
+            "name": "fingerprint",
+            "path": "chutils/scraping/fingerprint",
             "type": "package",
             "layer": "internal",
-            "summary": "",
-            "docstring": "",
+            "summary": "Подсистема комбинаторного синтеза цифровой личности браузера (Fingerprint Synthesizer).",
+            "docstring": "Подсистема комбинаторного синтеза цифровой личности браузера (Fingerprint Synthesizer).",
             "children": [
               {
-                "name": "actions",
-                "path": "chutils/scraping/humanize/actions",
+                "name": "database",
+                "path": "chutils/scraping/fingerprint/database",
                 "type": "module",
                 "layer": "internal",
-                "summary": "",
-                "docstring": "",
+                "summary": "Базы данных и матрицы физической совместимости оборудования (Hardware Tiers).",
+                "docstring": "Базы данных и матрицы физической совместимости оборудования (Hardware Tiers).",
                 "children": [],
                 "symbols": [
                   {
-                    "name": "_ensure_playwright",
-                    "type": "function",
-                    "layer": "private",
-                    "signature": "()",
+                    "name": "GPUTier",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Описание тира оборудования с допустимыми диапазонами характеристик.",
+                    "docstring": "Описание тира оборудования с допустимыми диапазонами характеристик.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 8,
+                    "bases": [
+                      "typing.NamedTuple"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "TIER_ENTHUSIAST",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
                     "summary": "",
-                    "docstring": "",
+                    "docstring": null,
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29241,12 +29441,12 @@
                     "children": []
                   },
                   {
-                    "name": "_ensure_selenium",
-                    "type": "function",
-                    "layer": "private",
-                    "signature": "()",
+                    "name": "TIER_MAINSTREAM",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
                     "summary": "",
-                    "docstring": "",
+                    "docstring": null,
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29256,7 +29456,879 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 34,
+                    "line_number": 43,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "TIER_BUDGET_DESKTOP",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 68,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "TIER_LAPTOP",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 91,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "ALL_TIERS",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 114,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "AUDIO_INPUTS_RU",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 117,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "AUDIO_INPUTS_EN",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 125,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "AUDIO_OUTPUTS_RU",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 133,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "AUDIO_OUTPUTS_EN",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 141,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "VIDEO_INPUTS",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 149,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "external",
+                "path": "chutils/scraping/fingerprint/external",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Адаптеры для внешних генераторов отпечатков (browserforge, fpgen).",
+                "docstring": "Адаптеры для внешних генераторов отпечатков (browserforge, fpgen).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "_ensure_browserforge",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "()",
+                    "summary": "Проверяет доступность библиотеки browserforge.",
+                    "docstring": "Проверяет доступность библиотеки browserforge.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 25,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_ensure_fpgen",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "()",
+                    "summary": "Проверяет доступность библиотеки fpgen.",
+                    "docstring": "Проверяет доступность библиотеки fpgen.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 39,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "BrowserForgeProvider",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Провайдер генерации отпечатков через библиотеку browserforge (Apify).",
+                    "docstring": "Провайдер генерации отпечатков через библиотеку browserforge (Apify).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 53,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, browser, os)",
+                        "summary": "Инициализирует провайдер browserforge.",
+                        "docstring": "Инициализирует провайдер browserforge.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 56,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, seed)",
+                        "summary": "Генерирует профиль через обученную байесовскую сеть browserforge.",
+                        "docstring": "Генерирует профиль через обученную байесовскую сеть browserforge.\n\nПри передаче seed генерация полностью детерминизируется с изоляцией\nсостояния встроенного генератора случайных чисел (PRNG).\n\nArgs:\n    seed: Опциональный сид для воспроизводимой генерации.\n\nReturns:\n    Экземпляр FingerprintProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 61,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "models",
+                "path": "chutils/scraping/fingerprint/models",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Pydantic-модели профиля цифрового отпечатка (Fingerprint Profile).",
+                "docstring": "Pydantic-модели профиля цифрового отпечатка (Fingerprint Profile).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "WebGLFingerprint",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Параметры графического стека WebGL.",
+                    "docstring": "Параметры графического стека WebGL.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 18,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "ScreenFingerprint",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Геометрия и характеристики дисплея.",
+                    "docstring": "Геометрия и характеристики дисплея.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 33,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "HardwareFingerprint",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Аппаратные ресурсы процессора и оперативной памяти.",
+                    "docstring": "Аппаратные ресурсы процессора и оперативной памяти.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 54,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "AudioFingerprint",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Параметры аудиоподсистемы и микрошум дискретизации ЦАП.",
+                    "docstring": "Параметры аудиоподсистемы и микрошум дискретизации ЦАП.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 73,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "MediaDeviceItem",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Элемент списка медиа-устройств (микрофон, динамики, камера).",
+                    "docstring": "Элемент списка медиа-устройств (микрофон, динамики, камера).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 90,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "FingerprintProfile",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Полный синтезированный профиль цифровой личности браузера.",
+                    "docstring": "Полный синтезированный профиль цифровой личности браузера.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 103,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": [
+                      {
+                        "name": "to_antidetect_config",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, stealth_minimal)",
+                        "summary": "Конвертирует профиль в AntidetectConfig для браузерных движков.",
+                        "docstring": "Конвертирует профиль в AntidetectConfig для браузерных движков.\n\nArgs:\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas.\n\nReturns:\n    Экземпляр AntidetectConfig с параметрами профиля.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 144,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "to_dict",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает профиль в виде словаря.",
+                        "docstring": "Возвращает профиль в виде словаря.\n\nReturns:\n    Словарь со всеми полями профиля.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 171,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "to_json",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, indent)",
+                        "summary": "Сериализует профиль в строку JSON.",
+                        "docstring": "Сериализует профиль в строку JSON.\n\nArgs:\n    indent: Размер отступа для форматирования.\n\nReturns:\n    Строка профиля в формате JSON.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 179,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "save_to_file",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, path)",
+                        "summary": "Сохраняет профиль в JSON файл на диске.",
+                        "docstring": "Сохраняет профиль в JSON файл на диске.\n\nArgs:\n    path: Путь к целевому файлу.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 190,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "from_file",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, path)",
+                        "summary": "Загружает профиль из сохраненного JSON файла.",
+                        "docstring": "Загружает профиль из сохраненного JSON файла.\n\nArgs:\n    path: Путь к файлу профиля.\n\nReturns:\n    Восстановленный экземпляр FingerprintProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 201,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "apply_to_tab",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, tab)",
+                        "summary": "Применяет параметры отпечатка к вкладке nodriver Tab.",
+                        "docstring": "Применяет параметры отпечатка к вкладке nodriver Tab.\n\nArgs:\n    tab: Вкладка nodriver (Tab).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 214,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "apply_to_page",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, page)",
+                        "summary": "Применяет параметры отпечатка к странице Playwright Page.",
+                        "docstring": "Применяет параметры отпечатка к странице Playwright Page.\n\nArgs:\n    page: Страница Playwright (Page).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 223,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "procedural",
+                "path": "chutils/scraping/fingerprint/procedural",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Процедурный детерминированный генератор цифрового отпечатка (Tier-Based Synthesizer).",
+                "docstring": "Процедурный детерминированный генератор цифрового отпечатка (Tier-Based Synthesizer).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "ProceduralSynthesizer",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Генератор консистентных цифровых отпечатков на основе физических матриц оборудования.",
+                    "docstring": "Генератор консистентных цифровых отпечатков на основе физических матриц оборудования.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 30,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, os_target, locale)",
+                        "summary": "Инициализирует процедурный синтезатор.",
+                        "docstring": "Инициализирует процедурный синтезатор.\n\nArgs:\n    os_target: Целевая операционная система ('windows').\n    locale: Локаль системы для именования периферийных устройств.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 33,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "synthesize",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, seed)",
+                        "summary": "Синтезирует физически согласованный профиль цифрового отпечатка по сиду.",
+                        "docstring": "Синтезирует физически согласованный профиль цифрового отпечатка по сиду.\n\nArgs:\n    seed: Исходный сид для детерминированного воспроизведения отпечатка.\n\nReturns:\n    Экземпляр FingerprintProfile с непротиворечивым набором характеристик.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 47,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "synthesizer",
+                "path": "chutils/scraping/fingerprint/synthesizer",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Единый фасад синтезатора цифровых отпечатков (FingerprintSynthesizer).",
+                "docstring": "Единый фасад синтезатора цифровых отпечатков (FingerprintSynthesizer).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "FingerprintSynthesizer",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Интеллектуальный синтезатор цифровой личности браузера с поддержкой процедурного и байесовского режимов.",
+                    "docstring": "Интеллектуальный синтезатор цифровой личности браузера с поддержкой процедурного и байесовского режимов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, mode, os_target, locale)",
+                        "summary": "Инициализирует синтезатор.",
+                        "docstring": "Инициализирует синтезатор.\n\nArgs:\n    mode: Режим работы ('auto', 'procedural', 'browserforge', 'fpgen').\n        В режиме 'auto' при наличии сида всегда используется детерминированный процедурный генератор.\n        Если сид не передан, при наличии browserforge используется он, иначе процедурный.\n    os_target: Целевая операционная система ('windows', 'macos', 'linux').\n    locale: Локаль системы для подбора периферийных устройств.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 19,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "synthesize",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, seed)",
+                        "summary": "Синтезирует отпечаток цифровой личности.",
+                        "docstring": "Синтезирует отпечаток цифровой личности.\n\nArgs:\n    seed: Сид профиля для детерминированной генерации.\n\nReturns:\n    Экземпляр FingerprintProfile с физически согласованными характеристиками.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 39,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "is_browserforge_available",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "()",
+                        "summary": "Проверяет, установлена ли библиотека browserforge.",
+                        "docstring": "Проверяет, установлена ли библиотека browserforge.\n\nReturns:\n    True, если библиотека найдена и доступна для импорта, иначе False.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 71,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "is_fpgen_available",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "()",
+                        "summary": "Проверяет, установлена ли библиотека fpgen.",
+                        "docstring": "Проверяет, установлена ли библиотека fpgen.\n\nReturns:\n    True, если библиотека найдена и доступна для импорта, иначе False.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 80,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "create_procedural",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, seed, os_target, locale)",
+                        "summary": "Быстрый хелпер создания чисто процедурного отпечатка.",
+                        "docstring": "Быстрый хелпер создания чисто процедурного отпечатка.\n\nArgs:\n    seed: Опциональный сид для повторяемой генерации отпечатка.\n    os_target: Имя целевой ОС ('windows', 'macos', 'linux').\n    locale: Локаль системы для подбора периферии.\n\nReturns:\n    Экземпляр FingerprintProfile с физически валидным отпечатком.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 89,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_or_create",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, seed, storage_dir)",
+                        "summary": "Загружает сохраненный профиль по сиду с диска либо синтезирует и сохраняет новый.",
+                        "docstring": "Загружает сохраненный профиль по сиду с диска либо синтезирует и сохраняет новый.\n\nArgs:\n    seed: Уникальный идентификатор (сид) профиля.\n    storage_dir: Директория для хранения файлов профилей.\n\nReturns:\n    Экземпляр FingerprintProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 109,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "create_from_browserforge",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, browser, os_target, seed)",
+                        "summary": "Быстрый хелпер создания отпечатка через библиотеку browserforge.",
+                        "docstring": "Быстрый хелпер создания отпечатка через библиотеку browserforge.\n\nArgs:\n    browser: Тип эмулируемого браузера ('chrome', 'firefox', 'safari').\n    os_target: Целевая ОС ('windows', 'macos', 'linux').\n    seed: Опциональный сид для воспроизводимой детерминированной генерации.\n\nReturns:\n    Экземпляр FingerprintProfile, созданный обученной байесовской сетью.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 138,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "symbols": []
+          },
+          {
+            "name": "humanize",
+            "path": "chutils/scraping/humanize",
+            "type": "package",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [
+              {
+                "name": "_actions_helpers",
+                "path": "chutils/scraping/humanize/_actions_helpers",
+                "type": "module",
+                "layer": "private",
+                "summary": "Вспомогательные утилиты, проверки зависимостей и маппинги клавиш для humanize actions.",
+                "docstring": "Вспомогательные утилиты, проверки зависимостей и маппинги клавиш для humanize actions.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "_ensure_playwright",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "()",
+                    "summary": "Проверяет доступность библиотеки playwright.",
+                    "docstring": "Проверяет доступность библиотеки playwright.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 13,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_ensure_selenium",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "()",
+                    "summary": "Проверяет доступность библиотеки selenium.",
+                    "docstring": "Проверяет доступность библиотеки selenium.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 29,
                     "bases": [],
                     "children": []
                   },
@@ -29265,8 +30337,8 @@
                     "type": "function",
                     "layer": "private",
                     "signature": "()",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Проверяет доступность библиотеки nodriver.",
+                    "docstring": "Проверяет доступность библиотеки nodriver.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29276,7 +30348,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 49,
+                    "line_number": 45,
                     "bases": [],
                     "children": []
                   },
@@ -29285,8 +30357,8 @@
                     "type": "function",
                     "layer": "private",
                     "signature": "(obj)",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Определяет, является ли переданный объект элементом или вкладкой nodriver.",
+                    "docstring": "Определяет, является ли переданный объект элементом или вкладкой nodriver.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29296,7 +30368,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 71,
+                    "line_number": 68,
                     "bases": [],
                     "children": []
                   },
@@ -29305,8 +30377,8 @@
                     "type": "function",
                     "layer": "private",
                     "signature": "(obj)",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Определяет, является ли переданный объект страницей Playwright.",
+                    "docstring": "Определяет, является ли переданный объект страницей Playwright.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29316,7 +30388,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 85,
+                    "line_number": 83,
                     "bases": [],
                     "children": []
                   },
@@ -29326,7 +30398,7 @@
                     "layer": "private",
                     "signature": "(min_seconds, max_seconds)",
                     "summary": "Генерирует логнормальное случайное время в заданном интервале.",
-                    "docstring": "Генерирует логнормальное случайное время в заданном интервале.",
+                    "docstring": "Генерирует логнормальное случайное время в заданном интервале.\n\nArgs:\n    min_seconds: Минимальное время задержки (в секундах).\n    max_seconds: Максимальное время задержки (в секундах).\n\nReturns:\n    Случайное значение задержки с нормальным/логнормальным распределением.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29336,7 +30408,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 97,
+                    "line_number": 95,
                     "bases": [],
                     "children": []
                   },
@@ -29356,7 +30428,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 110,
+                    "line_number": 116,
                     "bases": [],
                     "children": []
                   },
@@ -29376,10 +30448,81 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 121,
+                    "line_number": 129,
                     "bases": [],
                     "children": []
                   },
+                  {
+                    "name": "_build_selenium_key_map",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(keys_cls)",
+                    "summary": "Строит маппинг строковых идентификаторов клавиш на константы Selenium Keys.",
+                    "docstring": "Строит маппинг строковых идентификаторов клавиш на константы Selenium Keys.\n\nArgs:\n    keys_cls: Класс selenium.webdriver.common.keys.Keys.\n\nReturns:\n    Словарь соответствия символов константам Selenium Keys.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 142,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_generate_scroll_points",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(start_x, start_y, target_x, target_y, steps)",
+                    "summary": "Генерирует промежуточные координаты для плавного скроллинга.",
+                    "docstring": "Генерирует промежуточные координаты для плавного скроллинга.\n\nArgs:\n    start_x: Текущая координата X.\n    start_y: Текущая координата Y.\n    target_x: Конечная координата X.\n    target_y: Конечная координата Y.\n    steps: Количество промежуточных шагов.\n\nReturns:\n    Список пар координат (px, py).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 161,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_resolve_async_element_coordinates",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(page, selector)",
+                    "summary": "Определяет координаты клика внутри элемента для Playwright или nodriver.",
+                    "docstring": "Определяет координаты клика внутри элемента для Playwright или nodriver.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 185,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "actions",
+                "path": "chutils/scraping/humanize/actions",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": [
                   {
                     "name": "async_move_mouse",
                     "type": "function",
@@ -29396,7 +30539,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 132,
+                    "line_number": 46,
                     "bases": [],
                     "children": []
                   },
@@ -29416,7 +30559,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 220,
+                    "line_number": 134,
                     "bases": [],
                     "children": []
                   },
@@ -29424,9 +30567,9 @@
                     "name": "async_type_text",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time)",
+                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time, layout_error_rate, delayed_fix_rate, paste_threshold, paste_delay_before, paste_delay_after)",
                     "summary": "Имитирует ввод текста с опечатками Playwright или nodriver.",
-                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.",
+                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nПоддерживает адаптивный ввод: если длина текста превышает paste_threshold,\nтекст вставляется целиком (имитируя вставку из буфера обмена Ctrl+V / Paste)\nс естественными паузами обдумывания до и после вставки.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    delayed_fix_rate: Вероятность отложенного исправления опечатки навигацией стрелками (0.0 - 1.0).\n    paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.\n    paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).\n    paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -29436,7 +30579,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 289,
+                    "line_number": 192,
                     "bases": [],
                     "children": []
                   },
@@ -29456,7 +30599,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 388,
+                    "line_number": 377,
                     "bases": [],
                     "children": []
                   },
@@ -29476,7 +30619,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 440,
+                    "line_number": 429,
                     "bases": [],
                     "children": []
                   },
@@ -29484,9 +30627,9 @@
                     "name": "type_text",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(driver, selector, text, error_rate, speed_wpm)",
+                    "signature": "(driver, selector, text, error_rate, speed_wpm, layout_error_rate, delayed_fix_rate, paste_threshold, paste_delay_before, paste_delay_after)",
                     "summary": "Имитирует ввод текста с опечатками Selenium.",
-                    "docstring": "Имитирует ввод текста с опечатками Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).",
+                    "docstring": "Имитирует ввод текста с опечатками Selenium.\n\nПоддерживает адаптивный ввод: если длина текста превышает paste_threshold,\nтекст вставляется целиком (Ctrl+V / Paste) с естественными паузами обдумывания.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    delayed_fix_rate: Вероятность отложенного исправления опечатки навигацией стрелками (0.0 - 1.0).\n    paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.\n    paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).\n    paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29496,7 +30639,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 480,
+                    "line_number": 463,
                     "bases": [],
                     "children": []
                   },
@@ -29516,7 +30659,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 519,
+                    "line_number": 549,
                     "bases": [],
                     "children": []
                   },
@@ -29536,7 +30679,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 629,
+                    "line_number": 632,
                     "bases": [],
                     "children": []
                   }
@@ -29886,7 +31029,7 @@
                     "name": "_get_antidetect_js",
                     "type": "function",
                     "layer": "private",
-                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal, session_seed, client_hints)",
+                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal, session_seed, client_hints, screen_width, screen_height, screen_avail_height, device_pixel_ratio)",
                     "summary": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
                     "docstring": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
                     "breadcrumbs": {
@@ -29905,6 +31048,226 @@
                 ]
               },
               {
+                "name": "behavior",
+                "path": "chutils/scraping/humanize/behavior",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Биометрический профиль моторики и поведения пользователя (мышь, клавиатура).",
+                "docstring": "Биометрический профиль моторики и поведения пользователя (мышь, клавиатура).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "BehavioralProfile",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Конфигурация биометрического профиля моторики (скорость, задержки, опечатки, движение мыши).",
+                    "docstring": "Конфигурация биометрического профиля моторики (скорость, задержки, опечатки, движение мыши).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 14,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": [
+                      {
+                        "name": "wpm",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Алиас для speed_wpm.",
+                        "docstring": "Алиас для speed_wpm.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 94,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "error_rate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Алиас для typo_rate.",
+                        "docstring": "Алиас для typo_rate.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 99,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "from_seed",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, seed)",
+                        "summary": "Создает детерминированный биометрический профиль моторики на основе сида.",
+                        "docstring": "Создает детерминированный биометрический профиль моторики на основе сида.\n\nОдин и тот же сид всегда порождает абсолютно идентичные биометрические характеристики\n(скорость ввода, опечатки, физику мыши, интервалы удержания), что позволяет\nзафиксировать уникальный почерк конкретного аккаунта или браузерного профиля.\n\nArgs:\n    seed: Числовой или строковый сид сессии/аккаунта.\n\nReturns:\n    Экземпляр BehavioralProfile с реалистичными биометрическими характеристиками.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 104,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "create_wind_mouse",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Создает генератор траекторий мыши WindMouse, настроенный под параметры профиля.",
+                        "docstring": "Создает генератор траекторий мыши WindMouse, настроенный под параметры профиля.\n\nReturns:\n    Экземпляр WindMouseGenerator.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 161,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "create_typo_generator",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Создает генератор опечаток клавиатуры, настроенный под параметры профиля.",
+                        "docstring": "Создает генератор опечаток клавиатуры, настроенный под параметры профиля.\n\nReturns:\n    Экземпляр KeyboardTypoGenerator.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 174,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "async_type_text",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self, page, selector, text, paste_threshold)",
+                        "summary": "Вводит текст через Playwright / nodriver с биометрическими параметрами профиля.",
+                        "docstring": "Вводит текст через Playwright / nodriver с биометрическими параметрами профиля.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: CSS/XPath селектор поля ввода.\n    text: Текст для ввода.\n    paste_threshold: Порог адаптивной вставки через буфер (если None, берется из профиля).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 185,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "async_click",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self, page, selector, x, y, start, button)",
+                        "summary": "Выполняет клик по элементу или координатам с биометрией удержания кнопки мыши.",
+                        "docstring": "Выполняет клик по элементу или координатам с биометрией удержания кнопки мыши.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор целевого элемента (опционально).\n    x: Конечная координата X клика.\n    y: Конечная координата Y клика.\n    start: Начальные координаты курсора.\n    button: Кнопка мыши ('left', 'right', 'middle').",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 215,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "type_text",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self, driver, selector, text, paste_threshold)",
+                        "summary": "Синхронно вводит текст через Selenium с биометрическими параметрами профиля.",
+                        "docstring": "Синхронно вводит текст через Selenium с биометрическими параметрами профиля.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.\n    paste_threshold: Порог адаптивной вставки через буфер (если None, берется из профиля).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 244,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "click",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self, driver, selector, x, y, start, algorithm)",
+                        "summary": "Синхронно выполняет клик через Selenium с биометрией удержания кнопки мыши.",
+                        "docstring": "Синхронно выполняет клик через Selenium с биометрией удержания кнопки мыши.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: Селектор целевого элемента.\n    x: Координата X клика.\n    y: Координата Y клика.\n    start: Начальные координаты мыши.\n    algorithm: Алгоритм перемещения ('windmouse' или 'bezier').",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 273,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
                 "name": "config",
                 "path": "chutils/scraping/humanize/config",
                 "type": "module",
@@ -29916,7 +31279,7 @@
                   {
                     "name": "AntidetectConfig",
                     "type": "class",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "",
                     "summary": "Конфигурация параметров маскировки браузера (антидетект).",
                     "docstring": "Конфигурация параметров маскировки браузера (антидетект).",
@@ -29929,7 +31292,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 17,
+                    "line_number": 20,
                     "bases": [
                       "pydantic.BaseModel"
                     ],
@@ -29952,7 +31315,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 59,
+                        "line_number": 78,
                         "bases": [],
                         "children": []
                       },
@@ -29974,7 +31337,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 81,
+                        "line_number": 100,
                         "bases": [],
                         "children": []
                       },
@@ -29996,7 +31359,115 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 115,
+                        "line_number": 134,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "from_fingerprint",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, profile)",
+                        "summary": "Создает AntidetectConfig на основе объекта FingerprintProfile.",
+                        "docstring": "Создает AntidetectConfig на основе объекта FingerprintProfile.\n\nArgs:\n    profile: Экземпляр FingerprintProfile.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas.\n\nReturns:\n    Сконфигурированный экземпляр AntidetectConfig.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 153,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "from_seed",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, seed)",
+                        "summary": "Синтезирует детерминированную цифровую личность по сиду и возвращает AntidetectConfig.",
+                        "docstring": "Синтезирует детерминированную цифровую личность по сиду и возвращает AntidetectConfig.\n\nОдин и тот же сид всегда дает абсолютно идентичный и физически согласованный\nотпечаток (видеокарта, процессор, память, геометрия экрана, панель задач).\n\nArgs:\n    seed: Сид профиля или имя учетной записи.\n    stealth_minimal: Если True, сохраняет чистый отпечаток без искажения Canvas.\n    os_target: Целевая ОС ('windows').\n    locale: Локаль ('ru-RU', 'en-US').\n\nReturns:\n    Экземпляр AntidetectConfig.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 172,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "from_browserforge",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, seed)",
+                        "summary": "Генерирует отпечаток через байесовскую сеть browserforge (при наличии пакета).",
+                        "docstring": "Генерирует отпечаток через байесовскую сеть browserforge (при наличии пакета).\n\nArgs:\n    seed: Опциональный сид для воспроизводимой детерминированной генерации.\n    browser: Эмулируемый браузер ('chrome').\n    os: Целевая ОС ('windows').\n    stealth_minimal: Режим маскировки.\n\nReturns:\n    Экземпляр AntidetectConfig.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 202,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "from_procedural",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, seed)",
+                        "summary": "Синтезирует отпечаток через встроенный процедурный генератор.",
+                        "docstring": "Синтезирует отпечаток через встроенный процедурный генератор.\n\nArgs:\n    seed: Опциональный сид.\n    stealth_minimal: Режим маскировки.\n    os_target: Целевая ОС.\n    locale: Локаль.\n\nReturns:\n    Экземпляр AntidetectConfig.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 227,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_behavioral_profile",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает детерминированный биометрический профиль моторики на основе session_seed.",
+                        "docstring": "Возвращает детерминированный биометрический профиль моторики на основе session_seed.\n\nReturns:\n    Экземпляр BehavioralProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 253,
                         "bases": [],
                         "children": []
                       },
@@ -30016,7 +31487,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 133,
+                        "line_number": 263,
                         "bases": [],
                         "children": []
                       },
@@ -30036,7 +31507,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 151,
+                        "line_number": 285,
                         "bases": [],
                         "children": []
                       },
@@ -30056,7 +31527,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 161,
+                        "line_number": 295,
                         "bases": [],
                         "children": []
                       },
@@ -30076,7 +31547,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 171,
+                        "line_number": 305,
                         "bases": [],
                         "children": []
                       }
@@ -30114,6 +31585,66 @@
                     "children": []
                   },
                   {
+                    "name": "_JCUKEN_NEIGHBORS",
+                    "type": "constant",
+                    "layer": "private",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 35,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_RU_TO_EN_LAYOUT",
+                    "type": "constant",
+                    "layer": "private",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 72,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_EN_TO_RU_LAYOUT",
+                    "type": "constant",
+                    "layer": "private",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 109,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
                     "name": "WindMouseGenerator",
                     "type": "class",
                     "layer": "public",
@@ -30129,7 +31660,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 36,
+                    "line_number": 113,
                     "bases": [],
                     "children": [
                       {
@@ -30148,7 +31679,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 39,
+                        "line_number": 116,
                         "bases": [],
                         "children": []
                       },
@@ -30168,7 +31699,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 65,
+                        "line_number": 142,
                         "bases": [],
                         "children": []
                       }
@@ -30190,7 +31721,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 166,
+                    "line_number": 243,
                     "bases": [],
                     "children": [
                       {
@@ -30209,7 +31740,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 169,
+                        "line_number": 246,
                         "bases": [],
                         "children": []
                       }
@@ -30231,7 +31762,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 253,
+                    "line_number": 330,
                     "bases": [],
                     "children": [
                       {
@@ -30250,7 +31781,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 256,
+                        "line_number": 333,
                         "bases": [],
                         "children": []
                       },
@@ -30270,7 +31801,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 266,
+                        "line_number": 343,
                         "bases": [],
                         "children": []
                       }
@@ -30281,8 +31812,8 @@
                     "type": "class",
                     "layer": "internal",
                     "signature": "",
-                    "summary": "Представляет действие ввода символа или нажатия backspace при имитации печати.",
-                    "docstring": "Представляет действие ввода символа или нажатия backspace при имитации печати.",
+                    "summary": "Представляет действие ввода символа или нажатия клавиши при имитации печати.",
+                    "docstring": "Представляет действие ввода символа или нажатия клавиши при имитации печати.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -30292,7 +31823,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 291,
+                    "line_number": 368,
                     "bases": [
                       "typing.NamedTuple"
                     ],
@@ -30314,16 +31845,16 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 298,
+                    "line_number": 375,
                     "bases": [],
                     "children": [
                       {
-                        "name": "generate_sequence",
+                        "name": "__init__",
                         "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, text, error_rate)",
-                        "summary": "Генерирует последовательность нажатий клавиш для ввода текста.",
-                        "docstring": "Генерирует последовательность нажатий клавиш для ввода текста.\n\nВключает случайные опечатки, их обнаружение и исправление через Backspace.\n\nArgs:\n    text: Исходный текст.\n    error_rate: Вероятность совершения ошибки на каждом символе.\n\nReturns:\n    Список действий TypoAction, имитирующий последовательный ввод текста человеком.",
+                        "layer": "private",
+                        "signature": "(self, layout_error_rate, delayed_fix_rate)",
+                        "summary": "Инициализирует генератор опечаток.",
+                        "docstring": "Инициализирует генератор опечаток.\n\nArgs:\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    delayed_fix_rate: Вероятность отложенного исправления опечатки навигацией стрелками (0.0 - 1.0).",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -30333,7 +31864,27 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 301,
+                        "line_number": 378,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate_sequence",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, text, error_rate, layout_error_rate, delayed_fix_rate)",
+                        "summary": "Генерирует последовательность нажатий клавиш для ввода текста.",
+                        "docstring": "Генерирует последовательность нажатий клавиш для ввода текста.\n\nВключает случайные опечатки, их обнаружение и исправление через Backspace.\nПри ненулевой layout_error_rate в самом начале ввода может произойти реалистичная\nошибка раскладки (например, ввод нескольких символов латиницей вместо кириллицы\nс последующим полным стиранием и повторным вводом на правильном языке).\nПри ненулевой delayed_fix_rate моделируется более сложная опечатка: пользователь\nдопускает ошибку, по инерции допечатывает несколько символов/слов, а затем возвращается\nклавишами стрелок назад (ArrowLeft), исправляет опечатку и прыгает в конец строки (End).\n\nArgs:\n    text: Исходный текст.\n    error_rate: Вероятность совершения ошибки на каждом символе.\n    layout_error_rate: Вероятность ошибки раскладки в начале ввода. Если None,\n        используется значение из конструктора (по умолчанию 0.0).\n    delayed_fix_rate: Вероятность отложенного исправления опечатки. Если None,\n        используется значение из конструктора (по умолчанию 0.0).\n\nReturns:\n    Список действий TypoAction, имитирующий последовательный ввод текста человеком.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 392,
                         "bases": [],
                         "children": []
                       }
@@ -35854,7 +37405,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 110,
+            "line_number": 119,
             "bases": [],
             "children": []
           },
@@ -35874,7 +37425,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 148,
+            "line_number": 160,
             "bases": [],
             "children": []
           },
@@ -35894,7 +37445,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 156,
+            "line_number": 168,
             "bases": [],
             "children": []
           }
@@ -40081,7 +41632,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 12,
+                "line_number": 14,
                 "bases": [
                   "logging.Handler"
                 ],
@@ -40090,7 +41641,7 @@
                     "name": "__init__",
                     "type": "method",
                     "layer": "private",
-                    "signature": "(self, bot_token, chat_id, level, rate_limit_per_min)",
+                    "signature": "(self, bot_token, chat_id, level, rate_limit_per_min, flapping_patterns, flapping_threshold, flapping_timeout)",
                     "summary": "",
                     "docstring": "",
                     "breadcrumbs": {
@@ -40102,7 +41653,27 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 15,
+                    "line_number": 17,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "add_flapping_filter",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, patterns, threshold, failure_timeout)",
+                    "summary": "Добавляет фильтр подавления кратковременных транзиентных ошибок (флаппинга).",
+                    "docstring": "Добавляет фильтр подавления кратковременных транзиентных ошибок (флаппинга).\n\nСообщения об ошибках, совпадающие с patterns, будут отсекаться до тех пор,\nпока количество последовательных сбоев не достигнет threshold или время\nсбоя не превысит failure_timeout.\n\nArgs:\n    patterns: Шаблоны ошибок (подстрока, регулярное выражение или список таковых).\n    threshold: Порог последовательных ошибок до отправки алерта в Telegram.\n    failure_timeout: Таймаут сбоя в секундах до отправки алерта.\n\nReturns:\n    Текущий экземпляр обработчика.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 43,
                     "bases": [],
                     "children": []
                   },
@@ -40122,7 +41693,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 28,
+                    "line_number": 76,
                     "bases": [],
                     "children": []
                   },
@@ -40142,7 +41713,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 47,
+                    "line_number": 95,
                     "bases": [],
                     "children": []
                   },
@@ -40162,7 +41733,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 56,
+                    "line_number": 104,
                     "bases": [],
                     "children": []
                   }
@@ -40184,7 +41755,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 99,
+                "line_number": 147,
                 "bases": [],
                 "children": []
               },
@@ -40204,7 +41775,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 169,
+                "line_number": 217,
                 "bases": [],
                 "children": [
                   {
@@ -40223,7 +41794,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 172,
+                    "line_number": 220,
                     "bases": [],
                     "children": []
                   },
@@ -40243,7 +41814,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 182,
+                    "line_number": 230,
                     "bases": [],
                     "children": []
                   }
@@ -43380,7 +44951,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 361,
+        "line_number": 366,
         "bases": [],
         "children": []
       },
@@ -43400,7 +44971,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 394,
+        "line_number": 399,
         "bases": [],
         "children": []
       },
@@ -43420,7 +44991,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 414,
+        "line_number": 419,
         "bases": [],
         "children": []
       }
@@ -44938,6 +46509,61 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/fingerprint",
+      "target": "/models",
+      "weight": 6
+    },
+    {
+      "source": "chutils/scraping/fingerprint",
+      "target": "/synthesizer",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/fingerprint/external",
+      "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/fingerprint/external",
+      "target": "/models",
+      "weight": 5
+    },
+    {
+      "source": "chutils/scraping/fingerprint/models",
+      "target": "chutils/fs",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/fingerprint/procedural",
+      "target": "/database",
+      "weight": 10
+    },
+    {
+      "source": "chutils/scraping/fingerprint/procedural",
+      "target": "/models",
+      "weight": 6
+    },
+    {
+      "source": "chutils/scraping/fingerprint/synthesizer",
+      "target": "chutils/fs",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/fingerprint/synthesizer",
+      "target": "/external",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/fingerprint/synthesizer",
+      "target": "/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/fingerprint/synthesizer",
+      "target": "/procedural",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/humanize",
       "target": "/actions",
       "weight": 10
@@ -44946,6 +46572,11 @@
       "source": "chutils/scraping/humanize",
       "target": "/antidetect",
       "weight": 5
+    },
+    {
+      "source": "chutils/scraping/humanize",
+      "target": "/behavior",
+      "weight": 1
     },
     {
       "source": "chutils/scraping/humanize",
@@ -44968,9 +46599,14 @@
       "weight": 6
     },
     {
-      "source": "chutils/scraping/humanize/actions",
+      "source": "chutils/scraping/humanize/_actions_helpers",
       "target": "chutils/exceptions",
       "weight": 1
+    },
+    {
+      "source": "chutils/scraping/humanize/actions",
+      "target": "/_actions_helpers",
+      "weight": 10
     },
     {
       "source": "chutils/scraping/humanize/actions",
@@ -44991,6 +46627,16 @@
       "source": "chutils/scraping/humanize/antidetect",
       "target": "/config",
       "weight": 1
+    },
+    {
+      "source": "chutils/scraping/humanize/behavior",
+      "target": "/actions",
+      "weight": 4
+    },
+    {
+      "source": "chutils/scraping/humanize/behavior",
+      "target": "/math_utils",
+      "weight": 2
     },
     {
       "source": "chutils/scraping/humanize/config",
@@ -45850,10 +47496,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.7.1",
-    "project_version": "3.7.1",
-    "git_commit": "bf465315bcadd5ab4b53ed8386bae33ef5dfc8fd (dirty)",
-    "generated_at": "2026-09-17T12:37:27.451138+00:00",
-    "project_hash": "f3bde5b850a22fc6f42bf70a67f76cff2bf7271c103231d3a9e7b9a34e013f22"
+    "chutils_version": "3.8.0",
+    "project_version": "3.8.0",
+    "git_commit": "bd63071db734d8cc460cb8e4529bc99366604a3e (dirty)",
+    "generated_at": "2026-09-20T22:17:34.629358+00:00",
+    "project_hash": "2db5281c8265a55096819ff20fa486efafdf3f548c0375f1273ce26bde8d32f3"
   }
 }

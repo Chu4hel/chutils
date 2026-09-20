@@ -73,6 +73,7 @@ members:
 - ChutilsLogger
 - DEVDEBUG_LEVEL_NUM
 - MEDIUMDEBUG_LEVEL_NUM
+- FlappingFilter
 
 ## Модуль `context`
 
@@ -570,5 +571,60 @@ members:
 - put
 - delete
 - patch
+
+## Модуль `scraping.fingerprint` (Синтезатор цифровой личности)
+
+::: chutils.scraping.fingerprint
+options:
+  members:
+    - FingerprintSynthesizer
+    - FingerprintProfile
+    - WebGLFingerprint
+    - ScreenFingerprint
+    - HardwareFingerprint
+    - AudioFingerprint
+    - MediaDeviceItem
+    - BrowserForgeProvider
+
+## Модуль `scraping.humanize` (Имитация поведения и антидетект)
+
+::: chutils.scraping.humanize
+options:
+  members:
+    - AntidetectConfig
+    - BehavioralProfile
+    - WindMouseGenerator
+    - BezierCurveGenerator
+    - JitterDelayGenerator
+    - KeyboardTypoGenerator
+    - apply_antidetect_nodriver
+    - apply_antidetect_playwright
+    - apply_antidetect_selenium
+    - solve_cf_turnstile
+    - detect_cf_turnstile
+    - is_cf_turnstile_solved
+    - async_move_mouse
+    - async_click
+    - async_type_text
+    - async_scroll_to
+    - async_human_sleep
+    - move_mouse
+    - click
+    - type_text
+    - scroll_to
+    - human_sleep
+
+## Модуль `telegram`
+
+::: chutils.telegram
+options:
+  members:
+    - TelegramLogHandler
+    - download_user_file
+    - send_telegram_file
+    - build_inline_keyboard
+    - PaginatorKeyboard
+    - HealthCheckAlertBridge
+
 
 

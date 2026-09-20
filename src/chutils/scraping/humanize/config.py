@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any, cast
+
+if TYPE_CHECKING:
+    from chutils.scraping.fingerprint.models import FingerprintProfile
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -53,6 +56,22 @@ class AntidetectConfig(BaseModel):
     client_hints: dict[str, Any] | None = Field(
         default=None,
         description="Параметры navigator.userAgentData (brands, platform, mobile).",
+    )
+    screen_width: int | None = Field(
+        default=None,
+        description="Эмулируемая ширина экрана (screen.width).",
+    )
+    screen_height: int | None = Field(
+        default=None,
+        description="Эмулируемая высота экрана (screen.height).",
+    )
+    screen_avail_height: int | None = Field(
+        default=None,
+        description="Эмулируемая доступная высота экрана за вычетом панели задач (screen.availHeight).",
+    )
+    device_pixel_ratio: float | None = Field(
+        default=None,
+        description="Эмулируемый коэффициент масштабирования (window.devicePixelRatio).",
     )
 
     @classmethod
@@ -130,6 +149,117 @@ class AntidetectConfig(BaseModel):
             session_seed=session_seed,
         )
 
+    @classmethod
+    def from_fingerprint(
+        cls,
+        profile: FingerprintProfile | Any,
+        *,
+        stealth_minimal: bool = True,
+    ) -> AntidetectConfig:
+        """Создает AntidetectConfig на основе объекта FingerprintProfile.
+
+        Args:
+            profile: Экземпляр FingerprintProfile.
+            stealth_minimal: Если True, не накладывать синтетический шум на Canvas.
+
+        Returns:
+            Сконфигурированный экземпляр AntidetectConfig.
+        """
+        res = profile.to_antidetect_config(stealth_minimal=stealth_minimal)
+        return cast(AntidetectConfig, res)
+
+    @classmethod
+    def from_seed(
+        cls,
+        seed: int | str,
+        *,
+        stealth_minimal: bool = True,
+        os_target: str = "windows",
+        locale: str = "ru-RU",
+    ) -> AntidetectConfig:
+        """Синтезирует детерминированную цифровую личность по сиду и возвращает AntidetectConfig.
+
+        Один и тот же сид всегда дает абсолютно идентичный и физически согласованный
+        отпечаток (видеокарта, процессор, память, геометрия экрана, панель задач).
+
+        Args:
+            seed: Сид профиля или имя учетной записи.
+            stealth_minimal: Если True, сохраняет чистый отпечаток без искажения Canvas.
+            os_target: Целевая ОС ('windows').
+            locale: Локаль ('ru-RU', 'en-US').
+
+        Returns:
+            Экземпляр AntidetectConfig.
+        """
+        from chutils.scraping.fingerprint import FingerprintSynthesizer
+
+        fp = FingerprintSynthesizer(
+            mode="procedural", os_target=os_target, locale=locale
+        ).synthesize(seed)
+        return fp.to_antidetect_config(stealth_minimal=stealth_minimal)
+
+    @classmethod
+    def from_browserforge(
+        cls,
+        seed: int | str | None = None,
+        *,
+        browser: str = "chrome",
+        os: str = "windows",
+        stealth_minimal: bool = True,
+    ) -> AntidetectConfig:
+        """Генерирует отпечаток через байесовскую сеть browserforge (при наличии пакета).
+
+        Args:
+            seed: Опциональный сид для воспроизводимой детерминированной генерации.
+            browser: Эмулируемый браузер ('chrome').
+            os: Целевая ОС ('windows').
+            stealth_minimal: Режим маскировки.
+
+        Returns:
+            Экземпляр AntidetectConfig.
+        """
+        from chutils.scraping.fingerprint import FingerprintSynthesizer
+
+        fp = FingerprintSynthesizer(mode="browserforge", os_target=os).synthesize(seed)
+        return fp.to_antidetect_config(stealth_minimal=stealth_minimal)
+
+    @classmethod
+    def from_procedural(
+        cls,
+        seed: int | str | None = None,
+        *,
+        stealth_minimal: bool = True,
+        os_target: str = "windows",
+        locale: str = "ru-RU",
+    ) -> AntidetectConfig:
+        """Синтезирует отпечаток через встроенный процедурный генератор.
+
+        Args:
+            seed: Опциональный сид.
+            stealth_minimal: Режим маскировки.
+            os_target: Целевая ОС.
+            locale: Локаль.
+
+        Returns:
+            Экземпляр AntidetectConfig.
+        """
+        from chutils.scraping.fingerprint import FingerprintSynthesizer
+
+        fp = FingerprintSynthesizer(
+            mode="procedural", os_target=os_target, locale=locale
+        ).synthesize(seed)
+        return fp.to_antidetect_config(stealth_minimal=stealth_minimal)
+
+    def get_behavioral_profile(self) -> Any:
+        """Возвращает детерминированный биометрический профиль моторики на основе session_seed.
+
+        Returns:
+            Экземпляр BehavioralProfile.
+        """
+        from .behavior import BehavioralProfile
+
+        return BehavioralProfile.from_seed(self.session_seed)
+
     def get_init_script(self) -> str:
         """Генерирует JavaScript-скрипт антидетекта на основе настроек конфигурации.
 
@@ -146,6 +276,10 @@ class AntidetectConfig(BaseModel):
             stealth_minimal=self.stealth_minimal,
             session_seed=self.session_seed,
             client_hints=self.client_hints,
+            screen_width=self.screen_width,
+            screen_height=self.screen_height,
+            screen_avail_height=self.screen_avail_height,
+            device_pixel_ratio=self.device_pixel_ratio,
         )
 
     async def apply_to_nodriver(self, tab: Any) -> None:

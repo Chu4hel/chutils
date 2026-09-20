@@ -13,8 +13,17 @@ if TYPE_CHECKING:
     from .camoufox import (
         launch_camoufox as launch_camoufox,
     )
+    from .fingerprint import (
+        FingerprintProfile as FingerprintProfile,
+    )
+    from .fingerprint import (
+        FingerprintSynthesizer as FingerprintSynthesizer,
+    )
     from .humanize.antidetect import (
         extract_clearance_cookies as extract_clearance_cookies,
+    )
+    from .humanize.behavior import (
+        BehavioralProfile as BehavioralProfile,
     )
     from .humanize.config import (
         AntidetectConfig as AntidetectConfig,
@@ -110,9 +119,12 @@ if TYPE_CHECKING:
 _LAZY_MAPPING = {
     "AntidetectConfig": (".humanize.config", "AntidetectConfig"),
     "AsyncProxyTunnel": (".proxy", "AsyncProxyTunnel"),
+    "BehavioralProfile": (".humanize.behavior", "BehavioralProfile"),
     "BrowserProfile": (".profiles", "BrowserProfile"),
     "CAMOUFOX_AVAILABLE": (".camoufox", "CAMOUFOX_AVAILABLE"),
     "ChromeProxyExtension": (".proxy", "ChromeProxyExtension"),
+    "FingerprintProfile": (".fingerprint", "FingerprintProfile"),
+    "FingerprintSynthesizer": (".fingerprint", "FingerprintSynthesizer"),
     "LiveBrowserSession": (".testing", "LiveBrowserSession"),
     "LocalTestServer": (".testing", "LocalTestServer"),
     "MockNodriverTab": (".testing", "MockNodriverTab"),
@@ -160,6 +172,7 @@ def __dir__() -> list[str]:
             "camoufox",
             "captcha",
             "concurrency",
+            "fingerprint",
             "humanize",
             "proxy",
             "testing",
@@ -173,8 +186,11 @@ __all__ = [
     "CAMOUFOX_AVAILABLE",
     "AntidetectConfig",
     "AsyncProxyTunnel",
+    "BehavioralProfile",
     "BrowserProfile",
     "ChromeProxyExtension",
+    "FingerprintProfile",
+    "FingerprintSynthesizer",
     "LiveBrowserSession",
     "LocalTestServer",
     "MockNodriverTab",
@@ -195,6 +211,7 @@ __all__ = [
     "concurrency",
     "detect_cf_turnstile",
     "extract_clearance_cookies",
+    "fingerprint",
     "get_async_camoufox_class",
     "get_nodriver_proxy_args",
     "get_playwright_proxy",

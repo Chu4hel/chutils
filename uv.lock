@@ -632,7 +632,7 @@ wheels = [
 
 [[package]]
 name = "chutils"
-version = "3.7.1"
+version = "3.8.0"
 source = { editable = "." }
 dependencies = [
     { name = "exceptiongroup", marker = "python_full_version < '3.11'" },
@@ -662,8 +662,12 @@ db = [
     { name = "asyncpg" },
     { name = "sqlalchemy" },
 ]
+fingerprint = [
+    { name = "browserforge" },
+]
 full = [
     { name = "boto3" },
+    { name = "browserforge" },
     { name = "cryptography" },
     { name = "google-cloud-secret-manager" },
     { name = "httpx" },
@@ -773,6 +777,8 @@ requires-dist = [
     { name = "asyncpg", marker = "extra == 'db'", specifier = ">=0.29.0" },
     { name = "boto3", marker = "extra == 'aws'", specifier = ">=1.34.0" },
     { name = "boto3", marker = "extra == 'full'", specifier = ">=1.34.0" },
+    { name = "browserforge", marker = "extra == 'fingerprint'", specifier = ">=1.1.0" },
+    { name = "browserforge", marker = "extra == 'full'", specifier = ">=1.1.0" },
     { name = "camoufox", marker = "extra == 'camoufox'", specifier = ">=0.4.0" },
     { name = "cryptography", marker = "extra == 'crypto'", specifier = ">=42.0.0" },
     { name = "cryptography", marker = "extra == 'full'", specifier = ">=42.0.0" },
@@ -822,7 +828,7 @@ requires-dist = [
     { name = "websockets", marker = "extra == 'full'", specifier = ">=14.0.0" },
     { name = "websockets", marker = "extra == 'websockets'", specifier = ">=14.0.0" },
 ]
-provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "websockets", "tls", "camoufox", "db", "captcha", "scraping", "redis", "qt", "qt-pyside", "vk", "vkma", "testing", "otel", "full"]
+provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "websockets", "tls", "camoufox", "db", "captcha", "scraping", "fingerprint", "redis", "qt", "qt-pyside", "vk", "vkma", "testing", "otel", "full"]
 
 [package.metadata.requires-dev]
 dev = [

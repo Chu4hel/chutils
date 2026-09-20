@@ -381,7 +381,9 @@ def get_config(
                                 )
                                 if len(parts) == 2:
                                     key_cand = parts[1]
-                                    sec_keys = known_keys_map.get(actual_sec.lower(), {})
+                                    sec_keys = known_keys_map.get(
+                                        actual_sec.lower(), {}
+                                    )
                                     actual_key = sec_keys.get(
                                         key_cand.lower(), key_cand.lower()
                                     )

@@ -21,6 +21,10 @@ def _get_antidetect_js(
     stealth_minimal: bool = False,
     session_seed: str | int = 1337,
     client_hints: dict[str, Any] | None = None,
+    screen_width: int | None = None,
+    screen_height: int | None = None,
+    screen_avail_height: int | None = None,
+    device_pixel_ratio: float | None = None,
 ) -> str:
     """Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами."""
     vendor_js = json.dumps(webgl_vendor)
@@ -30,6 +34,10 @@ def _get_antidetect_js(
     minimal_js = "true" if stealth_minimal else "false"
     seed_js = json.dumps(str(session_seed))
     hints_js = json.dumps(client_hints) if client_hints is not None else "null"
+    screen_w_js = json.dumps(screen_width)
+    screen_h_js = json.dumps(screen_height)
+    screen_avail_h_js = json.dumps(screen_avail_height)
+    dpr_js = json.dumps(device_pixel_ratio)
 
     return f"""(function() {{
     // Утилита для маскировки функций под нативные [native code] с чистым V8 stack trace
@@ -461,4 +469,43 @@ def _get_antidetect_js(
             }});
         }} catch (e) {{}}
     }}
+
+    // 9. Эмуляция характеристик дисплея (screen.width, screen.height, screen.availHeight, window.devicePixelRatio)
+    try {{
+        if (typeof window !== 'undefined') {{
+            if ({screen_w_js} !== null) {{
+                Object.defineProperty(screen, 'width', {{
+                    get: makeNative(() => {screen_w_js}, 'get width'),
+                    configurable: true,
+                    enumerable: true
+                }});
+                Object.defineProperty(screen, 'availWidth', {{
+                    get: makeNative(() => {screen_w_js}, 'get availWidth'),
+                    configurable: true,
+                    enumerable: true
+                }});
+            }}
+            if ({screen_h_js} !== null) {{
+                Object.defineProperty(screen, 'height', {{
+                    get: makeNative(() => {screen_h_js}, 'get height'),
+                    configurable: true,
+                    enumerable: true
+                }});
+            }}
+            if ({screen_avail_h_js} !== null) {{
+                Object.defineProperty(screen, 'availHeight', {{
+                    get: makeNative(() => {screen_avail_h_js}, 'get availHeight'),
+                    configurable: true,
+                    enumerable: true
+                }});
+            }}
+            if ({dpr_js} !== null) {{
+                Object.defineProperty(window, 'devicePixelRatio', {{
+                    get: makeNative(() => {dpr_js}, 'get devicePixelRatio'),
+                    configurable: true,
+                    enumerable: true
+                }});
+            }}
+        }}
+    }} catch (e) {{}}
 }})();"""

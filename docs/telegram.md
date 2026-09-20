@@ -254,14 +254,22 @@ for chunk in chunks_paragraphs:
 
 ## 12. Лог-хэндлер алертов в Telegram (`TelegramLogHandler`)
 
-Автоматическая отправка ошибок уровня `ERROR` / `CRITICAL` в Telegram с троттлингом:
+Автоматическая отправка ошибок уровня `ERROR` / `CRITICAL` в Telegram с троттлингом и подавлением транзиентных сбоев (флаппинга):
 
 ```python
 import logging
 from chutils.telegram import TelegramLogHandler
 
 logger = logging.getLogger("my_app")
-handler = TelegramLogHandler(bot_token="TOKEN", chat_id=12345678, rate_limit_per_min=10)
+handler = TelegramLogHandler(
+    bot_token="TOKEN",
+    chat_id=12345678,
+    rate_limit_per_min=10,
+    # Подавление ложных алертов (например, при ночных реконнектах LongPoll):
+    flapping_patterns=["Unable to make request to BotPolling"],
+    flapping_threshold=3,       # Отправит алерт только если сбой повторится 3 раза подряд
+    flapping_timeout=60.0,      # или продлится непрерывно более 60 секунд
+)
 logger.addHandler(handler)
 
 logger.error("Критический сбой базы данных!")
@@ -320,3 +328,27 @@ kb = paginator.build_keyboard(
     page=2, footer_buttons=[("Закрыть", "close_catalog")], as_aiogram=True
 )
 ```
+
+---
+
+## 16. Логирование критических ошибок в Telegram (`TelegramLogHandler`)
+
+`TelegramLogHandler` направляет логи (по умолчанию уровня `ERROR` и выше) напрямую в указанный чат Telegram с поддержкой ограничения частоты (Rate Limiting) и подавления флэппинга:
+
+```python
+import logging
+from chutils.telegram import TelegramLogHandler
+
+handler = TelegramLogHandler(
+    bot_token="BOT_TOKEN",
+    chat_id=12345678,
+    level=logging.ERROR,
+    rate_limit_per_min=10,
+    flapping_threshold=3,
+    flapping_timeout=60.0,
+)
+
+logger = logging.getLogger("my_app")
+logger.addHandler(handler)
+```
+

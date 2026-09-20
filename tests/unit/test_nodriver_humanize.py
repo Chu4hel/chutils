@@ -8,9 +8,9 @@ from pytest_mock import MockerFixture
 
 # Настраиваем фиктивные функции для генерации CDP-команд
 mock_nodriver = MagicMock()
-mock_cdp = MagicMock()
+mock_cdp = MagicMock(spec=["input_"])
 mock_input = MagicMock()
-mock_cdp.input = mock_input
+mock_cdp.input_ = mock_input
 
 mock_input.dispatch_mouse_event = MagicMock(
     side_effect=lambda **kwargs: ("dispatch_mouse_event", kwargs)
@@ -18,6 +18,7 @@ mock_input.dispatch_mouse_event = MagicMock(
 mock_input.dispatch_key_event = MagicMock(
     side_effect=lambda **kwargs: ("dispatch_key_event", kwargs)
 )
+mock_input.insert_text = MagicMock(side_effect=lambda **kwargs: ("insert_text", kwargs))
 
 
 from chutils.scraping.humanize.actions import (
@@ -50,7 +51,7 @@ def mock_sys_modules(mocker: MockerFixture) -> None:
         {
             "nodriver": mock_nodriver,
             "nodriver.cdp": mock_cdp,
-            "nodriver.cdp.input": mock_input,
+            "nodriver.cdp.input_": mock_input,
         },
     )
 
@@ -68,6 +69,23 @@ async def test_async_move_mouse_nodriver() -> None:
 
     assert tab.send.call_count == 10
     # Проверяем, что последний вызов отправляет событие на координаты 200, 300
+    last_call = tab.send.call_args_list[-1][0][0]
+    assert last_call[0] == "dispatch_mouse_event"
+    assert last_call[1]["x"] == 200
+    assert last_call[1]["y"] == 300
+    assert last_call[1]["type_"] == "mouseMoved"
+
+
+@pytest.mark.asyncio
+async def test_async_move_mouse_nodriver_windmouse() -> None:
+    """Проверяет перемещение мыши с nodriver по алгоритму windmouse через CDP."""
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.send = AsyncMock()
+
+    await async_move_mouse(tab, x=200, y=300, start=(0, 0), algorithm="windmouse")
+
+    assert tab.send.call_count > 0
     last_call = tab.send.call_args_list[-1][0][0]
     assert last_call[0] == "dispatch_mouse_event"
     assert last_call[1]["x"] == 200
@@ -117,6 +135,87 @@ async def test_async_type_text_nodriver() -> None:
     first_send_args = tab.send.call_args_list[0][0][0]
     assert first_send_args[0] == "dispatch_key_event"
     assert "type_" in first_send_args[1]
+
+
+@pytest.mark.asyncio
+async def test_async_type_text_nodriver_paste_threshold(mocker: MockerFixture) -> None:
+    """Проверяет адаптивную вставку длинного текста через paste_threshold в nodriver."""
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.find = AsyncMock()
+    tab.send = AsyncMock()
+
+    mock_element = AsyncMock()
+    mock_element._is_nodriver = True
+    tab.find.return_value = mock_element
+
+    sleep_mock = mocker.patch("asyncio.sleep", new_callable=AsyncMock)
+    long_text = "Длинный текст для вставки через буфер обмена nodriver" * 2
+
+    await async_type_text(
+        tab,
+        selector="#username",
+        text=long_text,
+        paste_threshold=40,
+        paste_delay_before=(0.4, 0.7),
+        paste_delay_after=(0.3, 0.5),
+    )
+
+    tab.find.assert_called_once_with("#username")
+    mock_element.focus.assert_called_once()
+
+    # Должен быть вызван send с insert_text
+    insert_calls = [
+        c[0][0] for c in tab.send.call_args_list if c[0][0][0] == "insert_text"
+    ]
+    assert len(insert_calls) == 1
+    assert insert_calls[0][1]["text"] == long_text
+
+    # dispatch_key_event не должен вызываться для посимвольного ввода
+    key_events = [
+        c[0][0] for c in tab.send.call_args_list if c[0][0][0] == "dispatch_key_event"
+    ]
+    assert len(key_events) == 0
+    assert sleep_mock.call_count >= 2
+
+
+@pytest.mark.asyncio
+async def test_async_type_text_nodriver_delayed_fix(mocker: MockerFixture) -> None:
+    """Проверяет отправку событий клавиш ArrowLeft и End при delayed_fix_rate в nodriver."""
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.find = AsyncMock()
+    tab.send = AsyncMock()
+
+    mock_element = AsyncMock()
+    mock_element._is_nodriver = True
+    tab.find.return_value = mock_element
+
+    mocker.patch("asyncio.sleep", new_callable=AsyncMock)
+    long_text = "Тестирование nodriver с исправлением опечаток стрелками"
+
+    await async_type_text(
+        tab,
+        selector="#username",
+        text=long_text,
+        error_rate=0.0,
+        delayed_fix_rate=1.0,
+        speed_wpm=500.0,
+    )
+
+    tab.find.assert_called_once_with("#username")
+    mock_element.focus.assert_called_once()
+
+    # Извлекаем все клавиши, отправленные через dispatch_key_event
+    sent_keys = [
+        c[0][0][1]["key"]
+        for c in tab.send.call_args_list
+        if c[0][0][0] == "dispatch_key_event" and "key" in c[0][0][1]
+    ]
+
+    assert "ArrowLeft" in sent_keys
+    assert "Backspace" in sent_keys
+    assert ("End" in sent_keys) or ("ArrowRight" in sent_keys)
 
 
 @pytest.mark.asyncio

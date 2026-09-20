@@ -80,16 +80,55 @@ delay = delay_gen.generate(base_delay)
 
 ### Генератор опечаток клавиатуры (`KeyboardTypoGenerator`)
 
-Генерирует последовательности нажатий клавиш, включая случайные опечатки на близкорасположенных QWERTY-клавишах, с
+Генерирует последовательности нажатий клавиш, включая реалистичные опечатки на близкорасположенных клавишах (поддерживаются раскладки QWERTY и ЙЦУКЕН), с
 последующим стиранием опечаток через Backspace и вводом правильных букв.
+
+Также поддерживается имитация редкой ошибки переключения раскладки (`layout_error_rate`), возникающей **строго в начале ввода** (например, ввод 1–3 символов латиницей `Ghb...` вместо кириллицы с последующим стиранием и повторным вводом `Привет...`).
+
+Кроме того, генератор поддерживает продвинутую механику **отложенного исправления опечаток** (`delayed_fix_rate`): когда пользователь допускает ошибку в слове, по инерции допечатывает несколько последующих слов, а затем, не удаляя написанный хвост через каскад Backspace, возвращается клавишами стрелок (`ArrowLeft`) к месту опечатки, исправляет её, и мгновенно возвращается в конец строки клавишей `End` (или серией `ArrowRight`).
 
 ```python
 from chutils.scraping.humanize import KeyboardTypoGenerator
 
-typo_gen = KeyboardTypoGenerator()
-sequence = typo_gen.generate_sequence("Hello!", error_rate=0.1)
+typo_gen = KeyboardTypoGenerator(layout_error_rate=0.03, delayed_fix_rate=0.02)
+# Или передавая напрямую в generate_sequence:
+sequence = typo_gen.generate_sequence(
+    "Автоматизация сбора данных и имитация поведения пользователя",
+    error_rate=0.04,
+    layout_error_rate=0.02,
+    delayed_fix_rate=0.015,
+)
 
-# Возвращает список объектов TypoAction (action='type'|'backspace', char='...')
+# Возвращает список объектов TypoAction (action='type'|'backspace'|'key', char='...')
+```
+
+
+### Биометрический профиль моторики (`BehavioralProfile`)
+
+`BehavioralProfile` объединяет все поведенческие параметры пользователя (скорость печати, опечатки, физику мыши и интервалы удержания) в единую Pydantic-модель.
+С помощью фабричного метода `.from_seed(seed)` можно детерминированно сгенерировать уникальный реалистичный почерк для конкретной сессии, аккаунта или браузерного профиля:
+
+```python
+from chutils.scraping.humanize import BehavioralProfile
+
+# Детерминированный профиль по сиду аккаунта:
+profile = BehavioralProfile.from_seed("user_account_42")
+
+print(profile.speed_wpm)        # напр., 52.4 WPM
+print(profile.typo_rate)        # напр., 0.038 (3.8% опечаток)
+print(profile.delayed_fix_rate) # отложенное исправление стрелками (напр., 0.015)
+print(profile.gravity)          # физика мыши WindMouse
+
+print(profile.key_hold_time)    # диапазон удержания клавиш (напр., 0.035 - 0.075 сек)
+print(profile.click_hold_time)  # диапазон удержания клика (напр., 0.052 - 0.114 сек)
+
+# Готовые фабрики генераторов:
+wind_mouse = profile.create_wind_mouse()
+typo_gen = profile.create_typo_generator()
+
+# Прямые вызовы действий с биометрией профиля:
+await profile.async_type_text(page, selector="#login", text="admin@example.com")
+await profile.async_click(page, selector="#submit-btn")
 ```
 
 ---
@@ -156,6 +195,18 @@ await async_type_text(
     error_rate=0.05,
     speed_wpm=40.0,
     key_hold_time=(0.04, 0.09),
+)
+
+# Адаптивный ввод (Paste/Ctrl+V для длинных текстов, промптов и кода):
+# Короткие строки печатаются по буквам, а тексты длиннее paste_threshold вставляются
+# целиком через буфер с паузами обдумывания до и после вставки.
+await async_type_text(
+    tab,
+    selector="#prompt-input",
+    text=long_prompt_or_code,
+    paste_threshold=100,
+    paste_delay_before=(0.5, 1.2),
+    paste_delay_after=(0.4, 0.8),
 )
 ```
 
@@ -267,6 +318,63 @@ custom_cfg = AntidetectConfig(
     session_seed="custom_seed_42",
 )
 await apply_antidetect_nodriver(tab, config=custom_cfg)
+
+# 4. Мгновенная генерация из детерминированного сида:
+seed_cfg = AntidetectConfig.from_seed("user_session_42")
+await seed_cfg.apply_to_nodriver(tab)
+```
+
+### Синтезатор цифровой личности браузера (`FingerprintSynthesizer`)
+
+В стиле профессиональных антидетект-браузеров (Linken Sphere, Octo Browser, Dolphin Anty), генератор отпечатков в `chutils` использует многоуровневый комбинаторный синтез цифровой личности. Отпечаток не выбирается из фиксированного списка и не генерируется чисто случайно (что создало бы невозможные комбинации вроде 7 ядер CPU или видеокарты Apple Metal на Windows), а строится по физически непротиворечивой матрице оборудования:
+
+- **Матрица Hardware Tiers**:
+  - `enthusiast_desktop`: мощные GPU (RTX 4090/4080/4070 Ti, RX 7900 XTX), 16–32 потока CPU, 32–64 ГБ RAM, мониторы 4K/2K (144–240 Гц).
+  - `mainstream_desktop`: народные GPU (RTX 4060, RTX 3060, RX 6700 XT), 8–16 потоков CPU, 16–32 ГБ RAM, Full HD/2K.
+  - `budget_desktop`: базовые GPU (GTX 1660, RTX 3050, RX 6500 XT), 6–12 потоков CPU, 8–16 ГБ RAM, Full HD.
+  - `laptop`: мобильные GPU (Laptop GPU, Iris Xe, Radeon Graphics), 4–16 потоков CPU, 8–16 ГБ RAM, экраны ноутбуков (1920×1080, 2560×1600, DPR 1.25–1.5).
+- **Синтез ANGLE D3D11 строк**: точная грамматика драйверов Windows (`Direct3D11 vs_5_0 ps_5_0, D3D11-31.0.15.xxxx`), согласованная с версиями драйверов NVIDIA и AMD.
+- **Геометрия экранов**: строгий расчет высоты панели задач Windows (`availHeight = height - 40` или `48`) и Device Pixel Ratio.
+- **Периферийные устройства**: согласованная эмуляция микрофонов, камер и аудиовыходов (`MediaDevices`) со стабильными SHA-256 хэшами `deviceId` и `groupId`.
+- **Субпиксельный шум аудио**: эмуляция аппаратного джиттера ЦАП звуковой карты с порядком $10^{-7}$.
+- **Двухуровневый движок**:
+  - **Tier B (Zero-Dependency)**: полностью автономный встроенный процедурный генератор. Строго детерминирован по `seed` — один и тот же сид гарантирует идентичность отпечатка между перезапусками браузера.
+  - **Tier A (Bayesian/ML)**: опциональный адаптер над библиотекой `browserforge` (Apify), если она установлена (`pip install browserforge`).
+
+#### Использование синтезатора
+
+```python
+from chutils.scraping import FingerprintProfile, FingerprintSynthesizer
+from chutils.scraping.humanize import AntidetectConfig
+
+# 1. Быстрая процедурная генерация по сиду (Zero-Dependency)
+profile = FingerprintSynthesizer.create_procedural(seed="profile_account_102")
+
+print(profile.webgl.renderer)  # ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11 ...)
+print(profile.hardware.concurrency)  # 12
+print(profile.hardware.memory_gb)  # 16
+print(profile.screen.width, profile.screen.avail_height)  # 1920 1040
+
+# 2. Преобразование в AntidetectConfig и применение к сессии
+antidetect_cfg = profile.to_antidetect_config()
+await antidetect_cfg.apply_to_nodriver(tab)
+
+# Или прямое применение профиля:
+await profile.apply_to_tab(tab)  # nodriver
+await profile.apply_to_page(page)  # Playwright
+
+# 3. Автоматическое кэширование и сохранение профилей на диск:
+# При первом вызове генерирует и сохраняет в ./profiles/acc_102.json, при последующих — быстро загружает:
+profile = synthesizer.get_or_create(seed="acc_102", storage_dir="./profiles")
+
+# Ручное сохранение и загрузка профиля (JSON)
+profile.save_to_file("my_fingerprint.json")
+loaded_profile = FingerprintProfile.from_file("my_fingerprint.json")
+
+# 4. Использование ML-генератора browserforge с поддержкой сида
+if FingerprintSynthesizer.is_browserforge_available():
+    # browserforge детерминирован по сиду с автоматической изоляцией PRNG:
+    bf_profile = FingerprintSynthesizer.create_from_browserforge(seed="acc_102")
 ```
 
 ### Автоматическое решение Cloudflare Turnstile (`solve_cf_turnstile`)
@@ -1062,3 +1170,58 @@ if __name__ == "__main__":
 - **Детекция Hard Challenge**: Автоматическое распознавание интерактивных челленджей с предупреждением в лог и детализированной ошибкой при `raise_on_failure=True`.
 - **Проверка интерактивности**: Ожидание готовности виджета и пропуск неинтерактивных состояний (`opacity: 0`, `data-state="checking"`).
 - **CDP Fallback**: Автоматический резервный расчет границ через Box Model CDP при нулевых размерах DOM-прямоугольника.
+
+---
+
+## 11. Синтезатор цифровой личности и генератор отпечатков (`chutils.scraping.fingerprint`)
+
+Модуль `chutils.scraping.fingerprint` обеспечивает генерацию физически согласованных и статистически достоверных цифровых личностей (Browser Fingerprints) для обхода систем антифрода и фингерпринтинга (CreepJS, Pixelscan, BrowserLeaks).
+
+### Концепция архитектуры
+1. **Физическая валидность параметров**: Видеокарта, процессор, объем памяти, Client Hints и разрешение экрана строго взаимосвязаны (например, исключены аномалии вроде видеокарты Apple Metal на Windows или нечетного количества ядер).
+2. **Детерминизм по сиду**: Один и тот же сид (`seed="session_123"`) генерирует абсолютно идентичный отпечаток цифровой личности в любое время.
+3. **Два независимых движка**:
+   - **`ProceduralFingerprintEngine` (Zero-Dependency)**: Встроенный комбинаторный генератор с детерминированным расчетом геометрии дисплея, вычетом системной панели задач и валидными ANGLE WebGL строками. Не требует сторонних библиотек.
+   - **`BrowserForgeProvider` (Байесовская сеть)**: Опциональный провайдер на базе пакета `browserforge` (`pip install chutils[fingerprint]`), использующий генеративную байесовскую сеть, обученную на миллионах реальных пользовательских сессий.
+4. **Бесшовная интеграция с `nodriver` и `Playwright`**: Прямое применение параметров через методы профиля или `AntidetectConfig`.
+
+### Быстрый старт
+
+```python
+import asyncio
+from chutils.scraping import FingerprintSynthesizer, AntidetectConfig
+
+# 1. Детерминированный синтез по сиду
+synthesizer = FingerprintSynthesizer(os_target="windows")
+profile = synthesizer.synthesize(seed="user_account_42")
+
+print(f"Платформа: {profile.platform}")
+print(f"User-Agent: {profile.user_agent}")
+print(f"Экран: {profile.screen.width}x{profile.screen.height} (доступно: {profile.screen.avail_width}x{profile.screen.avail_height})")
+print(f"GPU: {profile.webgl.renderer}")
+print(f"Ядра CPU: {profile.hardware_concurrency}, RAM: {profile.device_memory} GB")
+
+# 2. Быстрое создание AntidetectConfig через сид
+config = AntidetectConfig.from_seed("user_account_42")
+# или из готового профиля:
+config = AntidetectConfig.from_fingerprint(profile)
+
+# 3. Прямое применение профиля к вкладке nodriver или странице Playwright
+# await profile.apply_to_tab(tab)
+# await profile.apply_to_page(page)
+```
+
+### Сохранение и сериализация профиля
+
+Сгенерированные отпечатки можно сериализовать в JSON / Dict и восстанавливать для долгосрочного использования сессий:
+
+```python
+# Экспорт в словарь / JSON
+data = profile.to_dict()
+
+# Восстановление профиля
+from chutils.scraping import FingerprintProfile
+restored_profile = FingerprintProfile.from_dict(data)
+assert restored_profile.user_agent == profile.user_agent
+```
+

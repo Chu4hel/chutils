@@ -226,7 +226,7 @@ class ProfileWarmer:
                     elif _is_nodriver(self.browser_or_tab):
                         try:
                             _ensure_nodriver()
-                            from nodriver.cdp import input as cdp_input
+                            from nodriver.cdp import input_ as cdp_input
 
                             await self.browser_or_tab.send(
                                 cdp_input.dispatch_key_event(

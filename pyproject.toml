@@ -1,6 +1,6 @@
 [project]
 name = "chutils"
-version = "3.7.1"
+version = "3.8.0"
 description = "Набор простых и удобных утилит для Python, который избавляет от рутины при работе с конфигурацией и логированием в новых проектах."
 authors = [{ name = "Chu4hel", email = "sergeiivanov636@gmail.com" }]
 license = "MIT"
@@ -38,6 +38,9 @@ captcha = ["httpx (>=0.27.0)"]
 scraping = [
     "playwright (>=1.49.0)",
     "selenium (>=4.27.0)"
+]
+fingerprint = [
+    "browserforge (>=1.1.0)"
 ]
 redis = [
     "redis (>=5.0.0)"
@@ -79,6 +82,7 @@ full = [
     "websockets (>=14.0.0)",
     "playwright (>=1.49.0)",
     "selenium (>=4.27.0)",
+    "browserforge (>=1.1.0)",
     "pytest (>=9.0.3)",
     "boto3 (>=1.34.0)",
     "google-cloud-secret-manager (>=2.20.0)"

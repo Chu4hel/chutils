@@ -1,12 +1,20 @@
 import asyncio
-import importlib.util
 import random
-import sys
 import time
 from typing import Any
 
-from chutils.exceptions import OptionalDependencyError
-
+from ._actions_helpers import (
+    _build_selenium_key_map,
+    _ensure_nodriver,
+    _ensure_playwright,
+    _ensure_selenium,
+    _generate_scroll_points,
+    _is_nodriver,
+    _is_playwright,
+    _resolve_async_element_coordinates,
+    async_human_sleep,
+    human_sleep,
+)
 from .math_utils import (
     BezierCurveGenerator,
     JitterDelayGenerator,
@@ -14,119 +22,25 @@ from .math_utils import (
     WindMouseGenerator,
 )
 
-
-# Ленивая проверка наличия библиотек
-def _ensure_playwright() -> None:
-    if "playwright" in sys.modules:
-        return
-    try:
-        if importlib.util.find_spec("playwright") is None:
-            raise ImportError()
-    except (ImportError, ValueError):
-        raise OptionalDependencyError(
-            "Модуль 'playwright' не установлен. Для использования Playwright-интеграций "
-            "установите его: pip install chutils[scraping] или pip install playwright.",
-            dependency="playwright",
-            hint="Выполните pip install chutils[scraping] или pip install playwright.",
-        )
-
-
-def _ensure_selenium() -> None:
-    if "selenium" in sys.modules:
-        return
-    try:
-        if importlib.util.find_spec("selenium") is None:
-            raise ImportError()
-    except (ImportError, ValueError):
-        raise OptionalDependencyError(
-            "Модуль 'selenium' не установлен. Для использования Selenium-интеграций "
-            "установите его: pip install chutils[scraping] или pip install selenium.",
-            dependency="selenium",
-            hint="Выполните pip install chutils[scraping] или pip install selenium.",
-        )
-
-
-def _ensure_nodriver() -> None:
-    if "nodriver" in sys.modules:
-        try:
-            from unittest.mock import Mock
-
-            is_mock = isinstance(sys.modules["nodriver"], Mock)
-        except ImportError:
-            is_mock = False
-        if not is_mock:
-            return
-    try:
-        if importlib.util.find_spec("nodriver") is None:
-            raise ImportError()
-    except (ImportError, ValueError):
-        raise OptionalDependencyError(
-            "Модуль 'nodriver' не установлен. Для использования nodriver-интеграций "
-            "установите его в ваше окружение (например, pip install nodriver или uv add nodriver).",
-            dependency="nodriver",
-            hint="Установите пакет nodriver в ваше окружение (через pip, uv или poetry).",
-        )
-
-
-def _is_nodriver(obj: Any) -> bool:
-    try:
-        from unittest.mock import Mock
-
-        is_mock = isinstance(obj, Mock)
-    except ImportError:
-        is_mock = False
-
-    if is_mock:
-        return getattr(obj, "_is_nodriver", False) is True
-
-    return hasattr(obj, "send") and callable(obj.send)
-
-
-def _is_playwright(obj: Any) -> bool:
-    # По умолчанию для обратной совместимости считаем Playwright-объектом, если тип None
-    if obj is None:
-        return True
-    return not _is_nodriver(obj) and (
-        hasattr(obj, "mouse")
-        or hasattr(obj, "keyboard")
-        or hasattr(obj, "evaluate")
-        or hasattr(obj, "focus")
-    )
-
-
-def _get_lognormal_delay(min_seconds: float, max_seconds: float) -> float:
-    """Генерирует логнормальное случайное время в заданном интервале."""
-    if min_seconds <= 0:
-        return 0.0
-    if min_seconds >= max_seconds:
-        return min_seconds
-
-    mean = (min_seconds + max_seconds) / 2
-    sigma = (max_seconds - min_seconds) / 6.0  # 3-сигма правило
-    val = random.gauss(mean, sigma)
-    return max(min_seconds, min(val, max_seconds))
-
-
-def human_sleep(min_seconds: float, max_seconds: float) -> None:
-    """Синхронно задерживает выполнение на случайное время, имитируя поведение человека.
-
-    Args:
-        min_seconds: Минимальное время задержки (в секундах).
-        max_seconds: Максимальное время задержки (в секундах).
-    """
-    delay = _get_lognormal_delay(min_seconds, max_seconds)
-    time.sleep(delay)
-
-
-async def async_human_sleep(min_seconds: float, max_seconds: float) -> None:
-    """Асинхронно задерживает выполнение на случайное время, имитируя поведение человека.
-
-    Args:
-        min_seconds: Минимальное время задержки (в секундах).
-        max_seconds: Максимальное время задержки (в секундах).
-    """
-    delay = _get_lognormal_delay(min_seconds, max_seconds)
-    await asyncio.sleep(delay)
+__all__ = [
+    "_build_selenium_key_map",
+    "_ensure_nodriver",
+    "_ensure_playwright",
+    "_ensure_selenium",
+    "_generate_scroll_points",
+    "_is_nodriver",
+    "_is_playwright",
+    "async_click",
+    "async_human_sleep",
+    "async_move_mouse",
+    "async_scroll_to",
+    "async_type_text",
+    "click",
+    "human_sleep",
+    "move_mouse",
+    "scroll_to",
+    "type_text",
+]
 
 
 async def async_move_mouse(
@@ -157,7 +71,7 @@ async def async_move_mouse(
 
         if _is_nodriver(page):
             _ensure_nodriver()
-            from nodriver.cdp import input as cdp_input
+            from nodriver.cdp import input_ as cdp_input
 
             for px, py, step_delay in points_with_delay:
                 await page.send(
@@ -185,7 +99,7 @@ async def async_move_mouse(
 
     if _is_nodriver(page):
         _ensure_nodriver()
-        from nodriver.cdp import input as cdp_input
+        from nodriver.cdp import input_ as cdp_input
 
         curve_gen = BezierCurveGenerator()
         points = curve_gen.generate(start_pt, (x, y), steps=steps)
@@ -250,13 +164,7 @@ async def async_scroll_to(
         except (ValueError, TypeError):
             scroll_y = 0
 
-        points = []
-        for i in range(steps):
-            t = (i + 1) / steps
-            px = int(scroll_x + (x - scroll_x) * t)
-            py = int(scroll_y + (y - scroll_y) * t)
-            points.append((px, py))
-
+        points = _generate_scroll_points(scroll_x, scroll_y, x, y, steps)
         for px, py in points:
             await page.evaluate(f"window.scrollTo({px}, {py})")
             if delay_between_steps > 0:
@@ -268,17 +176,12 @@ async def async_scroll_to(
         scroll_x = await page.evaluate("window.scrollX || window.pageXOffset || 0")
         scroll_y = await page.evaluate("window.scrollY || window.pageYOffset || 0")
 
-        points = []
-        for i in range(steps):
-            t = (i + 1) / steps
-            px = int(scroll_x + (x - scroll_x) * t)
-            py = int(scroll_y + (y - scroll_y) * t)
-            points.append((px, py))
-
+        points = _generate_scroll_points(scroll_x, scroll_y, x, y, steps)
         for px, py in points:
             await page.evaluate(f"window.scrollTo({px}, {py})")
             if delay_between_steps > 0:
                 await asyncio.sleep(delay_between_steps)
+
     else:
         raise ValueError(
             f"Не удалось определить тип переданного объекта: {type(page)}. "
@@ -293,8 +196,17 @@ async def async_type_text(
     error_rate: float = 0.05,
     speed_wpm: float = 40.0,
     key_hold_time: tuple[float, float] = (0.04, 0.09),
+    layout_error_rate: float = 0.0,
+    delayed_fix_rate: float = 0.0,
+    paste_threshold: int | None = None,
+    paste_delay_before: tuple[float, float] = (0.4, 1.0),
+    paste_delay_after: tuple[float, float] = (0.3, 0.8),
 ) -> None:
     """Имитирует ввод текста с опечатками Playwright или nodriver.
+
+    Поддерживает адаптивный ввод: если длина текста превышает paste_threshold,
+    текст вставляется целиком (имитируя вставку из буфера обмена Ctrl+V / Paste)
+    с естественными паузами обдумывания до и после вставки.
 
     Args:
         page: Объект страницы Playwright Page или вкладки nodriver Tab.
@@ -303,18 +215,49 @@ async def async_type_text(
         error_rate: Вероятность совершения опечатки (0.0 - 1.0).
         speed_wpm: Скорость ввода в словах в минуту (WPM).
         key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.
+        layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).
+        delayed_fix_rate: Вероятность отложенного исправления опечатки навигацией стрелками (0.0 - 1.0).
+        paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.
+        paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).
+        paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).
     """
     if _is_nodriver(page):
         _ensure_nodriver()
-        from nodriver.cdp import input as cdp_input
+        from nodriver.cdp import input_ as cdp_input
 
         element = await page.find(selector)
         await element.focus()
 
+        # Адаптивная вставка длинного текста через буфер обмена
+        if paste_threshold is not None and len(text) >= paste_threshold:
+            delay_before = (
+                random.uniform(*paste_delay_before)
+                if paste_delay_before and paste_delay_before[1] > 0
+                else 0.0
+            )
+            if delay_before > 0:
+                await asyncio.sleep(delay_before)
+
+            await page.send(cdp_input.insert_text(text=text))
+
+            delay_after = (
+                random.uniform(*paste_delay_after)
+                if paste_delay_after and paste_delay_after[1] > 0
+                else 0.0
+            )
+            if delay_after > 0:
+                await asyncio.sleep(delay_after)
+            return
+
         char_delay = 60.0 / (speed_wpm * 5)
         delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.25)
         typo_gen = KeyboardTypoGenerator()
-        sequence = typo_gen.generate_sequence(text, error_rate)
+        sequence = typo_gen.generate_sequence(
+            text,
+            error_rate=error_rate,
+            layout_error_rate=layout_error_rate,
+            delayed_fix_rate=delayed_fix_rate,
+        )
 
         for action in sequence:
             if action.action == "type":
@@ -354,6 +297,24 @@ async def async_type_text(
                         code="Backspace",
                     )
                 )
+            elif action.action == "key":
+                key_name = action.char
+                await page.send(
+                    cdp_input.dispatch_key_event(
+                        type_="keyDown",
+                        key=key_name,
+                        code=key_name,
+                    )
+                )
+                if key_hold_time and key_hold_time[1] > 0:
+                    await asyncio.sleep(random.uniform(*key_hold_time))
+                await page.send(
+                    cdp_input.dispatch_key_event(
+                        type_="keyUp",
+                        key=key_name,
+                        code=key_name,
+                    )
+                )
 
             delay = delay_gen.generate(char_delay)
             if delay > 0:
@@ -363,17 +324,45 @@ async def async_type_text(
         _ensure_playwright()
         await page.focus(selector)
 
+        # Адаптивная вставка длинного текста через буфер обмена
+        if paste_threshold is not None and len(text) >= paste_threshold:
+            delay_before = (
+                random.uniform(*paste_delay_before)
+                if paste_delay_before and paste_delay_before[1] > 0
+                else 0.0
+            )
+            if delay_before > 0:
+                await asyncio.sleep(delay_before)
+
+            await page.keyboard.insert_text(text)
+
+            delay_after = (
+                random.uniform(*paste_delay_after)
+                if paste_delay_after and paste_delay_after[1] > 0
+                else 0.0
+            )
+            if delay_after > 0:
+                await asyncio.sleep(delay_after)
+            return
+
         # 40 WPM = 200 CPM (символов в минуту) = 0.3 секунды на символ
         char_delay = 60.0 / (speed_wpm * 5)
         delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.25)
         typo_gen = KeyboardTypoGenerator()
-        sequence = typo_gen.generate_sequence(text, error_rate)
+        sequence = typo_gen.generate_sequence(
+            text,
+            error_rate=error_rate,
+            layout_error_rate=layout_error_rate,
+            delayed_fix_rate=delayed_fix_rate,
+        )
 
         for action in sequence:
             if action.action == "type":
                 await page.keyboard.type(action.char)
             elif action.action == "backspace":
                 await page.keyboard.press("Backspace")
+            elif action.action == "key":
+                await page.keyboard.press(action.char)
 
             delay = delay_gen.generate(char_delay)
             if delay > 0:
@@ -464,13 +453,7 @@ def scroll_to(
         "return window.scrollY || window.pageYOffset || 0;"
     )
 
-    points = []
-    for i in range(steps):
-        t = (i + 1) / steps
-        px = int(scroll_x + (x - scroll_x) * t)
-        py = int(scroll_y + (y - scroll_y) * t)
-        points.append((px, py))
-
+    points = _generate_scroll_points(scroll_x, scroll_y, x, y, steps)
     for px, py in points:
         driver.execute_script(f"window.scrollTo({px}, {py});")
         if delay_between_steps > 0:
@@ -483,8 +466,16 @@ def type_text(
     text: str,
     error_rate: float = 0.05,
     speed_wpm: float = 40.0,
+    layout_error_rate: float = 0.0,
+    delayed_fix_rate: float = 0.0,
+    paste_threshold: int | None = None,
+    paste_delay_before: tuple[float, float] = (0.4, 1.0),
+    paste_delay_after: tuple[float, float] = (0.3, 0.8),
 ) -> None:
     """Имитирует ввод текста с опечатками Selenium.
+
+    Поддерживает адаптивный ввод: если длина текста превышает paste_threshold,
+    текст вставляется целиком (Ctrl+V / Paste) с естественными паузами обдумывания.
 
     Args:
         driver: Экземпляр Selenium WebDriver.
@@ -492,6 +483,11 @@ def type_text(
         text: Текст для ввода.
         error_rate: Вероятность совершения опечатки (0.0 - 1.0).
         speed_wpm: Скорость ввода в словах в минуту (WPM).
+        layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).
+        delayed_fix_rate: Вероятность отложенного исправления опечатки навигацией стрелками (0.0 - 1.0).
+        paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.
+        paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).
+        paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).
     """
     _ensure_selenium()
     from selenium.webdriver.common.by import By
@@ -500,16 +496,50 @@ def type_text(
     element = driver.find_element(By.CSS_SELECTOR, selector)
     element.click()
 
+    # Адаптивная вставка длинного текста через буфер обмена
+    if paste_threshold is not None and len(text) >= paste_threshold:
+        delay_before = (
+            random.uniform(*paste_delay_before)
+            if paste_delay_before and paste_delay_before[1] > 0
+            else 0.0
+        )
+        if delay_before > 0:
+            time.sleep(delay_before)
+
+        driver.execute_script(
+            "arguments[0].focus(); document.execCommand('insertText', false, arguments[1]);",
+            element,
+            text,
+        )
+
+        delay_after = (
+            random.uniform(*paste_delay_after)
+            if paste_delay_after and paste_delay_after[1] > 0
+            else 0.0
+        )
+        if delay_after > 0:
+            time.sleep(delay_after)
+        return
+
     char_delay = 60.0 / (speed_wpm * 5)
     delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.25)
     typo_gen = KeyboardTypoGenerator()
-    sequence = typo_gen.generate_sequence(text, error_rate)
+    sequence = typo_gen.generate_sequence(
+        text,
+        error_rate=error_rate,
+        layout_error_rate=layout_error_rate,
+        delayed_fix_rate=delayed_fix_rate,
+    )
+
+    selenium_keys_map = _build_selenium_key_map(Keys)
 
     for action in sequence:
         if action.action == "type":
             element.send_keys(action.char)
         elif action.action == "backspace":
             element.send_keys(Keys.BACKSPACE)
+        elif action.action == "key":
+            element.send_keys(selenium_keys_map.get(action.char, action.char))
 
         delay = delay_gen.generate(char_delay)
         if delay > 0:
@@ -547,34 +577,7 @@ async def async_click(
                 "Необходимо указать координаты (x, y) или CSS-селектор selector."
             )
 
-        if _is_nodriver(page):
-            _ensure_nodriver()
-            elem = await page.find(selector)
-            box = await elem.get_position() if hasattr(elem, "get_position") else None
-            if box:
-                target_x = int(box.x + box.width * random.uniform(0.3, 0.7))
-                target_y = int(box.y + box.height * random.uniform(0.3, 0.7))
-            else:
-                target_x, target_y = 100, 100
-        elif _is_playwright(page):
-            _ensure_playwright()
-            elem = (
-                await page.query_selector(selector)
-                if hasattr(page, "query_selector")
-                else None
-            )
-            if elem is not None:
-                box = await elem.bounding_box()
-                if box:
-                    target_x = int(box["x"] + box["width"] * random.uniform(0.3, 0.7))
-                    target_y = int(box["y"] + box["height"] * random.uniform(0.3, 0.7))
-            if target_x is None or target_y is None:
-                target_x, target_y = 100, 100
-        else:
-            raise ValueError(
-                f"Не удалось определить тип переданного объекта: {type(page)}. "
-                "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
-            )
+        target_x, target_y = await _resolve_async_element_coordinates(page, selector)
 
     # 1. Плавное перемещение к цели
     await async_move_mouse(
@@ -592,7 +595,7 @@ async def async_click(
     )
     if _is_nodriver(page):
         _ensure_nodriver()
-        from nodriver.cdp import input as cdp_input
+        from nodriver.cdp import input_ as cdp_input
 
         btn = (
             "left" if button == "left" else ("right" if button == "right" else "middle")
