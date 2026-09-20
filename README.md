@@ -51,6 +51,7 @@ Every time you start a new project, you have to solve the same tasks:
   `@validate_call` decorator for function argument checks and rich exception formatting.
 - **🩺 Diagnostics API (chutils.diagnostics):** An asynchronous, thread-safe health checking framework with built-in
   checks (keyring, config) and integrations for popular web frameworks (FastAPI, Flask).
+- **🎭 Fingerprint Synthesizer (chutils.scraping.fingerprint):** Synthesis of physically consistent browser hardware identities (GPU Tiers, ANGLE D3D11 driver strings, screens with Windows taskbar awareness, audio jitter, and MediaDevices). Features strict seed determinism, on-disk caching (`get_or_create`), and Bayesian ML network support (`browserforge`).
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.
 - **🚀 Ready to Use:** Just install and use.
 
