@@ -318,6 +318,58 @@ custom_cfg = AntidetectConfig(
     session_seed="custom_seed_42",
 )
 await apply_antidetect_nodriver(tab, config=custom_cfg)
+
+# 4. Мгновенная генерация из детерминированного сида:
+seed_cfg = AntidetectConfig.from_seed("user_session_42")
+await seed_cfg.apply_to_nodriver(tab)
+```
+
+### Синтезатор цифровой личности браузера (`FingerprintSynthesizer`)
+
+В стиле профессиональных антидетект-браузеров (Linken Sphere, Octo Browser, Dolphin Anty), генератор отпечатков в `chutils` использует многоуровневый комбинаторный синтез цифровой личности. Отпечаток не выбирается из фиксированного списка и не генерируется чисто случайно (что создало бы невозможные комбинации вроде 7 ядер CPU или видеокарты Apple Metal на Windows), а строится по физически непротиворечивой матрице оборудования:
+
+- **Матрица Hardware Tiers**:
+  - `enthusiast_desktop`: мощные GPU (RTX 4090/4080/4070 Ti, RX 7900 XTX), 16–32 потока CPU, 32–64 ГБ RAM, мониторы 4K/2K (144–240 Гц).
+  - `mainstream_desktop`: народные GPU (RTX 4060, RTX 3060, RX 6700 XT), 8–16 потоков CPU, 16–32 ГБ RAM, Full HD/2K.
+  - `budget_desktop`: базовые GPU (GTX 1660, RTX 3050, RX 6500 XT), 6–12 потоков CPU, 8–16 ГБ RAM, Full HD.
+  - `laptop`: мобильные GPU (Laptop GPU, Iris Xe, Radeon Graphics), 4–16 потоков CPU, 8–16 ГБ RAM, экраны ноутбуков (1920×1080, 2560×1600, DPR 1.25–1.5).
+- **Синтез ANGLE D3D11 строк**: точная грамматика драйверов Windows (`Direct3D11 vs_5_0 ps_5_0, D3D11-31.0.15.xxxx`), согласованная с версиями драйверов NVIDIA и AMD.
+- **Геометрия экранов**: строгий расчет высоты панели задач Windows (`availHeight = height - 40` или `48`) и Device Pixel Ratio.
+- **Периферийные устройства**: согласованная эмуляция микрофонов, камер и аудиовыходов (`MediaDevices`) со стабильными SHA-256 хэшами `deviceId` и `groupId`.
+- **Субпиксельный шум аудио**: эмуляция аппаратного джиттера ЦАП звуковой карты с порядком $10^{-7}$.
+- **Двухуровневый движок**:
+  - **Tier B (Zero-Dependency)**: полностью автономный встроенный процедурный генератор. Строго детерминирован по `seed` — один и тот же сид гарантирует идентичность отпечатка между перезапусками браузера.
+  - **Tier A (Bayesian/ML)**: опциональный адаптер над библиотекой `browserforge` (Apify), если она установлена (`pip install browserforge`).
+
+#### Использование синтезатора
+
+```python
+from chutils.scraping import FingerprintProfile, FingerprintSynthesizer
+from chutils.scraping.humanize import AntidetectConfig
+
+# 1. Быстрая процедурная генерация по сиду (Zero-Dependency)
+profile = FingerprintSynthesizer.create_procedural(seed="profile_account_102")
+
+print(profile.webgl.renderer)  # ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11 ...)
+print(profile.hardware.concurrency)  # 12
+print(profile.hardware.memory_gb)  # 16
+print(profile.screen.width, profile.screen.avail_height)  # 1920 1040
+
+# 2. Преобразование в AntidetectConfig и применение к сессии
+antidetect_cfg = profile.to_antidetect_config()
+await antidetect_cfg.apply_to_nodriver(tab)
+
+# Или прямое применение профиля:
+await profile.apply_to_tab(tab)  # nodriver
+await profile.apply_to_page(page)  # Playwright
+
+# 3. Сохранение и загрузка профиля (JSON) для долгоживущих сессий
+profile.save_to_file("my_fingerprint.json")
+loaded_profile = FingerprintProfile.from_file("my_fingerprint.json")
+
+# 4. Использование ML-генератора browserforge (при наличии пакета)
+if FingerprintSynthesizer.is_browserforge_available():
+    bf_profile = FingerprintSynthesizer.create_from_browserforge()
 ```
 
 ### Автоматическое решение Cloudflare Turnstile (`solve_cf_turnstile`)

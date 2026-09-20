@@ -1218,3 +1218,85 @@ class StoreManager:
 def store_cache(
     store: StoreManager | None = None, ttl: float = 60, key_prefix: str = "cache:"
 ) -> Callable[..., Any]: ...
+
+# --- scraping & fingerprinting ---
+class AntidetectConfig:
+    user_agent: str | None
+    platform: str
+    hardware_concurrency: int
+    device_memory: int
+    webgl_vendor: str
+    webgl_renderer: str
+    locale: str
+    timezone: str
+    screen_width: int | None
+    screen_height: int | None
+    screen_avail_height: int | None
+    device_pixel_ratio: float | None
+    apply_webrtc_leak_protection: bool
+    apply_audio_fingerprint: bool
+    apply_client_hints: bool
+    def __init__(self, **kwargs: Any) -> None: ...
+    @classmethod
+    def from_seed(cls, seed: int | str, os_target: str = "windows") -> AntidetectConfig: ...
+    @classmethod
+    def from_fingerprint(cls, profile: FingerprintProfile) -> AntidetectConfig: ...
+    @classmethod
+    def from_browserforge(cls, browser: str = "chrome", os_target: str = "windows") -> AntidetectConfig: ...
+    @classmethod
+    def from_procedural(cls, seed: int | str | None = None, os_target: str = "windows") -> AntidetectConfig: ...
+    def get_init_script(self) -> str: ...
+    def apply_to_playwright_context(self, context: Any) -> None: ...
+    async def apply_to_playwright_context_async(self, context: Any) -> None: ...
+    def apply_to_selenium_options(self, options: Any) -> None: ...
+    async def apply_to_nodriver_tab(self, tab: Any) -> None: ...
+
+class FingerprintProfile:
+    seed: int | str | None
+    os: str
+    browser: str
+    user_agent: str
+    webgl: Any
+    screen: Any
+    hardware: Any
+    audio: Any
+    media_devices: list[Any]
+    client_hints: dict[str, Any]
+    source: str
+    def to_antidetect_config(self) -> AntidetectConfig: ...
+    def to_dict(self) -> dict[str, Any]: ...
+    def to_json(self, indent: int = 2) -> str: ...
+    def save_to_file(self, path: str | Path) -> None: ...
+    @classmethod
+    def from_file(cls, path: str | Path) -> FingerprintProfile: ...
+    async def apply_to_tab(self, tab: Any) -> None: ...
+    async def apply_to_page(self, page: Any) -> None: ...
+
+class FingerprintSynthesizer:
+    mode: str
+    os_target: str
+    locale: str
+    def __init__(
+        self,
+        mode: Literal["auto", "procedural", "browserforge", "fpgen"] = "auto",
+        os_target: str = "windows",
+        locale: str = "ru-RU",
+    ) -> None: ...
+    def synthesize(self, seed: int | str | None = None) -> FingerprintProfile: ...
+    @staticmethod
+    def is_browserforge_available() -> bool: ...
+    @staticmethod
+    def is_fpgen_available() -> bool: ...
+    @classmethod
+    def create_procedural(
+        cls,
+        seed: int | str | None = None,
+        os_target: str = "windows",
+        locale: str = "ru-RU",
+    ) -> FingerprintProfile: ...
+    @classmethod
+    def create_from_browserforge(
+        cls,
+        browser: str = "chrome",
+        os_target: str = "windows",
+    ) -> FingerprintProfile: ...
