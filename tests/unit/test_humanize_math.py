@@ -78,6 +78,55 @@ def test_keyboard_typo_generator() -> None:
         assert action.char == text[i]
 
 
+def test_keyboard_typo_generator_cyrillic() -> None:
+    """Тестирует генератор опечаток для кириллического текста (ЙЦУКЕН)."""
+    generator = KeyboardTypoGenerator()
+    text = "Привет, мир!"
+
+    sequence = generator.generate_sequence(text, error_rate=0.8)
+
+    # Должны появиться опечатки и backspace
+    has_backspace = any(action.action == "backspace" for action in sequence)
+    assert has_backspace, "Ожидались опечатки с последующим исправлением backspace для кириллицы"
+
+    # Итоговый результат после воспроизведения действий должен совпадать с исходным
+    typed_text: list[str] = []
+    for action in sequence:
+        if action.action == "type":
+            typed_text.append(action.char)
+        elif action.action == "backspace" and typed_text:
+            typed_text.pop()
+    assert "".join(typed_text) == text
+
+
+def test_jcuken_neighbors_coverage() -> None:
+    """Проверяет полноту покрытия букв русского алфавита в _JCUKEN_NEIGHBORS."""
+    from chutils.scraping.humanize.math_utils import _JCUKEN_NEIGHBORS
+
+    cyrillic_alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+    for letter in cyrillic_alphabet:
+        assert letter in _JCUKEN_NEIGHBORS, f"Буква {letter} отсутствует в _JCUKEN_NEIGHBORS"
+        assert len(_JCUKEN_NEIGHBORS[letter]) > 0, f"У буквы {letter} нет соседних клавиш"
+
+
+def test_keyboard_typo_generator_cyrillic_uppercase() -> None:
+    """Проверяет сохранение верхнего регистра при опечатках в кириллице."""
+    from chutils.scraping.humanize.math_utils import _JCUKEN_NEIGHBORS
+
+    generator = KeyboardTypoGenerator()
+    # Генерируем опечатки для заглавной буквы
+    letter = "Й"
+    sequence = generator.generate_sequence(letter, error_rate=1.0)
+
+    # Первое действие должно быть опечаткой в верхнем регистре
+    first_action = sequence[0]
+    assert first_action.action == "type"
+    assert first_action.char.isupper()
+    assert first_action.char.lower() in _JCUKEN_NEIGHBORS["й"]
+
+
+
+
 def test_wind_mouse_generator() -> None:
     """Тестирует генератор траекторий WindMouse."""
     generator = WindMouseGenerator()

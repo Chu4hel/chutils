@@ -30292,6 +30292,26 @@
                     "children": []
                   },
                   {
+                    "name": "_JCUKEN_NEIGHBORS",
+                    "type": "constant",
+                    "layer": "private",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 35,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
                     "name": "WindMouseGenerator",
                     "type": "class",
                     "layer": "public",
@@ -30307,7 +30327,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 36,
+                    "line_number": 73,
                     "bases": [],
                     "children": [
                       {
@@ -30326,7 +30346,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 39,
+                        "line_number": 76,
                         "bases": [],
                         "children": []
                       },
@@ -30346,7 +30366,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 65,
+                        "line_number": 102,
                         "bases": [],
                         "children": []
                       }
@@ -30368,7 +30388,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 166,
+                    "line_number": 203,
                     "bases": [],
                     "children": [
                       {
@@ -30387,7 +30407,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 169,
+                        "line_number": 206,
                         "bases": [],
                         "children": []
                       }
@@ -30409,7 +30429,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 253,
+                    "line_number": 290,
                     "bases": [],
                     "children": [
                       {
@@ -30428,7 +30448,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 256,
+                        "line_number": 293,
                         "bases": [],
                         "children": []
                       },
@@ -30448,7 +30468,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 266,
+                        "line_number": 303,
                         "bases": [],
                         "children": []
                       }
@@ -30470,7 +30490,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 291,
+                    "line_number": 328,
                     "bases": [
                       "typing.NamedTuple"
                     ],
@@ -30492,7 +30512,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 298,
+                    "line_number": 335,
                     "bases": [],
                     "children": [
                       {
@@ -30511,7 +30531,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 301,
+                        "line_number": 338,
                         "bases": [],
                         "children": []
                       }
@@ -46050,8 +46070,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "586aa82bbea5558e91a4b89c7190e53c0112cb28 (dirty)",
-    "generated_at": "2026-09-20T19:25:27.249357+00:00",
-    "project_hash": "1e55d7ce5cf3a4a01bff847c6b926652d97ef85b75c3503df206113a225ab3b4"
+    "git_commit": "dcd15afaa87a2cd5624bf8c110bb058899f265dc (dirty)",
+    "generated_at": "2026-09-20T19:28:47.074912+00:00",
+    "project_hash": "fc93d5bcd281c6e652296257bda4b4292fb62220f3ea25e9b577539d0720eec0"
   }
 }
