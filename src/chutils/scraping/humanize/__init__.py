@@ -17,6 +17,7 @@ from .antidetect import (
     get_browser_launch_args,
     get_client_hints,
 )
+from .behavior import BehavioralProfile
 from .config import AntidetectConfig
 from .math_utils import (
     BezierCurveGenerator,
@@ -41,6 +42,7 @@ from .warmer import (
 __all__ = [
     "DEFAULT_SEARCH_QUERIES",
     "AntidetectConfig",
+    "BehavioralProfile",
     "BezierCurveGenerator",
     "JitterDelayGenerator",
     "KeyboardTypoGenerator",

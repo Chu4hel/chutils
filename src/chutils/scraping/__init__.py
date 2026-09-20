@@ -16,6 +16,9 @@ if TYPE_CHECKING:
     from .humanize.antidetect import (
         extract_clearance_cookies as extract_clearance_cookies,
     )
+    from .humanize.behavior import (
+        BehavioralProfile as BehavioralProfile,
+    )
     from .humanize.config import (
         AntidetectConfig as AntidetectConfig,
     )
@@ -110,6 +113,7 @@ if TYPE_CHECKING:
 _LAZY_MAPPING = {
     "AntidetectConfig": (".humanize.config", "AntidetectConfig"),
     "AsyncProxyTunnel": (".proxy", "AsyncProxyTunnel"),
+    "BehavioralProfile": (".humanize.behavior", "BehavioralProfile"),
     "BrowserProfile": (".profiles", "BrowserProfile"),
     "CAMOUFOX_AVAILABLE": (".camoufox", "CAMOUFOX_AVAILABLE"),
     "ChromeProxyExtension": (".proxy", "ChromeProxyExtension"),
@@ -173,6 +177,7 @@ __all__ = [
     "CAMOUFOX_AVAILABLE",
     "AntidetectConfig",
     "AsyncProxyTunnel",
+    "BehavioralProfile",
     "BrowserProfile",
     "ChromeProxyExtension",
     "LiveBrowserSession",

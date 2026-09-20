@@ -130,6 +130,16 @@ class AntidetectConfig(BaseModel):
             session_seed=session_seed,
         )
 
+    def get_behavioral_profile(self) -> Any:
+        """Возвращает детерминированный биометрический профиль моторики на основе session_seed.
+
+        Returns:
+            Экземпляр BehavioralProfile.
+        """
+        from .behavior import BehavioralProfile
+
+        return BehavioralProfile.from_seed(self.session_seed)
+
     def get_init_script(self) -> str:
         """Генерирует JavaScript-скрипт антидетекта на основе настроек конфигурации.
 

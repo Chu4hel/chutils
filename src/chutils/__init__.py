@@ -302,6 +302,7 @@ _LAZY_MAPPING = {
     "launch_camoufox": (".scraping.camoufox", "launch_camoufox"),
     "BrowserProfile": (".scraping.profiles", "BrowserProfile"),
     "ProfileManager": (".scraping.profiles", "ProfileManager"),
+    "BehavioralProfile": (".scraping.humanize", "BehavioralProfile"),
     "BezierCurveGenerator": (".scraping.humanize", "BezierCurveGenerator"),
     "WindMouseGenerator": (".scraping.humanize", "WindMouseGenerator"),
     "JitterDelayGenerator": (".scraping.humanize", "JitterDelayGenerator"),

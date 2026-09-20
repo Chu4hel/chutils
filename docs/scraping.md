@@ -95,6 +95,32 @@ sequence = typo_gen.generate_sequence("Привет, мир!", error_rate=0.05, 
 # Возвращает список объектов TypoAction (action='type'|'backspace', char='...')
 ```
 
+### Биометрический профиль моторики (`BehavioralProfile`)
+
+`BehavioralProfile` объединяет все поведенческие параметры пользователя (скорость печати, опечатки, физику мыши и интервалы удержания) в единую Pydantic-модель.
+С помощью фабричного метода `.from_seed(seed)` можно детерминированно сгенерировать уникальный реалистичный почерк для конкретной сессии, аккаунта или браузерного профиля:
+
+```python
+from chutils.scraping.humanize import BehavioralProfile
+
+# Детерминированный профиль по сиду аккаунта:
+profile = BehavioralProfile.from_seed("user_account_42")
+
+print(profile.speed_wpm)        # напр., 52.4 WPM
+print(profile.typo_rate)        # напр., 0.038 (3.8% опечаток)
+print(profile.gravity)          # физика мыши WindMouse
+print(profile.key_hold_time)    # диапазон удержания клавиш (напр., 0.035 - 0.075 сек)
+print(profile.click_hold_time)  # диапазон удержания клика (напр., 0.052 - 0.114 сек)
+
+# Готовые фабрики генераторов:
+wind_mouse = profile.create_wind_mouse()
+typo_gen = profile.create_typo_generator()
+
+# Прямые вызовы действий с биометрией профиля:
+await profile.async_type_text(page, selector="#login", text="admin@example.com")
+await profile.async_click(page, selector="#submit-btn")
+```
+
 ---
 
 ## 2. Имитация мыши, скролла и клавиатуры

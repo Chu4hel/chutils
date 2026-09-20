@@ -30083,6 +30083,226 @@
                 ]
               },
               {
+                "name": "behavior",
+                "path": "chutils/scraping/humanize/behavior",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Биометрический профиль моторики и поведения пользователя (мышь, клавиатура).",
+                "docstring": "Биометрический профиль моторики и поведения пользователя (мышь, клавиатура).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "BehavioralProfile",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Конфигурация биометрического профиля моторики (скорость, задержки, опечатки, движение мыши).",
+                    "docstring": "Конфигурация биометрического профиля моторики (скорость, задержки, опечатки, движение мыши).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 14,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": [
+                      {
+                        "name": "wpm",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Алиас для speed_wpm.",
+                        "docstring": "Алиас для speed_wpm.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 75,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "error_rate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Алиас для typo_rate.",
+                        "docstring": "Алиас для typo_rate.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 80,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "from_seed",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, seed)",
+                        "summary": "Создает детерминированный биометрический профиль моторики на основе сида.",
+                        "docstring": "Создает детерминированный биометрический профиль моторики на основе сида.\n\nОдин и тот же сид всегда порождает абсолютно идентичные биометрические характеристики\n(скорость ввода, опечатки, физику мыши, интервалы удержания), что позволяет\nзафиксировать уникальный почерк конкретного аккаунта или браузерного профиля.\n\nArgs:\n    seed: Числовой или строковый сид сессии/аккаунта.\n\nReturns:\n    Экземпляр BehavioralProfile с реалистичными биометрическими характеристиками.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 85,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "create_wind_mouse",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Создает генератор траекторий мыши WindMouse, настроенный под параметры профиля.",
+                        "docstring": "Создает генератор траекторий мыши WindMouse, настроенный под параметры профиля.\n\nReturns:\n    Экземпляр WindMouseGenerator.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 138,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "create_typo_generator",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Создает генератор опечаток клавиатуры, настроенный под параметры профиля.",
+                        "docstring": "Создает генератор опечаток клавиатуры, настроенный под параметры профиля.\n\nReturns:\n    Экземпляр KeyboardTypoGenerator.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 151,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "async_type_text",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self, page, selector, text)",
+                        "summary": "Вводит текст через Playwright / nodriver с биометрическими параметрами профиля.",
+                        "docstring": "Вводит текст через Playwright / nodriver с биометрическими параметрами профиля.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: CSS/XPath селектор поля ввода.\n    text: Текст для ввода.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 159,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "async_click",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self, page, selector, x, y, start, button)",
+                        "summary": "Выполняет клик по элементу или координатам с биометрией удержания кнопки мыши.",
+                        "docstring": "Выполняет клик по элементу или координатам с биометрией удержания кнопки мыши.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор целевого элемента (опционально).\n    x: Конечная координата X клика.\n    y: Конечная координата Y клика.\n    start: Начальные координаты курсора.\n    button: Кнопка мыши ('left', 'right', 'middle').",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 182,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "type_text",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self, driver, selector, text)",
+                        "summary": "Синхронно вводит текст через Selenium с биометрическими параметрами профиля.",
+                        "docstring": "Синхронно вводит текст через Selenium с биометрическими параметрами профиля.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 211,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "click",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self, driver, selector, x, y, start, algorithm)",
+                        "summary": "Синхронно выполняет клик через Selenium с биометрией удержания кнопки мыши.",
+                        "docstring": "Синхронно выполняет клик через Selenium с биометрией удержания кнопки мыши.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: Селектор целевого элемента.\n    x: Координата X клика.\n    y: Координата Y клика.\n    start: Начальные координаты мыши.\n    algorithm: Алгоритм перемещения ('windmouse' или 'bezier').",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 233,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
                 "name": "config",
                 "path": "chutils/scraping/humanize/config",
                 "type": "module",
@@ -30179,6 +30399,26 @@
                         "children": []
                       },
                       {
+                        "name": "get_behavioral_profile",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает детерминированный биометрический профиль моторики на основе session_seed.",
+                        "docstring": "Возвращает детерминированный биометрический профиль моторики на основе session_seed.\n\nReturns:\n    Экземпляр BehavioralProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 133,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
                         "name": "get_init_script",
                         "type": "method",
                         "layer": "internal",
@@ -30194,7 +30434,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 133,
+                        "line_number": 143,
                         "bases": [],
                         "children": []
                       },
@@ -30214,7 +30454,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 151,
+                        "line_number": 161,
                         "bases": [],
                         "children": []
                       },
@@ -30234,7 +30474,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 161,
+                        "line_number": 171,
                         "bases": [],
                         "children": []
                       },
@@ -30254,7 +30494,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 171,
+                        "line_number": 181,
                         "bases": [],
                         "children": []
                       }
@@ -36112,7 +36352,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 110,
+            "line_number": 113,
             "bases": [],
             "children": []
           },
@@ -36132,7 +36372,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 148,
+            "line_number": 152,
             "bases": [],
             "children": []
           },
@@ -36152,7 +36392,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 156,
+            "line_number": 160,
             "bases": [],
             "children": []
           }
@@ -43658,7 +43898,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 362,
+        "line_number": 363,
         "bases": [],
         "children": []
       },
@@ -43678,7 +43918,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 395,
+        "line_number": 396,
         "bases": [],
         "children": []
       },
@@ -43698,7 +43938,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 415,
+        "line_number": 416,
         "bases": [],
         "children": []
       }
@@ -45227,6 +45467,11 @@
     },
     {
       "source": "chutils/scraping/humanize",
+      "target": "/behavior",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/humanize",
       "target": "/config",
       "weight": 1
     },
@@ -45269,6 +45514,16 @@
       "source": "chutils/scraping/humanize/antidetect",
       "target": "/config",
       "weight": 1
+    },
+    {
+      "source": "chutils/scraping/humanize/behavior",
+      "target": "/actions",
+      "weight": 4
+    },
+    {
+      "source": "chutils/scraping/humanize/behavior",
+      "target": "/math_utils",
+      "weight": 2
     },
     {
       "source": "chutils/scraping/humanize/config",
@@ -46130,8 +46385,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "0784d78fac70f5ded60641c3492c0f068d850c26 (dirty)",
-    "generated_at": "2026-09-20T19:45:00.057399+00:00",
-    "project_hash": "d367db72caa1f4a2cf64f040fe4bee7964039831a8a8c811ad886ed25c9c417c"
+    "git_commit": "0046975734cd8329ba87c390fe08e0d6aeb3f403 (dirty)",
+    "generated_at": "2026-09-20T20:08:24.895991+00:00",
+    "project_hash": "034cbef6b6339e5b0db82d683a95e06e12fc42d4e64b7146761b5a75bf27ed82"
   }
 }
