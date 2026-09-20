@@ -10,9 +10,9 @@ from pytest_mock import MockerFixture
 mock_playwright = MagicMock()
 mock_selenium = MagicMock()
 mock_nodriver = MagicMock()
-mock_cdp = MagicMock()
+mock_cdp = MagicMock(spec=["input_"])
 mock_input = MagicMock()
-mock_cdp.input = mock_input
+mock_cdp.input_ = mock_input
 
 
 @pytest.fixture(autouse=True)
@@ -25,7 +25,7 @@ def mock_sys_modules(mocker: MockerFixture) -> None:
             "selenium": mock_selenium,
             "nodriver": mock_nodriver,
             "nodriver.cdp": mock_cdp,
-            "nodriver.cdp.input": mock_input,
+            "nodriver.cdp.input_": mock_input,
         },
     )
 

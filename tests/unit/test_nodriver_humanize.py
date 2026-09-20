@@ -8,9 +8,9 @@ from pytest_mock import MockerFixture
 
 # Настраиваем фиктивные функции для генерации CDP-команд
 mock_nodriver = MagicMock()
-mock_cdp = MagicMock()
+mock_cdp = MagicMock(spec=["input_"])
 mock_input = MagicMock()
-mock_cdp.input = mock_input
+mock_cdp.input_ = mock_input
 
 mock_input.dispatch_mouse_event = MagicMock(
     side_effect=lambda **kwargs: ("dispatch_mouse_event", kwargs)
@@ -50,7 +50,7 @@ def mock_sys_modules(mocker: MockerFixture) -> None:
         {
             "nodriver": mock_nodriver,
             "nodriver.cdp": mock_cdp,
-            "nodriver.cdp.input": mock_input,
+            "nodriver.cdp.input_": mock_input,
         },
     )
 
@@ -73,6 +73,26 @@ async def test_async_move_mouse_nodriver() -> None:
     assert last_call[1]["x"] == 200
     assert last_call[1]["y"] == 300
     assert last_call[1]["type_"] == "mouseMoved"
+
+
+@pytest.mark.asyncio
+async def test_async_move_mouse_nodriver_windmouse() -> None:
+    """Проверяет перемещение мыши с nodriver по алгоритму windmouse через CDP."""
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.send = AsyncMock()
+
+    await async_move_mouse(
+        tab, x=200, y=300, start=(0, 0), algorithm="windmouse"
+    )
+
+    assert tab.send.call_count > 0
+    last_call = tab.send.call_args_list[-1][0][0]
+    assert last_call[0] == "dispatch_mouse_event"
+    assert last_call[1]["x"] == 200
+    assert last_call[1]["y"] == 300
+    assert last_call[1]["type_"] == "mouseMoved"
+
 
 
 @pytest.mark.asyncio

@@ -157,7 +157,7 @@ async def async_move_mouse(
 
         if _is_nodriver(page):
             _ensure_nodriver()
-            from nodriver.cdp import input as cdp_input
+            from nodriver.cdp import input_ as cdp_input
 
             for px, py, step_delay in points_with_delay:
                 await page.send(
@@ -185,7 +185,7 @@ async def async_move_mouse(
 
     if _is_nodriver(page):
         _ensure_nodriver()
-        from nodriver.cdp import input as cdp_input
+        from nodriver.cdp import input_ as cdp_input
 
         curve_gen = BezierCurveGenerator()
         points = curve_gen.generate(start_pt, (x, y), steps=steps)
@@ -306,7 +306,7 @@ async def async_type_text(
     """
     if _is_nodriver(page):
         _ensure_nodriver()
-        from nodriver.cdp import input as cdp_input
+        from nodriver.cdp import input_ as cdp_input
 
         element = await page.find(selector)
         await element.focus()
@@ -592,7 +592,7 @@ async def async_click(
     )
     if _is_nodriver(page):
         _ensure_nodriver()
-        from nodriver.cdp import input as cdp_input
+        from nodriver.cdp import input_ as cdp_input
 
         btn = (
             "left" if button == "left" else ("right" if button == "right" else "middle")
