@@ -29647,7 +29647,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 24,
+                    "line_number": 26,
                     "bases": [],
                     "children": []
                   },
@@ -29667,7 +29667,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 38,
+                    "line_number": 40,
                     "bases": [],
                     "children": []
                   },
@@ -29687,7 +29687,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 52,
+                    "line_number": 54,
                     "bases": [],
                     "children": [
                       {
@@ -29706,7 +29706,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 55,
+                        "line_number": 57,
                         "bases": [],
                         "children": []
                       },
@@ -29716,7 +29716,7 @@
                         "layer": "internal",
                         "signature": "(self, seed)",
                         "summary": "Генерирует профиль через обученную байесовскую сеть browserforge.",
-                        "docstring": "Генерирует профиль через обученную байесовскую сеть browserforge.\n\nArgs:\n    seed: Опциональный сид (browserforge не гарантирует полную детерминированность по сиду).\n\nReturns:\n    Экземпляр FingerprintProfile.",
+                        "docstring": "Генерирует профиль через обученную байесовскую сеть browserforge.\n\nПри передаче seed генерация полностью детерминизируется с изоляцией\nсостояния встроенного генератора случайных чисел (PRNG).\n\nArgs:\n    seed: Опциональный сид для воспроизводимой генерации.\n\nReturns:\n    Экземпляр FingerprintProfile.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -29726,7 +29726,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 60,
+                        "line_number": 62,
                         "bases": [],
                         "children": []
                       }
@@ -30117,7 +30117,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 13,
+                    "line_number": 16,
                     "bases": [],
                     "children": [
                       {
@@ -30136,7 +30136,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 16,
+                        "line_number": 19,
                         "bases": [],
                         "children": []
                       },
@@ -30156,7 +30156,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 36,
+                        "line_number": 39,
                         "bases": [],
                         "children": []
                       },
@@ -30178,7 +30178,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 68,
+                        "line_number": 71,
                         "bases": [],
                         "children": []
                       },
@@ -30200,7 +30200,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 77,
+                        "line_number": 80,
                         "bases": [],
                         "children": []
                       },
@@ -30222,7 +30222,27 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 86,
+                        "line_number": 89,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_or_create",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, seed, storage_dir)",
+                        "summary": "Загружает сохраненный профиль по сиду с диска либо синтезирует и сохраняет новый.",
+                        "docstring": "Загружает сохраненный профиль по сиду с диска либо синтезирует и сохраняет новый.\n\nArgs:\n    seed: Уникальный идентификатор (сид) профиля.\n    storage_dir: Директория для хранения файлов профилей.\n\nReturns:\n    Экземпляр FingerprintProfile.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 107,
                         "bases": [],
                         "children": []
                       },
@@ -30230,9 +30250,9 @@
                         "name": "create_from_browserforge",
                         "type": "method",
                         "layer": "internal",
-                        "signature": "(cls, browser, os_target)",
+                        "signature": "(cls, browser, os_target, seed)",
                         "summary": "Быстрый хелпер создания отпечатка через библиотеку browserforge.",
-                        "docstring": "Быстрый хелпер создания отпечатка через библиотеку browserforge.\n\nArgs:\n    browser: Тип эмулируемого браузера ('chrome', 'firefox', 'safari').\n    os_target: Целевая ОС ('windows', 'macos', 'linux').\n\nReturns:\n    Экземпляр FingerprintProfile, созданный обученной байесовской сетью.",
+                        "docstring": "Быстрый хелпер создания отпечатка через библиотеку browserforge.\n\nArgs:\n    browser: Тип эмулируемого браузера ('chrome', 'firefox', 'safari').\n    os_target: Целевая ОС ('windows', 'macos', 'linux').\n    seed: Опциональный сид для воспроизводимой детерминированной генерации.\n\nReturns:\n    Экземпляр FingerprintProfile, созданный обученной байесовской сетью.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -30244,7 +30264,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 105,
+                        "line_number": 134,
                         "bases": [],
                         "children": []
                       }
@@ -31371,9 +31391,9 @@
                         "name": "from_browserforge",
                         "type": "method",
                         "layer": "internal",
-                        "signature": "(cls)",
+                        "signature": "(cls, seed)",
                         "summary": "Генерирует отпечаток через байесовскую сеть browserforge (при наличии пакета).",
-                        "docstring": "Генерирует отпечаток через байесовскую сеть browserforge (при наличии пакета).\n\nArgs:\n    browser: Эмулируемый браузер ('chrome').\n    os: Целевая ОС ('windows').\n    stealth_minimal: Режим маскировки.\n\nReturns:\n    Экземпляр AntidetectConfig.",
+                        "docstring": "Генерирует отпечаток через байесовскую сеть browserforge (при наличии пакета).\n\nArgs:\n    seed: Опциональный сид для воспроизводимой детерминированной генерации.\n    browser: Эмулируемый браузер ('chrome').\n    os: Целевая ОС ('windows').\n    stealth_minimal: Режим маскировки.\n\nReturns:\n    Экземпляр AntidetectConfig.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -31407,7 +31427,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 220,
+                        "line_number": 222,
                         "bases": [],
                         "children": []
                       },
@@ -31427,7 +31447,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 245,
+                        "line_number": 247,
                         "bases": [],
                         "children": []
                       },
@@ -31447,7 +31467,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 255,
+                        "line_number": 257,
                         "bases": [],
                         "children": []
                       },
@@ -31467,7 +31487,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 278,
+                        "line_number": 280,
                         "bases": [],
                         "children": []
                       },
@@ -31487,7 +31507,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 288,
+                        "line_number": 290,
                         "bases": [],
                         "children": []
                       },
@@ -31507,7 +31527,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 298,
+                        "line_number": 300,
                         "bases": [],
                         "children": []
                       }
@@ -46505,6 +46525,11 @@
     },
     {
       "source": "chutils/scraping/fingerprint/synthesizer",
+      "target": "chutils/fs",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/fingerprint/synthesizer",
       "target": "/external",
       "weight": 1
     },
@@ -47458,8 +47483,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "d092c831df263efc2471e33432e1e12137bc5b67 (dirty)",
-    "generated_at": "2026-09-20T21:37:43.309900+00:00",
-    "project_hash": "83c6a9beb359fb21fe9d95d2690003693a8b4ff1600c0735ad1876c6b64f6f76"
+    "git_commit": "4b3cb6c2fc830b2bd7dd5c0f0cd8f08047253af3 (dirty)",
+    "generated_at": "2026-09-20T21:50:59.641562+00:00",
+    "project_hash": "35890470b88911c6ef1bacfd364694c42c549b93711734aa7087096b1c4a2722"
   }
 }

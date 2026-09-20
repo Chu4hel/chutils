@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 from typing import Any
@@ -11,6 +12,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 from chutils.exceptions import OptionalDependencyError
+from chutils.scraping.fingerprint.external import BrowserForgeProvider
 from chutils.scraping.fingerprint.models import (
     FingerprintProfile,
     HardwareFingerprint,
@@ -189,3 +191,63 @@ def test_availability_helpers() -> None:
     """Проверяет статические методы проверки доступности сторонних библиотек."""
     assert isinstance(FingerprintSynthesizer.is_browserforge_available(), bool)
     assert isinstance(FingerprintSynthesizer.is_fpgen_available(), bool)
+
+
+def test_browserforge_seed_determinism() -> None:
+    """Проверяет детерминированность BrowserForgeProvider по сиду и изоляцию PRNG."""
+    if not FingerprintSynthesizer.is_browserforge_available():
+        pytest.skip("browserforge не установлен в тестовом окружении")
+
+    import random
+
+    random.seed(12345)
+    baseline_val = random.random()
+
+    provider = BrowserForgeProvider(browser="chrome", os="windows")
+    fp1 = provider.generate(seed="deterministic_acc_1")
+
+    # Имитируем стороннюю работу с random в приложении
+    _ = random.random()
+
+    fp2 = provider.generate(seed="deterministic_acc_1")
+
+    # Профиль должен быть идентичным по сиду
+    assert fp1.user_agent == fp2.user_agent
+    assert fp1.webgl.renderer == fp2.webgl.renderer
+    assert fp1.screen.width == fp2.screen.width
+    assert fp1.screen.height == fp2.screen.height
+    assert fp1.hardware.concurrency == fp2.hardware.concurrency
+
+    # Проверяем, что генерация с другим сидом отличается
+    fp3 = provider.generate(seed="different_acc_999999")
+    # Должен сгенерироваться другой экран или рендерер/UA
+    assert (
+        fp1.screen.width != fp3.screen.width
+        or fp1.screen.height != fp3.screen.height
+        or fp1.webgl.renderer != fp3.webgl.renderer
+        or fp1.hardware.concurrency != fp3.hardware.concurrency
+    )
+
+
+def test_synthesizer_get_or_create(tmp_path: Path) -> None:
+    """Проверяет автоматическое кэширование и сохранение профилей на диск через get_or_create."""
+    synthesizer = FingerprintSynthesizer(mode="procedural")
+
+    # 1. Первый вызов: профиля на диске нет, он должен сгенерироваться и сохраниться
+    fp1 = synthesizer.get_or_create(seed="alpha_user", storage_dir=tmp_path)
+    expected_file = tmp_path / "alpha_user.json"
+    assert expected_file.exists()
+
+    # 2. Второй вызов: профиль должен загрузиться из существующего файла
+    fp2 = synthesizer.get_or_create(seed="alpha_user", storage_dir=tmp_path)
+    assert fp1.webgl.renderer == fp2.webgl.renderer
+    assert fp1.screen.width == fp2.screen.width
+    assert fp1.hardware.memory_gb == fp2.hardware.memory_gb
+
+    # 3. Модифицируем файл на диске, чтобы убедиться, что читается именно файл
+    saved_data = json.loads(expected_file.read_text(encoding="utf-8"))
+    saved_data["hardware"]["memory_gb"] = 128
+    expected_file.write_text(json.dumps(saved_data), encoding="utf-8")
+
+    fp3 = synthesizer.get_or_create(seed="alpha_user", storage_dir=tmp_path)
+    assert fp3.hardware.memory_gb == 128

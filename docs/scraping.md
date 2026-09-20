@@ -363,13 +363,18 @@ await antidetect_cfg.apply_to_nodriver(tab)
 await profile.apply_to_tab(tab)  # nodriver
 await profile.apply_to_page(page)  # Playwright
 
-# 3. Сохранение и загрузка профиля (JSON) для долгоживущих сессий
+# 3. Автоматическое кэширование и сохранение профилей на диск:
+# При первом вызове генерирует и сохраняет в ./profiles/acc_102.json, при последующих — быстро загружает:
+profile = synthesizer.get_or_create(seed="acc_102", storage_dir="./profiles")
+
+# Ручное сохранение и загрузка профиля (JSON)
 profile.save_to_file("my_fingerprint.json")
 loaded_profile = FingerprintProfile.from_file("my_fingerprint.json")
 
-# 4. Использование ML-генератора browserforge (при наличии пакета)
+# 4. Использование ML-генератора browserforge с поддержкой сида
 if FingerprintSynthesizer.is_browserforge_available():
-    bf_profile = FingerprintSynthesizer.create_from_browserforge()
+    # browserforge детерминирован по сиду с автоматической изоляцией PRNG:
+    bf_profile = FingerprintSynthesizer.create_from_browserforge(seed="acc_102")
 ```
 
 ### Автоматическое решение Cloudflare Turnstile (`solve_cf_turnstile`)

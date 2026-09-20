@@ -196,6 +196,7 @@ class AntidetectConfig(BaseModel):
     @classmethod
     def from_browserforge(
         cls,
+        seed: int | str | None = None,
         *,
         browser: str = "chrome",
         os: str = "windows",
@@ -204,6 +205,7 @@ class AntidetectConfig(BaseModel):
         """Генерирует отпечаток через байесовскую сеть browserforge (при наличии пакета).
 
         Args:
+            seed: Опциональный сид для воспроизводимой детерминированной генерации.
             browser: Эмулируемый браузер ('chrome').
             os: Целевая ОС ('windows').
             stealth_minimal: Режим маскировки.
@@ -213,7 +215,7 @@ class AntidetectConfig(BaseModel):
         """
         from chutils.scraping.fingerprint import FingerprintSynthesizer
 
-        fp = FingerprintSynthesizer(mode="browserforge", os_target=os).synthesize()
+        fp = FingerprintSynthesizer(mode="browserforge", os_target=os).synthesize(seed)
         return fp.to_antidetect_config(stealth_minimal=stealth_minimal)
 
     @classmethod

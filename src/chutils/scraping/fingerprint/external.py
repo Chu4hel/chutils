@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
+import random
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
@@ -60,8 +62,11 @@ class BrowserForgeProvider:
     def generate(self, seed: int | str | None = None) -> FingerprintProfile:
         """Генерирует профиль через обученную байесовскую сеть browserforge.
 
+        При передаче seed генерация полностью детерминизируется с изоляцией
+        состояния встроенного генератора случайных чисел (PRNG).
+
         Args:
-            seed: Опциональный сид (browserforge не гарантирует полную детерминированность по сиду).
+            seed: Опциональный сид для воспроизводимой генерации.
 
         Returns:
             Экземпляр FingerprintProfile.
@@ -83,7 +88,17 @@ class BrowserForgeProvider:
             )
 
         fg = generator_cls(browser=self.browser, os=self.os)
-        raw_fp = fg.generate()
+        if seed is not None:
+            seed_bytes = str(seed).encode("utf-8")
+            seed_int = int(hashlib.sha256(seed_bytes).hexdigest(), 16) % (2**32)
+            rng_state = random.getstate()
+            try:
+                random.seed(seed_int)
+                raw_fp = fg.generate()
+            finally:
+                random.setstate(rng_state)
+        else:
+            raw_fp = fg.generate()
 
         nav = raw_fp.navigator
         scr = raw_fp.screen
