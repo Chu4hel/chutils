@@ -69,6 +69,46 @@ _JCUKEN_NEIGHBORS = {
 }
 """Карта соседних клавиш для ЙЦУКЕН-раскладки, используемая для имитации опечаток."""
 
+_RU_TO_EN_LAYOUT = {
+    "й": "q",
+    "ц": "w",
+    "у": "e",
+    "к": "r",
+    "е": "t",
+    "н": "y",
+    "г": "u",
+    "ш": "i",
+    "щ": "o",
+    "з": "p",
+    "х": "[",
+    "ъ": "]",
+    "ф": "a",
+    "ы": "s",
+    "в": "d",
+    "а": "f",
+    "п": "g",
+    "р": "h",
+    "о": "j",
+    "л": "k",
+    "д": "l",
+    "ж": ";",
+    "э": "'",
+    "я": "z",
+    "ч": "x",
+    "с": "c",
+    "м": "v",
+    "и": "b",
+    "т": "n",
+    "ь": "m",
+    "б": ",",
+    "ю": ".",
+    "ё": "`",
+}
+"""Карта трансляции физических клавиш русской раскладки (ЙЦУКЕН) в английскую (QWERTY)."""
+
+_EN_TO_RU_LAYOUT = {v: k for k, v in _RU_TO_EN_LAYOUT.items()}
+"""Карта трансляции физических клавиш английской раскладки (QWERTY) в русскую (ЙЦУКЕН)."""
+
 
 class WindMouseGenerator:
     """Генератор траекторий перемещения мыши на основе физической модели WindMouse (гравитация, ветер, инерция)."""
@@ -335,21 +375,75 @@ class TypoAction(NamedTuple):
 class KeyboardTypoGenerator:
     """Генератор последовательностей ввода символов с реалистичными опечатками."""
 
+    def __init__(self, layout_error_rate: float = 0.0) -> None:
+        """Инициализирует генератор опечаток.
+
+        Args:
+            layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).
+        """
+        self.layout_error_rate = layout_error_rate
+
     def generate_sequence(
-        self, text: str, error_rate: float = 0.05
+        self,
+        text: str,
+        error_rate: float = 0.05,
+        layout_error_rate: float | None = None,
     ) -> list[TypoAction]:
         """Генерирует последовательность нажатий клавиш для ввода текста.
 
         Включает случайные опечатки, их обнаружение и исправление через Backspace.
+        При ненулевой layout_error_rate в самом начале ввода может произойти реалистичная
+        ошибка раскладки (например, ввод нескольких символов латиницей вместо кириллицы
+        с последующим полным стиранием и повторным вводом на правильном языке).
 
         Args:
             text: Исходный текст.
             error_rate: Вероятность совершения ошибки на каждом символе.
+            layout_error_rate: Вероятность ошибки раскладки в начале ввода. Если None,
+                используется значение из конструктора (по умолчанию 0.0).
 
         Returns:
             Список действий TypoAction, имитирующий последовательный ввод текста человеком.
         """
         sequence: list[TypoAction] = []
+        if not text:
+            return sequence
+
+        eff_layout_rate = (
+            self.layout_error_rate
+            if layout_error_rate is None
+            else layout_error_rate
+        )
+
+        # Ошибка раскладки возможна СТРОГО в начале ввода
+        if eff_layout_rate > 0.0 and random.random() < eff_layout_rate:
+            first_char = text[0].lower()
+            layout_map: dict[str, str] | None = None
+            if first_char in _RU_TO_EN_LAYOUT:
+                layout_map = _RU_TO_EN_LAYOUT
+            elif first_char in _EN_TO_RU_LAYOUT:
+                layout_map = _EN_TO_RU_LAYOUT
+
+            if layout_map is not None:
+                # Ошибочно вводим от 1 до 3 символов
+                max_err = min(random.randint(1, 3), len(text))
+                err_chars: list[str] = []
+                for c in text[:max_err]:
+                    lowered_c = c.lower()
+                    if lowered_c in layout_map:
+                        mapped = layout_map[lowered_c]
+                        err_chars.append(mapped.upper() if c.isupper() else mapped)
+                    else:
+                        break
+
+                if err_chars:
+                    # Печатаем символы в неверной раскладке
+                    for wrong_c in err_chars:
+                        sequence.append(TypoAction("type", wrong_c))
+                    # Замечаем ошибку и стираем неверно введенные символы
+                    for _ in err_chars:
+                        sequence.append(TypoAction("backspace", ""))
+
         i = 0
         n = len(text)
 

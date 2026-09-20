@@ -293,6 +293,7 @@ async def async_type_text(
     error_rate: float = 0.05,
     speed_wpm: float = 40.0,
     key_hold_time: tuple[float, float] = (0.04, 0.09),
+    layout_error_rate: float = 0.0,
 ) -> None:
     """Имитирует ввод текста с опечатками Playwright или nodriver.
 
@@ -303,6 +304,7 @@ async def async_type_text(
         error_rate: Вероятность совершения опечатки (0.0 - 1.0).
         speed_wpm: Скорость ввода в словах в минуту (WPM).
         key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.
+        layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).
     """
     if _is_nodriver(page):
         _ensure_nodriver()
@@ -314,7 +316,9 @@ async def async_type_text(
         char_delay = 60.0 / (speed_wpm * 5)
         delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.25)
         typo_gen = KeyboardTypoGenerator()
-        sequence = typo_gen.generate_sequence(text, error_rate)
+        sequence = typo_gen.generate_sequence(
+            text, error_rate=error_rate, layout_error_rate=layout_error_rate
+        )
 
         for action in sequence:
             if action.action == "type":
@@ -367,7 +371,9 @@ async def async_type_text(
         char_delay = 60.0 / (speed_wpm * 5)
         delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.25)
         typo_gen = KeyboardTypoGenerator()
-        sequence = typo_gen.generate_sequence(text, error_rate)
+        sequence = typo_gen.generate_sequence(
+            text, error_rate=error_rate, layout_error_rate=layout_error_rate
+        )
 
         for action in sequence:
             if action.action == "type":
@@ -483,6 +489,7 @@ def type_text(
     text: str,
     error_rate: float = 0.05,
     speed_wpm: float = 40.0,
+    layout_error_rate: float = 0.0,
 ) -> None:
     """Имитирует ввод текста с опечатками Selenium.
 
@@ -492,6 +499,7 @@ def type_text(
         text: Текст для ввода.
         error_rate: Вероятность совершения опечатки (0.0 - 1.0).
         speed_wpm: Скорость ввода в словах в минуту (WPM).
+        layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).
     """
     _ensure_selenium()
     from selenium.webdriver.common.by import By
@@ -503,7 +511,9 @@ def type_text(
     char_delay = 60.0 / (speed_wpm * 5)
     delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.25)
     typo_gen = KeyboardTypoGenerator()
-    sequence = typo_gen.generate_sequence(text, error_rate)
+    sequence = typo_gen.generate_sequence(
+        text, error_rate=error_rate, layout_error_rate=layout_error_rate
+    )
 
     for action in sequence:
         if action.action == "type":

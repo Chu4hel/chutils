@@ -125,6 +125,84 @@ def test_keyboard_typo_generator_cyrillic_uppercase() -> None:
     assert first_action.char.lower() in _JCUKEN_NEIGHBORS["й"]
 
 
+def test_keyboard_layout_typo_at_start() -> None:
+    """Проверяет генерацию ошибки раскладки строго в начале ввода."""
+    generator = KeyboardTypoGenerator()
+    text = "Привет, мир!"
+
+    # Запускаем с гарантированной ошибкой раскладки и без обычных опечаток
+    sequence = generator.generate_sequence(text, error_rate=0.0, layout_error_rate=1.0)
+
+    # Первые действия должны быть ошибочными символами латиницы (G, h, b...)
+    # Затем ровно столько же Backspace
+    # Затем весь текст "Привет, мир!"
+    backspace_actions = [a for a in sequence if a.action == "backspace"]
+
+    err_count = len(backspace_actions)
+    assert 1 <= err_count <= 3
+    # Первые err_count символов должны быть латиницей
+    for i in range(err_count):
+        assert sequence[i].action == "type"
+        assert sequence[i].char.isascii()
+
+    # Следующие err_count действий — backspace
+    for i in range(err_count, err_count * 2):
+        assert sequence[i].action == "backspace"
+
+    # Воспроизведение последовательности дает исходный текст
+    typed: list[str] = []
+    for a in sequence:
+        if a.action == "type":
+            typed.append(a.char)
+        elif a.action == "backspace" and typed:
+            typed.pop()
+    assert "".join(typed) == text
+
+
+def test_keyboard_layout_typo_latin() -> None:
+    """Проверяет генерацию ошибки раскладки в начале ввода латинского текста (ввод кириллицей)."""
+    generator = KeyboardTypoGenerator()
+    text = "Hello, world!"
+
+    sequence = generator.generate_sequence(text, error_rate=0.0, layout_error_rate=1.0)
+
+    backspace_actions = [a for a in sequence if a.action == "backspace"]
+    err_count = len(backspace_actions)
+    assert 1 <= err_count <= 3
+
+    # Первые err_count символов должны быть кириллицей
+    from chutils.scraping.humanize.math_utils import _JCUKEN_NEIGHBORS
+    for i in range(err_count):
+        assert sequence[i].action == "type"
+        assert sequence[i].char.lower() in _JCUKEN_NEIGHBORS
+
+    # Итоговый результат совпадает
+    typed: list[str] = []
+    for a in sequence:
+        if a.action == "type":
+            typed.append(a.char)
+        elif a.action == "backspace" and typed:
+            typed.pop()
+    assert "".join(typed) == text
+
+
+def test_keyboard_layout_typo_never_in_middle() -> None:
+    """Проверяет, что ошибка раскладки не возникает в середине текста."""
+    generator = KeyboardTypoGenerator()
+    text = "Привет, как дела?"
+
+    # Принудительно включаем layout_error_rate, но выключаем обычные опечатки
+    sequence = generator.generate_sequence(text, error_rate=0.0, layout_error_rate=1.0)
+
+    # Все backspace должны быть строго в начале (до того как начнется нормальный ввод)
+    backspaces = [idx for idx, a in enumerate(sequence) if a.action == "backspace"]
+    assert len(backspaces) > 0
+    # Индексы всех backspace должны идти подряд в начале
+    assert backspaces == list(range(len(backspaces), len(backspaces) * 2))
+
+
+
+
 
 
 def test_wind_mouse_generator() -> None:

@@ -83,11 +83,14 @@ delay = delay_gen.generate(base_delay)
 Генерирует последовательности нажатий клавиш, включая реалистичные опечатки на близкорасположенных клавишах (поддерживаются раскладки QWERTY и ЙЦУКЕН), с
 последующим стиранием опечаток через Backspace и вводом правильных букв.
 
+Также поддерживается имитация редкой ошибки переключения раскладки (`layout_error_rate`), возникающей **строго в начале ввода** (например, ввод 1–3 символов латиницей `Ghb...` вместо кириллицы с последующим стиранием и повторным вводом `Привет...`).
+
 ```python
 from chutils.scraping.humanize import KeyboardTypoGenerator
 
-typo_gen = KeyboardTypoGenerator()
-sequence = typo_gen.generate_sequence("Hello!", error_rate=0.1)
+typo_gen = KeyboardTypoGenerator(layout_error_rate=0.03)
+# Или передавая напрямую в generate_sequence:
+sequence = typo_gen.generate_sequence("Привет, мир!", error_rate=0.05, layout_error_rate=0.03)
 
 # Возвращает список объектов TypoAction (action='type'|'backspace', char='...')
 ```

@@ -29602,9 +29602,9 @@
                     "name": "async_type_text",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time)",
+                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time, layout_error_rate)",
                     "summary": "Имитирует ввод текста с опечатками Playwright или nodriver.",
-                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.",
+                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -29634,7 +29634,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 388,
+                    "line_number": 394,
                     "bases": [],
                     "children": []
                   },
@@ -29654,7 +29654,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 440,
+                    "line_number": 446,
                     "bases": [],
                     "children": []
                   },
@@ -29662,9 +29662,9 @@
                     "name": "type_text",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(driver, selector, text, error_rate, speed_wpm)",
+                    "signature": "(driver, selector, text, error_rate, speed_wpm, layout_error_rate)",
                     "summary": "Имитирует ввод текста с опечатками Selenium.",
-                    "docstring": "Имитирует ввод текста с опечатками Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).",
+                    "docstring": "Имитирует ввод текста с опечатками Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29674,7 +29674,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 480,
+                    "line_number": 486,
                     "bases": [],
                     "children": []
                   },
@@ -29694,7 +29694,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 519,
+                    "line_number": 529,
                     "bases": [],
                     "children": []
                   },
@@ -29714,7 +29714,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 629,
+                    "line_number": 639,
                     "bases": [],
                     "children": []
                   }
@@ -30312,6 +30312,46 @@
                     "children": []
                   },
                   {
+                    "name": "_RU_TO_EN_LAYOUT",
+                    "type": "constant",
+                    "layer": "private",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 72,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_EN_TO_RU_LAYOUT",
+                    "type": "constant",
+                    "layer": "private",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 109,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
                     "name": "WindMouseGenerator",
                     "type": "class",
                     "layer": "public",
@@ -30327,7 +30367,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 73,
+                    "line_number": 113,
                     "bases": [],
                     "children": [
                       {
@@ -30346,7 +30386,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 76,
+                        "line_number": 116,
                         "bases": [],
                         "children": []
                       },
@@ -30366,7 +30406,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 102,
+                        "line_number": 142,
                         "bases": [],
                         "children": []
                       }
@@ -30388,7 +30428,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 203,
+                    "line_number": 243,
                     "bases": [],
                     "children": [
                       {
@@ -30407,7 +30447,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 206,
+                        "line_number": 246,
                         "bases": [],
                         "children": []
                       }
@@ -30429,7 +30469,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 290,
+                    "line_number": 330,
                     "bases": [],
                     "children": [
                       {
@@ -30448,7 +30488,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 293,
+                        "line_number": 333,
                         "bases": [],
                         "children": []
                       },
@@ -30468,7 +30508,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 303,
+                        "line_number": 343,
                         "bases": [],
                         "children": []
                       }
@@ -30490,7 +30530,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 328,
+                    "line_number": 368,
                     "bases": [
                       "typing.NamedTuple"
                     ],
@@ -30512,16 +30552,16 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 335,
+                    "line_number": 375,
                     "bases": [],
                     "children": [
                       {
-                        "name": "generate_sequence",
+                        "name": "__init__",
                         "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, text, error_rate)",
-                        "summary": "Генерирует последовательность нажатий клавиш для ввода текста.",
-                        "docstring": "Генерирует последовательность нажатий клавиш для ввода текста.\n\nВключает случайные опечатки, их обнаружение и исправление через Backspace.\n\nArgs:\n    text: Исходный текст.\n    error_rate: Вероятность совершения ошибки на каждом символе.\n\nReturns:\n    Список действий TypoAction, имитирующий последовательный ввод текста человеком.",
+                        "layer": "private",
+                        "signature": "(self, layout_error_rate)",
+                        "summary": "Инициализирует генератор опечаток.",
+                        "docstring": "Инициализирует генератор опечаток.\n\nArgs:\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -30531,7 +30571,27 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 338,
+                        "line_number": 378,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate_sequence",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, text, error_rate, layout_error_rate)",
+                        "summary": "Генерирует последовательность нажатий клавиш для ввода текста.",
+                        "docstring": "Генерирует последовательность нажатий клавиш для ввода текста.\n\nВключает случайные опечатки, их обнаружение и исправление через Backspace.\nПри ненулевой layout_error_rate в самом начале ввода может произойти реалистичная\nошибка раскладки (например, ввод нескольких символов латиницей вместо кириллицы\nс последующим полным стиранием и повторным вводом на правильном языке).\n\nArgs:\n    text: Исходный текст.\n    error_rate: Вероятность совершения ошибки на каждом символе.\n    layout_error_rate: Вероятность ошибки раскладки в начале ввода. Если None,\n        используется значение из конструктора (по умолчанию 0.0).\n\nReturns:\n    Список действий TypoAction, имитирующий последовательный ввод текста человеком.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 386,
                         "bases": [],
                         "children": []
                       }
@@ -46070,8 +46130,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "dcd15afaa87a2cd5624bf8c110bb058899f265dc (dirty)",
-    "generated_at": "2026-09-20T19:28:47.074912+00:00",
-    "project_hash": "fc93d5bcd281c6e652296257bda4b4292fb62220f3ea25e9b577539d0720eec0"
+    "git_commit": "0784d78fac70f5ded60641c3492c0f068d850c26 (dirty)",
+    "generated_at": "2026-09-20T19:45:00.057399+00:00",
+    "project_hash": "d367db72caa1f4a2cf64f040fe4bee7964039831a8a8c811ad886ed25c9c417c"
   }
 }
