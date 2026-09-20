@@ -184,8 +184,47 @@ async def test_async_type_text_nodriver_paste_threshold(mocker: MockerFixture) -
     assert sleep_mock.call_count >= 2
 
 
+@pytest.mark.asyncio
+async def test_async_type_text_nodriver_delayed_fix(mocker: MockerFixture) -> None:
+    """Проверяет отправку событий клавиш ArrowLeft и End при delayed_fix_rate в nodriver."""
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.find = AsyncMock()
+    tab.send = AsyncMock()
+
+    mock_element = AsyncMock()
+    mock_element._is_nodriver = True
+    tab.find.return_value = mock_element
+
+    mocker.patch("asyncio.sleep", new_callable=AsyncMock)
+    long_text = "Тестирование nodriver с исправлением опечаток стрелками"
+
+    await async_type_text(
+        tab,
+        selector="#username",
+        text=long_text,
+        error_rate=0.0,
+        delayed_fix_rate=1.0,
+        speed_wpm=500.0,
+    )
+
+    tab.find.assert_called_once_with("#username")
+    mock_element.focus.assert_called_once()
+
+    # Извлекаем все клавиши, отправленные через dispatch_key_event
+    sent_keys = [
+        c[0][0][1]["key"]
+        for c in tab.send.call_args_list
+        if c[0][0][0] == "dispatch_key_event" and "key" in c[0][0][1]
+    ]
+
+    assert "ArrowLeft" in sent_keys
+    assert "Backspace" in sent_keys
+    assert ("End" in sent_keys) or ("ArrowRight" in sent_keys)
+
 
 @pytest.mark.asyncio
+
 async def test_invalid_type_raises_value_error() -> None:
     """Проверяет, что передача объекта неизвестного типа выбрасывает ValueError."""
     with pytest.raises(ValueError, match="Не удалось определить тип"):

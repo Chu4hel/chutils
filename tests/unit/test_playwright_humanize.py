@@ -106,8 +106,36 @@ async def test_async_type_text_paste_threshold(mocker: MockerFixture) -> None:
     assert sleep_mock.call_count >= 2
 
 
+@pytest.mark.asyncio
+async def test_async_type_text_delayed_fix() -> None:
+    """Проверяет обработку навигационных клавиш стрелок и End при delayed_fix_rate в Playwright."""
+    page = MagicMock()
+    page.focus = AsyncMock()
+    page.keyboard = MagicMock()
+    page.keyboard.type = AsyncMock()
+    page.keyboard.press = AsyncMock()
+
+    long_text = "Интеграционное тестирование Playwright с имитацией моторики"
+
+    await async_type_text(
+        page,
+        selector="#input",
+        text=long_text,
+        error_rate=0.0,
+        delayed_fix_rate=1.0,
+        speed_wpm=500.0,
+    )
+
+    page.focus.assert_called_once_with("#input")
+    # Проверяем, что были нажатия клавиш Backspace, ArrowLeft и End/ArrowRight
+    press_args = [call[0][0] for call in page.keyboard.press.call_args_list]
+    assert "ArrowLeft" in press_args
+    assert "Backspace" in press_args
+    assert ("End" in press_args) or ("ArrowRight" in press_args)
+
 
 @pytest.mark.asyncio
+
 async def test_async_move_mouse_windmouse() -> None:
     """Проверяет перемещение мыши Playwright с алгоритмом WindMouse."""
     page = MagicMock()

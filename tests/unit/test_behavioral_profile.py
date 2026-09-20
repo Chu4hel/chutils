@@ -78,6 +78,7 @@ def test_behavioral_profile_create_generators() -> None:
     typo_gen = profile.create_typo_generator()
     assert isinstance(typo_gen, KeyboardTypoGenerator)
     assert typo_gen.layout_error_rate == profile.layout_error_rate
+    assert typo_gen.delayed_fix_rate == profile.delayed_fix_rate
 
 
 @pytest.mark.asyncio
@@ -89,6 +90,7 @@ async def test_behavioral_profile_async_actions() -> None:
         key_hold_time=(0.04, 0.08),
         click_hold_time=(0.06, 0.11),
         layout_error_rate=0.02,
+        delayed_fix_rate=0.015,
     )
 
     page_mock = AsyncMock()
@@ -103,6 +105,7 @@ async def test_behavioral_profile_async_actions() -> None:
             speed_wpm=profile.speed_wpm,
             key_hold_time=profile.key_hold_time,
             layout_error_rate=profile.layout_error_rate,
+            delayed_fix_rate=profile.delayed_fix_rate,
             paste_threshold=profile.paste_threshold,
             paste_delay_before=profile.paste_delay_before,
             paste_delay_after=profile.paste_delay_after,

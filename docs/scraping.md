@@ -85,15 +85,23 @@ delay = delay_gen.generate(base_delay)
 
 Также поддерживается имитация редкой ошибки переключения раскладки (`layout_error_rate`), возникающей **строго в начале ввода** (например, ввод 1–3 символов латиницей `Ghb...` вместо кириллицы с последующим стиранием и повторным вводом `Привет...`).
 
+Кроме того, генератор поддерживает продвинутую механику **отложенного исправления опечаток** (`delayed_fix_rate`): когда пользователь допускает ошибку в слове, по инерции допечатывает несколько последующих слов, а затем, не удаляя написанный хвост через каскад Backspace, возвращается клавишами стрелок (`ArrowLeft`) к месту опечатки, исправляет её, и мгновенно возвращается в конец строки клавишей `End` (или серией `ArrowRight`).
+
 ```python
 from chutils.scraping.humanize import KeyboardTypoGenerator
 
-typo_gen = KeyboardTypoGenerator(layout_error_rate=0.03)
+typo_gen = KeyboardTypoGenerator(layout_error_rate=0.03, delayed_fix_rate=0.02)
 # Или передавая напрямую в generate_sequence:
-sequence = typo_gen.generate_sequence("Привет, мир!", error_rate=0.05, layout_error_rate=0.03)
+sequence = typo_gen.generate_sequence(
+    "Автоматизация сбора данных и имитация поведения пользователя",
+    error_rate=0.04,
+    layout_error_rate=0.02,
+    delayed_fix_rate=0.015,
+)
 
-# Возвращает список объектов TypoAction (action='type'|'backspace', char='...')
+# Возвращает список объектов TypoAction (action='type'|'backspace'|'key', char='...')
 ```
+
 
 ### Биометрический профиль моторики (`BehavioralProfile`)
 

@@ -201,10 +201,85 @@ def test_keyboard_layout_typo_never_in_middle() -> None:
     assert backspaces == list(range(len(backspaces), len(backspaces) * 2))
 
 
+def _simulate_typing(sequence: list[TypoAction]) -> str:
+    """Виртуальный эмулятор текстового поля для верификации последовательности действий ввода."""
+    buffer: list[str] = []
+    cursor = 0
+    for a in sequence:
+        if a.action == "type":
+            buffer.insert(cursor, a.char)
+            cursor += len(a.char)
+        elif a.action == "backspace":
+            if cursor > 0:
+                cursor -= 1
+                buffer.pop(cursor)
+        elif a.action == "key":
+            if a.char == "ArrowLeft":
+                cursor = max(0, cursor - 1)
+            elif a.char == "ArrowRight":
+                cursor = min(len(buffer), cursor + 1)
+            elif a.char == "End":
+                cursor = len(buffer)
+            elif a.char == "Home":
+                cursor = 0
+    return "".join(buffer)
 
 
+def test_keyboard_delayed_fix_sequence() -> None:
+    """Проверяет генерацию отложенного исправления опечаток клавишами стрелок и End."""
+    generator = KeyboardTypoGenerator(delayed_fix_rate=1.0)
+    text = "Автоматизация тестирования веб-приложений с имитацией поведения человека"
+
+    sequence = generator.generate_sequence(
+        text, error_rate=0.0, layout_error_rate=0.0, delayed_fix_rate=1.0
+    )
+
+    # Проверяем наличие навигационных клавиш ArrowLeft и End/ArrowRight
+    arrow_lefts = [a for a in sequence if a.action == "key" and a.char == "ArrowLeft"]
+    assert len(arrow_lefts) > 0, "Должна быть серия нажатий ArrowLeft"
+
+    end_or_right = [
+        a
+        for a in sequence
+        if a.action == "key" and a.char in ("End", "ArrowRight")
+    ]
+    assert len(end_or_right) > 0, "Должно быть возвращение в конец строки через End или ArrowRight"
+
+    # Эмуляция текстового редактора должна дать исходный текст без искажений
+    typed_result = _simulate_typing(sequence)
+    assert typed_result == text
 
 
+def test_keyboard_delayed_fix_short_text_no_op() -> None:
+    """Проверяет, что для коротких текстов отложенное исправление не генерируется."""
+    generator = KeyboardTypoGenerator(delayed_fix_rate=1.0)
+    short_text = "Привет!"
+
+    sequence = generator.generate_sequence(
+        short_text, error_rate=0.0, layout_error_rate=0.0, delayed_fix_rate=1.0
+    )
+
+    # В коротком тексте не должно быть навигации стрелками
+    arrow_keys = [a for a in sequence if a.action == "key"]
+    assert len(arrow_keys) == 0
+    assert _simulate_typing(sequence) == short_text
+
+
+def test_keyboard_delayed_fix_latin() -> None:
+    """Проверяет отложенное исправление опечатки для длинного текста на латинице."""
+    generator = KeyboardTypoGenerator(delayed_fix_rate=1.0)
+    text = "The quick brown fox jumps over the lazy dog near the riverbank"
+
+    sequence = generator.generate_sequence(
+        text, error_rate=0.0, layout_error_rate=0.0, delayed_fix_rate=1.0
+    )
+
+    # Должна быть навигация
+    has_arrow_left = any(a.action == "key" and a.char == "ArrowLeft" for a in sequence)
+    assert has_arrow_left
+
+    # Идеальный результат после исправления
+    assert _simulate_typing(sequence) == text
 def test_wind_mouse_generator() -> None:
     """Тестирует генератор траекторий WindMouse."""
     generator = WindMouseGenerator()

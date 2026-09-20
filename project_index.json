@@ -29390,12 +29390,12 @@
             "docstring": "",
             "children": [
               {
-                "name": "actions",
-                "path": "chutils/scraping/humanize/actions",
+                "name": "_actions_helpers",
+                "path": "chutils/scraping/humanize/_actions_helpers",
                 "type": "module",
-                "layer": "internal",
-                "summary": "",
-                "docstring": "",
+                "layer": "private",
+                "summary": "Вспомогательные утилиты, проверки зависимостей и маппинги клавиш для humanize actions.",
+                "docstring": "Вспомогательные утилиты, проверки зависимостей и маппинги клавиш для humanize actions.",
                 "children": [],
                 "symbols": [
                   {
@@ -29403,8 +29403,8 @@
                     "type": "function",
                     "layer": "private",
                     "signature": "()",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Проверяет доступность библиотеки playwright.",
+                    "docstring": "Проверяет доступность библиотеки playwright.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29414,7 +29414,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 19,
+                    "line_number": 13,
                     "bases": [],
                     "children": []
                   },
@@ -29423,8 +29423,8 @@
                     "type": "function",
                     "layer": "private",
                     "signature": "()",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Проверяет доступность библиотеки selenium.",
+                    "docstring": "Проверяет доступность библиотеки selenium.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29434,7 +29434,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 34,
+                    "line_number": 29,
                     "bases": [],
                     "children": []
                   },
@@ -29443,8 +29443,8 @@
                     "type": "function",
                     "layer": "private",
                     "signature": "()",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Проверяет доступность библиотеки nodriver.",
+                    "docstring": "Проверяет доступность библиотеки nodriver.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29454,7 +29454,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 49,
+                    "line_number": 45,
                     "bases": [],
                     "children": []
                   },
@@ -29463,8 +29463,8 @@
                     "type": "function",
                     "layer": "private",
                     "signature": "(obj)",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Определяет, является ли переданный объект элементом или вкладкой nodriver.",
+                    "docstring": "Определяет, является ли переданный объект элементом или вкладкой nodriver.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29474,7 +29474,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 71,
+                    "line_number": 68,
                     "bases": [],
                     "children": []
                   },
@@ -29483,8 +29483,8 @@
                     "type": "function",
                     "layer": "private",
                     "signature": "(obj)",
-                    "summary": "",
-                    "docstring": "",
+                    "summary": "Определяет, является ли переданный объект страницей Playwright.",
+                    "docstring": "Определяет, является ли переданный объект страницей Playwright.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29494,7 +29494,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 85,
+                    "line_number": 83,
                     "bases": [],
                     "children": []
                   },
@@ -29504,7 +29504,7 @@
                     "layer": "private",
                     "signature": "(min_seconds, max_seconds)",
                     "summary": "Генерирует логнормальное случайное время в заданном интервале.",
-                    "docstring": "Генерирует логнормальное случайное время в заданном интервале.",
+                    "docstring": "Генерирует логнормальное случайное время в заданном интервале.\n\nArgs:\n    min_seconds: Минимальное время задержки (в секундах).\n    max_seconds: Максимальное время задержки (в секундах).\n\nReturns:\n    Случайное значение задержки с нормальным/логнормальным распределением.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29514,10 +29514,21 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 97,
+                    "line_number": 95,
                     "bases": [],
                     "children": []
-                  },
+                  }
+                ]
+              },
+              {
+                "name": "actions",
+                "path": "chutils/scraping/humanize/actions",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": [
                   {
                     "name": "human_sleep",
                     "type": "function",
@@ -29534,7 +29545,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 110,
+                    "line_number": 28,
                     "bases": [],
                     "children": []
                   },
@@ -29554,7 +29565,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 121,
+                    "line_number": 39,
                     "bases": [],
                     "children": []
                   },
@@ -29574,7 +29585,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 132,
+                    "line_number": 50,
                     "bases": [],
                     "children": []
                   },
@@ -29594,7 +29605,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 220,
+                    "line_number": 138,
                     "bases": [],
                     "children": []
                   },
@@ -29602,9 +29613,9 @@
                     "name": "async_type_text",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time, layout_error_rate, paste_threshold, paste_delay_before, paste_delay_after)",
+                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time, layout_error_rate, delayed_fix_rate, paste_threshold, paste_delay_before, paste_delay_after)",
                     "summary": "Имитирует ввод текста с опечатками Playwright или nodriver.",
-                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nПоддерживает адаптивный ввод: если длина текста превышает paste_threshold,\nтекст вставляется целиком (имитируя вставку из буфера обмена Ctrl+V / Paste)\nс естественными паузами обдумывания до и после вставки.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.\n    paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).\n    paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).",
+                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nПоддерживает адаптивный ввод: если длина текста превышает paste_threshold,\nтекст вставляется целиком (имитируя вставку из буфера обмена Ctrl+V / Paste)\nс естественными паузами обдумывания до и после вставки.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    delayed_fix_rate: Вероятность отложенного исправления опечатки навигацией стрелками (0.0 - 1.0).\n    paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.\n    paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).\n    paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -29614,7 +29625,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 289,
+                    "line_number": 207,
                     "bases": [],
                     "children": []
                   },
@@ -29634,7 +29645,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 446,
+                    "line_number": 392,
                     "bases": [],
                     "children": []
                   },
@@ -29654,7 +29665,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 498,
+                    "line_number": 444,
                     "bases": [],
                     "children": []
                   },
@@ -29662,9 +29673,9 @@
                     "name": "type_text",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(driver, selector, text, error_rate, speed_wpm, layout_error_rate, paste_threshold, paste_delay_before, paste_delay_after)",
+                    "signature": "(driver, selector, text, error_rate, speed_wpm, layout_error_rate, delayed_fix_rate, paste_threshold, paste_delay_before, paste_delay_after)",
                     "summary": "Имитирует ввод текста с опечатками Selenium.",
-                    "docstring": "Имитирует ввод текста с опечатками Selenium.\n\nПоддерживает адаптивный ввод: если длина текста превышает paste_threshold,\nтекст вставляется целиком (Ctrl+V / Paste) с естественными паузами обдумывания.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.\n    paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).\n    paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).",
+                    "docstring": "Имитирует ввод текста с опечатками Selenium.\n\nПоддерживает адаптивный ввод: если длина текста превышает paste_threshold,\nтекст вставляется целиком (Ctrl+V / Paste) с естественными паузами обдумывания.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    delayed_fix_rate: Вероятность отложенного исправления опечатки навигацией стрелками (0.0 - 1.0).\n    paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.\n    paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).\n    paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29674,7 +29685,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 538,
+                    "line_number": 484,
                     "bases": [],
                     "children": []
                   },
@@ -29694,7 +29705,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 615,
+                    "line_number": 577,
                     "bases": [],
                     "children": []
                   },
@@ -29714,7 +29725,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 725,
+                    "line_number": 687,
                     "bases": [],
                     "children": []
                   }
@@ -30130,7 +30141,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 88,
+                        "line_number": 94,
                         "bases": [],
                         "children": []
                       },
@@ -30152,7 +30163,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 93,
+                        "line_number": 99,
                         "bases": [],
                         "children": []
                       },
@@ -30174,7 +30185,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 98,
+                        "line_number": 104,
                         "bases": [],
                         "children": []
                       },
@@ -30194,7 +30205,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 151,
+                        "line_number": 161,
                         "bases": [],
                         "children": []
                       },
@@ -30214,7 +30225,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 164,
+                        "line_number": 174,
                         "bases": [],
                         "children": []
                       },
@@ -30234,7 +30245,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 172,
+                        "line_number": 185,
                         "bases": [],
                         "children": []
                       },
@@ -30254,7 +30265,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 201,
+                        "line_number": 215,
                         "bases": [],
                         "children": []
                       },
@@ -30274,7 +30285,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 230,
+                        "line_number": 244,
                         "bases": [],
                         "children": []
                       },
@@ -30294,7 +30305,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 258,
+                        "line_number": 273,
                         "bases": [],
                         "children": []
                       }
@@ -30759,8 +30770,8 @@
                     "type": "class",
                     "layer": "internal",
                     "signature": "",
-                    "summary": "Представляет действие ввода символа или нажатия backspace при имитации печати.",
-                    "docstring": "Представляет действие ввода символа или нажатия backspace при имитации печати.",
+                    "summary": "Представляет действие ввода символа или нажатия клавиши при имитации печати.",
+                    "docstring": "Представляет действие ввода символа или нажатия клавиши при имитации печати.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -30799,9 +30810,9 @@
                         "name": "__init__",
                         "type": "method",
                         "layer": "private",
-                        "signature": "(self, layout_error_rate)",
+                        "signature": "(self, layout_error_rate, delayed_fix_rate)",
                         "summary": "Инициализирует генератор опечаток.",
-                        "docstring": "Инициализирует генератор опечаток.\n\nArgs:\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).",
+                        "docstring": "Инициализирует генератор опечаток.\n\nArgs:\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    delayed_fix_rate: Вероятность отложенного исправления опечатки навигацией стрелками (0.0 - 1.0).",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -30819,9 +30830,9 @@
                         "name": "generate_sequence",
                         "type": "method",
                         "layer": "internal",
-                        "signature": "(self, text, error_rate, layout_error_rate)",
+                        "signature": "(self, text, error_rate, layout_error_rate, delayed_fix_rate)",
                         "summary": "Генерирует последовательность нажатий клавиш для ввода текста.",
-                        "docstring": "Генерирует последовательность нажатий клавиш для ввода текста.\n\nВключает случайные опечатки, их обнаружение и исправление через Backspace.\nПри ненулевой layout_error_rate в самом начале ввода может произойти реалистичная\nошибка раскладки (например, ввод нескольких символов латиницей вместо кириллицы\nс последующим полным стиранием и повторным вводом на правильном языке).\n\nArgs:\n    text: Исходный текст.\n    error_rate: Вероятность совершения ошибки на каждом символе.\n    layout_error_rate: Вероятность ошибки раскладки в начале ввода. Если None,\n        используется значение из конструктора (по умолчанию 0.0).\n\nReturns:\n    Список действий TypoAction, имитирующий последовательный ввод текста человеком.",
+                        "docstring": "Генерирует последовательность нажатий клавиш для ввода текста.\n\nВключает случайные опечатки, их обнаружение и исправление через Backspace.\nПри ненулевой layout_error_rate в самом начале ввода может произойти реалистичная\nошибка раскладки (например, ввод нескольких символов латиницей вместо кириллицы\nс последующим полным стиранием и повторным вводом на правильном языке).\nПри ненулевой delayed_fix_rate моделируется более сложная опечатка: пользователь\nдопускает ошибку, по инерции допечатывает несколько символов/слов, а затем возвращается\nклавишами стрелок назад (ArrowLeft), исправляет опечатку и прыгает в конец строки (End).\n\nArgs:\n    text: Исходный текст.\n    error_rate: Вероятность совершения ошибки на каждом символе.\n    layout_error_rate: Вероятность ошибки раскладки в начале ввода. Если None,\n        используется значение из конструктора (по умолчанию 0.0).\n    delayed_fix_rate: Вероятность отложенного исправления опечатки. Если None,\n        используется значение из конструктора (по умолчанию 0.0).\n\nReturns:\n    Список действий TypoAction, имитирующий последовательный ввод текста человеком.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -30831,7 +30842,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 386,
+                        "line_number": 392,
                         "bases": [],
                         "children": []
                       }
@@ -45491,6 +45502,11 @@
       "weight": 6
     },
     {
+      "source": "chutils/scraping/humanize/_actions_helpers",
+      "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/humanize/actions",
       "target": "chutils/exceptions",
       "weight": 1
@@ -45499,6 +45515,11 @@
       "source": "chutils/scraping/humanize/actions",
       "target": "/math_utils",
       "weight": 4
+    },
+    {
+      "source": "chutils/scraping/humanize/actions",
+      "target": "/_actions_helpers",
+      "weight": 6
     },
     {
       "source": "chutils/scraping/humanize/antidetect",
@@ -46385,8 +46406,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "92b3d91c44d972ebc51d0a08bf4913fc619b4b87 (dirty)",
-    "generated_at": "2026-09-20T20:24:07.014193+00:00",
-    "project_hash": "0891fcb2a19de0ec9529a99bd46b2bc3dc427af987b0824d2e012a8fbd5e51b3"
+    "git_commit": "3db6e227c9c7f07638b41358b376a74db43ef927 (dirty)",
+    "generated_at": "2026-09-20T20:51:53.197956+00:00",
+    "project_hash": "0c3af6bcac93760dfcb02303de68f7453cbd4a3f4b8c1e13426df53e76ebc60a"
   }
 }

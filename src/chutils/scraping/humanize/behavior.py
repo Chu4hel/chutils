@@ -38,6 +38,12 @@ class BehavioralProfile(BaseModel):
         le=1.0,
         description="Вероятность ошибки раскладки в самом начале ввода.",
     )
+    delayed_fix_rate: float = Field(
+        default=0.01,
+        ge=0.0,
+        le=1.0,
+        description="Вероятность отложенного исправления опечатки навигацией стрелочками.",
+    )
     gravity: float = Field(
         default=9.0,
         ge=1.0,
@@ -119,6 +125,9 @@ class BehavioralProfile(BaseModel):
         # Ошибка раскладки в начале ввода: от 1% до 4%
         layout_error_rate = round(rng.uniform(0.01, 0.04), 3)
 
+        # Отложенное исправление опечатки стрелочками: от 0.5% до 2.5%
+        delayed_fix_rate = round(rng.uniform(0.005, 0.025), 3)
+
         # Физические параметры движения мыши WindMouse
         gravity = round(rng.uniform(7.5, 12.5), 2)
         wind = round(rng.uniform(2.0, 4.5), 2)
@@ -140,6 +149,7 @@ class BehavioralProfile(BaseModel):
             speed_wpm=speed_wpm,
             typo_rate=typo_rate,
             layout_error_rate=layout_error_rate,
+            delayed_fix_rate=delayed_fix_rate,
             gravity=gravity,
             wind=wind,
             max_step=max_step,
@@ -167,7 +177,10 @@ class BehavioralProfile(BaseModel):
         Returns:
             Экземпляр KeyboardTypoGenerator.
         """
-        return KeyboardTypoGenerator(layout_error_rate=self.layout_error_rate)
+        return KeyboardTypoGenerator(
+            layout_error_rate=self.layout_error_rate,
+            delayed_fix_rate=self.delayed_fix_rate,
+        )
 
     async def async_type_text(
         self,
@@ -193,6 +206,7 @@ class BehavioralProfile(BaseModel):
             speed_wpm=self.speed_wpm,
             key_hold_time=self.key_hold_time,
             layout_error_rate=self.layout_error_rate,
+            delayed_fix_rate=self.delayed_fix_rate,
             paste_threshold=threshold,
             paste_delay_before=self.paste_delay_before,
             paste_delay_after=self.paste_delay_after,
@@ -250,6 +264,7 @@ class BehavioralProfile(BaseModel):
             error_rate=self.typo_rate,
             speed_wpm=self.speed_wpm,
             layout_error_rate=self.layout_error_rate,
+            delayed_fix_rate=self.delayed_fix_rate,
             paste_threshold=threshold,
             paste_delay_before=self.paste_delay_before,
             paste_delay_after=self.paste_delay_after,
