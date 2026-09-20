@@ -70,6 +70,19 @@ class BehavioralProfile(BaseModel):
         default=(0.05, 0.12),
         description="Диапазон задержки удержания кнопки мыши (mouseDown -> mouseUp) в секундах.",
     )
+    paste_threshold: int | None = Field(
+        default=None,
+        ge=1,
+        description="Порог длины текста (в символах) для адаптивной вставки через буфер обмена.",
+    )
+    paste_delay_before: tuple[float, float] = Field(
+        default=(0.4, 1.0),
+        description="Диапазон паузы обдумывания перед вставкой из буфера (в секундах).",
+    )
+    paste_delay_after: tuple[float, float] = Field(
+        default=(0.3, 0.8),
+        description="Диапазон паузы проверки после вставки из буфера (в секундах).",
+    )
 
     @property
     def wpm(self) -> float:
@@ -161,6 +174,7 @@ class BehavioralProfile(BaseModel):
         page: Any,
         selector: str,
         text: str,
+        paste_threshold: int | None = None,
     ) -> None:
         """Вводит текст через Playwright / nodriver с биометрическими параметрами профиля.
 
@@ -168,7 +182,9 @@ class BehavioralProfile(BaseModel):
             page: Объект страницы Playwright Page или вкладки nodriver Tab.
             selector: CSS/XPath селектор поля ввода.
             text: Текст для ввода.
+            paste_threshold: Порог адаптивной вставки через буфер (если None, берется из профиля).
         """
+        threshold = self.paste_threshold if paste_threshold is None else paste_threshold
         await async_type_text(
             page=page,
             selector=selector,
@@ -177,6 +193,9 @@ class BehavioralProfile(BaseModel):
             speed_wpm=self.speed_wpm,
             key_hold_time=self.key_hold_time,
             layout_error_rate=self.layout_error_rate,
+            paste_threshold=threshold,
+            paste_delay_before=self.paste_delay_before,
+            paste_delay_after=self.paste_delay_after,
         )
 
     async def async_click(
@@ -213,6 +232,7 @@ class BehavioralProfile(BaseModel):
         driver: Any,
         selector: str,
         text: str,
+        paste_threshold: int | None = None,
     ) -> None:
         """Синхронно вводит текст через Selenium с биометрическими параметрами профиля.
 
@@ -220,7 +240,9 @@ class BehavioralProfile(BaseModel):
             driver: Экземпляр Selenium WebDriver.
             selector: CSS-селектор поля ввода.
             text: Текст для ввода.
+            paste_threshold: Порог адаптивной вставки через буфер (если None, берется из профиля).
         """
+        threshold = self.paste_threshold if paste_threshold is None else paste_threshold
         type_text(
             driver=driver,
             selector=selector,
@@ -228,6 +250,9 @@ class BehavioralProfile(BaseModel):
             error_rate=self.typo_rate,
             speed_wpm=self.speed_wpm,
             layout_error_rate=self.layout_error_rate,
+            paste_threshold=threshold,
+            paste_delay_before=self.paste_delay_before,
+            paste_delay_after=self.paste_delay_after,
         )
 
     def click(

@@ -18,6 +18,9 @@ mock_input.dispatch_mouse_event = MagicMock(
 mock_input.dispatch_key_event = MagicMock(
     side_effect=lambda **kwargs: ("dispatch_key_event", kwargs)
 )
+mock_input.insert_text = MagicMock(
+    side_effect=lambda **kwargs: ("insert_text", kwargs)
+)
 
 
 from chutils.scraping.humanize.actions import (
@@ -137,6 +140,49 @@ async def test_async_type_text_nodriver() -> None:
     first_send_args = tab.send.call_args_list[0][0][0]
     assert first_send_args[0] == "dispatch_key_event"
     assert "type_" in first_send_args[1]
+
+
+@pytest.mark.asyncio
+async def test_async_type_text_nodriver_paste_threshold(mocker: MockerFixture) -> None:
+    """Проверяет адаптивную вставку длинного текста через paste_threshold в nodriver."""
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.find = AsyncMock()
+    tab.send = AsyncMock()
+
+    mock_element = AsyncMock()
+    mock_element._is_nodriver = True
+    tab.find.return_value = mock_element
+
+    sleep_mock = mocker.patch("asyncio.sleep", new_callable=AsyncMock)
+    long_text = "Длинный текст для вставки через буфер обмена nodriver" * 2
+
+    await async_type_text(
+        tab,
+        selector="#username",
+        text=long_text,
+        paste_threshold=40,
+        paste_delay_before=(0.4, 0.7),
+        paste_delay_after=(0.3, 0.5),
+    )
+
+    tab.find.assert_called_once_with("#username")
+    mock_element.focus.assert_called_once()
+
+    # Должен быть вызван send с insert_text
+    insert_calls = [
+        c[0][0] for c in tab.send.call_args_list if c[0][0][0] == "insert_text"
+    ]
+    assert len(insert_calls) == 1
+    assert insert_calls[0][1]["text"] == long_text
+
+    # dispatch_key_event не должен вызываться для посимвольного ввода
+    key_events = [
+        c[0][0] for c in tab.send.call_args_list if c[0][0][0] == "dispatch_key_event"
+    ]
+    assert len(key_events) == 0
+    assert sleep_mock.call_count >= 2
+
 
 
 @pytest.mark.asyncio

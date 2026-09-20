@@ -186,6 +186,18 @@ await async_type_text(
     speed_wpm=40.0,
     key_hold_time=(0.04, 0.09),
 )
+
+# Адаптивный ввод (Paste/Ctrl+V для длинных текстов, промптов и кода):
+# Короткие строки печатаются по буквам, а тексты длиннее paste_threshold вставляются
+# целиком через буфер с паузами обдумывания до и после вставки.
+await async_type_text(
+    tab,
+    selector="#prompt-input",
+    text=long_prompt_or_code,
+    paste_threshold=100,
+    paste_delay_before=(0.5, 1.2),
+    paste_delay_after=(0.4, 0.8),
+)
 ```
 
 ### Обертки для Selenium (синхронные)

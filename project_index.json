@@ -29602,9 +29602,9 @@
                     "name": "async_type_text",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time, layout_error_rate)",
+                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time, layout_error_rate, paste_threshold, paste_delay_before, paste_delay_after)",
                     "summary": "Имитирует ввод текста с опечатками Playwright или nodriver.",
-                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).",
+                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nПоддерживает адаптивный ввод: если длина текста превышает paste_threshold,\nтекст вставляется целиком (имитируя вставку из буфера обмена Ctrl+V / Paste)\nс естественными паузами обдумывания до и после вставки.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.\n    paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).\n    paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -29634,7 +29634,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 394,
+                    "line_number": 446,
                     "bases": [],
                     "children": []
                   },
@@ -29654,7 +29654,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 446,
+                    "line_number": 498,
                     "bases": [],
                     "children": []
                   },
@@ -29662,9 +29662,9 @@
                     "name": "type_text",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(driver, selector, text, error_rate, speed_wpm, layout_error_rate)",
+                    "signature": "(driver, selector, text, error_rate, speed_wpm, layout_error_rate, paste_threshold, paste_delay_before, paste_delay_after)",
                     "summary": "Имитирует ввод текста с опечатками Selenium.",
-                    "docstring": "Имитирует ввод текста с опечатками Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).",
+                    "docstring": "Имитирует ввод текста с опечатками Selenium.\n\nПоддерживает адаптивный ввод: если длина текста превышает paste_threshold,\nтекст вставляется целиком (Ctrl+V / Paste) с естественными паузами обдумывания.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.\n    paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).\n    paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -29674,7 +29674,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 486,
+                    "line_number": 538,
                     "bases": [],
                     "children": []
                   },
@@ -29694,7 +29694,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 529,
+                    "line_number": 615,
                     "bases": [],
                     "children": []
                   },
@@ -29714,7 +29714,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 639,
+                    "line_number": 725,
                     "bases": [],
                     "children": []
                   }
@@ -30130,7 +30130,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 75,
+                        "line_number": 88,
                         "bases": [],
                         "children": []
                       },
@@ -30152,7 +30152,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 80,
+                        "line_number": 93,
                         "bases": [],
                         "children": []
                       },
@@ -30174,7 +30174,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 85,
+                        "line_number": 98,
                         "bases": [],
                         "children": []
                       },
@@ -30194,7 +30194,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 138,
+                        "line_number": 151,
                         "bases": [],
                         "children": []
                       },
@@ -30214,7 +30214,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 151,
+                        "line_number": 164,
                         "bases": [],
                         "children": []
                       },
@@ -30222,9 +30222,9 @@
                         "name": "async_type_text",
                         "type": "method",
                         "layer": "public",
-                        "signature": "(self, page, selector, text)",
+                        "signature": "(self, page, selector, text, paste_threshold)",
                         "summary": "Вводит текст через Playwright / nodriver с биометрическими параметрами профиля.",
-                        "docstring": "Вводит текст через Playwright / nodriver с биометрическими параметрами профиля.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: CSS/XPath селектор поля ввода.\n    text: Текст для ввода.",
+                        "docstring": "Вводит текст через Playwright / nodriver с биометрическими параметрами профиля.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: CSS/XPath селектор поля ввода.\n    text: Текст для ввода.\n    paste_threshold: Порог адаптивной вставки через буфер (если None, берется из профиля).",
                         "breadcrumbs": {
                           "is_async": true,
                           "is_thread_safe": false,
@@ -30234,7 +30234,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 159,
+                        "line_number": 172,
                         "bases": [],
                         "children": []
                       },
@@ -30254,7 +30254,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 182,
+                        "line_number": 201,
                         "bases": [],
                         "children": []
                       },
@@ -30262,9 +30262,9 @@
                         "name": "type_text",
                         "type": "method",
                         "layer": "public",
-                        "signature": "(self, driver, selector, text)",
+                        "signature": "(self, driver, selector, text, paste_threshold)",
                         "summary": "Синхронно вводит текст через Selenium с биометрическими параметрами профиля.",
-                        "docstring": "Синхронно вводит текст через Selenium с биометрическими параметрами профиля.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.",
+                        "docstring": "Синхронно вводит текст через Selenium с биометрическими параметрами профиля.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор поля ввода.\n    text: Текст для ввода.\n    paste_threshold: Порог адаптивной вставки через буфер (если None, берется из профиля).",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -30274,7 +30274,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 211,
+                        "line_number": 230,
                         "bases": [],
                         "children": []
                       },
@@ -30294,7 +30294,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 233,
+                        "line_number": 258,
                         "bases": [],
                         "children": []
                       }
@@ -46385,8 +46385,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "0046975734cd8329ba87c390fe08e0d6aeb3f403 (dirty)",
-    "generated_at": "2026-09-20T20:08:24.895991+00:00",
-    "project_hash": "034cbef6b6339e5b0db82d683a95e06e12fc42d4e64b7146761b5a75bf27ed82"
+    "git_commit": "92b3d91c44d972ebc51d0a08bf4913fc619b4b87 (dirty)",
+    "generated_at": "2026-09-20T20:24:07.014193+00:00",
+    "project_hash": "0891fcb2a19de0ec9529a99bd46b2bc3dc427af987b0824d2e012a8fbd5e51b3"
   }
 }

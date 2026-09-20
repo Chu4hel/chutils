@@ -103,7 +103,13 @@ async def test_behavioral_profile_async_actions() -> None:
             speed_wpm=profile.speed_wpm,
             key_hold_time=profile.key_hold_time,
             layout_error_rate=profile.layout_error_rate,
+            paste_threshold=profile.paste_threshold,
+            paste_delay_before=profile.paste_delay_before,
+            paste_delay_after=profile.paste_delay_after,
         )
+
+        await profile.async_type_text(page_mock, "#input", "Тест", paste_threshold=20)
+        assert mock_type.call_args.kwargs["paste_threshold"] == 20
 
     with patch("chutils.scraping.humanize.behavior.async_click") as mock_click:
         await profile.async_click(page_mock, selector="#btn")

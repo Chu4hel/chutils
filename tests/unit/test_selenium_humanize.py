@@ -103,6 +103,36 @@ def test_type_text() -> None:
     assert element.send_keys.call_count == 5
 
 
+def test_type_text_paste_threshold(mocker: MockerFixture) -> None:
+    """Проверяет адаптивную вставку текста через paste_threshold в Selenium."""
+    driver = MagicMock()
+    element = MagicMock()
+    driver.find_element.return_value = element
+    sleep_mock = mocker.patch("time.sleep")
+
+    long_text = "Длинный текст для проверки вставки Selenium" * 2
+    type_text(
+        driver,
+        selector="#input",
+        text=long_text,
+        paste_threshold=30,
+        paste_delay_before=(0.4, 0.7),
+        paste_delay_after=(0.3, 0.5),
+    )
+
+    driver.find_element.assert_called_once()
+    element.click.assert_called_once()
+    # Посимвольный send_keys не должен вызываться
+    assert element.send_keys.call_count == 0
+    # Должен быть вызван execute_script с insertText
+    assert driver.execute_script.call_count == 1
+    script_call = driver.execute_script.call_args[0]
+    assert "insertText" in script_call[0]
+    assert script_call[2] == long_text
+    assert sleep_mock.call_count >= 2
+
+
+
 def test_move_mouse_windmouse() -> None:
     """Проверяет перемещение мыши Selenium с алгоритмом WindMouse."""
     driver = MagicMock()

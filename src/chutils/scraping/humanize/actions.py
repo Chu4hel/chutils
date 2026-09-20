@@ -294,8 +294,15 @@ async def async_type_text(
     speed_wpm: float = 40.0,
     key_hold_time: tuple[float, float] = (0.04, 0.09),
     layout_error_rate: float = 0.0,
+    paste_threshold: int | None = None,
+    paste_delay_before: tuple[float, float] = (0.4, 1.0),
+    paste_delay_after: tuple[float, float] = (0.3, 0.8),
 ) -> None:
     """Имитирует ввод текста с опечатками Playwright или nodriver.
+
+    Поддерживает адаптивный ввод: если длина текста превышает paste_threshold,
+    текст вставляется целиком (имитируя вставку из буфера обмена Ctrl+V / Paste)
+    с естественными паузами обдумывания до и после вставки.
 
     Args:
         page: Объект страницы Playwright Page или вкладки nodriver Tab.
@@ -305,6 +312,9 @@ async def async_type_text(
         speed_wpm: Скорость ввода в словах в минуту (WPM).
         key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.
         layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).
+        paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.
+        paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).
+        paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).
     """
     if _is_nodriver(page):
         _ensure_nodriver()
@@ -312,6 +322,27 @@ async def async_type_text(
 
         element = await page.find(selector)
         await element.focus()
+
+        # Адаптивная вставка длинного текста через буфер обмена
+        if paste_threshold is not None and len(text) >= paste_threshold:
+            delay_before = (
+                random.uniform(*paste_delay_before)
+                if paste_delay_before and paste_delay_before[1] > 0
+                else 0.0
+            )
+            if delay_before > 0:
+                await asyncio.sleep(delay_before)
+
+            await page.send(cdp_input.insert_text(text=text))
+
+            delay_after = (
+                random.uniform(*paste_delay_after)
+                if paste_delay_after and paste_delay_after[1] > 0
+                else 0.0
+            )
+            if delay_after > 0:
+                await asyncio.sleep(delay_after)
+            return
 
         char_delay = 60.0 / (speed_wpm * 5)
         delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.25)
@@ -366,6 +397,27 @@ async def async_type_text(
     elif _is_playwright(page):
         _ensure_playwright()
         await page.focus(selector)
+
+        # Адаптивная вставка длинного текста через буфер обмена
+        if paste_threshold is not None and len(text) >= paste_threshold:
+            delay_before = (
+                random.uniform(*paste_delay_before)
+                if paste_delay_before and paste_delay_before[1] > 0
+                else 0.0
+            )
+            if delay_before > 0:
+                await asyncio.sleep(delay_before)
+
+            await page.keyboard.insert_text(text)
+
+            delay_after = (
+                random.uniform(*paste_delay_after)
+                if paste_delay_after and paste_delay_after[1] > 0
+                else 0.0
+            )
+            if delay_after > 0:
+                await asyncio.sleep(delay_after)
+            return
 
         # 40 WPM = 200 CPM (символов в минуту) = 0.3 секунды на символ
         char_delay = 60.0 / (speed_wpm * 5)
@@ -490,8 +542,14 @@ def type_text(
     error_rate: float = 0.05,
     speed_wpm: float = 40.0,
     layout_error_rate: float = 0.0,
+    paste_threshold: int | None = None,
+    paste_delay_before: tuple[float, float] = (0.4, 1.0),
+    paste_delay_after: tuple[float, float] = (0.3, 0.8),
 ) -> None:
     """Имитирует ввод текста с опечатками Selenium.
+
+    Поддерживает адаптивный ввод: если длина текста превышает paste_threshold,
+    текст вставляется целиком (Ctrl+V / Paste) с естественными паузами обдумывания.
 
     Args:
         driver: Экземпляр Selenium WebDriver.
@@ -500,6 +558,9 @@ def type_text(
         error_rate: Вероятность совершения опечатки (0.0 - 1.0).
         speed_wpm: Скорость ввода в словах в минуту (WPM).
         layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).
+        paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.
+        paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).
+        paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).
     """
     _ensure_selenium()
     from selenium.webdriver.common.by import By
@@ -507,6 +568,31 @@ def type_text(
 
     element = driver.find_element(By.CSS_SELECTOR, selector)
     element.click()
+
+    # Адаптивная вставка длинного текста через буфер обмена
+    if paste_threshold is not None and len(text) >= paste_threshold:
+        delay_before = (
+            random.uniform(*paste_delay_before)
+            if paste_delay_before and paste_delay_before[1] > 0
+            else 0.0
+        )
+        if delay_before > 0:
+            time.sleep(delay_before)
+
+        driver.execute_script(
+            "arguments[0].focus(); document.execCommand('insertText', false, arguments[1]);",
+            element,
+            text,
+        )
+
+        delay_after = (
+            random.uniform(*paste_delay_after)
+            if paste_delay_after and paste_delay_after[1] > 0
+            else 0.0
+        )
+        if delay_after > 0:
+            time.sleep(delay_after)
+        return
 
     char_delay = 60.0 / (speed_wpm * 5)
     delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.25)
