@@ -116,7 +116,9 @@ profile = BehavioralProfile.from_seed("user_account_42")
 
 print(profile.speed_wpm)        # напр., 52.4 WPM
 print(profile.typo_rate)        # напр., 0.038 (3.8% опечаток)
+print(profile.delayed_fix_rate) # отложенное исправление стрелками (напр., 0.015)
 print(profile.gravity)          # физика мыши WindMouse
+
 print(profile.key_hold_time)    # диапазон удержания клавиш (напр., 0.035 - 0.075 сек)
 print(profile.click_hold_time)  # диапазон удержания клика (напр., 0.052 - 0.114 сек)
 

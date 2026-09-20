@@ -16,35 +16,19 @@ from .math_utils import (
 
 
 from ._actions_helpers import (
+    _build_selenium_key_map,
     _ensure_nodriver,
     _ensure_playwright,
     _ensure_selenium,
+    _generate_scroll_points,
     _get_lognormal_delay,
     _is_nodriver,
     _is_playwright,
+    async_human_sleep,
+    human_sleep,
 )
 
 
-def human_sleep(min_seconds: float, max_seconds: float) -> None:
-    """Синхронно задерживает выполнение на случайное время, имитируя поведение человека.
-
-    Args:
-        min_seconds: Минимальное время задержки (в секундах).
-        max_seconds: Максимальное время задержки (в секундах).
-    """
-    delay = _get_lognormal_delay(min_seconds, max_seconds)
-    time.sleep(delay)
-
-
-async def async_human_sleep(min_seconds: float, max_seconds: float) -> None:
-    """Асинхронно задерживает выполнение на случайное время, имитируя поведение человека.
-
-    Args:
-        min_seconds: Минимальное время задержки (в секундах).
-        max_seconds: Максимальное время задержки (в секундах).
-    """
-    delay = _get_lognormal_delay(min_seconds, max_seconds)
-    await asyncio.sleep(delay)
 
 
 async def async_move_mouse(
@@ -168,13 +152,7 @@ async def async_scroll_to(
         except (ValueError, TypeError):
             scroll_y = 0
 
-        points = []
-        for i in range(steps):
-            t = (i + 1) / steps
-            px = int(scroll_x + (x - scroll_x) * t)
-            py = int(scroll_y + (y - scroll_y) * t)
-            points.append((px, py))
-
+        points = _generate_scroll_points(scroll_x, scroll_y, x, y, steps)
         for px, py in points:
             await page.evaluate(f"window.scrollTo({px}, {py})")
             if delay_between_steps > 0:
@@ -186,17 +164,12 @@ async def async_scroll_to(
         scroll_x = await page.evaluate("window.scrollX || window.pageXOffset || 0")
         scroll_y = await page.evaluate("window.scrollY || window.pageYOffset || 0")
 
-        points = []
-        for i in range(steps):
-            t = (i + 1) / steps
-            px = int(scroll_x + (x - scroll_x) * t)
-            py = int(scroll_y + (y - scroll_y) * t)
-            points.append((px, py))
-
+        points = _generate_scroll_points(scroll_x, scroll_y, x, y, steps)
         for px, py in points:
             await page.evaluate(f"window.scrollTo({px}, {py})")
             if delay_between_steps > 0:
                 await asyncio.sleep(delay_between_steps)
+
     else:
         raise ValueError(
             f"Не удалось определить тип переданного объекта: {type(page)}. "
@@ -468,17 +441,12 @@ def scroll_to(
         "return window.scrollY || window.pageYOffset || 0;"
     )
 
-    points = []
-    for i in range(steps):
-        t = (i + 1) / steps
-        px = int(scroll_x + (x - scroll_x) * t)
-        py = int(scroll_y + (y - scroll_y) * t)
-        points.append((px, py))
-
+    points = _generate_scroll_points(scroll_x, scroll_y, x, y, steps)
     for px, py in points:
         driver.execute_script(f"window.scrollTo({px}, {py});")
         if delay_between_steps > 0:
             time.sleep(delay_between_steps)
+
 
 
 def type_text(
@@ -552,14 +520,7 @@ def type_text(
         delayed_fix_rate=delayed_fix_rate,
     )
 
-    selenium_keys_map = {
-        "ArrowLeft": Keys.ARROW_LEFT,
-        "ArrowRight": Keys.ARROW_RIGHT,
-        "End": Keys.END,
-        "Home": Keys.HOME,
-        "Backspace": Keys.BACKSPACE,
-        "Delete": Keys.DELETE,
-    }
+    selenium_keys_map = _build_selenium_key_map(Keys)
 
     for action in sequence:
         if action.action == "type":

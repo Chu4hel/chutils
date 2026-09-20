@@ -29517,18 +29517,7 @@
                     "line_number": 95,
                     "bases": [],
                     "children": []
-                  }
-                ]
-              },
-              {
-                "name": "actions",
-                "path": "chutils/scraping/humanize/actions",
-                "type": "module",
-                "layer": "internal",
-                "summary": "",
-                "docstring": "",
-                "children": [],
-                "symbols": [
+                  },
                   {
                     "name": "human_sleep",
                     "type": "function",
@@ -29545,7 +29534,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 28,
+                    "line_number": 116,
                     "bases": [],
                     "children": []
                   },
@@ -29565,10 +29554,61 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 39,
+                    "line_number": 129,
                     "bases": [],
                     "children": []
                   },
+                  {
+                    "name": "_build_selenium_key_map",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(keys_cls)",
+                    "summary": "Строит маппинг строковых идентификаторов клавиш на константы Selenium Keys.",
+                    "docstring": "Строит маппинг строковых идентификаторов клавиш на константы Selenium Keys.\n\nArgs:\n    keys_cls: Класс selenium.webdriver.common.keys.Keys.\n\nReturns:\n    Словарь соответствия символов константам Selenium Keys.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 142,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_generate_scroll_points",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(start_x, start_y, target_x, target_y, steps)",
+                    "summary": "Генерирует промежуточные координаты для плавного скроллинга.",
+                    "docstring": "Генерирует промежуточные координаты для плавного скроллинга.\n\nArgs:\n    start_x: Текущая координата X.\n    start_y: Текущая координата Y.\n    target_x: Конечная координата X.\n    target_y: Конечная координата Y.\n    steps: Количество промежуточных шагов.\n\nReturns:\n    Список пар координат (px, py).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 161,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "actions",
+                "path": "chutils/scraping/humanize/actions",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": [
                   {
                     "name": "async_move_mouse",
                     "type": "function",
@@ -29585,7 +29625,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 50,
+                    "line_number": 34,
                     "bases": [],
                     "children": []
                   },
@@ -29605,7 +29645,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 138,
+                    "line_number": 122,
                     "bases": [],
                     "children": []
                   },
@@ -29625,7 +29665,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 207,
+                    "line_number": 180,
                     "bases": [],
                     "children": []
                   },
@@ -29645,7 +29685,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 392,
+                    "line_number": 365,
                     "bases": [],
                     "children": []
                   },
@@ -29665,7 +29705,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 444,
+                    "line_number": 417,
                     "bases": [],
                     "children": []
                   },
@@ -29685,7 +29725,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 484,
+                    "line_number": 452,
                     "bases": [],
                     "children": []
                   },
@@ -29705,7 +29745,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 577,
+                    "line_number": 538,
                     "bases": [],
                     "children": []
                   },
@@ -29725,7 +29765,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 687,
+                    "line_number": 648,
                     "bases": [],
                     "children": []
                   }
@@ -45519,7 +45559,7 @@
     {
       "source": "chutils/scraping/humanize/actions",
       "target": "/_actions_helpers",
-      "weight": 6
+      "weight": 10
     },
     {
       "source": "chutils/scraping/humanize/antidetect",
@@ -46406,8 +46446,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "3db6e227c9c7f07638b41358b376a74db43ef927 (dirty)",
-    "generated_at": "2026-09-20T20:51:53.197956+00:00",
-    "project_hash": "0c3af6bcac93760dfcb02303de68f7453cbd4a3f4b8c1e13426df53e76ebc60a"
+    "git_commit": "660469218c6080f2d6ff23a23cc9d6d6c3783f8f (dirty)",
+    "generated_at": "2026-09-20T21:00:04.453252+00:00",
+    "project_hash": "184b1c780b862aa87699bf13e5083064a44ef882473cf94600d062548e315979"
   }
 }

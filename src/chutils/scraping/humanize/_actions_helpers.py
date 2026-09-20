@@ -111,3 +111,74 @@ def _get_lognormal_delay(min_seconds: float, max_seconds: float) -> float:
     sigma = (max_seconds - min_seconds) / 6.0  # 3-сигма правило
     val = random.gauss(mean, sigma)
     return max(min_seconds, min(val, max_seconds))
+
+
+def human_sleep(min_seconds: float, max_seconds: float) -> None:
+    """Синхронно задерживает выполнение на случайное время, имитируя поведение человека.
+
+    Args:
+        min_seconds: Минимальное время задержки (в секундах).
+        max_seconds: Максимальное время задержки (в секундах).
+    """
+    import time
+
+    delay = _get_lognormal_delay(min_seconds, max_seconds)
+    time.sleep(delay)
+
+
+async def async_human_sleep(min_seconds: float, max_seconds: float) -> None:
+    """Асинхронно задерживает выполнение на случайное время, имитируя поведение человека.
+
+    Args:
+        min_seconds: Минимальное время задержки (в секундах).
+        max_seconds: Максимальное время задержки (в секундах).
+    """
+    import asyncio
+
+    delay = _get_lognormal_delay(min_seconds, max_seconds)
+    await asyncio.sleep(delay)
+
+
+def _build_selenium_key_map(keys_cls: Any) -> dict[str, Any]:
+    """Строит маппинг строковых идентификаторов клавиш на константы Selenium Keys.
+
+    Args:
+        keys_cls: Класс selenium.webdriver.common.keys.Keys.
+
+    Returns:
+        Словарь соответствия символов константам Selenium Keys.
+    """
+    return {
+        "ArrowLeft": getattr(keys_cls, "ARROW_LEFT", "ArrowLeft"),
+        "ArrowRight": getattr(keys_cls, "ARROW_RIGHT", "ArrowRight"),
+        "End": getattr(keys_cls, "END", "End"),
+        "Home": getattr(keys_cls, "HOME", "Home"),
+        "Backspace": getattr(keys_cls, "BACKSPACE", "Backspace"),
+        "Delete": getattr(keys_cls, "DELETE", "Delete"),
+    }
+
+
+def _generate_scroll_points(
+    start_x: int, start_y: int, target_x: int, target_y: int, steps: int
+) -> list[tuple[int, int]]:
+    """Генерирует промежуточные координаты для плавного скроллинга.
+
+    Args:
+        start_x: Текущая координата X.
+        start_y: Текущая координата Y.
+        target_x: Конечная координата X.
+        target_y: Конечная координата Y.
+        steps: Количество промежуточных шагов.
+
+    Returns:
+        Список пар координат (px, py).
+    """
+    points: list[tuple[int, int]] = []
+    for i in range(steps):
+        t = (i + 1) / steps
+        px = int(start_x + (target_x - start_x) * t)
+        py = int(start_y + (target_y - start_y) * t)
+        points.append((px, py))
+    return points
+
+
