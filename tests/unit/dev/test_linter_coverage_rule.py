@@ -173,3 +173,63 @@ def test_linter_coverage_rule_files_ignore_by_file_configs(tmp_path):
     # Должно быть ровно 1 предупреждение (на git_ignored.py)
     assert len(results) == 1
     assert Path(results[0].file_path).name == "git_ignored.py"
+
+
+def test_linter_coverage_rule_enabled_when_rules_empty_list(tmp_path):
+    """Тест: LinterCoverageRule активен при пустом списке rules (все правила включены)."""
+    rule = LinterCoverageRule()
+    rule.config = {
+        "dependencies": {"src/chutils/covered.py": ["docs/api.md"]},
+        "rules": [],  # Пустой список rules = все правила активны
+    }
+
+    src_dir = tmp_path / "src" / "chutils"
+    src_dir.mkdir(parents=True, exist_ok=True)
+    (src_dir / "covered.py").write_text("print('covered')", encoding="utf-8")
+    (src_dir / "uncovered.py").write_text("print('uncovered')", encoding="utf-8")
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert Path(results[0].file_path).name == "uncovered.py"
+
+
+def test_linter_coverage_rule_disabled_via_exclude_rules(tmp_path):
+    """Тест: LinterCoverageRule отключается, если FileDependencySyncRule указано в exclude_rules."""
+    rule = LinterCoverageRule()
+    rule.config = {
+        "dependencies": {"src/chutils/covered.py": ["docs/api.md"]},
+        "exclude_rules": ["FileDependencySyncRule"],
+    }
+
+    src_dir = tmp_path / "src" / "chutils"
+    src_dir.mkdir(parents=True, exist_ok=True)
+    (src_dir / "covered.py").write_text("print('covered')", encoding="utf-8")
+    (src_dir / "uncovered.py").write_text("print('uncovered')", encoding="utf-8")
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 0
+
+
+def test_linter_coverage_rule_staged_mode(tmp_path):
+    """Тест: В режиме staged LinterCoverageRule проверяет только измененные staged файлы."""
+    rule = LinterCoverageRule()
+    rule.staged = True
+    rule.config = {
+        "dependencies": {"src/chutils/covered.py": ["docs/api.md"]},
+    }
+
+    src_dir = tmp_path / "src" / "chutils"
+    src_dir.mkdir(parents=True, exist_ok=True)
+    covered_file = src_dir / "covered.py"
+    covered_file.write_text("print('covered')", encoding="utf-8")
+    uncovered_file = src_dir / "uncovered.py"
+    uncovered_file.write_text("print('uncovered')", encoding="utf-8")
+    other_uncovered = src_dir / "other_uncovered.py"
+    other_uncovered.write_text("print('other')", encoding="utf-8")
+
+    # Передаем в files только uncovered.py (staged)
+    results = rule.check(str(tmp_path), [str(uncovered_file.resolve())])
+
+    # Должно быть только 1 предупреждение на uncovered.py, а other_uncovered не проверяется
+    assert len(results) == 1
+    assert Path(results[0].file_path).name == "uncovered.py"

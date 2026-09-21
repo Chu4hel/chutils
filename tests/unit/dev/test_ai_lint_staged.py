@@ -9,7 +9,12 @@ import pytest
 from pytest_mock import MockerFixture
 
 from chutils.dev.ai_lint import LinterEngine
-from chutils.dev.rules import APIMapRule, EnvSyncRule, ManifestRule
+from chutils.dev.rules import (
+    APIMapRule,
+    EnvSyncRule,
+    FileDependencySyncRule,
+    ManifestRule,
+)
 
 
 @pytest.fixture
@@ -188,3 +193,56 @@ def test_ai_lint_command_staged_output_message(mocker: MockerFixture) -> None:
     cmd.handle(args_full)
     output_full = mock_console.print.call_args[0][0]
     assert "кодовой базы" in output_full
+
+
+def test_file_dependency_sync_rule_staged_mode(
+    mock_git_diff: MockerFixture, tmp_path: Path
+) -> None:
+    """Проверяет, что FileDependencySyncRule в режиме staged анализирует только staged изменения."""
+    rule = FileDependencySyncRule()
+    rule.staged = True
+    rule.config = {
+        "dependencies": {
+            "src/chutils/module.py": ["docs/module.md"],
+        }
+    }
+
+    # Исходный файл в src
+    src_file = tmp_path / "src" / "chutils" / "module.py"
+    src_file.parent.mkdir(parents=True, exist_ok=True)
+    src_file.touch()
+
+    # 1. Ситуация: в staged есть изменения module.py, но нет docs/module.md
+    def mock_run_staged(cmd, **kwargs):
+        res = MagicMock()
+        res.returncode = 0
+        if "--cached" in cmd and "--diff-filter=A" in cmd:
+            res.stdout = ""
+        elif "--cached" in cmd:
+            res.stdout = "src/chutils/module.py\n"
+        else:
+            # unstaged содержит docs/module.md, но это не должно помочь в staged режиме!
+            res.stdout = "docs/module.md\n"
+        return res
+
+    mock_git_diff.side_effect = mock_run_staged
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "docs/module.md" in results[0].message
+
+    # 2. Ситуация: в staged изменения docs/module.md тоже подготовлены
+    def mock_run_synced(cmd, **kwargs):
+        res = MagicMock()
+        res.returncode = 0
+        if "--cached" in cmd and "--diff-filter=A" in cmd:
+            res.stdout = ""
+        elif "--cached" in cmd:
+            res.stdout = "src/chutils/module.py\ndocs/module.md\n"
+        else:
+            res.stdout = ""
+        return res
+
+    mock_git_diff.side_effect = mock_run_synced
+    results_synced = rule.check(str(tmp_path), [])
+    assert len(results_synced) == 0

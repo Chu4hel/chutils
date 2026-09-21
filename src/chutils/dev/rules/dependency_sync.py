@@ -7,11 +7,12 @@ from pathlib import Path
 from ..ai_lint import LintResult, Rule
 
 
-def get_git_changed_files(base_dir: str) -> list[str]:
+def get_git_changed_files(base_dir: str, staged_only: bool = False) -> list[str]:
     """Возвращает список всех измененных, добавленных и неотслеживаемых файлов в Git.
 
     Args:
         base_dir: Путь к корню проекта.
+        staged_only: Если True, возвращает только staged изменения (подготовленные к коммиту).
 
     Returns:
         Список абсолютных путей к измененным файлам.
@@ -33,31 +34,32 @@ def get_git_changed_files(base_dir: str) -> list[str]:
             if line:
                 changed_files.add(str((base_path / line).resolve()))
 
-        # 2. Unstaged изменения
-        res_unstaged = subprocess.run(
-            ["git", "diff", "--name-only"],
-            cwd=str(base_path),
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        for line in res_unstaged.stdout.splitlines():
-            line = line.strip()
-            if line:
-                changed_files.add(str((base_path / line).resolve()))
+        if not staged_only:
+            # 2. Unstaged изменения
+            res_unstaged = subprocess.run(
+                ["git", "diff", "--name-only"],
+                cwd=str(base_path),
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            for line in res_unstaged.stdout.splitlines():
+                line = line.strip()
+                if line:
+                    changed_files.add(str((base_path / line).resolve()))
 
-        # 3. Untracked файлы
-        res_untracked = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard"],
-            cwd=str(base_path),
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        for line in res_untracked.stdout.splitlines():
-            line = line.strip()
-            if line:
-                changed_files.add(str((base_path / line).resolve()))
+            # 3. Untracked файлы
+            res_untracked = subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard"],
+                cwd=str(base_path),
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            for line in res_untracked.stdout.splitlines():
+                line = line.strip()
+                if line:
+                    changed_files.add(str((base_path / line).resolve()))
 
     except (subprocess.SubprocessError, FileNotFoundError):
         pass
@@ -65,11 +67,12 @@ def get_git_changed_files(base_dir: str) -> list[str]:
     return sorted(changed_files)
 
 
-def get_git_new_files(base_dir: str) -> list[str]:
+def get_git_new_files(base_dir: str, staged_only: bool = False) -> list[str]:
     """Возвращает список всех новых (добавленных или неотслеживаемых) файлов в Git.
 
     Args:
         base_dir: Путь к корню проекта.
+        staged_only: Если True, возвращает только staged добавленные файлы.
 
     Returns:
         Список абсолютных путей к новым файлам.
@@ -91,18 +94,19 @@ def get_git_new_files(base_dir: str) -> list[str]:
             if line:
                 new_files.add(str((base_path / line).resolve()))
 
-        # 2. Untracked (неотслеживаемые файлы, которые еще не добавлены)
-        res_untracked = subprocess.run(
-            ["git", "ls-files", "--others", "--exclude-standard"],
-            cwd=str(base_path),
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        for line in res_untracked.stdout.splitlines():
-            line = line.strip()
-            if line:
-                new_files.add(str((base_path / line).resolve()))
+        if not staged_only:
+            # 2. Untracked (неотслеживаемые файлы, которые еще не добавлены)
+            res_untracked = subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard"],
+                cwd=str(base_path),
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            for line in res_untracked.stdout.splitlines():
+                line = line.strip()
+                if line:
+                    new_files.add(str((base_path / line).resolve()))
 
     except (subprocess.SubprocessError, FileNotFoundError):
         pass
@@ -151,7 +155,7 @@ def match_glob(file_path: Path, glob_pattern: str, base_dir: Path) -> bool:
 
 
 def is_file_ignored(file_path: Path) -> bool:
-    """Проверяет, содержит ли файл директиву игнорирования правила.
+    """Проверяет, содержит ли исходный файл директиву игнорирования правила.
 
     Args:
         file_path: Путь к проверяемому файлу.
@@ -159,14 +163,22 @@ def is_file_ignored(file_path: Path) -> bool:
     Returns:
         True, если в файле есть комментарий игнорирования, иначе False.
     """
+    # Документация не может быть проигнорирована как исходник
+    if file_path.suffix.lower() in (".md", ".rst", ".txt"):
+        return False
+
     try:
         with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-            content = f.read()
-        return "chutils:ignore[filedependencysyncrule]" in content.lower().replace(
-            " ", ""
-        )
+            for _ in range(50):
+                line = f.readline()
+                if not line:
+                    break
+                line_clean = line.strip().lower().replace(" ", "")
+                if "#chutils:ignore[filedependencysyncrule]" in line_clean or "#chutils:ignore[all]" in line_clean:
+                    return True
     except Exception:
         return False
+    return False
 
 
 class FileDependencySyncRule(Rule):
@@ -196,17 +208,19 @@ class FileDependencySyncRule(Rule):
         if not dependencies:
             return results
 
-        # Получаем все измененные в Git файлы и новые файлы
-        git_changed = get_git_changed_files(base_dir)
-        git_new = get_git_new_files(base_dir)
+        # Получаем все измененные в Git файлы и новые файлы (с учетом режима staged)
+        is_staged = getattr(self, "staged", False)
+        git_changed = get_git_changed_files(base_dir, staged_only=is_staged)
+        git_new = get_git_new_files(base_dir, staged_only=is_staged)
         if not git_changed:
             return results
 
         # FileDependencySyncRule НАМЕРЕННО ИГНОРИРУЕТ глобальные списки .gitignore, .chutilsignore и [ai-lint] ignore,
         # так как файлы документации (docs/*.md, api_map.md) и схемы могут находиться во внешних/игнорируемых каталогах.
         # Учитывается ТОЛЬКО инлайн-директива: # chutils: ignore[FileDependencySyncRule]
+        all_changed = [Path(f_str) for f_str in git_changed]
         active_changed = [
-            Path(f_str) for f_str in git_changed if not is_file_ignored(Path(f_str))
+            f for f in all_changed if not is_file_ignored(f)
         ]
         active_new = [
             Path(f_str) for f_str in git_new if not is_file_ignored(Path(f_str))
@@ -232,7 +246,7 @@ class FileDependencySyncRule(Rule):
             has_dep_change = False
             for dep_glob in dep_globs:
                 matching_deps = [
-                    f for f in active_changed if match_glob(f, dep_glob, base_path)
+                    f for f in all_changed if match_glob(f, dep_glob, base_path)
                 ]
                 if matching_deps:
                     has_dep_change = True

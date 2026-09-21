@@ -15529,9 +15529,9 @@
                     "name": "get_git_changed_files",
                     "type": "function",
                     "layer": "internal",
-                    "signature": "(base_dir)",
+                    "signature": "(base_dir, staged_only)",
                     "summary": "Возвращает список всех измененных, добавленных и неотслеживаемых файлов в Git.",
-                    "docstring": "Возвращает список всех измененных, добавленных и неотслеживаемых файлов в Git.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Список абсолютных путей к измененным файлам.",
+                    "docstring": "Возвращает список всех измененных, добавленных и неотслеживаемых файлов в Git.\n\nArgs:\n    base_dir: Путь к корню проекта.\n    staged_only: Если True, возвращает только staged изменения (подготовленные к коммиту).\n\nReturns:\n    Список абсолютных путей к измененным файлам.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -15549,9 +15549,9 @@
                     "name": "get_git_new_files",
                     "type": "function",
                     "layer": "internal",
-                    "signature": "(base_dir)",
+                    "signature": "(base_dir, staged_only)",
                     "summary": "Возвращает список всех новых (добавленных или неотслеживаемых) файлов в Git.",
-                    "docstring": "Возвращает список всех новых (добавленных или неотслеживаемых) файлов в Git.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Список абсолютных путей к новым файлам.",
+                    "docstring": "Возвращает список всех новых (добавленных или неотслеживаемых) файлов в Git.\n\nArgs:\n    base_dir: Путь к корню проекта.\n    staged_only: Если True, возвращает только staged добавленные файлы.\n\nReturns:\n    Список абсолютных путей к новым файлам.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -15561,7 +15561,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 68,
+                    "line_number": 70,
                     "bases": [],
                     "children": []
                   },
@@ -15581,7 +15581,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 113,
+                    "line_number": 117,
                     "bases": [],
                     "children": []
                   },
@@ -15590,8 +15590,8 @@
                     "type": "function",
                     "layer": "internal",
                     "signature": "(file_path)",
-                    "summary": "Проверяет, содержит ли файл директиву игнорирования правила.",
-                    "docstring": "Проверяет, содержит ли файл директиву игнорирования правила.\n\nArgs:\n    file_path: Путь к проверяемому файлу.\n\nReturns:\n    True, если в файле есть комментарий игнорирования, иначе False.",
+                    "summary": "Проверяет, содержит ли исходный файл директиву игнорирования правила.",
+                    "docstring": "Проверяет, содержит ли исходный файл директиву игнорирования правила.\n\nArgs:\n    file_path: Путь к проверяемому файлу.\n\nReturns:\n    True, если в файле есть комментарий игнорирования, иначе False.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -15601,7 +15601,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 153,
+                    "line_number": 157,
                     "bases": [],
                     "children": []
                   },
@@ -15621,7 +15621,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 172,
+                    "line_number": 184,
                     "bases": [
                       "..ai_lint.Rule"
                     ],
@@ -15642,7 +15642,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 181,
+                        "line_number": 193,
                         "bases": [],
                         "children": []
                       }
@@ -47518,8 +47518,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "84928a6b437399ba5f0d5fe7e35ed905e14aec9f (dirty)",
-    "generated_at": "2026-09-21T10:33:51.198751+00:00",
-    "project_hash": "d19bbad5a6d82e142d33c7394080473f475093202a5464f7b7296bbf5df4c125"
+    "git_commit": "9e72f2f48cdad80255b899fa3dbc564adf6fc5ba (dirty)",
+    "generated_at": "2026-09-21T10:47:59.552851+00:00",
+    "project_hash": "dd4efdcd220e8febf643814c84f61f31e0454b774a92987b3e92cece0fc45a91"
   }
 }
