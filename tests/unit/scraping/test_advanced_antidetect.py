@@ -134,4 +134,7 @@ def test_get_browser_launch_args_enhanced() -> None:
     assert "--no-sandbox" in args
     assert "--disable-dev-shm-usage" in args
     assert any("--lang=" in a for a in args)
-    assert any("IsolateOrigins" in a or "disable-features" in a for a in args)
+    assert "--mute-audio" in args
+    assert "--disable-background-timer-throttling" in args
+    assert not any("use-fake-ui-for-media-stream" in a for a in args)
+    assert not any("IsolateOrigins" in a or "disable-features" in a for a in args)

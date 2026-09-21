@@ -271,25 +271,25 @@ def get_browser_launch_args() -> list[str]:
     """Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.
 
     Note:
-        Флаг ``--disable-blink-features=AutomationControlled`` намеренно исключен,
-        так как в современных версиях Chromium он вызывает системное предупреждение
-        (инфобар) о неподдерживаемом флаге. Скрытие ``navigator.webdriver``
-        выполняется через CDP-инъекцию скрипта антидетекта.
+        Флаги ``--disable-blink-features=AutomationControlled``, ``--use-fake-ui-for-media-stream``
+        и подобные намеренно исключены, так как в современных версиях Chromium они
+        вызывают системный инфобар о неподдерживаемых флагах или детектируются
+        антибот-системами. Скрытие ``navigator.webdriver`` выполняется через
+        CDP-инъекцию скрипта антидетекта.
 
     Returns:
         Список аргументов командной строки запуска браузера.
     """
     return [
-        "--disable-features=IsolateOrigins,site-per-process",
         "--no-sandbox",
         "--disable-dev-shm-usage",
-        "--use-fake-ui-for-media-stream",
-        "--use-fake-device-for-media-stream",
         "--no-first-run",
         "--no-default-browser-check",
         "--password-store=basic",
         "--lang=en-US,en;q=0.9",
-        "--enable-webgl",
+        "--mute-audio",
+        "--disable-background-timer-throttling",
+        "--disable-component-update",
     ]
 
 

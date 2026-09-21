@@ -30860,7 +30860,7 @@
                     "layer": "public",
                     "signature": "()",
                     "summary": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.",
-                    "docstring": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.\n\nNote:\n    Флаг ``--disable-blink-features=AutomationControlled`` намеренно исключен,\n    так как в современных версиях Chromium он вызывает системное предупреждение\n    (инфобар) о неподдерживаемом флаге. Скрытие ``navigator.webdriver``\n    выполняется через CDP-инъекцию скрипта антидетекта.\n\nReturns:\n    Список аргументов командной строки запуска браузера.",
+                    "docstring": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.\n\nNote:\n    Флаги ``--disable-blink-features=AutomationControlled``, ``--use-fake-ui-for-media-stream``\n    и подобные намеренно исключены, так как в современных версиях Chromium они\n    вызывают системный инфобар о неподдерживаемых флагах или детектируются\n    антибот-системами. Скрытие ``navigator.webdriver`` выполняется через\n    CDP-инъекцию скрипта антидетекта.\n\nReturns:\n    Список аргументов командной строки запуска браузера.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -47498,8 +47498,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "dc5859d2236f27a0650157b74fd7de72c226e4e2 (dirty)",
-    "generated_at": "2026-09-21T10:03:16.073952+00:00",
-    "project_hash": "612d69f0f2c08d5710e65a1e0e2f7f3bd9faa24fd45baecf2867d2bf7c8f45d6"
+    "git_commit": "4c61006f8eee328a8756e3c044c84ea02516414e (dirty)",
+    "generated_at": "2026-09-21T10:12:14.537323+00:00",
+    "project_hash": "e944b0200ed04eeab01c769e5a568d5c8d6eeb57aff912c7d2d61222b5c1ff9e"
   }
 }
