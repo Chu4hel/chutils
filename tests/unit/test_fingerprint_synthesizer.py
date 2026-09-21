@@ -267,3 +267,42 @@ def test_synthesizer_get_or_create(tmp_path: Path) -> None:
 
     fp3 = synthesizer.get_or_create(seed="alpha_user", storage_dir=tmp_path)
     assert fp3.hardware.memory_gb == 128
+
+
+def test_synthesizer_auto_mode_with_seed_uses_browserforge_when_available(
+    mocker: MockerFixture,
+) -> None:
+    """Проверяет, что в режиме 'auto' сид передаётся в BrowserForgeProvider, если browserforge установлен."""
+    mock_provider = MagicMock()
+    mock_fp = MagicMock()
+    mock_provider.generate.return_value = mock_fp
+
+    mocker.patch("importlib.util.find_spec", return_value=MagicMock())
+    mocker.patch(
+        "chutils.scraping.fingerprint.synthesizer.BrowserForgeProvider",
+        return_value=mock_provider,
+    )
+
+    synthesizer = FingerprintSynthesizer(mode="auto")
+    result = synthesizer.synthesize(seed="user_seed_123")
+
+    mock_provider.generate.assert_called_once_with("user_seed_123")
+    assert result is mock_fp
+
+
+def test_synthesizer_auto_mode_fallback_on_browserforge_error(
+    mocker: MockerFixture,
+) -> None:
+    """Проверяет fallback на процедурный генератор при ошибке в browserforge."""
+    mocker.patch("importlib.util.find_spec", return_value=MagicMock())
+    mocker.patch(
+        "chutils.scraping.fingerprint.synthesizer.BrowserForgeProvider.generate",
+        side_effect=RuntimeError("BrowserForge internal error"),
+    )
+
+    synthesizer = FingerprintSynthesizer(mode="auto")
+    result = synthesizer.synthesize(seed="user_seed_456")
+
+    assert result.source == "procedural"
+    assert result.seed == "user_seed_456"
+
