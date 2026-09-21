@@ -407,7 +407,8 @@ if solved:
 from chutils.scraping.humanize import get_browser_launch_args
 
 # Возвращает список флагов запуска, таких как:
-# '--no-first-run', '--password-store=basic', '--disable-dev-shm-usage' и т.д.
+# '--no-sandbox', '--disable-dev-shm-usage', '--no-first-run', '--password-store=basic',
+# '--mute-audio', '--disable-background-timer-throttling', '--disable-component-update' и т.д.
 launch_flags = get_browser_launch_args()
 ```
 
