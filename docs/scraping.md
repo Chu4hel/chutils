@@ -1318,6 +1318,20 @@ proxy_url = resolver.resolve_sync("185.199.229.156:8080:login:password")
 proxy_cfg = resolver.resolve_config_sync("185.199.229.156:8080:login:password")
 ```
 
+### Локальный прокси-туннель (`AsyncProxyTunnel`)
+
+Позволяет безопасно проксировать трафик браузеров (включая Chromium в headless-режиме) через локальный HTTP/CONNECT форвардер с прозрачной подстановкой заголовков `Proxy-Authorization` и логированием сбоев соединения:
+
+```python
+from chutils.scraping.proxy import AsyncProxyTunnel
+
+tunnel = AsyncProxyTunnel("http://user:pass@1.2.3.4:8000")
+await tunnel.start()
+print("Chrome flag:", tunnel.to_chrome_arg())  # --proxy-server=http://127.0.0.1:<port>
+...
+await tunnel.stop()
+```
+
 ---
 
 ## 14. Тестирование скраперов и Pytest-фикстуры (`chutils.scraping.testing`)
