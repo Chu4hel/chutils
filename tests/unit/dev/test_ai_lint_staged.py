@@ -134,3 +134,57 @@ def test_api_map_rule_staged_optimization(tmp_path: Path) -> None:
     # Python файл изменился -> проверка запускается (найдет расхождение, так как api_map пустой)
     results_with_change = rule.check(str(tmp_path), ["src/chutils/cli.py"])
     assert len(results_with_change) > 0
+
+
+def test_ai_lint_command_staged_output_message(mocker: MockerFixture) -> None:
+    """Проверяет корректность сообщения о запуске аудита для staged diff и полной базы."""
+    import argparse
+
+    from chutils.commands.dev.ai_lint import AiLintSubCommand
+
+    cmd = AiLintSubCommand()
+    mock_console = MagicMock()
+    cmd.console = mock_console
+    cmd.err_console = mock_console
+
+    mock_engine = MagicMock()
+    mock_engine.staged = True
+    mock_engine.run.return_value = []
+    mock_engine.print_results.return_value = True
+
+    mocker.patch("chutils.dev.ai_lint.LinterEngine", return_value=mock_engine)
+    mocker.patch("chutils.config.dev.load_ai_lint_config", return_value={})
+
+    # 1. При staged=True
+    args_staged = argparse.Namespace(
+        strict=None,
+        soft_mode=None,
+        ignore=None,
+        rules=None,
+        exclude_rules=None,
+        custom_rules_path=None,
+        staged=True,
+        output_format=None,
+        group_by=None,
+    )
+    cmd.handle(args_staged)
+    output_staged = mock_console.print.call_args[0][0]
+    assert "изменённых файлов" in output_staged
+
+    # 2. При staged=False
+    mock_engine.staged = False
+    mock_console.reset_mock()
+    args_full = argparse.Namespace(
+        strict=None,
+        soft_mode=None,
+        ignore=None,
+        rules=None,
+        exclude_rules=None,
+        custom_rules_path=None,
+        staged=False,
+        output_format=None,
+        group_by=None,
+    )
+    cmd.handle(args_full)
+    output_full = mock_console.print.call_args[0][0]
+    assert "кодовой базы" in output_full
