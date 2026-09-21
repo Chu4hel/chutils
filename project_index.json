@@ -30662,7 +30662,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 377,
+                    "line_number": 394,
                     "bases": [],
                     "children": []
                   },
@@ -30682,7 +30682,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 429,
+                    "line_number": 446,
                     "bases": [],
                     "children": []
                   },
@@ -30702,7 +30702,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 463,
+                    "line_number": 480,
                     "bases": [],
                     "children": []
                   },
@@ -30722,7 +30722,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 549,
+                    "line_number": 566,
                     "bases": [],
                     "children": []
                   },
@@ -30742,7 +30742,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 632,
+                    "line_number": 649,
                     "bases": [],
                     "children": []
                   }
@@ -48143,8 +48143,8 @@
   "metadata": {
     "chutils_version": "3.8.1",
     "project_version": "3.8.1",
-    "git_commit": "5a5ebc68277d306251b0a3ed0b828c6f52a5fca8 (dirty)",
-    "generated_at": "2026-09-21T15:04:47.515387+00:00",
-    "project_hash": "9a6ba1d24fa67e0e176806f8cadc2cfc9cd3fad1ca0a15601f9d5c2229f30157"
+    "git_commit": "420b425809f2de080b88430032abbd9606abad56 (dirty)",
+    "generated_at": "2026-09-21T16:41:33.337466+00:00",
+    "project_hash": "f104a60ce900917af5ed42ddeec446a3a07783c26afd1251add84d4df12d8296"
   }
 }

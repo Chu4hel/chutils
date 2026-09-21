@@ -283,9 +283,12 @@ async def async_type_text(
             elif action.action == "backspace":
                 await page.send(
                     cdp_input.dispatch_key_event(
-                        type_="keyDown",
+                        type_="rawKeyDown",
                         key="Backspace",
                         code="Backspace",
+                        windows_virtual_key_code=8,
+                        native_virtual_key_code=8,
+                        commands=["deleteContentBackward"],
                     )
                 )
                 if key_hold_time and key_hold_time[1] > 0:
@@ -295,15 +298,27 @@ async def async_type_text(
                         type_="keyUp",
                         key="Backspace",
                         code="Backspace",
+                        windows_virtual_key_code=8,
+                        native_virtual_key_code=8,
                     )
                 )
             elif action.action == "key":
                 key_name = action.char
+                vk_code = {
+                    "ArrowLeft": 37,
+                    "ArrowUp": 38,
+                    "ArrowRight": 39,
+                    "ArrowDown": 40,
+                    "Backspace": 8,
+                    "Enter": 13,
+                }.get(key_name, 0)
                 await page.send(
                     cdp_input.dispatch_key_event(
-                        type_="keyDown",
+                        type_="rawKeyDown",
                         key=key_name,
                         code=key_name,
+                        windows_virtual_key_code=vk_code,
+                        native_virtual_key_code=vk_code,
                     )
                 )
                 if key_hold_time and key_hold_time[1] > 0:
@@ -313,6 +328,8 @@ async def async_type_text(
                         type_="keyUp",
                         key=key_name,
                         code=key_name,
+                        windows_virtual_key_code=vk_code,
+                        native_virtual_key_code=vk_code,
                     )
                 )
 
