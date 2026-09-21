@@ -45,8 +45,13 @@ async def export_nodriver_profile(tab: Any) -> BrowserProfile:
             from nodriver.cdp import network
 
             raw_cookies = await tab.send(network.get_all_cookies())
-        except Exception as e:
-            logger.debug("Не удалось получить куки через CDP: %s", e)
+        except Exception:
+            try:
+                from nodriver.cdp import network
+
+                raw_cookies = await tab.send(network.get_cookies())
+            except Exception as e:
+                logger.debug("Не удалось получить куки через CDP: %s", e)
 
     raw_list: list[Any] = []
     if isinstance(raw_cookies, list):

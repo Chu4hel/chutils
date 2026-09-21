@@ -1227,3 +1227,40 @@ restored_profile = FingerprintProfile.from_dict(data)
 assert restored_profile.user_agent == profile.user_agent
 ```
 
+---
+
+## 12. Управление профилями браузеров и сессиями (`chutils.scraping.profiles`)
+
+Модуль `chutils.scraping.profiles` предоставляет универсальную абстракцию профиля браузера (`BrowserProfile`) для сохранения, переноса и переиспользования сессий между различными браузерными движками (`nodriver`, `Playwright`, `Selenium`).
+
+### Основные компоненты
+
+* **`BrowserProfile`**: Унифицированный контейнер данных сессии, включающий куки (`cookies: list[CookieData]`), локальное хранилище (`storage: StorageData`) и заголовки с User-Agent (`headers: HeaderData`).
+* **`ProfileManager`**: Менеджер жизненного цикла сессий на диске с поддержкой автоматической ротации, проверки валидности и кэширования.
+* **Адаптеры движков (`chutils.scraping.profiles.adapters`)**:
+  * **`nodriver`**: `export_nodriver_profile(tab)` и `import_nodriver_profile(tab, profile)`. Поддерживает полиморфное чтение кук из CDP (словари, прямой список, объекты `cdp.network.Cookie` с enum-полями `same_site`), а также каскадный вызов `Network.getAllCookies` / `network.get_all_cookies()` / `network.get_cookies()`.
+  * **`Playwright`**: `export_playwright_profile(context)` и `import_playwright_profile(context, profile)`. Экспортирует состояние кук и localStorage через `context.storage_state()`.
+  * **`Selenium`**: `export_selenium_profile(driver)` и `import_selenium_profile(driver, profile)`.
+
+### Пример использования адаптера nodriver
+
+```python
+import nodriver as uc
+from chutils.scraping.profiles.adapters.nodriver import export_nodriver_profile, import_nodriver_profile
+from chutils.scraping.profiles.storage import save_profile_to_file, load_profile_from_file
+
+async def main():
+    browser = await uc.start()
+    tab = await browser.get("https://example.com/login")
+    # ... авторизация на сайте ...
+
+    # Экспорт профиля сессии с куками и User-Agent
+    profile = await export_nodriver_profile(tab)
+    save_profile_to_file(profile, "session_profile.json")
+
+    # В новой сессии — импорт сохраненного профиля
+    restored_profile = load_profile_from_file("session_profile.json")
+    new_tab = await browser.get("https://example.com")
+    await import_nodriver_profile(new_tab, restored_profile)
+```
+
