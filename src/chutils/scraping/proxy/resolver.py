@@ -464,7 +464,11 @@ class SmartProxyResolver:
         if not should_force:
             cached = self.cache.get(clean_raw)
             if cached:
-                logger.debug("Прокси найден в дисковом кэше: %s -> %s", clean_raw, cached)
+                try:
+                    masked_cached = parse_proxy(cached).masked_url
+                except Exception:
+                    masked_cached = "***"
+                logger.debug("Прокси найден в кэше: %s", masked_cached)
                 return cached
 
         # 2. Генерируем кандидатов
@@ -474,15 +478,18 @@ class SmartProxyResolver:
 
         # 3. Последовательно опрашиваем кандидатов (HTTP -> SOCKS5 -> перестановки)
         for cand in candidates:
-            logger.debug("Проверка кандидата прокси: %s", cand)
+            try:
+                masked_cand = parse_proxy(cand).masked_url
+            except Exception:
+                masked_cand = cand
+            logger.debug("Проверка кандидата прокси: %s", masked_cand)
             if await self.probe_proxy(cand):
-                logger.info("Кандидат прокси успешно верифицирован: %s", cand)
+                logger.info("Кандидат прокси успешно верифицирован: %s", masked_cand)
                 self.cache.set(clean_raw, cand, ttl=7 * 86400)
                 return cand
 
         logger.warning(
-            "Ни один кандидат прокси не прошел сетевую проверку для: '%s'. Протестировано: %d",
-            clean_raw,
+            "Ни один кандидат прокси не прошел сетевую проверку. Протестировано: %d",
             len(candidates),
         )
         if default_fallback and candidates:
