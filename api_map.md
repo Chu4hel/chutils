@@ -1,9 +1,9 @@
 ---
 chutils_version: 3.8.1
 project_version: 3.8.1
-git_commit: b5e793935ab483f679855602072b5bb5410323bc (dirty)
-generated_at: 2026-09-21T11:38:01.850279+00:00
-project_hash: 3cc645ead66787a4fa6d81c083d97c268e1ed59b077444df42657746d8eabe67
+git_commit: df32381bb21c8fcd5188c08a911d649dc51e5198 (dirty)
+generated_at: 2026-09-21T14:31:23.299912+00:00
+project_hash: 1a69e6632a280d14b2dcf99f4afaa5dda4d0820164c5655811048a86abc1ce7a
 ---
 
 # Public API Map: chutils

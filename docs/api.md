@@ -626,5 +626,19 @@ options:
     - PaginatorKeyboard
     - HealthCheckAlertBridge
 
+## Модуль `logger`
+
+::: chutils.logger
+options:
+  members:
+    - setup_logger
+    - setup_logger_from_config
+    - ChutilsLogger
+    - SafeTimedRotatingFileHandler
+    - SafeRotatingFileHandler
+    - CompressingRotatingFileHandler
+    - CompressingTimedRotatingFileHandler
+
+
 
 

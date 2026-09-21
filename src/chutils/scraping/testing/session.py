@@ -18,11 +18,11 @@ from typing import Any
 
 from typing_extensions import Self
 
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from chutils.fs import ensure_dir
 from chutils.lifecycle import register_cleanup, unregister_cleanup
-from chutils.logger import setup_logger
 
-logger = setup_logger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 
 class LiveBrowserSession:

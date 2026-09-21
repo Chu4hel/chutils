@@ -12,12 +12,11 @@ from __future__ import annotations
 
 import re
 from decimal import Decimal
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 from typing import Any
 from urllib.parse import urlparse
 
-from chutils.logger import setup_logger
-
-logger = setup_logger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 
 def assert_extraction_complete(

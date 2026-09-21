@@ -18,6 +18,7 @@ from ..formatters import JSON_LOGGER_AVAILABLE, ChutilsJsonFormatter
 from ..handlers import (
     CompressingRotatingFileHandler,
     CompressingTimedRotatingFileHandler,
+    SafeRotatingFileHandler,
     SafeTimedRotatingFileHandler,
 )
 from ..masking import (
@@ -457,6 +458,9 @@ class LoggerBuilder:
                 cval.lower() in ["true", "1"] if isinstance(cval, str) else bool(cval)
             )
 
+        file_kwargs = dict(self.kwargs)
+        file_kwargs.setdefault("delay", True)
+
         h_class: type[logging.FileHandler]
         if rtype == "size":
             max_bytes = int(
@@ -466,14 +470,14 @@ class LoggerBuilder:
             h_class = (
                 CompressingRotatingFileHandler
                 if compress
-                else logging.handlers.RotatingFileHandler
+                else SafeRotatingFileHandler
             )
             return h_class(
                 path,
                 maxBytes=max_bytes,
                 backupCount=backup_count,
                 encoding=encoding,
-                **self.kwargs,
+                **file_kwargs,
             )
 
         # Ротация по времени
@@ -510,7 +514,7 @@ class LoggerBuilder:
         if at_time:
             h_args["atTime"] = at_time
 
-        return h_class(path, **h_args, **self.kwargs)
+        return h_class(path, **h_args, **file_kwargs)
 
     def _apply_async_logging(
         self, handlers: list[logging.Handler], **params: Any

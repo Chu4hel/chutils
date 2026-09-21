@@ -23677,7 +23677,7 @@
                 "layer": "public",
                 "signature": "",
                 "summary": "Надежный обработчик ротации логов, адаптированный для Windows.",
-                "docstring": "Надежный обработчик ротации логов, адаптированный для Windows.\n\nЭтот класс решает проблему `PermissionError` при ротации логов в Windows,\nгарантируя, что файл будет закрыт перед переименованием.\nОн явно закрывает файловый поток перед вызовом стандартной логики ротации.",
+                "docstring": "Надежный обработчик ротации логов, адаптированный для Windows.\n\nЭтот класс решает проблему `PermissionError` при ротации логов в Windows,\nгарантируя, что файл будет закрыт перед переименованием.\nОн явно закрывает файловый поток перед вызовом стандартной логики ротации\nи гарантирует существование каталога при открытии файла.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -23687,11 +23687,31 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 11,
+                "line_number": 12,
                 "bases": [
                   "logging.handlers.TimedRotatingFileHandler"
                 ],
                 "children": [
+                  {
+                    "name": "_open",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 22,
+                    "bases": [],
+                    "children": []
+                  },
                   {
                     "name": "doRollover",
                     "type": "method",
@@ -23708,7 +23728,50 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 20,
+                    "line_number": 28,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "SafeRotatingFileHandler",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Надежный обработчик ротации логов по размеру.",
+                "docstring": "Надежный обработчик ротации логов по размеру.\n\nГарантирует существование каталога при ленивом открытии файла.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 38,
+                "bases": [
+                  "logging.handlers.RotatingFileHandler"
+                ],
+                "children": [
+                  {
+                    "name": "_open",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 45,
                     "bases": [],
                     "children": []
                   }
@@ -23730,9 +23793,9 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 30,
+                "line_number": 52,
                 "bases": [
-                  "logging.handlers.RotatingFileHandler"
+                  "SafeRotatingFileHandler"
                 ],
                 "children": [
                   {
@@ -23751,7 +23814,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 37,
+                    "line_number": 59,
                     "bases": [],
                     "children": []
                   }
@@ -23773,7 +23836,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 107,
+                "line_number": 129,
                 "bases": [
                   "SafeTimedRotatingFileHandler"
                 ],
@@ -23794,7 +23857,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 112,
+                    "line_number": 134,
                     "bases": [],
                     "children": []
                   }
@@ -23835,7 +23898,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 34,
+                    "line_number": 35,
                     "bases": [],
                     "children": [
                       {
@@ -23854,7 +23917,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 42,
+                        "line_number": 43,
                         "bases": [],
                         "children": []
                       },
@@ -23874,7 +23937,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 68,
+                        "line_number": 69,
                         "bases": [],
                         "children": []
                       },
@@ -23894,7 +23957,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 171,
+                        "line_number": 172,
                         "bases": [],
                         "children": []
                       },
@@ -23914,7 +23977,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 196,
+                        "line_number": 197,
                         "bases": [],
                         "children": []
                       },
@@ -23934,7 +23997,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 208,
+                        "line_number": 209,
                         "bases": [],
                         "children": []
                       },
@@ -23954,7 +24017,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 221,
+                        "line_number": 222,
                         "bases": [],
                         "children": []
                       },
@@ -23974,7 +24037,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 230,
+                        "line_number": 231,
                         "bases": [],
                         "children": []
                       },
@@ -23994,7 +24057,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 278,
+                        "line_number": 279,
                         "bases": [],
                         "children": []
                       },
@@ -24014,7 +24077,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 304,
+                        "line_number": 305,
                         "bases": [],
                         "children": []
                       },
@@ -24034,7 +24097,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 319,
+                        "line_number": 320,
                         "bases": [],
                         "children": []
                       },
@@ -24054,7 +24117,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 355,
+                        "line_number": 356,
                         "bases": [],
                         "children": []
                       },
@@ -24074,7 +24137,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 438,
+                        "line_number": 439,
                         "bases": [],
                         "children": []
                       },
@@ -24094,7 +24157,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 515,
+                        "line_number": 519,
                         "bases": [],
                         "children": []
                       },
@@ -24114,7 +24177,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 533,
+                        "line_number": 537,
                         "bases": [],
                         "children": []
                       },
@@ -24134,7 +24197,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 572,
+                        "line_number": 576,
                         "bases": [],
                         "children": []
                       }
@@ -24362,7 +24425,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 14,
+                    "line_number": 13,
                     "bases": [],
                     "children": []
                   },
@@ -24372,7 +24435,7 @@
                     "layer": "internal",
                     "signature": "()",
                     "summary": "\"Лениво\" получает и кэширует путь к директории логов.",
-                    "docstring": "\"Лениво\" получает и кэширует путь к директории логов.\nСоздает директорию 'logs' в корне проекта при первом обращении.\n\nReturns:\n    Путь к директории логов или None при ошибке.",
+                    "docstring": "\"Лениво\" получает и кэширует путь к директории логов.\n\nReturns:\n    Путь к директории логов или None при ошибке.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -24382,7 +24445,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 17,
+                    "line_number": 16,
                     "bases": [],
                     "children": []
                   },
@@ -24402,7 +24465,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 48,
+                    "line_number": 38,
                     "bases": [],
                     "children": []
                   },
@@ -24422,7 +24485,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 60,
+                    "line_number": 50,
                     "bases": [],
                     "children": []
                   }
@@ -35145,7 +35208,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 20,
+                    "line_number": 19,
                     "bases": [],
                     "children": []
                   },
@@ -35165,7 +35228,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 23,
+                    "line_number": 22,
                     "bases": [],
                     "children": []
                   },
@@ -35185,7 +35248,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 70,
+                    "line_number": 69,
                     "bases": [],
                     "children": []
                   },
@@ -35205,7 +35268,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 103,
+                    "line_number": 102,
                     "bases": [],
                     "children": []
                   },
@@ -35225,7 +35288,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 152,
+                    "line_number": 151,
                     "bases": [],
                     "children": []
                   }
@@ -35237,7 +35300,7 @@
                 "type": "module",
                 "layer": "internal",
                 "summary": "Pytest плагин и фикстуры для автотестирования парсеров и скраперов.",
-                "docstring": "Pytest плагин и фикстуры для автотестирования парсеров и скраперов.\n\nАвтоматически регистрируется pytest через entry_point `pytest11`\nи предоставляет готовые фикстуры для мок- и live-тестирования.",
+                "docstring": "Pytest плагин и фикстуры для автотестирования парсеров и скраперов.\n\nАвтоматически регистрируется pytest через entry_point `pytest11`\nи предоставляет готовые фикстуры для мок- и live-тестирования.\nВсе тяжелые зависимости импортируются лениво внутри фикстур.",
                 "children": [],
                 "symbols": [
                   {
@@ -35256,7 +35319,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 26,
+                    "line_number": 28,
                     "bases": [],
                     "children": []
                   },
@@ -35278,7 +35341,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 39,
+                    "line_number": 41,
                     "bases": [],
                     "children": []
                   },
@@ -35300,7 +35363,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 50,
+                    "line_number": 54,
                     "bases": [],
                     "children": []
                   },
@@ -35322,7 +35385,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 61,
+                    "line_number": 67,
                     "bases": [],
                     "children": []
                   },
@@ -35344,7 +35407,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 74,
+                    "line_number": 82,
                     "bases": [],
                     "children": []
                   },
@@ -35366,7 +35429,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 88,
+                    "line_number": 98,
                     "bases": [],
                     "children": []
                   },
@@ -35388,7 +35451,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 102,
+                    "line_number": 114,
                     "bases": [],
                     "children": []
                   }
@@ -37647,7 +37710,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 26,
+                    "line_number": 27,
                     "bases": [],
                     "children": []
                   },
@@ -37667,7 +37730,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 28,
+                    "line_number": 29,
                     "bases": [],
                     "children": []
                   },
@@ -37687,7 +37750,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 29,
+                    "line_number": 30,
                     "bases": [],
                     "children": []
                   },
@@ -37707,7 +37770,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 32,
+                    "line_number": 33,
                     "bases": [],
                     "children": [
                       {
@@ -37726,7 +37789,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 35,
+                        "line_number": 36,
                         "bases": [],
                         "children": []
                       },
@@ -37746,7 +37809,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 47,
+                        "line_number": 48,
                         "bases": [],
                         "children": []
                       },
@@ -37766,7 +37829,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 59,
+                        "line_number": 60,
                         "bases": [],
                         "children": []
                       },
@@ -37786,7 +37849,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 70,
+                        "line_number": 71,
                         "bases": [],
                         "children": []
                       },
@@ -37806,7 +37869,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 86,
+                        "line_number": 87,
                         "bases": [],
                         "children": []
                       }
@@ -37828,7 +37891,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 107,
+                    "line_number": 108,
                     "bases": [],
                     "children": [
                       {
@@ -37847,7 +37910,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 110,
+                        "line_number": 111,
                         "bases": [],
                         "children": []
                       },
@@ -37867,7 +37930,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 134,
+                        "line_number": 135,
                         "bases": [],
                         "children": []
                       },
@@ -37887,7 +37950,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 151,
+                        "line_number": 152,
                         "bases": [],
                         "children": []
                       },
@@ -37907,7 +37970,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 187,
+                        "line_number": 188,
                         "bases": [],
                         "children": []
                       }
@@ -46858,7 +46921,7 @@
     {
       "source": "chutils/logger/internal/builder",
       "target": "//handlers",
-      "weight": 3
+      "weight": 4
     },
     {
       "source": "chutils/logger/internal/builder",
@@ -46878,11 +46941,6 @@
     {
       "source": "chutils/logger/internal/utils",
       "target": "...",
-      "weight": 1
-    },
-    {
-      "source": "chutils/logger/internal/utils",
-      "target": "///fs",
       "weight": 1
     },
     {
@@ -47516,31 +47574,6 @@
       "weight": 1
     },
     {
-      "source": "chutils/scraping/testing/assertions",
-      "target": "chutils/logger",
-      "weight": 1
-    },
-    {
-      "source": "chutils/scraping/testing/fixtures",
-      "target": "chutils/scraping/testing/mocks",
-      "weight": 3
-    },
-    {
-      "source": "chutils/scraping/testing/fixtures",
-      "target": "chutils/scraping/testing/server",
-      "weight": 1
-    },
-    {
-      "source": "chutils/scraping/testing/fixtures",
-      "target": "chutils/scraping/testing/session",
-      "weight": 1
-    },
-    {
-      "source": "chutils/scraping/testing/fixtures",
-      "target": "chutils/scraping/testing/snapshot",
-      "weight": 1
-    },
-    {
       "source": "chutils/scraping/testing/mocks",
       "target": "chutils/scraping/testing/mocks/dom",
       "weight": 2
@@ -47576,11 +47609,6 @@
       "weight": 2
     },
     {
-      "source": "chutils/scraping/testing/server",
-      "target": "chutils/logger",
-      "weight": 1
-    },
-    {
       "source": "chutils/scraping/testing/session",
       "target": "chutils/fs",
       "weight": 1
@@ -47591,19 +47619,9 @@
       "weight": 2
     },
     {
-      "source": "chutils/scraping/testing/session",
-      "target": "chutils/logger",
-      "weight": 1
-    },
-    {
       "source": "chutils/scraping/testing/snapshot",
       "target": "chutils/fs",
       "weight": 2
-    },
-    {
-      "source": "chutils/scraping/testing/snapshot",
-      "target": "chutils/logger",
-      "weight": 1
     },
     {
       "source": "chutils/scraping/testing/snapshot",
@@ -48125,8 +48143,8 @@
   "metadata": {
     "chutils_version": "3.8.1",
     "project_version": "3.8.1",
-    "git_commit": "b5e793935ab483f679855602072b5bb5410323bc (dirty)",
-    "generated_at": "2026-09-21T11:38:17.076023+00:00",
-    "project_hash": "3cc645ead66787a4fa6d81c083d97c268e1ed59b077444df42657746d8eabe67"
+    "git_commit": "df32381bb21c8fcd5188c08a911d649dc51e5198 (dirty)",
+    "generated_at": "2026-09-21T14:31:42.236564+00:00",
+    "project_hash": "1a69e6632a280d14b2dcf99f4afaa5dda4d0820164c5655811048a86abc1ce7a"
   }
 }

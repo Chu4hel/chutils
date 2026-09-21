@@ -3,24 +3,26 @@ Pytest плагин и фикстуры для автотестирования 
 
 Автоматически регистрируется pytest через entry_point `pytest11`
 и предоставляет готовые фикстуры для мок- и live-тестирования.
+Все тяжелые зависимости импортируются лениво внутри фикстур.
 """
 
 from __future__ import annotations
 
 from collections.abc import Callable, Generator
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from chutils.scraping.testing.mocks import (
-    MockNodriverTab,
-    MockPlaywrightPage,
-    MockSeleniumDriver,
-)
-from chutils.scraping.testing.server import LocalTestServer
-from chutils.scraping.testing.session import LiveBrowserSession
-from chutils.scraping.testing.snapshot import SnapshotRecorder
+if TYPE_CHECKING:
+    from chutils.scraping.testing.mocks import (
+        MockNodriverTab,
+        MockPlaywrightPage,
+        MockSeleniumDriver,
+    )
+    from chutils.scraping.testing.server import LocalTestServer
+    from chutils.scraping.testing.session import LiveBrowserSession
+    from chutils.scraping.testing.snapshot import SnapshotRecorder
 
 
 def pytest_configure(config: Any) -> None:
@@ -42,6 +44,8 @@ def local_test_server() -> Generator[LocalTestServer, None, None]:
     Yields:
         Запущенный экземпляр LocalTestServer.
     """
+    from chutils.scraping.testing.server import LocalTestServer
+
     with LocalTestServer() as server:
         yield server
 
@@ -53,6 +57,8 @@ def live_browser_session() -> Generator[LiveBrowserSession, None, None]:
     Yields:
         Активный экземпляр LiveBrowserSession.
     """
+    from chutils.scraping.testing.session import LiveBrowserSession
+
     with LiveBrowserSession() as session:
         yield session
 
@@ -67,6 +73,8 @@ def html_snapshot_recorder(tmp_path: Path) -> SnapshotRecorder:
     Returns:
         Экземпляр SnapshotRecorder.
     """
+    from chutils.scraping.testing.snapshot import SnapshotRecorder
+
     return SnapshotRecorder(snapshot_dir=tmp_path)
 
 
@@ -79,6 +87,8 @@ def mock_nodriver_tab() -> Callable[..., MockNodriverTab]:
     """
 
     def _factory(html: str = "") -> MockNodriverTab:
+        from chutils.scraping.testing.mocks import MockNodriverTab
+
         return MockNodriverTab(html)
 
     return _factory
@@ -93,6 +103,8 @@ def mock_playwright_page() -> Callable[..., MockPlaywrightPage]:
     """
 
     def _factory(html: str = "") -> MockPlaywrightPage:
+        from chutils.scraping.testing.mocks import MockPlaywrightPage
+
         return MockPlaywrightPage(html)
 
     return _factory
@@ -107,6 +119,8 @@ def mock_selenium_driver() -> Callable[..., MockSeleniumDriver]:
     """
 
     def _factory(html: str = "") -> MockSeleniumDriver:
+        from chutils.scraping.testing.mocks import MockSeleniumDriver
+
         return MockSeleniumDriver(html)
 
     return _factory
