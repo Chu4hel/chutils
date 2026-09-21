@@ -1264,3 +1264,57 @@ async def main():
     await import_nodriver_profile(new_tab, restored_profile)
 ```
 
+---
+
+## 13. Умный резолвер и валидатор прокси (`SmartProxyResolver`)
+
+При работе с пулами прокси от различных поставщиков строки подключения часто поступают в нестандартных форматах (`ip:port:user:pass`, `user:pass:ip:port`, `user:pass@ip:port`, без протокола или с неверно указанным протоколом `http://` вместо `socks5://`).
+
+Класс `SmartProxyResolver` (`chutils.scraping.proxy.SmartProxyResolver` или `chutils.SmartProxyResolver`) решает эту проблему:
+1. **Эвристический разбор строк**: Распознает любые вариации форматов `host:port:user:pass`, `user:pass:host:port`, `@` нотацию и формирует приоритизированный список кандидатов.
+2. **Активный сетевой Handshake (Probe)**:
+   - Для HTTP/HTTPS: проверяет поддержку туннелирования через `CONNECT` или легковесный `GET /generate_204`, корректно обрабатывая ошибки авторизации `407 Proxy Authentication Required`.
+   - Для SOCKS5: выполняет полноценное рукопожатие RFC 1928 и авторизацию RFC 1929 (`0x02 username/password`).
+   - Для SOCKS4: выполняет SOCKS4 connect handshake.
+3. **Персистентный дисковый кэш (`FileCacheBackend`)**: Валидированные канонические URL сохраняются на диск с TTL (по умолчанию 7 дней) и атомарной записью (`atomic_write`), избегая повторных сетевых задержек при последующих запусках.
+4. **Live Health-Check и замер задержки**: Метод `check_health` возвращает `ProxyHealthResult` со статусом доступности `is_alive`, задержкой `latency_ms` и текстом ошибки `error`.
+5. **Синхронные обертки**: Методы `resolve_sync` и `resolve_config_sync` корректно работают как в синхронных скриптах, так и внутри уже работающего цикла событий `asyncio` (например, в Jupyter Notebook, FastAPI или GUI).
+
+### Пример использования
+
+```python
+import asyncio
+from chutils import SmartProxyResolver
+
+async def main():
+    resolver = SmartProxyResolver()
+
+    # Автоматическое определение протокола и формата
+    # Строка вида "ip:port:user:pass" превращается в валидный рабочий URL
+    proxy_url = await resolver.resolve("185.199.229.156:8080:login:password")
+    print(f"Рабочий URL прокси: {proxy_url}")
+    # Вывод: http://login:password@185.199.229.156:8080 (или socks5://...)
+
+    # Получение готовой типизированной конфигурации ProxyConfig
+    config = await resolver.resolve_config("185.199.229.156:8080:login:password")
+    if config:
+        print(f"Хост: {config.host}, Порт: {config.port}, Протокол: {config.protocol}")
+
+    # Проверка задержки и живости прокси (Health Check)
+    health = await resolver.check_health(proxy_url)
+    print(f"Живой: {health.is_alive}, Задержка: {health.latency_ms} ms")
+
+asyncio.run(main())
+```
+
+### Синхронный вызов
+
+```python
+from chutils import SmartProxyResolver
+
+resolver = SmartProxyResolver()
+# Работает без явного вызова asyncio.run(), безопасно внутри любого контекста
+proxy_url = resolver.resolve_sync("185.199.229.156:8080:login:password")
+proxy_cfg = resolver.resolve_config_sync("185.199.229.156:8080:login:password")
+```
+

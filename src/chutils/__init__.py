@@ -332,6 +332,8 @@ _LAZY_MAPPING = {
         ".scraping.humanize.antidetect",
         "extract_clearance_cookies",
     ),
+    # scraping proxy
+    "SmartProxyResolver": (".scraping.proxy", "SmartProxyResolver"),
     # scraping captcha
     "RuCaptchaSolver": (".scraping.captcha", "RuCaptchaSolver"),
     "AsyncRuCaptchaSolver": (".scraping.captcha", "AsyncRuCaptchaSolver"),
