@@ -5,6 +5,7 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 import logging.handlers  # chutils: ignore[ChutilsIntegrationRule]
 import os
 import queue
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
@@ -364,16 +365,15 @@ class LoggerBuilder:
 
         # 1. Переменная окружения (высший приоритет)
         # chutils: ignore[ChutilsIntegrationRule]
-        env_no_file = os.getenv("CH_LOG_NO_FILE", "").lower() in [
-            "true",
-            "1",
-            "yes",
-            "y",
-        ]
-        if env_no_file:
-            return None
+        raw_env_no_file = os.getenv("CH_LOG_NO_FILE")
+        env_force_file = False
+        if raw_env_no_file is not None:
+            if raw_env_no_file.lower() in ["true", "1", "yes", "y"]:
+                return None
+            if raw_env_no_file.lower() in ["false", "0", "no", "n"]:
+                env_force_file = True
 
-        # 2. Проверка явного отключения файлового логирования
+        # 2. Проверка явного отключения/включения файлового логирования
         file_logging = params.get("file_logging")
         if file_logging is None:
             file_logging = params.get("enable_file_logging")
@@ -394,6 +394,31 @@ class LoggerBuilder:
                 else bool(file_logging)
             )
             if not file_logging_val:
+                return None
+        else:
+            # 2.1. Для тестовых модулей chutils файловое логирование по умолчанию отключено
+            is_test_module = (
+                self.name.startswith(
+                    (
+                        "chutils.scraping.testing",
+                        "chutils.testing",
+                        "chutils.vk.testing",
+                    )
+                )
+                or ".testing" in self.name
+            )
+            if is_test_module and not env_force_file:
+                return None
+
+            # 2.2. Проверка тестового раннера (pytest и др.)
+            # chutils: ignore[ChutilsIntegrationRule]
+            env_pytest = "PYTEST_CURRENT_TEST" in os.environ or bool(os.getenv("PYTEST_VERSION"))
+            is_test_runner = env_pytest or ("pytest" in sys.modules)
+            if (
+                is_test_runner
+                and not env_force_file
+                and params.get("log_file_name") is None
+            ):
                 return None
 
         # 3. Имя файла лога

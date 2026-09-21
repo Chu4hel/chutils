@@ -44,3 +44,35 @@ def test_setup_logger_delay_does_not_create_file_before_emit(tmp_path: Path) -> 
     assert log_file.exists()
     content = log_file.read_text(encoding="utf-8")
     assert "Проверка ленивой записи" in content
+
+
+def test_test_modules_disable_file_logging_by_default() -> None:
+    """Проверяет, что для тестовых модулей chutils.*.testing файловый обработчик выключен по умолчанию."""
+    import logging
+
+    logger = setup_logger("chutils.scraping.testing.server", force_reconfigure=True)
+    assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+
+
+def test_pytest_runner_disables_default_file_logging() -> None:
+    """Проверяет, что под тестовым раннером дефолтный app.log не создается, если не запрошен явно."""
+    import logging
+
+    # Обычный логгер без явного файла под pytest не должен иметь FileHandler
+    logger = setup_logger("regular_app_logger", force_reconfigure=True)
+    assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
+
+
+def test_pytest_runner_allows_file_logging_when_explicitly_requested(tmp_path: Path) -> None:
+    """Проверяет, что при явном указании log_file_name или file_logging=True файловый логгер создается."""
+    import logging
+
+    # Явный log_file_name
+    custom_log = tmp_path / "custom.log"
+    logger1 = setup_logger("explicit_file_logger", log_file_name=str(custom_log), force_reconfigure=True)
+    assert any(isinstance(h, logging.FileHandler) for h in logger1.handlers)
+
+    # Явный file_logging=True
+    logger2 = setup_logger("explicit_flag_logger", file_logging=True, force_reconfigure=True)
+    assert any(isinstance(h, logging.FileHandler) for h in logger2.handlers)
+
