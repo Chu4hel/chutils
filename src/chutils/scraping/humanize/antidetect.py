@@ -270,17 +270,19 @@ async def apply_antidetect_nodriver(
 def get_browser_launch_args() -> list[str]:
     """Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.
 
+    Note:
+        Флаг ``--disable-blink-features=AutomationControlled`` намеренно исключен,
+        так как в современных версиях Chromium он вызывает системное предупреждение
+        (инфобар) о неподдерживаемом флаге. Скрытие ``navigator.webdriver``
+        выполняется через CDP-инъекцию скрипта антидетекта.
+
     Returns:
         Список аргументов командной строки запуска браузера.
     """
     return [
-        "--disable-blink-features=AutomationControlled",
         "--disable-features=IsolateOrigins,site-per-process",
-        "--disable-infobars",
         "--no-sandbox",
-        "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
-        "--excludeSwitches=enable-automation",
         "--use-fake-ui-for-media-stream",
         "--use-fake-device-for-media-stream",
         "--no-first-run",

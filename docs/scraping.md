@@ -407,7 +407,7 @@ if solved:
 from chutils.scraping.humanize import get_browser_launch_args
 
 # Возвращает список флагов запуска, таких как:
-# '--disable-blink-features=AutomationControlled', '--no-first-run', '--password-store=basic' и т.д.
+# '--no-first-run', '--password-store=basic', '--disable-dev-shm-usage' и т.д.
 launch_flags = get_browser_launch_args()
 ```
 
@@ -1103,7 +1103,7 @@ resp = await client.get("https://protected-site.com/api/data")
 
 ## 9. Запуск Nodriver с антидетектом (`launch_nodriver`, `nodriver_session`)
 
-Для браузерной автоматизации без следов веб-драйвера модуль `chutils.scraping` предоставляет фабрику `launch_nodriver` и асинхронный контекстный менеджер `nodriver_session`. Они автоматически накладывают рекомендованные флаги запуска Chromium (`--disable-blink-features=AutomationControlled`, `--disable-dev-shm-usage` для Docker и др.), настраивают прокси (с прозрачной поддержкой авторизации через расширение) и применяют `AntidetectConfig`.
+Для браузерной автоматизации без следов веб-драйвера модуль `chutils.scraping` предоставляет фабрику `launch_nodriver` и асинхронный контекстный менеджер `nodriver_session`. Они автоматически накладывают рекомендованные флаги запуска Chromium (`--disable-dev-shm-usage` для Docker, параметры изоляции и др.), настраивают прокси (с прозрачной поддержкой авторизации через расширение) и применяют `AntidetectConfig`.
 
 Фабрика поддерживает передачу постоянного каталога профиля (`user_data_dir`) для сохранения сессий, авторизаций и прогретых куки, а также кастомного пути к бинарнику браузера (`browser_executable_path`):
 

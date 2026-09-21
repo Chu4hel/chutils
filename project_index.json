@@ -30860,7 +30860,7 @@
                     "layer": "public",
                     "signature": "()",
                     "summary": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.",
-                    "docstring": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.\n\nReturns:\n    Список аргументов командной строки запуска браузера.",
+                    "docstring": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.\n\nNote:\n    Флаг ``--disable-blink-features=AutomationControlled`` намеренно исключен,\n    так как в современных версиях Chromium он вызывает системное предупреждение\n    (инфобар) о неподдерживаемом флаге. Скрытие ``navigator.webdriver``\n    выполняется через CDP-инъекцию скрипта антидетекта.\n\nReturns:\n    Список аргументов командной строки запуска браузера.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -30890,7 +30890,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 294,
+                    "line_number": 296,
                     "bases": [],
                     "children": []
                   },
@@ -30910,7 +30910,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 356,
+                    "line_number": 358,
                     "bases": [],
                     "children": []
                   },
@@ -30930,7 +30930,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 376,
+                    "line_number": 378,
                     "bases": [],
                     "children": []
                   }
@@ -47498,8 +47498,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "bd63071db734d8cc460cb8e4529bc99366604a3e (dirty)",
-    "generated_at": "2026-09-20T22:17:34.629358+00:00",
-    "project_hash": "2db5281c8265a55096819ff20fa486efafdf3f548c0375f1273ce26bde8d32f3"
+    "git_commit": "dc5859d2236f27a0650157b74fd7de72c226e4e2 (dirty)",
+    "generated_at": "2026-09-21T10:03:16.073952+00:00",
+    "project_hash": "612d69f0f2c08d5710e65a1e0e2f7f3bd9faa24fd45baecf2867d2bf7c8f45d6"
   }
 }

@@ -130,7 +130,7 @@ def test_antidetect_screen_and_navigator_properties() -> None:
 def test_get_browser_launch_args_enhanced() -> None:
     """get_browser_launch_args возвращает актуальный набор флагов против детекта автоматизации."""
     args = get_browser_launch_args()
-    assert "--disable-blink-features=AutomationControlled" in args
+    assert "--disable-blink-features=AutomationControlled" not in args
     assert "--no-sandbox" in args
     assert "--disable-dev-shm-usage" in args
     assert any("--lang=" in a for a in args)

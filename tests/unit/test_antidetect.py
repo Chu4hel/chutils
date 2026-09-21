@@ -17,7 +17,8 @@ def test_antidetect_helpers(
     # 1. Тестируем аргументы запуска
     args = get_browser_launch_args()
     assert isinstance(args, list)
-    assert "--disable-blink-features=AutomationControlled" in args
+    assert "--disable-blink-features=AutomationControlled" not in args
+    assert "--no-first-run" in args
 
     # 2. Тестируем Playwright-интеграцию
     pw_context = MagicMock()
@@ -216,7 +217,7 @@ def test_browser_launch_args_enhanced() -> None:
     from chutils.scraping.humanize.antidetect import get_browser_launch_args
 
     args = get_browser_launch_args()
-    assert "--disable-blink-features=AutomationControlled" in args
+    assert "--disable-blink-features=AutomationControlled" not in args
     assert "--no-first-run" in args
     assert "--no-default-browser-check" in args
     assert "--password-store=basic" in args

@@ -49,7 +49,8 @@ async def test_launch_nodriver_default() -> None:
         _, kwargs = mock_uc.start.call_args
         assert kwargs["headless"] is True
         args = kwargs["browser_args"]
-        assert any("--disable-blink-features=AutomationControlled" in a for a in args)
+        assert not any("--disable-blink-features=AutomationControlled" in a for a in args)
+        assert any("--disable-dev-shm-usage" in a for a in args)
 
         # Проверяем, что к вкладке применен стелс-конфиг
         assert mock_apply.called
