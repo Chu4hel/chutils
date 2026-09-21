@@ -83,6 +83,80 @@ async def test_nodriver_adapter():
     assert tab_mock.send.call_count >= 2
 
 
+@pytest.mark.asyncio
+async def test_nodriver_adapter_cdp_cookie_objects():
+    """Проверяет экспорт, когда send возвращает список объектов cdp.network.Cookie с enum same_site."""
+    class FakeSameSiteEnum:
+        value = "Lax"
+
+    class FakeCDPCookie:
+        def __init__(self):
+            self.name = "cdp_token"
+            self.value = "secret_xyz"
+            self.domain = "target.com"
+            self.path = "/api"
+            self.expires = 1700000000.0
+            self.http_only = True
+            self.secure = True
+            self.same_site = FakeSameSiteEnum()
+
+    tab_mock = AsyncMock()
+    tab_mock.send.return_value = [FakeCDPCookie()]
+    tab_mock.evaluate.return_value = "Mozilla/5.0 Nodriver"
+
+    profile = await export_nodriver_profile(tab_mock)
+    assert len(profile.cookies) == 1
+    cookie = profile.cookies[0]
+    assert cookie.name == "cdp_token"
+    assert cookie.value == "secret_xyz"
+    assert cookie.domain == "target.com"
+    assert cookie.path == "/api"
+    assert cookie.expires == 1700000000.0
+    assert cookie.http_only is True
+    assert cookie.secure is True
+    assert cookie.same_site == "Lax"
+
+
+@pytest.mark.asyncio
+async def test_nodriver_adapter_wrapped_result_and_direct_list():
+    """Проверяет экспорт, когда send возвращает объект с атрибутом .cookies или список словарей."""
+    # 1. Объект с атрибутом .cookies
+    class FakeCDPResult:
+        def __init__(self, cookies):
+            self.cookies = cookies
+
+    tab_mock = AsyncMock()
+    tab_mock.send.return_value = FakeCDPResult(
+        cookies=[
+            {
+                "name": "wrapped_cookie",
+                "value": "val1",
+                "domain": ".site.org",
+                "sameSite": "Strict",
+            }
+        ]
+    )
+    tab_mock.evaluate.return_value = None
+
+    profile = await export_nodriver_profile(tab_mock)
+    assert len(profile.cookies) == 1
+    assert profile.cookies[0].name == "wrapped_cookie"
+    assert profile.cookies[0].same_site == "Strict"
+
+    # 2. Прямой список словарей
+    tab_mock.send.return_value = [
+        {
+            "name": "direct_list_cookie",
+            "value": "val2",
+            "domain": "site2.org",
+        }
+    ]
+    profile2 = await export_nodriver_profile(tab_mock)
+    assert len(profile2.cookies) == 1
+    assert profile2.cookies[0].name == "direct_list_cookie"
+    assert profile2.cookies[0].value == "val2"
+
+
 def test_selenium_adapter():
     driver_mock = MagicMock()
     driver_mock.get_cookies.return_value = [

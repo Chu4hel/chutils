@@ -32549,6 +32549,26 @@
                         "children": []
                       },
                       {
+                        "name": "_extract_cookie_field",
+                        "type": "function",
+                        "layer": "private",
+                        "signature": "(c)",
+                        "summary": "Безопасно извлекает значение поля из словаря или CDP-объекта Cookie.",
+                        "docstring": "Безопасно извлекает значение поля из словаря или CDP-объекта Cookie.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 16,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
                         "name": "export_nodriver_profile",
                         "type": "function",
                         "layer": "internal",
@@ -32564,7 +32584,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 16,
+                        "line_number": 31,
                         "bases": [],
                         "children": []
                       },
@@ -32584,7 +32604,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 64,
+                        "line_number": 110,
                         "bases": [],
                         "children": []
                       }
@@ -47498,8 +47518,8 @@
   "metadata": {
     "chutils_version": "3.8.0",
     "project_version": "3.8.0",
-    "git_commit": "1f7db3277bb953bca50aa406995415553b4e6cca (dirty)",
-    "generated_at": "2026-09-21T10:30:44.773026+00:00",
-    "project_hash": "99ce5007a551676a69763b0da52e0c21be2e17ef4d43cce1a3728804c3ad4b85"
+    "git_commit": "84928a6b437399ba5f0d5fe7e35ed905e14aec9f (dirty)",
+    "generated_at": "2026-09-21T10:33:51.198751+00:00",
+    "project_hash": "d19bbad5a6d82e142d33c7394080473f475093202a5464f7b7296bbf5df4c125"
   }
 }
