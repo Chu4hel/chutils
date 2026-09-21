@@ -181,6 +181,8 @@
 "src/chutils/commands/template.py" = ["docs/cli/template.md"]
 "src/chutils/commands/validate.py" = ["docs/cli/validate.md"]
 "src/chutils/commands/db.py" = ["docs/cli/db.md"]
+"src/chutils/commands/check.py" = ["docs/cli/check.md"]
+"src/chutils/commands/*.py" = ["docs/cli/index.md"]
 
 # ---------------------------------------------------------------------------
 # Корневые файлы проекта

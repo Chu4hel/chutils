@@ -26,8 +26,8 @@ class FingerprintSynthesizer:
 
         Args:
             mode: Режим работы ('auto', 'procedural', 'browserforge', 'fpgen').
-                В режиме 'auto' при наличии сида всегда используется детерминированный процедурный генератор.
-                Если сид не передан, при наличии browserforge используется он, иначе процедурный.
+                В режиме 'auto' при наличии browserforge используется он (включая детерминированную
+                генерацию по сиду), иначе используется процедурный генератор.
             os_target: Целевая операционная система ('windows', 'macos', 'linux').
             locale: Локаль системы для подбора периферийных устройств.
         """
@@ -52,12 +52,7 @@ class FingerprintSynthesizer:
             provider = BrowserForgeProvider(browser="chrome", os=self.os_target)
             return provider.generate(seed)
 
-        # Режим 'auto'
-        if seed is not None:
-            # При наличии сида строгая детерминированность гарантируется процедурным движком
-            return self._procedural.synthesize(seed)
-
-        # Без сида: проверяем наличие browserforge
+        # Режим 'auto': при наличии browserforge используем его (сид поддержан детерминированно)
         if importlib.util.find_spec("browserforge") is not None:
             try:
                 provider = BrowserForgeProvider(browser="chrome", os=self.os_target)

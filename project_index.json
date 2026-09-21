@@ -15529,9 +15529,9 @@
                     "name": "get_git_changed_files",
                     "type": "function",
                     "layer": "internal",
-                    "signature": "(base_dir)",
+                    "signature": "(base_dir, staged_only)",
                     "summary": "Возвращает список всех измененных, добавленных и неотслеживаемых файлов в Git.",
-                    "docstring": "Возвращает список всех измененных, добавленных и неотслеживаемых файлов в Git.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Список абсолютных путей к измененным файлам.",
+                    "docstring": "Возвращает список всех измененных, добавленных и неотслеживаемых файлов в Git.\n\nArgs:\n    base_dir: Путь к корню проекта.\n    staged_only: Если True, возвращает только staged изменения (подготовленные к коммиту).\n\nReturns:\n    Список абсолютных путей к измененным файлам.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -15549,9 +15549,9 @@
                     "name": "get_git_new_files",
                     "type": "function",
                     "layer": "internal",
-                    "signature": "(base_dir)",
+                    "signature": "(base_dir, staged_only)",
                     "summary": "Возвращает список всех новых (добавленных или неотслеживаемых) файлов в Git.",
-                    "docstring": "Возвращает список всех новых (добавленных или неотслеживаемых) файлов в Git.\n\nArgs:\n    base_dir: Путь к корню проекта.\n\nReturns:\n    Список абсолютных путей к новым файлам.",
+                    "docstring": "Возвращает список всех новых (добавленных или неотслеживаемых) файлов в Git.\n\nArgs:\n    base_dir: Путь к корню проекта.\n    staged_only: Если True, возвращает только staged добавленные файлы.\n\nReturns:\n    Список абсолютных путей к новым файлам.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -15561,7 +15561,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 68,
+                    "line_number": 70,
                     "bases": [],
                     "children": []
                   },
@@ -15581,7 +15581,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 113,
+                    "line_number": 117,
                     "bases": [],
                     "children": []
                   },
@@ -15590,8 +15590,8 @@
                     "type": "function",
                     "layer": "internal",
                     "signature": "(file_path)",
-                    "summary": "Проверяет, содержит ли файл директиву игнорирования правила.",
-                    "docstring": "Проверяет, содержит ли файл директиву игнорирования правила.\n\nArgs:\n    file_path: Путь к проверяемому файлу.\n\nReturns:\n    True, если в файле есть комментарий игнорирования, иначе False.",
+                    "summary": "Проверяет, содержит ли исходный файл директиву игнорирования правила.",
+                    "docstring": "Проверяет, содержит ли исходный файл директиву игнорирования правила.\n\nArgs:\n    file_path: Путь к проверяемому файлу.\n\nReturns:\n    True, если в файле есть комментарий игнорирования, иначе False.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -15601,7 +15601,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 153,
+                    "line_number": 157,
                     "bases": [],
                     "children": []
                   },
@@ -15621,7 +15621,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 172,
+                    "line_number": 184,
                     "bases": [
                       "..ai_lint.Rule"
                     ],
@@ -15642,7 +15642,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 181,
+                        "line_number": 193,
                         "bases": [],
                         "children": []
                       }
@@ -30126,7 +30126,7 @@
                         "layer": "private",
                         "signature": "(self, mode, os_target, locale)",
                         "summary": "Инициализирует синтезатор.",
-                        "docstring": "Инициализирует синтезатор.\n\nArgs:\n    mode: Режим работы ('auto', 'procedural', 'browserforge', 'fpgen').\n        В режиме 'auto' при наличии сида всегда используется детерминированный процедурный генератор.\n        Если сид не передан, при наличии browserforge используется он, иначе процедурный.\n    os_target: Целевая операционная система ('windows', 'macos', 'linux').\n    locale: Локаль системы для подбора периферийных устройств.",
+                        "docstring": "Инициализирует синтезатор.\n\nArgs:\n    mode: Режим работы ('auto', 'procedural', 'browserforge', 'fpgen').\n        В режиме 'auto' при наличии browserforge используется он (включая детерминированную\n        генерацию по сиду), иначе используется процедурный генератор.\n    os_target: Целевая операционная система ('windows', 'macos', 'linux').\n    locale: Локаль системы для подбора периферийных устройств.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -30178,7 +30178,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 71,
+                        "line_number": 66,
                         "bases": [],
                         "children": []
                       },
@@ -30200,7 +30200,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 80,
+                        "line_number": 75,
                         "bases": [],
                         "children": []
                       },
@@ -30222,7 +30222,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 89,
+                        "line_number": 84,
                         "bases": [],
                         "children": []
                       },
@@ -30242,7 +30242,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 109,
+                        "line_number": 104,
                         "bases": [],
                         "children": []
                       },
@@ -30264,7 +30264,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 138,
+                        "line_number": 133,
                         "bases": [],
                         "children": []
                       }
@@ -30860,7 +30860,7 @@
                     "layer": "public",
                     "signature": "()",
                     "summary": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.",
-                    "docstring": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.\n\nReturns:\n    Список аргументов командной строки запуска браузера.",
+                    "docstring": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.\n\nNote:\n    Флаги ``--disable-blink-features=AutomationControlled``, ``--use-fake-ui-for-media-stream``\n    и подобные намеренно исключены, так как в современных версиях Chromium они\n    вызывают системный инфобар о неподдерживаемых флагах или детектируются\n    антибот-системами. Скрытие ``navigator.webdriver`` выполняется через\n    CDP-инъекцию скрипта антидетекта.\n\nReturns:\n    Список аргументов командной строки запуска браузера.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -30890,7 +30890,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 294,
+                    "line_number": 296,
                     "bases": [],
                     "children": []
                   },
@@ -30910,7 +30910,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 356,
+                    "line_number": 358,
                     "bases": [],
                     "children": []
                   },
@@ -30930,7 +30930,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 376,
+                    "line_number": 378,
                     "bases": [],
                     "children": []
                   }
@@ -32549,6 +32549,26 @@
                         "children": []
                       },
                       {
+                        "name": "_extract_cookie_field",
+                        "type": "function",
+                        "layer": "private",
+                        "signature": "(c)",
+                        "summary": "Безопасно извлекает значение поля из словаря или CDP-объекта Cookie.",
+                        "docstring": "Безопасно извлекает значение поля из словаря или CDP-объекта Cookie.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 16,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
                         "name": "export_nodriver_profile",
                         "type": "function",
                         "layer": "internal",
@@ -32564,7 +32584,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 16,
+                        "line_number": 31,
                         "bases": [],
                         "children": []
                       },
@@ -32584,7 +32604,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 64,
+                        "line_number": 115,
                         "bases": [],
                         "children": []
                       }
@@ -33278,6 +33298,238 @@
                     "line_number": 92,
                     "bases": [],
                     "children": []
+                  }
+                ]
+              },
+              {
+                "name": "cache",
+                "path": "chutils/scraping/proxy/cache",
+                "type": "module",
+                "layer": "public",
+                "summary": "Модуль дискового кэширования для подсистемы прокси chutils.",
+                "docstring": "Модуль дискового кэширования для подсистемы прокси chutils.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "FileCacheBackend",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Дисковый кэш строковых значений с поддержкой TTL и атомарной записью через chutils.fs.",
+                    "docstring": "Дисковый кэш строковых значений с поддержкой TTL и атомарной записью через chutils.fs.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 19,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, file_path)",
+                        "summary": "Инициализирует дисковый файловый кэш.",
+                        "docstring": "Инициализирует дисковый файловый кэш.\n\nArgs:\n    file_path: Путь к целевому JSON-файлу на диске.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 22,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_load",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "Загружает данные из файла кэша.",
+                        "docstring": "Загружает данные из файла кэша.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 33,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_save",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "Атомарно сохраняет словарь на диск.",
+                        "docstring": "Атомарно сохраняет словарь на диск.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 48,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Возвращает значение из кэша с проверкой срока жизни.",
+                        "docstring": "Возвращает значение из кэша с проверкой срока жизни.\n\nArgs:\n    key: Ключ для поиска.\n\nReturns:\n    Строковое значение или None, если запись отсутствует или просрочена.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 57,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "set",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key, value, ttl, tags)",
+                        "summary": "Сохраняет значение в кэше с опциональным TTL.",
+                        "docstring": "Сохраняет значение в кэше с опциональным TTL.\n\nArgs:\n    key: Ключ для сохранения.\n    value: Сохраняемое строковое значение.\n    ttl: Время жизни записи в секундах.\n    tags: Опциональный список тегов.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 78,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "delete",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Удаляет ключ из кэша.",
+                        "docstring": "Удаляет ключ из кэша.\n\nArgs:\n    key: Удаляемый ключ.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 103,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "exists",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, key)",
+                        "summary": "Проверяет наличие непросроченного ключа в кэше.",
+                        "docstring": "Проверяет наличие непросроченного ключа в кэше.\n\nArgs:\n    key: Проверяемый ключ.\n\nReturns:\n    True, если ключ найден и не просрочен, иначе False.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 114,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "clear",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Полностью очищает кэш.",
+                        "docstring": "Полностью очищает кэш.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 125,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "invalidate_tag",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, tag)",
+                        "summary": "Инвалидирует все ключи с заданным тегом.",
+                        "docstring": "Инвалидирует все ключи с заданным тегом.\n\nArgs:\n    tag: Название тега для очистки.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 131,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
                   }
                 ]
               },
@@ -34117,6 +34369,346 @@
                 ]
               },
               {
+                "name": "resolver",
+                "path": "chutils/scraping/proxy/resolver",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Модуль умного разрешения форматов прокси, проверки доступности и дискового кэширования.",
+                "docstring": "Модуль умного разрешения форматов прокси, проверки доступности и дискового кэширования.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 20,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "ProxyCandidate",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Модель кандидата прокси с нормализованными компонентами.",
+                    "docstring": "Модель кандидата прокси с нормализованными компонентами.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 25,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": [
+                      {
+                        "name": "url",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает нормализованный URL прокси.",
+                        "docstring": "Возвращает нормализованный URL прокси.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 35,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "to_proxy_config",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Преобразует кандидата в экземпляр ProxyConfig.",
+                        "docstring": "Преобразует кандидата в экземпляр ProxyConfig.\n\nReturns:\n    Сконфигурированный объект ProxyConfig.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 46,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "SmartProxyResolver",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Умный резолвер и верификатор форматов прокси с активным зондированием и дисковым кэшированием.",
+                    "docstring": "Умный резолвер и верификатор форматов прокси с активным зондированием и дисковым кэшированием.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 61,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, cache_path, probe_timeout, target_url)",
+                        "summary": "Инициализирует резолвер прокси.",
+                        "docstring": "Инициализирует резолвер прокси.\n\nArgs:\n    cache_path: Путь к файлу кэша. Если не указан, используется .chutils/proxy_cache.json.\n    probe_timeout: Таймаут проверки соединения с кандидатом в секундах.\n    target_url: Целевой легковесный URL для тестового HTTP GET-запроса при проверке.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 64,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate_candidates",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, raw_proxy)",
+                        "summary": "Генерирует список кандидатов URL прокси в порядке приоритета проверки.",
+                        "docstring": "Генерирует список кандидатов URL прокси в порядке приоритета проверки.\n\nПоддерживает форматы:\n- `host:port:user:pass` (приоритет: http, затем socks5)\n- `user:pass:host:port`\n- `user:pass@host:port`\n- `host:port@user:pass`\n- `host:port`\n- `http://...`, `socks5://...` (выбранный протокол, затем альтернатива)\n\nArgs:\n    raw_proxy: Исходная строка прокси.\n\nReturns:\n    Список нормализованных URL-адресов кандидатов.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [
+                            "pass",
+                            "port"
+                          ],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 82,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "probe_proxy",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, candidate_url)",
+                        "summary": "Проверяет реальную сетевую доступность и валидность авторизации кандидата прокси.",
+                        "docstring": "Проверяет реальную сетевую доступность и валидность авторизации кандидата прокси.\n\nArgs:\n    candidate_url: URL кандидата прокси.\n\nReturns:\n    True, если прокси успешно ответил на рукопожатие или запрос, иначе False.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 206,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "check_health",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, candidate_url)",
+                        "summary": "Выполняет комплексный Health Check прокси с замером задержки (latency).",
+                        "docstring": "Выполняет комплексный Health Check прокси с замером задержки (latency).\n\nArgs:\n    candidate_url: URL кандидата прокси для проверки.\n\nReturns:\n    Экземпляр ProxyHealthResult со статусом доступности и задержкой в мс.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 234,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_probe_http",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, host, port, username, password, timeout)",
+                        "summary": "Проверяет HTTP прокси через HTTP CONNECT или GET-запрос к легковесному эндпоинту.",
+                        "docstring": "Проверяет HTTP прокси через HTTP CONNECT или GET-запрос к легковесному эндпоинту.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 262,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_probe_socks5",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, host, port, username, password, timeout)",
+                        "summary": "Проверяет SOCKS5 прокси через рукопожатие RFC 1928 / RFC 1929.",
+                        "docstring": "Проверяет SOCKS5 прокси через рукопожатие RFC 1928 / RFC 1929.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 334,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_probe_socks4",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, host, port, username, timeout)",
+                        "summary": "Проверяет SOCKS4 прокси.",
+                        "docstring": "Проверяет SOCKS4 прокси.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 406,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "resolve",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, raw_proxy, force_check, default_fallback, force)",
+                        "summary": "Определяет корректный формат, проверяет доступность кандидатов и возвращает рабочий URL.",
+                        "docstring": "Определяет корректный формат, проверяет доступность кандидатов и возвращает рабочий URL.\n\nArgs:\n    raw_proxy: Исходная строка прокси от пользователя.\n    force_check: Игнорировать дисковый кэш и принудительно провести сетевой опрос.\n    default_fallback: Возвращать лучший нормализованный URL при недоступности всех кандидатов.\n    force: Синоним force_check для обратной совместимости.\n\nReturns:\n    Нормализованный валидный URL прокси или None при пустом вводе.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 439,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "resolve_config",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, raw_proxy, force_check, default_fallback, force)",
+                        "summary": "Резолвит прокси и возвращает структурированный объект ProxyConfig.",
+                        "docstring": "Резолвит прокси и возвращает структурированный объект ProxyConfig.\n\nArgs:\n    raw_proxy: Исходная строка прокси.\n    force_check: Принудительно выполнить сетевую проверку без кэша.\n    default_fallback: Использовать первый валидный кандидат при недоступности сети.\n    force: Синоним force_check для обратной совместимости.\n\nReturns:\n    Экземпляр ProxyConfig или None при пустом вводе.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 493,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "resolve_sync",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, raw_proxy, force_check, default_fallback, force)",
+                        "summary": "Синхронная обертка для асинхронного метода resolve.",
+                        "docstring": "Синхронная обертка для асинхронного метода resolve.\n\nArgs:\n    raw_proxy: Исходная строка прокси.\n    force_check: Принудительно выполнить опрос без учета кэша.\n    default_fallback: Возвращать лучший кандидат при неудаче проверки.\n    force: Синоним force_check для обратной совместимости.\n\nReturns:\n    Рабочий URL прокси или None.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 521,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "resolve_config_sync",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, raw_proxy, force_check, default_fallback, force)",
+                        "summary": "Синхронная обертка для асинхронного метода resolve_config.",
+                        "docstring": "Синхронная обертка для асинхронного метода resolve_config.\n\nArgs:\n    raw_proxy: Исходная строка прокси.\n    force_check: Принудительно выполнить опрос без учета кэша.\n    default_fallback: Возвращать лучший кандидат при неудаче проверки.\n    force: Синоним force_check для обратной совместимости.\n\nReturns:\n    Экземпляр ProxyConfig или None.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 570,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
                 "name": "tunnel",
                 "path": "chutils/scraping/proxy/tunnel",
                 "type": "module",
@@ -34474,7 +35066,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 21,
+                "line_number": 24,
                 "bases": [],
                 "children": []
               },
@@ -34494,7 +35086,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 38,
+                "line_number": 44,
                 "bases": [],
                 "children": []
               },
@@ -34514,7 +35106,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 46,
+                "line_number": 52,
                 "bases": [],
                 "children": []
               }
@@ -44951,7 +45543,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 366,
+        "line_number": 368,
         "bases": [],
         "children": []
       },
@@ -44971,7 +45563,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 399,
+        "line_number": 401,
         "bases": [],
         "children": []
       },
@@ -44991,7 +45583,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 419,
+        "line_number": 421,
         "bases": [],
         "children": []
       }
@@ -46829,6 +47421,21 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/proxy/cache",
+      "target": "chutils",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/cache",
+      "target": "chutils/cache/base",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/cache",
+      "target": "chutils/fs",
+      "weight": 2
+    },
+    {
       "source": "chutils/scraping/proxy/extension",
       "target": "chutils/fs",
       "weight": 2
@@ -46870,6 +47477,26 @@
     },
     {
       "source": "chutils/scraping/proxy/pool",
+      "target": "chutils/scraping/proxy/parser",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/resolver",
+      "target": "chutils",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/resolver",
+      "target": "chutils/scraping/proxy/cache",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/resolver",
+      "target": "chutils/scraping/proxy/models",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/proxy/resolver",
       "target": "chutils/scraping/proxy/parser",
       "weight": 1
     },
@@ -47496,10 +48123,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.8.0",
-    "project_version": "3.8.0",
-    "git_commit": "bd63071db734d8cc460cb8e4529bc99366604a3e (dirty)",
-    "generated_at": "2026-09-20T22:17:34.629358+00:00",
-    "project_hash": "2db5281c8265a55096819ff20fa486efafdf3f548c0375f1273ce26bde8d32f3"
+    "chutils_version": "3.8.1",
+    "project_version": "3.8.1",
+    "git_commit": "b5e793935ab483f679855602072b5bb5410323bc (dirty)",
+    "generated_at": "2026-09-21T11:38:17.076023+00:00",
+    "project_hash": "3cc645ead66787a4fa6d81c083d97c268e1ed59b077444df42657746d8eabe67"
   }
 }

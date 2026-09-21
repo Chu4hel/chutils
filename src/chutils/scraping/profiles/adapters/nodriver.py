@@ -13,6 +13,21 @@ from chutils.scraping.profiles.models import (
 logger = setup_logger(__name__)
 
 
+def _extract_cookie_field(c: Any, *keys: str, default: Any = None) -> Any:
+    """Безопасно извлекает значение поля из словаря или CDP-объекта Cookie."""
+    if isinstance(c, dict):
+        for k in keys:
+            if k in c and c[k] is not None:
+                return c[k]
+        return default
+    for k in keys:
+        if hasattr(c, k):
+            val = getattr(c, k)
+            if val is not None:
+                return getattr(val, "value", val)
+    return default
+
+
 async def export_nodriver_profile(tab: Any) -> BrowserProfile:
     """Экспортировать профиль сессии из вкладки nodriver Tab через CDP.
 
@@ -22,27 +37,63 @@ async def export_nodriver_profile(tab: Any) -> BrowserProfile:
     Returns:
         Экземпляр BrowserProfile.
     """
-    raw_cookies = await tab.send("Network.getAllCookies")
-    cookies_list: list[CookieData] = []
-    if isinstance(raw_cookies, dict) and "cookies" in raw_cookies:
-        for c in raw_cookies["cookies"]:
-            same_site_val = c.get("sameSite")
-            same_site_normalized = None
-            if same_site_val in ("Strict", "Lax", "None"):
-                same_site_normalized = same_site_val
+    raw_cookies = None
+    try:
+        raw_cookies = await tab.send("Network.getAllCookies")
+    except Exception:
+        try:
+            from nodriver.cdp import network
 
-            cookies_list.append(
-                CookieData(
-                    name=c.get("name", ""),
-                    value=c.get("value", ""),
-                    domain=c.get("domain", ""),
-                    path=c.get("path", "/"),
-                    expires=c.get("expires"),
-                    http_only=c.get("httpOnly", False),
-                    secure=c.get("secure", False),
-                    same_site=same_site_normalized,
-                )
+            raw_cookies = await tab.send(network.get_all_cookies())
+        except Exception:
+            try:
+                from nodriver.cdp import network
+
+                raw_cookies = await tab.send(network.get_cookies())
+            except Exception as e:
+                logger.debug("Не удалось получить куки через CDP: %s", e)
+
+    raw_list: list[Any] = []
+    if isinstance(raw_cookies, list):
+        raw_list = raw_cookies
+    elif isinstance(raw_cookies, dict):
+        raw_list = raw_cookies.get("cookies", [])
+    elif hasattr(raw_cookies, "cookies"):
+        cookies_attr = getattr(raw_cookies, "cookies")
+        if isinstance(cookies_attr, list):
+            raw_list = cookies_attr
+
+    cookies_list: list[CookieData] = []
+    for c in raw_list:
+        name = _extract_cookie_field(c, "name", default="")
+        if not name:
+            continue
+        value = _extract_cookie_field(c, "value", default="")
+        domain = _extract_cookie_field(c, "domain", default="")
+        path = _extract_cookie_field(c, "path", default="/")
+        expires = _extract_cookie_field(c, "expires", "expiry", default=None)
+        http_only = bool(_extract_cookie_field(c, "httpOnly", "http_only", default=False))
+        secure = bool(_extract_cookie_field(c, "secure", default=False))
+
+        raw_same_site = _extract_cookie_field(c, "sameSite", "same_site", default=None)
+        same_site_normalized = None
+        if raw_same_site is not None:
+            val_str = str(getattr(raw_same_site, "value", raw_same_site)).capitalize()
+            if val_str in ("Strict", "Lax", "None"):
+                same_site_normalized = val_str
+
+        cookies_list.append(
+            CookieData(
+                name=str(name),
+                value=str(value),
+                domain=str(domain),
+                path=str(path),
+                expires=float(expires) if expires is not None else None,
+                http_only=http_only,
+                secure=secure,
+                same_site=same_site_normalized,  # type: ignore[arg-type]
             )
+        )
 
     # Извлечение User-Agent
     user_agent = None

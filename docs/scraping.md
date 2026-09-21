@@ -338,8 +338,9 @@ await seed_cfg.apply_to_nodriver(tab)
 - **Периферийные устройства**: согласованная эмуляция микрофонов, камер и аудиовыходов (`MediaDevices`) со стабильными SHA-256 хэшами `deviceId` и `groupId`.
 - **Субпиксельный шум аудио**: эмуляция аппаратного джиттера ЦАП звуковой карты с порядком $10^{-7}$.
 - **Двухуровневый движок**:
+  - **Режим `auto`**: автоматически использует `browserforge`, если библиотека установлена (включая детерминированную генерацию по `seed`), либо прозрачно переключается на процедурный движок (Zero-Dependency fallback).
   - **Tier B (Zero-Dependency)**: полностью автономный встроенный процедурный генератор. Строго детерминирован по `seed` — один и тот же сид гарантирует идентичность отпечатка между перезапусками браузера.
-  - **Tier A (Bayesian/ML)**: опциональный адаптер над библиотекой `browserforge` (Apify), если она установлена (`pip install browserforge`).
+  - **Tier A (Bayesian/ML)**: опциональный адаптер над библиотекой `browserforge` (Apify), если она установлена (`pip install browserforge`). Поддерживает детерминизацию по сиду с изоляцией PRNG.
 
 #### Использование синтезатора
 
@@ -407,7 +408,8 @@ if solved:
 from chutils.scraping.humanize import get_browser_launch_args
 
 # Возвращает список флагов запуска, таких как:
-# '--disable-blink-features=AutomationControlled', '--no-first-run', '--password-store=basic' и т.д.
+# '--no-sandbox', '--disable-dev-shm-usage', '--no-first-run', '--password-store=basic',
+# '--mute-audio', '--disable-background-timer-throttling', '--disable-component-update' и т.д.
 launch_flags = get_browser_launch_args()
 ```
 
@@ -1103,7 +1105,7 @@ resp = await client.get("https://protected-site.com/api/data")
 
 ## 9. Запуск Nodriver с антидетектом (`launch_nodriver`, `nodriver_session`)
 
-Для браузерной автоматизации без следов веб-драйвера модуль `chutils.scraping` предоставляет фабрику `launch_nodriver` и асинхронный контекстный менеджер `nodriver_session`. Они автоматически накладывают рекомендованные флаги запуска Chromium (`--disable-blink-features=AutomationControlled`, `--disable-dev-shm-usage` для Docker и др.), настраивают прокси (с прозрачной поддержкой авторизации через расширение) и применяют `AntidetectConfig`.
+Для браузерной автоматизации без следов веб-драйвера модуль `chutils.scraping` предоставляет фабрику `launch_nodriver` и асинхронный контекстный менеджер `nodriver_session`. Они автоматически накладывают рекомендованные флаги запуска Chromium (`--disable-dev-shm-usage` для Docker, параметры изоляции и др.), настраивают прокси (с прозрачной поддержкой авторизации через расширение) и применяют `AntidetectConfig`.
 
 Фабрика поддерживает передачу постоянного каталога профиля (`user_data_dir`) для сохранения сессий, авторизаций и прогретых куки, а также кастомного пути к бинарнику браузера (`browser_executable_path`):
 
@@ -1223,5 +1225,96 @@ data = profile.to_dict()
 from chutils.scraping import FingerprintProfile
 restored_profile = FingerprintProfile.from_dict(data)
 assert restored_profile.user_agent == profile.user_agent
+```
+
+---
+
+## 12. Управление профилями браузеров и сессиями (`chutils.scraping.profiles`)
+
+Модуль `chutils.scraping.profiles` предоставляет универсальную абстракцию профиля браузера (`BrowserProfile`) для сохранения, переноса и переиспользования сессий между различными браузерными движками (`nodriver`, `Playwright`, `Selenium`).
+
+### Основные компоненты
+
+* **`BrowserProfile`**: Унифицированный контейнер данных сессии, включающий куки (`cookies: list[CookieData]`), локальное хранилище (`storage: StorageData`) и заголовки с User-Agent (`headers: HeaderData`).
+* **`ProfileManager`**: Менеджер жизненного цикла сессий на диске с поддержкой автоматической ротации, проверки валидности и кэширования.
+* **Адаптеры движков (`chutils.scraping.profiles.adapters`)**:
+  * **`nodriver`**: `export_nodriver_profile(tab)` и `import_nodriver_profile(tab, profile)`. Поддерживает полиморфное чтение кук из CDP (словари, прямой список, объекты `cdp.network.Cookie` с enum-полями `same_site`), а также каскадный вызов `Network.getAllCookies` / `network.get_all_cookies()` / `network.get_cookies()`.
+  * **`Playwright`**: `export_playwright_profile(context)` и `import_playwright_profile(context, profile)`. Экспортирует состояние кук и localStorage через `context.storage_state()`.
+  * **`Selenium`**: `export_selenium_profile(driver)` и `import_selenium_profile(driver, profile)`.
+
+### Пример использования адаптера nodriver
+
+```python
+import nodriver as uc
+from chutils.scraping.profiles.adapters.nodriver import export_nodriver_profile, import_nodriver_profile
+from chutils.scraping.profiles.storage import save_profile_to_file, load_profile_from_file
+
+async def main():
+    browser = await uc.start()
+    tab = await browser.get("https://example.com/login")
+    # ... авторизация на сайте ...
+
+    # Экспорт профиля сессии с куками и User-Agent
+    profile = await export_nodriver_profile(tab)
+    save_profile_to_file(profile, "session_profile.json")
+
+    # В новой сессии — импорт сохраненного профиля
+    restored_profile = load_profile_from_file("session_profile.json")
+    new_tab = await browser.get("https://example.com")
+    await import_nodriver_profile(new_tab, restored_profile)
+```
+
+---
+
+## 13. Умный резолвер и валидатор прокси (`SmartProxyResolver`)
+
+При работе с пулами прокси от различных поставщиков строки подключения часто поступают в нестандартных форматах (`ip:port:user:pass`, `user:pass:ip:port`, `user:pass@ip:port`, без протокола или с неверно указанным протоколом `http://` вместо `socks5://`).
+
+Класс `SmartProxyResolver` (`chutils.scraping.proxy.SmartProxyResolver` или `chutils.SmartProxyResolver`) решает эту проблему:
+1. **Эвристический разбор строк**: Распознает любые вариации форматов `host:port:user:pass`, `user:pass:host:port`, `@` нотацию и формирует приоритизированный список кандидатов.
+2. **Активный сетевой Handshake (Probe)**:
+   - Для HTTP/HTTPS: проверяет поддержку туннелирования через `CONNECT` или легковесный `GET /generate_204`, корректно обрабатывая ошибки авторизации `407 Proxy Authentication Required`.
+   - Для SOCKS5: выполняет полноценное рукопожатие RFC 1928 и авторизацию RFC 1929 (`0x02 username/password`).
+   - Для SOCKS4: выполняет SOCKS4 connect handshake.
+3. **Персистентный дисковый кэш (`FileCacheBackend`)**: Валидированные канонические URL сохраняются на диск с TTL (по умолчанию 7 дней) и атомарной записью (`atomic_write`), избегая повторных сетевых задержек при последующих запусках.
+4. **Live Health-Check и замер задержки**: Метод `check_health` возвращает `ProxyHealthResult` со статусом доступности `is_alive`, задержкой `latency_ms` и текстом ошибки `error`.
+5. **Синхронные обертки**: Методы `resolve_sync` и `resolve_config_sync` корректно работают как в синхронных скриптах, так и внутри уже работающего цикла событий `asyncio` (например, в Jupyter Notebook, FastAPI или GUI).
+
+### Пример использования
+
+```python
+import asyncio
+from chutils import SmartProxyResolver
+
+async def main():
+    resolver = SmartProxyResolver()
+
+    # Автоматическое определение протокола и формата
+    # Строка вида "ip:port:user:pass" превращается в валидный рабочий URL
+    proxy_url = await resolver.resolve("185.199.229.156:8080:login:password")
+    print(f"Рабочий URL прокси: {proxy_url}")
+    # Вывод: http://login:password@185.199.229.156:8080 (или socks5://...)
+
+    # Получение готовой типизированной конфигурации ProxyConfig
+    config = await resolver.resolve_config("185.199.229.156:8080:login:password")
+    if config:
+        print(f"Хост: {config.host}, Порт: {config.port}, Протокол: {config.protocol}")
+
+    # Проверка задержки и живости прокси (Health Check)
+    health = await resolver.check_health(proxy_url)
+    print(f"Живой: {health.is_alive}, Задержка: {health.latency_ms} ms")
+
+asyncio.run(main())
+```
+
+### Синхронный вызов
+
+```python
+from chutils import SmartProxyResolver
+
+resolver = SmartProxyResolver()
+# Работает без явного вызова asyncio.run(), безопасно внутри любого контекста
+proxy_url = resolver.resolve_sync("185.199.229.156:8080:login:password")
+proxy_cfg = resolver.resolve_config_sync("185.199.229.156:8080:login:password")
 ```
 

@@ -9,7 +9,12 @@ import pytest
 from pytest_mock import MockerFixture
 
 from chutils.dev.ai_lint import LinterEngine
-from chutils.dev.rules import APIMapRule, EnvSyncRule, ManifestRule
+from chutils.dev.rules import (
+    APIMapRule,
+    EnvSyncRule,
+    FileDependencySyncRule,
+    ManifestRule,
+)
 
 
 @pytest.fixture
@@ -134,3 +139,110 @@ def test_api_map_rule_staged_optimization(tmp_path: Path) -> None:
     # Python файл изменился -> проверка запускается (найдет расхождение, так как api_map пустой)
     results_with_change = rule.check(str(tmp_path), ["src/chutils/cli.py"])
     assert len(results_with_change) > 0
+
+
+def test_ai_lint_command_staged_output_message(mocker: MockerFixture) -> None:
+    """Проверяет корректность сообщения о запуске аудита для staged diff и полной базы."""
+    import argparse
+
+    from chutils.commands.dev.ai_lint import AiLintSubCommand
+
+    cmd = AiLintSubCommand()
+    mock_console = MagicMock()
+    cmd.console = mock_console
+    cmd.err_console = mock_console
+
+    mock_engine = MagicMock()
+    mock_engine.staged = True
+    mock_engine.run.return_value = []
+    mock_engine.print_results.return_value = True
+
+    mocker.patch("chutils.dev.ai_lint.LinterEngine", return_value=mock_engine)
+    mocker.patch("chutils.config.dev.load_ai_lint_config", return_value={})
+
+    # 1. При staged=True
+    args_staged = argparse.Namespace(
+        strict=None,
+        soft_mode=None,
+        ignore=None,
+        rules=None,
+        exclude_rules=None,
+        custom_rules_path=None,
+        staged=True,
+        output_format=None,
+        group_by=None,
+    )
+    cmd.handle(args_staged)
+    output_staged = mock_console.print.call_args[0][0]
+    assert "изменённых файлов" in output_staged
+
+    # 2. При staged=False
+    mock_engine.staged = False
+    mock_console.reset_mock()
+    args_full = argparse.Namespace(
+        strict=None,
+        soft_mode=None,
+        ignore=None,
+        rules=None,
+        exclude_rules=None,
+        custom_rules_path=None,
+        staged=False,
+        output_format=None,
+        group_by=None,
+    )
+    cmd.handle(args_full)
+    output_full = mock_console.print.call_args[0][0]
+    assert "кодовой базы" in output_full
+
+
+def test_file_dependency_sync_rule_staged_mode(
+    mock_git_diff: MockerFixture, tmp_path: Path
+) -> None:
+    """Проверяет, что FileDependencySyncRule в режиме staged анализирует только staged изменения."""
+    rule = FileDependencySyncRule()
+    rule.staged = True
+    rule.config = {
+        "dependencies": {
+            "src/chutils/module.py": ["docs/module.md"],
+        }
+    }
+
+    # Исходный файл в src
+    src_file = tmp_path / "src" / "chutils" / "module.py"
+    src_file.parent.mkdir(parents=True, exist_ok=True)
+    src_file.touch()
+
+    # 1. Ситуация: в staged есть изменения module.py, но нет docs/module.md
+    def mock_run_staged(cmd, **kwargs):
+        res = MagicMock()
+        res.returncode = 0
+        if "--cached" in cmd and "--diff-filter=A" in cmd:
+            res.stdout = ""
+        elif "--cached" in cmd:
+            res.stdout = "src/chutils/module.py\n"
+        else:
+            # unstaged содержит docs/module.md, но это не должно помочь в staged режиме!
+            res.stdout = "docs/module.md\n"
+        return res
+
+    mock_git_diff.side_effect = mock_run_staged
+
+    results = rule.check(str(tmp_path), [])
+    assert len(results) == 1
+    assert "docs/module.md" in results[0].message
+
+    # 2. Ситуация: в staged изменения docs/module.md тоже подготовлены
+    def mock_run_synced(cmd, **kwargs):
+        res = MagicMock()
+        res.returncode = 0
+        if "--cached" in cmd and "--diff-filter=A" in cmd:
+            res.stdout = ""
+        elif "--cached" in cmd:
+            res.stdout = "src/chutils/module.py\ndocs/module.md\n"
+        else:
+            res.stdout = ""
+        return res
+
+    mock_git_diff.side_effect = mock_run_synced
+    results_synced = rule.check(str(tmp_path), [])
+    assert len(results_synced) == 0

@@ -38,10 +38,17 @@ class LinterCoverageRule(Rule):
 
         # Проверяем, включено ли само правило FileDependencySyncRule
         enabled_rules = self.config.get("rules")
-        if isinstance(enabled_rules, list):
+        if isinstance(enabled_rules, list) and enabled_rules:
             enabled_names = [str(name) for name in enabled_rules]
             if "FileDependencySyncRule" not in enabled_names:
-                # Если основное правило отслеживания выключено в конфиге, то и покрытие проверять не нужно
+                # Если основное правило отслеживания явно выключено в списке rules, то и покрытие проверять не нужно
+                return results
+
+        exclude_rules = self.config.get("exclude_rules")
+        if isinstance(exclude_rules, list) and exclude_rules:
+            excluded_names = [str(name) for name in exclude_rules]
+            if "FileDependencySyncRule" in excluded_names:
+                # Если правило явно исключено через exclude_rules, пропускаем проверку покрытия
                 return results
 
         # Собираем все python-файлы исходного кода chutils
@@ -126,11 +133,22 @@ class LinterCoverageRule(Rule):
 
             return False
 
-        # Получаем список всех .py файлов, исключая игнорируемые
+        # Получаем список .py файлов: в режиме staged проверяем только измененные staged файлы,
+        # в обычном режиме — сканируем все исходники пакета src/chutils/
         py_files: list[Path] = []
-        for p in src_path.glob("**/*.py"):
-            if not is_file_ignored(p):
-                py_files.append(p)
+        if getattr(self, "staged", False):
+            target_candidates = [Path(f) for f in files if Path(f).suffix == ".py"]
+            for p in target_candidates:
+                try:
+                    p.relative_to(src_path)
+                    if not is_file_ignored(p):
+                        py_files.append(p)
+                except ValueError:
+                    continue
+        else:
+            for p in src_path.glob("**/*.py"):
+                if not is_file_ignored(p):
+                    py_files.append(p)
 
         # Проверяем каждый файл на покрытие хотя бы одним глоб-шаблоном из dependencies.
         # Ключи могут быть обычными глоб-шаблонами или начинаться с "new:".

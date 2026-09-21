@@ -124,10 +124,14 @@ class AiLintSubCommand(SubCommand):
         try:
             config = load_ai_lint_config(cli_args=cli_args)
             engine = LinterEngine(config)
-
-            self.err_console.print(
-                "[bold yellow]Запуск аудита AI-готовности кодовой базы...[/bold yellow]"
-            )
+            if engine.staged:
+                self.err_console.print(
+                    "[bold yellow]Запуск аудита AI-готовности изменённых файлов (staged diff)...[/bold yellow]"
+                )
+            else:
+                self.err_console.print(
+                    "[bold yellow]Запуск аудита AI-готовности кодовой базы...[/bold yellow]"
+                )
             results = engine.run()
             success = engine.print_results(results)
 

@@ -176,6 +176,9 @@ chutils dev ai-lint
     повышении версии автоматически генерирует миграционный файл контекста для ИИ `.chutils/migration_context.md` на
     основе чейнджлогов релизов с GitHub API. Можно отключать через ENV (`CHUTILS_DISABLE_UPGRADE_CHECK=1`,
     `CHUTILS_GENERATE_CHANGELOG=0`) или конфиг `ai-lint.toml`.
+11. **`LinterCoverageRule`** — Проверяет полноту покрытия исходного кода пакета `src/chutils/` правилами отслеживания
+    зависимостей в секции `[dependencies]` файла `ai-lint.toml`. В режиме `--staged` проверяет только измененные
+    исходные файлы.
 
 ---
 

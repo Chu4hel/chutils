@@ -16,14 +16,20 @@ if TYPE_CHECKING:
     from .pool import ProxyPool as ProxyPool
     from .pool import check_proxy as check_proxy
     from .pool import check_proxy_async as check_proxy_async
+    from .cache import FileCacheBackend as FileCacheBackend
+    from .resolver import ProxyCandidate as ProxyCandidate
+    from .resolver import SmartProxyResolver as SmartProxyResolver
     from .tunnel import AsyncProxyTunnel as AsyncProxyTunnel
 
 _LAZY_MAPPING = {
     "AsyncProxyTunnel": (".tunnel", "AsyncProxyTunnel"),
     "ChromeProxyExtension": (".extension", "ChromeProxyExtension"),
+    "FileCacheBackend": (".cache", "FileCacheBackend"),
+    "ProxyCandidate": (".resolver", "ProxyCandidate"),
     "ProxyConfig": (".models", "ProxyConfig"),
     "ProxyHealthResult": (".models", "ProxyHealthResult"),
     "ProxyPool": (".pool", "ProxyPool"),
+    "SmartProxyResolver": (".resolver", "SmartProxyResolver"),
     "async_nodriver_proxy": (".adapters", "async_nodriver_proxy"),
     "check_proxy": (".pool", "check_proxy"),
     "check_proxy_async": (".pool", "check_proxy_async"),
@@ -50,9 +56,12 @@ def __dir__() -> list[str]:
 __all__ = [
     "AsyncProxyTunnel",
     "ChromeProxyExtension",
+    "FileCacheBackend",
+    "ProxyCandidate",
     "ProxyConfig",
     "ProxyHealthResult",
     "ProxyPool",
+    "SmartProxyResolver",
     "async_nodriver_proxy",
     "check_proxy",
     "check_proxy_async",
