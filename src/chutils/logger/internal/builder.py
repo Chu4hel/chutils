@@ -87,6 +87,7 @@ class LoggerBuilder:
         at_time: Any = None,
         custom_patterns: list[str] | None = None,
         use_predefined_patterns: list[str | list[str]] | None = None,
+        propagate: bool | None = None,
     ) -> ChutilsLogger:
         """Основной метод сборки и настройки логгера.
 
@@ -112,6 +113,7 @@ class LoggerBuilder:
             at_time: Точное время ротации.
             custom_patterns: Пользовательские паттерны маскирования.
             use_predefined_patterns: Предопределенные паттерны маскирования.
+            propagate: Передавать ли логи вверх по иерархии (по умолчанию False).
 
         Returns:
             Настроенный экземпляр ChutilsLogger.
@@ -140,12 +142,22 @@ class LoggerBuilder:
         # 1. Настройка ширины консоли
         self._apply_console_width()
 
-        # 2. Определение и установка уровня
+        # 2. Определение и установка уровня и propagate
         level_int = self._get_level_int(log_level)
         self.logger.setLevel(level_int)
-        self.logger.propagate = False
 
-        if self.logger.hasHandlers() and not force_reconfigure:
+        propagate_val: bool
+        if propagate is not None:
+            propagate_val = propagate
+        else:
+            cfg_propagate = self.settings.get("propagate", False)
+            if isinstance(cfg_propagate, str):
+                propagate_val = cfg_propagate.lower() in ("true", "1", "yes", "y")
+            else:
+                propagate_val = bool(cfg_propagate)
+        self.logger.propagate = propagate_val
+
+        if getattr(self.logger, "_chutils_configured", False) and not force_reconfigure:
             return cast("ChutilsLogger", self.logger)
 
         if force_reconfigure:
@@ -167,6 +179,17 @@ class LoggerBuilder:
 
         # 6. Добавление стандартных фильтров (маскирование + контекст)
         self._add_standard_filters()
+
+        # 7. Подключение глобальных обработчиков
+        from ..core import _active_loggers, _global_handlers, _global_handlers_lock
+
+        with _global_handlers_lock:
+            for gh in _global_handlers:
+                if gh not in self.logger.handlers:
+                    self.logger.addHandler(gh)
+            _active_loggers.add(cast("ChutilsLogger", self.logger))
+
+        setattr(self.logger, "_chutils_configured", True)
 
         return cast("ChutilsLogger", self.logger)
 
@@ -209,7 +232,11 @@ class LoggerBuilder:
 
     def _clear_handlers(self) -> None:
         """Закрывает и удаляет все существующие обработчики логгера."""
-        from ..core import _file_handler_cache
+        from ..core import (
+            _file_handler_cache,
+            _global_handlers,
+            _global_handlers_lock,
+        )
 
         for handler in self.logger.handlers[:]:
             if (
@@ -217,7 +244,10 @@ class LoggerBuilder:
                 and handler.baseFilename in _file_handler_cache
             ):
                 del _file_handler_cache[handler.baseFilename]
-            handler.close()
+            with _global_handlers_lock:
+                is_global = handler in _global_handlers
+            if not is_global:
+                handler.close()
             self.logger.removeHandler(handler)
 
     def _is_async(self, explicit_use_async: bool | None) -> bool:
@@ -412,7 +442,9 @@ class LoggerBuilder:
 
             # 2.2. Проверка тестового раннера (pytest и др.)
             # chutils: ignore[ChutilsIntegrationRule]
-            env_pytest = "PYTEST_CURRENT_TEST" in os.environ or bool(os.getenv("PYTEST_VERSION"))
+            env_pytest = "PYTEST_CURRENT_TEST" in os.environ or bool(
+                os.getenv("PYTEST_VERSION")
+            )
             is_test_runner = env_pytest or ("pytest" in sys.modules)
             if (
                 is_test_runner
@@ -493,9 +525,7 @@ class LoggerBuilder:
                 or self.settings.get("max_bytes", 5 * 1024 * 1024)
             )
             h_class = (
-                CompressingRotatingFileHandler
-                if compress
-                else SafeRotatingFileHandler
+                CompressingRotatingFileHandler if compress else SafeRotatingFileHandler
             )
             return h_class(
                 path,

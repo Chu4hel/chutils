@@ -70,10 +70,19 @@ options:
 members:
 
 - setup_logger
+- setup_logger_from_config
 - ChutilsLogger
 - DEVDEBUG_LEVEL_NUM
 - MEDIUMDEBUG_LEVEL_NUM
 - FlappingFilter
+- add_global_handler
+- remove_global_handler
+- get_global_handlers
+- clear_global_handlers
+- InterceptHandler
+- capture_standard_logging
+- intercept_all
+- restore_standard_logging
 
 ## Модуль `context`
 
@@ -440,6 +449,7 @@ members:
 - require_qt
 - QtLogHandler
 - setup_qt_logging
+- remove_qt_logging
 - QtAsyncWorker
 - run_async_task
 - async_to_qt

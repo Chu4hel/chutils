@@ -5,6 +5,7 @@
 from .asyncio import QtAsyncWorker, async_to_qt, run_async_task
 from .logging import (  # chutils: ignore[ChutilsIntegrationRule]
     QtLogHandler,
+    remove_qt_logging,
     setup_qt_logging,
 )
 from .shim import (
@@ -46,6 +47,7 @@ __all__ = [
     "async_to_qt",
     "bind_qt_signals",
     "qt_slot",
+    "remove_qt_logging",
     "require_qt",
     "run_async_task",
     "setup_qt_logging",

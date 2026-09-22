@@ -167,6 +167,11 @@ _LAZY_MAPPING = {
     ),
     "DEVDEBUG_LEVEL_NUM": (".logger", "DEVDEBUG_LEVEL_NUM"),
     "MEDIUMDEBUG_LEVEL_NUM": (".logger", "MEDIUMDEBUG_LEVEL_NUM"),
+    "add_global_handler": (".logger", "add_global_handler"),
+    "remove_global_handler": (".logger", "remove_global_handler"),
+    "capture_standard_logging": (".logger", "capture_standard_logging"),
+    "intercept_all": (".logger", "intercept_all"),
+    "InterceptHandler": (".logger", "InterceptHandler"),
     # cli_utils
     "get_console": (".cli_utils", "get_console"),
     # env (Discovery)

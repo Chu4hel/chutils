@@ -16,6 +16,18 @@ if TYPE_CHECKING:
     from .core import MEDIUMDEBUG_LEVEL_NUM as MEDIUMDEBUG_LEVEL_NUM
     from .core import ChutilsLogger as ChutilsLogger
     from .core import LogLevel as LogLevel
+    from .core import (
+        add_global_handler as add_global_handler,
+    )
+    from .core import (
+        clear_global_handlers as clear_global_handlers,
+    )
+    from .core import (
+        get_global_handlers as get_global_handlers,
+    )
+    from .core import (
+        remove_global_handler as remove_global_handler,
+    )
     from .core import setup_logger as setup_logger
     from .core import setup_logger_from_config as setup_logger_from_config
     from .filters import (
@@ -30,6 +42,21 @@ if TYPE_CHECKING:
         CompressingTimedRotatingFileHandler as CompressingTimedRotatingFileHandler,
     )
     from .handlers import SafeTimedRotatingFileHandler as SafeTimedRotatingFileHandler
+    from .intercept import (
+        DEFAULT_INTERCEPT_MODULES as DEFAULT_INTERCEPT_MODULES,
+    )
+    from .intercept import (
+        InterceptHandler as InterceptHandler,
+    )
+    from .intercept import (
+        capture_standard_logging as capture_standard_logging,
+    )
+    from .intercept import (
+        intercept_all as intercept_all,
+    )
+    from .intercept import (
+        restore_standard_logging as restore_standard_logging,
+    )
     from .masking import (
         SecretMaskingFilter as SecretMaskingFilter,
     )
@@ -50,6 +77,15 @@ _LAZY_MAPPING = {
     "LogLevel": (".core", "LogLevel"),
     "DEVDEBUG_LEVEL_NUM": (".core", "DEVDEBUG_LEVEL_NUM"),
     "MEDIUMDEBUG_LEVEL_NUM": (".core", "MEDIUMDEBUG_LEVEL_NUM"),
+    "add_global_handler": (".core", "add_global_handler"),
+    "remove_global_handler": (".core", "remove_global_handler"),
+    "get_global_handlers": (".core", "get_global_handlers"),
+    "clear_global_handlers": (".core", "clear_global_handlers"),
+    "InterceptHandler": (".intercept", "InterceptHandler"),
+    "capture_standard_logging": (".intercept", "capture_standard_logging"),
+    "intercept_all": (".intercept", "intercept_all"),
+    "restore_standard_logging": (".intercept", "restore_standard_logging"),
+    "DEFAULT_INTERCEPT_MODULES": (".intercept", "DEFAULT_INTERCEPT_MODULES"),
     "FlappingFilter": (".filters", "FlappingFilter"),
     "ChutilsJsonFormatter": (".formatters", "ChutilsJsonFormatter"),
     "JSON_LOGGER_AVAILABLE": (".formatters", "JSON_LOGGER_AVAILABLE"),

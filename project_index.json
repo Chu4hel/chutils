@@ -23325,6 +23325,106 @@
             "children": [],
             "symbols": [
               {
+                "name": "_global_handlers_lock",
+                "type": "constant",
+                "layer": "private",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 32,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "add_global_handler",
+                "type": "function",
+                "layer": "public",
+                "signature": "(handler)",
+                "summary": "Добавляет глобальный обработчик для всех текущих и будущих логгеров chutils.",
+                "docstring": "Добавляет глобальный обработчик для всех текущих и будущих логгеров chutils.\n\nArgs:\n    handler: Экземпляр logging.Handler.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 35,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "remove_global_handler",
+                "type": "function",
+                "layer": "public",
+                "signature": "(handler)",
+                "summary": "Удаляет глобальный обработчик из реестра и из всех активных логгеров chutils.",
+                "docstring": "Удаляет глобальный обработчик из реестра и из всех активных логгеров chutils.\n\nArgs:\n    handler: Экземпляр logging.Handler.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 49,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "get_global_handlers",
+                "type": "function",
+                "layer": "internal",
+                "signature": "()",
+                "summary": "Возвращает копию списка зарегистрированных глобальных обработчиков.",
+                "docstring": "Возвращает копию списка зарегистрированных глобальных обработчиков.\n\nReturns:\n    Список активных глобальных обработчиков logging.Handler.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 63,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "clear_global_handlers",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(remove_from_active)",
+                "summary": "Очищает реестр глобальных обработчиков.",
+                "docstring": "Очищает реестр глобальных обработчиков.\n\nArgs:\n    remove_from_active: Если True, также удаляет обработчики из активных логгеров.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 73,
+                "bases": [],
+                "children": []
+              },
+              {
                 "name": "ChutilsLogger",
                 "type": "class",
                 "layer": "public",
@@ -23340,12 +23440,32 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 38,
+                "line_number": 102,
                 "bases": [
                   "logging.Logger",
                   ".internal.levels.LogLevelsMixin"
                 ],
                 "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, name, level)",
+                    "summary": "Инициализирует экземпляр ChutilsLogger.",
+                    "docstring": "Инициализирует экземпляр ChutilsLogger.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 127,
+                    "bases": [],
+                    "children": []
+                  },
                   {
                     "name": "add_mask",
                     "type": "method",
@@ -23362,7 +23482,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 63,
+                    "line_number": 134,
                     "bases": [],
                     "children": []
                   }
@@ -23384,7 +23504,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 83,
+                "line_number": 154,
                 "bases": [],
                 "children": []
               },
@@ -23392,9 +23512,9 @@
                 "name": "setup_logger",
                 "type": "function",
                 "layer": "public",
-                "signature": "(name, config_section_name, log_level, log_file_name, file_logging, no_file, force_reconfigure, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, json_format, use_async, custom_patterns, use_predefined_patterns)",
+                "signature": "(name, config_section_name, log_level, log_file_name, file_logging, no_file, force_reconfigure, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, json_format, use_async, custom_patterns, use_predefined_patterns, propagate)",
                 "summary": "Настраивает и возвращает экземпляр логгера.",
-                "docstring": "Настраивает и возвращает экземпляр логгера.\n\nФункция предлагает гибкую настройку, включая управление уровнями, ротацией и сжатием.\nПри каждом вызове для существующего логгера его уровень **всегда обновляется**.\n\n### Приоритет настроек:\n0. Переменные окружения `CH_LOG_NO_TIME` и `CH_LOG_NO_FILE` (высший приоритет).\n1. Явные аргументы, переданные в эту функцию (например, `log_level=...`).\n2. Секция, указанная в `config_section_name` (например, `[AuditLogger]`).\n3. Общая секция `[Logging]` в `config.yml`.\n4. Значения по умолчанию, зашитые в коде.\n\n### Ротация и сжатие:\n- **По времени (`rotation_type='time'`)**: Ротация ежедневно или по интервалу (параметры `when`, `interval`).\n- **По размеру (`rotation_type='size'`)**: Ротация при достижении `max_bytes`.\n- **Сжатие**: Если `compress=True`, старые логи сжимаются в `.gz`.\n\n### Асинхронность:\n- Если `use_async=True`, логи записываются в очередь и обрабатываются в отдельном потоке.\n- Очередь блокирующая, что предотвращает потерю сообщений при переполнении.\n\n### Маскирование:\n- Автоматическая замена секретов и паттернов на `[MASKED]`.\n- Поддержка предустановленных паттернов PII (`email`, `phone`, `credit_card`, `ssn`).\n\nWarning:\n    Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings`\n    для чтения конфигурации из внешних источников (например, `.env` или переменных окружения),\n    рекомендуется явно передавать уровень логирования через параметр `log_level` для исключения\n    рассинхронизации настроек с файлом `config.yml`.\n\nArgs:\n    name: Имя логгера. `app_logger` по умолчанию.\n    config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').\n        Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.\n        Если не указана, используется только общая секция `[Logging]`.\n    log_level: Уровень логирования (строка или LogLevel). Поддерживается псевдоним `level`.\n    log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.\n    file_logging: Включить или отключить запись в файл (True/False). По умолчанию True.\n    no_file: Псевдоним для отключения файлового логирования (no_file=True эквивалентно file_logging=False).\n    force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).\n    rotation_type: Тип ротации ('time' или 'size').\n    max_bytes: Макс. размер файла (для 'size'). По умолчанию 5 МБ.\n    compress: Сжимать ли старые логи в `.gz`. По умолчанию False.\n    backup_count: Количество хранимых ротированных файлов. По умолчанию 3.\n    encoding: Кодировка файла. По умолчанию 'utf-8'.\n    when: Интервал ротации для 'time' (например, 'S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').\n    interval: Для 'time'. Кратность интервала.\n    utc: Для 'time'. Использовать ли UTC время для имен файлов.\n    at_time: Для 'time'. Время ротации (для when='midnight').\n    json_format: Использовать ли JSON формат для логов.\n    use_async: Использовать ли асинхронное логирование.\n    custom_patterns: Список регулярных выражений для маскирования.\n    use_predefined_patterns: Список имен предустановленных паттернов для маскирования.\n\n    **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`). Также поддерживает `level` как псевдоним `log_level`.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
+                "docstring": "Настраивает и возвращает экземпляр логгера.\n\nФункция предлагает гибкую настройку, включая управление уровнями, ротацией и сжатием.\nПри каждом вызове для существующего логгера его уровень **всегда обновляется**.\n\n### Приоритет настроек:\n0. Переменные окружения `CH_LOG_NO_TIME` и `CH_LOG_NO_FILE` (высший приоритет).\n1. Явные аргументы, переданные в эту функцию (например, `log_level=...`).\n2. Секция, указанная в `config_section_name` (например, `[AuditLogger]`).\n3. Общая секция `[Logging]` в `config.yml`.\n4. Значения по умолчанию, зашитые в коде.\n\n### Ротация и сжатие:\n- **По времени (`rotation_type='time'`)**: Ротация ежедневно или по интервалу (параметры `when`, `interval`).\n- **По размеру (`rotation_type='size'`)**: Ротация при достижении `max_bytes`.\n- **Сжатие**: Если `compress=True`, старые логи сжимаются в `.gz`.\n\n### Асинхронность:\n- Если `use_async=True`, логи записываются в очередь и обрабатываются в отдельном потоке.\n- Очередь блокирующая, что предотвращает потерю сообщений при переполнении.\n\n### Маскирование:\n- Автоматическая замена секретов и паттернов на `[MASKED]`.\n- Поддержка предустановленных паттернов PII (`email`, `phone`, `credit_card`, `ssn`).\n\nWarning:\n    Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings`\n    для чтения конфигурации из внешних источников (например, `.env` или переменных окружения),\n    рекомендуется явно передавать уровень логирования через параметр `log_level` для исключения\n    рассинхронизации настроек с файлом `config.yml`.\n\nArgs:\n    name: Имя логгера. `app_logger` по умолчанию.\n    config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').\n        Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.\n        Если не указана, используется только общая секция `[Logging]`.\n    log_level: Уровень логирования (строка или LogLevel). Поддерживается псевдоним `level`.\n    log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.\n    file_logging: Включить или отключить запись в файл (True/False). По умолчанию True.\n    no_file: Псевдоним для отключения файлового логирования (no_file=True эквивалентно file_logging=False).\n    force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).\n    rotation_type: Тип ротации ('time' или 'size').\n    max_bytes: Макс. размер файла (для 'size'). По умолчанию 5 МБ.\n    compress: Сжимать ли старые логи в `.gz`. По умолчанию False.\n    backup_count: Количество хранимых ротированных файлов. По умолчанию 3.\n    encoding: Кодировка файла. По умолчанию 'utf-8'.\n    when: Интервал ротации для 'time' (например, 'S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').\n    interval: Для 'time'. Кратность интервала.\n    utc: Для 'time'. Использовать ли UTC время для имен файлов.\n    at_time: Для 'time'. Время ротации (для when='midnight').\n    json_format: Использовать ли JSON формат для логов.\n    use_async: Использовать ли асинхронное логирование.\n    custom_patterns: Список регулярных выражений для маскирования.\n    use_predefined_patterns: Список имен предустановленных паттернов для маскирования.\n    propagate: Передавать ли логи вверх по иерархии родительским логгерам (по умолчанию False).\n\n    **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`). Также поддерживает `level` как псевдоним `log_level`.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -23404,7 +23524,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 86,
+                "line_number": 157,
                 "bases": [],
                 "children": []
               },
@@ -23424,7 +23544,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 207,
+                "line_number": 281,
                 "bases": [],
                 "children": []
               }
@@ -23866,6 +23986,160 @@
             ]
           },
           {
+            "name": "intercept",
+            "path": "chutils/logger/intercept",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Перехват стандартного логирования Python (InterceptHandler и capture_standard_logging).",
+            "docstring": "Перехват стандартного логирования Python (InterceptHandler и capture_standard_logging).",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_is_intercepting",
+                "type": "constant",
+                "layer": "private",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 11,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "InterceptHandler",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Обработчик для перенаправления стандартных записей logging в chutils.",
+                "docstring": "Обработчик для перенаправления стандартных записей logging в chutils.\n\nПерехватывает записи `logging.LogRecord` от стандартных или сторонних библиотек\nи направляет их в целевой логгер `chutils`, сохраняя уровень, форматирование\nи метаданные вызова.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 27,
+                "bases": [
+                  "logging.Handler"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, target_logger_name, level)",
+                    "summary": "Инициализирует InterceptHandler.",
+                    "docstring": "Инициализирует InterceptHandler.\n\nArgs:\n    target_logger_name: Имя логгера chutils, принимающего записи.\n    level: Уровень фильтрации обработчика.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 35,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "emit",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, record)",
+                    "summary": "Перенаправляет LogRecord в целевой логгер chutils.",
+                    "docstring": "Перенаправляет LogRecord в целевой логгер chutils.\n\nArgs:\n    record: Запись лога.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 49,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "capture_standard_logging",
+                "type": "function",
+                "layer": "public",
+                "signature": "(modules, target_logger, level, intercept_root)",
+                "summary": "Перехватывает логи стандартных и сторонних библиотек в логгер chutils.",
+                "docstring": "Перехватывает логи стандартных и сторонних библиотек в логгер chutils.\n\nПозволяет централизованно собирать логи от библиотек вроде uvicorn, requests,\nhttpx, nodriver и форматировать их через chutils (Rich, файлы, Qt).\n\nArgs:\n    modules: Список имен логгеров библиотек для явного перехвата.\n        Если None, используется DEFAULT_INTERCEPT_MODULES.\n    target_logger: Имя логгера chutils, принимающего записи.\n    level: Минимальный уровень логирования.\n    intercept_root: Перехватывать ли корневой логгер logging.root.\n\nReturns:\n    Экземпляр установленного InterceptHandler.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 85,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "intercept_all",
+                "type": "constant",
+                "layer": "public",
+                "signature": null,
+                "summary": "",
+                "docstring": null,
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 135,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "restore_standard_logging",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(modules, restore_root)",
+                "summary": "Восстанавливает стандартное поведение логгеров, удаляя InterceptHandler.",
+                "docstring": "Восстанавливает стандартное поведение логгеров, удаляя InterceptHandler.\n\nArgs:\n    modules: Список имен логгеров модулей для восстановления.\n    restore_root: Восстановить ли корневой логгер logging.root.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 138,
+                "bases": [],
+                "children": []
+              }
+            ]
+          },
+          {
             "name": "internal",
             "path": "chutils/logger/internal",
             "type": "package",
@@ -23925,9 +24199,9 @@
                         "name": "build",
                         "type": "method",
                         "layer": "internal",
-                        "signature": "(self, log_level, force_reconfigure, use_async, json_format, log_file_name, file_logging, no_file, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, custom_patterns, use_predefined_patterns)",
+                        "signature": "(self, log_level, force_reconfigure, use_async, json_format, log_file_name, file_logging, no_file, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, custom_patterns, use_predefined_patterns, propagate)",
                         "summary": "Основной метод сборки и настройки логгера.",
-                        "docstring": "Основной метод сборки и настройки логгера.\n\nВыполняет все этапы конфигурации: определение уровня, настройку консоли,\nсоздание файловых обработчиков, применение асинхронности и маскирование.\n\nArgs:\n    log_level: Уровень логирования.\n    force_reconfigure: Принудительная повторная конфигурация.\n    use_async: Использовать ли асинхронную запись.\n    json_format: Использовать ли JSON формат.\n    log_file_name: Имя файла лога.\n    file_logging: Включить или отключить запись в файл.\n    no_file: Отключить запись в файл (эквивалент file_logging=False).\n    rotation_type: Тип ротации файлов.\n    max_bytes: Максимальный размер файла в байтах.\n    compress: Сжимать ли ротированные файлы.\n    backup_count: Количество сохраняемых бэкапов.\n    encoding: Кодировка файла логов.\n    when: Интервал временной ротации.\n    interval: Шаг интервала ротации.\n    utc: Использовать ли UTC время.\n    at_time: Точное время ротации.\n    custom_patterns: Пользовательские паттерны маскирования.\n    use_predefined_patterns: Предопределенные паттерны маскирования.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
+                        "docstring": "Основной метод сборки и настройки логгера.\n\nВыполняет все этапы конфигурации: определение уровня, настройку консоли,\nсоздание файловых обработчиков, применение асинхронности и маскирование.\n\nArgs:\n    log_level: Уровень логирования.\n    force_reconfigure: Принудительная повторная конфигурация.\n    use_async: Использовать ли асинхронную запись.\n    json_format: Использовать ли JSON формат.\n    log_file_name: Имя файла лога.\n    file_logging: Включить или отключить запись в файл.\n    no_file: Отключить запись в файл (эквивалент file_logging=False).\n    rotation_type: Тип ротации файлов.\n    max_bytes: Максимальный размер файла в байтах.\n    compress: Сжимать ли ротированные файлы.\n    backup_count: Количество сохраняемых бэкапов.\n    encoding: Кодировка файла логов.\n    when: Интервал временной ротации.\n    interval: Шаг интервала ротации.\n    utc: Использовать ли UTC время.\n    at_time: Точное время ротации.\n    custom_patterns: Пользовательские паттерны маскирования.\n    use_predefined_patterns: Предопределенные паттерны маскирования.\n    propagate: Передавать ли логи вверх по иерархии (по умолчанию False).\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -23957,7 +24231,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 173,
+                        "line_number": 196,
                         "bases": [],
                         "children": []
                       },
@@ -23977,7 +24251,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 198,
+                        "line_number": 221,
                         "bases": [],
                         "children": []
                       },
@@ -23997,7 +24271,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 210,
+                        "line_number": 233,
                         "bases": [],
                         "children": []
                       },
@@ -24017,7 +24291,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 223,
+                        "line_number": 253,
                         "bases": [],
                         "children": []
                       },
@@ -24037,7 +24311,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 232,
+                        "line_number": 262,
                         "bases": [],
                         "children": []
                       },
@@ -24057,7 +24331,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 280,
+                        "line_number": 310,
                         "bases": [],
                         "children": []
                       },
@@ -24077,7 +24351,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 306,
+                        "line_number": 336,
                         "bases": [],
                         "children": []
                       },
@@ -24097,7 +24371,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 321,
+                        "line_number": 351,
                         "bases": [],
                         "children": []
                       },
@@ -24117,7 +24391,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 357,
+                        "line_number": 387,
                         "bases": [],
                         "children": []
                       },
@@ -24137,7 +24411,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 464,
+                        "line_number": 496,
                         "bases": [],
                         "children": []
                       },
@@ -24157,7 +24431,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 544,
+                        "line_number": 574,
                         "bases": [],
                         "children": []
                       },
@@ -24177,7 +24451,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 562,
+                        "line_number": 592,
                         "bases": [],
                         "children": []
                       },
@@ -24197,7 +24471,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 601,
+                        "line_number": 631,
                         "bases": [],
                         "children": []
                       }
@@ -24706,7 +24980,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 46,
+            "line_number": 73,
             "bases": [],
             "children": []
           },
@@ -24726,7 +25000,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 69,
+            "line_number": 105,
             "bases": [],
             "children": []
           },
@@ -24746,7 +25020,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 77,
+            "line_number": 113,
             "bases": [],
             "children": []
           }
@@ -26703,6 +26977,26 @@
                   "custom_metadata": {}
                 },
                 "line_number": 49,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "remove_qt_logging",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(handler, logger_name)",
+                "summary": "Удаляет QtLogHandler из chutils.logger и стандартного logging.",
+                "docstring": "Удаляет QtLogHandler из chutils.logger и стандартного logging.\n\nArgs:\n    handler: Обработчик QtLogHandler для удаления.\n    logger_name: Имя конкретного логгера или None для глобального удаления.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 112,
                 "bases": [],
                 "children": []
               }
@@ -45606,7 +45900,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 368,
+        "line_number": 373,
         "bases": [],
         "children": []
       },
@@ -45626,7 +45920,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 401,
+        "line_number": 406,
         "bases": [],
         "children": []
       },
@@ -45646,7 +45940,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 421,
+        "line_number": 426,
         "bases": [],
         "children": []
       }
@@ -47011,7 +47305,7 @@
     {
       "source": "chutils/qt",
       "target": "/logging",
-      "weight": 2
+      "weight": 3
     },
     {
       "source": "chutils/qt",
@@ -48143,8 +48437,8 @@
   "metadata": {
     "chutils_version": "3.8.1",
     "project_version": "3.8.1",
-    "git_commit": "2e3eb1e023eba6fbe4cbca9914e415191e7432d7 (dirty)",
-    "generated_at": "2026-09-21T21:28:56.213295+00:00",
-    "project_hash": "cc2862ffb9310c43b88dba16915875ae8ae388d61f4272b2a115c42115217b2e"
+    "git_commit": "d53ed6b48cc1aca6a33541dedd00a240da1b162b (dirty)",
+    "generated_at": "2026-09-22T13:29:02.866877+00:00",
+    "project_hash": "8bf1bace5c428fc52fac09f2b8ed71ee7279f3d0cc94a2410593d0296319ccbb"
   }
 }
