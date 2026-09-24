@@ -167,6 +167,9 @@ class FingerprintProfile(BaseModel):
             screen_height=self.screen.height,
             screen_avail_height=self.screen.avail_height,
             device_pixel_ratio=self.screen.device_pixel_ratio,
+            media_devices=[d.model_dump() for d in self.media_devices]
+            if self.media_devices
+            else None,
         )
 
     def to_dict(self) -> dict[str, Any]:

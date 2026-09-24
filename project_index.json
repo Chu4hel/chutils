@@ -30267,7 +30267,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 172,
+                        "line_number": 175,
                         "bases": [],
                         "children": []
                       },
@@ -30287,7 +30287,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 180,
+                        "line_number": 183,
                         "bases": [],
                         "children": []
                       },
@@ -30307,7 +30307,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 191,
+                        "line_number": 194,
                         "bases": [],
                         "children": []
                       },
@@ -30329,7 +30329,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 202,
+                        "line_number": 205,
                         "bases": [],
                         "children": []
                       },
@@ -30349,7 +30349,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 215,
+                        "line_number": 218,
                         "bases": [],
                         "children": []
                       },
@@ -30369,7 +30369,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 224,
+                        "line_number": 227,
                         "bases": [],
                         "children": []
                       }
@@ -31546,7 +31546,7 @@
                     "name": "_get_antidetect_js",
                     "type": "function",
                     "layer": "private",
-                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal, session_seed, client_hints, screen_width, screen_height, screen_avail_height, device_pixel_ratio)",
+                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal, session_seed, client_hints, screen_width, screen_height, screen_avail_height, device_pixel_ratio, media_devices)",
                     "summary": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
                     "docstring": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
                     "breadcrumbs": {
@@ -31832,7 +31832,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 82,
+                        "line_number": 86,
                         "bases": [],
                         "children": []
                       },
@@ -31854,7 +31854,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 107,
+                        "line_number": 111,
                         "bases": [],
                         "children": []
                       },
@@ -31876,7 +31876,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 144,
+                        "line_number": 148,
                         "bases": [],
                         "children": []
                       },
@@ -31898,7 +31898,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 166,
+                        "line_number": 170,
                         "bases": [],
                         "children": []
                       },
@@ -31920,7 +31920,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 185,
+                        "line_number": 189,
                         "bases": [],
                         "children": []
                       },
@@ -31942,7 +31942,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 215,
+                        "line_number": 219,
                         "bases": [],
                         "children": []
                       },
@@ -31964,7 +31964,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 240,
+                        "line_number": 244,
                         "bases": [],
                         "children": []
                       },
@@ -31984,7 +31984,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 266,
+                        "line_number": 270,
                         "bases": [],
                         "children": []
                       },
@@ -32004,7 +32004,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 276,
+                        "line_number": 280,
                         "bases": [],
                         "children": []
                       },
@@ -32024,7 +32024,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 298,
+                        "line_number": 303,
                         "bases": [],
                         "children": []
                       },
@@ -32044,7 +32044,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 308,
+                        "line_number": 313,
                         "bases": [],
                         "children": []
                       },
@@ -32064,7 +32064,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 318,
+                        "line_number": 323,
                         "bases": [],
                         "children": []
                       }
@@ -48715,8 +48715,8 @@
   "metadata": {
     "chutils_version": "3.8.1",
     "project_version": "3.8.1",
-    "git_commit": "26b46d96f9dbecb20c964b1f5183ef823c743b2a (dirty)",
-    "generated_at": "2026-09-24T12:31:24.331620+00:00",
-    "project_hash": "4415ad81b0181914574a99888e6f916703b232c9a161cdbfcc2e209c07b71269"
+    "git_commit": "955306fb807e62796c4c23239dba3f57200442e5 (dirty)",
+    "generated_at": "2026-09-24T12:36:59.506250+00:00",
+    "project_hash": "0e5386e2a8bb6cba13560ffc83dfe1bdb8d90ee60b893b90eb80ca3af2cc1984"
   }
 }

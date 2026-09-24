@@ -25,6 +25,7 @@ def _get_antidetect_js(
     screen_height: int | None = None,
     screen_avail_height: int | None = None,
     device_pixel_ratio: float | None = None,
+    media_devices: list[dict[str, Any]] | None = None,
 ) -> str:
     """Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами."""
     vendor_js = json.dumps(webgl_vendor)
@@ -38,6 +39,7 @@ def _get_antidetect_js(
     screen_h_js = json.dumps(screen_height)
     screen_avail_h_js = json.dumps(screen_avail_height)
     dpr_js = json.dumps(device_pixel_ratio)
+    devices_js = json.dumps(media_devices) if media_devices is not None else "null"
 
     return f"""(function() {{
     // Утилита для маскировки функций под нативные [native code] с чистым V8 stack trace
@@ -506,6 +508,66 @@ def _get_antidetect_js(
                     enumerable: true
                 }});
             }}
+        }}
+    }} catch (e) {{}}
+
+    // 10. Эмуляция медиа-устройств (navigator.mediaDevices.enumerateDevices)
+    try {{
+        if (typeof navigator !== 'undefined') {{
+            const rawDevices = {devices_js};
+            const defaultFakeDevices = [
+                {{
+                    deviceId: 'default',
+                    kind: 'audioinput',
+                    label: 'Встроенный микрофон (Realtek Audio)',
+                    groupId: 'group_audio_default'
+                }},
+                {{
+                    deviceId: 'default',
+                    kind: 'audiooutput',
+                    label: 'Динамики (Realtek Audio)',
+                    groupId: 'group_audio_default'
+                }}
+            ];
+            const targetDevices = Array.isArray(rawDevices) && rawDevices.length > 0 ? rawDevices : defaultFakeDevices;
+
+            if (!navigator.mediaDevices) {{
+                navigator.mediaDevices = {{}};
+            }}
+
+            const makeMediaDeviceInfo = (d) => {{
+                return {{
+                    deviceId: d.deviceId || d.device_id || 'default',
+                    kind: d.kind || 'audiooutput',
+                    label: d.label || '',
+                    groupId: d.groupId || d.group_id || 'default',
+                    toJSON: function toJSON() {{
+                        return {{
+                            deviceId: this.deviceId,
+                            kind: this.kind,
+                            label: this.label,
+                            groupId: this.groupId
+                        }};
+                    }}
+                }};
+            }};
+
+            const origEnumerate = navigator.mediaDevices.enumerateDevices;
+            const fakeEnumerateDevices = function enumerateDevices() {{
+                if (origEnumerate) {{
+                    return origEnumerate.apply(this, arguments).then((devices) => {{
+                        if (Array.isArray(devices) && devices.length > 0) {{
+                            return devices;
+                        }}
+                        return targetDevices.map(makeMediaDeviceInfo);
+                    }}).catch(() => {{
+                        return targetDevices.map(makeMediaDeviceInfo);
+                    }});
+                }}
+                return Promise.resolve(targetDevices.map(makeMediaDeviceInfo));
+            }};
+
+            navigator.mediaDevices.enumerateDevices = makeNative(fakeEnumerateDevices, 'enumerateDevices');
         }}
     }} catch (e) {{}}
 }})();"""

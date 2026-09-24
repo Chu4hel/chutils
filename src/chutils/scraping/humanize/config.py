@@ -77,6 +77,10 @@ class AntidetectConfig(BaseModel):
         default=None,
         description="Эмулируемый коэффициент масштабирования (window.devicePixelRatio).",
     )
+    media_devices: list[dict[str, Any]] | None = Field(
+        default=None,
+        description="Список эмулируемых медиа-устройств (микрофоны, динамики, веб-камеры).",
+    )
 
     @classmethod
     def preset_stealth_nodriver(
@@ -293,6 +297,7 @@ class AntidetectConfig(BaseModel):
             screen_height=self.screen_height,
             screen_avail_height=self.screen_avail_height,
             device_pixel_ratio=self.device_pixel_ratio,
+            media_devices=self.media_devices,
         )
 
     async def apply_to_nodriver(self, tab: Any) -> None:

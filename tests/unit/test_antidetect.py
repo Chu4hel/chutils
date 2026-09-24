@@ -322,3 +322,69 @@ def test_antidetect_selenium_device_metrics_override() -> None:
     )
 
 
+def test_antidetect_media_devices_emulation() -> None:
+    """Проверяет эмуляцию navigator.mediaDevices.enumerateDevices в сгенерированном JS."""
+    from chutils.scraping.humanize.antidetect_scripts import _get_antidetect_js
+
+    # 1. По умолчанию (когда media_devices не заданы явно) подставляются дефолтные аудиоустройства
+    js_default = _get_antidetect_js()
+    assert "navigator.mediaDevices" in js_default
+    assert "enumerateDevices" in js_default
+    assert "audioinput" in js_default
+    assert "audiooutput" in js_default
+    assert "Realtek Audio" in js_default
+
+    # 2. Кастомный список устройств
+    custom_devices = [
+        {
+            "deviceId": "mic_123",
+            "kind": "audioinput",
+            "label": "HyperX QuadCast",
+            "groupId": "group_hyperx",
+        },
+        {
+            "deviceId": "cam_456",
+            "kind": "videoinput",
+            "label": "Logitech Brio",
+            "groupId": "group_logi",
+        },
+    ]
+    js_custom = _get_antidetect_js(media_devices=custom_devices)
+    assert "HyperX QuadCast" in js_custom
+    assert "Logitech Brio" in js_custom
+    assert "mic_123" in js_custom
+
+
+def test_fingerprint_profile_media_devices_to_antidetect_config() -> None:
+    """Проверяет проброс media_devices из FingerprintProfile в AntidetectConfig."""
+    from chutils.scraping.fingerprint.models import FingerprintProfile, MediaDeviceItem
+
+    profile = FingerprintProfile(
+        media_devices=[
+            MediaDeviceItem(
+                kind="audioinput",
+                label="Studio Mic",
+                device_id="id_mic",
+                group_id="grp_1",
+            ),
+            MediaDeviceItem(
+                kind="audiooutput",
+                label="Studio Headphones",
+                device_id="id_out",
+                group_id="grp_1",
+            ),
+        ]
+    )
+
+    cfg = profile.to_antidetect_config()
+    assert cfg.media_devices is not None
+    assert len(cfg.media_devices) == 2
+    assert cfg.media_devices[0]["label"] == "Studio Mic"
+    assert cfg.media_devices[1]["label"] == "Studio Headphones"
+
+    init_script = cfg.get_init_script()
+    assert "Studio Mic" in init_script
+    assert "Studio Headphones" in init_script
+
+
+
