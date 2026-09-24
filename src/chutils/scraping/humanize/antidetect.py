@@ -154,14 +154,18 @@ async def apply_antidetect_playwright(
         if config.user_agent is not None:
             user_agent = config.user_agent
 
-    script = _get_antidetect_js(
-        webgl_vendor=webgl_vendor,
-        webgl_renderer=webgl_renderer,
-        hardware_concurrency=hardware_concurrency,
-        device_memory=device_memory,
-        stealth_minimal=stealth_minimal,
-        session_seed=session_seed,
-        client_hints=client_hints,
+    script = (
+        config.get_init_script()
+        if config is not None
+        else _get_antidetect_js(
+            webgl_vendor=webgl_vendor,
+            webgl_renderer=webgl_renderer,
+            hardware_concurrency=hardware_concurrency,
+            device_memory=device_memory,
+            stealth_minimal=stealth_minimal,
+            session_seed=session_seed,
+            client_hints=client_hints,
+        )
     )
     await context.add_init_script(script)
 
@@ -205,14 +209,18 @@ def apply_antidetect_selenium(
         if config.user_agent is not None:
             user_agent = config.user_agent
 
-    script = _get_antidetect_js(
-        webgl_vendor=webgl_vendor,
-        webgl_renderer=webgl_renderer,
-        hardware_concurrency=hardware_concurrency,
-        device_memory=device_memory,
-        stealth_minimal=stealth_minimal,
-        session_seed=session_seed,
-        client_hints=client_hints,
+    script = (
+        config.get_init_script()
+        if config is not None
+        else _get_antidetect_js(
+            webgl_vendor=webgl_vendor,
+            webgl_renderer=webgl_renderer,
+            hardware_concurrency=hardware_concurrency,
+            device_memory=device_memory,
+            stealth_minimal=stealth_minimal,
+            session_seed=session_seed,
+            client_hints=client_hints,
+        )
     )
     if hasattr(driver, "execute_cdp_cmd"):
         driver.execute_cdp_cmd(
@@ -222,6 +230,19 @@ def apply_antidetect_selenium(
             driver.execute_cdp_cmd(
                 "Emulation.setUserAgentOverride", {"userAgent": user_agent}
             )
+        if config is not None and config.screen_width and config.screen_height:
+            try:
+                driver.execute_cdp_cmd(
+                    "Emulation.setDeviceMetricsOverride",
+                    {
+                        "width": config.screen_width,
+                        "height": config.screen_height,
+                        "deviceScaleFactor": config.device_pixel_ratio or 1.0,
+                        "mobile": False,
+                    },
+                )
+            except Exception:
+                pass
     else:
         driver.execute_script(script)
 
@@ -278,20 +299,38 @@ async def apply_antidetect_nodriver(
         except Exception:
             pass
 
-    script = _get_antidetect_js(
-        webgl_vendor=webgl_vendor,
-        webgl_renderer=webgl_renderer,
-        hardware_concurrency=hardware_concurrency,
-        device_memory=device_memory,
-        stealth_minimal=stealth_minimal,
-        session_seed=session_seed,
-        client_hints=client_hints,
+    # 2. Эмуляция реальных метрик экрана и viewport через CDP Emulation (предотвращает детекцию CSS Media Queries)
+    if config is not None and config.screen_width and config.screen_height:
+        try:
+            await tab.send(
+                emulation.set_device_metrics_override(
+                    width=config.screen_width,
+                    height=config.screen_height,
+                    device_scale_factor=config.device_pixel_ratio or 1.0,
+                    mobile=False,
+                )
+            )
+        except Exception:
+            pass
+
+    script = (
+        config.get_init_script()
+        if config is not None
+        else _get_antidetect_js(
+            webgl_vendor=webgl_vendor,
+            webgl_renderer=webgl_renderer,
+            hardware_concurrency=hardware_concurrency,
+            device_memory=device_memory,
+            stealth_minimal=stealth_minimal,
+            session_seed=session_seed,
+            client_hints=client_hints,
+        )
     )
     # Двойная инъекция:
-    # 2. Регистрация на новые документы (будущие навигации, редиректы, перезагрузки)
+    # 3. Регистрация на новые документы (будущие навигации, редиректы, перезагрузки)
     await tab.send(page.add_script_to_evaluate_on_new_document(source=script))
 
-    # 3. Мгновенное применение к уже открытой текущей странице (если вкладка активна)
+    # 4. Мгновенное применение к уже открытой текущей странице (если вкладка активна)
     if hasattr(tab, "evaluate") and callable(tab.evaluate):
         try:
             await tab.evaluate(script)

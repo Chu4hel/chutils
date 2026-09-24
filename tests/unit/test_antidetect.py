@@ -228,3 +228,97 @@ def test_browser_launch_args_enhanced() -> None:
     assert "--force-webrtc-ip-handling-policy=disable_non_proxied_udp" in args
     assert "--enforce-webrtc-ip-permission-check" in args
 
+
+@patch("chutils.scraping.humanize.antidetect._ensure_nodriver")
+def test_antidetect_nodriver_device_metrics_override(mock_ensure: MagicMock) -> None:
+    """Проверяет отправку emulation.set_device_metrics_override при наличии screen_width/screen_height."""
+    import asyncio
+    import sys
+    from chutils.scraping.humanize.config import AntidetectConfig
+
+    mock_page = MagicMock()
+    mock_page.add_script_to_evaluate_on_new_document = MagicMock(
+        return_value="mock_page_cmd"
+    )
+
+    mock_emulation = MagicMock()
+    mock_emulation.set_device_metrics_override = MagicMock(
+        return_value="mock_metrics_cmd"
+    )
+    mock_emulation.set_user_agent_override = MagicMock(
+        return_value="mock_ua_cmd"
+    )
+
+    mock_cdp = MagicMock()
+    mock_cdp.page = mock_page
+    mock_cdp.emulation = mock_emulation
+
+    modules = {
+        "nodriver": MagicMock(),
+        "nodriver.cdp": mock_cdp,
+        "nodriver.cdp.page": mock_page,
+        "nodriver.cdp.emulation": mock_emulation,
+    }
+
+    with patch.dict(sys.modules, modules):
+        from chutils.scraping.humanize.antidetect import apply_antidetect_nodriver
+
+        tab = MagicMock()
+        tab.send = AsyncMock()
+        tab.evaluate = AsyncMock()
+
+        config = AntidetectConfig(
+            screen_width=1920,
+            screen_height=1080,
+            device_pixel_ratio=1.25,
+            user_agent="CustomTestUA/1.0",
+        )
+
+        asyncio.run(apply_antidetect_nodriver(tab, config=config))
+
+        mock_emulation.set_device_metrics_override.assert_called_once_with(
+            width=1920,
+            height=1080,
+            device_scale_factor=1.25,
+            mobile=False,
+        )
+        mock_emulation.set_user_agent_override.assert_called_once_with(
+            user_agent="CustomTestUA/1.0"
+        )
+        tab.send.assert_any_call("mock_metrics_cmd")
+        tab.send.assert_any_call("mock_ua_cmd")
+        tab.send.assert_any_call("mock_page_cmd")
+
+
+def test_antidetect_selenium_device_metrics_override() -> None:
+    """Проверяет отправку Emulation.setDeviceMetricsOverride в Selenium CDP."""
+    from chutils.scraping.humanize.antidetect import apply_antidetect_selenium
+    from chutils.scraping.humanize.config import AntidetectConfig
+
+    driver = MagicMock()
+    driver.execute_cdp_cmd = MagicMock()
+
+    config = AntidetectConfig(
+        screen_width=1440,
+        screen_height=900,
+        device_pixel_ratio=2.0,
+        user_agent="SeleniumUA/2.0",
+    )
+
+    apply_antidetect_selenium(driver, config=config)
+
+    driver.execute_cdp_cmd.assert_any_call(
+        "Emulation.setDeviceMetricsOverride",
+        {
+            "width": 1440,
+            "height": 900,
+            "deviceScaleFactor": 2.0,
+            "mobile": False,
+        },
+    )
+    driver.execute_cdp_cmd.assert_any_call(
+        "Emulation.setUserAgentOverride",
+        {"userAgent": "SeleniumUA/2.0"},
+    )
+
+

@@ -330,7 +330,7 @@ cfg_aggressive = AntidetectConfig.preset_aggressive(
 )
 await cfg_aggressive.apply_to_playwright(browser_context)
 
-# 3. Пользовательская конфигурация с User-Agent:
+# 3. Пользовательская конфигурация с User-Agent и геометрией экрана:
 custom_cfg = AntidetectConfig(
     user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     webgl_vendor="Google Inc. (NVIDIA)",
@@ -339,12 +339,18 @@ custom_cfg = AntidetectConfig(
     device_memory=16,
     stealth_minimal=True,
     session_seed="custom_seed_42",
+    screen_width=1920,
+    screen_height=1080,
+    device_pixel_ratio=1.0,
 )
-# При применении к nodriver автоматически вызывается cdp emulation.set_user_agent_override(user_agent=...)
+# При применении к nodriver/selenium автоматически вызывается:
+# 1) emulation.set_user_agent_override(user_agent=...)
+# 2) emulation.set_device_metrics_override(width=..., height=..., device_scale_factor=..., mobile=False)
+# Это синхронизирует реальный Viewport с CSS Media Queries (matchMedia), предотвращая детекцию Screen Spoofing.
 await apply_antidetect_nodriver(tab, config=custom_cfg)
 
 # 4. Мгновенная генерация из детерминированного сида:
-# FingerprintProfile.to_antidetect_config() полностью сохраняет согласованный user_agent и Client Hints
+# FingerprintProfile.to_antidetect_config() полностью сохраняет согласованный user_agent, геометрию экрана и Client Hints
 seed_cfg = AntidetectConfig.from_seed("user_session_42")
 await seed_cfg.apply_to_nodriver(tab)
 ```
