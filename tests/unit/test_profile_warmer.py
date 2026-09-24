@@ -378,3 +378,71 @@ def test_sync_warmer_save_profile(tmp_path) -> None:
     assert profile.metadata["warmed_up"] == "true"
     assert profile.metadata["run"] == "sync"
     assert file_path.exists()
+
+
+@pytest.mark.asyncio
+async def test_safe_get_async_url_variants() -> None:
+    """Тестирует функцию _safe_get_async_url для различных форматов и версий объектов Tab / Page."""
+    from chutils.scraping.humanize._actions_helpers import _safe_get_async_url
+
+    # 1. Прямой атрибут .url как строка
+    obj1 = MagicMock()
+    obj1.url = "https://example.com/direct"
+    assert await _safe_get_async_url(obj1) == "https://example.com/direct"
+
+    # 2. Атрибут .url как callable
+    obj2 = MagicMock()
+    obj2.url = MagicMock(return_value="https://example.com/callable")
+    assert await _safe_get_async_url(obj2) == "https://example.com/callable"
+
+    # 3. Через tab.target.url при отсутствии атрибута url
+    obj3 = MagicMock(spec=["target", "evaluate"])
+    target_mock = MagicMock()
+    target_mock.url = "https://example.com/from_target"
+    obj3.target = target_mock
+    assert await _safe_get_async_url(obj3) == "https://example.com/from_target"
+
+    # 4. Через evaluate("window.location.href") при отсутствии url и target
+    obj4 = MagicMock(spec=["evaluate"])
+    obj4.evaluate = AsyncMock(return_value="https://example.com/from_eval")
+    assert await _safe_get_async_url(obj4) == "https://example.com/from_eval"
+
+    # 5. Пустой fallback
+    obj5 = MagicMock(spec=[])
+    assert await _safe_get_async_url(obj5) == ""
+    assert await _safe_get_async_url(None) == ""
+
+
+@pytest.mark.asyncio
+async def test_profile_warmer_nodriver_target_url() -> None:
+    """Тестирует ProfileWarmer с nodriver Tab, у которого url находится в target.url (нет прямого tab.url)."""
+    tab = AsyncMock(spec=["target", "evaluate", "send", "get", "_is_nodriver"])
+    tab._is_nodriver = True
+    tab.get = AsyncMock()
+    target_mock = MagicMock()
+    target_mock.url = "https://example.com/target_page"
+    tab.target = target_mock
+    tab.evaluate = AsyncMock(
+        side_effect=lambda js, *args: (
+            ["/page2", "/page3"]
+        )
+    )
+
+    with (
+        patch("chutils.scraping.humanize.warmer.async_move_mouse", AsyncMock()),
+        patch("chutils.scraping.humanize.warmer.async_scroll_to", AsyncMock()),
+        patch("chutils.scraping.humanize.warmer.async_human_sleep", AsyncMock()),
+        patch("random.choice", side_effect=["click_link", "/page2"]),
+    ):
+        ProfileWarmer, _ = get_warmers()
+        warmer = ProfileWarmer(tab)
+        await warmer.warm_up(
+            sites=["https://example.com"],
+            sites_count=1,
+            duration_per_site=(0.01, 0.02),
+            click_random_links=True,
+        )
+
+        tab.get.assert_any_call("https://example.com")
+        tab.get.assert_any_call("https://example.com/page2")
+

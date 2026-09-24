@@ -114,6 +114,52 @@ def _is_playwright(obj: Any) -> bool:
     )
 
 
+async def _safe_get_async_url(page_or_tab: Any) -> str:
+    """Безопасно извлекает текущий URL страницы из объекта Playwright Page или nodriver Tab.
+
+    Учитывает различия версий nodriver, где url может отсутствовать как прямой атрибут,
+    находиться в target.url или требовать выполнения JavaScript window.location.href.
+
+    Args:
+        page_or_tab: Объект Playwright Page или nodriver Tab.
+
+    Returns:
+        Строка с текущим URL-адресом или пустая строка в случае неудачи.
+    """
+    if page_or_tab is None:
+        return ""
+
+    # 1. Прямой атрибут .url (Playwright, некоторые версии nodriver)
+    url_attr = getattr(page_or_tab, "url", None)
+    if isinstance(url_attr, str) and url_attr:
+        return url_attr
+    if callable(url_attr):
+        try:
+            res = url_attr()
+            if isinstance(res, str) and res:
+                return res
+        except Exception:
+            pass
+
+    # 2. Атрибут .target.url (nodriver Tab.target)
+    target = getattr(page_or_tab, "target", None)
+    if target is not None:
+        target_url = getattr(target, "url", None)
+        if isinstance(target_url, str) and target_url:
+            return target_url
+
+    # 3. Fallback через evaluate JS
+    if hasattr(page_or_tab, "evaluate") and callable(page_or_tab.evaluate):
+        try:
+            eval_res = await page_or_tab.evaluate("window.location.href")
+            if isinstance(eval_res, str) and eval_res:
+                return eval_res
+        except Exception:
+            pass
+
+    return ""
+
+
 def _get_lognormal_delay(min_seconds: float, max_seconds: float) -> float:
     """Генерирует логнормальное случайное время в заданном интервале.
 
