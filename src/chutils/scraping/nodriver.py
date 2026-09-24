@@ -40,6 +40,30 @@ def _get_nodriver_module() -> Any:
         ) from err
 
 
+async def close_tab(tab: Any, *, timeout: float = 3.0) -> None:
+    """Безопасно закрывает вкладку nodriver с защитой от зависания CDP-сокета.
+
+    Если вкладка потерпела крах (Renderer Crash) или CDP не отвечает,
+    операция прерывается по истечении таймаута без зависания вызывающего потока.
+
+    Args:
+        tab: Объект вкладки nodriver (nodriver.Tab).
+        timeout: Максимальное время ожидания закрытия вкладки в секундах.
+    """
+    close_method = getattr(tab, "close", None)
+    if callable(close_method):
+        res = close_method()
+        if inspect.isawaitable(res):
+            try:
+                await asyncio.wait_for(res, timeout=timeout)
+            except TimeoutError:
+                logger.debug(
+                    f"Таймаут ({timeout}с) при закрытии вкладки nodriver, принудительное завершение."
+                )
+            except Exception as exc:
+                logger.debug(f"Ошибка при закрытии вкладки nodriver: {exc}")
+
+
 async def launch_nodriver(
     config: AntidetectConfig | None = None,
     *,
@@ -198,4 +222,18 @@ async def nodriver_session(
         if callable(stop_method):
             res = stop_method()
             if inspect.isawaitable(res):
-                await res
+                try:
+                    await asyncio.wait_for(res, timeout=5.0)
+                except TimeoutError:
+                    logger.debug(
+                        "Таймаут (5.0с) при остановке браузера nodriver, принудительное завершение."
+                    )
+                except Exception as exc:
+                    logger.debug(f"Ошибка при остановке браузера nodriver: {exc}")
+
+
+__all__ = [
+    "close_tab",
+    "launch_nodriver",
+    "nodriver_session",
+]

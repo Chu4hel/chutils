@@ -487,3 +487,58 @@ async def test_resolve_async_element_coordinates_nodriver_fallback() -> None:
     assert 85 <= y <= 95
 
 
+@pytest.mark.asyncio
+async def test_async_move_mouse_timeout() -> None:
+    """Проверяет выброс TimeoutError при превышении таймаута в async_move_mouse."""
+    import asyncio
+    tab = AsyncMock()
+    tab._is_nodriver = True
+
+    async def slow_send(*args: Any, **kwargs: Any) -> None:
+        await asyncio.sleep(0.5)
+
+    tab.send = slow_send
+
+    with pytest.raises(TimeoutError):
+        await async_move_mouse(tab, x=100, y=100, timeout=0.02)
+
+
+@pytest.mark.asyncio
+async def test_async_click_timeout() -> None:
+    """Проверяет выброс TimeoutError при превышении таймаута в async_click."""
+    import asyncio
+    from chutils.scraping.humanize.actions import async_click
+
+    tab = AsyncMock()
+    tab._is_nodriver = True
+
+    async def slow_send(*args: Any, **kwargs: Any) -> None:
+        await asyncio.sleep(0.5)
+
+    tab.send = slow_send
+
+    with pytest.raises(TimeoutError):
+        await async_click(tab, x=100, y=100, timeout=0.02)
+
+
+@pytest.mark.asyncio
+async def test_async_type_text_timeout() -> None:
+    """Проверяет выброс TimeoutError при превышении таймаута в async_type_text."""
+    import asyncio
+
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    mock_element = AsyncMock()
+    mock_element._is_nodriver = True
+
+    async def slow_focus() -> None:
+        await asyncio.sleep(0.5)
+
+    mock_element.focus = slow_focus
+    tab.find = AsyncMock(return_value=mock_element)
+
+    with pytest.raises(TimeoutError):
+        await async_type_text(tab, selector="#input", text="hello", timeout=0.02)
+
+
+

@@ -38,6 +38,9 @@ if TYPE_CHECKING:
         solve_cf_turnstile as solve_cf_turnstile,
     )
     from .nodriver import (
+        close_tab as close_tab,
+    )
+    from .nodriver import (
         launch_nodriver as launch_nodriver,
     )
     from .nodriver import (
@@ -144,6 +147,7 @@ _LAZY_MAPPING = {
     "assert_valid_url": (".testing", "assert_valid_url"),
     "async_nodriver_proxy": (".proxy", "async_nodriver_proxy"),
     "check_proxy": (".proxy", "check_proxy"),
+    "close_tab": (".nodriver", "close_tab"),
     "detect_cf_turnstile": (".humanize.turnstile", "detect_cf_turnstile"),
     "extract_clearance_cookies": (".humanize.antidetect", "extract_clearance_cookies"),
     "get_async_camoufox_class": (".camoufox", "get_async_camoufox_class"),
@@ -212,6 +216,7 @@ __all__ = [
     "camoufox",
     "captcha",
     "check_proxy",
+    "close_tab",
     "concurrency",
     "detect_cf_turnstile",
     "extract_clearance_cookies",

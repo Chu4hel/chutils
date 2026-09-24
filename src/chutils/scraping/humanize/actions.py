@@ -4,9 +4,9 @@ import time
 from typing import Any
 
 from ._actions_helpers import (
+    _async_type_nodriver,
+    _async_type_playwright,
     _build_selenium_key_map,
-    _dom_safe_heal,
-    _dom_safe_paste,
     _ensure_nodriver,
     _ensure_playwright,
     _ensure_selenium,
@@ -14,6 +14,7 @@ from ._actions_helpers import (
     _is_nodriver,
     _is_playwright,
     _resolve_async_element_coordinates,
+    _run_with_timeout,
     async_human_sleep,
     click,
     human_sleep,
@@ -54,6 +55,8 @@ async def async_move_mouse(
     steps: int = 30,
     delay_between_steps: float = 0.01,
     algorithm: str = "bezier",
+    *,
+    timeout: float | None = None,
 ) -> None:
     """Имитирует плавное перемещение мыши Playwright или nodriver.
 
@@ -65,18 +68,51 @@ async def async_move_mouse(
         steps: Количество промежуточных шагов движения (для алгоритма 'bezier').
         delay_between_steps: Задержка между шагами в секундах (для алгоритма 'bezier').
         algorithm: Алгоритм генерации траектории ('bezier' или 'windmouse').
+        timeout: Максимальное время ожидания операции (в секундах).
     """
-    start_pt = start or (0, 0)
+    async def _move() -> None:
+        start_pt = start or (0, 0)
 
-    if algorithm == "windmouse":
-        wind_gen = WindMouseGenerator()
-        points_with_delay = wind_gen.generate(start_pt, (x, y))
+        if algorithm == "windmouse":
+            wind_gen = WindMouseGenerator()
+            points_with_delay = wind_gen.generate(start_pt, (x, y))
+
+            if _is_nodriver(page):
+                _ensure_nodriver()
+                from nodriver.cdp import input_ as cdp_input
+
+                for px, py, step_delay in points_with_delay:
+                    await page.send(
+                        cdp_input.dispatch_mouse_event(
+                            type_="mouseMoved",
+                            x=px,
+                            y=py,
+                        )
+                    )
+                    if step_delay > 0:
+                        await asyncio.sleep(step_delay)
+            elif _is_playwright(page):
+                _ensure_playwright()
+
+                for px, py, step_delay in points_with_delay:
+                    await page.mouse.move(px, py)
+                    if step_delay > 0:
+                        await asyncio.sleep(step_delay)
+            else:
+                raise ValueError(
+                    f"Не удалось определить тип переданного объекта: {type(page)}. "
+                    "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
+                )
+            return
 
         if _is_nodriver(page):
             _ensure_nodriver()
             from nodriver.cdp import input_ as cdp_input
 
-            for px, py, step_delay in points_with_delay:
+            curve_gen = BezierCurveGenerator()
+            points = curve_gen.generate(start_pt, (x, y), steps=steps)
+
+            for px, py in points:
                 await page.send(
                     cdp_input.dispatch_mouse_event(
                         type_="mouseMoved",
@@ -84,54 +120,25 @@ async def async_move_mouse(
                         y=py,
                     )
                 )
-                if step_delay > 0:
-                    await asyncio.sleep(step_delay)
+                if delay_between_steps > 0:
+                    await asyncio.sleep(delay_between_steps)
         elif _is_playwright(page):
             _ensure_playwright()
 
-            for px, py, step_delay in points_with_delay:
+            curve_gen = BezierCurveGenerator()
+            points = curve_gen.generate(start_pt, (x, y), steps=steps)
+
+            for px, py in points:
                 await page.mouse.move(px, py)
-                if step_delay > 0:
-                    await asyncio.sleep(step_delay)
+                if delay_between_steps > 0:
+                    await asyncio.sleep(delay_between_steps)
         else:
             raise ValueError(
                 f"Не удалось определить тип переданного объекта: {type(page)}. "
                 "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
             )
-        return
 
-    if _is_nodriver(page):
-        _ensure_nodriver()
-        from nodriver.cdp import input_ as cdp_input
-
-        curve_gen = BezierCurveGenerator()
-        points = curve_gen.generate(start_pt, (x, y), steps=steps)
-
-        for px, py in points:
-            await page.send(
-                cdp_input.dispatch_mouse_event(
-                    type_="mouseMoved",
-                    x=px,
-                    y=py,
-                )
-            )
-            if delay_between_steps > 0:
-                await asyncio.sleep(delay_between_steps)
-    elif _is_playwright(page):
-        _ensure_playwright()
-
-        curve_gen = BezierCurveGenerator()
-        points = curve_gen.generate(start_pt, (x, y), steps=steps)
-
-        for px, py in points:
-            await page.mouse.move(px, py)
-            if delay_between_steps > 0:
-                await asyncio.sleep(delay_between_steps)
-    else:
-        raise ValueError(
-            f"Не удалось определить тип переданного объекта: {type(page)}. "
-            "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
-        )
+    await _run_with_timeout(_move(), timeout)
 
 
 async def async_scroll_to(
@@ -141,6 +148,8 @@ async def async_scroll_to(
     selector: str | None = None,
     steps: int = 10,
     delay_between_steps: float = 0.01,
+    *,
+    timeout: float | None = None,
 ) -> None:
     """Имитирует плавный скроллинг Playwright или nodriver.
 
@@ -151,45 +160,49 @@ async def async_scroll_to(
         selector: Необязательный селектор элемента для скролла.
         steps: Количество промежуточных шагов.
         delay_between_steps: Задержка между шагами в секундах.
+        timeout: Максимальное время ожидания операции (в секундах).
     """
-    if _is_nodriver(page):
-        _ensure_nodriver()
+    async def _scroll() -> None:
+        if _is_nodriver(page):
+            _ensure_nodriver()
 
-        scroll_x_val = await page.evaluate("window.scrollX || window.pageXOffset || 0")
-        scroll_y_val = await page.evaluate("window.scrollY || window.pageYOffset || 0")
+            scroll_x_val = await page.evaluate("window.scrollX || window.pageXOffset || 0")
+            scroll_y_val = await page.evaluate("window.scrollY || window.pageYOffset || 0")
 
-        try:
-            scroll_x = int(scroll_x_val)
-        except (ValueError, TypeError):
-            scroll_x = 0
-        try:
-            scroll_y = int(scroll_y_val)
-        except (ValueError, TypeError):
-            scroll_y = 0
+            try:
+                scroll_x = int(scroll_x_val)
+            except (ValueError, TypeError):
+                scroll_x = 0
+            try:
+                scroll_y = int(scroll_y_val)
+            except (ValueError, TypeError):
+                scroll_y = 0
 
-        points = _generate_scroll_points(scroll_x, scroll_y, x, y, steps)
-        for px, py in points:
-            await page.evaluate(f"window.scrollTo({px}, {py})")
-            if delay_between_steps > 0:
-                await asyncio.sleep(delay_between_steps)
+            points = _generate_scroll_points(scroll_x, scroll_y, x, y, steps)
+            for px, py in points:
+                await page.evaluate(f"window.scrollTo({px}, {py})")
+                if delay_between_steps > 0:
+                    await asyncio.sleep(delay_between_steps)
 
-    elif _is_playwright(page):
-        _ensure_playwright()
+        elif _is_playwright(page):
+            _ensure_playwright()
 
-        scroll_x = await page.evaluate("window.scrollX || window.pageXOffset || 0")
-        scroll_y = await page.evaluate("window.scrollY || window.pageYOffset || 0")
+            scroll_x = await page.evaluate("window.scrollX || window.pageXOffset || 0")
+            scroll_y = await page.evaluate("window.scrollY || window.pageYOffset || 0")
 
-        points = _generate_scroll_points(scroll_x, scroll_y, x, y, steps)
-        for px, py in points:
-            await page.evaluate(f"window.scrollTo({px}, {py})")
-            if delay_between_steps > 0:
-                await asyncio.sleep(delay_between_steps)
+            points = _generate_scroll_points(scroll_x, scroll_y, x, y, steps)
+            for px, py in points:
+                await page.evaluate(f"window.scrollTo({px}, {py})")
+                if delay_between_steps > 0:
+                    await asyncio.sleep(delay_between_steps)
 
-    else:
-        raise ValueError(
-            f"Не удалось определить тип переданного объекта: {type(page)}. "
-            "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
-        )
+        else:
+            raise ValueError(
+                f"Не удалось определить тип переданного объекта: {type(page)}. "
+                "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
+            )
+
+    await _run_with_timeout(_scroll(), timeout)
 
 
 async def async_type_text(
@@ -204,6 +217,7 @@ async def async_type_text(
     paste_threshold: int | None = None,
     paste_delay_before: tuple[float, float] = (0.4, 1.0),
     paste_delay_after: tuple[float, float] = (0.3, 0.8),
+    timeout: float | None = None,
 ) -> None:
     """Имитирует ввод текста с опечатками Playwright или nodriver.
 
@@ -223,193 +237,51 @@ async def async_type_text(
         paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.
         paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).
         paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).
+        timeout: Таймаут выполнения операции в секундах.
     """
-    if _is_nodriver(page):
-        _ensure_nodriver()
-        from nodriver.cdp import input_ as cdp_input
-
-        element = await page.find(selector)
-        await element.focus()
-
-        # Адаптивная вставка длинного текста через буфер обмена
-        if paste_threshold is not None and len(text) >= paste_threshold:
-            delay_before = (
-                random.uniform(*paste_delay_before)
-                if paste_delay_before and paste_delay_before[1] > 0
-                else 0.0
-            )
-            if delay_before > 0:
-                await asyncio.sleep(delay_before)
-
-            # Безопасная вставка через DOM Prototype Setter с генерацией событий
-            # input и change для реактивных фреймворков (React, Vue, Angular),
-            # с fallback на cdp_input.insert_text при невозможности вызова JS.
-            pasted_via_dom = await _dom_safe_paste(page, selector, text)
-            if not pasted_via_dom:
-                await page.send(cdp_input.insert_text(text=text))
-
-            delay_after = (
-                random.uniform(*paste_delay_after)
-                if paste_delay_after and paste_delay_after[1] > 0
-                else 0.0
-            )
-            if delay_after > 0:
-                await asyncio.sleep(delay_after)
-            return
-
-        char_delay = 60.0 / (speed_wpm * 5)
+    async def _type() -> None:
         delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.25)
         typo_gen = KeyboardTypoGenerator()
-        sequence = typo_gen.generate_sequence(
-            text,
-            error_rate=error_rate,
-            layout_error_rate=layout_error_rate,
-            delayed_fix_rate=delayed_fix_rate,
-        )
 
-        for action in sequence:
-            if action.action == "type":
-                char = action.char
-                await page.send(
-                    cdp_input.dispatch_key_event(
-                        type_="keyDown",
-                        text=char,
-                        unmodified_text=char,
-                        key=char,
-                    )
-                )
-                if key_hold_time and key_hold_time[1] > 0:
-                    await asyncio.sleep(random.uniform(*key_hold_time))
-                await page.send(
-                    cdp_input.dispatch_key_event(
-                        type_="keyUp",
-                        text=char,
-                        unmodified_text=char,
-                        key=char,
-                    )
-                )
-            elif action.action == "backspace":
-                await page.send(
-                    cdp_input.dispatch_key_event(
-                        type_="rawKeyDown",
-                        key="Backspace",
-                        code="Backspace",
-                        windows_virtual_key_code=8,
-                        native_virtual_key_code=8,
-                        commands=["deleteContentBackward"],
-                    )
-                )
-                if key_hold_time and key_hold_time[1] > 0:
-                    await asyncio.sleep(random.uniform(*key_hold_time))
-                await page.send(
-                    cdp_input.dispatch_key_event(
-                        type_="keyUp",
-                        key="Backspace",
-                        code="Backspace",
-                        windows_virtual_key_code=8,
-                        native_virtual_key_code=8,
-                    )
-                )
-            elif action.action == "key":
-                key_name = action.char
-                vk_code = {
-                    "ArrowLeft": 37,
-                    "ArrowUp": 38,
-                    "ArrowRight": 39,
-                    "ArrowDown": 40,
-                    "Backspace": 8,
-                    "Enter": 13,
-                }.get(key_name, 0)
-                extra_args: dict[str, Any] = {}
-                if key_name == "Backspace":
-                    extra_args["commands"] = ["deleteContentBackward"]
-
-                await page.send(
-                    cdp_input.dispatch_key_event(
-                        type_="rawKeyDown",
-                        key=key_name,
-                        code=key_name,
-                        windows_virtual_key_code=vk_code,
-                        native_virtual_key_code=vk_code,
-                        **extra_args,
-                    )
-                )
-                if key_hold_time and key_hold_time[1] > 0:
-                    await asyncio.sleep(random.uniform(*key_hold_time))
-                await page.send(
-                    cdp_input.dispatch_key_event(
-                        type_="keyUp",
-                        key=key_name,
-                        code=key_name,
-                        windows_virtual_key_code=vk_code,
-                        native_virtual_key_code=vk_code,
-                    )
-                )
-
-            delay = delay_gen.generate(char_delay)
-            if delay > 0:
-                await asyncio.sleep(delay)
-
-        # Self-Healing: финальная сверка введенного значения с ожидаемым текстом.
-        # В случае рассинхронизации из-за лагов CDP или несработавшего стирания
-        # значение поля синхронизируется через прототипный сеттер.
-        await _dom_safe_heal(page, selector, text)
-
-    elif _is_playwright(page):
-        _ensure_playwright()
-        await page.focus(selector)
-
-        # Адаптивная вставка длинного текста через буфер обмена
-        if paste_threshold is not None and len(text) >= paste_threshold:
-            delay_before = (
-                random.uniform(*paste_delay_before)
-                if paste_delay_before and paste_delay_before[1] > 0
-                else 0.0
+        if _is_nodriver(page):
+            await _async_type_nodriver(
+                page,
+                selector,
+                text,
+                error_rate=error_rate,
+                speed_wpm=speed_wpm,
+                key_hold_time=key_hold_time,
+                layout_error_rate=layout_error_rate,
+                delayed_fix_rate=delayed_fix_rate,
+                paste_threshold=paste_threshold,
+                paste_delay_before=paste_delay_before,
+                paste_delay_after=paste_delay_after,
+                delay_gen=delay_gen,
+                typo_gen=typo_gen,
             )
-            if delay_before > 0:
-                await asyncio.sleep(delay_before)
-
-            await page.keyboard.insert_text(text)
-
-            delay_after = (
-                random.uniform(*paste_delay_after)
-                if paste_delay_after and paste_delay_after[1] > 0
-                else 0.0
+        elif _is_playwright(page):
+            await _async_type_playwright(
+                page,
+                selector,
+                text,
+                error_rate=error_rate,
+                speed_wpm=speed_wpm,
+                layout_error_rate=layout_error_rate,
+                delayed_fix_rate=delayed_fix_rate,
+                paste_threshold=paste_threshold,
+                paste_delay_before=paste_delay_before,
+                paste_delay_after=paste_delay_after,
+                delay_gen=delay_gen,
+                typo_gen=typo_gen,
             )
-            if delay_after > 0:
-                await asyncio.sleep(delay_after)
-            return
+        else:
+            raise ValueError(
+                f"Не удалось определить тип переданного объекта: {type(page)}. "
+                "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
+            )
 
-        # 40 WPM = 200 CPM (символов в минуту) = 0.3 секунды на символ
-        char_delay = 60.0 / (speed_wpm * 5)
-        delay_gen = JitterDelayGenerator(strategy="lognormal", jitter=0.25)
-        typo_gen = KeyboardTypoGenerator()
-        sequence = typo_gen.generate_sequence(
-            text,
-            error_rate=error_rate,
-            layout_error_rate=layout_error_rate,
-            delayed_fix_rate=delayed_fix_rate,
-        )
+    await _run_with_timeout(_type(), timeout)
 
-        for action in sequence:
-            if action.action == "type":
-                await page.keyboard.type(action.char)
-            elif action.action == "backspace":
-                await page.keyboard.press("Backspace")
-            elif action.action == "key":
-                await page.keyboard.press(action.char)
-
-            delay = delay_gen.generate(char_delay)
-            if delay > 0:
-                await asyncio.sleep(delay)
-
-        # Self-Healing: финальная сверка введенного значения для Playwright
-        await _dom_safe_heal(page, selector, text)
-    else:
-        raise ValueError(
-            f"Не удалось определить тип переданного объекта: {type(page)}. "
-            "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
-        )
 
 
 def move_mouse(
@@ -593,6 +465,7 @@ async def async_click(
     algorithm: str = "windmouse",
     button: str = "left",
     hold_time: tuple[float, float] = (0.05, 0.12),
+    timeout: float | None = None,
 ) -> None:
     """Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).
 
@@ -605,63 +478,68 @@ async def async_click(
         algorithm: Алгоритм движения ('windmouse' или 'bezier').
         button: Кнопка мыши ('left', 'right', 'middle').
         hold_time: Диапазон задержки удержания кнопки мыши (в секундах).
+        timeout: Таймаут выполнения операции в секундах.
     """
-    target_x = x
-    target_y = y
+    async def _click() -> None:
+        target_x = x
+        target_y = y
 
-    if target_x is None or target_y is None:
-        if selector is None:
-            raise ValueError(
-                "Необходимо указать координаты (x, y) или CSS-селектор selector."
-            )
+        if target_x is None or target_y is None:
+            if selector is None:
+                raise ValueError(
+                    "Необходимо указать координаты (x, y) или CSS-селектор selector."
+                )
 
-        target_x, target_y = await _resolve_async_element_coordinates(page, selector)
+            target_x, target_y = await _resolve_async_element_coordinates(page, selector)
 
-    # 1. Плавное перемещение к цели
-    await async_move_mouse(
-        page, x=target_x, y=target_y, start=start, algorithm=algorithm
-    )
-
-    # 2. Пауза перед нажатием
-    await asyncio.sleep(random.uniform(0.04, 0.12))
-
-    # 3. Нажатие, удержание и отпускание кнопки
-    hold_delay = (
-        random.uniform(*hold_time)
-        if hold_time and hold_time[1] > 0
-        else random.uniform(0.04, 0.09)
-    )
-    if _is_nodriver(page):
-        _ensure_nodriver()
-        from nodriver.cdp import input_ as cdp_input
-
-        btn = (
-            "left" if button == "left" else ("right" if button == "right" else "middle")
+        # 1. Плавное перемещение к цели
+        await async_move_mouse(
+            page, x=target_x, y=target_y, start=start, algorithm=algorithm
         )
-        await page.send(
-            cdp_input.dispatch_mouse_event(
-                type_="mousePressed",
-                x=target_x,
-                y=target_y,
-                button=cdp_input.MouseButton(btn),
-                click_count=1,
-            )
-        )
-        await asyncio.sleep(hold_delay)
-        await page.send(
-            cdp_input.dispatch_mouse_event(
-                type_="mouseReleased",
-                x=target_x,
-                y=target_y,
-                button=cdp_input.MouseButton(btn),
-                click_count=1,
-            )
-        )
-    elif _is_playwright(page):
-        _ensure_playwright()
-        await page.mouse.down(button=button)
-        await asyncio.sleep(hold_delay)
-        await page.mouse.up(button=button)
 
-    # 4. Пауза после клика
-    await asyncio.sleep(random.uniform(0.03, 0.08))
+        # 2. Пауза перед нажатием
+        await asyncio.sleep(random.uniform(0.04, 0.12))
+
+        # 3. Нажатие, удержание и отпускание кнопки
+        hold_delay = (
+            random.uniform(*hold_time)
+            if hold_time and hold_time[1] > 0
+            else random.uniform(0.04, 0.09)
+        )
+        if _is_nodriver(page):
+            _ensure_nodriver()
+            from nodriver.cdp import input_ as cdp_input
+
+            btn = (
+                "left" if button == "left" else ("right" if button == "right" else "middle")
+            )
+            await page.send(
+                cdp_input.dispatch_mouse_event(
+                    type_="mousePressed",
+                    x=target_x,
+                    y=target_y,
+                    button=cdp_input.MouseButton(btn),
+                    click_count=1,
+                )
+            )
+            await asyncio.sleep(hold_delay)
+            await page.send(
+                cdp_input.dispatch_mouse_event(
+                    type_="mouseReleased",
+                    x=target_x,
+                    y=target_y,
+                    button=cdp_input.MouseButton(btn),
+                    click_count=1,
+                )
+            )
+        elif _is_playwright(page):
+            _ensure_playwright()
+            await page.mouse.down(button=button)
+            await asyncio.sleep(hold_delay)
+            await page.mouse.up(button=button)
+
+        # 4. Пауза после клика
+        await asyncio.sleep(random.uniform(0.03, 0.08))
+
+    await _run_with_timeout(_click(), timeout)
+

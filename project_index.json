@@ -30650,6 +30650,26 @@
                 "children": [],
                 "symbols": [
                   {
+                    "name": "_run_with_timeout",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(coro, timeout)",
+                    "summary": "Выполняет корутину с опциональным ограничением по таймауту.",
+                    "docstring": "Выполняет корутину с опциональным ограничением по таймауту.\n\nArgs:\n    coro: Асинхронная корутина.\n    timeout: Таймаут в секундах. Если None, выполняется без таймаута.\n\nReturns:\n    Результат выполнения корутины.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 17,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
                     "name": "_ensure_playwright",
                     "type": "function",
                     "layer": "private",
@@ -30665,7 +30685,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 15,
+                    "line_number": 35,
                     "bases": [],
                     "children": []
                   },
@@ -30685,7 +30705,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 31,
+                    "line_number": 51,
                     "bases": [],
                     "children": []
                   },
@@ -30705,7 +30725,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 47,
+                    "line_number": 67,
                     "bases": [],
                     "children": []
                   },
@@ -30725,7 +30745,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 70,
+                    "line_number": 90,
                     "bases": [],
                     "children": []
                   },
@@ -30745,7 +30765,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 85,
+                    "line_number": 105,
                     "bases": [],
                     "children": []
                   },
@@ -30765,7 +30785,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 97,
+                    "line_number": 117,
                     "bases": [],
                     "children": []
                   },
@@ -30785,7 +30805,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 118,
+                    "line_number": 138,
                     "bases": [],
                     "children": []
                   },
@@ -30805,7 +30825,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 131,
+                    "line_number": 151,
                     "bases": [],
                     "children": []
                   },
@@ -30825,7 +30845,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 144,
+                    "line_number": 164,
                     "bases": [],
                     "children": []
                   },
@@ -30845,7 +30865,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 163,
+                    "line_number": 183,
                     "bases": [],
                     "children": []
                   },
@@ -30865,7 +30885,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 187,
+                    "line_number": 207,
                     "bases": [],
                     "children": []
                   },
@@ -30885,7 +30905,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 258,
+                    "line_number": 278,
                     "bases": [],
                     "children": []
                   },
@@ -30905,7 +30925,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 280,
+                    "line_number": 300,
                     "bases": [],
                     "children": []
                   },
@@ -30925,7 +30945,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 304,
+                    "line_number": 324,
                     "bases": [],
                     "children": []
                   },
@@ -30945,7 +30965,47 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 326,
+                    "line_number": 346,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_async_type_nodriver",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(page, selector, text)",
+                    "summary": "Выполняет посимвольный ввод или paste для nodriver.",
+                    "docstring": "Выполняет посимвольный ввод или paste для nodriver.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 363,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_async_type_playwright",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(page, selector, text)",
+                    "summary": "Выполняет посимвольный ввод или paste для Playwright.",
+                    "docstring": "Выполняет посимвольный ввод или paste для Playwright.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 468,
                     "bases": [],
                     "children": []
                   },
@@ -30965,7 +31025,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 343,
+                    "line_number": 521,
                     "bases": [],
                     "children": []
                   }
@@ -30986,7 +31046,7 @@
                     "layer": "public",
                     "signature": "(page, x, y, start, steps, delay_between_steps, algorithm)",
                     "summary": "Имитирует плавное перемещение мыши Playwright или nodriver.",
-                    "docstring": "Имитирует плавное перемещение мыши Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты X, Y. Если не задано, используется (0, 0).\n    steps: Количество промежуточных шагов движения (для алгоритма 'bezier').\n    delay_between_steps: Задержка между шагами в секундах (для алгоритма 'bezier').\n    algorithm: Алгоритм генерации траектории ('bezier' или 'windmouse').",
+                    "docstring": "Имитирует плавное перемещение мыши Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты X, Y. Если не задано, используется (0, 0).\n    steps: Количество промежуточных шагов движения (для алгоритма 'bezier').\n    delay_between_steps: Задержка между шагами в секундах (для алгоритма 'bezier').\n    algorithm: Алгоритм генерации траектории ('bezier' или 'windmouse').\n    timeout: Максимальное время ожидания операции (в секундах).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -30996,7 +31056,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 49,
+                    "line_number": 50,
                     "bases": [],
                     "children": []
                   },
@@ -31006,7 +31066,7 @@
                     "layer": "public",
                     "signature": "(page, x, y, selector, steps, delay_between_steps)",
                     "summary": "Имитирует плавный скроллинг Playwright или nodriver.",
-                    "docstring": "Имитирует плавный скроллинг Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    x: Конечная горизонтальная позиция скролла.\n    y: Конечная вертикальная позиция скролла.\n    selector: Необязательный селектор элемента для скролла.\n    steps: Количество промежуточных шагов.\n    delay_between_steps: Задержка между шагами в секундах.",
+                    "docstring": "Имитирует плавный скроллинг Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    x: Конечная горизонтальная позиция скролла.\n    y: Конечная вертикальная позиция скролла.\n    selector: Необязательный селектор элемента для скролла.\n    steps: Количество промежуточных шагов.\n    delay_between_steps: Задержка между шагами в секундах.\n    timeout: Максимальное время ожидания операции (в секундах).",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -31016,7 +31076,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 137,
+                    "line_number": 144,
                     "bases": [],
                     "children": []
                   },
@@ -31024,9 +31084,9 @@
                     "name": "async_type_text",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time, layout_error_rate, delayed_fix_rate, paste_threshold, paste_delay_before, paste_delay_after)",
+                    "signature": "(page, selector, text, error_rate, speed_wpm, key_hold_time, layout_error_rate, delayed_fix_rate, paste_threshold, paste_delay_before, paste_delay_after, timeout)",
                     "summary": "Имитирует ввод текста с опечатками Playwright или nodriver.",
-                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nПоддерживает адаптивный ввод: если длина текста превышает paste_threshold,\nтекст вставляется целиком (имитируя вставку из буфера обмена Ctrl+V / Paste)\nс естественными паузами обдумывания до и после вставки.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    delayed_fix_rate: Вероятность отложенного исправления опечатки навигацией стрелками (0.0 - 1.0).\n    paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.\n    paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).\n    paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).",
+                    "docstring": "Имитирует ввод текста с опечатками Playwright или nodriver.\n\nПоддерживает адаптивный ввод: если длина текста превышает paste_threshold,\nтекст вставляется целиком (имитируя вставку из буфера обмена Ctrl+V / Paste)\nс естественными паузами обдумывания до и после вставки.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор поля ввода.\n    text: Текст для ввода.\n    error_rate: Вероятность совершения опечатки (0.0 - 1.0).\n    speed_wpm: Скорость ввода в словах в минуту (WPM).\n    key_hold_time: Диапазон задержки удержания клавиши (keyDown -> keyUp) в секундах.\n    layout_error_rate: Вероятность ошибки переключения раскладки в начале ввода (0.0 - 1.0).\n    delayed_fix_rate: Вероятность отложенного исправления опечатки навигацией стрелками (0.0 - 1.0).\n    paste_threshold: Порог длины текста для вставки через буфер обмена. Если None, ввод всегда посимвольный.\n    paste_delay_before: Диапазон паузы обдумывания перед вставкой из буфера (в секундах).\n    paste_delay_after: Диапазон паузы проверки после вставки из буфера (в секундах).\n    timeout: Таймаут выполнения операции в секундах.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -31036,7 +31096,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 195,
+                    "line_number": 208,
                     "bases": [],
                     "children": []
                   },
@@ -31056,7 +31116,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 415,
+                    "line_number": 287,
                     "bases": [],
                     "children": []
                   },
@@ -31076,7 +31136,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 467,
+                    "line_number": 339,
                     "bases": [],
                     "children": []
                   },
@@ -31096,7 +31156,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 501,
+                    "line_number": 373,
                     "bases": [],
                     "children": []
                   },
@@ -31104,9 +31164,9 @@
                     "name": "async_click",
                     "type": "function",
                     "layer": "public",
-                    "signature": "(page, selector, x, y, start, algorithm, button, hold_time)",
+                    "signature": "(page, selector, x, y, start, algorithm, button, hold_time, timeout)",
                     "summary": "Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).",
-                    "docstring": "Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор целевого элемента (если x, y не заданы).\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты курсора.\n    algorithm: Алгоритм движения ('windmouse' или 'bezier').\n    button: Кнопка мыши ('left', 'right', 'middle').\n    hold_time: Диапазон задержки удержания кнопки мыши (в секундах).",
+                    "docstring": "Имитирует реалистичный клик мышью (с плавным наведением, микропаузами и удержанием кнопки).\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    selector: Селектор целевого элемента (если x, y не заданы).\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты курсора.\n    algorithm: Алгоритм движения ('windmouse' или 'bezier').\n    button: Кнопка мыши ('left', 'right', 'middle').\n    hold_time: Диапазон задержки удержания кнопки мыши (в секундах).\n    timeout: Таймаут выполнения операции в секундах.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -31116,7 +31176,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 587,
+                    "line_number": 459,
                     "bases": [],
                     "children": []
                   }
@@ -32897,6 +32957,26 @@
                 "children": []
               },
               {
+                "name": "close_tab",
+                "type": "function",
+                "layer": "internal",
+                "signature": "(tab)",
+                "summary": "Безопасно закрывает вкладку nodriver с защитой от зависания CDP-сокета.",
+                "docstring": "Безопасно закрывает вкладку nodriver с защитой от зависания CDP-сокета.\n\nЕсли вкладка потерпела крах (Renderer Crash) или CDP не отвечает,\nоперация прерывается по истечении таймаута без зависания вызывающего потока.\n\nArgs:\n    tab: Объект вкладки nodriver (nodriver.Tab).\n    timeout: Максимальное время ожидания закрытия вкладки в секундах.",
+                "breadcrumbs": {
+                  "is_async": true,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 43,
+                "bases": [],
+                "children": []
+              },
+              {
                 "name": "launch_nodriver",
                 "type": "function",
                 "layer": "internal",
@@ -32912,7 +32992,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 43,
+                "line_number": 67,
                 "bases": [],
                 "children": []
               },
@@ -32934,7 +33014,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 155,
+                "line_number": 179,
                 "bases": [],
                 "children": []
               }
@@ -38507,7 +38587,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 122,
+            "line_number": 125,
             "bases": [],
             "children": []
           },
@@ -38527,7 +38607,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 164,
+            "line_number": 168,
             "bases": [],
             "children": []
           },
@@ -38547,7 +38627,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 172,
+            "line_number": 176,
             "bases": [],
             "children": []
           }
@@ -47703,7 +47783,7 @@
     {
       "source": "chutils/scraping/humanize/actions",
       "target": "/_actions_helpers",
-      "weight": 13
+      "weight": 14
     },
     {
       "source": "chutils/scraping/humanize/actions",
@@ -48615,8 +48695,8 @@
   "metadata": {
     "chutils_version": "3.8.1",
     "project_version": "3.8.1",
-    "git_commit": "b1911f641e4f7e7b3817af363aee00e31e5cc62e (dirty)",
-    "generated_at": "2026-09-24T10:20:47.634955+00:00",
-    "project_hash": "48bdd122eea9be6317675dc39a9f422b86b86ac9d1dae570e8c0698ca8c08d53"
+    "git_commit": "c7bd6b79ee14a1ef524f82bb7fddc07958c09599 (dirty)",
+    "generated_at": "2026-09-24T11:00:23.175318+00:00",
+    "project_hash": "d5762bfa86d7777e1cd22887e41d3155b281bf50433d85a4f8f00a8733c2ef8e"
   }
 }

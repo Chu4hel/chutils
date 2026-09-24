@@ -195,6 +195,7 @@ await async_type_text(
     error_rate=0.05,
     speed_wpm=40.0,
     key_hold_time=(0.04, 0.09),
+    timeout=5.0,  # Защита от зависания CDP
 )
 
 # Адаптивный ввод (Paste/Ctrl+V для длинных текстов, промптов и кода):
@@ -210,8 +211,24 @@ await async_type_text(
     paste_threshold=100,
     paste_delay_before=(0.5, 1.2),
     paste_delay_after=(0.4, 0.8),
+    timeout=10.0,
 )
 ```
+
+#### Защита от зависаний CDP и таймауты (`timeout`, `close_tab`)
+
+Все асинхронные действия (`async_move_mouse`, `async_click`, `async_scroll_to`, `async_type_text`) принимают опциональный параметр `timeout: float | None = None`. При зависании сокета CDP или падении рендерера браузера операция прерывается с выбросом `TimeoutError`, не блокируя выполнение программы.
+
+Для безопасного закрытия вкладок nodriver модуль предоставляет функцию `close_tab`:
+
+```python
+from chutils.scraping import close_tab
+
+# Безопасное закрытие вкладки с таймаутом (по умолчанию timeout=3.0с)
+# Перехватывает TimeoutError и ошибки отвалившегося CDP сокета
+await close_tab(tab, timeout=3.0)
+```
+
 
 ### Обертки для Selenium (синхронные)
 

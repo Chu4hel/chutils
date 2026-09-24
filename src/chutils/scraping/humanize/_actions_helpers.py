@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+from collections.abc import Coroutine
 import importlib.util
 import json
 import random
@@ -10,6 +12,24 @@ import time
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
+
+
+async def _run_with_timeout(
+    coro: Coroutine[Any, Any, Any],
+    timeout: float | None = None,
+) -> Any:
+    """Выполняет корутину с опциональным ограничением по таймауту.
+
+    Args:
+        coro: Асинхронная корутина.
+        timeout: Таймаут в секундах. Если None, выполняется без таймаута.
+
+    Returns:
+        Результат выполнения корутины.
+    """
+    if timeout is not None:
+        return await asyncio.wait_for(coro, timeout=timeout)
+    return await coro
 
 
 def _ensure_playwright() -> None:
@@ -338,6 +358,164 @@ async def _dom_safe_heal(page: Any, selector: str, expected_text: str) -> None:
             )
         except Exception:
             pass
+
+
+async def _async_type_nodriver(
+    page: Any,
+    selector: str,
+    text: str,
+    *,
+    error_rate: float,
+    speed_wpm: float,
+    key_hold_time: tuple[float, float],
+    layout_error_rate: float,
+    delayed_fix_rate: float,
+    paste_threshold: int | None,
+    paste_delay_before: tuple[float, float],
+    paste_delay_after: tuple[float, float],
+    delay_gen: Any,
+    typo_gen: Any,
+) -> None:
+    """Выполняет посимвольный ввод или paste для nodriver."""
+    _ensure_nodriver()
+    from nodriver.cdp import input_ as cdp_input
+
+    element = await page.find(selector)
+    await element.focus()
+
+    if paste_threshold is not None and len(text) >= paste_threshold:
+        if paste_delay_before and paste_delay_before[1] > 0:
+            await asyncio.sleep(random.uniform(*paste_delay_before))
+
+        pasted = await _dom_safe_paste(page, selector, text)
+        if not pasted:
+            await page.send(cdp_input.insert_text(text=text))
+
+        if paste_delay_after and paste_delay_after[1] > 0:
+            await asyncio.sleep(random.uniform(*paste_delay_after))
+        return
+
+    char_delay = 60.0 / (speed_wpm * 5)
+    sequence = typo_gen.generate_sequence(
+        text,
+        error_rate=error_rate,
+        layout_error_rate=layout_error_rate,
+        delayed_fix_rate=delayed_fix_rate,
+    )
+
+    for action in sequence:
+        if action.action == "type":
+            c = action.char
+            await page.send(
+                cdp_input.dispatch_key_event(type_="keyDown", text=c, unmodified_text=c, key=c)
+            )
+            if key_hold_time and key_hold_time[1] > 0:
+                await asyncio.sleep(random.uniform(*key_hold_time))
+            await page.send(
+                cdp_input.dispatch_key_event(type_="keyUp", text=c, unmodified_text=c, key=c)
+            )
+        elif action.action == "backspace":
+            await page.send(
+                cdp_input.dispatch_key_event(
+                    type_="rawKeyDown",
+                    key="Backspace",
+                    code="Backspace",
+                    windows_virtual_key_code=8,
+                    native_virtual_key_code=8,
+                    commands=["deleteContentBackward"],
+                )
+            )
+            if key_hold_time and key_hold_time[1] > 0:
+                await asyncio.sleep(random.uniform(*key_hold_time))
+            await page.send(
+                cdp_input.dispatch_key_event(
+                    type_="keyUp",
+                    key="Backspace",
+                    code="Backspace",
+                    windows_virtual_key_code=8,
+                    native_virtual_key_code=8,
+                )
+            )
+        elif action.action == "key":
+            k = action.char
+            vk = {
+                "ArrowLeft": 37, "ArrowUp": 38, "ArrowRight": 39,
+                "ArrowDown": 40, "Backspace": 8, "Enter": 13,
+            }.get(k, 0)
+            extra: dict[str, Any] = {"commands": ["deleteContentBackward"]} if k == "Backspace" else {}
+            await page.send(
+                cdp_input.dispatch_key_event(
+                    type_="rawKeyDown", key=k, code=k,
+                    windows_virtual_key_code=vk, native_virtual_key_code=vk, **extra
+                )
+            )
+            if key_hold_time and key_hold_time[1] > 0:
+                await asyncio.sleep(random.uniform(*key_hold_time))
+            await page.send(
+                cdp_input.dispatch_key_event(
+                    type_="keyUp", key=k, code=k,
+                    windows_virtual_key_code=vk, native_virtual_key_code=vk
+                )
+            )
+
+        delay = delay_gen.generate(char_delay)
+        if delay > 0:
+            await asyncio.sleep(delay)
+
+    await _dom_safe_heal(page, selector, text)
+
+
+async def _async_type_playwright(
+    page: Any,
+    selector: str,
+    text: str,
+    *,
+    error_rate: float,
+    speed_wpm: float,
+    layout_error_rate: float,
+    delayed_fix_rate: float,
+    paste_threshold: int | None,
+    paste_delay_before: tuple[float, float],
+    paste_delay_after: tuple[float, float],
+    delay_gen: Any,
+    typo_gen: Any,
+) -> None:
+    """Выполняет посимвольный ввод или paste для Playwright."""
+    _ensure_playwright()
+    await page.focus(selector)
+
+    if paste_threshold is not None and len(text) >= paste_threshold:
+        if paste_delay_before and paste_delay_before[1] > 0:
+            await asyncio.sleep(random.uniform(*paste_delay_before))
+
+        await page.keyboard.insert_text(text)
+
+        if paste_delay_after and paste_delay_after[1] > 0:
+            await asyncio.sleep(random.uniform(*paste_delay_after))
+        return
+
+    char_delay = 60.0 / (speed_wpm * 5)
+    sequence = typo_gen.generate_sequence(
+        text,
+        error_rate=error_rate,
+        layout_error_rate=layout_error_rate,
+        delayed_fix_rate=delayed_fix_rate,
+    )
+
+    for action in sequence:
+        if action.action == "type":
+            await page.keyboard.type(action.char)
+        elif action.action == "backspace":
+            await page.keyboard.press("Backspace")
+        elif action.action == "key":
+            await page.keyboard.press(action.char)
+
+        delay = delay_gen.generate(char_delay)
+        if delay > 0:
+            await asyncio.sleep(delay)
+
+    await _dom_safe_heal(page, selector, text)
+
 
 
 def click(
