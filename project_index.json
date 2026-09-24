@@ -31387,7 +31387,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 344,
+                    "line_number": 347,
                     "bases": [],
                     "children": []
                   },
@@ -31407,7 +31407,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 406,
+                    "line_number": 409,
                     "bases": [],
                     "children": []
                   },
@@ -31427,7 +31427,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 426,
+                    "line_number": 429,
                     "bases": [],
                     "children": []
                   }
@@ -48695,8 +48695,8 @@
   "metadata": {
     "chutils_version": "3.8.1",
     "project_version": "3.8.1",
-    "git_commit": "2aa7d17bce538bb5f18dc85f4cd940364c3a6e39 (dirty)",
-    "generated_at": "2026-09-24T11:44:56.217236+00:00",
-    "project_hash": "2be6398dd534822ee59052a997bf84fed28038d21b41b19726ff21dbf7ddff45"
+    "git_commit": "4fb3174852de4239050a4b311118020e8ba21b01 (dirty)",
+    "generated_at": "2026-09-24T12:12:06.710957+00:00",
+    "project_hash": "002940a65ca18b9bcfeb7ff4651bbfa23759d4915a0e447c7f580650e6111e06"
   }
 }

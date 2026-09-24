@@ -433,10 +433,11 @@ if solved:
 from chutils.scraping.humanize import get_browser_launch_args
 
 # Возвращает список флагов запуска без триггерящего антифрод '--no-sandbox' (по умолчанию),
-# подавляя всплывающие окна падений и первого запуска:
+# подавляя всплывающие окна падений и первого запуска, а также предотвращая WebRTC IP Leaks в обход прокси:
 # '--disable-dev-shm-usage', '--no-first-run', '--password-store=basic',
 # '--mute-audio', '--disable-background-timer-throttling', '--disable-component-update',
-# '--disable-session-crashed-bubble', '--hide-crash-restore-bubble', '--restore-last-session=false'
+# '--disable-session-crashed-bubble', '--hide-crash-restore-bubble', '--restore-last-session=false',
+# '--force-webrtc-ip-handling-policy=disable_non_proxied_udp', '--enforce-webrtc-ip-permission-check'
 launch_flags = get_browser_launch_args()
 
 # Для изолированных Docker-контейнеров без root-прав можно включить no_sandbox:

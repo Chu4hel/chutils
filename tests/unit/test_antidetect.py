@@ -225,3 +225,6 @@ def test_browser_launch_args_enhanced() -> None:
     assert "--no-first-run" in args
     assert "--no-default-browser-check" in args
     assert "--password-store=basic" in args
+    assert "--force-webrtc-ip-handling-policy=disable_non_proxied_udp" in args
+    assert "--enforce-webrtc-ip-permission-check" in args
+

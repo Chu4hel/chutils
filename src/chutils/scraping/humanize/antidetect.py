@@ -335,10 +335,13 @@ def get_browser_launch_args(*, no_sandbox: bool = False) -> list[str]:
         "--disable-session-crashed-bubble",
         "--hide-crash-restore-bubble",
         "--restore-last-session=false",
+        "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
+        "--enforce-webrtc-ip-permission-check",
     ]
     if no_sandbox:
         args.insert(0, "--no-sandbox")
     return args
+
 
 
 async def _extract_clearance_cookies_async(target: Any) -> dict[str, Any]:
