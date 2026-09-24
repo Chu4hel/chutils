@@ -124,6 +124,7 @@ def test_antidetect_nodriver(mock_ensure: MagicMock) -> None:
 
         tab = MagicMock()
         tab.send = AsyncMock()
+        tab.evaluate = AsyncMock()
 
         asyncio.run(
             apply_antidetect_nodriver(
@@ -145,8 +146,11 @@ def test_antidetect_nodriver(mock_ensure: MagicMock) -> None:
         assert "24" in js_code
         assert "64" in js_code
 
-        # Проверяем, что команда отправлена вкладке
+        # Проверяем, что команда отправлена вкладке для новых документов
         tab.send.assert_called_once_with("mock_cdp_command")
+
+        # Проверяем мгновенную инъекцию на текущую страницу через evaluate
+        tab.evaluate.assert_called_once_with(js_code)
 
 
 def test_antidetect_js_tampering_protection() -> None:

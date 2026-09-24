@@ -288,7 +288,9 @@ apply_antidetect_selenium(
 
 # Для nodriver (применяется к вкладке Tab через CDP протокол)
 # По умолчанию stealth_minimal=True: отключает синтетический шум Canvas/WebGL,
-# сохраняя естественный отпечаток установленного браузера Google Chrome:
+# сохраняя естественный отпечаток установленного браузера Google Chrome.
+# Выполняет двойную инъекцию: регистрирует скрипт для будущих страниц (Page.addScriptToEvaluateOnNewDocument)
+# и мгновенно выполняет его через evaluate() на текущей уже открытой странице:
 await apply_antidetect_nodriver(tab)
 ```
 

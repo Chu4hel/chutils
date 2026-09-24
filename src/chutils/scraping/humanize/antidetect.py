@@ -264,7 +264,16 @@ async def apply_antidetect_nodriver(
         session_seed=session_seed,
         client_hints=client_hints,
     )
+    # Двойная инъекция:
+    # 1. Регистрация на новые документы (будущие навигации, редиректы, перезагрузки)
     await tab.send(page.add_script_to_evaluate_on_new_document(source=script))
+
+    # 2. Мгновенное применение к уже открытой текущей странице (если вкладка активна)
+    if hasattr(tab, "evaluate") and callable(tab.evaluate):
+        try:
+            await tab.evaluate(script)
+        except Exception:
+            pass
 
 
 def get_browser_launch_args(*, no_sandbox: bool = False) -> list[str]:
