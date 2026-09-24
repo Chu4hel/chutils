@@ -118,6 +118,11 @@ async def launch_nodriver(
             if b_arg not in merged_args:
                 merged_args.append(b_arg)
 
+    # Синхронизация User-Agent флага запуска с AntidetectConfig
+    if config.user_agent and not any(a.startswith("--user-agent=") for a in merged_args):
+        merged_args.append(f"--user-agent={config.user_agent}")
+
+
     # Очистка профиля от следов падений и сброс crash flags перед запуском
     if sanitize_profile_dir and user_data_dir is not None:
         try:

@@ -330,8 +330,9 @@ cfg_aggressive = AntidetectConfig.preset_aggressive(
 )
 await cfg_aggressive.apply_to_playwright(browser_context)
 
-# 3. Пользовательская конфигурация:
+# 3. Пользовательская конфигурация с User-Agent:
 custom_cfg = AntidetectConfig(
+    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     webgl_vendor="Google Inc. (NVIDIA)",
     webgl_renderer="ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Direct3D11 vs_5_0 ps_5_0, D3D11)",
     hardware_concurrency=8,
@@ -339,9 +340,11 @@ custom_cfg = AntidetectConfig(
     stealth_minimal=True,
     session_seed="custom_seed_42",
 )
+# При применении к nodriver автоматически вызывается cdp emulation.set_user_agent_override(user_agent=...)
 await apply_antidetect_nodriver(tab, config=custom_cfg)
 
 # 4. Мгновенная генерация из детерминированного сида:
+# FingerprintProfile.to_antidetect_config() полностью сохраняет согласованный user_agent и Client Hints
 seed_cfg = AntidetectConfig.from_seed("user_session_42")
 await seed_cfg.apply_to_nodriver(tab)
 ```

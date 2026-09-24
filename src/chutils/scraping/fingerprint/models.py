@@ -162,6 +162,7 @@ class FingerprintProfile(BaseModel):
             stealth_minimal=stealth_minimal,
             session_seed=seed_val,
             client_hints=self.client_hints,
+            user_agent=self.user_agent,
             screen_width=self.screen.width,
             screen_height=self.screen.height,
             screen_avail_height=self.screen.avail_height,

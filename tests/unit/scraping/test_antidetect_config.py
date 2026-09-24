@@ -168,3 +168,50 @@ async def test_apply_antidetect_playwright_direct() -> None:
         assert mock_context.add_init_script.called
     finally:
         sys.modules.pop("playwright", None)
+
+
+@pytest.mark.asyncio
+async def test_apply_antidetect_nodriver_user_agent_override() -> None:
+    """Проверка отправки команды emulation.set_user_agent_override при наличии user_agent."""
+    mock_nodriver = MagicMock()
+    mock_cdp = MagicMock()
+    mock_page = MagicMock()
+    mock_emulation = MagicMock()
+    mock_cdp.page = mock_page
+    mock_cdp.emulation = mock_emulation
+    mock_nodriver.cdp = mock_cdp
+
+    mock_tab = MagicMock()
+    mock_tab.send = AsyncMock()
+
+    sys.modules["nodriver"] = mock_nodriver
+    sys.modules["nodriver.cdp"] = mock_cdp
+    sys.modules["nodriver.cdp.page"] = mock_page
+    sys.modules["nodriver.cdp.emulation"] = mock_emulation
+
+    test_ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) TestBrowser/1.0"
+    cfg = AntidetectConfig(user_agent=test_ua)
+
+    try:
+        await apply_antidetect_nodriver(mock_tab, config=cfg)
+        assert mock_emulation.set_user_agent_override.called
+        mock_emulation.set_user_agent_override.assert_called_once_with(
+            user_agent=test_ua
+        )
+        assert mock_tab.send.called
+    finally:
+        sys.modules.pop("nodriver", None)
+        sys.modules.pop("nodriver.cdp", None)
+        sys.modules.pop("nodriver.cdp.page", None)
+        sys.modules.pop("nodriver.cdp.emulation", None)
+
+
+def test_fingerprint_profile_to_antidetect_config_user_agent() -> None:
+    """Проверка проброса user_agent из FingerprintProfile в AntidetectConfig."""
+    from chutils.scraping.fingerprint.models import FingerprintProfile
+
+    profile = FingerprintProfile(user_agent="Custom-UA/2.0")
+    config = profile.to_antidetect_config()
+
+    assert config.user_agent == "Custom-UA/2.0"
+

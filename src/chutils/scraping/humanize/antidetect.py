@@ -126,6 +126,7 @@ async def apply_antidetect_playwright(
     stealth_minimal: bool = False,
     session_seed: str | int = 1337,
     client_hints: dict[str, Any] | None = None,
+    user_agent: str | None = None,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к контексту Playwright.
 
@@ -139,6 +140,7 @@ async def apply_antidetect_playwright(
         stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.
         session_seed: Сид для детерминированного шума Canvas.
         client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
+        user_agent: Пользовательская строка User-Agent.
     """
     _ensure_playwright()
     if config is not None:
@@ -149,6 +151,8 @@ async def apply_antidetect_playwright(
         stealth_minimal = config.stealth_minimal
         session_seed = config.session_seed
         client_hints = config.client_hints
+        if config.user_agent is not None:
+            user_agent = config.user_agent
 
     script = _get_antidetect_js(
         webgl_vendor=webgl_vendor,
@@ -173,6 +177,7 @@ def apply_antidetect_selenium(
     stealth_minimal: bool = False,
     session_seed: str | int = 1337,
     client_hints: dict[str, Any] | None = None,
+    user_agent: str | None = None,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к сессии Selenium.
 
@@ -186,6 +191,7 @@ def apply_antidetect_selenium(
         stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.
         session_seed: Сид для детерминированного шума Canvas.
         client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
+        user_agent: Пользовательская строка User-Agent.
     """
     _ensure_selenium()
     if config is not None:
@@ -196,6 +202,8 @@ def apply_antidetect_selenium(
         stealth_minimal = config.stealth_minimal
         session_seed = config.session_seed
         client_hints = config.client_hints
+        if config.user_agent is not None:
+            user_agent = config.user_agent
 
     script = _get_antidetect_js(
         webgl_vendor=webgl_vendor,
@@ -210,6 +218,10 @@ def apply_antidetect_selenium(
         driver.execute_cdp_cmd(
             "Page.addScriptToEvaluateOnNewDocument", {"source": script}
         )
+        if user_agent:
+            driver.execute_cdp_cmd(
+                "Emulation.setUserAgentOverride", {"userAgent": user_agent}
+            )
     else:
         driver.execute_script(script)
 
@@ -225,6 +237,7 @@ async def apply_antidetect_nodriver(
     stealth_minimal: bool = True,
     session_seed: str | int = 1337,
     client_hints: dict[str, Any] | None = None,
+    user_agent: str | None = None,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.
 
@@ -242,9 +255,10 @@ async def apply_antidetect_nodriver(
             сохраняя естественный отпечаток установленного браузера Google Chrome (True по умолчанию).
         session_seed: Сид для детерминированного шума Canvas.
         client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
+        user_agent: Пользовательская строка User-Agent для переопределения через CDP.
     """
     _ensure_nodriver()
-    from nodriver.cdp import page
+    from nodriver.cdp import emulation, page
 
     if config is not None:
         webgl_vendor = config.webgl_vendor
@@ -254,6 +268,15 @@ async def apply_antidetect_nodriver(
         stealth_minimal = config.stealth_minimal
         session_seed = config.session_seed
         client_hints = config.client_hints
+        if config.user_agent is not None:
+            user_agent = config.user_agent
+
+    # 1. Переопределение User-Agent через CDP Emulation для синхронизации с Client Hints и HTTP заголовками
+    if user_agent:
+        try:
+            await tab.send(emulation.set_user_agent_override(user_agent=user_agent))
+        except Exception:
+            pass
 
     script = _get_antidetect_js(
         webgl_vendor=webgl_vendor,
@@ -265,10 +288,10 @@ async def apply_antidetect_nodriver(
         client_hints=client_hints,
     )
     # Двойная инъекция:
-    # 1. Регистрация на новые документы (будущие навигации, редиректы, перезагрузки)
+    # 2. Регистрация на новые документы (будущие навигации, редиректы, перезагрузки)
     await tab.send(page.add_script_to_evaluate_on_new_document(source=script))
 
-    # 2. Мгновенное применение к уже открытой текущей странице (если вкладка активна)
+    # 3. Мгновенное применение к уже открытой текущей странице (если вкладка активна)
     if hasattr(tab, "evaluate") and callable(tab.evaluate):
         try:
             await tab.evaluate(script)

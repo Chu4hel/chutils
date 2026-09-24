@@ -30267,7 +30267,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 171,
+                        "line_number": 172,
                         "bases": [],
                         "children": []
                       },
@@ -30287,7 +30287,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 179,
+                        "line_number": 180,
                         "bases": [],
                         "children": []
                       },
@@ -30307,7 +30307,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 190,
+                        "line_number": 191,
                         "bases": [],
                         "children": []
                       },
@@ -30329,7 +30329,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 201,
+                        "line_number": 202,
                         "bases": [],
                         "children": []
                       },
@@ -30349,7 +30349,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 214,
+                        "line_number": 215,
                         "bases": [],
                         "children": []
                       },
@@ -30369,7 +30369,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 223,
+                        "line_number": 224,
                         "bases": [],
                         "children": []
                       }
@@ -31297,7 +31297,7 @@
                     "layer": "public",
                     "signature": "(context)",
                     "summary": "Применяет JS-инъекции анти-детекта к контексту Playwright.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к контексту Playwright.\n\nArgs:\n    context: Объект контекста Playwright BrowserContext.\n    config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
+                    "docstring": "Применяет JS-инъекции анти-детекта к контексту Playwright.\n\nArgs:\n    context: Объект контекста Playwright BrowserContext.\n    config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).\n    user_agent: Пользовательская строка User-Agent.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -31317,7 +31317,7 @@
                     "layer": "public",
                     "signature": "(driver)",
                     "summary": "Применяет JS-инъекции анти-детекта к сессии Selenium.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к сессии Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
+                    "docstring": "Применяет JS-инъекции анти-детекта к сессии Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).\n    user_agent: Пользовательская строка User-Agent.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -31327,7 +31327,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 165,
+                    "line_number": 169,
                     "bases": [],
                     "children": []
                   },
@@ -31337,7 +31337,7 @@
                     "layer": "public",
                     "signature": "(tab)",
                     "summary": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.",
-                    "docstring": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.\n\nПо умолчанию stealth_minimal=True для сохранения естественного отпечатка\nреального Chromium и предотвращения детекта искусственного шума Canvas/WebGL.\n\nArgs:\n    tab: Объект вкладки nodriver Tab.\n    config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL,\n        сохраняя естественный отпечаток установленного браузера Google Chrome (True по умолчанию).\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).",
+                    "docstring": "Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.\n\nПо умолчанию stealth_minimal=True для сохранения естественного отпечатка\nреального Chromium и предотвращения детекта искусственного шума Canvas/WebGL.\n\nArgs:\n    tab: Объект вкладки nodriver Tab.\n    config: Экземпляр AntidetectConfig (если указан, параметры берутся из него).\n    webgl_vendor: Подменяемый производитель WebGL.\n    webgl_renderer: Подменяемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер процессора.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL,\n        сохраняя естественный отпечаток установленного браузера Google Chrome (True по умолчанию).\n    session_seed: Сид для детерминированного шума Canvas.\n    client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).\n    user_agent: Пользовательская строка User-Agent для переопределения через CDP.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -31347,7 +31347,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 217,
+                    "line_number": 229,
                     "bases": [],
                     "children": []
                   },
@@ -31367,7 +31367,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 279,
+                    "line_number": 302,
                     "bases": [],
                     "children": []
                   },
@@ -31387,7 +31387,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 321,
+                    "line_number": 344,
                     "bases": [],
                     "children": []
                   },
@@ -31407,7 +31407,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 383,
+                    "line_number": 406,
                     "bases": [],
                     "children": []
                   },
@@ -31427,7 +31427,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 403,
+                    "line_number": 426,
                     "bases": [],
                     "children": []
                   }
@@ -31800,7 +31800,7 @@
                         "layer": "internal",
                         "signature": "(cls)",
                         "summary": "Рекомендуемый пресет для nodriver: zero-footprint (без синтетического шума Canvas/WebGL).",
-                        "docstring": "Рекомендуемый пресет для nodriver: zero-footprint (без синтетического шума Canvas/WebGL).\n\nArgs:\n    session_seed: Сид для детерминированного генератора псевдослучайных чисел.\n    client_hints: Опциональный словарь с параметрами Client Hints.\n\nReturns:\n    Экземпляр AntidetectConfig с конфигурацией zero-footprint.",
+                        "docstring": "Рекомендуемый пресет для nodriver: zero-footprint (без синтетического шума Canvas/WebGL).\n\nArgs:\n    session_seed: Сид для детерминированного генератора псевдослучайных чисел.\n    client_hints: Опциональный словарь с параметрами Client Hints.\n    user_agent: Опциональная строка User-Agent.\n\nReturns:\n    Экземпляр AntidetectConfig с конфигурацией zero-footprint.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -31812,7 +31812,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 78,
+                        "line_number": 82,
                         "bases": [],
                         "children": []
                       },
@@ -31822,7 +31822,7 @@
                         "layer": "internal",
                         "signature": "(cls)",
                         "summary": "Агрессивный пресет с рандомизацией Canvas/WebGL/Audio (для Playwright/Selenium в headless).",
-                        "docstring": "Агрессивный пресет с рандомизацией Canvas/WebGL/Audio (для Playwright/Selenium в headless).\n\nArgs:\n    webgl_vendor: Эмулируемый производитель WebGL.\n    webgl_renderer: Эмулируемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер CPU.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    session_seed: Сид для рандомизации шума Canvas/Audio.\n    client_hints: Дополнительные параметры Client Hints.\n\nReturns:\n    Экземпляр AntidetectConfig с агрессивной рандомизацией.",
+                        "docstring": "Агрессивный пресет с рандомизацией Canvas/WebGL/Audio (для Playwright/Selenium в headless).\n\nArgs:\n    webgl_vendor: Эмулируемый производитель WebGL.\n    webgl_renderer: Эмулируемая видеокарта WebGL.\n    hardware_concurrency: Эмулируемое количество ядер CPU.\n    device_memory: Эмулируемый объем оперативной памяти в ГБ.\n    session_seed: Сид для рандомизации шума Canvas/Audio.\n    client_hints: Дополнительные параметры Client Hints.\n    user_agent: Опциональная строка User-Agent.\n\nReturns:\n    Экземпляр AntidetectConfig с агрессивной рандомизацией.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -31834,7 +31834,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 100,
+                        "line_number": 107,
                         "bases": [],
                         "children": []
                       },
@@ -31844,7 +31844,7 @@
                         "layer": "internal",
                         "signature": "(cls)",
                         "summary": "Минимальный пресет: отключен шум, только базовая защита от утечек и скрытие webdriver.",
-                        "docstring": "Минимальный пресет: отключен шум, только базовая защита от утечек и скрытие webdriver.\n\nArgs:\n    session_seed: Сид для инициализации сессии.\n\nReturns:\n    Экземпляр AntidetectConfig с минимальной модификацией.",
+                        "docstring": "Минимальный пресет: отключен шум, только базовая защита от утечек и скрытие webdriver.\n\nArgs:\n    session_seed: Сид для инициализации сессии.\n    user_agent: Опциональная строка User-Agent.\n\nReturns:\n    Экземпляр AntidetectConfig с минимальной модификацией.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -31856,7 +31856,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 134,
+                        "line_number": 144,
                         "bases": [],
                         "children": []
                       },
@@ -31878,7 +31878,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 153,
+                        "line_number": 166,
                         "bases": [],
                         "children": []
                       },
@@ -31900,7 +31900,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 172,
+                        "line_number": 185,
                         "bases": [],
                         "children": []
                       },
@@ -31922,7 +31922,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 202,
+                        "line_number": 215,
                         "bases": [],
                         "children": []
                       },
@@ -31944,7 +31944,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 227,
+                        "line_number": 240,
                         "bases": [],
                         "children": []
                       },
@@ -31964,7 +31964,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 253,
+                        "line_number": 266,
                         "bases": [],
                         "children": []
                       },
@@ -31984,7 +31984,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 263,
+                        "line_number": 276,
                         "bases": [],
                         "children": []
                       },
@@ -32004,7 +32004,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 285,
+                        "line_number": 298,
                         "bases": [],
                         "children": []
                       },
@@ -32024,7 +32024,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 295,
+                        "line_number": 308,
                         "bases": [],
                         "children": []
                       },
@@ -32044,7 +32044,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 305,
+                        "line_number": 318,
                         "bases": [],
                         "children": []
                       }
@@ -33014,7 +33014,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 179,
+                "line_number": 184,
                 "bases": [],
                 "children": []
               }
@@ -48695,8 +48695,8 @@
   "metadata": {
     "chutils_version": "3.8.1",
     "project_version": "3.8.1",
-    "git_commit": "c7bd6b79ee14a1ef524f82bb7fddc07958c09599 (dirty)",
-    "generated_at": "2026-09-24T11:00:23.175318+00:00",
-    "project_hash": "d5762bfa86d7777e1cd22887e41d3155b281bf50433d85a4f8f00a8733c2ef8e"
+    "git_commit": "2aa7d17bce538bb5f18dc85f4cd940364c3a6e39 (dirty)",
+    "generated_at": "2026-09-24T11:44:56.217236+00:00",
+    "project_hash": "2be6398dd534822ee59052a997bf84fed28038d21b41b19726ff21dbf7ddff45"
   }
 }

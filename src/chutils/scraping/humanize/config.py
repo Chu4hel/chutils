@@ -57,6 +57,10 @@ class AntidetectConfig(BaseModel):
         default=None,
         description="Параметры navigator.userAgentData (brands, platform, mobile).",
     )
+    user_agent: str | None = Field(
+        default=None,
+        description="Пользовательская строка User-Agent для переопределения через CDP/HTTP.",
+    )
     screen_width: int | None = Field(
         default=None,
         description="Эмулируемая ширина экрана (screen.width).",
@@ -80,12 +84,14 @@ class AntidetectConfig(BaseModel):
         *,
         session_seed: str | int = 1337,
         client_hints: dict[str, Any] | None = None,
+        user_agent: str | None = None,
     ) -> AntidetectConfig:
         """Рекомендуемый пресет для nodriver: zero-footprint (без синтетического шума Canvas/WebGL).
 
         Args:
             session_seed: Сид для детерминированного генератора псевдослучайных чисел.
             client_hints: Опциональный словарь с параметрами Client Hints.
+            user_agent: Опциональная строка User-Agent.
 
         Returns:
             Экземпляр AntidetectConfig с конфигурацией zero-footprint.
@@ -94,6 +100,7 @@ class AntidetectConfig(BaseModel):
             stealth_minimal=True,
             session_seed=session_seed,
             client_hints=client_hints,
+            user_agent=user_agent,
         )
 
     @classmethod
@@ -106,6 +113,7 @@ class AntidetectConfig(BaseModel):
         device_memory: int = DEFAULT_DEVICE_MEMORY,
         session_seed: str | int = 1337,
         client_hints: dict[str, Any] | None = None,
+        user_agent: str | None = None,
     ) -> AntidetectConfig:
         """Агрессивный пресет с рандомизацией Canvas/WebGL/Audio (для Playwright/Selenium в headless).
 
@@ -116,6 +124,7 @@ class AntidetectConfig(BaseModel):
             device_memory: Эмулируемый объем оперативной памяти в ГБ.
             session_seed: Сид для рандомизации шума Canvas/Audio.
             client_hints: Дополнительные параметры Client Hints.
+            user_agent: Опциональная строка User-Agent.
 
         Returns:
             Экземпляр AntidetectConfig с агрессивной рандомизацией.
@@ -128,6 +137,7 @@ class AntidetectConfig(BaseModel):
             stealth_minimal=False,
             session_seed=session_seed,
             client_hints=client_hints,
+            user_agent=user_agent,
         )
 
     @classmethod
@@ -135,11 +145,13 @@ class AntidetectConfig(BaseModel):
         cls,
         *,
         session_seed: str | int = 1337,
+        user_agent: str | None = None,
     ) -> AntidetectConfig:
         """Минимальный пресет: отключен шум, только базовая защита от утечек и скрытие webdriver.
 
         Args:
             session_seed: Сид для инициализации сессии.
+            user_agent: Опциональная строка User-Agent.
 
         Returns:
             Экземпляр AntidetectConfig с минимальной модификацией.
@@ -147,6 +159,7 @@ class AntidetectConfig(BaseModel):
         return cls(
             stealth_minimal=True,
             session_seed=session_seed,
+            user_agent=user_agent,
         )
 
     @classmethod
