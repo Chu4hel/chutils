@@ -32792,7 +32792,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 19,
+                "line_number": 20,
                 "bases": [],
                 "children": []
               },
@@ -32812,7 +32812,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 22,
+                "line_number": 23,
                 "bases": [],
                 "children": []
               },
@@ -32822,7 +32822,7 @@
                 "layer": "internal",
                 "signature": "(config)",
                 "summary": "Запускает браузер nodriver с рекомендуемыми стелс-аргументами и AntidetectConfig.",
-                "docstring": "Запускает браузер nodriver с рекомендуемыми стелс-аргументами и AntidetectConfig.\n\nArgs:\n    config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().\n    user_data_dir: Путь к постоянному каталогу профиля браузера (куки, сессии, история).\n    browser_executable_path: Пользовательский путь к бинарному файлу Chromium/Chrome/Brave.\n    proxy: Настройки прокси (строка, ProxyConfig или dict). Если требуется авторизация,\n        автоматически создается временное Manifest v3 расширение.\n    headless: Флаг запуска в фоновом (headless) режиме.\n    browser_args: Дополнительные аргументы командной строки Chromium.\n    apply_config_to_tab: Если True, автоматически применяет конфигурацию антидетекта к первой вкладке.\n    **kwargs: Дополнительные параметры для передачи в nodriver.start().\n\nReturns:\n    Экземпляр nodriver.Browser.",
+                "docstring": "Запускает браузер nodriver с рекомендуемыми стелс-аргументами и AntidetectConfig.\n\nArgs:\n    config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().\n    user_data_dir: Путь к постоянному каталогу профиля браузера (куки, сессии, история).\n    browser_executable_path: Пользовательский путь к бинарному файлу Chromium/Chrome/Brave.\n    proxy: Настройки прокси (строка, ProxyConfig или dict). Если требуется авторизация,\n        автоматически создается временное Manifest v3 расширение.\n    headless: Флаг запуска в фоновом (headless) режиме.\n    browser_args: Дополнительные аргументы командной строки Chromium.\n    apply_config_to_tab: Если True, автоматически применяет конфигурацию антидетекта к первой вкладке.\n    sanitize_profile_dir: Если True и передан user_data_dir, перед запуском браузера сбрасывает флаги\n        аварийного завершения (exit_type=\"Normal\") и очищает остаточные сессии/вкладки,\n        предотвращая инфобар восстановления вкладок и детекты антифрода.\n    **kwargs: Дополнительные параметры для передачи в nodriver.start().\n\nReturns:\n    Экземпляр nodriver.Browser.",
                 "breadcrumbs": {
                   "is_async": true,
                   "is_thread_safe": false,
@@ -32832,7 +32832,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 42,
+                "line_number": 43,
                 "bases": [],
                 "children": []
               },
@@ -32842,7 +32842,7 @@
                 "layer": "internal",
                 "signature": "(config)",
                 "summary": "Асинхронный контекстный менеджер сессии браузера nodriver с гарантированным закрытием.",
-                "docstring": "Асинхронный контекстный менеджер сессии браузера nodriver с гарантированным закрытием.\n\nArgs:\n    config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().\n    user_data_dir: Путь к постоянному каталогу профиля браузера (куки, сессии, история).\n    browser_executable_path: Пользовательский путь к бинарному файлу Chromium/Chrome/Brave.\n    proxy: Настройки прокси.\n    headless: Флаг запуска в headless режиме.\n    browser_args: Дополнительные флаги Chromium.\n    apply_config_to_tab: Автоматически применить AntidetectConfig к вкладке.\n    **kwargs: Дополнительные параметры nodriver.start().\n\nYields:\n    Экземпляр nodriver.Browser.",
+                "docstring": "Асинхронный контекстный менеджер сессии браузера nodriver с гарантированным закрытием.\n\nArgs:\n    config: Экземпляр AntidetectConfig. Если None, используется AntidetectConfig.preset_stealth_nodriver().\n    user_data_dir: Путь к постоянному каталогу профиля браузера (куки, сессии, история).\n    browser_executable_path: Пользовательский путь к бинарному файлу Chromium/Chrome/Brave.\n    proxy: Настройки прокси.\n    headless: Флаг запуска в headless режиме.\n    browser_args: Дополнительные флаги Chromium.\n    apply_config_to_tab: Автоматически применить AntidetectConfig к вкладке.\n    sanitize_profile_dir: Выполнить санитайзинг профиля перед запуском.\n    **kwargs: Дополнительные параметры nodriver.start().\n\nYields:\n    Экземпляр nodriver.Browser.",
                 "breadcrumbs": {
                   "is_async": true,
                   "is_thread_safe": false,
@@ -32854,7 +32854,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 143,
+                "line_number": 155,
                 "bases": [],
                 "children": []
               }
@@ -33113,6 +33113,57 @@
                 "symbols": []
               },
               {
+                "name": "hygiene",
+                "path": "chutils/scraping/profiles/hygiene",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Утилиты для очистки профилей браузера и сброса флагов аварийного завершения (Profile Hygiene & Crash Flags).",
+                "docstring": "Утилиты для очистки профилей браузера и сброса флагов аварийного завершения (Profile Hygiene & Crash Flags).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 11,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "sanitize_profile",
+                    "type": "function",
+                    "layer": "public",
+                    "signature": "(profile_path)",
+                    "summary": "Очищает профиль Chromium от артефактов падений и сбрасывает флаги некорректного завершения.",
+                    "docstring": "Очищает профиль Chromium от артефактов падений и сбрасывает флаги некорректного завершения.\n\nПредотвращает появление инфобара \"Восстановить страницы? Chromium завершился некорректно\",\nкоторый искажает геометрию окна (viewport), сдвигает координаты кликов и детектируется\nантифрод-системами как признак автоматизации.\n\nArgs:\n    profile_path: Путь к корневой директории пользовательских данных Chromium (user_data_dir)\n        или непосредственно к каталогу профиля (например, Default).\n    reset_crash_flags: Сбросить флаги exit_type в \"Normal\" и exited_cleanly в True в файле Preferences.\n    clear_sessions: Очистить директории и файлы сохраненных сессий и вкладок (Default/Sessions,\n        Session_*, Tabs_*).\n    profile_dir_name: Имя поддиректории профиля Chromium (по умолчанию \"Default\").\n    restore_on_startup: Значение session.restore_on_startup (1 = открывать новую вкладку).\n\nReturns:\n    True, если очистка выполнена успешно или директория валидна; False в случае ошибки.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 14,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "manager",
                 "path": "chutils/scraping/profiles/manager",
                 "type": "module",
@@ -33137,7 +33188,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 25,
+                    "line_number": 26,
                     "bases": [],
                     "children": []
                   },
@@ -33157,9 +33208,31 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 28,
+                    "line_number": 29,
                     "bases": [],
                     "children": [
+                      {
+                        "name": "sanitize_profile",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(profile_path)",
+                        "summary": "Очищает профиль Chromium от артефактов падений и сбрасывает флаги некорректного завершения.",
+                        "docstring": "Очищает профиль Chromium от артефактов падений и сбрасывает флаги некорректного завершения.\n\nПредотвращает появление инфобара \"Восстановить страницы? Chromium завершился некорректно\",\nменяющего геометрию viewport и детектируемого антифрод-системами.\n\nArgs:\n    profile_path: Путь к корневой директории пользовательских данных (user_data_dir) или профиля.\n    reset_crash_flags: Сбросить exit_type в \"Normal\" и exited_cleanly в True в Preferences.\n    clear_sessions: Очистить Sessions/Session_* и Tabs_*.\n    profile_dir_name: Имя поддиректории профиля (по умолчанию \"Default\").\n    restore_on_startup: Значение restore_on_startup (1 = открывать новую вкладку).\n\nReturns:\n    True, если очистка выполнена успешно; False в случае ошибки.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 33,
+                        "bases": [],
+                        "children": []
+                      },
                       {
                         "name": "export_from_playwright",
                         "type": "method",
@@ -33178,7 +33251,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 32,
+                        "line_number": 65,
                         "bases": [],
                         "children": []
                       },
@@ -33200,7 +33273,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 44,
+                        "line_number": 77,
                         "bases": [],
                         "children": []
                       },
@@ -33222,7 +33295,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 54,
+                        "line_number": 87,
                         "bases": [],
                         "children": []
                       },
@@ -33244,7 +33317,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 66,
+                        "line_number": 99,
                         "bases": [],
                         "children": []
                       },
@@ -33266,7 +33339,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 76,
+                        "line_number": 109,
                         "bases": [],
                         "children": []
                       },
@@ -33288,7 +33361,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 88,
+                        "line_number": 121,
                         "bases": [],
                         "children": []
                       },
@@ -33310,7 +33383,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 98,
+                        "line_number": 131,
                         "bases": [],
                         "children": []
                       },
@@ -33332,7 +33405,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 116,
+                        "line_number": 149,
                         "bases": [],
                         "children": []
                       },
@@ -33354,7 +33427,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 132,
+                        "line_number": 165,
                         "bases": [],
                         "children": []
                       }
@@ -38354,7 +38427,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 119,
+            "line_number": 122,
             "bases": [],
             "children": []
           },
@@ -38374,7 +38447,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 160,
+            "line_number": 164,
             "bases": [],
             "children": []
           },
@@ -38394,7 +38467,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 168,
+            "line_number": 172,
             "bases": [],
             "children": []
           }
@@ -45900,7 +45973,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 373,
+        "line_number": 374,
         "bases": [],
         "children": []
       },
@@ -45920,7 +45993,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 406,
+        "line_number": 407,
         "bases": [],
         "children": []
       },
@@ -45940,7 +46013,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 426,
+        "line_number": 427,
         "bases": [],
         "children": []
       }
@@ -47639,12 +47712,22 @@
     },
     {
       "source": "chutils/scraping/nodriver",
+      "target": "chutils/scraping/profiles/hygiene",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/nodriver",
       "target": "chutils/scraping/proxy/adapters",
       "weight": 1
     },
     {
       "source": "chutils/scraping/nodriver",
       "target": "chutils/scraping/proxy/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/profiles",
+      "target": "chutils/scraping/profiles/hygiene",
       "weight": 1
     },
     {
@@ -47713,6 +47796,16 @@
       "weight": 4
     },
     {
+      "source": "chutils/scraping/profiles/hygiene",
+      "target": "chutils/fs",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/profiles/hygiene",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/profiles/manager",
       "target": "chutils/logger",
       "weight": 1
@@ -47731,6 +47824,11 @@
       "source": "chutils/scraping/profiles/manager",
       "target": "chutils/scraping/profiles/adapters/selenium",
       "weight": 2
+    },
+    {
+      "source": "chutils/scraping/profiles/manager",
+      "target": "chutils/scraping/profiles/hygiene",
+      "weight": 1
     },
     {
       "source": "chutils/scraping/profiles/manager",
@@ -48437,8 +48535,8 @@
   "metadata": {
     "chutils_version": "3.8.1",
     "project_version": "3.8.1",
-    "git_commit": "d53ed6b48cc1aca6a33541dedd00a240da1b162b (dirty)",
-    "generated_at": "2026-09-22T13:29:02.866877+00:00",
-    "project_hash": "8bf1bace5c428fc52fac09f2b8ed71ee7279f3d0cc94a2410593d0296319ccbb"
+    "git_commit": "e9e8980dbdd2a43f0c745ff603e2c718a85ac9d9 (dirty)",
+    "generated_at": "2026-09-24T09:16:59.465434+00:00",
+    "project_hash": "e9a4adfd214ce275f90f5cdbcd6fbe536760599d05074e08f149e34a6eded0c1"
   }
 }

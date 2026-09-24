@@ -548,6 +548,31 @@ loaded_profile = ProfileManager.load("my_session.chprofile", password="secret_pa
 await ProfileManager.import_to_nodriver(nodriver_tab, loaded_profile)
 ```
 
+### Гигиена профилей и сброс флагов аварийного завершения (`sanitize_profile`)
+
+При аварийном завершении процессов Chromium или закрытии по таймауту/сигналу браузер сохраняет в `Preferences` флаги `exit_type = "Crashed"` и `exited_cleanly = false`. При следующем старте Chromium отображает плашку *"Восстановить страницы? Chromium завершился некорректно"*. Этот инфобар меняет геометрию окна (`viewport`), сдвигает координаты кликов и детектируется антифрод-системами как автоматизация.
+
+Функция [`sanitize_profile`](file:///D:/PROJECTS/chutils/src/chutils/scraping/profiles/hygiene.py) автоматически:
+1. Сбрасывает флаг `exit_type` в `"Normal"` и выставляет `exited_cleanly = True` в файле `Preferences`.
+2. Устанавливает `session.restore_on_startup = 1` (открытие чистой вкладки).
+3. Очищает директории и файлы артефактов старых сессий (`Default/Sessions/Session_*`, `Tabs_*`, `Current Session/Tabs`, `Last Session/Tabs`).
+
+```python
+from chutils.scraping import sanitize_profile, ProfileManager, launch_nodriver
+
+# 1. Прямой вызов санитайзинга пользовательского профиля
+sanitize_profile("/path/to/chrome/user_data_dir")
+
+# Или через фасад ProfileManager:
+ProfileManager.sanitize_profile("/path/to/chrome/user_data_dir")
+
+# 2. В launch_nodriver и nodriver_session санитайзинг включен автоматически:
+browser = await launch_nodriver(
+    user_data_dir="/path/to/chrome/user_data_dir",
+    sanitize_profile_dir=True,  # по умолчанию True
+)
+```
+
 ---
 
 ## 7. Конфигурация и парсинг прокси (`ProxyConfig`, `parse_proxy`)

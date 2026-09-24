@@ -13,6 +13,7 @@ from chutils.lifecycle import register_cleanup
 from chutils.logger import setup_logger
 from chutils.scraping.humanize.antidetect import get_browser_launch_args
 from chutils.scraping.humanize.config import AntidetectConfig
+from chutils.scraping.profiles.hygiene import sanitize_profile
 from chutils.scraping.proxy.adapters import get_nodriver_proxy_args
 from chutils.scraping.proxy.models import ProxyConfig
 
@@ -48,6 +49,7 @@ async def launch_nodriver(
     headless: bool = False,
     browser_args: list[str] | None = None,
     apply_config_to_tab: bool = True,
+    sanitize_profile_dir: bool = True,
     **kwargs: Any,
 ) -> Any:
     """Запускает браузер nodriver с рекомендуемыми стелс-аргументами и AntidetectConfig.
@@ -61,6 +63,9 @@ async def launch_nodriver(
         headless: Флаг запуска в фоновом (headless) режиме.
         browser_args: Дополнительные аргументы командной строки Chromium.
         apply_config_to_tab: Если True, автоматически применяет конфигурацию антидетекта к первой вкладке.
+        sanitize_profile_dir: Если True и передан user_data_dir, перед запуском браузера сбрасывает флаги
+            аварийного завершения (exit_type="Normal") и очищает остаточные сессии/вкладки,
+            предотвращая инфобар восстановления вкладок и детекты антифрода.
         **kwargs: Дополнительные параметры для передачи в nodriver.start().
 
     Returns:
@@ -88,6 +93,13 @@ async def launch_nodriver(
         for b_arg in browser_args:
             if b_arg not in merged_args:
                 merged_args.append(b_arg)
+
+    # Очистка профиля от следов падений и сброс crash flags перед запуском
+    if sanitize_profile_dir and user_data_dir is not None:
+        try:
+            sanitize_profile(user_data_dir)
+        except Exception as exc:
+            logger.debug(f"Не удалось выполнить sanitize_profile для {user_data_dir}: {exc}")
 
     # Запуск браузера
     start_kwargs: dict[str, Any] = dict(kwargs)
@@ -149,6 +161,7 @@ async def nodriver_session(
     headless: bool = False,
     browser_args: list[str] | None = None,
     apply_config_to_tab: bool = True,
+    sanitize_profile_dir: bool = True,
     **kwargs: Any,
 ) -> AsyncIterator[Any]:
     """Асинхронный контекстный менеджер сессии браузера nodriver с гарантированным закрытием.
@@ -161,6 +174,7 @@ async def nodriver_session(
         headless: Флаг запуска в headless режиме.
         browser_args: Дополнительные флаги Chromium.
         apply_config_to_tab: Автоматически применить AntidetectConfig к вкладке.
+        sanitize_profile_dir: Выполнить санитайзинг профиля перед запуском.
         **kwargs: Дополнительные параметры nodriver.start().
 
     Yields:
@@ -174,6 +188,7 @@ async def nodriver_session(
         headless=headless,
         browser_args=browser_args,
         apply_config_to_tab=apply_config_to_tab,
+        sanitize_profile_dir=sanitize_profile_dir,
         **kwargs,
     )
     try:

@@ -307,6 +307,7 @@ _LAZY_MAPPING = {
     "launch_camoufox": (".scraping.camoufox", "launch_camoufox"),
     "BrowserProfile": (".scraping.profiles", "BrowserProfile"),
     "ProfileManager": (".scraping.profiles", "ProfileManager"),
+    "sanitize_profile": (".scraping.profiles", "sanitize_profile"),
     "FingerprintProfile": (".scraping.fingerprint", "FingerprintProfile"),
     "FingerprintSynthesizer": (".scraping.fingerprint", "FingerprintSynthesizer"),
     "AntidetectConfig": (".scraping.humanize", "AntidetectConfig"),

@@ -126,6 +126,25 @@ async def test_launch_nodriver_user_data_dir_and_executable() -> None:
         assert kwargs["browser_executable_path"] == "/usr/bin/google-chrome"
 
 
+@pytest.mark.asyncio
+async def test_launch_nodriver_sanitizes_profile() -> None:
+    """Проверка вызова sanitize_profile перед стартом nodriver при указании user_data_dir."""
+    mock_uc = MagicMock()
+    mock_browser = MagicMock()
+    mock_browser.main_tab = MagicMock()
+    mock_uc.start = AsyncMock(return_value=mock_browser)
+
+    with (
+        patch("chutils.scraping.nodriver._get_nodriver_module", return_value=mock_uc),
+        patch(
+            "chutils.scraping.nodriver.AntidetectConfig.apply_to_nodriver", AsyncMock()
+        ),
+        patch("chutils.scraping.nodriver.sanitize_profile") as mock_sanitize,
+    ):
+        await launch_nodriver(user_data_dir="/tmp/chrome_profile")
+        mock_sanitize.assert_called_once_with("/tmp/chrome_profile")
+
+
 def test_scraping_module_exports() -> None:
     """Проверка ленивого экспорта launch_nodriver и nodriver_session из chutils.scraping."""
     from chutils import scraping

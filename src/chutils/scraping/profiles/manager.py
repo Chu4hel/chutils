@@ -16,6 +16,7 @@ from chutils.scraping.profiles.adapters.selenium import (
     export_selenium_profile,
     import_selenium_profile,
 )
+from chutils.scraping.profiles.hygiene import sanitize_profile
 from chutils.scraping.profiles.models import BrowserProfile
 from chutils.scraping.profiles.storage import (
     load_profile_from_file,
@@ -27,6 +28,38 @@ logger = setup_logger(__name__)
 
 class ProfileManager:
     """Менеджер для универсального экспорта, конвертации и импорта браузерных профилей."""
+
+    @staticmethod
+    def sanitize_profile(
+        profile_path: str | Path,
+        *,
+        reset_crash_flags: bool = True,
+        clear_sessions: bool = True,
+        profile_dir_name: str = "Default",
+        restore_on_startup: int = 1,
+    ) -> bool:
+        """Очищает профиль Chromium от артефактов падений и сбрасывает флаги некорректного завершения.
+
+        Предотвращает появление инфобара "Восстановить страницы? Chromium завершился некорректно",
+        меняющего геометрию viewport и детектируемого антифрод-системами.
+
+        Args:
+            profile_path: Путь к корневой директории пользовательских данных (user_data_dir) или профиля.
+            reset_crash_flags: Сбросить exit_type в "Normal" и exited_cleanly в True в Preferences.
+            clear_sessions: Очистить Sessions/Session_* и Tabs_*.
+            profile_dir_name: Имя поддиректории профиля (по умолчанию "Default").
+            restore_on_startup: Значение restore_on_startup (1 = открывать новую вкладку).
+
+        Returns:
+            True, если очистка выполнена успешно; False в случае ошибки.
+        """
+        return sanitize_profile(
+            profile_path=profile_path,
+            reset_crash_flags=reset_crash_flags,
+            clear_sessions=clear_sessions,
+            profile_dir_name=profile_dir_name,
+            restore_on_startup=restore_on_startup,
+        )
 
     @staticmethod
     async def export_from_playwright(context: Any) -> BrowserProfile:

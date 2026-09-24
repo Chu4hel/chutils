@@ -1,5 +1,6 @@
 """Инициализация пакета профилей браузеров."""
 
+from chutils.scraping.profiles.hygiene import sanitize_profile
 from chutils.scraping.profiles.manager import ProfileManager
 from chutils.scraping.profiles.models import (
     BrowserProfile,
@@ -19,5 +20,6 @@ __all__ = [
     "ProfileManager",
     "StorageData",
     "load_profile_from_file",
+    "sanitize_profile",
     "save_profile_to_file",
 ]

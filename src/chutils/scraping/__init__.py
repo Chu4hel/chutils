@@ -49,6 +49,9 @@ if TYPE_CHECKING:
     from .profiles import (
         ProfileManager as ProfileManager,
     )
+    from .profiles import (
+        sanitize_profile as sanitize_profile,
+    )
     from .proxy import (
         AsyncProxyTunnel as AsyncProxyTunnel,
     )
@@ -134,6 +137,7 @@ _LAZY_MAPPING = {
     "ProxyConfig": (".proxy", "ProxyConfig"),
     "ProxyPool": (".proxy", "ProxyPool"),
     "SnapshotRecorder": (".testing", "SnapshotRecorder"),
+    "sanitize_profile": (".profiles", "sanitize_profile"),
     "assert_extraction_complete": (".testing", "assert_extraction_complete"),
     "assert_schema_match": (".testing", "assert_schema_match"),
     "assert_valid_price": (".testing", "assert_valid_price"),
@@ -224,6 +228,7 @@ __all__ = [
     "nodriver_session",
     "parse_proxy",
     "proxy",
+    "sanitize_profile",
     "solve_cf_turnstile",
     "testing",
     "use_html_snapshot",
