@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import random
 import sys
+import time
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
@@ -188,13 +190,48 @@ async def _resolve_async_element_coordinates(
     """Определяет координаты клика внутри элемента для Playwright или nodriver."""
     if _is_nodriver(page):
         _ensure_nodriver()
-        elem = await page.find(selector)
-        box = await elem.get_position() if hasattr(elem, "get_position") else None
-        if box:
-            return (
-                int(box.x + box.width * random.uniform(0.3, 0.7)),
-                int(box.y + box.height * random.uniform(0.3, 0.7)),
-            )
+        # 1. Сначала пробуем получить точные экранные координаты через JS getBoundingClientRect()
+        # Это работает со сложными селекторами, псевдоклассами, запятыми, CDK Overlay и Shadow DOM
+        if hasattr(page, "evaluate") and callable(page.evaluate):
+            try:
+                js_rect = (
+                    "(function(sel) {"
+                    "  var el = document.querySelector(sel);"
+                    "  if (!el) return null;"
+                    "  var rect = el.getBoundingClientRect();"
+                    "  return {"
+                    "    x: rect.left,"
+                    "    y: rect.top,"
+                    "    width: rect.width,"
+                    "    height: rect.height"
+                    "  };"
+                    "})"
+                )
+                box_dict = await page.evaluate(f"({js_rect})({json.dumps(selector)})")
+                if isinstance(box_dict, dict) and "x" in box_dict and "y" in box_dict:
+                    bx = float(box_dict.get("x", 0.0))
+                    by = float(box_dict.get("y", 0.0))
+                    bw = float(box_dict.get("width", 0.0))
+                    bh = float(box_dict.get("height", 0.0))
+                    return (
+                        int(bx + bw * random.uniform(0.3, 0.7)),
+                        int(by + bh * random.uniform(0.3, 0.7)),
+                    )
+            except Exception:
+                pass
+
+        # 2. Fallback: поиск через внутренний page.find() nodriver
+        try:
+            elem = await page.find(selector)
+            box = await elem.get_position() if hasattr(elem, "get_position") else None
+            if box:
+                return (
+                    int(box.x + box.width * random.uniform(0.3, 0.7)),
+                    int(box.y + box.height * random.uniform(0.3, 0.7)),
+                )
+        except Exception:
+            pass
+
         return (100, 100)
     elif _is_playwright(page):
         _ensure_playwright()
@@ -216,3 +253,141 @@ async def _resolve_async_element_coordinates(
             f"Не удалось определить тип переданного объекта: {type(page)}. "
             "Убедитесь, что передан объект Playwright (Page) или nodriver (Tab/Element)."
         )
+
+
+JS_DOM_PASTE_SCRIPT = (
+    "(function(sel, val) {"
+    "  var el = document.querySelector(sel);"
+    "  if (!el) return false;"
+    "  var proto = Object.getPrototypeOf(el);"
+    "  var desc = Object.getOwnPropertyDescriptor(proto, 'value') || "
+    "             Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value') || "
+    "             Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');"
+    "  if (desc && desc.set) {"
+    "    desc.set.call(el, val);"
+    "  } else if ('value' in el) {"
+    "    el.value = val;"
+    "  } else {"
+    "    el.textContent = val;"
+    "  }"
+    "  el.dispatchEvent(new Event('input', { bubbles: true }));"
+    "  el.dispatchEvent(new Event('change', { bubbles: true }));"
+    "  return true;"
+    "})"
+)
+
+
+JS_DOM_HEAL_SCRIPT = (
+    "(function(sel, expected) {"
+    "  var el = document.querySelector(sel);"
+    "  if (!el) return;"
+    "  var current = el.value !== undefined ? el.value : el.textContent;"
+    "  if (current !== expected) {"
+    "    var proto = Object.getPrototypeOf(el);"
+    "    var desc = Object.getOwnPropertyDescriptor(proto, 'value') || "
+    "               Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value') || "
+    "               Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');"
+    "    if (desc && desc.set) {"
+    "      desc.set.call(el, expected);"
+    "    } else if ('value' in el) {"
+    "      el.value = expected;"
+    "    } else {"
+    "      el.textContent = expected;"
+    "    }"
+    "    el.dispatchEvent(new Event('input', { bubbles: true }));"
+    "    el.dispatchEvent(new Event('change', { bubbles: true }));"
+    "  }"
+    "})"
+)
+
+
+async def _dom_safe_paste(page: Any, selector: str, text: str) -> bool:
+    """Безопасно вставляет текст через DOM Prototype Setter с диспатчем input/change.
+
+    Args:
+        page: Объект страницы Playwright или вкладки nodriver.
+        selector: CSS-селектор целевого элемента.
+        text: Вставляемый текст.
+
+    Returns:
+        True, если вставка через JS выполнена успешно, иначе False.
+    """
+    if hasattr(page, "evaluate") and callable(page.evaluate):
+        try:
+            res = await page.evaluate(
+                f"({JS_DOM_PASTE_SCRIPT})({json.dumps(selector)}, {json.dumps(text)})"
+            )
+            return res is True
+        except Exception:
+            return False
+    return False
+
+
+async def _dom_safe_heal(page: Any, selector: str, expected_text: str) -> None:
+    """Выполняет сверку и самовосстановление значения поля ввода через DOM.
+
+    Args:
+        page: Объект страницы Playwright или вкладки nodriver.
+        selector: CSS-селектор целевого элемента.
+        expected_text: Ожидаемый итоговый текст.
+    """
+    if hasattr(page, "evaluate") and callable(page.evaluate):
+        try:
+            await page.evaluate(
+                f"({JS_DOM_HEAL_SCRIPT})({json.dumps(selector)}, {json.dumps(expected_text)})"
+            )
+        except Exception:
+            pass
+
+
+def click(
+    driver: Any,
+    selector: str | None = None,
+    x: int | None = None,
+    y: int | None = None,
+    start: tuple[int, int] | None = None,
+    algorithm: str = "windmouse",
+    hold_time: tuple[float, float] = (0.05, 0.12),
+) -> None:
+    """Имитирует реалистичный клик мышью Selenium.
+
+    Args:
+        driver: Экземпляр Selenium WebDriver.
+        selector: CSS-селектор целевого элемента (если x, y не заданы).
+        x: Конечная координата X.
+        y: Конечная координата Y.
+        start: Начальные координаты курсора.
+        algorithm: Алгоритм движения ('windmouse' или 'bezier').
+        hold_time: Диапазон задержки удержания кнопки мыши (в секундах).
+    """
+    _ensure_selenium()
+    from selenium.webdriver.common.action_chains import ActionChains
+    from selenium.webdriver.common.by import By
+
+    from .actions import move_mouse
+
+    target_x = x
+    target_y = y
+
+    if target_x is None or target_y is None:
+        if selector is None:
+            raise ValueError(
+                "Необходимо указать координаты (x, y) или CSS-селектор selector."
+            )
+        element = driver.find_element(By.CSS_SELECTOR, selector)
+        loc = element.location
+        size = element.size
+        target_x = int(loc["x"] + size["width"] * random.uniform(0.3, 0.7))
+        target_y = int(loc["y"] + size["height"] * random.uniform(0.3, 0.7))
+
+    move_mouse(driver, x=target_x, y=target_y, start=start, algorithm=algorithm)
+    time.sleep(random.uniform(0.04, 0.12))
+
+    hold_delay = (
+        random.uniform(*hold_time)
+        if hold_time and hold_time[1] > 0
+        else random.uniform(0.04, 0.09)
+    )
+    actions = ActionChains(driver)
+    actions.click_and_hold().pause(hold_delay).release().perform()
+    time.sleep(random.uniform(0.03, 0.08))

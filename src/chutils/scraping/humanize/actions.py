@@ -5,6 +5,8 @@ from typing import Any
 
 from ._actions_helpers import (
     _build_selenium_key_map,
+    _dom_safe_heal,
+    _dom_safe_paste,
     _ensure_nodriver,
     _ensure_playwright,
     _ensure_selenium,
@@ -13,6 +15,7 @@ from ._actions_helpers import (
     _is_playwright,
     _resolve_async_element_coordinates,
     async_human_sleep,
+    click,
     human_sleep,
 )
 from .math_utils import (
@@ -238,7 +241,12 @@ async def async_type_text(
             if delay_before > 0:
                 await asyncio.sleep(delay_before)
 
-            await page.send(cdp_input.insert_text(text=text))
+            # Безопасная вставка через DOM Prototype Setter с генерацией событий
+            # input и change для реактивных фреймворков (React, Vue, Angular),
+            # с fallback на cdp_input.insert_text при невозможности вызова JS.
+            pasted_via_dom = await _dom_safe_paste(page, selector, text)
+            if not pasted_via_dom:
+                await page.send(cdp_input.insert_text(text=text))
 
             delay_after = (
                 random.uniform(*paste_delay_after)
@@ -312,6 +320,10 @@ async def async_type_text(
                     "Backspace": 8,
                     "Enter": 13,
                 }.get(key_name, 0)
+                extra_args: dict[str, Any] = {}
+                if key_name == "Backspace":
+                    extra_args["commands"] = ["deleteContentBackward"]
+
                 await page.send(
                     cdp_input.dispatch_key_event(
                         type_="rawKeyDown",
@@ -319,6 +331,7 @@ async def async_type_text(
                         code=key_name,
                         windows_virtual_key_code=vk_code,
                         native_virtual_key_code=vk_code,
+                        **extra_args,
                     )
                 )
                 if key_hold_time and key_hold_time[1] > 0:
@@ -336,6 +349,11 @@ async def async_type_text(
             delay = delay_gen.generate(char_delay)
             if delay > 0:
                 await asyncio.sleep(delay)
+
+        # Self-Healing: финальная сверка введенного значения с ожидаемым текстом.
+        # В случае рассинхронизации из-за лагов CDP или несработавшего стирания
+        # значение поля синхронизируется через прототипный сеттер.
+        await _dom_safe_heal(page, selector, text)
 
     elif _is_playwright(page):
         _ensure_playwright()
@@ -384,6 +402,9 @@ async def async_type_text(
             delay = delay_gen.generate(char_delay)
             if delay > 0:
                 await asyncio.sleep(delay)
+
+        # Self-Healing: финальная сверка введенного значения для Playwright
+        await _dom_safe_heal(page, selector, text)
     else:
         raise ValueError(
             f"Не удалось определить тип переданного объекта: {type(page)}. "
@@ -644,54 +665,3 @@ async def async_click(
 
     # 4. Пауза после клика
     await asyncio.sleep(random.uniform(0.03, 0.08))
-
-
-def click(
-    driver: Any,
-    selector: str | None = None,
-    x: int | None = None,
-    y: int | None = None,
-    start: tuple[int, int] | None = None,
-    algorithm: str = "windmouse",
-    hold_time: tuple[float, float] = (0.05, 0.12),
-) -> None:
-    """Имитирует реалистичный клик мышью Selenium.
-
-    Args:
-        driver: Экземпляр Selenium WebDriver.
-        selector: CSS-селектор целевого элемента (если x, y не заданы).
-        x: Конечная координата X.
-        y: Конечная координата Y.
-        start: Начальные координаты курсора.
-        algorithm: Алгоритм движения ('windmouse' или 'bezier').
-        hold_time: Диапазон задержки удержания кнопки мыши (в секундах).
-    """
-    _ensure_selenium()
-    from selenium.webdriver.common.action_chains import ActionChains
-    from selenium.webdriver.common.by import By
-
-    target_x = x
-    target_y = y
-
-    if target_x is None or target_y is None:
-        if selector is None:
-            raise ValueError(
-                "Необходимо указать координаты (x, y) или CSS-селектор selector."
-            )
-        element = driver.find_element(By.CSS_SELECTOR, selector)
-        loc = element.location
-        size = element.size
-        target_x = int(loc["x"] + size["width"] * random.uniform(0.3, 0.7))
-        target_y = int(loc["y"] + size["height"] * random.uniform(0.3, 0.7))
-
-    move_mouse(driver, x=target_x, y=target_y, start=start, algorithm=algorithm)
-    time.sleep(random.uniform(0.04, 0.12))
-
-    hold_delay = (
-        random.uniform(*hold_time)
-        if hold_time and hold_time[1] > 0
-        else random.uniform(0.04, 0.09)
-    )
-    actions = ActionChains(driver)
-    actions.click_and_hold().pause(hold_delay).release().perform()
-    time.sleep(random.uniform(0.03, 0.08))

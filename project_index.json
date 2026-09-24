@@ -30665,7 +30665,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 13,
+                    "line_number": 15,
                     "bases": [],
                     "children": []
                   },
@@ -30685,7 +30685,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 29,
+                    "line_number": 31,
                     "bases": [],
                     "children": []
                   },
@@ -30705,7 +30705,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 45,
+                    "line_number": 47,
                     "bases": [],
                     "children": []
                   },
@@ -30725,7 +30725,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 68,
+                    "line_number": 70,
                     "bases": [],
                     "children": []
                   },
@@ -30745,7 +30745,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 83,
+                    "line_number": 85,
                     "bases": [],
                     "children": []
                   },
@@ -30765,7 +30765,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 95,
+                    "line_number": 97,
                     "bases": [],
                     "children": []
                   },
@@ -30785,7 +30785,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 116,
+                    "line_number": 118,
                     "bases": [],
                     "children": []
                   },
@@ -30805,7 +30805,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 129,
+                    "line_number": 131,
                     "bases": [],
                     "children": []
                   },
@@ -30825,7 +30825,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 142,
+                    "line_number": 144,
                     "bases": [],
                     "children": []
                   },
@@ -30845,7 +30845,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 161,
+                    "line_number": 163,
                     "bases": [],
                     "children": []
                   },
@@ -30865,7 +30865,107 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 185,
+                    "line_number": 187,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "JS_DOM_PASTE_SCRIPT",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 258,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "JS_DOM_HEAL_SCRIPT",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 280,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_dom_safe_paste",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(page, selector, text)",
+                    "summary": "Безопасно вставляет текст через DOM Prototype Setter с диспатчем input/change.",
+                    "docstring": "Безопасно вставляет текст через DOM Prototype Setter с диспатчем input/change.\n\nArgs:\n    page: Объект страницы Playwright или вкладки nodriver.\n    selector: CSS-селектор целевого элемента.\n    text: Вставляемый текст.\n\nReturns:\n    True, если вставка через JS выполнена успешно, иначе False.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 304,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_dom_safe_heal",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(page, selector, expected_text)",
+                    "summary": "Выполняет сверку и самовосстановление значения поля ввода через DOM.",
+                    "docstring": "Выполняет сверку и самовосстановление значения поля ввода через DOM.\n\nArgs:\n    page: Объект страницы Playwright или вкладки nodriver.\n    selector: CSS-селектор целевого элемента.\n    expected_text: Ожидаемый итоговый текст.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 326,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "click",
+                    "type": "function",
+                    "layer": "public",
+                    "signature": "(driver, selector, x, y, start, algorithm, hold_time)",
+                    "summary": "Имитирует реалистичный клик мышью Selenium.",
+                    "docstring": "Имитирует реалистичный клик мышью Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор целевого элемента (если x, y не заданы).\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты курсора.\n    algorithm: Алгоритм движения ('windmouse' или 'bezier').\n    hold_time: Диапазон задержки удержания кнопки мыши (в секундах).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 343,
                     "bases": [],
                     "children": []
                   }
@@ -30896,7 +30996,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 46,
+                    "line_number": 49,
                     "bases": [],
                     "children": []
                   },
@@ -30916,7 +31016,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 134,
+                    "line_number": 137,
                     "bases": [],
                     "children": []
                   },
@@ -30936,7 +31036,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 192,
+                    "line_number": 195,
                     "bases": [],
                     "children": []
                   },
@@ -30956,7 +31056,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 394,
+                    "line_number": 415,
                     "bases": [],
                     "children": []
                   },
@@ -30976,7 +31076,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 446,
+                    "line_number": 467,
                     "bases": [],
                     "children": []
                   },
@@ -30996,7 +31096,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 480,
+                    "line_number": 501,
                     "bases": [],
                     "children": []
                   },
@@ -31016,27 +31116,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 566,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "click",
-                    "type": "function",
-                    "layer": "public",
-                    "signature": "(driver, selector, x, y, start, algorithm, hold_time)",
-                    "summary": "Имитирует реалистичный клик мышью Selenium.",
-                    "docstring": "Имитирует реалистичный клик мышью Selenium.\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n    selector: CSS-селектор целевого элемента (если x, y не заданы).\n    x: Конечная координата X.\n    y: Конечная координата Y.\n    start: Начальные координаты курсора.\n    algorithm: Алгоритм движения ('windmouse' или 'bezier').\n    hold_time: Диапазон задержки удержания кнопки мыши (в секундах).",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 649,
+                    "line_number": 587,
                     "bases": [],
                     "children": []
                   }
@@ -47623,7 +47703,7 @@
     {
       "source": "chutils/scraping/humanize/actions",
       "target": "/_actions_helpers",
-      "weight": 10
+      "weight": 13
     },
     {
       "source": "chutils/scraping/humanize/actions",
@@ -48535,8 +48615,8 @@
   "metadata": {
     "chutils_version": "3.8.1",
     "project_version": "3.8.1",
-    "git_commit": "0278e9703ff31840c853d021647d79f032d7cf88 (dirty)",
-    "generated_at": "2026-09-24T09:30:15.676733+00:00",
-    "project_hash": "13cf90ad931c6adef686c01fa43ab0e4e1d82accd7f525394af12e98ad5831bf"
+    "git_commit": "e96ca7fc7b4a33222f874ab8341d7b3213a965f2 (dirty)",
+    "generated_at": "2026-09-24T10:16:02.433061+00:00",
+    "project_hash": "3536cdc0eb5c7a698940738b9d384f048d13c71f1c047f3ba23fa8a679adffac"
   }
 }
