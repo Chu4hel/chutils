@@ -407,10 +407,15 @@ if solved:
 ```python
 from chutils.scraping.humanize import get_browser_launch_args
 
-# Возвращает список флагов запуска, таких как:
-# '--no-sandbox', '--disable-dev-shm-usage', '--no-first-run', '--password-store=basic',
-# '--mute-audio', '--disable-background-timer-throttling', '--disable-component-update' и т.д.
+# Возвращает список флагов запуска без триггерящего антифрод '--no-sandbox' (по умолчанию),
+# подавляя всплывающие окна падений и первого запуска:
+# '--disable-dev-shm-usage', '--no-first-run', '--password-store=basic',
+# '--mute-audio', '--disable-background-timer-throttling', '--disable-component-update',
+# '--disable-session-crashed-bubble', '--hide-crash-restore-bubble', '--restore-last-session=false'
 launch_flags = get_browser_launch_args()
+
+# Для изолированных Docker-контейнеров без root-прав можно включить no_sandbox:
+# docker_flags = get_browser_launch_args(no_sandbox=True)
 ```
 
 ---

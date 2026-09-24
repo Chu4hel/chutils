@@ -31217,7 +31217,7 @@
                     "layer": "public",
                     "signature": "()",
                     "summary": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.",
-                    "docstring": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.\n\nNote:\n    Флаги ``--disable-blink-features=AutomationControlled``, ``--use-fake-ui-for-media-stream``\n    и подобные намеренно исключены, так как в современных версиях Chromium они\n    вызывают системный инфобар о неподдерживаемых флагах или детектируются\n    антибот-системами. Скрытие ``navigator.webdriver`` выполняется через\n    CDP-инъекцию скрипта антидетекта.\n\nReturns:\n    Список аргументов командной строки запуска браузера.",
+                    "docstring": "Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.\n\nПредотвращает появление инфобаров, системных всплывающих окон Chromium о падениях\nи некорректном завершении сессий.\n\nNote:\n    Флаг ``--no-sandbox`` по умолчанию отключен (False), так как отключение песочницы\n    является первичным триггером для многих систем антифрода (Cloudflare, Google Cloud Armor)\n    и снижает безопасность. Если запуск производится внутри изолированного Docker-контейнера\n    без прав root/SYS_ADMIN, передайте ``no_sandbox=True``.\n\n    Флаги ``--disable-blink-features=AutomationControlled``, ``--use-fake-ui-for-media-stream``\n    и подобные намеренно исключены, так как в современных версиях Chromium они\n    вызывают системный инфобар о неподдерживаемых флагах или детектируются\n    антибот-системами. Скрытие ``navigator.webdriver`` выполняется через\n    CDP-инъекцию скрипта антидетекта.\n\nArgs:\n    no_sandbox: Если True, добавляет флаг ``--no-sandbox`` (рекомендуется только для root Docker-контейнеров).\n\nReturns:\n    Список аргументов командной строки запуска браузера.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -31247,7 +31247,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 296,
+                    "line_number": 312,
                     "bases": [],
                     "children": []
                   },
@@ -31267,7 +31267,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 358,
+                    "line_number": 374,
                     "bases": [],
                     "children": []
                   },
@@ -31287,7 +31287,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 378,
+                    "line_number": 394,
                     "bases": [],
                     "children": []
                   }
@@ -48535,8 +48535,8 @@
   "metadata": {
     "chutils_version": "3.8.1",
     "project_version": "3.8.1",
-    "git_commit": "e9e8980dbdd2a43f0c745ff603e2c718a85ac9d9 (dirty)",
-    "generated_at": "2026-09-24T09:16:59.465434+00:00",
-    "project_hash": "e9a4adfd214ce275f90f5cdbcd6fbe536760599d05074e08f149e34a6eded0c1"
+    "git_commit": "0278e9703ff31840c853d021647d79f032d7cf88 (dirty)",
+    "generated_at": "2026-09-24T09:30:15.676733+00:00",
+    "project_hash": "13cf90ad931c6adef686c01fa43ab0e4e1d82accd7f525394af12e98ad5831bf"
   }
 }

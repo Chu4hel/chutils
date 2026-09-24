@@ -131,10 +131,18 @@ def test_get_browser_launch_args_enhanced() -> None:
     """get_browser_launch_args возвращает актуальный набор флагов против детекта автоматизации."""
     args = get_browser_launch_args()
     assert "--disable-blink-features=AutomationControlled" not in args
-    assert "--no-sandbox" in args
+    # По умолчанию --no-sandbox отключен для предотвращения детекта антифродом
+    assert "--no-sandbox" not in args
     assert "--disable-dev-shm-usage" in args
     assert any("--lang=" in a for a in args)
     assert "--mute-audio" in args
     assert "--disable-background-timer-throttling" in args
+    assert "--disable-session-crashed-bubble" in args
+    assert "--hide-crash-restore-bubble" in args
+    assert "--restore-last-session=false" in args
     assert not any("use-fake-ui-for-media-stream" in a for a in args)
     assert not any("IsolateOrigins" in a or "disable-features" in a for a in args)
+
+    # Опциональный --no-sandbox для Docker окружений
+    sandbox_args = get_browser_launch_args(no_sandbox=True)
+    assert "--no-sandbox" in sandbox_args

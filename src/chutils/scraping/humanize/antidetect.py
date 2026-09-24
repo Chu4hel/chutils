@@ -267,21 +267,31 @@ async def apply_antidetect_nodriver(
     await tab.send(page.add_script_to_evaluate_on_new_document(source=script))
 
 
-def get_browser_launch_args() -> list[str]:
+def get_browser_launch_args(*, no_sandbox: bool = False) -> list[str]:
     """Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.
 
+    Предотвращает появление инфобаров, системных всплывающих окон Chromium о падениях
+    и некорректном завершении сессий.
+
     Note:
+        Флаг ``--no-sandbox`` по умолчанию отключен (False), так как отключение песочницы
+        является первичным триггером для многих систем антифрода (Cloudflare, Google Cloud Armor)
+        и снижает безопасность. Если запуск производится внутри изолированного Docker-контейнера
+        без прав root/SYS_ADMIN, передайте ``no_sandbox=True``.
+
         Флаги ``--disable-blink-features=AutomationControlled``, ``--use-fake-ui-for-media-stream``
         и подобные намеренно исключены, так как в современных версиях Chromium они
         вызывают системный инфобар о неподдерживаемых флагах или детектируются
         антибот-системами. Скрытие ``navigator.webdriver`` выполняется через
         CDP-инъекцию скрипта антидетекта.
 
+    Args:
+        no_sandbox: Если True, добавляет флаг ``--no-sandbox`` (рекомендуется только для root Docker-контейнеров).
+
     Returns:
         Список аргументов командной строки запуска браузера.
     """
-    return [
-        "--no-sandbox",
+    args = [
         "--disable-dev-shm-usage",
         "--no-first-run",
         "--no-default-browser-check",
@@ -290,7 +300,13 @@ def get_browser_launch_args() -> list[str]:
         "--mute-audio",
         "--disable-background-timer-throttling",
         "--disable-component-update",
+        "--disable-session-crashed-bubble",
+        "--hide-crash-restore-bubble",
+        "--restore-last-session=false",
     ]
+    if no_sandbox:
+        args.insert(0, "--no-sandbox")
+    return args
 
 
 async def _extract_clearance_cookies_async(target: Any) -> dict[str, Any]:
