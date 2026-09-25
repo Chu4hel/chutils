@@ -113,6 +113,16 @@ def parse_proxy(
         else:
             raise ValueError(f"Не удалось распознать формат прокси: {clean_str}")
 
+    if password:
+        try:
+            from chutils.logger.masking import _GLOBAL_MASKS, _update_mask_re
+
+            if password not in _GLOBAL_MASKS:
+                _GLOBAL_MASKS.add(password)
+                _update_mask_re()
+        except Exception:
+            pass
+
     return ProxyConfig(
         protocol=protocol,  # type: ignore[arg-type]
         host=host,
@@ -120,3 +130,4 @@ def parse_proxy(
         username=username,
         password=password,
     )
+

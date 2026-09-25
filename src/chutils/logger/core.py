@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import atexit
 import logging  # chutils: ignore[ChutilsIntegrationRule]
+import threading
+import weakref
 from typing import Any
 
 from .internal.levels import (
@@ -25,11 +27,73 @@ atexit.register(stop_all_async_loggers)
 
 init_custom_levels()
 
+_active_loggers: weakref.WeakSet[ChutilsLogger] = weakref.WeakSet()
+_global_handlers: list[logging.Handler] = []
+_global_handlers_lock = threading.RLock()
+
+
+def add_global_handler(handler: logging.Handler) -> None:
+    """Добавляет глобальный обработчик для всех текущих и будущих логгеров chutils.
+
+    Args:
+        handler: Экземпляр logging.Handler.
+    """
+    with _global_handlers_lock:
+        if handler not in _global_handlers:
+            _global_handlers.append(handler)
+        for log_obj in list(_active_loggers):
+            if handler not in log_obj.handlers:
+                log_obj.addHandler(handler)
+
+
+def remove_global_handler(handler: logging.Handler) -> None:
+    """Удаляет глобальный обработчик из реестра и из всех активных логгеров chutils.
+
+    Args:
+        handler: Экземпляр logging.Handler.
+    """
+    with _global_handlers_lock:
+        if handler in _global_handlers:
+            _global_handlers.remove(handler)
+        for log_obj in list(_active_loggers):
+            if handler in log_obj.handlers:
+                log_obj.removeHandler(handler)
+
+
+def get_global_handlers() -> list[logging.Handler]:
+    """Возвращает копию списка зарегистрированных глобальных обработчиков.
+
+    Returns:
+        Список активных глобальных обработчиков logging.Handler.
+    """
+    with _global_handlers_lock:
+        return list(_global_handlers)
+
+
+def clear_global_handlers(remove_from_active: bool = True) -> None:
+    """Очищает реестр глобальных обработчиков.
+
+    Args:
+        remove_from_active: Если True, также удаляет обработчики из активных логгеров.
+    """
+    with _global_handlers_lock:
+        if remove_from_active:
+            for handler in _global_handlers:
+                for log_obj in list(_active_loggers):
+                    if handler in log_obj.handlers:
+                        log_obj.removeHandler(handler)
+        _global_handlers.clear()
+
+
 __all__ = [
     "DEVDEBUG_LEVEL_NUM",
     "MEDIUMDEBUG_LEVEL_NUM",
     "ChutilsLogger",
     "LogLevel",
+    "add_global_handler",
+    "clear_global_handlers",
+    "get_global_handlers",
+    "remove_global_handler",
     "setup_logger",
     "setup_logger_from_config",
 ]
@@ -59,6 +123,13 @@ class ChutilsLogger(logging.Logger, LogLevelsMixin):
         logger.devdebug("Максимально подробное сообщение")
         ```
     """
+
+    def __init__(self, name: str, level: int = logging.NOTSET) -> None:
+        """Инициализирует экземпляр ChutilsLogger."""
+        super().__init__(name, level)
+        self._chutils_configured: bool = False
+        with _global_handlers_lock:
+            _active_loggers.add(self)
 
     def add_mask(self, value: str) -> None:
         """
@@ -104,6 +175,7 @@ def setup_logger(
     use_async: bool | None = None,
     custom_patterns: list[str] | None = None,
     use_predefined_patterns: list[str | list[str]] | None = None,
+    propagate: bool | None = None,
     **kwargs: Any,
 ) -> ChutilsLogger:
     """
@@ -161,6 +233,7 @@ def setup_logger(
         use_async: Использовать ли асинхронное логирование.
         custom_patterns: Список регулярных выражений для маскирования.
         use_predefined_patterns: Список имен предустановленных паттернов для маскирования.
+        propagate: Передавать ли логи вверх по иерархии родительским логгерам (по умолчанию False).
 
         **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`). Также поддерживает `level` как псевдоним `log_level`.
 
@@ -201,6 +274,7 @@ def setup_logger(
         at_time=at_time,
         custom_patterns=custom_patterns,
         use_predefined_patterns=use_predefined_patterns,
+        propagate=propagate,
     )
 
 

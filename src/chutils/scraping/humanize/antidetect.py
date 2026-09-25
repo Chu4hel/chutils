@@ -126,6 +126,7 @@ async def apply_antidetect_playwright(
     stealth_minimal: bool = False,
     session_seed: str | int = 1337,
     client_hints: dict[str, Any] | None = None,
+    user_agent: str | None = None,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к контексту Playwright.
 
@@ -139,6 +140,7 @@ async def apply_antidetect_playwright(
         stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.
         session_seed: Сид для детерминированного шума Canvas.
         client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
+        user_agent: Пользовательская строка User-Agent.
     """
     _ensure_playwright()
     if config is not None:
@@ -149,15 +151,21 @@ async def apply_antidetect_playwright(
         stealth_minimal = config.stealth_minimal
         session_seed = config.session_seed
         client_hints = config.client_hints
+        if config.user_agent is not None:
+            user_agent = config.user_agent
 
-    script = _get_antidetect_js(
-        webgl_vendor=webgl_vendor,
-        webgl_renderer=webgl_renderer,
-        hardware_concurrency=hardware_concurrency,
-        device_memory=device_memory,
-        stealth_minimal=stealth_minimal,
-        session_seed=session_seed,
-        client_hints=client_hints,
+    script = (
+        config.get_init_script()
+        if config is not None
+        else _get_antidetect_js(
+            webgl_vendor=webgl_vendor,
+            webgl_renderer=webgl_renderer,
+            hardware_concurrency=hardware_concurrency,
+            device_memory=device_memory,
+            stealth_minimal=stealth_minimal,
+            session_seed=session_seed,
+            client_hints=client_hints,
+        )
     )
     await context.add_init_script(script)
 
@@ -173,6 +181,7 @@ def apply_antidetect_selenium(
     stealth_minimal: bool = False,
     session_seed: str | int = 1337,
     client_hints: dict[str, Any] | None = None,
+    user_agent: str | None = None,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к сессии Selenium.
 
@@ -186,6 +195,7 @@ def apply_antidetect_selenium(
         stealth_minimal: Если True, не накладывать синтетический шум на Canvas и не подменять WebGL.
         session_seed: Сид для детерминированного шума Canvas.
         client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
+        user_agent: Пользовательская строка User-Agent.
     """
     _ensure_selenium()
     if config is not None:
@@ -196,20 +206,43 @@ def apply_antidetect_selenium(
         stealth_minimal = config.stealth_minimal
         session_seed = config.session_seed
         client_hints = config.client_hints
+        if config.user_agent is not None:
+            user_agent = config.user_agent
 
-    script = _get_antidetect_js(
-        webgl_vendor=webgl_vendor,
-        webgl_renderer=webgl_renderer,
-        hardware_concurrency=hardware_concurrency,
-        device_memory=device_memory,
-        stealth_minimal=stealth_minimal,
-        session_seed=session_seed,
-        client_hints=client_hints,
+    script = (
+        config.get_init_script()
+        if config is not None
+        else _get_antidetect_js(
+            webgl_vendor=webgl_vendor,
+            webgl_renderer=webgl_renderer,
+            hardware_concurrency=hardware_concurrency,
+            device_memory=device_memory,
+            stealth_minimal=stealth_minimal,
+            session_seed=session_seed,
+            client_hints=client_hints,
+        )
     )
     if hasattr(driver, "execute_cdp_cmd"):
         driver.execute_cdp_cmd(
             "Page.addScriptToEvaluateOnNewDocument", {"source": script}
         )
+        if user_agent:
+            driver.execute_cdp_cmd(
+                "Emulation.setUserAgentOverride", {"userAgent": user_agent}
+            )
+        if config is not None and config.screen_width and config.screen_height:
+            try:
+                driver.execute_cdp_cmd(
+                    "Emulation.setDeviceMetricsOverride",
+                    {
+                        "width": config.screen_width,
+                        "height": config.screen_height,
+                        "deviceScaleFactor": config.device_pixel_ratio or 1.0,
+                        "mobile": False,
+                    },
+                )
+            except Exception:
+                pass
     else:
         driver.execute_script(script)
 
@@ -225,6 +258,7 @@ async def apply_antidetect_nodriver(
     stealth_minimal: bool = True,
     session_seed: str | int = 1337,
     client_hints: dict[str, Any] | None = None,
+    user_agent: str | None = None,
 ) -> None:
     """Применяет JS-инъекции анти-детекта к вкладке (Tab) nodriver.
 
@@ -242,9 +276,10 @@ async def apply_antidetect_nodriver(
             сохраняя естественный отпечаток установленного браузера Google Chrome (True по умолчанию).
         session_seed: Сид для детерминированного шума Canvas.
         client_hints: Дополнительные параметры Client Hints (navigator.userAgentData).
+        user_agent: Пользовательская строка User-Agent для переопределения через CDP.
     """
     _ensure_nodriver()
-    from nodriver.cdp import page
+    from nodriver.cdp import emulation, page
 
     if config is not None:
         webgl_vendor = config.webgl_vendor
@@ -254,34 +289,80 @@ async def apply_antidetect_nodriver(
         stealth_minimal = config.stealth_minimal
         session_seed = config.session_seed
         client_hints = config.client_hints
+        if config.user_agent is not None:
+            user_agent = config.user_agent
 
-    script = _get_antidetect_js(
-        webgl_vendor=webgl_vendor,
-        webgl_renderer=webgl_renderer,
-        hardware_concurrency=hardware_concurrency,
-        device_memory=device_memory,
-        stealth_minimal=stealth_minimal,
-        session_seed=session_seed,
-        client_hints=client_hints,
+    # 1. Переопределение User-Agent через CDP Emulation для синхронизации с Client Hints и HTTP заголовками
+    if user_agent:
+        try:
+            await tab.send(emulation.set_user_agent_override(user_agent=user_agent))
+        except Exception:
+            pass
+
+    # 2. Эмуляция реальных метрик экрана и viewport через CDP Emulation (предотвращает детекцию CSS Media Queries)
+    if config is not None and config.screen_width and config.screen_height:
+        try:
+            await tab.send(
+                emulation.set_device_metrics_override(
+                    width=config.screen_width,
+                    height=config.screen_height,
+                    device_scale_factor=config.device_pixel_ratio or 1.0,
+                    mobile=False,
+                )
+            )
+        except Exception:
+            pass
+
+    script = (
+        config.get_init_script()
+        if config is not None
+        else _get_antidetect_js(
+            webgl_vendor=webgl_vendor,
+            webgl_renderer=webgl_renderer,
+            hardware_concurrency=hardware_concurrency,
+            device_memory=device_memory,
+            stealth_minimal=stealth_minimal,
+            session_seed=session_seed,
+            client_hints=client_hints,
+        )
     )
+    # Двойная инъекция:
+    # 3. Регистрация на новые документы (будущие навигации, редиректы, перезагрузки)
     await tab.send(page.add_script_to_evaluate_on_new_document(source=script))
 
+    # 4. Мгновенное применение к уже открытой текущей странице (если вкладка активна)
+    if hasattr(tab, "evaluate") and callable(tab.evaluate):
+        try:
+            await tab.evaluate(script)
+        except Exception:
+            pass
 
-def get_browser_launch_args() -> list[str]:
+
+def get_browser_launch_args(*, no_sandbox: bool = False) -> list[str]:
     """Возвращает расширенный набор аргументов запуска браузера для скрытия автоматизации.
 
+    Предотвращает появление инфобаров, системных всплывающих окон Chromium о падениях
+    и некорректном завершении сессий.
+
     Note:
+        Флаг ``--no-sandbox`` по умолчанию отключен (False), так как отключение песочницы
+        является первичным триггером для многих систем антифрода (Cloudflare, Google Cloud Armor)
+        и снижает безопасность. Если запуск производится внутри изолированного Docker-контейнера
+        без прав root/SYS_ADMIN, передайте ``no_sandbox=True``.
+
         Флаги ``--disable-blink-features=AutomationControlled``, ``--use-fake-ui-for-media-stream``
         и подобные намеренно исключены, так как в современных версиях Chromium они
         вызывают системный инфобар о неподдерживаемых флагах или детектируются
         антибот-системами. Скрытие ``navigator.webdriver`` выполняется через
         CDP-инъекцию скрипта антидетекта.
 
+    Args:
+        no_sandbox: Если True, добавляет флаг ``--no-sandbox`` (рекомендуется только для root Docker-контейнеров).
+
     Returns:
         Список аргументов командной строки запуска браузера.
     """
-    return [
-        "--no-sandbox",
+    args = [
         "--disable-dev-shm-usage",
         "--no-first-run",
         "--no-default-browser-check",
@@ -290,7 +371,16 @@ def get_browser_launch_args() -> list[str]:
         "--mute-audio",
         "--disable-background-timer-throttling",
         "--disable-component-update",
+        "--disable-session-crashed-bubble",
+        "--hide-crash-restore-bubble",
+        "--restore-last-session=false",
+        "--force-webrtc-ip-handling-policy=disable_non_proxied_udp",
+        "--enforce-webrtc-ip-permission-check",
     ]
+    if no_sandbox:
+        args.insert(0, "--no-sandbox")
+    return args
+
 
 
 async def _extract_clearance_cookies_async(target: Any) -> dict[str, Any]:

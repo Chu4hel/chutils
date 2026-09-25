@@ -167,6 +167,11 @@ _LAZY_MAPPING = {
     ),
     "DEVDEBUG_LEVEL_NUM": (".logger", "DEVDEBUG_LEVEL_NUM"),
     "MEDIUMDEBUG_LEVEL_NUM": (".logger", "MEDIUMDEBUG_LEVEL_NUM"),
+    "add_global_handler": (".logger", "add_global_handler"),
+    "remove_global_handler": (".logger", "remove_global_handler"),
+    "capture_standard_logging": (".logger", "capture_standard_logging"),
+    "intercept_all": (".logger", "intercept_all"),
+    "InterceptHandler": (".logger", "InterceptHandler"),
     # cli_utils
     "get_console": (".cli_utils", "get_console"),
     # env (Discovery)
@@ -302,6 +307,12 @@ _LAZY_MAPPING = {
     "launch_camoufox": (".scraping.camoufox", "launch_camoufox"),
     "BrowserProfile": (".scraping.profiles", "BrowserProfile"),
     "ProfileManager": (".scraping.profiles", "ProfileManager"),
+    "is_profile_locked": (".scraping.profiles", "is_profile_locked"),
+    "sanitize_profile": (".scraping.profiles", "sanitize_profile"),
+    "sanitize_profile_crash_state": (
+        ".scraping.profiles",
+        "sanitize_profile_crash_state",
+    ),
     "FingerprintProfile": (".scraping.fingerprint", "FingerprintProfile"),
     "FingerprintSynthesizer": (".scraping.fingerprint", "FingerprintSynthesizer"),
     "AntidetectConfig": (".scraping.humanize", "AntidetectConfig"),
@@ -332,7 +343,20 @@ _LAZY_MAPPING = {
         ".scraping.humanize.antidetect",
         "extract_clearance_cookies",
     ),
+    # scraping concurrency
+    "IdleBrowserReaper": (".scraping.concurrency", "IdleBrowserReaper"),
+    "IdleBrowserReaperConfig": (".scraping.concurrency", "IdleBrowserReaperConfig"),
+    "IdleReaper": (".scraping.concurrency", "IdleReaper"),
+    "IdleReaperConfig": (".scraping.concurrency", "IdleReaperConfig"),
+    # scraping testing
+    "DOMActionRecorder": (".scraping.testing", "DOMActionRecorder"),
+    "DOMActionRecorderHUD": (".scraping.testing", "DOMActionRecorderHUD"),
+    "DOMActionSessionReport": (".scraping.testing", "DOMActionSessionReport"),
+    "RecordedAction": (".scraping.testing", "RecordedAction"),
+    "RecordedChecklistItem": (".scraping.testing", "RecordedChecklistItem"),
     # scraping proxy
+    "KeyringProxyStorage": (".scraping.proxy", "KeyringProxyStorage"),
+    "ProxySecretStorage": (".scraping.proxy", "ProxySecretStorage"),
     "SmartProxyResolver": (".scraping.proxy", "SmartProxyResolver"),
     # scraping captcha
     "RuCaptchaSolver": (".scraping.captcha", "RuCaptchaSolver"),

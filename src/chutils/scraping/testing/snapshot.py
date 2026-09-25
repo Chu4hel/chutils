@@ -15,15 +15,16 @@ from pathlib import Path
 from types import TracebackType
 from typing import Any, Literal
 
+import logging  # chutils: ignore[ChutilsIntegrationRule]
+
 from chutils.fs import atomic_write, ensure_dir
-from chutils.logger import setup_logger
 from chutils.scraping.testing.mocks import (
     MockNodriverTab,
     MockPlaywrightPage,
     MockSeleniumDriver,
 )
 
-logger = setup_logger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 MockType = Literal["raw", "nodriver", "playwright", "selenium"]
 FetcherType = Callable[[], str | Awaitable[str]]

@@ -6,6 +6,7 @@
 import logging
 import logging.handlers
 import os
+from typing import Any
 
 
 class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
@@ -14,8 +15,15 @@ class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
 
     Этот класс решает проблему `PermissionError` при ротации логов в Windows,
     гарантируя, что файл будет закрыт перед переименованием.
-    Он явно закрывает файловый поток перед вызовом стандартной логики ротации.
+    Он явно закрывает файловый поток перед вызовом стандартной логики ротации
+    и гарантирует существование каталога при открытии файла.
     """
+
+    def _open(self) -> Any:
+        from chutils.fs import ensure_dir
+
+        ensure_dir(os.path.dirname(self.baseFilename))
+        return super()._open()
 
     def doRollover(self) -> None:
         """
@@ -27,7 +35,21 @@ class SafeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
         super().doRollover()
 
 
-class CompressingRotatingFileHandler(logging.handlers.RotatingFileHandler):
+class SafeRotatingFileHandler(logging.handlers.RotatingFileHandler):
+    """
+    Надежный обработчик ротации логов по размеру.
+
+    Гарантирует существование каталога при ленивом открытии файла.
+    """
+
+    def _open(self) -> Any:
+        from chutils.fs import ensure_dir
+
+        ensure_dir(os.path.dirname(self.baseFilename))
+        return super()._open()
+
+
+class CompressingRotatingFileHandler(SafeRotatingFileHandler):
     """
     Обработчик ротации по размеру с поддержкой сжатия (gzip).
 

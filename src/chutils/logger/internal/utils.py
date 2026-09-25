@@ -3,7 +3,6 @@ import logging.handlers
 from pathlib import Path
 
 from ... import config
-from ...fs import ensure_dir
 
 _LOG_DIR: str | None = None
 """Глобальное состояние директории логов."""
@@ -16,7 +15,6 @@ logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 def get_log_dir() -> str | None:
     """ "Лениво" получает и кэширует путь к директории логов.
-    Создает директорию 'logs' в корне проекта при первом обращении.
 
     Returns:
         Путь к директории логов или None при ошибке.
@@ -33,14 +31,6 @@ def get_log_dir() -> str | None:
         return None
 
     log_path = Path(base_dir) / "logs"
-    if not log_path.exists():
-        try:
-            ensure_dir(log_path)
-            logger.info("Создана директория для логов: %s", log_path)
-        except OSError as e:
-            logger.error("Не удалось создать директорию для логов %s: %s", log_path, e)
-            return None
-
     _LOG_DIR = str(log_path)
     return _LOG_DIR
 

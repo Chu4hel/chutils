@@ -124,6 +124,7 @@ def test_antidetect_nodriver(mock_ensure: MagicMock) -> None:
 
         tab = MagicMock()
         tab.send = AsyncMock()
+        tab.evaluate = AsyncMock()
 
         asyncio.run(
             apply_antidetect_nodriver(
@@ -145,8 +146,11 @@ def test_antidetect_nodriver(mock_ensure: MagicMock) -> None:
         assert "24" in js_code
         assert "64" in js_code
 
-        # Проверяем, что команда отправлена вкладке
+        # Проверяем, что команда отправлена вкладке для новых документов
         tab.send.assert_called_once_with("mock_cdp_command")
+
+        # Проверяем мгновенную инъекцию на текущую страницу через evaluate
+        tab.evaluate.assert_called_once_with(js_code)
 
 
 def test_antidetect_js_tampering_protection() -> None:
@@ -221,3 +225,166 @@ def test_browser_launch_args_enhanced() -> None:
     assert "--no-first-run" in args
     assert "--no-default-browser-check" in args
     assert "--password-store=basic" in args
+    assert "--force-webrtc-ip-handling-policy=disable_non_proxied_udp" in args
+    assert "--enforce-webrtc-ip-permission-check" in args
+
+
+@patch("chutils.scraping.humanize.antidetect._ensure_nodriver")
+def test_antidetect_nodriver_device_metrics_override(mock_ensure: MagicMock) -> None:
+    """Проверяет отправку emulation.set_device_metrics_override при наличии screen_width/screen_height."""
+    import asyncio
+    import sys
+    from chutils.scraping.humanize.config import AntidetectConfig
+
+    mock_page = MagicMock()
+    mock_page.add_script_to_evaluate_on_new_document = MagicMock(
+        return_value="mock_page_cmd"
+    )
+
+    mock_emulation = MagicMock()
+    mock_emulation.set_device_metrics_override = MagicMock(
+        return_value="mock_metrics_cmd"
+    )
+    mock_emulation.set_user_agent_override = MagicMock(
+        return_value="mock_ua_cmd"
+    )
+
+    mock_cdp = MagicMock()
+    mock_cdp.page = mock_page
+    mock_cdp.emulation = mock_emulation
+
+    modules = {
+        "nodriver": MagicMock(),
+        "nodriver.cdp": mock_cdp,
+        "nodriver.cdp.page": mock_page,
+        "nodriver.cdp.emulation": mock_emulation,
+    }
+
+    with patch.dict(sys.modules, modules):
+        from chutils.scraping.humanize.antidetect import apply_antidetect_nodriver
+
+        tab = MagicMock()
+        tab.send = AsyncMock()
+        tab.evaluate = AsyncMock()
+
+        config = AntidetectConfig(
+            screen_width=1920,
+            screen_height=1080,
+            device_pixel_ratio=1.25,
+            user_agent="CustomTestUA/1.0",
+        )
+
+        asyncio.run(apply_antidetect_nodriver(tab, config=config))
+
+        mock_emulation.set_device_metrics_override.assert_called_once_with(
+            width=1920,
+            height=1080,
+            device_scale_factor=1.25,
+            mobile=False,
+        )
+        mock_emulation.set_user_agent_override.assert_called_once_with(
+            user_agent="CustomTestUA/1.0"
+        )
+        tab.send.assert_any_call("mock_metrics_cmd")
+        tab.send.assert_any_call("mock_ua_cmd")
+        tab.send.assert_any_call("mock_page_cmd")
+
+
+def test_antidetect_selenium_device_metrics_override() -> None:
+    """Проверяет отправку Emulation.setDeviceMetricsOverride в Selenium CDP."""
+    from chutils.scraping.humanize.antidetect import apply_antidetect_selenium
+    from chutils.scraping.humanize.config import AntidetectConfig
+
+    driver = MagicMock()
+    driver.execute_cdp_cmd = MagicMock()
+
+    config = AntidetectConfig(
+        screen_width=1440,
+        screen_height=900,
+        device_pixel_ratio=2.0,
+        user_agent="SeleniumUA/2.0",
+    )
+
+    apply_antidetect_selenium(driver, config=config)
+
+    driver.execute_cdp_cmd.assert_any_call(
+        "Emulation.setDeviceMetricsOverride",
+        {
+            "width": 1440,
+            "height": 900,
+            "deviceScaleFactor": 2.0,
+            "mobile": False,
+        },
+    )
+    driver.execute_cdp_cmd.assert_any_call(
+        "Emulation.setUserAgentOverride",
+        {"userAgent": "SeleniumUA/2.0"},
+    )
+
+
+def test_antidetect_media_devices_emulation() -> None:
+    """Проверяет эмуляцию navigator.mediaDevices.enumerateDevices в сгенерированном JS."""
+    from chutils.scraping.humanize.antidetect_scripts import _get_antidetect_js
+
+    # 1. По умолчанию (когда media_devices не заданы явно) подставляются дефолтные аудиоустройства
+    js_default = _get_antidetect_js()
+    assert "navigator.mediaDevices" in js_default
+    assert "enumerateDevices" in js_default
+    assert "audioinput" in js_default
+    assert "audiooutput" in js_default
+    assert "Realtek Audio" in js_default
+
+    # 2. Кастомный список устройств
+    custom_devices = [
+        {
+            "deviceId": "mic_123",
+            "kind": "audioinput",
+            "label": "HyperX QuadCast",
+            "groupId": "group_hyperx",
+        },
+        {
+            "deviceId": "cam_456",
+            "kind": "videoinput",
+            "label": "Logitech Brio",
+            "groupId": "group_logi",
+        },
+    ]
+    js_custom = _get_antidetect_js(media_devices=custom_devices)
+    assert "HyperX QuadCast" in js_custom
+    assert "Logitech Brio" in js_custom
+    assert "mic_123" in js_custom
+
+
+def test_fingerprint_profile_media_devices_to_antidetect_config() -> None:
+    """Проверяет проброс media_devices из FingerprintProfile в AntidetectConfig."""
+    from chutils.scraping.fingerprint.models import FingerprintProfile, MediaDeviceItem
+
+    profile = FingerprintProfile(
+        media_devices=[
+            MediaDeviceItem(
+                kind="audioinput",
+                label="Studio Mic",
+                device_id="id_mic",
+                group_id="grp_1",
+            ),
+            MediaDeviceItem(
+                kind="audiooutput",
+                label="Studio Headphones",
+                device_id="id_out",
+                group_id="grp_1",
+            ),
+        ]
+    )
+
+    cfg = profile.to_antidetect_config()
+    assert cfg.media_devices is not None
+    assert len(cfg.media_devices) == 2
+    assert cfg.media_devices[0]["label"] == "Studio Mic"
+    assert cfg.media_devices[1]["label"] == "Studio Headphones"
+
+    init_script = cfg.get_init_script()
+    assert "Studio Mic" in init_script
+    assert "Studio Headphones" in init_script
+
+
+

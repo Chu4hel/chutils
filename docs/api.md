@@ -70,10 +70,19 @@ options:
 members:
 
 - setup_logger
+- setup_logger_from_config
 - ChutilsLogger
 - DEVDEBUG_LEVEL_NUM
 - MEDIUMDEBUG_LEVEL_NUM
 - FlappingFilter
+- add_global_handler
+- remove_global_handler
+- get_global_handlers
+- clear_global_handlers
+- InterceptHandler
+- capture_standard_logging
+- intercept_all
+- restore_standard_logging
 
 ## Модуль `context`
 
@@ -429,6 +438,10 @@ members:
 - RedisTaskQueue
 - DomainRateLimiter
 - WorkerPool
+- IdleBrowserReaper
+- IdleBrowserReaperConfig
+- IdleReaper
+- IdleReaperConfig
 
 ## Модуль `qt` (Интеграция PyQt6 / PySide6)
 
@@ -440,6 +453,7 @@ members:
 - require_qt
 - QtLogHandler
 - setup_qt_logging
+- remove_qt_logging
 - QtAsyncWorker
 - run_async_task
 - async_to_qt
@@ -625,6 +639,84 @@ options:
     - build_inline_keyboard
     - PaginatorKeyboard
     - HealthCheckAlertBridge
+
+## Модуль `logger`
+
+::: chutils.logger
+options:
+  members:
+    - setup_logger
+    - setup_logger_from_config
+    - ChutilsLogger
+    - SafeTimedRotatingFileHandler
+    - SafeRotatingFileHandler
+    - CompressingRotatingFileHandler
+    - CompressingTimedRotatingFileHandler
+
+## Модуль `scraping.testing` (Интерактивная разметка DOM, автотестирование и моки)
+
+::: chutils.scraping.testing
+options:
+  members:
+    - DOMActionRecorder
+    - DOMActionRecorderHUD
+    - DOMActionSessionReport
+    - RecordedAction
+    - RecordedChecklistItem
+    - DOMMutationDiff
+    - ViewportInfo
+    - CORE_DOM_HELPERS_JS
+    - PAGE_META_SCRIPT
+    - POLL_RECORDED_ACTIONS_SCRIPT
+    - build_inject_recorder_hud_script
+    - build_scan_selectors_script
+    - get_recorder_hud_ui_js
+    - LiveBrowserSession
+    - LocalTestServer
+    - SnapshotRecorder
+    - MockNodriverTab
+    - MockPlaywrightPage
+    - MockSeleniumDriver
+    - assert_extraction_complete
+    - assert_schema_match
+    - assert_valid_price
+    - assert_valid_url
+
+## Модуль `scraping.proxy` (Управление прокси и защищенное хранилище)
+
+::: chutils.scraping.proxy
+options:
+  members:
+    - KeyringProxyStorage
+    - ProxySecretStorage
+    - ProxyConfig
+    - ProxyPool
+    - SmartProxyResolver
+    - AsyncProxyTunnel
+    - ChromeProxyExtension
+    - parse_proxy
+    - check_proxy
+    - check_proxy_async
+    - async_nodriver_proxy
+    - nodriver_proxy
+    - get_nodriver_proxy_args
+    - get_playwright_proxy
+    - get_selenium_proxy
+
+## Модуль `scraping.profiles` (Управление профилями браузеров и гигиена)
+
+::: chutils.scraping.profiles
+options:
+  members:
+    - ProfileManager
+    - ProfileHygieneService
+    - sanitize_profile_crash_state
+    - sanitize_profile
+    - is_profile_locked
+    - clean_profile_cache
+
+
+
 
 
 

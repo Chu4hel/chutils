@@ -112,6 +112,7 @@ def reset_chutils_state(monkeypatch):
     monkeypatch.setattr(logger_utils, "_LOG_DIR", None)
     monkeypatch.setattr(chutils_logger_core, "_initialization_message_shown", False)
     monkeypatch.setattr(chutils_logger_core, "_file_handler_cache", {})
+    monkeypatch.setenv("CH_LOG_NO_FILE", "0")
 
 
 @pytest.fixture

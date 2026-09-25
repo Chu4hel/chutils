@@ -133,3 +133,67 @@ def test_setup_qt_logging_set_text_widget() -> None:
             callback = mock_emitter.message_emitted.connect.call_args[0][0]
             callback("label_msg", 20)
             widget.setText.assert_called_once_with("label_msg")
+
+
+def test_setup_qt_logging_global_registration_before_and_after() -> None:
+    """Проверяет регистрацию в chutils.logger до и после создания логгеров."""
+    from chutils.logger.core import (
+        clear_global_handlers,
+        get_global_handlers,
+        setup_logger,
+    )
+    from chutils.qt.logging import remove_qt_logging, setup_qt_logging
+
+    clear_global_handlers()
+
+    # 1. Логгер создан ДО setup_qt_logging
+    logger_before = setup_logger("test_qt_before", file_logging=False)
+
+    mock_emitter = MagicMock()
+    with (
+        patch("chutils.qt.logging.require_qt"),
+        patch("chutils.qt.logging._QtLogEmitter", return_value=mock_emitter),
+    ):
+        handler = setup_qt_logging(widget=None, logger_name=None)
+        assert handler in get_global_handlers()
+        assert handler in logger_before.handlers
+
+        # 2. Логгер создан ПОСЛЕ setup_qt_logging
+        logger_after = setup_logger("test_qt_after", file_logging=False)
+        assert handler in logger_after.handlers
+
+        # 3. Удаление
+        remove_qt_logging(handler)
+        assert handler not in get_global_handlers()
+        assert handler not in logger_before.handlers
+        assert handler not in logger_after.handlers
+
+    clear_global_handlers()
+
+
+def test_setup_logger_with_prior_qt_handler_configures_properly() -> None:
+    """Проверяет, что наличие QtLogHandler не блокирует конфигурацию логгера chutils."""
+    from chutils.logger.core import clear_global_handlers, setup_logger
+    from chutils.qt.logging import remove_qt_logging, setup_qt_logging
+
+    clear_global_handlers()
+
+    mock_emitter = MagicMock()
+    with (
+        patch("chutils.qt.logging.require_qt"),
+        patch("chutils.qt.logging._QtLogEmitter", return_value=mock_emitter),
+    ):
+        qt_handler = setup_qt_logging(logger_name="test_specific_qt")
+        target_logger = logging.getLogger("test_specific_qt")
+        assert qt_handler in target_logger.handlers
+
+        # Настраиваем через chutils: логгер не должен завершиться досрочно без хэндлеров
+        ch_logger = setup_logger("test_specific_qt", file_logging=False)
+        assert getattr(ch_logger, "_chutils_configured", False) is True
+        # Должен присутствовать и qt_handler, и консольный хэндлер chutils
+        assert qt_handler in ch_logger.handlers
+        assert len(ch_logger.handlers) >= 2
+
+        remove_qt_logging(qt_handler, logger_name="test_specific_qt")
+
+    clear_global_handlers()

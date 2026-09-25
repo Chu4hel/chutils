@@ -13,6 +13,18 @@ if TYPE_CHECKING:
     from .camoufox import (
         launch_camoufox as launch_camoufox,
     )
+    from .concurrency import (
+        IdleBrowserReaper as IdleBrowserReaper,
+    )
+    from .concurrency import (
+        IdleBrowserReaperConfig as IdleBrowserReaperConfig,
+    )
+    from .concurrency import (
+        IdleReaper as IdleReaper,
+    )
+    from .concurrency import (
+        IdleReaperConfig as IdleReaperConfig,
+    )
     from .fingerprint import (
         FingerprintProfile as FingerprintProfile,
     )
@@ -38,6 +50,9 @@ if TYPE_CHECKING:
         solve_cf_turnstile as solve_cf_turnstile,
     )
     from .nodriver import (
+        close_tab as close_tab,
+    )
+    from .nodriver import (
         launch_nodriver as launch_nodriver,
     )
     from .nodriver import (
@@ -48,6 +63,15 @@ if TYPE_CHECKING:
     )
     from .profiles import (
         ProfileManager as ProfileManager,
+    )
+    from .profiles import (
+        is_profile_locked as is_profile_locked,
+    )
+    from .profiles import (
+        sanitize_profile as sanitize_profile,
+    )
+    from .profiles import (
+        sanitize_profile_crash_state as sanitize_profile_crash_state,
     )
     from .proxy import (
         AsyncProxyTunnel as AsyncProxyTunnel,
@@ -80,9 +104,18 @@ if TYPE_CHECKING:
         nodriver_proxy as nodriver_proxy,
     )
     from .proxy import (
+        KeyringProxyStorage as KeyringProxyStorage,
+    )
+    from .proxy import (
+        ProxySecretStorage as ProxySecretStorage,
+    )
+    from .proxy import (
         parse_proxy as parse_proxy,
     )
     from .testing import (
+        DOMActionRecorder as DOMActionRecorder,
+        DOMActionRecorderHUD as DOMActionRecorderHUD,
+        DOMActionSessionReport as DOMActionSessionReport,
         LiveBrowserSession as LiveBrowserSession,
     )
     from .testing import (
@@ -123,8 +156,16 @@ _LAZY_MAPPING = {
     "BrowserProfile": (".profiles", "BrowserProfile"),
     "CAMOUFOX_AVAILABLE": (".camoufox", "CAMOUFOX_AVAILABLE"),
     "ChromeProxyExtension": (".proxy", "ChromeProxyExtension"),
+    "DOMActionRecorder": (".testing", "DOMActionRecorder"),
+    "DOMActionRecorderHUD": (".testing", "DOMActionRecorderHUD"),
+    "DOMActionSessionReport": (".testing", "DOMActionSessionReport"),
     "FingerprintProfile": (".fingerprint", "FingerprintProfile"),
     "FingerprintSynthesizer": (".fingerprint", "FingerprintSynthesizer"),
+    "IdleBrowserReaper": (".concurrency", "IdleBrowserReaper"),
+    "IdleBrowserReaperConfig": (".concurrency", "IdleBrowserReaperConfig"),
+    "IdleReaper": (".concurrency", "IdleReaper"),
+    "IdleReaperConfig": (".concurrency", "IdleReaperConfig"),
+    "KeyringProxyStorage": (".proxy", "KeyringProxyStorage"),
     "LiveBrowserSession": (".testing", "LiveBrowserSession"),
     "LocalTestServer": (".testing", "LocalTestServer"),
     "MockNodriverTab": (".testing", "MockNodriverTab"),
@@ -133,13 +174,18 @@ _LAZY_MAPPING = {
     "ProfileManager": (".profiles", "ProfileManager"),
     "ProxyConfig": (".proxy", "ProxyConfig"),
     "ProxyPool": (".proxy", "ProxyPool"),
+    "ProxySecretStorage": (".proxy", "ProxySecretStorage"),
     "SnapshotRecorder": (".testing", "SnapshotRecorder"),
+    "is_profile_locked": (".profiles", "is_profile_locked"),
+    "sanitize_profile": (".profiles", "sanitize_profile"),
+    "sanitize_profile_crash_state": (".profiles", "sanitize_profile_crash_state"),
     "assert_extraction_complete": (".testing", "assert_extraction_complete"),
     "assert_schema_match": (".testing", "assert_schema_match"),
     "assert_valid_price": (".testing", "assert_valid_price"),
     "assert_valid_url": (".testing", "assert_valid_url"),
     "async_nodriver_proxy": (".proxy", "async_nodriver_proxy"),
     "check_proxy": (".proxy", "check_proxy"),
+    "close_tab": (".nodriver", "close_tab"),
     "detect_cf_turnstile": (".humanize.turnstile", "detect_cf_turnstile"),
     "extract_clearance_cookies": (".humanize.antidetect", "extract_clearance_cookies"),
     "get_async_camoufox_class": (".camoufox", "get_async_camoufox_class"),
@@ -189,8 +235,16 @@ __all__ = [
     "BehavioralProfile",
     "BrowserProfile",
     "ChromeProxyExtension",
+    "DOMActionRecorder",
+    "DOMActionRecorderHUD",
+    "DOMActionSessionReport",
     "FingerprintProfile",
     "FingerprintSynthesizer",
+    "IdleBrowserReaper",
+    "IdleBrowserReaperConfig",
+    "IdleReaper",
+    "IdleReaperConfig",
+    "KeyringProxyStorage",
     "LiveBrowserSession",
     "LocalTestServer",
     "MockNodriverTab",
@@ -199,6 +253,7 @@ __all__ = [
     "ProfileManager",
     "ProxyConfig",
     "ProxyPool",
+    "ProxySecretStorage",
     "SnapshotRecorder",
     "assert_extraction_complete",
     "assert_schema_match",
@@ -208,6 +263,7 @@ __all__ = [
     "camoufox",
     "captcha",
     "check_proxy",
+    "close_tab",
     "concurrency",
     "detect_cf_turnstile",
     "extract_clearance_cookies",
@@ -218,12 +274,15 @@ __all__ = [
     "get_selenium_proxy",
     "humanize",
     "is_cf_turnstile_solved",
+    "is_profile_locked",
     "launch_camoufox",
     "launch_nodriver",
     "nodriver_proxy",
     "nodriver_session",
     "parse_proxy",
     "proxy",
+    "sanitize_profile",
+    "sanitize_profile_crash_state",
     "solve_cf_turnstile",
     "testing",
     "use_html_snapshot",

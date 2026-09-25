@@ -162,10 +162,14 @@ class FingerprintProfile(BaseModel):
             stealth_minimal=stealth_minimal,
             session_seed=seed_val,
             client_hints=self.client_hints,
+            user_agent=self.user_agent,
             screen_width=self.screen.width,
             screen_height=self.screen.height,
             screen_avail_height=self.screen.avail_height,
             device_pixel_ratio=self.screen.device_pixel_ratio,
+            media_devices=[d.model_dump() for d in self.media_devices]
+            if self.media_devices
+            else None,
         )
 
     def to_dict(self) -> dict[str, Any]:

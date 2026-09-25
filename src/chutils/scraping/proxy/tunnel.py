@@ -172,7 +172,11 @@ class AsyncProxyTunnel:
                 self.proxy.host, self.proxy.port
             )
         except Exception as e:
-            logger.debug("Не удалось соединиться с удаленным прокси: %s", e)
+            logger.warning(
+                "Не удалось соединиться с удаленным прокси %s: %s",
+                self.proxy.masked_url,
+                e,
+            )
             client_writer.write(b"HTTP/1.1 502 Bad Gateway\r\n\r\n")
             await client_writer.drain()
             return
@@ -195,6 +199,15 @@ class AsyncProxyTunnel:
                 # Читаем ответ upstream прокси
                 resp = await remote_reader.readuntil(b"\r\n\r\n")
                 if not resp.startswith((b"HTTP/1.1 200", b"HTTP/1.0 200")):
+                    first_line = (
+                        resp.split(b"\r\n", 1)[0].decode("iso-8859-1", errors="replace")
+                    )
+                    logger.warning(
+                        "Удаленный прокси %s отклонил CONNECT-запрос к %s: %s",
+                        self.proxy.masked_url,
+                        target,
+                        first_line,
+                    )
                     client_writer.write(resp)
                     await client_writer.drain()
                     remote_writer.close()
@@ -229,7 +242,11 @@ class AsyncProxyTunnel:
                 self.proxy.host, self.proxy.port
             )
         except Exception as e:
-            logger.debug("Не удалось соединиться с удаленным прокси: %s", e)
+            logger.warning(
+                "Не удалось соединиться с удаленным прокси %s: %s",
+                self.proxy.masked_url,
+                e,
+            )
             client_writer.write(b"HTTP/1.1 502 Bad Gateway\r\n\r\n")
             await client_writer.drain()
             return

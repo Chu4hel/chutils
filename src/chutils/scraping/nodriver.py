@@ -13,6 +13,11 @@ from chutils.lifecycle import register_cleanup
 from chutils.logger import setup_logger
 from chutils.scraping.humanize.antidetect import get_browser_launch_args
 from chutils.scraping.humanize.config import AntidetectConfig
+from chutils.scraping.profiles.hygiene import (
+    is_profile_locked,
+    sanitize_profile,
+    sanitize_profile_crash_state,
+)
 from chutils.scraping.proxy.adapters import get_nodriver_proxy_args
 from chutils.scraping.proxy.models import ProxyConfig
 
@@ -39,6 +44,30 @@ def _get_nodriver_module() -> Any:
         ) from err
 
 
+async def close_tab(tab: Any, *, timeout: float = 3.0) -> None:
+    """Безопасно закрывает вкладку nodriver с защитой от зависания CDP-сокета.
+
+    Если вкладка потерпела крах (Renderer Crash) или CDP не отвечает,
+    операция прерывается по истечении таймаута без зависания вызывающего потока.
+
+    Args:
+        tab: Объект вкладки nodriver (nodriver.Tab).
+        timeout: Максимальное время ожидания закрытия вкладки в секундах.
+    """
+    close_method = getattr(tab, "close", None)
+    if callable(close_method):
+        res = close_method()
+        if inspect.isawaitable(res):
+            try:
+                await asyncio.wait_for(res, timeout=timeout)
+            except TimeoutError:
+                logger.debug(
+                    f"Таймаут ({timeout}с) при закрытии вкладки nodriver, принудительное завершение."
+                )
+            except Exception as exc:
+                logger.debug(f"Ошибка при закрытии вкладки nodriver: {exc}")
+
+
 async def launch_nodriver(
     config: AntidetectConfig | None = None,
     *,
@@ -48,6 +77,7 @@ async def launch_nodriver(
     headless: bool = False,
     browser_args: list[str] | None = None,
     apply_config_to_tab: bool = True,
+    sanitize_profile_dir: bool = True,
     **kwargs: Any,
 ) -> Any:
     """Запускает браузер nodriver с рекомендуемыми стелс-аргументами и AntidetectConfig.
@@ -61,6 +91,9 @@ async def launch_nodriver(
         headless: Флаг запуска в фоновом (headless) режиме.
         browser_args: Дополнительные аргументы командной строки Chromium.
         apply_config_to_tab: Если True, автоматически применяет конфигурацию антидетекта к первой вкладке.
+        sanitize_profile_dir: Если True и передан user_data_dir, перед запуском браузера сбрасывает флаги
+            аварийного завершения (exit_type="Normal") и очищает остаточные сессии/вкладки,
+            предотвращая инфобар восстановления вкладок и детекты антифрода.
         **kwargs: Дополнительные параметры для передачи в nodriver.start().
 
     Returns:
@@ -88,6 +121,18 @@ async def launch_nodriver(
         for b_arg in browser_args:
             if b_arg not in merged_args:
                 merged_args.append(b_arg)
+
+    # Синхронизация User-Agent флага запуска с AntidetectConfig
+    if config.user_agent and not any(a.startswith("--user-agent=") for a in merged_args):
+        merged_args.append(f"--user-agent={config.user_agent}")
+
+
+    # Очистка профиля от следов падений и сброс crash flags перед запуском
+    if sanitize_profile_dir and user_data_dir is not None:
+        try:
+            sanitize_profile(user_data_dir)
+        except Exception as exc:
+            logger.debug(f"Не удалось выполнить sanitize_profile для {user_data_dir}: {exc}")
 
     # Запуск браузера
     start_kwargs: dict[str, Any] = dict(kwargs)
@@ -149,6 +194,7 @@ async def nodriver_session(
     headless: bool = False,
     browser_args: list[str] | None = None,
     apply_config_to_tab: bool = True,
+    sanitize_profile_dir: bool = True,
     **kwargs: Any,
 ) -> AsyncIterator[Any]:
     """Асинхронный контекстный менеджер сессии браузера nodriver с гарантированным закрытием.
@@ -161,6 +207,7 @@ async def nodriver_session(
         headless: Флаг запуска в headless режиме.
         browser_args: Дополнительные флаги Chromium.
         apply_config_to_tab: Автоматически применить AntidetectConfig к вкладке.
+        sanitize_profile_dir: Выполнить санитайзинг профиля перед запуском.
         **kwargs: Дополнительные параметры nodriver.start().
 
     Yields:
@@ -174,6 +221,7 @@ async def nodriver_session(
         headless=headless,
         browser_args=browser_args,
         apply_config_to_tab=apply_config_to_tab,
+        sanitize_profile_dir=sanitize_profile_dir,
         **kwargs,
     )
     try:
@@ -183,4 +231,33 @@ async def nodriver_session(
         if callable(stop_method):
             res = stop_method()
             if inspect.isawaitable(res):
-                await res
+                try:
+                    await asyncio.wait_for(res, timeout=5.0)
+                except TimeoutError:
+                    logger.debug(
+                        "Таймаут (5.0с) при остановке браузера nodriver, принудительное завершение."
+                    )
+                except Exception as exc:
+                    logger.debug(f"Ошибка при остановке браузера nodriver: {exc}")
+
+
+from chutils.scraping.concurrency.reaper import (
+    IdleBrowserReaper,
+    IdleBrowserReaperConfig,
+    IdleReaper,
+    IdleReaperConfig,
+)
+
+__all__ = [
+    "IdleBrowserReaper",
+    "IdleBrowserReaperConfig",
+    "IdleReaper",
+    "IdleReaperConfig",
+    "close_tab",
+    "is_profile_locked",
+    "launch_nodriver",
+    "nodriver_session",
+    "sanitize_profile",
+    "sanitize_profile_crash_state",
+]
+

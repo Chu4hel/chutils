@@ -126,11 +126,74 @@ async def test_launch_nodriver_user_data_dir_and_executable() -> None:
         assert kwargs["browser_executable_path"] == "/usr/bin/google-chrome"
 
 
+@pytest.mark.asyncio
+async def test_launch_nodriver_sanitizes_profile() -> None:
+    """Проверка вызова sanitize_profile перед стартом nodriver при указании user_data_dir."""
+    mock_uc = MagicMock()
+    mock_browser = MagicMock()
+    mock_browser.main_tab = MagicMock()
+    mock_uc.start = AsyncMock(return_value=mock_browser)
+
+    with (
+        patch("chutils.scraping.nodriver._get_nodriver_module", return_value=mock_uc),
+        patch(
+            "chutils.scraping.nodriver.AntidetectConfig.apply_to_nodriver", AsyncMock()
+        ),
+        patch("chutils.scraping.nodriver.sanitize_profile") as mock_sanitize,
+    ):
+        await launch_nodriver(user_data_dir="/tmp/chrome_profile")
+        mock_sanitize.assert_called_once_with("/tmp/chrome_profile")
+
+
 def test_scraping_module_exports() -> None:
     """Проверка ленивого экспорта launch_nodriver и nodriver_session из chutils.scraping."""
     from chutils import scraping
 
     assert hasattr(scraping, "launch_nodriver")
     assert hasattr(scraping, "nodriver_session")
+    assert hasattr(scraping, "close_tab")
     assert "launch_nodriver" in scraping.__all__
     assert "nodriver_session" in scraping.__all__
+    assert "close_tab" in scraping.__all__
+
+
+@pytest.mark.asyncio
+async def test_close_tab_success() -> None:
+    """Проверка успешного закрытия вкладки nodriver."""
+    from chutils.scraping.nodriver import close_tab
+
+    mock_tab = MagicMock()
+    mock_tab.close = AsyncMock()
+
+    await close_tab(mock_tab, timeout=1.0)
+    mock_tab.close.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_close_tab_timeout_handled() -> None:
+    """Проверка обработки таймаута при зависшем CDP close."""
+    import asyncio
+    from chutils.scraping.nodriver import close_tab
+
+    mock_tab = MagicMock()
+
+    async def slow_close() -> None:
+        await asyncio.sleep(1.0)
+
+    mock_tab.close = slow_close
+
+    # Не должно выбрасывать TimeoutError
+    await close_tab(mock_tab, timeout=0.05)
+
+
+@pytest.mark.asyncio
+async def test_close_tab_exception_handled() -> None:
+    """Проверка обработки исключений при закрытии вкладки nodriver."""
+    from chutils.scraping.nodriver import close_tab
+
+    mock_tab = MagicMock()
+    mock_tab.close = AsyncMock(side_effect=RuntimeError("CDP connection lost"))
+
+    # Не должно выбрасывать исключение
+    await close_tab(mock_tab, timeout=1.0)
+

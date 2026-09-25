@@ -13,9 +13,9 @@ from urllib.parse import urlparse
 
 from typing_extensions import Self
 
-from chutils.logger import setup_logger
+import logging  # chutils: ignore[ChutilsIntegrationRule]
 
-logger = setup_logger(__name__)
+logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 
 @dataclass

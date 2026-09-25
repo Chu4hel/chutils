@@ -90,6 +90,44 @@ def setup_qt_logging(
         elif callable(widget):
             handler.emitter.message_emitted.connect(lambda msg, lvl: widget(msg))
 
-    logger = logging.getLogger(logger_name)
-    logger.addHandler(handler)
+    if logger_name is None:
+        try:
+            from chutils.logger.core import add_global_handler
+
+            add_global_handler(handler)
+        except ImportError:
+            pass
+
+        root_logger = logging.getLogger(None)
+        if handler not in root_logger.handlers:
+            root_logger.addHandler(handler)
+    else:
+        logger = logging.getLogger(logger_name)
+        if handler not in logger.handlers:
+            logger.addHandler(handler)
+
     return handler
+
+
+def remove_qt_logging(handler: QtLogHandler, logger_name: str | None = None) -> None:
+    """Удаляет QtLogHandler из chutils.logger и стандартного logging.
+
+    Args:
+        handler: Обработчик QtLogHandler для удаления.
+        logger_name: Имя конкретного логгера или None для глобального удаления.
+    """
+    if logger_name is None:
+        try:
+            from chutils.logger.core import remove_global_handler
+
+            remove_global_handler(handler)
+        except ImportError:
+            pass
+
+        root_logger = logging.getLogger(None)
+        if handler in root_logger.handlers:
+            root_logger.removeHandler(handler)
+    else:
+        logger = logging.getLogger(logger_name)
+        if handler in logger.handlers:
+            logger.removeHandler(handler)

@@ -11,6 +11,7 @@ from .actions import (
     _ensure_nodriver,
     _is_nodriver,
     _is_playwright,
+    _safe_get_async_url,
     async_human_sleep,
     async_move_mouse,
     async_scroll_to,
@@ -132,7 +133,7 @@ class ProfileWarmer:
                     elif action == "sleep":
                         await async_human_sleep(1.0, 3.0)
                     elif action == "click_link":
-                        curr_url = self.browser_or_tab.url
+                        curr_url = await _safe_get_async_url(self.browser_or_tab)
                         links = await self.browser_or_tab.evaluate("""() => {
                             return Array.from(document.querySelectorAll('a[href]'))
                                 .map(a => a.getAttribute('href'))
@@ -195,7 +196,7 @@ class ProfileWarmer:
 
                 await async_human_sleep(1.5, 3.0)
 
-                curr_url = getattr(self.browser_or_tab, "url", "")
+                curr_url = await _safe_get_async_url(self.browser_or_tab)
                 if _is_bot_detection(curr_url):
                     logger.warning(
                         "Обнаружена страница проверки бота/капчи (%s). Прогрев поиска прерван.",
@@ -257,7 +258,7 @@ class ProfileWarmer:
 
                 await async_human_sleep(2.0, 4.0)
 
-                curr_url = getattr(self.browser_or_tab, "url", "")
+                curr_url = await _safe_get_async_url(self.browser_or_tab)
                 if _is_bot_detection(curr_url):
                     logger.warning(
                         "Обнаружена страница проверки бота/капчи (%s). Прогрев поиска прерван.",
