@@ -94,6 +94,24 @@ async def test_async_move_mouse_nodriver_windmouse() -> None:
 
 
 @pytest.mark.asyncio
+async def test_async_move_mouse_nodriver_wind_mouse_alias() -> None:
+    """Проверяет алиас wind_mouse со змеиным регистром."""
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.send = AsyncMock()
+
+    await async_move_mouse(tab, x=250, y=350, start=(10, 10), algorithm="wind_mouse")
+
+    assert tab.send.call_count > 0
+    last_call = tab.send.call_args_list[-1][0][0]
+    assert last_call[0] == "dispatch_mouse_event"
+    assert last_call[1]["x"] == 250
+    assert last_call[1]["y"] == 350
+    assert last_call[1]["type_"] == "mouseMoved"
+
+
+
+@pytest.mark.asyncio
 async def test_async_scroll_to_nodriver() -> None:
     """Проверяет имитацию скроллинга с nodriver."""
     tab = AsyncMock()
@@ -499,7 +517,7 @@ async def test_async_move_mouse_timeout() -> None:
 
     tab.send = slow_send
 
-    with pytest.raises(TimeoutError):
+    with pytest.raises((TimeoutError, asyncio.TimeoutError)):
         await async_move_mouse(tab, x=100, y=100, timeout=0.02)
 
 
@@ -507,6 +525,7 @@ async def test_async_move_mouse_timeout() -> None:
 async def test_async_click_timeout() -> None:
     """Проверяет выброс TimeoutError при превышении таймаута в async_click."""
     import asyncio
+
     from chutils.scraping.humanize.actions import async_click
 
     tab = AsyncMock()
@@ -517,7 +536,7 @@ async def test_async_click_timeout() -> None:
 
     tab.send = slow_send
 
-    with pytest.raises(TimeoutError):
+    with pytest.raises((TimeoutError, asyncio.TimeoutError)):
         await async_click(tab, x=100, y=100, timeout=0.02)
 
 
@@ -537,7 +556,7 @@ async def test_async_type_text_timeout() -> None:
     mock_element.focus = slow_focus
     tab.find = AsyncMock(return_value=mock_element)
 
-    with pytest.raises(TimeoutError):
+    with pytest.raises((TimeoutError, asyncio.TimeoutError)):
         await async_type_text(tab, selector="#input", text="hello", timeout=0.02)
 
 

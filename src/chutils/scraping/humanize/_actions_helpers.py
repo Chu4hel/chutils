@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Coroutine
 import importlib.util
 import json
 import random
 import sys
 import time
+from collections.abc import Coroutine
 from typing import Any
 
 from chutils.exceptions import OptionalDependencyError
@@ -26,9 +26,15 @@ async def _run_with_timeout(
 
     Returns:
         Результат выполнения корутины.
+
+    Raises:
+        TimeoutError: При превышении допустимого таймаута.
     """
     if timeout is not None:
-        return await asyncio.wait_for(coro, timeout=timeout)
+        try:
+            return await asyncio.wait_for(coro, timeout=timeout)
+        except (asyncio.TimeoutError, TimeoutError) as exc:
+            raise TimeoutError(f"Действие превысило допустимый таймаут {timeout}с") from exc
     return await coro
 
 

@@ -1,10 +1,11 @@
 import datetime
 import logging
 from abc import ABC
-from collections.abc import AsyncIterator, Callable, Iterable, Iterator
+from collections.abc import AsyncIterator, Awaitable, Callable, Iterable, Iterator
 from enum import Enum
 from pathlib import Path
-from typing import Any, Literal, TypeVar
+from types import TracebackType
+from typing import Any, Generic, Literal, TypeVar, overload
 
 from typing_extensions import Self
 
@@ -13,6 +14,7 @@ _T = TypeVar("_T")
 _F = TypeVar("_F", bound=Callable[..., Any])
 
 # --- init ---
+__version__: str
 def init(base_dir: str) -> None: ...
 def get_config(
     model: type[_T] | None = None,
@@ -443,6 +445,7 @@ class WindMouseGenerator:
         max_step: float = 15.0,
         target_area: float = 8.0,
     ) -> None: ...
+    @overload
     def generate(
         self,
         start: tuple[int, int],
@@ -453,7 +456,47 @@ class WindMouseGenerator:
         max_wait: float | None = None,
         max_step: float | None = None,
         target_area: float | None = None,
+        *,
+        with_delays: Literal[True] = ...,
     ) -> list[tuple[int, int, float]]: ...
+    @overload
+    def generate(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        gravity: float | None = None,
+        wind: float | None = None,
+        min_wait: float | None = None,
+        max_wait: float | None = None,
+        max_step: float | None = None,
+        target_area: float | None = None,
+        *,
+        with_delays: Literal[False],
+    ) -> list[tuple[int, int]]: ...
+    @overload
+    def generate(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        gravity: float | None = None,
+        wind: float | None = None,
+        min_wait: float | None = None,
+        max_wait: float | None = None,
+        max_step: float | None = None,
+        target_area: float | None = None,
+        *,
+        with_delays: bool,
+    ) -> list[tuple[int, int, float]] | list[tuple[int, int]]: ...
+    def generate_points(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        gravity: float | None = None,
+        wind: float | None = None,
+        max_step: float | None = None,
+        target_area: float | None = None,
+    ) -> list[tuple[int, int]]: ...
+
 
 class JitterDelayGenerator:
     def __init__(self, strategy: str = "lognormal", jitter: float = 0.15) -> None: ...
@@ -724,6 +767,30 @@ from .diagnostics import DiagnosticsManager as DiagnosticsManager
 from .env import BaseEnvManifest as BaseEnvManifest
 from .exceptions import ChutilsValidationError as ChutilsValidationError
 from .exceptions import EnvValidationError as EnvValidationError
+from .scraping.concurrency.reaper import (
+    IdleBrowserReaper as IdleBrowserReaper,
+    IdleBrowserReaperConfig as IdleBrowserReaperConfig,
+    IdleReaper as IdleReaper,
+    IdleReaperConfig as IdleReaperConfig,
+)
+from .scraping.profiles.hygiene import (
+    is_profile_locked as is_profile_locked,
+    sanitize_profile as sanitize_profile,
+    sanitize_profile_crash_state as sanitize_profile_crash_state,
+)
+from .scraping.proxy.storage import (
+    KeyringProxyStorage as KeyringProxyStorage,
+    ProxySecretStorage as ProxySecretStorage,
+)
+from .scraping.testing.dom_models import (
+    DOMActionSessionReport as DOMActionSessionReport,
+    RecordedAction as RecordedAction,
+    RecordedChecklistItem as RecordedChecklistItem,
+)
+from .scraping.testing.recorder import (
+    DOMActionRecorder as DOMActionRecorder,
+    DOMActionRecorderHUD as DOMActionRecorderHUD,
+)
 from .validation import validate_call as validate_call
 from .validation import validate_data as validate_data
 

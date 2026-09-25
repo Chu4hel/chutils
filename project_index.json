@@ -29734,6 +29734,523 @@
                     ]
                   }
                 ]
+              },
+              {
+                "name": "reaper",
+                "path": "chutils/scraping/concurrency/reaper",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Модуль мониторинга неактивности и автоматического высвобождения браузеров (Scale-to-Zero).",
+                "docstring": "Модуль мониторинга неактивности и автоматического высвобождения браузеров (Scale-to-Zero).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "T",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 18,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "IdleReaperConfig",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Декларативная конфигурация сторожевого таймера неактивности и Scale-to-Zero.",
+                    "docstring": "Декларативная конфигурация сторожевого таймера неактивности и Scale-to-Zero.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 21,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": [
+                      {
+                        "name": "preset_aggressive",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls)",
+                        "summary": "Агрессивный пресет для экономии RAM: сброс избыточных за 30с, Scale-to-Zero за 60с.",
+                        "docstring": "Агрессивный пресет для экономии RAM: сброс избыточных за 30с, Scale-to-Zero за 60с.\n\nReturns:\n    Экземпляр IdleReaperConfig с агрессивными параметрами.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 47,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "preset_relaxed",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls)",
+                        "summary": "Щадящий пресет для интерактивной работы: сброс избыточных за 5 мин, Scale-to-Zero за 15 мин.",
+                        "docstring": "Щадящий пресет для интерактивной работы: сброс избыточных за 5 мин, Scale-to-Zero за 15 мин.\n\nReturns:\n    Экземпляр IdleReaperConfig с умеренными параметрами.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 60,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "preset_keep_warm",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls)",
+                        "summary": "Пресет с удержанием 1 постоянного прогретого инстанса (Scale-to-Zero отключен).",
+                        "docstring": "Пресет с удержанием 1 постоянного прогретого инстанса (Scale-to-Zero отключен).\n\nReturns:\n    Экземпляр IdleReaperConfig с отключенным Scale-to-Zero.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 73,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "from_settings",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, section, config_dict)",
+                        "summary": "Загружает параметры из секции конфигурации chutils или переданного словаря.",
+                        "docstring": "Загружает параметры из секции конфигурации chutils или переданного словаря.\n\nArgs:\n    section: Имя секции конфигурационного файла (по умолчанию 'reaper').\n    config_dict: Явный словарь настроек. Если None, данные извлекаются через chutils.config.\n    **overrides: Точечные переопределения параметров.\n\nReturns:\n    Экземпляр IdleReaperConfig.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 86,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "IdleBrowserReaperConfig",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 133,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "IdleBrowserReaper",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Сторожевой таймер неактивности (Watchdog) для пула браузеров и воркеров с поддержкой Scale-to-Zero.",
+                    "docstring": "Сторожевой таймер неактивности (Watchdog) для пула браузеров и воркеров с поддержкой Scale-to-Zero.\n\nОтслеживает время последнего использования (last_active_time) активных воркеров/браузеров\nи автоматически инициирует корректное завершение простаивающих процессов для освобождения RAM.\nПоддерживает двухуровневый таймаут:\n1. idle_timeout_seconds — для избыточных инстансов (когда активно >1).\n2. scale_to_zero_seconds — для закрытия последнего оставшегося инстанса при полном бездействии.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 136,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, close_worker_fn, is_worker_busy_fn, get_active_workers_fn, get_last_used_fn, config)",
+                        "summary": "Инициализирует сборщик простаивающих воркеров.",
+                        "docstring": "Инициализирует сборщик простаивающих воркеров.\n\nArgs:\n    close_worker_fn: Функция (синхронная или асинхронная) корректного закрытия воркера.\n    is_worker_busy_fn: Функция проверки, выполняет ли воркер в данный момент задачу.\n    get_active_workers_fn: Функция получения списка идентификаторов запущенных воркеров.\n    get_last_used_fn: Функция получения timestamp последнего использования воркера.\n    config: Экземпляр IdleReaperConfig с готовыми настройками.\n    idle_timeout_seconds: Таймаут неактивности для избыточных инстансов (переопределяет config).\n    scale_to_zero_seconds: Таймаут неактивности для Scale-to-Zero (переопределяет config).\n    check_interval_seconds: Периодичность проверки в секундах (переопределяет config).\n    enabled: Флаг включения очистки (переопределяет config).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 146,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "from_config",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls, close_worker_fn, is_worker_busy_fn, get_active_workers_fn, get_last_used_fn, config, config_section)",
+                        "summary": "Создает экземпляр с автоматическим чтением параметров из конфигурации chutils.",
+                        "docstring": "Создает экземпляр с автоматическим чтением параметров из конфигурации chutils.\n\nArgs:\n    close_worker_fn: Функция закрытия инстанса воркера/браузера.\n    is_worker_busy_fn: Функция проверки занятости воркера выполнением задачи.\n    get_active_workers_fn: Функция получения списка всех активных воркеров.\n    get_last_used_fn: Функция получения timestamp последнего использования воркера.\n    config: Готовый объект конфигурации.\n    config_section: Название секции в файле настроек.\n    **overrides: Переопределения отдельных параметров конфигурации.\n\nReturns:\n    Инициализированный экземпляр IdleBrowserReaper.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 194,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "configure",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, config)",
+                        "summary": "Динамически обновляет настройки сторожевого таймера на лету.",
+                        "docstring": "Динамически обновляет настройки сторожевого таймера на лету.\n\nArgs:\n    config: Новый базовый объект конфигурации.\n    idle_timeout_seconds: Таймаут неактивности для завершения избыточных инстансов.\n    scale_to_zero_seconds: Таймаут полного простоя до закрытия последнего инстанса.\n    check_interval_seconds: Интервал регулярной проверки.\n    enabled: Флаг активности таймера.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 229,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "config",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self)",
+                        "summary": "Текущая конфигурация сторожевого таймера.",
+                        "docstring": "Текущая конфигурация сторожевого таймера.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 261,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "is_running",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Запущен ли фоновый мониторинг.",
+                        "docstring": "Запущен ли фоновый мониторинг.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 266,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "enabled",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Включена ли очистка простаивающих ресурсов.",
+                        "docstring": "Включена ли очистка простаивающих ресурсов.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 271,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "idle_timeout_seconds",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Таймаут простоя избыточных инстансов.",
+                        "docstring": "Таймаут простоя избыточных инстансов.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 276,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "scale_to_zero_seconds",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Таймаут полного Scale-to-Zero.",
+                        "docstring": "Таймаут полного Scale-to-Zero.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 281,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "check_interval_seconds",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Интервал фоновой проверки.",
+                        "docstring": "Интервал фоновой проверки.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 286,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "start",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Запускает фоновую задачу периодической очистки, если она еще не запущена.",
+                        "docstring": "Запускает фоновую задачу периодической очистки, если она еще не запущена.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 290,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "stop",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Останавливает фоновую задачу мониторинга.",
+                        "docstring": "Останавливает фоновую задачу мониторинга.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 295,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_close_worker",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, worker)",
+                        "summary": "Внутренний вызов закрытия воркера с поддержкой синхронных и асинхронных коллбэков.",
+                        "docstring": "Внутренний вызов закрытия воркера с поддержкой синхронных и асинхронных коллбэков.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 320,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "reap",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Выполняет одну итерацию проверки и закрывает простаивающие браузеры.",
+                        "docstring": "Выполняет одну итерацию проверки и закрывает простаивающие браузеры.\n\nReturns:\n    Количество закрытых экземпляров браузеров / воркеров.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 326,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_run_loop",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "Внутренний бесконечный цикл периодической проверки.",
+                        "docstring": "Внутренний бесконечный цикл периодической проверки.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 389,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "IdleReaper",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 403,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
               }
             ],
             "symbols": []
@@ -30655,7 +31172,7 @@
                     "layer": "private",
                     "signature": "(coro, timeout)",
                     "summary": "Выполняет корутину с опциональным ограничением по таймауту.",
-                    "docstring": "Выполняет корутину с опциональным ограничением по таймауту.\n\nArgs:\n    coro: Асинхронная корутина.\n    timeout: Таймаут в секундах. Если None, выполняется без таймаута.\n\nReturns:\n    Результат выполнения корутины.",
+                    "docstring": "Выполняет корутину с опциональным ограничением по таймауту.\n\nArgs:\n    coro: Асинхронная корутина.\n    timeout: Таймаут в секундах. Если None, выполняется без таймаута.\n\nReturns:\n    Результат выполнения корутины.\n\nRaises:\n    TimeoutError: При превышении допустимого таймаута.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -30685,7 +31202,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 35,
+                    "line_number": 41,
                     "bases": [],
                     "children": []
                   },
@@ -30705,7 +31222,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 51,
+                    "line_number": 57,
                     "bases": [],
                     "children": []
                   },
@@ -30725,7 +31242,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 67,
+                    "line_number": 73,
                     "bases": [],
                     "children": []
                   },
@@ -30745,7 +31262,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 90,
+                    "line_number": 96,
                     "bases": [],
                     "children": []
                   },
@@ -30765,7 +31282,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 105,
+                    "line_number": 111,
                     "bases": [],
                     "children": []
                   },
@@ -30785,7 +31302,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 117,
+                    "line_number": 123,
                     "bases": [],
                     "children": []
                   },
@@ -30805,7 +31322,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 163,
+                    "line_number": 169,
                     "bases": [],
                     "children": []
                   },
@@ -30825,7 +31342,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 184,
+                    "line_number": 190,
                     "bases": [],
                     "children": []
                   },
@@ -30845,7 +31362,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 197,
+                    "line_number": 203,
                     "bases": [],
                     "children": []
                   },
@@ -30865,7 +31382,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 210,
+                    "line_number": 216,
                     "bases": [],
                     "children": []
                   },
@@ -30885,7 +31402,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 229,
+                    "line_number": 235,
                     "bases": [],
                     "children": []
                   },
@@ -30905,7 +31422,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 253,
+                    "line_number": 259,
                     "bases": [],
                     "children": []
                   },
@@ -30925,7 +31442,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 324,
+                    "line_number": 330,
                     "bases": [],
                     "children": []
                   },
@@ -30945,7 +31462,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 346,
+                    "line_number": 352,
                     "bases": [],
                     "children": []
                   },
@@ -30965,7 +31482,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 370,
+                    "line_number": 376,
                     "bases": [],
                     "children": []
                   },
@@ -30985,7 +31502,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 392,
+                    "line_number": 398,
                     "bases": [],
                     "children": []
                   },
@@ -31005,7 +31522,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 409,
+                    "line_number": 415,
                     "bases": [],
                     "children": []
                   },
@@ -31025,7 +31542,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 514,
+                    "line_number": 520,
                     "bases": [],
                     "children": []
                   },
@@ -31045,7 +31562,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 567,
+                    "line_number": 573,
                     "bases": [],
                     "children": []
                   }
@@ -31156,7 +31673,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 341,
+                    "line_number": 342,
                     "bases": [],
                     "children": []
                   },
@@ -31176,7 +31693,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 375,
+                    "line_number": 376,
                     "bases": [],
                     "children": []
                   },
@@ -31196,7 +31713,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 461,
+                    "line_number": 462,
                     "bases": [],
                     "children": []
                   }
@@ -32186,7 +32703,7 @@
                         "layer": "private",
                         "signature": "(self, gravity, wind, min_wait, max_wait, max_step, target_area)",
                         "summary": "Инициализирует генератор WindMouse.",
-                        "docstring": "Инициализирует генератор WindMouse.\n\nArgs:\n    gravity: Сила притяжения курсора к целевой точке.\n    wind: Величина случайного отклонения (ветра/дрейфа).\n    min_wait: Минимальная пауза между смещениями (в секундах).\n    max_wait: Максимальная пауза между смещениями (в секундах).\n    max_step: Максимальное расстояние одного шага.\n    target_area: Радиус целевой зоны, при входе в которую уменьшается влияние ветра.",
+                        "docstring": "Инициализирует генератор WindMouse.\n\nArgs:\n    gravity: Сила притяжения курсора к целевой точке.\n    wind: Величина случайного отклонения (ветра/мышечных микроколебаний).\n    min_wait: Минимальная пауза между смещениями (в секундах).\n    max_wait: Максимальная пауза между смещениями (в секундах).\n    max_step: Максимальное расстояние одного шага (скорость).\n    target_area: Радиус целевой зоны, при входе в которую уменьшается влияние ветра и падает скорость.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -32205,8 +32722,74 @@
                         "type": "method",
                         "layer": "internal",
                         "signature": "(self, start, end, gravity, wind, min_wait, max_wait, max_step, target_area)",
-                        "summary": "Генерирует последовательность точек (x, y, delay) от start к end.",
-                        "docstring": "Генерирует последовательность точек (x, y, delay) от start к end.\n\nArgs:\n    start: Начальные координаты (x, y).\n    end: Конечные координаты (x, y).\n    gravity: Переопределение силы гравитации.\n    wind: Переопределение силы ветра.\n    min_wait: Переопределение минимальной задержки шага.\n    max_wait: Переопределение максимальной задержки шага.\n    max_step: Переопределение максимального размера шага.\n    target_area: Переопределение радиуса целевой зоны.\n\nReturns:\n    Список кортежей (x, y, step_delay), описывающих перемещение курсора с таймингами.",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "overload"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 143,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, start, end, gravity, wind, min_wait, max_wait, max_step, target_area)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "overload"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 158,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, start, end, gravity, wind, min_wait, max_wait, max_step, target_area)",
+                        "summary": "",
+                        "docstring": "",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "overload"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 173,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, start, end, gravity, wind, min_wait, max_wait, max_step, target_area)",
+                        "summary": "Генерирует последовательность точек от start к end.",
+                        "docstring": "Генерирует последовательность точек от start к end.\n\nArgs:\n    start: Начальные координаты (x, y).\n    end: Конечные координаты (x, y).\n    gravity: Переопределение силы гравитации.\n    wind: Переопределение силы ветра.\n    min_wait: Переопределение минимальной задержки шага.\n    max_wait: Переопределение максимальной задержки шага.\n    max_step: Переопределение максимального размера шага.\n    target_area: Переопределение радиуса целевой зоны.\n    with_delays: Если True, возвращает кортежи (x, y, delay). Если False, возвращает (x, y).\n\nReturns:\n    Список точек пути с задержками или без них.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -32216,7 +32799,27 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 142,
+                        "line_number": 187,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate_points",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, start, end, gravity, wind, max_step, target_area)",
+                        "summary": "Генерирует последовательность координат (x, y) без задержек.",
+                        "docstring": "Генерирует последовательность координат (x, y) без задержек.\n\nArgs:\n    start: Начальные координаты (x, y).\n    end: Конечные координаты (x, y).\n    gravity: Переопределение силы гравитации.\n    wind: Переопределение силы ветра.\n    max_step: Переопределение максимального размера шага.\n    target_area: Переопределение радиуса целевой зоны.\n\nReturns:\n    Список координат (x, y).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 315,
                         "bases": [],
                         "children": []
                       }
@@ -32238,7 +32841,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 243,
+                    "line_number": 348,
                     "bases": [],
                     "children": [
                       {
@@ -32257,7 +32860,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 246,
+                        "line_number": 351,
                         "bases": [],
                         "children": []
                       }
@@ -32279,7 +32882,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 330,
+                    "line_number": 435,
                     "bases": [],
                     "children": [
                       {
@@ -32298,7 +32901,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 333,
+                        "line_number": 438,
                         "bases": [],
                         "children": []
                       },
@@ -32318,7 +32921,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 343,
+                        "line_number": 448,
                         "bases": [],
                         "children": []
                       }
@@ -32340,7 +32943,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 368,
+                    "line_number": 473,
                     "bases": [
                       "typing.NamedTuple"
                     ],
@@ -32362,7 +32965,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 375,
+                    "line_number": 480,
                     "bases": [],
                     "children": [
                       {
@@ -32381,7 +32984,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 378,
+                        "line_number": 483,
                         "bases": [],
                         "children": []
                       },
@@ -32401,7 +33004,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 392,
+                        "line_number": 497,
                         "bases": [],
                         "children": []
                       }
@@ -32952,7 +33555,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 20,
+                "line_number": 24,
                 "bases": [],
                 "children": []
               },
@@ -32972,7 +33575,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 23,
+                "line_number": 27,
                 "bases": [],
                 "children": []
               },
@@ -32992,7 +33595,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 43,
+                "line_number": 47,
                 "bases": [],
                 "children": []
               },
@@ -33012,7 +33615,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 67,
+                "line_number": 71,
                 "bases": [],
                 "children": []
               },
@@ -33034,7 +33637,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 184,
+                "line_number": 188,
                 "bases": [],
                 "children": []
               }
@@ -33317,7 +33920,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 11,
+                    "line_number": 9,
                     "bases": [],
                     "children": []
                   },
@@ -33327,7 +33930,7 @@
                     "layer": "public",
                     "signature": "(profile_path)",
                     "summary": "Очищает профиль Chromium от артефактов падений и сбрасывает флаги некорректного завершения.",
-                    "docstring": "Очищает профиль Chromium от артефактов падений и сбрасывает флаги некорректного завершения.\n\nПредотвращает появление инфобара \"Восстановить страницы? Chromium завершился некорректно\",\nкоторый искажает геометрию окна (viewport), сдвигает координаты кликов и детектируется\nантифрод-системами как признак автоматизации.\n\nArgs:\n    profile_path: Путь к корневой директории пользовательских данных Chromium (user_data_dir)\n        или непосредственно к каталогу профиля (например, Default).\n    reset_crash_flags: Сбросить флаги exit_type в \"Normal\" и exited_cleanly в True в файле Preferences.\n    clear_sessions: Очистить директории и файлы сохраненных сессий и вкладок (Default/Sessions,\n        Session_*, Tabs_*).\n    profile_dir_name: Имя поддиректории профиля Chromium (по умолчанию \"Default\").\n    restore_on_startup: Значение session.restore_on_startup (1 = открывать новую вкладку).\n\nReturns:\n    True, если очистка выполнена успешно или директория валидна; False в случае ошибки.",
+                    "docstring": "Очищает профиль Chromium от артефактов падений и сбрасывает флаги некорректного завершения.\n\nПредотвращает появление инфобара и модального диалога \"Восстановить страницы? Chromium завершился некорректно\",\nкоторый искажает геометрию окна (viewport), перехватывает фокус, сдвигает координаты кликов и детектируется\nантифрод-системами как признак автоматизации.\n\nArgs:\n    profile_path: Путь к корневой директории пользовательских данных Chromium (user_data_dir)\n        или непосредственно к каталогу профиля (например, Default).\n    reset_crash_flags: Сбросить флаги exit_type в \"Normal\" и exited_cleanly в True в файле Preferences и Local State.\n    clear_sessions: Очистить директории и файлы сохраненных сессий и вкладок (Default/Sessions,\n        Session_*, Tabs_*).\n    profile_dir_name: Имя поддиректории профиля Chromium (по умолчанию \"Default\").\n    restore_on_startup: Значение session.restore_on_startup (1 = открывать новую вкладку).\n\nReturns:\n    True, если очистка выполнена успешно или директория валидна; False в случае ошибки.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -33337,7 +33940,47 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 14,
+                    "line_number": 12,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "sanitize_profile_crash_state",
+                    "type": "function",
+                    "layer": "public",
+                    "signature": "(profile_dir)",
+                    "summary": "Сбрасывает флаги аварийного закрытия Chromium, предотвращая модальное окно 'Восстановить страницы'.",
+                    "docstring": "Сбрасывает флаги аварийного закрытия Chromium, предотвращая модальное окно 'Восстановить страницы'.\n\nАлиас для `sanitize_profile(profile_dir, reset_crash_flags=True, clear_sessions=True)`.\n\nArgs:\n    profile_dir: Путь к директории профиля пользователя Chrome.\n\nReturns:\n    True, если очистка выполнена успешно.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 193,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "is_profile_locked",
+                    "type": "function",
+                    "layer": "public",
+                    "signature": "(profile_dir)",
+                    "summary": "Проверяет, заблокирован ли каталог профиля другим запущенным процессом Chromium.",
+                    "docstring": "Проверяет, заблокирован ли каталог профиля другим запущенным процессом Chromium.\n\nСканирует файлы блокировок Chrome: `lockfile`, `SingletonLock`\nи проверяет доступ к эксклюзивной базе `Default/Web Data`.\n\nArgs:\n    profile_dir: Путь к директории профиля Chrome.\n\nReturns:\n    True, если каталог профиля заблокирован или используется другим процессом.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 207,
                     "bases": [],
                     "children": []
                   }
@@ -35319,6 +35962,262 @@
                 ]
               },
               {
+                "name": "storage",
+                "path": "chutils/scraping/proxy/storage",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Безопасное хранилище учетных данных прокси на базе системного Keyring.",
+                "docstring": "Безопасное хранилище учетных данных прокси на базе системного Keyring.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 9,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "KeyringProxyStorage",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Безопасное хранилище учетных данных прокси для именованных профилей браузера.",
+                    "docstring": "Безопасное хранилище учетных данных прокси для именованных профилей браузера.\n\nОбеспечивает разделение публичных метаданных профилей (сохраняемых на диск)\nи приватных паролей прокси. Учетные данные сохраняются в зашифрованном\nсистемном хранилище ОС (Windows Credential Manager, macOS Keychain, Linux Secret Service)\nчерез `chutils.SecretManager`, оставляя на диске только замаскированный URL.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 12,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, service_name, key_prefix, secret_manager)",
+                        "summary": "Инициализирует защищенное хранилище прокси.",
+                        "docstring": "Инициализирует защищенное хранилище прокси.\n\nArgs:\n    service_name: Имя сервиса для Keyring (по умолчанию \"chutils_proxy_storage\").\n    key_prefix: Префикс ключей в системном хранилище (по умолчанию \"proxy:\").\n    secret_manager: Пользовательский экземпляр SecretManager (для DI или тестов).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 25,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_make_key",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, profile_name)",
+                        "summary": "Формирует изолированный ключ для профиля в Keyring.",
+                        "docstring": "Формирует изолированный ключ для профиля в Keyring.\n\nArgs:\n    profile_name: Имя профиля браузера.\n\nReturns:\n    Строка ключа с префиксом хранилища.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 45,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_proxy",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, profile_name)",
+                        "summary": "Получает полный URL прокси с учетными данными для указанного профиля.",
+                        "docstring": "Получает полный URL прокси с учетными данными для указанного профиля.\n\nArgs:\n    profile_name: Имя профиля браузера.\n\nReturns:\n    Полная строка прокси (с паролем) или None, если прокси не привязан.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 57,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "set_proxy",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, profile_name, proxy_url)",
+                        "summary": "Сохраняет или удаляет прокси профиля в безопасном хранилище.",
+                        "docstring": "Сохраняет или удаляет прокси профиля в безопасном хранилище.\n\nArgs:\n    profile_name: Имя профиля браузера.\n    proxy_url: Строка прокси (URL или host:port:user:pass) или None для сброса.\n\nReturns:\n    True при успешном сохранении или удалении.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [
+                            "port"
+                          ],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 76,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "delete_proxy",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, profile_name)",
+                        "summary": "Удаляет сохраненный прокси профиля из Keyring.",
+                        "docstring": "Удаляет сохраненный прокси профиля из Keyring.\n\nArgs:\n    profile_name: Имя профиля браузера.\n\nReturns:\n    True при успешном удалении.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 100,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_masked_proxy",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, profile_name)",
+                        "summary": "Получает безопасную замаскированную строку прокси для профиля.",
+                        "docstring": "Получает безопасную замаскированную строку прокси для профиля.\n\nArgs:\n    profile_name: Имя профиля браузера.\n\nReturns:\n    Замаскированный URL (например, 'http://user:***@host:port') или None.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 117,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "restore_proxy_url",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, profile_name, proxy_url)",
+                        "summary": "Восстанавливает оригинальный URL с паролем, если передан замаскированный URL.",
+                        "docstring": "Восстанавливает оригинальный URL с паролем, если передан замаскированный URL.\n\nЕсли в переданном URL обнаружена маска '***', метод извлекает\nсохраненный пароль из Keyring для соответствующего профиля.\n\nArgs:\n    profile_name: Имя профиля браузера.\n    proxy_url: Исходная строка прокси (возможно, замаскированная).\n\nReturns:\n    Полный URL прокси с оригинальным паролем или исходная строка.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 131,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "mask_proxy_url",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(proxy_url)",
+                        "summary": "Маскирует пароль в строке прокси для безопасного сохранения на диск или логирования.",
+                        "docstring": "Маскирует пароль в строке прокси для безопасного сохранения на диск или логирования.\n\nArgs:\n    proxy_url: Строка прокси (URL или параметры).\n\nReturns:\n    Строка со скрытым паролем ('user:***@host:port') или исходное значение.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "staticmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 156,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "sanitize_metadata_dict",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, profile_name, meta_dict, proxy_key, sync_to_keyring)",
+                        "summary": "Санитизирует словарь метаданных профиля перед сохранением в JSON-файл на диске.",
+                        "docstring": "Санитизирует словарь метаданных профиля перед сохранением в JSON-файл на диске.\n\nЕсли в словаре содержится открытый URL с паролем:\n1. Полный URL сохраняется в системный Keyring (если sync_to_keyring=True).\n2. В словаре пароль заменяется на безопасную маску '***'.\n\nArgs:\n    profile_name: Имя профиля.\n    meta_dict: Исходный словарь метаданных.\n    proxy_key: Имя ключа прокси в словаре (по умолчанию 'proxy').\n    sync_to_keyring: Сохранить оригинальный прокси в Keyring при наличии пароля.\n\nReturns:\n    Копия словаря с замаскированным прокси.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 172,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "ProxySecretStorage",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 205,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "tunnel",
                 "path": "chutils/scraping/proxy/tunnel",
                 "type": "module",
@@ -35676,7 +36575,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 24,
+                "line_number": 26,
                 "bases": [],
                 "children": []
               },
@@ -35696,7 +36595,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 44,
+                "line_number": 48,
                 "bases": [],
                 "children": []
               },
@@ -35716,7 +36615,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 52,
+                "line_number": 56,
                 "bases": [],
                 "children": []
               }
@@ -35836,6 +36735,198 @@
                       "custom_metadata": {}
                     },
                     "line_number": 151,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "dom_models",
+                "path": "chutils/scraping/testing/dom_models",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Модели данных для интерактивной записи действий пользователя и инспекции DOM.",
+                "docstring": "Модели данных для интерактивной записи действий пользователя и инспекции DOM.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "ViewportInfo",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Параметры области просмотра браузера и адаптивный брейкпоинт.",
+                    "docstring": "Параметры области просмотра браузера и адаптивный брейкпоинт.\n\nAttributes:\n    width: Ширина окна в пикселях.\n    height: Высота окна в пикселях.\n    device_pixel_ratio: Соотношение физических пикселей к CSS (DPR).\n    breakpoint: Адаптивный брейкпоинт (\"desktop_wide\", \"compact\", \"mobile\").",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 10,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "DOMMutationDiff",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Структурированная дельта мутаций DOM после действия пользователя.",
+                    "docstring": "Структурированная дельта мутаций DOM после действия пользователя.\n\nAttributes:\n    spawned_containers: Селекторы появившихся контейнеров (оверлеи, диалоги, панели).\n    appeared_elements: Селекторы новых интерактивных элементов внутри контейнера.\n    attribute_changes: Измененные классы и aria-* атрибуты.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 26,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "RecordedChecklistItem",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Элемент интерактивного чеклиста действий пользователя.",
+                    "docstring": "Элемент интерактивного чеклиста действий пользователя.\n\nAttributes:\n    id: Уникальный строковый идентификатор пункта.\n    label: Отображаемое название пункта в HUD.\n    description: Подробное описание выполняемого действия.\n    hints: Список селекторов и визуальных ориентиров элемента.\n    completed: Флаг завершения шага.\n    is_manual: Флаг подтверждения пользователем вручную.\n    action_index: Номер связанного действия пользователя.\n    target_selector: Зафиксированный итоговый селектор элемента.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 49,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "RecordedAction",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Зафиксированное действие пользователя с элементом интерфейса.",
+                    "docstring": "Зафиксированное действие пользователя с элементом интерфейса.\n\nAttributes:\n    action_id: Порядковый номер действия в сессии.\n    event_type: Тип события браузера (\"click\", \"input\", \"change\", \"keydown\").\n    timestamp: Временная метка ISO 8601.\n    elapsed_seconds: Секунды с момента старта записи.\n    tag_name: Имя HTML-тега элемента.\n    element_id: Значение id элемента (если есть).\n    class_names: CSS-классы элемента.\n    aria_label: Значение aria-label атрибута.\n    role: ARIA-роль элемента.\n    text_snippet: Текстовое содержимое элемента (фрагмент).\n    value_snippet: Введенное строковое значение.\n    computed_selector: Основной сгенерированный селектор элемента.\n    alternative_selectors: Список альтернативных селекторов.\n    xpath: XPath-путь к элементу (опционально).\n    outer_html: HTML-сниппет элемента.\n    parent_summary: Описание непосредственного родителя.\n    matched_checklist_id: Идентификатор пункта чеклиста, с которым сопоставлено действие.\n    mutations: Список произошедших мутаций DOM.\n    viewport: Информация о вьюпорте на момент взаимодействия.\n    container_scope: Контекст родительского оверлея или модального окна.\n    scoped_selector: Составной селектор с учетом контейнера.\n    duplicate_count: Количество найденных совпадений в DOM.\n    has_duplicates: Флаг наличия дубликатов селектора.\n    mutation_diff: Детализированный отчет мутаций.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 79,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "DOMActionSessionReport",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Итоговый структурированный отчет интерактивной сессии записи действий.",
+                    "docstring": "Итоговый структурированный отчет интерактивной сессии записи действий.\n\nAttributes:\n    timestamp: Временная метка сессии ISO 8601.\n    session_name: Имя профиля или сессии.\n    target_name: Имя целевого сайта или провайдера.\n    page_url: URL целевой страницы.\n    page_title: Заголовок веб-страницы.\n    total_actions: Общее число зафиксированных действий.\n    session_viewport: Разрешение вьюпорта браузера.\n    actions: Список зафиксированных действий.\n    checklist: Список пунктов чеклиста с результатами.\n    discovered_selectors: Словарь обнаруженных селекторов по категориям.\n    summary_markdown: Итоговый сгенерированный Markdown-отчет.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 135,
+                    "bases": [
+                      "pydantic.BaseModel"
+                    ],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "dom_scripts",
+                "path": "chutils/scraping/testing/dom_scripts",
+                "type": "module",
+                "layer": "internal",
+                "summary": "JavaScript-скрипты браузерной инспекции разметки, полифилов селекторов и HUD-виджета.",
+                "docstring": "JavaScript-скрипты браузерной инспекции разметки, полифилов селекторов и HUD-виджета.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "build_scan_selectors_script",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(groups)",
+                    "summary": "Генерирует JS-скрипт для полного сканирования и диагностики групп селекторов.",
+                    "docstring": "Генерирует JS-скрипт для полного сканирования и диагностики групп селекторов.\n\nArgs:\n    groups: Конфигурация групп селекторов. Значением может быть список строк-селекторов\n        или словарь со свойством \"selectors\".\n\nReturns:\n    Исходный код JavaScript, возвращающий диагностику через JSON.stringify.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 186,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_recorder_hud_ui_js",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "()",
+                    "summary": "Возвращает JavaScript код рендеринга и управления плавающим HUD виджетом.",
+                    "docstring": "Возвращает JavaScript код рендеринга и управления плавающим HUD виджетом.\n\nПостроен с соблюдением требований Trusted Types (без использования innerHTML).\n\nReturns:\n    Строка JavaScript кода функций renderChecklist, updateHudDisplay и createHud.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 306,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "build_inject_recorder_hud_script",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(checklist, widget_title, container_selectors, custom_matcher_js)",
+                    "summary": "Генерирует JS-скрипт внедрения перехватчика действий и плавающего виджета-шпаргалки.",
+                    "docstring": "Генерирует JS-скрипт внедрения перехватчика действий и плавающего виджета-шпаргалки.\n\nArgs:\n    checklist: Список пунктов чеклиста с id, label, description, hints.\n    widget_title: Отображаемый заголовок в шапке HUD.\n    container_selectors: Дополнительные селекторы модальных окон/панелей.\n    custom_matcher_js: Пользовательский код функции сопоставления элемента с чеклистом:\n        `(el, evType) => string | null`.\n\nReturns:\n    Строка JavaScript для вызова в браузере через evaluate.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 666,
                     "bases": [],
                     "children": []
                   }
@@ -37510,6 +38601,258 @@
                 "symbols": []
               },
               {
+                "name": "recorder",
+                "path": "chutils/scraping/testing/recorder",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Интерактивный регистратор действий в браузере с инъекцией HUD и генерацией отчетов по DOM.",
+                "docstring": "Интерактивный регистратор действий в браузере с инъекцией HUD и генерацией отчетов по DOM.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 26,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_safe_extract_dict",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(val)",
+                    "summary": "Безопасно распаковывает результат вызова evaluate в Python-словарь.",
+                    "docstring": "Безопасно распаковывает результат вызова evaluate в Python-словарь.\n\nArgs:\n    val: Сырой результат выполнения JS в браузере (JSON-строка, dict или пары).\n\nReturns:\n    Словарь с извлеченными полями.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 29,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "DOMActionRecorder",
+                    "type": "class",
+                    "layer": "public",
+                    "signature": "",
+                    "summary": "Интерактивный регистратор действий пользователя в браузере с плавающим HUD.",
+                    "docstring": "Интерактивный регистратор действий пользователя в браузере с плавающим HUD.\n\nПозволяет визуально размечать шаги сценариев на живых веб-страницах,\nпроверять селекторы, отслеживать мутации DOM и формировать подробные\nструктурированные отчеты для нейроагентов и тестов.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 63,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, checklist_items, widget_title, container_selectors, custom_matcher_js)",
+                        "summary": "Инициализация регистратора.",
+                        "docstring": "Инициализация регистратора.\n\nArgs:\n    checklist_items: Список пунктов чеклиста с id, label, hints.\n    widget_title: Заголовок, отображаемый в шапке HUD-виджета.\n    container_selectors: Дополнительные селекторы модальных окон/панелей.\n    custom_matcher_js: Кастомный JS-код функции сопоставления с чеклистом.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 71,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "inject",
+                        "type": "method",
+                        "layer": "public",
+                        "signature": "(self, tab)",
+                        "summary": "Внедряет перехватчик действий и плавающий HUD в страницу браузера.",
+                        "docstring": "Внедряет перехватчик действий и плавающий HUD в страницу браузера.\n\nArgs:\n    tab: Объект вкладки браузера (nodriver Tab, Playwright Page или аналогичный\n        с асинхронным методом `evaluate`).\n\nReturns:\n    True, если скрипт успешно выполнен.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 98,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "poll",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, tab)",
+                        "summary": "Опрашивает текущий лог действий и состояние HUD из браузера.",
+                        "docstring": "Опрашивает текущий лог действий и состояние HUD из браузера.\n\nArgs:\n    tab: Вкладка браузера с методом `evaluate`.\n\nReturns:\n    Словарь с зафиксированными действиями, состоянием чеклиста и вьюпорта.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 122,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "is_finished",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, tab)",
+                        "summary": "Проверяет, нажал ли пользователь кнопку завершения в HUD виджете.",
+                        "docstring": "Проверяет, нажал ли пользователь кнопку завершения в HUD виджете.\n\nArgs:\n    tab: Вкладка браузера.\n\nReturns:\n    True, если сессия завершена.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 138,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "build_report",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, raw_data, session_name, target_name)",
+                        "summary": "Преобразует сырые данные из браузера в типизированный отчет DOMActionSessionReport.",
+                        "docstring": "Преобразует сырые данные из браузера в типизированный отчет DOMActionSessionReport.\n\nArgs:\n    raw_data: Сырой словарь, возвращенный методом `poll()`.\n    session_name: Название сессии или имя профиля браузера.\n    target_name: Название целевой веб-системы или сайта.\n\nReturns:\n    Структурированный Pydantic-объект отчета.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 150,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate_markdown_report",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, report)",
+                        "summary": "Формирует подробный Markdown-отчет для чтения разработчиками и LLM-агентами.",
+                        "docstring": "Формирует подробный Markdown-отчет для чтения разработчиками и LLM-агентами.\n\nArgs:\n    report: Объект отчета DOMActionSessionReport.\n\nReturns:\n    Строка в формате Markdown.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 197,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "export_report",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, report, json_path, md_path)",
+                        "summary": "Экспортирует структурированный отчет в JSON и Markdown.",
+                        "docstring": "Экспортирует структурированный отчет в JSON и Markdown.\n\nArgs:\n    report: Объект отчета DOMActionSessionReport.\n    json_path: Путь к целевому файлу JSON.\n    md_path: Путь к целевому файлу Markdown (по умолчанию .md рядом с JSON).\n\nReturns:\n    Кортеж (путь к JSON, путь к Markdown).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 337,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "wait_for_finish",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, tab, poll_interval, timeout, on_action, session_name, target_name)",
+                        "summary": "Асинхронно ожидает нажатия кнопки завершения в HUD виджете браузера.",
+                        "docstring": "Асинхронно ожидает нажатия кнопки завершения в HUD виджете браузера.\n\nArgs:\n    tab: Вкладка браузера.\n    poll_interval: Интервал опроса в секундах.\n    timeout: Максимальное время ожидания в секундах (None для неограниченного).\n    on_action: Опциональный колбэк при фиксации нового действия.\n    session_name: Имя сессии для итогового отчета.\n    target_name: Имя цели для итогового отчета.\n\nReturns:\n    Итоговый объект отчета DOMActionSessionReport.\n\nRaises:\n    asyncio.TimeoutError: При истечении таймаута до завершения пользователем.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 365,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "DOMActionRecorderHUD",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 417,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "server",
                 "path": "chutils/scraping/testing/server",
                 "type": "module",
@@ -38543,7 +39886,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 56,
+                "line_number": 75,
                 "bases": [],
                 "children": []
               },
@@ -38563,7 +39906,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 76,
+                "line_number": 108,
                 "bases": [],
                 "children": []
               },
@@ -38583,7 +39926,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 84,
+                "line_number": 116,
                 "bases": [],
                 "children": []
               }
@@ -38607,7 +39950,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 125,
+            "line_number": 152,
             "bases": [],
             "children": []
           },
@@ -38627,7 +39970,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 168,
+            "line_number": 206,
             "bases": [],
             "children": []
           },
@@ -38647,7 +39990,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 176,
+            "line_number": 214,
             "bases": [],
             "children": []
           }
@@ -46153,7 +47496,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 374,
+        "line_number": 392,
         "bases": [],
         "children": []
       },
@@ -46173,7 +47516,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 407,
+        "line_number": 425,
         "bases": [],
         "children": []
       },
@@ -46193,7 +47536,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 427,
+        "line_number": 445,
         "bases": [],
         "children": []
       }
@@ -47681,6 +49024,11 @@
       "weight": 3
     },
     {
+      "source": "chutils/scraping/concurrency",
+      "target": "/reaper",
+      "weight": 4
+    },
+    {
       "source": "chutils/scraping/concurrency/metrics",
       "target": "chutils/metrics",
       "weight": 1
@@ -47703,6 +49051,11 @@
     {
       "source": "chutils/scraping/concurrency/queues",
       "target": "/models",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/concurrency/reaper",
+      "target": "chutils/logger",
       "weight": 1
     },
     {
@@ -47893,7 +49246,7 @@
     {
       "source": "chutils/scraping/nodriver",
       "target": "chutils/scraping/profiles/hygiene",
-      "weight": 1
+      "weight": 3
     },
     {
       "source": "chutils/scraping/nodriver",
@@ -47906,9 +49259,14 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/nodriver",
+      "target": "chutils/scraping/concurrency/reaper",
+      "weight": 4
+    },
+    {
       "source": "chutils/scraping/profiles",
       "target": "chutils/scraping/profiles/hygiene",
-      "weight": 1
+      "weight": 3
     },
     {
       "source": "chutils/scraping/profiles",
@@ -47979,11 +49337,6 @@
       "source": "chutils/scraping/profiles/hygiene",
       "target": "chutils/fs",
       "weight": 2
-    },
-    {
-      "source": "chutils/scraping/profiles/hygiene",
-      "target": "chutils/logger",
-      "weight": 1
     },
     {
       "source": "chutils/scraping/profiles/manager",
@@ -48131,6 +49484,16 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/proxy/storage",
+      "target": "chutils/scraping/proxy/parser",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/storage",
+      "target": "chutils/secret_manager",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/proxy/tunnel",
       "target": "chutils/logger",
       "weight": 1
@@ -48143,6 +49506,11 @@
     {
       "source": "chutils/scraping/proxy/tunnel",
       "target": "chutils/scraping/proxy/parser",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/testing/dom_scripts",
+      "target": "/dom_models",
       "weight": 1
     },
     {
@@ -48178,6 +49546,26 @@
     {
       "source": "chutils/scraping/testing/mocks/selenium",
       "target": "chutils/scraping/testing/mocks/dom",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/testing/recorder",
+      "target": "chutils/fs",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/testing/recorder",
+      "target": "chutils/time",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/testing/recorder",
+      "target": "/dom_models",
+      "weight": 4
+    },
+    {
+      "source": "chutils/scraping/testing/recorder",
+      "target": "/dom_scripts",
       "weight": 2
     },
     {
@@ -48713,10 +50101,10 @@
   ],
   "examples": [],
   "metadata": {
-    "chutils_version": "3.8.1",
-    "project_version": "3.8.1",
-    "git_commit": "955306fb807e62796c4c23239dba3f57200442e5 (dirty)",
-    "generated_at": "2026-09-24T12:36:59.506250+00:00",
-    "project_hash": "0e5386e2a8bb6cba13560ffc83dfe1bdb8d90ee60b893b90eb80ca3af2cc1984"
+    "chutils_version": "3.9.0",
+    "project_version": "3.9.0",
+    "git_commit": "36646678c362f13bbb24bb83d19c9e16bed474fc (dirty)",
+    "generated_at": "2026-09-25T21:15:01.247701+00:00",
+    "project_hash": "c4891812052fccbd536fdda9dcf51e671ec604735e49e4d5a46d584b6052589a"
   }
 }

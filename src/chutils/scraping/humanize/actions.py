@@ -74,8 +74,8 @@ async def async_move_mouse(
     """
     async def _move() -> None:
         start_pt = start or (0, 0)
-
-        if algorithm == "windmouse":
+        algo = algorithm.lower().replace("_", "").replace("-", "")
+        if algo == "windmouse":
             wind_gen = WindMouseGenerator()
             points_with_delay = wind_gen.generate(start_pt, (x, y))
 
@@ -310,8 +310,9 @@ def move_mouse(
     from selenium.webdriver.common.action_chains import ActionChains
 
     start_pt = start or (0, 0)
+    algo = algorithm.lower().replace("_", "").replace("-", "")
 
-    if algorithm == "windmouse":
+    if algo == "windmouse":
         wind_gen = WindMouseGenerator()
         points = wind_gen.generate(start_pt, (x, y))
 

@@ -1,6 +1,6 @@
 import math
 import random
-from typing import NamedTuple
+from typing import Literal, NamedTuple, overload
 
 _QWERTY_NEIGHBORS = {
     "q": "wa",
@@ -126,11 +126,11 @@ class WindMouseGenerator:
 
         Args:
             gravity: Сила притяжения курсора к целевой точке.
-            wind: Величина случайного отклонения (ветра/дрейфа).
+            wind: Величина случайного отклонения (ветра/мышечных микроколебаний).
             min_wait: Минимальная пауза между смещениями (в секундах).
             max_wait: Максимальная пауза между смещениями (в секундах).
-            max_step: Максимальное расстояние одного шага.
-            target_area: Радиус целевой зоны, при входе в которую уменьшается влияние ветра.
+            max_step: Максимальное расстояние одного шага (скорость).
+            target_area: Радиус целевой зоны, при входе в которую уменьшается влияние ветра и падает скорость.
         """
         self.gravity = gravity
         self.wind = wind
@@ -138,6 +138,51 @@ class WindMouseGenerator:
         self.max_wait = max_wait
         self.max_step = max_step
         self.target_area = target_area
+
+    @overload
+    def generate(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        gravity: float | None = None,
+        wind: float | None = None,
+        min_wait: float | None = None,
+        max_wait: float | None = None,
+        max_step: float | None = None,
+        target_area: float | None = None,
+        *,
+        with_delays: Literal[True] = ...,
+    ) -> list[tuple[int, int, float]]: ...
+
+    @overload
+    def generate(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        gravity: float | None = None,
+        wind: float | None = None,
+        min_wait: float | None = None,
+        max_wait: float | None = None,
+        max_step: float | None = None,
+        target_area: float | None = None,
+        *,
+        with_delays: Literal[False],
+    ) -> list[tuple[int, int]]: ...
+
+    @overload
+    def generate(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        gravity: float | None = None,
+        wind: float | None = None,
+        min_wait: float | None = None,
+        max_wait: float | None = None,
+        max_step: float | None = None,
+        target_area: float | None = None,
+        *,
+        with_delays: bool,
+    ) -> list[tuple[int, int, float]] | list[tuple[int, int]]: ...
 
     def generate(
         self,
@@ -149,8 +194,10 @@ class WindMouseGenerator:
         max_wait: float | None = None,
         max_step: float | None = None,
         target_area: float | None = None,
-    ) -> list[tuple[int, int, float]]:
-        """Генерирует последовательность точек (x, y, delay) от start к end.
+        *,
+        with_delays: bool = True,
+    ) -> list[tuple[int, int, float]] | list[tuple[int, int]]:
+        """Генерирует последовательность точек от start к end.
 
         Args:
             start: Начальные координаты (x, y).
@@ -161,9 +208,10 @@ class WindMouseGenerator:
             max_wait: Переопределение максимальной задержки шага.
             max_step: Переопределение максимального размера шага.
             target_area: Переопределение радиуса целевой зоны.
+            with_delays: Если True, возвращает кортежи (x, y, delay). Если False, возвращает (x, y).
 
         Returns:
-            Список кортежей (x, y, step_delay), описывающих перемещение курсора с таймингами.
+            Список точек пути с задержками или без них.
         """
         g = self.gravity if gravity is None else gravity
         w = self.wind if wind is None else wind
@@ -176,68 +224,125 @@ class WindMouseGenerator:
         dest_x, dest_y = end
 
         if start_x == dest_x and start_y == dest_y:
-            return [(dest_x, dest_y, random.uniform(min_w, max_w))]
+            if with_delays:
+                return [(dest_x, dest_y, random.uniform(min_w, max_w))]
+            return [(dest_x, dest_y)]
 
         current_x, current_y = float(start_x), float(start_y)
         v_x, v_y = 0.0, 0.0
         w_x, w_y = 0.0, 0.0
 
-        points: list[tuple[int, int, float]] = []
+        sqrt3 = math.sqrt(3.0)
+        sqrt5 = math.sqrt(5.0)
+
+        cur_gravity = g
+        cur_wind = w
+
         max_iterations = 2000
         iteration = 0
 
-        sqrt3 = math.sqrt(3)
-        sqrt5 = math.sqrt(5)
+        # Начальная точка траектории
+        if with_delays:
+            points_with_delay: list[tuple[int, int, float]] = [
+                (start_x, start_y, random.uniform(min_w, max_w))
+            ]
+        else:
+            points_no_delay: list[tuple[int, int]] = [(start_x, start_y)]
 
         while iteration < max_iterations:
             iteration += 1
             dist = math.hypot(dest_x - current_x, dest_y - current_y)
-            if dist < 1.0:
+            if dist < 2.0:
                 break
 
-            # В целевой зоне снижаем воздействие случайного ветра для точной доводки к цели
-            cur_wind = w
+            # В целевой зоне снижаем воздействие случайного ветра, гравитации и скорости шага
+            # для моделирования естественного притормаживания руки перед нажатием клавиши
+            cur_max_s = max_s
             if dist < t_area:
-                cur_wind = w * (dist / max(1.0, t_area))
+                factor = dist / max(1.0, t_area)
+                cur_wind = max(0.5, cur_wind * 0.8)
+                cur_gravity = max(1.5, cur_gravity * 0.85)
+                cur_max_s = max(2.0, max_s * factor)
 
-            # Вектор случайного ветра (дрейф)
+            # Вектор случайного ветра (дрейф / мышечные микроколебания)
             w_x = (
-                w_x / sqrt3 + (random.random() * (cur_wind * 2 + 1) - cur_wind) / sqrt5
+                w_x / sqrt3 + (random.random() * (cur_wind * 2.0 + 1.0) - cur_wind) / sqrt5
             )
             w_y = (
-                w_y / sqrt5 + (random.random() * (cur_wind * 2 + 1) - cur_wind) / sqrt5
+                w_y / sqrt5 + (random.random() * (cur_wind * 2.0 + 1.0) - cur_wind) / sqrt5
             )
 
-            # Сила притяжения к цели
-            mag = max(dist, 1.0)
-            g_x = (dest_x - current_x) * (g / mag)
-            g_y = (dest_y - current_y) * (g / mag)
-
-            v_x += w_x + g_x
-            v_y += w_y + g_y
+            # Сила гравитационного притяжения к цели
+            v_x += w_x + cur_gravity * (dest_x - current_x) / dist
+            v_y += w_y + cur_gravity * (dest_y - current_y) / dist
 
             # Ограничение максимальной скорости с динамическим затуханием
             v_mag = math.hypot(v_x, v_y)
-            if v_mag > max_s:
-                v_clip = max_s / 2.0 + random.random() * (max_s / 2.0)
+            if v_mag > cur_max_s:
+                v_clip = cur_max_s / 2.0 + random.random() * (cur_max_s / 2.0)
                 v_x = (v_x / v_mag) * v_clip
                 v_y = (v_y / v_mag) * v_clip
 
             current_x += v_x
             current_y += v_y
 
-            step_delay = random.uniform(min_w, max_w)
-            points.append((round(current_x), round(current_y), step_delay))
+            pt_x = round(current_x)
+            pt_y = round(current_y)
 
-        # Гарантируем попадание в конечную точку с небольшой паузой перед кликом/остановкой
+            # Исключаем добавление дублирующихся подряд экранных координат
+            if with_delays:
+                last_x, last_y = points_with_delay[-1][0], points_with_delay[-1][1]
+                if (pt_x, pt_y) != (last_x, last_y):
+                    points_with_delay.append((pt_x, pt_y, random.uniform(min_w, max_w)))
+            else:
+                last_x, last_y = points_no_delay[-1][0], points_no_delay[-1][1]
+                if (pt_x, pt_y) != (last_x, last_y):
+                    points_no_delay.append((pt_x, pt_y))
+
+        # Гарантируем попадание в конечную точку
         post_delay = random.uniform(0.04, 0.12)
-        if not points or points[-1][0] != dest_x or points[-1][1] != dest_y:
-            points.append((dest_x, dest_y, post_delay))
-        else:
-            last_x, last_y, _ = points[-1]
-            points[-1] = (last_x, last_y, post_delay)
+        if with_delays:
+            if (points_with_delay[-1][0], points_with_delay[-1][1]) != (dest_x, dest_y):
+                points_with_delay.append((dest_x, dest_y, post_delay))
+            else:
+                points_with_delay[-1] = (dest_x, dest_y, post_delay)
+            return points_with_delay
 
-        return points
+        if (points_no_delay[-1][0], points_no_delay[-1][1]) != (dest_x, dest_y):
+            points_no_delay.append((dest_x, dest_y))
+        return points_no_delay
+
+    def generate_points(
+        self,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        gravity: float | None = None,
+        wind: float | None = None,
+        max_step: float | None = None,
+        target_area: float | None = None,
+    ) -> list[tuple[int, int]]:
+        """Генерирует последовательность координат (x, y) без задержек.
+
+        Args:
+            start: Начальные координаты (x, y).
+            end: Конечные координаты (x, y).
+            gravity: Переопределение силы гравитации.
+            wind: Переопределение силы ветра.
+            max_step: Переопределение максимального размера шага.
+            target_area: Переопределение радиуса целевой зоны.
+
+        Returns:
+            Список координат (x, y).
+        """
+        return self.generate(
+            start,
+            end,
+            gravity=gravity,
+            wind=wind,
+            max_step=max_step,
+            target_area=target_area,
+            with_delays=False,
+        )
 
 
 class BezierCurveGenerator:

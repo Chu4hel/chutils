@@ -316,3 +316,37 @@ def test_wind_mouse_generator() -> None:
     assert len(same_points) == 1
     assert same_points[0][0] == start[0]
     assert same_points[0][1] == start[1]
+
+
+def test_wind_mouse_generator_points_only() -> None:
+    """Тестирует генерацию координат без задержек (generate_points и with_delays=False)."""
+    generator = WindMouseGenerator()
+    start = (50, 50)
+    end = (300, 200)
+
+    # 1. Проверка через generate_points
+    points = generator.generate_points(start, end)
+    assert len(points) > 5
+    assert points[0] == start
+    assert points[-1] == end
+    for pt in points:
+        assert len(pt) == 2
+        assert isinstance(pt[0], int)
+        assert isinstance(pt[1], int)
+
+    # Проверка отсутствия дублирующихся подряд точек
+    for i in range(len(points) - 1):
+        assert points[i] != points[i + 1]
+
+    # 2. Проверка через generate(with_delays=False)
+    points2 = generator.generate(start, end, with_delays=False)
+    assert len(points2) > 5
+    assert points2[0] == start
+    assert points2[-1] == end
+    for pt in points2:
+        assert len(pt) == 2
+
+    # 3. Граничный случай start == end
+    same = generator.generate_points(start, start)
+    assert same == [start]
+

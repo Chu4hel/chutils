@@ -13,7 +13,11 @@ from chutils.lifecycle import register_cleanup
 from chutils.logger import setup_logger
 from chutils.scraping.humanize.antidetect import get_browser_launch_args
 from chutils.scraping.humanize.config import AntidetectConfig
-from chutils.scraping.profiles.hygiene import sanitize_profile
+from chutils.scraping.profiles.hygiene import (
+    is_profile_locked,
+    sanitize_profile,
+    sanitize_profile_crash_state,
+)
 from chutils.scraping.proxy.adapters import get_nodriver_proxy_args
 from chutils.scraping.proxy.models import ProxyConfig
 
@@ -237,8 +241,23 @@ async def nodriver_session(
                     logger.debug(f"Ошибка при остановке браузера nodriver: {exc}")
 
 
+from chutils.scraping.concurrency.reaper import (
+    IdleBrowserReaper,
+    IdleBrowserReaperConfig,
+    IdleReaper,
+    IdleReaperConfig,
+)
+
 __all__ = [
+    "IdleBrowserReaper",
+    "IdleBrowserReaperConfig",
+    "IdleReaper",
+    "IdleReaperConfig",
     "close_tab",
+    "is_profile_locked",
     "launch_nodriver",
     "nodriver_session",
+    "sanitize_profile",
+    "sanitize_profile_crash_state",
 ]
+

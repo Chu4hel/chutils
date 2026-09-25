@@ -19,16 +19,20 @@ if TYPE_CHECKING:
     from .cache import FileCacheBackend as FileCacheBackend
     from .resolver import ProxyCandidate as ProxyCandidate
     from .resolver import SmartProxyResolver as SmartProxyResolver
+    from .storage import KeyringProxyStorage as KeyringProxyStorage
+    from .storage import ProxySecretStorage as ProxySecretStorage
     from .tunnel import AsyncProxyTunnel as AsyncProxyTunnel
 
 _LAZY_MAPPING = {
     "AsyncProxyTunnel": (".tunnel", "AsyncProxyTunnel"),
     "ChromeProxyExtension": (".extension", "ChromeProxyExtension"),
     "FileCacheBackend": (".cache", "FileCacheBackend"),
+    "KeyringProxyStorage": (".storage", "KeyringProxyStorage"),
     "ProxyCandidate": (".resolver", "ProxyCandidate"),
     "ProxyConfig": (".models", "ProxyConfig"),
     "ProxyHealthResult": (".models", "ProxyHealthResult"),
     "ProxyPool": (".pool", "ProxyPool"),
+    "ProxySecretStorage": (".storage", "ProxySecretStorage"),
     "SmartProxyResolver": (".resolver", "SmartProxyResolver"),
     "async_nodriver_proxy": (".adapters", "async_nodriver_proxy"),
     "check_proxy": (".pool", "check_proxy"),
@@ -57,10 +61,12 @@ __all__ = [
     "AsyncProxyTunnel",
     "ChromeProxyExtension",
     "FileCacheBackend",
+    "KeyringProxyStorage",
     "ProxyCandidate",
     "ProxyConfig",
     "ProxyHealthResult",
     "ProxyPool",
+    "ProxySecretStorage",
     "SmartProxyResolver",
     "async_nodriver_proxy",
     "check_proxy",

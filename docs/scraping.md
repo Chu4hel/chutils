@@ -34,18 +34,41 @@ pip install "chutils[camoufox]"
 
 ### Физический генератор траекторий WindMouse (`WindMouseGenerator`)
 
-Имитирует движение руки человека на основе физической модели (гравитация, случайный ветер/дрейф, инерция и микродоводка у цели). Обеспечивает наилучший обход поведенческого антифрода (Cloudflare, DataDome, reCAPTCHA).
+Имитирует биомеханическое движение руки человека на основе физической модели (гравитационное притяжение к цели, случайный мышечный ветер/микроколебания, инерция и естественное притормаживание в целевой зоне). Обеспечивает наилучший обход поведенческого антифрода (Cloudflare, DataDome, reCAPTCHA, FingerprintJS Pro).
+
+* **Плавное замедление:** В радиусе `target_area` максимальный шаг пропорционально падает (`cur_max_s = max(2.0, max_s * factor)`), симулируя естественное замедление кисти руки перед кликом.
+* **Автоматическая дедупликация:** Подряд идущие одинаковые координаты отсекаются, исключая холостой спам CDP-событий `Input.dispatchMouseEvent(type="mouseMoved")`.
+* **Гибкий формат вывода:** Поддерживает как кортежи с таймингами `(x, y, delay)`, так и чистые экранные координаты `(x, y)`.
 
 ```python
 from chutils.scraping.humanize import WindMouseGenerator
 
-generator = WindMouseGenerator(gravity=9.0, wind=3.0)
+generator = WindMouseGenerator(
+    gravity=9.0,      # Сила притяжения курсора к цели
+    wind=3.5,         # Амплитуда случайных мышечных колебаний
+    max_step=14.0,    # Максимальная скорость шага
+    target_area=8.0,  # Радиус целевой зоны замедления
+)
 start_point = (100, 150)
 end_point = (500, 450)
 
-# Генерирует список кортежей (x, y, delay) с реалистичными таймингами
-points = generator.generate(start_point, end_point)
+# 1. Генерация точек с индивидуальными микропаузами (x, y, step_delay)
+points_with_delays = generator.generate(start_point, end_point)
+
+# 2. Генерация чистых координат (x, y) для кастомных циклов CDP
+points = generator.generate_points(start_point, end_point)
+# или: points = generator.generate(start_point, end_point, with_delays=False)
+
+for px, py in points:
+    await tab.send(cdp_input.dispatch_mouse_event(type_="mouseMoved", x=px, y=py))
 ```
+
+Высокоуровневые функции `async_move_mouse` и `move_mouse` поддерживают алгоритм под именами `"windmouse"` и `"wind_mouse"`:
+
+```python
+await async_move_mouse(tab, x=500, y=450, algorithm="wind_mouse")
+```
+
 
 ### Генератор траекторий Безье (`BezierCurveGenerator`)
 
@@ -563,6 +586,79 @@ async def main():
     await pool.run_until_complete()
 ```
 
+### Сторожевой таймер неактивности и Scale-to-Zero (`IdleBrowserReaper`)
+
+Класс `IdleBrowserReaper` (и его алиас `IdleReaper`) представляет собой универсальный Watchdog для пулов браузеров (`nodriver`, `Playwright`, `Selenium`, `Camoufox`) и фоновых воркеров. Он непрерывно отслеживает временные метки активности инстансов и автоматически закрывает простаивающие процессы, высвобождая оперативную память (RAM).
+
+#### Двухуровневый контроль времени простоя
+1. **`idle_timeout_seconds`** — таймаут для закрытия избыточных инстансов (когда активно более одного браузера). Позволяет автоматически масштабировать пул вниз при спаде нагрузки.
+2. **`scale_to_zero_seconds`** — таймаут полного сброса пула до 0 (когда остался всего 1 браузер). Если система полностью простаивает, последний инстанс также закрывается (0 MB RAM).
+
+#### Конфигурация через `IdleReaperConfig`
+Настройки задаются через типизированную Pydantic-модель `IdleReaperConfig` с готовыми фабричными пресетами:
+
+```python
+from chutils.scraping.concurrency import IdleBrowserReaper, IdleReaperConfig
+
+# 1. Ручная настройка или готовый пресет
+config = IdleReaperConfig.preset_aggressive()
+# Доступные пресеты:
+# - IdleReaperConfig.preset_aggressive()  # idle: 30s, scale_to_zero: 60s, check: 5s
+# - IdleReaperConfig.preset_relaxed()     # idle: 300s, scale_to_zero: 900s, check: 30s
+# - IdleReaperConfig.preset_keep_warm()   # удерживать 1 инстанс всегда прогретым (scale_to_zero=0)
+
+# 2. Инициализация сторожевого таймера
+reaper = IdleBrowserReaper(
+    close_worker_fn=close_browser_instance,       # async или sync функция закрытия
+    is_worker_busy_fn=lambda name: is_busy(name), # воркеры с активными задачами не закрываются
+    get_active_workers_fn=lambda: list(workers.keys()),
+    get_last_used_fn=lambda name: last_used[name],
+    config=config,
+)
+
+# 3. Управление жизненным циклом через контекстный менеджер
+async with reaper:
+    # Фоновый мониторинг автоматически запущен
+    await do_scraping_work()
+# При выходе из блока фоновый цикл корректно останавливается
+```
+
+#### Загрузка из файла конфигурации (`config.yaml`)
+В файле `config.yaml` можно задать секцию `reaper`:
+```yaml
+reaper:
+  idle_timeout_seconds: 90.0
+  scale_to_zero_seconds: 240.0
+  check_interval_seconds: 10.0
+  enabled: true
+```
+
+И создать экземпляр одной строкой:
+```python
+reaper = IdleBrowserReaper.from_config(
+    close_worker_fn=close_fn,
+    is_worker_busy_fn=is_busy_fn,
+    get_active_workers_fn=get_workers_fn,
+    get_last_used_fn=get_last_used_fn,
+    config_section="reaper",
+)
+```
+
+#### Ручной запуск и динамическая перенастройка на лету
+```python
+# Запуск и остановка вручную
+reaper.start()
+...
+await reaper.stop()
+
+# Разовый вызов проверки (возвращает количество закрытых экземпляров)
+closed_count = await reaper.reap()
+
+# Динамическое изменение таймаутов без перезапуска приложения
+reaper.configure(idle_timeout_seconds=45.0, enabled=True)
+```
+
+
 
 
 ---
@@ -585,27 +681,39 @@ loaded_profile = ProfileManager.load("my_session.chprofile", password="secret_pa
 await ProfileManager.import_to_nodriver(nodriver_tab, loaded_profile)
 ```
 
-### Гигиена профилей и сброс флагов аварийного завершения (`sanitize_profile`)
+### Гигиена профилей и сброс флагов аварийного завершения (`sanitize_profile`, `sanitize_profile_crash_state`, `is_profile_locked`)
 
-При аварийном завершении процессов Chromium или закрытии по таймауту/сигналу браузер сохраняет в `Preferences` флаги `exit_type = "Crashed"` и `exited_cleanly = false`. При следующем старте Chromium отображает плашку *"Восстановить страницы? Chromium завершился некорректно"*. Этот инфобар меняет геометрию окна (`viewport`), сдвигает координаты кликов и детектируется антифрод-системами как автоматизация.
+При аварийном завершении процессов Chromium (OOM killer, отмена сессии, закрытие по таймауту/сигналу) браузер сохраняет в `Preferences` и `Local State` аварийные флаги `exit_type = "Crashed"` и `exited_cleanly = false`. При следующем старте Chromium отображает блокирующее модальное окно или плашку *"Восстановить страницы? Chromium завершил работу некорректно"*. Это окно перехватывает фокус, меняет геометрию окна (`viewport`), сдвигает экранные координаты кликов и детектируется антифрод-системами.
 
-Функция [`sanitize_profile`](file:///D:/PROJECTS/chutils/src/chutils/scraping/profiles/hygiene.py) автоматически:
-1. Сбрасывает флаг `exit_type` в `"Normal"` и выставляет `exited_cleanly = True` в файле `Preferences`.
-2. Устанавливает `session.restore_on_startup = 1` (открытие чистой вкладки).
-3. Очищает директории и файлы артефактов старых сессий (`Default/Sessions/Session_*`, `Tabs_*`, `Current Session/Tabs`, `Last Session/Tabs`).
+Функции [`sanitize_profile`](file:///D:/PROJECTS/chutils/src/chutils/scraping/profiles/hygiene.py) и её алиас [`sanitize_profile_crash_state`](file:///D:/PROJECTS/chutils/src/chutils/scraping/profiles/hygiene.py) автоматически:
+1. Сбрасывают флаг `exit_type` в `"Normal"`, выставляют `exited_cleanly = True` и `restore_after_crash = False` во всех найденных конфигурациях `Preferences` (`Default/Preferences`, корень профиля).
+2. Сбрасывают флаги падений и перезапусков в файле `Local State` (`profile.info_cache.*.exit_type = "Normal"`, `was.restarted = False`).
+3. Устанавливают `session.restore_on_startup = 1` (открытие чистой вкладки).
+4. Очищают директории и файлы артефактов старых сессий (`Default/Sessions/Session_*`, `Tabs_*`, `Current Session/Tabs`, `Last Session/Tabs`) с безопасным пропуском занятых дескрипторов.
+
+Функция [`is_profile_locked`](file:///D:/PROJECTS/chutils/src/chutils/scraping/profiles/hygiene.py) позволяет перед запуском проверить, не занят ли каталог профиля другим работающим процессом браузера (`lockfile`, `SingletonLock`, база `Default/Web Data`).
 
 ```python
-from chutils.scraping import sanitize_profile, ProfileManager, launch_nodriver
+from chutils.scraping import (
+    is_profile_locked,
+    launch_nodriver,
+    sanitize_profile,
+    sanitize_profile_crash_state,
+)
 
-# 1. Прямой вызов санитайзинга пользовательского профиля
-sanitize_profile("/path/to/chrome/user_data_dir")
+profile_path = "/path/to/chrome/user_data_dir"
 
-# Или через фасад ProfileManager:
-ProfileManager.sanitize_profile("/path/to/chrome/user_data_dir")
+# 1. Проверка блокировки профиля другим инстансом
+if is_profile_locked(profile_path):
+    print("Внимание: Профиль уже используется другим процессом Chromium!")
 
-# 2. В launch_nodriver и nodriver_session санитайзинг включен автоматически:
+# 2. Сброс флагов падения перед запуском
+sanitize_profile_crash_state(profile_path)
+# Или: sanitize_profile(profile_path)
+
+# 3. В launch_nodriver и nodriver_session санитайзинг включен автоматически:
 browser = await launch_nodriver(
-    user_data_dir="/path/to/chrome/user_data_dir",
+    user_data_dir=profile_path,
     sanitize_profile_dir=True,  # по умолчанию True
 )
 ```
@@ -729,6 +837,46 @@ async with async_nodriver_proxy(
     "socks5://user:pass@1.2.3.4:1080", mode="tunnel"
 ) as browser_args:
     browser = await nodriver.start(browser_args=browser_args)
+```
+
+### Безопасное хранение учетных данных прокси в системном Keyring (`KeyringProxyStorage`, `ProxySecretStorage`)
+
+При работе с приватными прокси с авторизацией (`http://user:password@host:port`) хранение паролей в открытом виде в JSON-файлах метаданных профилей (`profile_state.json`, `metadata.json`) создает риск компрометации (например, при резервном копировании или анализе логов).
+
+Класс `KeyringProxyStorage` (и алиас `ProxySecretStorage`) обеспечивает надежное разделение: учетные данные шифруются в системном хранилище ОС (Windows Credential Manager / macOS Keychain / Linux Secret Service) через `chutils.SecretManager`, а на диске и в логах сохраняется только безопасный замаскированный URL (`http://user:***@host:port`):
+
+```python
+from chutils.scraping import KeyringProxyStorage
+
+storage = KeyringProxyStorage(service_name="my_scraper_proxies")
+
+# 1. Привязка приватного прокси к профилю (сохраняется в Keyring)
+storage.set_proxy("worker_profile_1", "http://user:super_secret_p@ss@185.220.101.5:8080")
+
+# 2. Получение полного URL для запуска сессии браузера
+full_proxy = storage.get_proxy("worker_profile_1")
+# -> 'http://user:super_secret_p@ss@185.220.101.5:8080'
+
+# 3. Получение безопасного замаскированного URL для логов и UI
+masked = storage.get_masked_proxy("worker_profile_1")
+# -> 'http://user:***@185.220.101.5:8080'
+
+# 4. Восстановление оригинального пароля из замаскированной строки
+restored = storage.restore_proxy_url("worker_profile_1", "http://user:***@185.220.101.5:8080")
+# -> 'http://user:super_secret_p@ss@185.220.101.5:8080'
+
+# 5. Автоматическая санитизация словаря метаданных перед записью в JSON на диск
+meta_dict = {
+    "name": "worker_profile_1",
+    "proxy": "http://user:super_secret_p@ss@185.220.101.5:8080",
+    "auth_status": "ready",
+}
+# Сохраняет пароль в Keyring и заменяет его на '***' в сохраняемом словаре:
+disk_safe_meta = storage.sanitize_metadata_dict("worker_profile_1", meta_dict)
+print(disk_safe_meta["proxy"])  # 'http://user:***@185.220.101.5:8080'
+
+# 6. Удаление учетных данных при удалении профиля
+storage.delete_proxy("worker_profile_1")
 ```
 
 ---
@@ -912,6 +1060,99 @@ async def test_scraper_with_fixtures(local_test_server, mock_playwright_page):
     page = mock_playwright_page("<h1>Товар</h1>")
     assert await page.locator("h1").inner_text() == "Товар"
 ```
+
+### Инструментарий интерактивной разметки DOM и HUD-виджет (`DOMActionRecorderHUD`, Core DOM Scripts)
+
+При разработке парсеров, сценариев автоматизации или интеграции со сложными веб-сервисами (включая AI Studio, личные кабинеты, SPA на Angular/React) критически важно быстро аудировать селекторы, выявлять скрытые дубликаты в DOM и записывать последовательность действий пользователя.
+
+Модуль `chutils.scraping.testing` предоставляет визуальный плавающий виджет (`DOMActionRecorderHUD`), инжектируемый прямо в страницу браузера, и набор низкоуровневых JavaScript-хелперов:
+
+#### 1. Использование `DOMActionRecorder` / `DOMActionRecorderHUD`
+
+```python
+from chutils.scraping import (
+    DOMActionRecorder,
+    DOMActionRecorderHUD,
+    RecordedChecklistItem,
+)
+
+# 1. Задаем чеклист целевых шагов сценария
+checklist = [
+    RecordedChecklistItem(
+        id="model_select",
+        label="1. Выбрать модель в селекторе",
+        hints=["ms-model-selector", "[role='option']", "button.model-card"],
+    ),
+    RecordedChecklistItem(
+        id="prompt_input",
+        label="2. Ввести текст промпта",
+        hints=["textarea", "div[contenteditable='true']", "ms-prompt-box"],
+    ),
+    RecordedChecklistItem(
+        id="run_btn",
+        label="3. Нажать кнопку отправки",
+        hints=["button[aria-label*='Run' i]", "button.send-btn"],
+    ),
+]
+
+recorder = DOMActionRecorder(
+    checklist_items=checklist,
+    widget_title="Разметка сценария генерации",
+    container_selectors=[".custom-modal", "[role='dialog']"],
+)
+
+# 2. Внедрение виджета в страницу (nodriver Tab / Playwright Page)
+await recorder.inject(tab)
+
+# 3. Асинхронное ожидание интерактивных действий пользователя
+# Пользователь кликает по интерфейсу, отмечает пункты в HUD и нажимает кнопку "Завершить запись"
+report = await recorder.wait_for_finish(
+    tab,
+    poll_interval=0.5,
+    timeout=120.0,
+    on_action=lambda act: print(f"Зафиксирован шаг {act.action_id}: {act.computed_selector}"),
+    session_name="auth_user_flow",
+    target_name="ai_studio",
+)
+
+# 4. Сохранение отчетов в формате JSON и подробного Markdown
+json_file, md_file = recorder.export_report(
+    report,
+    json_path=Path("reports/action_session.json"),
+)
+print(f"Отчет успешно сохранен: {md_file}")
+```
+
+#### Возможности плавающего виджета HUD:
+- **Trusted Types совместимость:** Отрисовка элементов через нативный DOM API (`document.createElement`) без вызова `innerHTML`.
+- **Drag-and-Drop:** Перемещение виджета по экрану с запоминанием координат.
+- **Интерактивный чеклист:** Автоматическая отметка совпадений по ориентирам `hints` либо ручной клик по пункту чеклиста для привязки к последнему действию оператора.
+- **Сворачивание/Разворачивание:** Кнопка `[-]` сворачивает виджет в компактную панель, чтобы не перекрывать целевой интерфейс.
+- **Детекция контекста (Scope):** Выявление родительских оверлеев и модальных окон (`dialog`, `[role="dialog"]`, `.modal`, `.cdk-overlay-pane`), генерация составных селекторов (`.modal button.save`).
+- **Предупреждения о дубликатах:** Автоматическое обнаружение селекторов, находящих более одного элемента в DOM.
+- **Mutation Diff:** Анализ изменений DOM (`MutationObserver`) с фиксацией появившихся диалогов, списков и смены атрибутов (`aria-expanded`, `disabled`).
+
+#### 2. Низкоуровневые DOM-хелперы и полифилы селекторов (`dom_scripts`)
+
+```python
+from chutils.scraping.testing import (
+    CORE_DOM_HELPERS_JS,
+    PAGE_META_SCRIPT,
+    build_scan_selectors_script,
+)
+
+# Пакетное сканирование групп селекторов на странице
+scan_js = build_scan_selectors_script({
+    "buttons": ["button.primary", "button:contains('Войти')", "button:has-text('Submit')"],
+    "inputs": ["input[name='query']", "textarea"],
+})
+diagnostic_results = await tab.evaluate(scan_js)
+```
+
+- **`queryAllSafe(selector)`:** Безопасный поиск элементов с полифилами псевдоселекторов `:contains('текст')` и `:has-text('текст')`, отсутствующих в стандартном `document.querySelectorAll`.
+- **`isElementVisible(element)`:** Проверка реальной физической видимости для человека (стили `display`, `visibility`, `opacity`, размеры `offsetWidth`, `offsetHeight`, `getBoundingClientRect`).
+- **`getCssSelector(element)`:** Генератор уникального устойчивого селектора по ID, атрибутам (`data-testid`, `aria-label`, `role`), custom-тегам и пути родителей.
+
 
 ---
 
