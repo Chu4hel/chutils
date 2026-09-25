@@ -1,0 +1,5198 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Простые утилиты для конфигурации, логирования и секретов в Python.">
+      
+      
+        <meta name="author" content="Chu4hel">
+      
+      
+        <link rel="canonical" href="https://Chu4hel.github.io/chutils/scraping/">
+      
+      
+        <link rel="prev" href="../qt/">
+      
+      
+        <link rel="next" href="../captcha/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Имитация поведения (scraping) - chutils</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#-chutilsscrapinghumanize" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Верхний колонтитул">
+    <a href=".." title="chutils" class="md-header__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            chutils
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Имитация поведения (scraping)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Поиск">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Очистить" aria-label="Очистить" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Инициализация поиска
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Вкладки" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Главная
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../ai_lint/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Проверка AI-готовности
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../recipes/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Рецепты
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../http/" class="md-tabs__link">
+          
+  
+  
+  Модули и интеграции
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Справочник API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../testing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Тестирование
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../migration/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Миграция: v2 -> v3
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../dependencies/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Опциональные зависимости
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../cli/" class="md-tabs__link">
+          
+  
+  
+  CLI Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../INTEGRATION_AI/" class="md-tabs__link">
+          
+  
+  
+  Для AI-ассистентов
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_RU/" class="md-tabs__link">
+          
+  
+  
+  Проект
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Навигация" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="chutils" class="md-nav__button md-logo" aria-label="chutils" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    chutils
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Главная
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai_lint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка AI-готовности
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../recipes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Рецепты
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Модули и интеграции
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Модули и интеграции
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../http/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP-клиент и стриминг
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Веб-утилиты (web)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../telegram/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интеграция с Telegram
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vk_bot/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ВКонтакте Бот (Callback API)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vkma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VK Mini Apps (VKMA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vk_testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Тестирование VK
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../audit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Журнал аудита
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../store/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key-Value хранилище (Store)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../qt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Интеграция с Qt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Имитация поведения (scraping)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Имитация поведения (scraping)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Установка
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Математические генераторы
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Математические генераторы">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#windmouse-windmousegenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Физический генератор траекторий WindMouse (WindMouseGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#beziercurvegenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор траекторий Безье (BezierCurveGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jitterdelaygenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор задержек с джиттером (JitterDelayGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyboardtypogenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор опечаток клавиатуры (KeyboardTypoGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioralprofile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Биометрический профиль моторики (BehavioralProfile)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Имитация мыши, скролла и клавиатуры
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Имитация мыши, скролла и клавиатуры">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#playwright" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для Playwright (асинхронные)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodriver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для nodriver (асинхронные)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Обертки для nodriver (асинхронные)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cdp-timeout-close_tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Защита от зависаний CDP и таймауты (timeout, close_tab)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selenium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для Selenium (синхронные)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Анти-детект и маскировка браузеров
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Анти-детект и маскировка браузеров">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#js-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JS-инъекции анти-детекта
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#antidetectconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Декларативная конфигурация AntidetectConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fingerprintsynthesizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтезатор цифровой личности браузера (FingerprintSynthesizer)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Синтезатор цифровой личности браузера (FingerprintSynthesizer)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование синтезатора
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudflare-turnstile-solve_cf_turnstile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматическое решение Cloudflare Turnstile (solve_cf_turnstile)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_browser_launch_args" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Флаги запуска браузера (get_browser_launch_args)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-profilewarmer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Прогрев профилей (ProfileWarmer)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Прогрев профилей (ProfileWarmer)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#playwright-nodriver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронный прогрев (Playwright и nodriver)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selenium_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синхронный прогрев (Selenium)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Вспомогательные утилиты органического поиска
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-chutilsscrapingconcurrency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Параллельный скрапинг (chutils.scraping.concurrency)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Параллельный скрапинг (chutils.scraping.concurrency)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scale-to-zero-idlebrowserreaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сторожевой таймер неактивности и Scale-to-Zero (IdleBrowserReaper)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Сторожевой таймер неактивности и Scale-to-Zero (IdleBrowserReaper)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Двухуровневый контроль времени простоя
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#idlereaperconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Конфигурация через IdleReaperConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Загрузка из файла конфигурации (config.yaml)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ручной запуск и динамическая перенастройка на лету
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-profilemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Перенос профилей и сессий браузеров (ProfileManager)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Перенос профилей и сессий браузеров (ProfileManager)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sanitize_profile-sanitize_profile_crash_state-is_profile_locked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Гигиена профилей и сброс флагов аварийного завершения (sanitize_profile, sanitize_profile_crash_state, is_profile_locked)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-proxyconfig-parse_proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Конфигурация и парсинг прокси (ProxyConfig, parse_proxy)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Конфигурация и парсинг прокси (ProxyConfig, parse_proxy)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodriver-chromium-chromeproxyextension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Авторизация прокси в nodriver / Chromium через расширение (ChromeProxyExtension)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-asyncproxytunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальный асинхронный туннель-форвардер (AsyncProxyTunnel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proxypool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Пул прокси и стратегии ротации (ProxyPool)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodriver_proxy-get_playwright_proxy-get_selenium_proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Фабрики адаптеров для браузерных движков (nodriver_proxy, get_playwright_proxy, get_selenium_proxy)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyring-keyringproxystorage-proxysecretstorage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Безопасное хранение учетных данных прокси в системном Keyring (KeyringProxyStorage, ProxySecretStorage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-chutilsscrapingtesting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Автотестирование парсеров и моки страниц (chutils.scraping.testing)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Автотестирование парсеров и моки страниц (chutils.scraping.testing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodriver-mocknodrivertab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Мок nodriver (MockNodriverTab)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#playwright-mockplaywrightpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Мок Playwright (MockPlaywrightPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selenium-mockseleniumdriver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Мок Selenium (MockSeleniumDriver)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http-localtestserver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальный тестовый HTTP-сервер песочницы (LocalTestServer)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#livebrowsersession" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Менеджер живых браузерных сессий (LiveBrowserSession)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-snapshotrecorder-use_html_snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Оффлайн-снапшоты страниц (SnapshotRecorder, @use_html_snapshot)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extraction-quality-assertions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация качества извлечения данных (Extraction Quality Assertions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytest-chutilsscrapingtestingfixtures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Встроенные фикстуры Pytest (chutils.scraping.testing.fixtures)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dom-hud-domactionrecorderhud-core-dom-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Инструментарий интерактивной разметки DOM и HUD-виджет (DOMActionRecorderHUD, Core DOM Scripts)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Инструментарий интерактивной разметки DOM и HUD-виджет (DOMActionRecorderHUD, Core DOM Scripts)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-domactionrecorder-domactionrecorderhud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Использование DOMActionRecorder / DOMActionRecorderHUD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Возможности плавающего виджета HUD:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dom-dom_scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Низкоуровневые DOM-хелперы и полифилы селекторов (dom_scripts)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-camoufox-chutilsscrapingcamoufox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Антидетект-браузер Camoufox (chutils.scraping.camoufox)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-js-web-workers-client-hints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Улучшенный JS-антидетект, Web Workers и Client Hints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Улучшенный JS-антидетект, Web Workers и Client Hints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http-localtestserver_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальный тестовый HTTP-сервер песочницы (LocalTestServer)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#livebrowsersession_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Менеджер живых браузерных сессий (LiveBrowserSession)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-snapshotrecorder-use_html_snapshot_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Оффлайн-снапшоты страниц (SnapshotRecorder, @use_html_snapshot)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extraction-quality-assertions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация качества извлечения данных (Extraction Quality Assertions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytest-chutilsscrapingtestingfixtures_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Встроенные фикстуры Pytest (chutils.scraping.testing.fixtures)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-camoufox-chutilsscrapingcamoufox_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Антидетект-браузер Camoufox (chutils.scraping.camoufox)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-js-web-workers-client-hints_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Улучшенный JS-антидетект, Web Workers и Client Hints
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-nodriver-launch_nodriver-nodriver_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Запуск Nodriver с антидетектом (launch_nodriver, nodriver_session)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-cloudflare-turnstile-solve_cf_turnstile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Автоматическое решение Cloudflare Turnstile (solve_cf_turnstile)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Автоматическое решение Cloudflare Turnstile (solve_cf_turnstile)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#solve_cf_turnstile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ключевые возможности solve_cf_turnstile:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-chutilsscrapingfingerprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Синтезатор цифровой личности и генератор отпечатков (chutils.scraping.fingerprint)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Синтезатор цифровой личности и генератор отпечатков (chutils.scraping.fingerprint)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Концепция архитектуры
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сохранение и сериализация профиля
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-chutilsscrapingprofiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Управление профилями браузеров и сессиями (chutils.scraping.profiles)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Управление профилями браузеров и сессиями (chutils.scraping.profiles)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Основные компоненты
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodriver_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Пример использования адаптера nodriver
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-smartproxyresolver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Умный резолвер и валидатор прокси (SmartProxyResolver)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Умный резолвер и валидатор прокси (SmartProxyResolver)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Пример использования
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синхронный вызов
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-asyncproxytunnel_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальный прокси-туннель (AsyncProxyTunnel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-pytest-chutilsscrapingtesting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Тестирование скраперов и Pytest-фикстуры (chutils.scraping.testing)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Тестирование скраперов и Pytest-фикстуры (chutils.scraping.testing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pytest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Авторегистрация плагина Pytest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Доступные фикстуры
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-assertions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Утверждения качества данных (Data Assertions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../captcha/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Решение капчи (captcha)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Система плагинов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom_config_providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Кастомные провайдеры конфигов
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Справочник API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Тестирование
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Миграция: v2 -> v3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dependencies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Опциональные зависимости
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Комплексная проверка (check)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/init/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инициализация (init)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Управление секретами (secrets)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/validate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Валидация (validate)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/env/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Синхронизация окружения (env)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/db/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Управление БД (db)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/show_paths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Пути поиска (show-paths)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/template/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Генерация шаблонов (template)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Настройки и отладка (config)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/dev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Инструменты разработчика (dev)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli/pypi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проверка зеркал (pypi)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Для AI-ассистентов
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Для AI-ассистентов
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../INTEGRATION_AI/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Руководство по интеграции
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai_hints/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Советы для AI (AI Hints)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai_examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Примеры Few-Shot
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Проект
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Проект
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Обзор (RU)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CODE_OF_CONDUCT_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Кодекс поведения
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CONTRIBUTING_RU/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Правила участия
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Установка
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Математические генераторы
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Математические генераторы">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#windmouse-windmousegenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Физический генератор траекторий WindMouse (WindMouseGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#beziercurvegenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор траекторий Безье (BezierCurveGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jitterdelaygenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор задержек с джиттером (JitterDelayGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyboardtypogenerator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Генератор опечаток клавиатуры (KeyboardTypoGenerator)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioralprofile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Биометрический профиль моторики (BehavioralProfile)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Имитация мыши, скролла и клавиатуры
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Имитация мыши, скролла и клавиатуры">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#playwright" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для Playwright (асинхронные)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodriver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для nodriver (асинхронные)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Обертки для nodriver (асинхронные)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cdp-timeout-close_tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Защита от зависаний CDP и таймауты (timeout, close_tab)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selenium" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Обертки для Selenium (синхронные)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Анти-детект и маскировка браузеров
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Анти-детект и маскировка браузеров">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#js-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JS-инъекции анти-детекта
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#antidetectconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Декларативная конфигурация AntidetectConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fingerprintsynthesizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синтезатор цифровой личности браузера (FingerprintSynthesizer)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Синтезатор цифровой личности браузера (FingerprintSynthesizer)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Использование синтезатора
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudflare-turnstile-solve_cf_turnstile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Автоматическое решение Cloudflare Turnstile (solve_cf_turnstile)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_browser_launch_args" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Флаги запуска браузера (get_browser_launch_args)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-profilewarmer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Прогрев профилей (ProfileWarmer)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Прогрев профилей (ProfileWarmer)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#playwright-nodriver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Асинхронный прогрев (Playwright и nodriver)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selenium_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синхронный прогрев (Selenium)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Вспомогательные утилиты органического поиска
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-chutilsscrapingconcurrency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Параллельный скрапинг (chutils.scraping.concurrency)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Параллельный скрапинг (chutils.scraping.concurrency)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scale-to-zero-idlebrowserreaper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сторожевой таймер неактивности и Scale-to-Zero (IdleBrowserReaper)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Сторожевой таймер неактивности и Scale-to-Zero (IdleBrowserReaper)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Двухуровневый контроль времени простоя
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#idlereaperconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Конфигурация через IdleReaperConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Загрузка из файла конфигурации (config.yaml)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ручной запуск и динамическая перенастройка на лету
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-profilemanager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Перенос профилей и сессий браузеров (ProfileManager)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Перенос профилей и сессий браузеров (ProfileManager)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sanitize_profile-sanitize_profile_crash_state-is_profile_locked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Гигиена профилей и сброс флагов аварийного завершения (sanitize_profile, sanitize_profile_crash_state, is_profile_locked)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-proxyconfig-parse_proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Конфигурация и парсинг прокси (ProxyConfig, parse_proxy)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Конфигурация и парсинг прокси (ProxyConfig, parse_proxy)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodriver-chromium-chromeproxyextension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Авторизация прокси в nodriver / Chromium через расширение (ChromeProxyExtension)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-asyncproxytunnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальный асинхронный туннель-форвардер (AsyncProxyTunnel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proxypool" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Пул прокси и стратегии ротации (ProxyPool)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodriver_proxy-get_playwright_proxy-get_selenium_proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Фабрики адаптеров для браузерных движков (nodriver_proxy, get_playwright_proxy, get_selenium_proxy)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyring-keyringproxystorage-proxysecretstorage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Безопасное хранение учетных данных прокси в системном Keyring (KeyringProxyStorage, ProxySecretStorage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-chutilsscrapingtesting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Автотестирование парсеров и моки страниц (chutils.scraping.testing)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Автотестирование парсеров и моки страниц (chutils.scraping.testing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodriver-mocknodrivertab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Мок nodriver (MockNodriverTab)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#playwright-mockplaywrightpage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Мок Playwright (MockPlaywrightPage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selenium-mockseleniumdriver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Мок Selenium (MockSeleniumDriver)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http-localtestserver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальный тестовый HTTP-сервер песочницы (LocalTestServer)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#livebrowsersession" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Менеджер живых браузерных сессий (LiveBrowserSession)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-snapshotrecorder-use_html_snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Оффлайн-снапшоты страниц (SnapshotRecorder, @use_html_snapshot)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extraction-quality-assertions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация качества извлечения данных (Extraction Quality Assertions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytest-chutilsscrapingtestingfixtures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Встроенные фикстуры Pytest (chutils.scraping.testing.fixtures)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dom-hud-domactionrecorderhud-core-dom-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Инструментарий интерактивной разметки DOM и HUD-виджет (DOMActionRecorderHUD, Core DOM Scripts)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Инструментарий интерактивной разметки DOM и HUD-виджет (DOMActionRecorderHUD, Core DOM Scripts)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-domactionrecorder-domactionrecorderhud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Использование DOMActionRecorder / DOMActionRecorderHUD
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Возможности плавающего виджета HUD:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dom-dom_scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Низкоуровневые DOM-хелперы и полифилы селекторов (dom_scripts)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-camoufox-chutilsscrapingcamoufox" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Антидетект-браузер Camoufox (chutils.scraping.camoufox)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-js-web-workers-client-hints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Улучшенный JS-антидетект, Web Workers и Client Hints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Улучшенный JS-антидетект, Web Workers и Client Hints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http-localtestserver_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальный тестовый HTTP-сервер песочницы (LocalTestServer)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#livebrowsersession_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Менеджер живых браузерных сессий (LiveBrowserSession)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-snapshotrecorder-use_html_snapshot_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Оффлайн-снапшоты страниц (SnapshotRecorder, @use_html_snapshot)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extraction-quality-assertions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Валидация качества извлечения данных (Extraction Quality Assertions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pytest-chutilsscrapingtestingfixtures_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Встроенные фикстуры Pytest (chutils.scraping.testing.fixtures)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-camoufox-chutilsscrapingcamoufox_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Антидетект-браузер Camoufox (chutils.scraping.camoufox)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-js-web-workers-client-hints_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Улучшенный JS-антидетект, Web Workers и Client Hints
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-nodriver-launch_nodriver-nodriver_session" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Запуск Nodriver с антидетектом (launch_nodriver, nodriver_session)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-cloudflare-turnstile-solve_cf_turnstile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Автоматическое решение Cloudflare Turnstile (solve_cf_turnstile)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Автоматическое решение Cloudflare Turnstile (solve_cf_turnstile)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#solve_cf_turnstile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ключевые возможности solve_cf_turnstile:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-chutilsscrapingfingerprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Синтезатор цифровой личности и генератор отпечатков (chutils.scraping.fingerprint)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. Синтезатор цифровой личности и генератор отпечатков (chutils.scraping.fingerprint)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Концепция архитектуры
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Быстрый старт
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Сохранение и сериализация профиля
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-chutilsscrapingprofiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Управление профилями браузеров и сессиями (chutils.scraping.profiles)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. Управление профилями браузеров и сессиями (chutils.scraping.profiles)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Основные компоненты
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodriver_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Пример использования адаптера nodriver
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-smartproxyresolver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Умный резолвер и валидатор прокси (SmartProxyResolver)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="13. Умный резолвер и валидатор прокси (SmartProxyResolver)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Пример использования
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Синхронный вызов
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-asyncproxytunnel_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Локальный прокси-туннель (AsyncProxyTunnel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-pytest-chutilsscrapingtesting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Тестирование скраперов и Pytest-фикстуры (chutils.scraping.testing)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Тестирование скраперов и Pytest-фикстуры (chutils.scraping.testing)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pytest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Авторегистрация плагина Pytest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Доступные фикстуры
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-assertions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Утверждения качества данных (Data Assertions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="-chutilsscrapinghumanize">Имитация поведения человека и анти-детект (chutils.scraping.humanize)</h1>
+<p>Модуль <code>chutils.scraping.humanize</code> разработан для имитации естественного человеческого поведения при автоматизации
+браузеров и обхода систем защиты от ботов. Он предоставляет математические алгоритмы генерации человекоподобных
+траекторий мыши, неравномерного ввода текста, случайных пауз, а также средства настройки анти-детект профилей для
+Playwright и Selenium.</p>
+<p>Данный модуль поставляется как опциональный экстра-пакет <code>chutils[scraping]</code>.</p>
+<hr />
+<h2 id="_1">Установка</h2>
+<p>Для работы с интеграциями для Playwright и Selenium установите пакет с поддержкой экстра-зависимостей:</p>
+<pre><code class="language-bash">pip install &quot;chutils[scraping]&quot;
+</code></pre>
+<p>Для использования антидетект-браузера нового поколения Camoufox (Playwright Firefox с C++ инъекциями):</p>
+<pre><code class="language-bash">pip install &quot;chutils[camoufox]&quot;
+</code></pre>
+<p><em>Примечание: Если вам нужны только математические генераторы (траектории, задержки, опечатки), вы можете использовать их
+без установки дополнительных библиотек автоматизации.</em></p>
+<hr />
+<h2 id="1">1. Математические генераторы</h2>
+<p>Математический модуль работает автономно и не требует внешних зависимостей.</p>
+<h3 id="windmouse-windmousegenerator">Физический генератор траекторий WindMouse (<code>WindMouseGenerator</code>)</h3>
+<p>Имитирует биомеханическое движение руки человека на основе физической модели (гравитационное притяжение к цели, случайный мышечный ветер/микроколебания, инерция и естественное притормаживание в целевой зоне). Обеспечивает наилучший обход поведенческого антифрода (Cloudflare, DataDome, reCAPTCHA, FingerprintJS Pro).</p>
+<ul>
+<li><strong>Плавное замедление:</strong> В радиусе <code>target_area</code> максимальный шаг пропорционально падает (<code>cur_max_s = max(2.0, max_s * factor)</code>), симулируя естественное замедление кисти руки перед кликом.</li>
+<li><strong>Автоматическая дедупликация:</strong> Подряд идущие одинаковые координаты отсекаются, исключая холостой спам CDP-событий <code>Input.dispatchMouseEvent(type="mouseMoved")</code>.</li>
+<li><strong>Гибкий формат вывода:</strong> Поддерживает как кортежи с таймингами <code>(x, y, delay)</code>, так и чистые экранные координаты <code>(x, y)</code>.</li>
+</ul>
+<pre><code class="language-python">from chutils.scraping.humanize import WindMouseGenerator
+
+generator = WindMouseGenerator(
+    gravity=9.0,      # Сила притяжения курсора к цели
+    wind=3.5,         # Амплитуда случайных мышечных колебаний
+    max_step=14.0,    # Максимальная скорость шага
+    target_area=8.0,  # Радиус целевой зоны замедления
+)
+start_point = (100, 150)
+end_point = (500, 450)
+
+# 1. Генерация точек с индивидуальными микропаузами (x, y, step_delay)
+points_with_delays = generator.generate(start_point, end_point)
+
+# 2. Генерация чистых координат (x, y) для кастомных циклов CDP
+points = generator.generate_points(start_point, end_point)
+# или: points = generator.generate(start_point, end_point, with_delays=False)
+
+for px, py in points:
+    await tab.send(cdp_input.dispatch_mouse_event(type_=&quot;mouseMoved&quot;, x=px, y=py))
+</code></pre>
+<p>Высокоуровневые функции <code>async_move_mouse</code> и <code>move_mouse</code> поддерживают алгоритм под именами <code>"windmouse"</code> и <code>"wind_mouse"</code>:</p>
+<pre><code class="language-python">await async_move_mouse(tab, x=500, y=450, algorithm=&quot;wind_mouse&quot;)
+</code></pre>
+<h3 id="beziercurvegenerator">Генератор траекторий Безье (<code>BezierCurveGenerator</code>)</h3>
+<p>Позволяет рассчитывать плавные кривые перемещения мыши с естественным ускорением в начале и замедлением в конце
+движения (ease-in-out).</p>
+<pre><code class="language-python">from chutils.scraping.humanize import BezierCurveGenerator
+
+generator = BezierCurveGenerator()
+start_point = (100, 150)
+end_point = (500, 450)
+
+# Генерирует список из 30 координат (x, y)
+points = generator.generate(start_point, end_point, steps=30)
+</code></pre>
+<h3 id="jitterdelaygenerator">Генератор задержек с джиттером (<code>JitterDelayGenerator</code>)</h3>
+<p>Рассчитывает задержки на основе логнормального или нормального распределения. Большинство задержек будут короткими, но
+изредка будут возникать естественные длинные паузы.</p>
+<pre><code class="language-python">from chutils.scraping.humanize import JitterDelayGenerator
+
+delay_gen = JitterDelayGenerator(strategy=&quot;lognormal&quot;, jitter=0.15)
+base_delay = 2.0
+
+# Возвращает случайное число вокруг 2.0
+delay = delay_gen.generate(base_delay)
+</code></pre>
+<h3 id="keyboardtypogenerator">Генератор опечаток клавиатуры (<code>KeyboardTypoGenerator</code>)</h3>
+<p>Генерирует последовательности нажатий клавиш, включая реалистичные опечатки на близкорасположенных клавишах (поддерживаются раскладки QWERTY и ЙЦУКЕН), с
+последующим стиранием опечаток через Backspace и вводом правильных букв.</p>
+<p>Также поддерживается имитация редкой ошибки переключения раскладки (<code>layout_error_rate</code>), возникающей <strong>строго в начале ввода</strong> (например, ввод 1–3 символов латиницей <code>Ghb...</code> вместо кириллицы с последующим стиранием и повторным вводом <code>Привет...</code>).</p>
+<p>Кроме того, генератор поддерживает продвинутую механику <strong>отложенного исправления опечаток</strong> (<code>delayed_fix_rate</code>): когда пользователь допускает ошибку в слове, по инерции допечатывает несколько последующих слов, а затем, не удаляя написанный хвост через каскад Backspace, возвращается клавишами стрелок (<code>ArrowLeft</code>) к месту опечатки, исправляет её, и мгновенно возвращается в конец строки клавишей <code>End</code> (или серией <code>ArrowRight</code>).</p>
+<pre><code class="language-python">from chutils.scraping.humanize import KeyboardTypoGenerator
+
+typo_gen = KeyboardTypoGenerator(layout_error_rate=0.03, delayed_fix_rate=0.02)
+# Или передавая напрямую в generate_sequence:
+sequence = typo_gen.generate_sequence(
+    &quot;Автоматизация сбора данных и имитация поведения пользователя&quot;,
+    error_rate=0.04,
+    layout_error_rate=0.02,
+    delayed_fix_rate=0.015,
+)
+
+# Возвращает список объектов TypoAction (action='type'|'backspace'|'key', char='...')
+</code></pre>
+<h3 id="behavioralprofile">Биометрический профиль моторики (<code>BehavioralProfile</code>)</h3>
+<p><code>BehavioralProfile</code> объединяет все поведенческие параметры пользователя (скорость печати, опечатки, физику мыши и интервалы удержания) в единую Pydantic-модель.
+С помощью фабричного метода <code>.from_seed(seed)</code> можно детерминированно сгенерировать уникальный реалистичный почерк для конкретной сессии, аккаунта или браузерного профиля:</p>
+<pre><code class="language-python">from chutils.scraping.humanize import BehavioralProfile
+
+# Детерминированный профиль по сиду аккаунта:
+profile = BehavioralProfile.from_seed(&quot;user_account_42&quot;)
+
+print(profile.speed_wpm)        # напр., 52.4 WPM
+print(profile.typo_rate)        # напр., 0.038 (3.8% опечаток)
+print(profile.delayed_fix_rate) # отложенное исправление стрелками (напр., 0.015)
+print(profile.gravity)          # физика мыши WindMouse
+
+print(profile.key_hold_time)    # диапазон удержания клавиш (напр., 0.035 - 0.075 сек)
+print(profile.click_hold_time)  # диапазон удержания клика (напр., 0.052 - 0.114 сек)
+
+# Готовые фабрики генераторов:
+wind_mouse = profile.create_wind_mouse()
+typo_gen = profile.create_typo_generator()
+
+# Прямые вызовы действий с биометрией профиля:
+await profile.async_type_text(page, selector=&quot;#login&quot;, text=&quot;admin@example.com&quot;)
+await profile.async_click(page, selector=&quot;#submit-btn&quot;)
+</code></pre>
+<hr />
+<h2 id="2">2. Имитация мыши, скролла и клавиатуры</h2>
+<p>Модуль предоставляет обертки для Playwright (асинхронные) и Selenium (синхронные).</p>
+<h3 id="playwright">Обертки для Playwright (асинхронные)</h3>
+<pre><code class="language-python">from chutils.scraping.humanize import (
+    async_move_mouse,
+    async_click,
+    async_scroll_to,
+    async_type_text,
+    async_human_sleep,
+)
+
+# Плавное движение мыши (по умолчанию используется WindMouse или Bezier)
+await async_move_mouse(page, x=400, y=300, start=(0, 0), algorithm=&quot;windmouse&quot;)
+
+# Реалистичный клик по селектору или координатам (с наведением, микропаузами и удержанием)
+await async_click(page, selector=&quot;#submit-btn&quot;)
+
+# Плавный скролл страницы по оси Y
+await async_scroll_to(page, x=0, y=800)
+
+# Ввод текста со скоростью 40 WPM и вероятностью опечаток 5%
+await async_type_text(
+    page, selector=&quot;#username&quot;, text=&quot;my_user_login&quot;, error_rate=0.05, speed_wpm=40.0
+)
+
+# Асинхронная пауза &quot;на чтение&quot; от 1 до 3 секунд
+await async_human_sleep(1.0, 3.0)
+</code></pre>
+<h3 id="nodriver">Обертки для nodriver (асинхронные)</h3>
+<p>Те же асинхронные функции поддерживают автоматизацию на базе <code>nodriver</code> (все действия транслируются напрямую через CDP протокол):</p>
+<pre><code class="language-python">from chutils.scraping.humanize import (
+    async_move_mouse,
+    async_click,
+    async_scroll_to,
+    async_type_text,
+)
+
+# Плавное движение мыши (транслируется в CDP dispatchMouseEvent)
+await async_move_mouse(tab, x=400, y=300, start=(0, 0), algorithm=&quot;windmouse&quot;)
+
+# Реалистичный клик через CDP с паузой фокусировки и настраиваемым удержанием (hold_time)
+await async_click(tab, x=400, y=300, hold_time=(0.05, 0.12))
+
+# Плавный скролл страницы через JS evaluate
+await async_scroll_to(tab, x=0, y=800)
+
+# Ввод текста с опечатками и физиологической задержкой нажатия клавиш (key_hold_time)
+await async_type_text(
+    tab,
+    selector=&quot;#username&quot;,
+    text=&quot;my_user_login&quot;,
+    error_rate=0.05,
+    speed_wpm=40.0,
+    key_hold_time=(0.04, 0.09),
+    timeout=5.0,  # Защита от зависания CDP
+)
+
+# Адаптивный ввод (Paste/Ctrl+V для длинных текстов, промптов и кода):
+# Короткие строки печатаются по буквам, а тексты длиннее paste_threshold вставляются
+# целиком через DOM Prototype Setter с диспатчем событий input/change (React/Vue/Angular)
+# и естественными паузами обдумывания до и после вставки.
+# Для посимвольного набора поддержано точное стирание опечаток (commands=[&quot;deleteContentBackward&quot;])
+# и автоматическая финальная сверка/синхронизация значения (Self-Healing).
+await async_type_text(
+    tab,
+    selector=&quot;#prompt-input&quot;,
+    text=long_prompt_or_code,
+    paste_threshold=100,
+    paste_delay_before=(0.5, 1.2),
+    paste_delay_after=(0.4, 0.8),
+    timeout=10.0,
+)
+</code></pre>
+<h4 id="cdp-timeout-close_tab">Защита от зависаний CDP и таймауты (<code>timeout</code>, <code>close_tab</code>)</h4>
+<p>Все асинхронные действия (<code>async_move_mouse</code>, <code>async_click</code>, <code>async_scroll_to</code>, <code>async_type_text</code>) принимают опциональный параметр <code>timeout: float | None = None</code>. При зависании сокета CDP или падении рендерера браузера операция прерывается с выбросом <code>TimeoutError</code>, не блокируя выполнение программы.</p>
+<p>Для безопасного закрытия вкладок nodriver модуль предоставляет функцию <code>close_tab</code>:</p>
+<pre><code class="language-python">from chutils.scraping import close_tab
+
+# Безопасное закрытие вкладки с таймаутом (по умолчанию timeout=3.0с)
+# Перехватывает TimeoutError и ошибки отвалившегося CDP сокета
+await close_tab(tab, timeout=3.0)
+</code></pre>
+<h3 id="selenium">Обертки для Selenium (синхронные)</h3>
+<pre><code class="language-python">from chutils.scraping.humanize import (
+    move_mouse,
+    click,
+    scroll_to,
+    type_text,
+    human_sleep,
+)
+
+# Плавное движение мыши с физической моделью WindMouse
+move_mouse(driver, x=400, y=300, start=(0, 0), algorithm=&quot;windmouse&quot;)
+
+# Реалистичный клик
+click(driver, selector=&quot;#submit-btn&quot;)
+
+# Плавный скролл
+scroll_to(driver, x=0, y=800)
+
+# Ввод текста
+type_text(
+    driver, selector=&quot;#username&quot;, text=&quot;my_user_login&quot;, error_rate=0.05, speed_wpm=40.0
+)
+
+# Синхронная пауза
+human_sleep(1.0, 3.0)
+</code></pre>
+<hr />
+<h2 id="3-">3. Анти-детект и маскировка браузеров</h2>
+<p>Для минимизации вероятности обнаружения бот-детектором (например, Cloudflare, Akamai, Imperva) модуль предоставляет
+JS-инъекции и флаги запуска.</p>
+<h3 id="js-">JS-инъекции анти-детекта</h3>
+<p>Инъекция скрывает автоматизацию на низком уровне JavaScript до загрузки веб-страницы:</p>
+<ul>
+<li>Защита от детекта вмешательства (Anti-Tampering): все подмененные методы возвращают <code>[native code]</code> при вызове <code>Function.prototype.toString</code>.</li>
+<li>Удаляет и переопределяет свойство <code>navigator.webdriver</code> с сохранением корректных атрибутов дескриптора.</li>
+<li>Добавляет минимальный псевдослучайный шум к пикселям Canvas (<code>getImageData</code>), искажая статический Canvas-отпечаток.</li>
+<li>Маскирует WebGL параметры видеокарты одновременно для <code>WebGLRenderingContext</code> (WebGL 1) и <code>WebGL2RenderingContext</code> (WebGL 2).</li>
+<li>Синхронизирует <code>navigator.permissions.query</code> с <code>Notification.permission</code>.</li>
+<li>Эмулирует список установленных системных плагинов и количество ядер процессора.</li>
+</ul>
+<pre><code class="language-python">from chutils.scraping.humanize import (
+    apply_antidetect_playwright,
+    apply_antidetect_selenium,
+    apply_antidetect_nodriver,
+)
+
+# Для Playwright (применяется к BrowserContext)
+# Все параметры ниже опциональны (по умолчанию эмулируется NVIDIA RTX 3060, 8 ядер CPU и 8 ГБ RAM):
+await apply_antidetect_playwright(
+    context,
+    webgl_vendor=&quot;AMD Inc.&quot;,
+    webgl_renderer=&quot;Radeon RX 6800&quot;,
+    hardware_concurrency=12,
+    device_memory=16,
+)
+
+# Для Selenium (применяется к WebDriver через CDP)
+apply_antidetect_selenium(
+    driver,
+    webgl_vendor=&quot;Intel&quot;,
+    webgl_renderer=&quot;Intel UHD Graphics&quot;,
+    hardware_concurrency=4,
+    device_memory=8,
+)
+
+# Для nodriver (применяется к вкладке Tab через CDP протокол)
+# По умолчанию stealth_minimal=True: отключает синтетический шум Canvas/WebGL,
+# сохраняя естественный отпечаток установленного браузера Google Chrome.
+# Выполняет двойную инъекцию: регистрирует скрипт для будущих страниц (Page.addScriptToEvaluateOnNewDocument)
+# и мгновенно выполняет его через evaluate() на текущей уже открытой странице:
+await apply_antidetect_nodriver(tab)
+</code></pre>
+<h3 id="antidetectconfig">Декларативная конфигурация <code>AntidetectConfig</code></h3>
+<p>Для унифицированного управления параметрами антидетекта во внешних проектах используется Pydantic-модель <code>AntidetectConfig</code>. Она валидирует параметры, предоставляет готовые фабричные пресеты и позволяет применять маскировку к любому браузерному движку в одну строчку:</p>
+<pre><code class="language-python">from chutils.scraping.humanize import AntidetectConfig
+
+# 1. Рекомендуемый пресет для nodriver (Zero-Footprint Stealth)
+# Сохраняет 100% нативный WebGL и Canvas, предотвращая обнаружение искусственного шума WAF-системами:
+cfg_nodriver = AntidetectConfig.preset_stealth_nodriver()
+await cfg_nodriver.apply_to_nodriver(tab)
+
+# 2. Агрессивный пресет для Playwright/Selenium в Headless-режиме (рандомизация Canvas, Audio, WebGL):
+cfg_aggressive = AntidetectConfig.preset_aggressive(
+    hardware_concurrency=16,
+    device_memory=16,
+)
+await cfg_aggressive.apply_to_playwright(browser_context)
+
+# 3. Пользовательская конфигурация с User-Agent и геометрией экрана:
+custom_cfg = AntidetectConfig(
+    user_agent=&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36&quot;,
+    webgl_vendor=&quot;Google Inc. (NVIDIA)&quot;,
+    webgl_renderer=&quot;ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Direct3D11 vs_5_0 ps_5_0, D3D11)&quot;,
+    hardware_concurrency=8,
+    device_memory=16,
+    stealth_minimal=True,
+    session_seed=&quot;custom_seed_42&quot;,
+    screen_width=1920,
+    screen_height=1080,
+    device_pixel_ratio=1.0,
+)
+# При применении к nodriver/selenium автоматически вызывается:
+# 1) emulation.set_user_agent_override(user_agent=...)
+# 2) emulation.set_device_metrics_override(width=..., height=..., device_scale_factor=..., mobile=False)
+# Это синхронизирует реальный Viewport с CSS Media Queries (matchMedia), предотвращая детекцию Screen Spoofing.
+await apply_antidetect_nodriver(tab, config=custom_cfg)
+
+# 4. Мгновенная генерация из детерминированного сида:
+# FingerprintProfile.to_antidetect_config() полностью сохраняет согласованный user_agent, геометрию экрана и Client Hints
+seed_cfg = AntidetectConfig.from_seed(&quot;user_session_42&quot;)
+await seed_cfg.apply_to_nodriver(tab)
+</code></pre>
+<h3 id="fingerprintsynthesizer">Синтезатор цифровой личности браузера (<code>FingerprintSynthesizer</code>)</h3>
+<p>В стиле профессиональных антидетект-браузеров (Linken Sphere, Octo Browser, Dolphin Anty), генератор отпечатков в <code>chutils</code> использует многоуровневый комбинаторный синтез цифровой личности. Отпечаток не выбирается из фиксированного списка и не генерируется чисто случайно (что создало бы невозможные комбинации вроде 7 ядер CPU или видеокарты Apple Metal на Windows), а строится по физически непротиворечивой матрице оборудования:</p>
+<ul>
+<li><strong>Матрица Hardware Tiers</strong>:</li>
+<li><code>enthusiast_desktop</code>: мощные GPU (RTX 4090/4080/4070 Ti, RX 7900 XTX), 16–32 потока CPU, 32–64 ГБ RAM, мониторы 4K/2K (144–240 Гц).</li>
+<li><code>mainstream_desktop</code>: народные GPU (RTX 4060, RTX 3060, RX 6700 XT), 8–16 потоков CPU, 16–32 ГБ RAM, Full HD/2K.</li>
+<li><code>budget_desktop</code>: базовые GPU (GTX 1660, RTX 3050, RX 6500 XT), 6–12 потоков CPU, 8–16 ГБ RAM, Full HD.</li>
+<li><code>laptop</code>: мобильные GPU (Laptop GPU, Iris Xe, Radeon Graphics), 4–16 потоков CPU, 8–16 ГБ RAM, экраны ноутбуков (1920×1080, 2560×1600, DPR 1.25–1.5).</li>
+<li><strong>Синтез ANGLE D3D11 строк</strong>: точная грамматика драйверов Windows (<code>Direct3D11 vs_5_0 ps_5_0, D3D11-31.0.15.xxxx</code>), согласованная с версиями драйверов NVIDIA и AMD.</li>
+<li><strong>Геометрия экранов</strong>: строгий расчет высоты панели задач Windows (<code>availHeight = height - 40</code> или <code>48</code>) и Device Pixel Ratio.</li>
+<li><strong>Периферийные устройства</strong>: согласованная эмуляция микрофонов, камер и аудиовыходов (<code>MediaDevices</code>) со стабильными SHA-256 хэшами <code>deviceId</code> и <code>groupId</code>. Вызов <code>navigator.mediaDevices.enumerateDevices()</code> в браузере возвращает реалистичные устройства вместо пустого списка <code>[]</code>, характерного для серверных окружений без физического оборудования.</li>
+<li><strong>Субпиксельный шум аудио</strong>: эмуляция аппаратного джиттера ЦАП звуковой карты с порядком $10^{-7}$.</li>
+<li><strong>Двухуровневый движок</strong>:</li>
+<li><strong>Режим <code>auto</code></strong>: автоматически использует <code>browserforge</code>, если библиотека установлена (включая детерминированную генерацию по <code>seed</code>), либо прозрачно переключается на процедурный движок (Zero-Dependency fallback).</li>
+<li><strong>Tier B (Zero-Dependency)</strong>: полностью автономный встроенный процедурный генератор. Строго детерминирован по <code>seed</code> — один и тот же сид гарантирует идентичность отпечатка между перезапусками браузера.</li>
+<li><strong>Tier A (Bayesian/ML)</strong>: опциональный адаптер над библиотекой <code>browserforge</code> (Apify), если она установлена (<code>pip install browserforge</code>). Поддерживает детерминизацию по сиду с изоляцией PRNG.</li>
+</ul>
+<h4 id="_2">Использование синтезатора</h4>
+<pre><code class="language-python">from chutils.scraping import FingerprintProfile, FingerprintSynthesizer
+from chutils.scraping.humanize import AntidetectConfig
+
+# 1. Быстрая процедурная генерация по сиду (Zero-Dependency)
+profile = FingerprintSynthesizer.create_procedural(seed=&quot;profile_account_102&quot;)
+
+print(profile.webgl.renderer)  # ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11 ...)
+print(profile.hardware.concurrency)  # 12
+print(profile.hardware.memory_gb)  # 16
+print(profile.screen.width, profile.screen.avail_height)  # 1920 1040
+
+# 2. Преобразование в AntidetectConfig и применение к сессии
+antidetect_cfg = profile.to_antidetect_config()
+await antidetect_cfg.apply_to_nodriver(tab)
+
+# Или прямое применение профиля:
+await profile.apply_to_tab(tab)  # nodriver
+await profile.apply_to_page(page)  # Playwright
+
+# 3. Автоматическое кэширование и сохранение профилей на диск:
+# При первом вызове генерирует и сохраняет в ./profiles/acc_102.json, при последующих — быстро загружает:
+profile = synthesizer.get_or_create(seed=&quot;acc_102&quot;, storage_dir=&quot;./profiles&quot;)
+
+# Ручное сохранение и загрузка профиля (JSON)
+profile.save_to_file(&quot;my_fingerprint.json&quot;)
+loaded_profile = FingerprintProfile.from_file(&quot;my_fingerprint.json&quot;)
+
+# 4. Использование ML-генератора browserforge с поддержкой сида
+if FingerprintSynthesizer.is_browserforge_available():
+    # browserforge детерминирован по сиду с автоматической изоляцией PRNG:
+    bf_profile = FingerprintSynthesizer.create_from_browserforge(seed=&quot;acc_102&quot;)
+</code></pre>
+<h3 id="cloudflare-turnstile-solve_cf_turnstile">Автоматическое решение Cloudflare Turnstile (<code>solve_cf_turnstile</code>)</h3>
+<p>Функция <code>solve_cf_turnstile</code> автоматически обнаруживает появление интерактивного виджета Turnstile (включая контейнеры <code>.cf-turnstile</code>, <code>#turnstile-wrapper</code> и iframe <code>challenges.cloudflare.com</code>), рассчитывает координаты интерактивного чекбокса, выполняет плавное наведение курсора мыши по модели <code>WindMouse</code> и осуществляет физический клик с ожиданием токена валидации:</p>
+<pre><code class="language-python">from chutils.scraping.humanize import (
+    detect_cf_turnstile,
+    is_cf_turnstile_solved,
+    solve_cf_turnstile,
+)
+
+# Проверить наличие и координаты виджета на странице
+widget_info = await detect_cf_turnstile(tab)
+if widget_info and widget_info.get(&quot;visible&quot;):
+    print(f&quot;Turnstile обнаружен в координатах ({widget_info['x']}, {widget_info['y']})&quot;)
+
+# Автоматически навести мышь, кликнуть и дождаться прохождения проверки
+solved = await solve_cf_turnstile(tab, timeout=15.0, check_interval=0.5)
+if solved:
+    print(&quot;Капча успешно пройдена, токен валидирован!&quot;)
+</code></pre>
+<h3 id="get_browser_launch_args">Флаги запуска браузера (<code>get_browser_launch_args</code>)</h3>
+<p>Возвращает оптимизированный список аргументов для запуска Chromium (включая подавление первого запуска, детекта автоматизации и предупреждений профиля):</p>
+<pre><code class="language-python">from chutils.scraping.humanize import get_browser_launch_args
+
+# Возвращает список флагов запуска без триггерящего антифрод '--no-sandbox' (по умолчанию),
+# подавляя всплывающие окна падений и первого запуска, а также предотвращая WebRTC IP Leaks в обход прокси:
+# '--disable-dev-shm-usage', '--no-first-run', '--password-store=basic',
+# '--mute-audio', '--disable-background-timer-throttling', '--disable-component-update',
+# '--disable-session-crashed-bubble', '--hide-crash-restore-bubble', '--restore-last-session=false',
+# '--force-webrtc-ip-handling-policy=disable_non_proxied_udp', '--enforce-webrtc-ip-permission-check'
+launch_flags = get_browser_launch_args()
+
+# Для изолированных Docker-контейнеров без root-прав можно включить no_sandbox:
+# docker_flags = get_browser_launch_args(no_sandbox=True)
+</code></pre>
+<hr />
+<h2 id="4-profilewarmer">4. Прогрев профилей (ProfileWarmer)</h2>
+<p>Инструмент <code>ProfileWarmer</code> (асинхронный для Playwright/nodriver) и <code>SyncProfileWarmer</code> (синхронный для Selenium) предназначены для прогрева браузерных профилей (сохраняемых в директории <code>user_data_dir</code>) путем посещения трастовых веб-ресурсов и симуляции действий реального пользователя (скроллинг, движения курсора по траектории Безье, паузы, клики по внутренним ссылкам).</p>
+<p>Это позволяет сформировать историю посещений, нагулять cookies и заполнить localStorage/sessionStorage, повышая Trust Score сессии браузера.</p>
+<h3 id="playwright-nodriver">Асинхронный прогрев (Playwright и nodriver)</h3>
+<pre><code class="language-python">from chutils.scraping.humanize import ProfileWarmer
+
+# Для Playwright (принимает объект Page)
+# или для nodriver (принимает объект Tab)
+warmer = ProfileWarmer(page_or_tab)
+
+# 1. Обычный прогрев по сайтам (посетит 3 случайных сайта из встроенного списка)
+await warmer.warm_up(
+    sites_count=3, duration_per_site=(10.0, 20.0), click_random_links=True
+)
+
+# 2. Органический поиск (Google / Yandex Search Surfing)
+# Вводит запросы из банка категорий ('tech', 'news', 'science', 'lifestyle'),
+# скроллит выдачу, находит органические результаты (исключая рекламу и внутренние ссылки),
+# переходит на целевой сайт и имитирует естественное чтение/скроллинг
+await warmer.warm_up_search(
+    category=&quot;tech&quot;,
+    queries_count=2,
+    search_engine=&quot;google&quot;,
+    click_result=True,
+    surf_result_duration=(10.0, 25.0),
+)
+
+# 3. Сохранение прогретой сессии в .chprofile через ProfileManager
+await warmer.save_profile(&quot;warmed_profile.chprofile&quot;, password=&quot;secret_password&quot;)
+</code></pre>
+<h3 id="selenium_1">Синхронный прогрев (Selenium)</h3>
+<pre><code class="language-python">from chutils.scraping.humanize import SyncProfileWarmer
+
+# Принимает экземпляр Selenium WebDriver
+warmer = SyncProfileWarmer(driver)
+
+# Обычный прогрев
+warmer.warm_up(sites_count=3, duration_per_site=(10.0, 20.0), click_random_links=True)
+
+# Органический поиск в Selenium
+warmer.warm_up_search(
+    queries=[&quot;python async tutorials&quot;, &quot;fastapi performance&quot;],
+    search_engine=&quot;google&quot;,
+    click_result=True,
+    surf_result_duration=(5.0, 15.0),
+)
+
+# Сохранение прогретой сессии
+warmer.save_profile(&quot;warmed_selenium.chprofile&quot;, password=&quot;secret_password&quot;)
+</code></pre>
+<h3 id="_3">Вспомогательные утилиты органического поиска</h3>
+<pre><code class="language-python">from chutils.scraping.humanize import (
+    DEFAULT_SEARCH_QUERIES,
+    get_random_search_queries,
+    get_search_engine_config,
+    is_organic_url,
+)
+
+# Получение реалистичных запросов по категории
+queries = get_random_search_queries(count=3, category=&quot;tech&quot;)
+
+# Проверка, является ли ссылка органической (отсекает Google Ads, Yandex Direct и трекинговые редиректы)
+assert is_organic_url(&quot;https://en.wikipedia.org/wiki/Python&quot;, &quot;google&quot;)
+assert not is_organic_url(&quot;https://googleads.g.doubleclick.net/...&quot;, &quot;google&quot;)
+</code></pre>
+<hr />
+<h2 id="5-chutilsscrapingconcurrency">5. Параллельный скрапинг (chutils.scraping.concurrency)</h2>
+<p>Модуль <code>chutils.scraping.concurrency</code> предоставляет инструменты для параллельного скрапинга с дедупликацией, приоритизацией, доменными лимитами (<code>DomainRateLimiter</code>), пулом воркеров (<code>WorkerPool</code>) и автоматическим экспортом Prometheus-метрических показателей (<code>chutils_queue_pending_size</code>, <code>chutils_tasks_processed_total</code>, <code>chutils_task_execution_duration_seconds</code>, <code>chutils_worker_pool_active_workers</code>).</p>
+<pre><code class="language-python">import asyncio
+from chutils.scraping.concurrency import (
+    DomainRateLimiter,
+    InMemoryTaskQueue,
+    ScrapingTask,
+    WorkerPool,
+)
+
+
+async def main():
+    # Очередь с включенным трекингом Prometheus-метрических показателей
+    queue = InMemoryTaskQueue(name=&quot;wiki_queue&quot;, enable_metrics=True)
+    await queue.push(
+        ScrapingTask(url=&quot;https://ru.wikipedia.org/wiki/Python&quot;, priority=5)
+    )
+
+    limiter = DomainRateLimiter(
+        default_delay=0.5, domain_rules={&quot;*.wikipedia.org&quot;: 1.0}
+    )
+
+    async def process(task):
+        print(f&quot;Обработка: {task.url}&quot;)
+
+    pool = WorkerPool(queue=queue, handler=process, limiter=limiter, max_workers=2)
+    await pool.run_until_complete()
+</code></pre>
+<h3 id="scale-to-zero-idlebrowserreaper">Сторожевой таймер неактивности и Scale-to-Zero (<code>IdleBrowserReaper</code>)</h3>
+<p>Класс <code>IdleBrowserReaper</code> (и его алиас <code>IdleReaper</code>) представляет собой универсальный Watchdog для пулов браузеров (<code>nodriver</code>, <code>Playwright</code>, <code>Selenium</code>, <code>Camoufox</code>) и фоновых воркеров. Он непрерывно отслеживает временные метки активности инстансов и автоматически закрывает простаивающие процессы, высвобождая оперативную память (RAM).</p>
+<h4 id="_4">Двухуровневый контроль времени простоя</h4>
+<ol>
+<li><strong><code>idle_timeout_seconds</code></strong> — таймаут для закрытия избыточных инстансов (когда активно более одного браузера). Позволяет автоматически масштабировать пул вниз при спаде нагрузки.</li>
+<li><strong><code>scale_to_zero_seconds</code></strong> — таймаут полного сброса пула до 0 (когда остался всего 1 браузер). Если система полностью простаивает, последний инстанс также закрывается (0 MB RAM).</li>
+</ol>
+<h4 id="idlereaperconfig">Конфигурация через <code>IdleReaperConfig</code></h4>
+<p>Настройки задаются через типизированную Pydantic-модель <code>IdleReaperConfig</code> с готовыми фабричными пресетами:</p>
+<pre><code class="language-python">from chutils.scraping.concurrency import IdleBrowserReaper, IdleReaperConfig
+
+# 1. Ручная настройка или готовый пресет
+config = IdleReaperConfig.preset_aggressive()
+# Доступные пресеты:
+# - IdleReaperConfig.preset_aggressive()  # idle: 30s, scale_to_zero: 60s, check: 5s
+# - IdleReaperConfig.preset_relaxed()     # idle: 300s, scale_to_zero: 900s, check: 30s
+# - IdleReaperConfig.preset_keep_warm()   # удерживать 1 инстанс всегда прогретым (scale_to_zero=0)
+
+# 2. Инициализация сторожевого таймера
+reaper = IdleBrowserReaper(
+    close_worker_fn=close_browser_instance,       # async или sync функция закрытия
+    is_worker_busy_fn=lambda name: is_busy(name), # воркеры с активными задачами не закрываются
+    get_active_workers_fn=lambda: list(workers.keys()),
+    get_last_used_fn=lambda name: last_used[name],
+    config=config,
+)
+
+# 3. Управление жизненным циклом через контекстный менеджер
+async with reaper:
+    # Фоновый мониторинг автоматически запущен
+    await do_scraping_work()
+# При выходе из блока фоновый цикл корректно останавливается
+</code></pre>
+<h4 id="configyaml">Загрузка из файла конфигурации (<code>config.yaml</code>)</h4>
+<p>В файле <code>config.yaml</code> можно задать секцию <code>reaper</code>:</p>
+<pre><code class="language-yaml">reaper:
+  idle_timeout_seconds: 90.0
+  scale_to_zero_seconds: 240.0
+  check_interval_seconds: 10.0
+  enabled: true
+</code></pre>
+<p>И создать экземпляр одной строкой:</p>
+<pre><code class="language-python">reaper = IdleBrowserReaper.from_config(
+    close_worker_fn=close_fn,
+    is_worker_busy_fn=is_busy_fn,
+    get_active_workers_fn=get_workers_fn,
+    get_last_used_fn=get_last_used_fn,
+    config_section=&quot;reaper&quot;,
+)
+</code></pre>
+<h4 id="_5">Ручной запуск и динамическая перенастройка на лету</h4>
+<pre><code class="language-python"># Запуск и остановка вручную
+reaper.start()
+...
+await reaper.stop()
+
+# Разовый вызов проверки (возвращает количество закрытых экземпляров)
+closed_count = await reaper.reap()
+
+# Динамическое изменение таймаутов без перезапуска приложения
+reaper.configure(idle_timeout_seconds=45.0, enabled=True)
+</code></pre>
+<hr />
+<h2 id="6-profilemanager">6. Перенос профилей и сессий браузеров (<code>ProfileManager</code>)</h2>
+<p>Класс <code>ProfileManager</code> (<code>chutils.scraping.ProfileManager</code>) позволяет легко экспортировать, сохранять, конвертировать и импортировать авторизованные сессии и профили между <code>Playwright</code>, <code>nodriver</code> и <code>Selenium</code>.</p>
+<pre><code class="language-python">from chutils.scraping import ProfileManager
+
+# 1. Экспорт сессии из Playwright
+profile = await ProfileManager.export_from_playwright(browser_context)
+
+# 2. Сохранение в защищенный .chprofile файл
+ProfileManager.save(profile, &quot;my_session.chprofile&quot;, password=&quot;secret_password&quot;)
+
+# 3. Загрузка и импорт сессии в nodriver
+loaded_profile = ProfileManager.load(&quot;my_session.chprofile&quot;, password=&quot;secret_password&quot;)
+await ProfileManager.import_to_nodriver(nodriver_tab, loaded_profile)
+</code></pre>
+<h3 id="sanitize_profile-sanitize_profile_crash_state-is_profile_locked">Гигиена профилей и сброс флагов аварийного завершения (<code>sanitize_profile</code>, <code>sanitize_profile_crash_state</code>, <code>is_profile_locked</code>)</h3>
+<p>При аварийном завершении процессов Chromium (OOM killer, отмена сессии, закрытие по таймауту/сигналу) браузер сохраняет в <code>Preferences</code> и <code>Local State</code> аварийные флаги <code>exit_type = "Crashed"</code> и <code>exited_cleanly = false</code>. При следующем старте Chromium отображает блокирующее модальное окно или плашку <em>"Восстановить страницы? Chromium завершил работу некорректно"</em>. Это окно перехватывает фокус, меняет геометрию окна (<code>viewport</code>), сдвигает экранные координаты кликов и детектируется антифрод-системами.</p>
+<p>Функции <a href="file:///D:/PROJECTS/chutils/src/chutils/scraping/profiles/hygiene.py"><code>sanitize_profile</code></a> и её алиас <a href="file:///D:/PROJECTS/chutils/src/chutils/scraping/profiles/hygiene.py"><code>sanitize_profile_crash_state</code></a> автоматически:
+1. Сбрасывают флаг <code>exit_type</code> в <code>"Normal"</code>, выставляют <code>exited_cleanly = True</code> и <code>restore_after_crash = False</code> во всех найденных конфигурациях <code>Preferences</code> (<code>Default/Preferences</code>, корень профиля).
+2. Сбрасывают флаги падений и перезапусков в файле <code>Local State</code> (<code>profile.info_cache.*.exit_type = "Normal"</code>, <code>was.restarted = False</code>).
+3. Устанавливают <code>session.restore_on_startup = 1</code> (открытие чистой вкладки).
+4. Очищают директории и файлы артефактов старых сессий (<code>Default/Sessions/Session_*</code>, <code>Tabs_*</code>, <code>Current Session/Tabs</code>, <code>Last Session/Tabs</code>) с безопасным пропуском занятых дескрипторов.</p>
+<p>Функция <a href="file:///D:/PROJECTS/chutils/src/chutils/scraping/profiles/hygiene.py"><code>is_profile_locked</code></a> позволяет перед запуском проверить, не занят ли каталог профиля другим работающим процессом браузера (<code>lockfile</code>, <code>SingletonLock</code>, база <code>Default/Web Data</code>).</p>
+<pre><code class="language-python">from chutils.scraping import (
+    is_profile_locked,
+    launch_nodriver,
+    sanitize_profile,
+    sanitize_profile_crash_state,
+)
+
+profile_path = &quot;/path/to/chrome/user_data_dir&quot;
+
+# 1. Проверка блокировки профиля другим инстансом
+if is_profile_locked(profile_path):
+    print(&quot;Внимание: Профиль уже используется другим процессом Chromium!&quot;)
+
+# 2. Сброс флагов падения перед запуском
+sanitize_profile_crash_state(profile_path)
+# Или: sanitize_profile(profile_path)
+
+# 3. В launch_nodriver и nodriver_session санитайзинг включен автоматически:
+browser = await launch_nodriver(
+    user_data_dir=profile_path,
+    sanitize_profile_dir=True,  # по умолчанию True
+)
+</code></pre>
+<hr />
+<h2 id="7-proxyconfig-parse_proxy">7. Конфигурация и парсинг прокси (<code>ProxyConfig</code>, <code>parse_proxy</code>)</h2>
+<p>Модуль <code>chutils.scraping.proxy</code> предоставляет Pydantic-модель <code>ProxyConfig</code> и функцию <code>parse_proxy</code> для гибкой работы с прокси-серверами, поддерживая аутентификацию и форматы аргументов для различных браузеров:</p>
+<pre><code class="language-python">from chutils.scraping import ProxyConfig, parse_proxy
+
+# Парсинг строки любого распространенного формата
+proxy = parse_proxy(&quot;socks5://user:pass@proxy.example.com:1080&quot;)
+# Или из колоночной строки
+proxy2 = parse_proxy(&quot;192.168.1.100:8080:login:password&quot;)
+
+# Получение параметров для различных движков:
+# Playwright
+pw_proxy = proxy.to_playwright()  # {&quot;server&quot;: &quot;socks5://...&quot;, &quot;username&quot;: &quot;user&quot;, ...}
+
+# Chrome CLI (Chromium/nodriver)
+chrome_arg = proxy.to_chrome_arg()  # &quot;--proxy-server=socks5://proxy.example.com:1080&quot;
+
+# Selenium Capabilities
+selenium_proxy = proxy.to_selenium()  # {&quot;proxyType&quot;: &quot;MANUAL&quot;, &quot;httpProxy&quot;: ..., ...}
+</code></pre>
+<h3 id="nodriver-chromium-chromeproxyextension">Авторизация прокси в nodriver / Chromium через расширение (<code>ChromeProxyExtension</code>)</h3>
+<p>Так как флаг Chromium <code>--proxy-server</code> не поддерживает передачу логина и пароля, <code>ChromeProxyExtension</code> автоматически формирует временное Manifest v3 расширение с обработчиком <code>chrome.webRequest.onAuthRequired</code>:</p>
+<pre><code class="language-python">from chutils.scraping import ChromeProxyExtension
+
+# Создание расширения в контекстном менеджере с авто-очисткой
+with ChromeProxyExtension(&quot;http://user:pass@1.2.3.4:8080&quot;) as ext:
+    # Получение аргументов для запуска Chromium / nodriver
+    args = ext.get_chrome_args()
+    # ['--load-extension=...', '--disable-extensions-except=...']
+    # nodriver.start(browser_args=args)
+</code></pre>
+<h3 id="-asyncproxytunnel">Локальный асинхронный туннель-форвардер (<code>AsyncProxyTunnel</code>)</h3>
+<p>Для headless-окружений, где расширения браузера могут быть отключены, используется легковесный асинхронный локальный сервер <code>AsyncProxyTunnel</code>. Браузер подключается к локальному адресу без авторизации, а туннель прозрачно инжектирует заголовок <code>Proxy-Authorization</code> в удаленный HTTP/SOCKS5 прокси:</p>
+<pre><code class="language-python">from chutils.scraping import AsyncProxyTunnel
+
+# Запуск туннеля
+async with AsyncProxyTunnel(&quot;socks5://user:pass@remote-proxy.com:1080&quot;) as tunnel:
+    # Браузер направляется на локальный туннель:
+    browser_arg = tunnel.to_chrome_arg()  # &quot;--proxy-server=http://127.0.0.1:54321&quot;
+    # nodriver.start(browser_args=[browser_arg])
+</code></pre>
+<h3 id="proxypool">Пул прокси и стратегии ротации (<code>ProxyPool</code>)</h3>
+<p>Класс <code>ProxyPool</code> управляет набором прокси, обеспечивая потокобезопасную ротацию, закрепление сессий и автоматический вывод из строя сбойных узлов (failover):</p>
+<pre><code class="language-python">from chutils.scraping import ProxyPool, check_proxy
+
+# Инициализация пула с авто-баном при 3 сбоях на 5 минут
+pool = ProxyPool(
+    proxies=[
+        &quot;http://user:pass@proxy1.com:8080&quot;,
+        &quot;socks5://user:pass@proxy2.com:1080&quot;,
+        &quot;proxy3.com:8080:login:pass&quot;,
+    ],
+    strategy=&quot;sticky&quot;,  # 'round_robin', 'random', 'sticky', 'failover'
+    sticky_ttl=600.0,
+    ban_timeout=300.0,
+    max_fails=3,
+)
+
+# Получение прокси для конкретной пользовательской сессии
+proxy = pool.get_next(key=&quot;session_user_42&quot;)
+
+try:
+    # Выполнение запроса через прокси...
+    pool.report_success(proxy)
+except Exception:
+    # При ошибке фиксируем сбой
+    pool.report_failure(proxy)
+
+# Проверка работоспособности и замер задержки (Health Check)
+health = check_proxy(proxy, timeout=5.0)
+if health.is_alive:
+    print(f&quot;IP: {health.external_ip}, Latency: {health.latency_ms} ms&quot;)
+</code></pre>
+<h3 id="nodriver_proxy-get_playwright_proxy-get_selenium_proxy">Фабрики адаптеров для браузерных движков (<code>nodriver_proxy</code>, <code>get_playwright_proxy</code>, <code>get_selenium_proxy</code>)</h3>
+<p>Для быстрого подключения прокси (как с авторизацией, так и без) к браузерам предоставляются специализированные функции-фабрики и контекстные менеджеры:</p>
+<pre><code class="language-python">from chutils.scraping import (
+    async_nodriver_proxy,
+    get_playwright_proxy,
+    get_selenium_proxy,
+    nodriver_proxy,
+)
+
+# 1. Playwright
+browser = await playwright.chromium.launch(
+    proxy=get_playwright_proxy(&quot;http://user:pass@1.2.3.4:8080&quot;)
+)
+
+# 2. Selenium
+get_selenium_proxy(&quot;http://1.2.3.4:8080&quot;, options=chrome_options)
+
+# 3. nodriver (через синхронный контекстный менеджер с расширением)
+with nodriver_proxy(&quot;http://user:pass@1.2.3.4:8080&quot;) as browser_args:
+    browser = await nodriver.start(browser_args=browser_args)
+
+# 4. nodriver (через асинхронный туннель)
+async with async_nodriver_proxy(
+    &quot;socks5://user:pass@1.2.3.4:1080&quot;, mode=&quot;tunnel&quot;
+) as browser_args:
+    browser = await nodriver.start(browser_args=browser_args)
+</code></pre>
+<h3 id="keyring-keyringproxystorage-proxysecretstorage">Безопасное хранение учетных данных прокси в системном Keyring (<code>KeyringProxyStorage</code>, <code>ProxySecretStorage</code>)</h3>
+<p>При работе с приватными прокси с авторизацией (<code>http://user:password@host:port</code>) хранение паролей в открытом виде в JSON-файлах метаданных профилей (<code>profile_state.json</code>, <code>metadata.json</code>) создает риск компрометации (например, при резервном копировании или анализе логов).</p>
+<p>Класс <code>KeyringProxyStorage</code> (и алиас <code>ProxySecretStorage</code>) обеспечивает надежное разделение: учетные данные шифруются в системном хранилище ОС (Windows Credential Manager / macOS Keychain / Linux Secret Service) через <code>chutils.SecretManager</code>, а на диске и в логах сохраняется только безопасный замаскированный URL (<code>http://user:***@host:port</code>):</p>
+<pre><code class="language-python">from chutils.scraping import KeyringProxyStorage
+
+storage = KeyringProxyStorage(service_name=&quot;my_scraper_proxies&quot;)
+
+# 1. Привязка приватного прокси к профилю (сохраняется в Keyring)
+storage.set_proxy(&quot;worker_profile_1&quot;, &quot;http://user:super_secret_p@ss@185.220.101.5:8080&quot;)
+
+# 2. Получение полного URL для запуска сессии браузера
+full_proxy = storage.get_proxy(&quot;worker_profile_1&quot;)
+# -&gt; 'http://user:super_secret_p@ss@185.220.101.5:8080'
+
+# 3. Получение безопасного замаскированного URL для логов и UI
+masked = storage.get_masked_proxy(&quot;worker_profile_1&quot;)
+# -&gt; 'http://user:***@185.220.101.5:8080'
+
+# 4. Восстановление оригинального пароля из замаскированной строки
+restored = storage.restore_proxy_url(&quot;worker_profile_1&quot;, &quot;http://user:***@185.220.101.5:8080&quot;)
+# -&gt; 'http://user:super_secret_p@ss@185.220.101.5:8080'
+
+# 5. Автоматическая санитизация словаря метаданных перед записью в JSON на диск
+meta_dict = {
+    &quot;name&quot;: &quot;worker_profile_1&quot;,
+    &quot;proxy&quot;: &quot;http://user:super_secret_p@ss@185.220.101.5:8080&quot;,
+    &quot;auth_status&quot;: &quot;ready&quot;,
+}
+# Сохраняет пароль в Keyring и заменяет его на '***' в сохраняемом словаре:
+disk_safe_meta = storage.sanitize_metadata_dict(&quot;worker_profile_1&quot;, meta_dict)
+print(disk_safe_meta[&quot;proxy&quot;])  # 'http://user:***@185.220.101.5:8080'
+
+# 6. Удаление учетных данных при удалении профиля
+storage.delete_proxy(&quot;worker_profile_1&quot;)
+</code></pre>
+<hr />
+<h2 id="8-chutilsscrapingtesting">8. Автотестирование парсеров и моки страниц (<code>chutils.scraping.testing</code>)</h2>
+<p>Модуль <code>chutils.scraping.testing</code> предоставляет легковесные in-memory моки страниц для мгновенного модульного тестирования парсеров без необходимости запуска реального браузера:</p>
+<h3 id="nodriver-mocknodrivertab">Мок nodriver (<code>MockNodriverTab</code>)</h3>
+<pre><code class="language-python">from chutils.scraping import MockNodriverTab
+
+tab = MockNodriverTab(&quot;&quot;&quot;
+    &lt;div class=&quot;product&quot;&gt;
+        &lt;h1 class=&quot;title&quot;&gt;Ноутбук&lt;/h1&gt;
+        &lt;span class=&quot;price&quot;&gt;99990 ₽&lt;/span&gt;
+    &lt;/div&gt;
+&quot;&quot;&quot;)
+
+# Тестирование парсера nodriver
+title = await tab.select(&quot;.title&quot;)
+print(title.text)  # &quot;Ноутбук&quot;
+</code></pre>
+<h3 id="playwright-mockplaywrightpage">Мок Playwright (<code>MockPlaywrightPage</code>)</h3>
+<pre><code class="language-python">from chutils.scraping import MockPlaywrightPage
+
+page = MockPlaywrightPage(&quot;&lt;ul&gt;&lt;li&gt;Элемент 1&lt;/li&gt;&lt;li&gt;Элемент 2&lt;/li&gt;&lt;/ul&gt;&quot;)
+items = await page.locator(&quot;li&quot;).all()
+assert len(items) == 2
+</code></pre>
+<h3 id="selenium-mockseleniumdriver">Мок Selenium (<code>MockSeleniumDriver</code>)</h3>
+<pre><code class="language-python">from chutils.scraping import MockSeleniumDriver
+
+driver = MockSeleniumDriver(&quot;&lt;div id='content'&gt;Привет&lt;/div&gt;&quot;)
+elem = driver.find_element(&quot;css selector&quot;, &quot;#content&quot;)
+assert elem.text == &quot;Привет&quot;
+</code></pre>
+<h3 id="http-localtestserver">Локальный тестовый HTTP-сервер песочницы (<code>LocalTestServer</code>)</h3>
+<p>Для тестирования парсеров в реальных сетевых условиях без обращения к внешним сайтам используется легковесный сервер:</p>
+<pre><code class="language-python">from chutils.scraping import LocalTestServer
+
+with LocalTestServer() as server:
+    # Регистрация страниц и API фикстур
+    html_url = server.serve_html(&quot;/catalog&quot;, &quot;&lt;h1&gt;Каталог товаров&lt;/h1&gt;&quot;)
+    json_url = server.serve_json(&quot;/api/items&quot;, [{&quot;id&quot;: 1, &quot;title&quot;: &quot;Товар&quot;}])
+
+    # Прямой запрос в обход системных прокси
+    response = server.fetch(&quot;/catalog&quot;)
+    assert response.status == 200
+    assert &quot;Каталог товаров&quot; in response.text
+
+    # Проверка журнала входящих запросов от браузера
+    assert len(server.requests_log) == 1
+    assert server.requests_log[0].path == &quot;/catalog&quot;
+</code></pre>
+<h3 id="livebrowsersession">Менеджер живых браузерных сессий (<code>LiveBrowserSession</code>)</h3>
+<p>При сквозном тестировании реальных браузеров часто возникают висячие зомби-процессы (<code>chrome.exe</code>) и остаточные временные папки профилей. <code>LiveBrowserSession</code> гарантирует их полное удаление:</p>
+<pre><code class="language-python">from chutils.scraping import LiveBrowserSession
+import nodriver
+
+async with LiveBrowserSession(browser_name=&quot;chromium&quot;) as session:
+    # Автоматически создается временный изолированный user_data_dir
+    browser = await nodriver.start(user_data_dir=str(session.user_data_dir))
+
+    # Регистрируем процесс браузера для отслеживания
+    session.track_process(browser)
+
+    tab = await browser.get(&quot;http://127.0.0.1:8080/test&quot;)
+    # ... выполнение скрапинга ...
+
+# При выходе: браузер гарантированно завершается (SIGTERM -&gt; SIGKILL),
+# а временный каталог профиля удаляется с диска даже при падении теста!
+</code></pre>
+<h3 id="-snapshotrecorder-use_html_snapshot">Оффлайн-снапшоты страниц (<code>SnapshotRecorder</code>, <code>@use_html_snapshot</code>)</h3>
+<p>Позволяет сохранять разметку страниц реального сайта при первом обращении (<code>fetcher</code>) и мгновенно воспроизводить ее в оффлайн-режиме в тестах без обращения к сети и без запуска браузера:</p>
+<pre><code class="language-python">from chutils.scraping import use_html_snapshot, MockPlaywrightPage
+
+# 1. Использование в качестве контекстного менеджера с моком Playwright/nodriver/Selenium
+with use_html_snapshot(&quot;product_card&quot;, as_mock=&quot;playwright&quot;) as page:
+    # page имеет тип MockPlaywrightPage с загруженной разметкой из tests/fixtures/snapshots/product_card.html
+    title = page.locator(&quot;h1&quot;).text_content()
+
+
+# 2. Использование в качестве декоратора тестовой функции
+@use_html_snapshot(&quot;catalog_listing&quot;, as_mock=&quot;nodriver&quot;)
+async def test_parse_catalog(tab):
+    # tab - это MockNodriverTab
+    items = await tab.select_all(&quot;.catalog-item&quot;)
+    assert len(items) &gt; 0
+
+
+# 3. Автоматическая запись при отсутствии снапшота (fetcher)
+def fetch_real_page():
+    # Реальный сетевой запрос или вызов браузера
+    return &quot;&lt;div class='price'&gt;1000 ₽&lt;/div&gt;&quot;
+
+
+with use_html_snapshot(&quot;price_page&quot;, fetcher=fetch_real_page) as html:
+    # Сохраняется в tests/fixtures/snapshots/price_page.html и не пересоздается при повторных тестах
+    assert &quot;1000&quot; in html
+</code></pre>
+<h3 id="extraction-quality-assertions">Валидация качества извлечения данных (<code>Extraction Quality Assertions</code>)</h3>
+<p>Для быстрой и надежной верификации структуры и качества распарсенных данных модуль предоставляет специализированные ассерты с информативными сообщениями об ошибках:</p>
+<pre><code class="language-python">from chutils.scraping import (
+    assert_extraction_complete,
+    assert_valid_url,
+    assert_valid_price,
+    assert_schema_match,
+)
+from pydantic import BaseModel
+
+
+class ProductSchema(BaseModel):
+    id: int
+    title: str
+    price: float
+
+
+item = {
+    &quot;id&quot;: 1,
+    &quot;title&quot;: &quot;Умные часы&quot;,
+    &quot;price&quot;: 14990.0,
+    &quot;url&quot;: &quot;https://example.com/item/1&quot;,
+}
+
+# 1. Проверка полноты и отсутствия None / пустых строк
+assert_extraction_complete(item, required_keys=[&quot;id&quot;, &quot;title&quot;, &quot;price&quot;, &quot;url&quot;])
+
+# 2. Проверка корректности ссылок
+assert_valid_url(item[&quot;url&quot;])
+
+# 3. Проверка числовых или текстовых цен (&quot;14 990 ₽&quot;, &quot;$199.99&quot;) и диапазонов
+assert_valid_price(item[&quot;price&quot;], min_value=100.0, max_value=100000.0)
+
+# 4. Проверка соответствия Pydantic-схеме (для одиночных элементов или списков)
+assert_schema_match(item, ProductSchema)
+</code></pre>
+<h3 id="pytest-chutilsscrapingtestingfixtures">Встроенные фикстуры Pytest (<code>chutils.scraping.testing.fixtures</code>)</h3>
+<p>При установленном <code>chutils</code> pytest автоматически подхватывает плагин со следующими фикстурами:</p>
+<ul>
+<li><code>local_test_server</code>: запущенный экземпляр <code>LocalTestServer</code> (автоматическая остановка при teardown).</li>
+<li><code>live_browser_session</code>: экземпляр <code>LiveBrowserSession</code> с изолированным временным каталогом и уничтожением зомби-процессов.</li>
+<li><code>html_snapshot_recorder</code>: настроенный <code>SnapshotRecorder</code> с каталогом во временной папке теста.</li>
+<li><code>mock_nodriver_tab</code>, <code>mock_playwright_page</code>, <code>mock_selenium_driver</code>: фабрики для мгновенного создания моков из переданной HTML-строки.</li>
+</ul>
+<p>Пример использования в тестах:</p>
+<pre><code class="language-python">async def test_scraper_with_fixtures(local_test_server, mock_playwright_page):
+    # Тест через сервер песочницы
+    local_test_server.serve_html(&quot;/item&quot;, &quot;&lt;h1&gt;Товар&lt;/h1&gt;&quot;)
+    resp = local_test_server.fetch(&quot;/item&quot;)
+    assert resp.status == 200
+
+    # Быстрый мок Playwright
+    page = mock_playwright_page(&quot;&lt;h1&gt;Товар&lt;/h1&gt;&quot;)
+    assert await page.locator(&quot;h1&quot;).inner_text() == &quot;Товар&quot;
+</code></pre>
+<h3 id="dom-hud-domactionrecorderhud-core-dom-scripts">Инструментарий интерактивной разметки DOM и HUD-виджет (<code>DOMActionRecorderHUD</code>, Core DOM Scripts)</h3>
+<p>При разработке парсеров, сценариев автоматизации или интеграции со сложными веб-сервисами (включая AI Studio, личные кабинеты, SPA на Angular/React) критически важно быстро аудировать селекторы, выявлять скрытые дубликаты в DOM и записывать последовательность действий пользователя.</p>
+<p>Модуль <code>chutils.scraping.testing</code> предоставляет визуальный плавающий виджет (<code>DOMActionRecorderHUD</code>), инжектируемый прямо в страницу браузера, и набор низкоуровневых JavaScript-хелперов:</p>
+<h4 id="1-domactionrecorder-domactionrecorderhud">1. Использование <code>DOMActionRecorder</code> / <code>DOMActionRecorderHUD</code></h4>
+<pre><code class="language-python">from chutils.scraping import (
+    DOMActionRecorder,
+    DOMActionRecorderHUD,
+    RecordedChecklistItem,
+)
+
+# 1. Задаем чеклист целевых шагов сценария
+checklist = [
+    RecordedChecklistItem(
+        id=&quot;model_select&quot;,
+        label=&quot;1. Выбрать модель в селекторе&quot;,
+        hints=[&quot;ms-model-selector&quot;, &quot;[role='option']&quot;, &quot;button.model-card&quot;],
+    ),
+    RecordedChecklistItem(
+        id=&quot;prompt_input&quot;,
+        label=&quot;2. Ввести текст промпта&quot;,
+        hints=[&quot;textarea&quot;, &quot;div[contenteditable='true']&quot;, &quot;ms-prompt-box&quot;],
+    ),
+    RecordedChecklistItem(
+        id=&quot;run_btn&quot;,
+        label=&quot;3. Нажать кнопку отправки&quot;,
+        hints=[&quot;button[aria-label*='Run' i]&quot;, &quot;button.send-btn&quot;],
+    ),
+]
+
+recorder = DOMActionRecorder(
+    checklist_items=checklist,
+    widget_title=&quot;Разметка сценария генерации&quot;,
+    container_selectors=[&quot;.custom-modal&quot;, &quot;[role='dialog']&quot;],
+)
+
+# 2. Внедрение виджета в страницу (nodriver Tab / Playwright Page)
+await recorder.inject(tab)
+
+# 3. Асинхронное ожидание интерактивных действий пользователя
+# Пользователь кликает по интерфейсу, отмечает пункты в HUD и нажимает кнопку &quot;Завершить запись&quot;
+report = await recorder.wait_for_finish(
+    tab,
+    poll_interval=0.5,
+    timeout=120.0,
+    on_action=lambda act: print(f&quot;Зафиксирован шаг {act.action_id}: {act.computed_selector}&quot;),
+    session_name=&quot;auth_user_flow&quot;,
+    target_name=&quot;ai_studio&quot;,
+)
+
+# 4. Сохранение отчетов в формате JSON и подробного Markdown
+json_file, md_file = recorder.export_report(
+    report,
+    json_path=Path(&quot;reports/action_session.json&quot;),
+)
+print(f&quot;Отчет успешно сохранен: {md_file}&quot;)
+</code></pre>
+<h4 id="hud">Возможности плавающего виджета HUD:</h4>
+<ul>
+<li><strong>Trusted Types совместимость:</strong> Отрисовка элементов через нативный DOM API (<code>document.createElement</code>) без вызова <code>innerHTML</code>.</li>
+<li><strong>Drag-and-Drop:</strong> Перемещение виджета по экрану с запоминанием координат.</li>
+<li><strong>Интерактивный чеклист:</strong> Автоматическая отметка совпадений по ориентирам <code>hints</code> либо ручной клик по пункту чеклиста для привязки к последнему действию оператора.</li>
+<li><strong>Сворачивание/Разворачивание:</strong> Кнопка <code>[-]</code> сворачивает виджет в компактную панель, чтобы не перекрывать целевой интерфейс.</li>
+<li><strong>Детекция контекста (Scope):</strong> Выявление родительских оверлеев и модальных окон (<code>dialog</code>, <code>[role="dialog"]</code>, <code>.modal</code>, <code>.cdk-overlay-pane</code>), генерация составных селекторов (<code>.modal button.save</code>).</li>
+<li><strong>Предупреждения о дубликатах:</strong> Автоматическое обнаружение селекторов, находящих более одного элемента в DOM.</li>
+<li><strong>Mutation Diff:</strong> Анализ изменений DOM (<code>MutationObserver</code>) с фиксацией появившихся диалогов, списков и смены атрибутов (<code>aria-expanded</code>, <code>disabled</code>).</li>
+</ul>
+<h4 id="2-dom-dom_scripts">2. Низкоуровневые DOM-хелперы и полифилы селекторов (<code>dom_scripts</code>)</h4>
+<pre><code class="language-python">from chutils.scraping.testing import (
+    CORE_DOM_HELPERS_JS,
+    PAGE_META_SCRIPT,
+    build_scan_selectors_script,
+)
+
+# Пакетное сканирование групп селекторов на странице
+scan_js = build_scan_selectors_script({
+    &quot;buttons&quot;: [&quot;button.primary&quot;, &quot;button:contains('Войти')&quot;, &quot;button:has-text('Submit')&quot;],
+    &quot;inputs&quot;: [&quot;input[name='query']&quot;, &quot;textarea&quot;],
+})
+diagnostic_results = await tab.evaluate(scan_js)
+</code></pre>
+<ul>
+<li><strong><code>queryAllSafe(selector)</code>:</strong> Безопасный поиск элементов с полифилами псевдоселекторов <code>:contains('текст')</code> и <code>:has-text('текст')</code>, отсутствующих в стандартном <code>document.querySelectorAll</code>.</li>
+<li><strong><code>isElementVisible(element)</code>:</strong> Проверка реальной физической видимости для человека (стили <code>display</code>, <code>visibility</code>, <code>opacity</code>, размеры <code>offsetWidth</code>, <code>offsetHeight</code>, <code>getBoundingClientRect</code>).</li>
+<li><strong><code>getCssSelector(element)</code>:</strong> Генератор уникального устойчивого селектора по ID, атрибутам (<code>data-testid</code>, <code>aria-label</code>, <code>role</code>), custom-тегам и пути родителей.</li>
+</ul>
+<hr />
+<h2 id="7-camoufox-chutilsscrapingcamoufox">7. Антидетект-браузер Camoufox (<code>chutils.scraping.camoufox</code>)</h2>
+<p>Для сценариев, где инъекций в CDP/JS недостаточно (например, при сложной проверке C++ рендеринга и WebGL Cloudflare Turnstile), рекомендуется использовать антидетект-браузер Camoufox (модифицированный Playwright Firefox со встроенной защитой на уровне ядра движка).</p>
+<p>Фабрика <code>launch_camoufox</code> возвращает асинхронный контекстный менеджер браузера:</p>
+<pre><code class="language-python">import asyncio
+from chutils.scraping import launch_camoufox
+
+
+async def main():
+    async with await launch_camoufox(headless=True, os=&quot;windows&quot;) as browser:
+        page = await browser.new_page()
+        await page.goto(&quot;https://nowecurity.com&quot;)
+        print(await page.title())
+
+
+if __name__ == &quot;__main__&quot;:
+    asyncio.run(main())
+</code></pre>
+<hr />
+<h2 id="8-js-web-workers-client-hints">8. Улучшенный JS-антидетект, Web Workers и Client Hints</h2>
+<p>В модуль <code>chutils.scraping.humanize.antidetect</code> добавлены следующие передовые механизмы защиты:</p>
+<ol>
+<li><strong>Защита изолированных Web Workers и SharedWorkers</strong>: Антифрод-системы (Cloudflare Turnstile, Kasada, CreepJS) часто создают фоновые воркеры (<code>new Worker(...)</code>), чтобы проверить чистый контекст <code>self.navigator.webdriver</code> в обход основных инъекций в страницу. Модуль перехватывает конструкторы <code>Worker</code> и <code>SharedWorker</code>, автоматически оборачивает исходный скрипт в защитную преамбулу через <code>Blob</code> и <code>URL.createObjectURL</code>, полностью скрывая автоматизацию внутри воркеров.</li>
+<li><strong>Маскировка V8 Stack Traces (<code>makeNative</code>)</strong>: При инспекции стектрейсов ошибок (<code>Error().stack</code> или <code>Error.captureStackTrace</code>) антифрод обнаруживает следы monkey-patching (<code>at patched... (eval at...)</code>). Функция <code>makeNative</code> маскирует стек вызовов под нативные вызовы браузера (<code>at FunctionName (&lt;anonymous&gt;)</code>).</li>
+<li><strong>Полноценная эмуляция <code>window.chrome</code></strong>: В headless-режиме и Playwright свойство <code>window.chrome</code> отсутствует или пустое. Антидетект эмулирует нативные методы <code>chrome.loadTimes()</code>, <code>chrome.csi()</code>, <code>chrome.runtime</code> и <code>chrome.app</code> с сохранением правильных сигнатур и <code>[native code]</code>.</li>
+<li><strong>Защита от утечки IP через WebRTC (<code>RTCPeerConnection</code>)</strong>: Блокирует утечку локальных (LAN) и прямых IP через STUN/TURN SDP кандидаты при работе через прокси.</li>
+<li><strong>Детерминированный микрошум AudioContext</strong>: Внедряет микрошум в <code>AudioBuffer.prototype.getChannelData</code> на базе <code>session_seed</code>, исключая снятие стабильного аудио-отпечатка антифрод-системами без искажения звука.</li>
+<li><strong>Эмуляция геометрии окна и экрана</strong>: В headless-браузерах <code>outerWidth</code> и <code>outerHeight</code> равны 0 либо строго равны <code>innerWidth</code>/<code>innerHeight</code>. Модуль выставляет реалистичные габариты с учетом тулбаров браузера и панели задач ОС.</li>
+<li><strong>Эмуляция свойств <code>navigator.connection</code> и <code>navigator.getBattery</code></strong>: Предоставляет согласованные данные сетевого статуса (4G, RTT) и Battery API.</li>
+<li><strong>Детерминированный Canvas Noise (<code>session_seed</code>)</strong>: Шум накладывается через псевдослучайный алгоритм на базе стабильного сида сессии. Это исключает обнаружение антифрод-скриптами частой мутации канваса при многократном чтении <code>getImageData</code>.</li>
+<li><strong>Cross-realm iframe prototype protection</strong>: Перехват создания элементов <code>iframe</code> и предотвращение извлечения чистых непатченных прототипов (<code>Function.prototype.toString</code>, <code>navigator.webdriver</code>).</li>
+<li><strong>Генерация Client Hints (<code>get_client_hints</code>)</strong>: Формирование согласованной структуры <code>navigator.userAgentData</code> (brands, platform, mobile, entropy values) под указанный User-Agent.</li>
+<li><strong>Мост Cookie и Clearance токенов (<code>extract_clearance_cookies</code>)</strong>: Извлечение сессионных токенов (включая <code>cf_clearance</code>) и User-Agent из браузера для последующей передачи в быстрый сетевой клиент <code>TLSAsyncClient</code> / <code>TLSSession</code>:</li>
+</ol>
+<pre><code class="language-python">from chutils.scraping import extract_clearance_cookies
+from chutils.http import TLSAsyncClient
+
+# Извлечение из Playwright Page / Nodriver Tab
+clearance_data = await extract_clearance_cookies(page)
+print(clearance_data[&quot;cookies&quot;])  # {'cf_clearance': '...', ...}
+
+# Прямая инициализация быстрого TLS-клиента из браузерной сессии
+client = await TLSAsyncClient.from_browser_session(page, impersonate=&quot;chrome120&quot;)
+elem = driver.find_element(&quot;css selector&quot;, &quot;#content&quot;)
+assert elem.text == &quot;Привет&quot;
+</code></pre>
+<h3 id="http-localtestserver_1">Локальный тестовый HTTP-сервер песочницы (<code>LocalTestServer</code>)</h3>
+<p>Для тестирования парсеров в реальных сетевых условиях без обращения к внешним сайтам используется легковесный сервер:</p>
+<pre><code class="language-python">from chutils.scraping import LocalTestServer
+
+with LocalTestServer() as server:
+    # Регистрация страниц и API фикстур
+    html_url = server.serve_html(&quot;/catalog&quot;, &quot;&lt;h1&gt;Каталог товаров&lt;/h1&gt;&quot;)
+    json_url = server.serve_json(&quot;/api/items&quot;, [{&quot;id&quot;: 1, &quot;title&quot;: &quot;Товар&quot;}])
+
+    # Прямой запрос в обход системных прокси
+    response = server.fetch(&quot;/catalog&quot;)
+    assert response.status == 200
+    assert &quot;Каталог товаров&quot; in response.text
+
+    # Проверка журнала входящих запросов от браузера
+    assert len(server.requests_log) == 1
+    assert server.requests_log[0].path == &quot;/catalog&quot;
+</code></pre>
+<h3 id="livebrowsersession_1">Менеджер живых браузерных сессий (<code>LiveBrowserSession</code>)</h3>
+<p>При сквозном тестировании реальных браузеров часто возникают висячие зомби-процессы (<code>chrome.exe</code>) и остаточные временные папки профилей. <code>LiveBrowserSession</code> гарантирует их полное удаление:</p>
+<pre><code class="language-python">from chutils.scraping import LiveBrowserSession
+import nodriver
+
+async with LiveBrowserSession(browser_name=&quot;chromium&quot;) as session:
+    # Автоматически создается временный изолированный user_data_dir
+    browser = await nodriver.start(user_data_dir=str(session.user_data_dir))
+
+    # Регистрируем процесс браузера для отслеживания
+    session.track_process(browser)
+
+    tab = await browser.get(&quot;http://127.0.0.1:8080/test&quot;)
+    # ... выполнение скрапинга ...
+
+# При выходе: браузер гарантированно завершается (SIGTERM -&gt; SIGKILL),
+# а временный каталог профиля удаляется с диска даже при падении теста!
+</code></pre>
+<h3 id="-snapshotrecorder-use_html_snapshot_1">Оффлайн-снапшоты страниц (<code>SnapshotRecorder</code>, <code>@use_html_snapshot</code>)</h3>
+<p>Позволяет сохранять разметку страниц реального сайта при первом обращении (<code>fetcher</code>) и мгновенно воспроизводить ее в оффлайн-режиме в тестах без обращения к сети и без запуска браузера:</p>
+<pre><code class="language-python">from chutils.scraping import use_html_snapshot, MockPlaywrightPage
+
+# 1. Использование в качестве контекстного менеджера с моком Playwright/nodriver/Selenium
+with use_html_snapshot(&quot;product_card&quot;, as_mock=&quot;playwright&quot;) as page:
+    # page имеет тип MockPlaywrightPage с загруженной разметкой из tests/fixtures/snapshots/product_card.html
+    title = page.locator(&quot;h1&quot;).text_content()
+
+
+# 2. Использование в качестве декоратора тестовой функции
+@use_html_snapshot(&quot;catalog_listing&quot;, as_mock=&quot;nodriver&quot;)
+async def test_parse_catalog(tab):
+    # tab - это MockNodriverTab
+    items = await tab.select_all(&quot;.catalog-item&quot;)
+    assert len(items) &gt; 0
+
+
+# 3. Автоматическая запись при отсутствии снапшота (fetcher)
+def fetch_real_page():
+    # Реальный сетевой запрос или вызов браузера
+    return &quot;&lt;div class='price'&gt;1000 ₽&lt;/div&gt;&quot;
+
+
+with use_html_snapshot(&quot;price_page&quot;, fetcher=fetch_real_page) as html:
+    # Сохраняется в tests/fixtures/snapshots/price_page.html и не пересоздается при повторных тестах
+    assert &quot;1000&quot; in html
+</code></pre>
+<h3 id="extraction-quality-assertions_1">Валидация качества извлечения данных (<code>Extraction Quality Assertions</code>)</h3>
+<p>Для быстрой и надежной верификации структуры и качества распарсенных данных модуль предоставляет специализированные ассерты с информативными сообщениями об ошибках:</p>
+<pre><code class="language-python">from chutils.scraping import (
+    assert_extraction_complete,
+    assert_valid_url,
+    assert_valid_price,
+    assert_schema_match,
+)
+from pydantic import BaseModel
+
+
+class ProductSchema(BaseModel):
+    id: int
+    title: str
+    price: float
+
+
+item = {
+    &quot;id&quot;: 1,
+    &quot;title&quot;: &quot;Умные часы&quot;,
+    &quot;price&quot;: 14990.0,
+    &quot;url&quot;: &quot;https://example.com/item/1&quot;,
+}
+
+# 1. Проверка полноты и отсутствия None / пустых строк
+assert_extraction_complete(item, required_keys=[&quot;id&quot;, &quot;title&quot;, &quot;price&quot;, &quot;url&quot;])
+
+# 2. Проверка корректности ссылок
+assert_valid_url(item[&quot;url&quot;])
+
+# 3. Проверка числовых или текстовых цен (&quot;14 990 ₽&quot;, &quot;$199.99&quot;) и диапазонов
+assert_valid_price(item[&quot;price&quot;], min_value=100.0, max_value=100000.0)
+
+# 4. Проверка соответствия Pydantic-схеме (для одиночных элементов или списков)
+assert_schema_match(item, ProductSchema)
+</code></pre>
+<h3 id="pytest-chutilsscrapingtestingfixtures_1">Встроенные фикстуры Pytest (<code>chutils.scraping.testing.fixtures</code>)</h3>
+<p>При установленном <code>chutils</code> pytest автоматически подхватывает плагин со следующими фикстурами:</p>
+<ul>
+<li><code>local_test_server</code>: запущенный экземпляр <code>LocalTestServer</code> (автоматическая остановка при teardown).</li>
+<li><code>live_browser_session</code>: экземпляр <code>LiveBrowserSession</code> с изолированным временным каталогом и уничтожением зомби-процессов.</li>
+<li><code>html_snapshot_recorder</code>: настроенный <code>SnapshotRecorder</code> с каталогом во временной папке теста.</li>
+<li><code>mock_nodriver_tab</code>, <code>mock_playwright_page</code>, <code>mock_selenium_driver</code>: фабрики для мгновенного создания моков из переданной HTML-строки.</li>
+</ul>
+<p>Пример использования в тестах:</p>
+<pre><code class="language-python">async def test_scraper_with_fixtures(local_test_server, mock_playwright_page):
+    # Тест через сервер песочницы
+    local_test_server.serve_html(&quot;/item&quot;, &quot;&lt;h1&gt;Товар&lt;/h1&gt;&quot;)
+    resp = local_test_server.fetch(&quot;/item&quot;)
+    assert resp.status == 200
+
+    # Быстрый мок Playwright
+    page = mock_playwright_page(&quot;&lt;h1&gt;Товар&lt;/h1&gt;&quot;)
+    assert await page.locator(&quot;h1&quot;).inner_text() == &quot;Товар&quot;
+</code></pre>
+<hr />
+<h2 id="7-camoufox-chutilsscrapingcamoufox_1">7. Антидетект-браузер Camoufox (<code>chutils.scraping.camoufox</code>)</h2>
+<p>Для сценариев, где инъекций в CDP/JS недостаточно (например, при сложной проверке C++ рендеринга и WebGL Cloudflare Turnstile), рекомендуется использовать антидетект-браузер Camoufox (модифицированный Playwright Firefox со встроенной защитой на уровне ядра движка).</p>
+<p>Фабрика <code>launch_camoufox</code> возвращает асинхронный контекстный менеджер браузера:</p>
+<pre><code class="language-python">import asyncio
+from chutils.scraping import launch_camoufox
+
+
+async def main():
+    async with await launch_camoufox(headless=True, os=&quot;windows&quot;) as browser:
+        page = await browser.new_page()
+        await page.goto(&quot;https://nowecurity.com&quot;)
+        print(await page.title())
+
+
+if __name__ == &quot;__main__&quot;:
+    asyncio.run(main())
+</code></pre>
+<hr />
+<h2 id="8-js-web-workers-client-hints_1">8. Улучшенный JS-антидетект, Web Workers и Client Hints</h2>
+<p>В модуль <code>chutils.scraping.humanize.antidetect</code> добавлены следующие передовые механизмы защиты:</p>
+<ol>
+<li><strong>Защита изолированных Web Workers и SharedWorkers</strong>: Антифрод-системы (Cloudflare Turnstile, Kasada, CreepJS) часто создают фоновые воркеры (<code>new Worker(...)</code>), чтобы проверить чистый контекст <code>self.navigator.webdriver</code> в обход основных инъекций в страницу. Модуль перехватывает конструкторы <code>Worker</code> и <code>SharedWorker</code>, автоматически оборачивает исходный скрипт в защитную преамбулу через <code>Blob</code> и <code>URL.createObjectURL</code>, полностью скрывая автоматизацию внутри воркеров.</li>
+<li><strong>Маскировка V8 Stack Traces (<code>makeNative</code>)</strong>: При инспекции стектрейсов ошибок (<code>Error().stack</code> или <code>Error.captureStackTrace</code>) антифрод обнаруживает следы monkey-patching (<code>at patched... (eval at...)</code>). Функция <code>makeNative</code> маскирует стек вызовов под нативные вызовы браузера (<code>at FunctionName (&lt;anonymous&gt;)</code>).</li>
+<li><strong>Полноценная эмуляция <code>window.chrome</code></strong>: В headless-режиме и Playwright свойство <code>window.chrome</code> отсутствует или пустое. Антидетект эмулирует нативные методы <code>chrome.loadTimes()</code>, <code>chrome.csi()</code>, <code>chrome.runtime</code> и <code>chrome.app</code> с сохранением правильных сигнатур и <code>[native code]</code>.</li>
+<li><strong>Защита от утечки IP через WebRTC (<code>RTCPeerConnection</code>)</strong>: Блокирует утечку локальных (LAN) и прямых IP через STUN/TURN SDP кандидаты при работе через прокси.</li>
+<li><strong>Детерминированный микрошум AudioContext</strong>: Внедряет микрошум в <code>AudioBuffer.prototype.getChannelData</code> на базе <code>session_seed</code>, исключая снятие стабильного аудио-отпечатка антифрод-системами без искажения звука.</li>
+<li><strong>Эмуляция геометрии окна и экрана</strong>: В headless-браузерах <code>outerWidth</code> и <code>outerHeight</code> равны 0 либо строго равны <code>innerWidth</code>/<code>innerHeight</code>. Модуль выставляет реалистичные габариты с учетом тулбаров браузера и панели задач ОС.</li>
+<li><strong>Эмуляция свойств <code>navigator.connection</code> и <code>navigator.getBattery</code></strong>: Предоставляет согласованные данные сетевого статуса (4G, RTT) и Battery API.</li>
+<li><strong>Детерминированный Canvas Noise (<code>session_seed</code>)</strong>: Шум накладывается через псевдослучайный алгоритм на базе стабильного сида сессии. Это исключает обнаружение антифрод-скриптами частой мутации канваса при многократном чтении <code>getImageData</code>.</li>
+<li><strong>Cross-realm iframe prototype protection</strong>: Перехват создания элементов <code>iframe</code> и предотвращение извлечения чистых непатченных прототипов (<code>Function.prototype.toString</code>, <code>navigator.webdriver</code>).</li>
+<li><strong>Генерация Client Hints (<code>get_client_hints</code>)</strong>: Формирование согласованной структуры <code>navigator.userAgentData</code> (brands, platform, mobile, entropy values) под указанный User-Agent.</li>
+<li><strong>Мост Cookie и Clearance токенов (<code>extract_clearance_cookies</code>)</strong>: Извлечение сессионных токенов (включая <code>cf_clearance</code>) и User-Agent из браузера для последующей передачи в быстрый сетевой клиент <code>TLSAsyncClient</code> / <code>TLSSession</code>:</li>
+</ol>
+<pre><code class="language-python">from chutils.scraping import extract_clearance_cookies
+from chutils.http import TLSAsyncClient
+
+# Извлечение из Playwright Page / Nodriver Tab
+clearance_data = await extract_clearance_cookies(page)
+print(clearance_data[&quot;cookies&quot;])  # {'cf_clearance': '...', ...}
+
+# Прямая инициализация быстрого TLS-клиента из браузерной сессии
+client = await TLSAsyncClient.from_browser_session(page, impersonate=&quot;chrome120&quot;)
+resp = await client.get(&quot;https://protected-site.com/api/data&quot;)
+</code></pre>
+<hr />
+<h2 id="9-nodriver-launch_nodriver-nodriver_session">9. Запуск Nodriver с антидетектом (<code>launch_nodriver</code>, <code>nodriver_session</code>)</h2>
+<p>Для браузерной автоматизации без следов веб-драйвера модуль <code>chutils.scraping</code> предоставляет фабрику <code>launch_nodriver</code> и асинхронный контекстный менеджер <code>nodriver_session</code>. Они автоматически накладывают рекомендованные флаги запуска Chromium (<code>--disable-dev-shm-usage</code> для Docker, параметры изоляции и др.), настраивают прокси (с прозрачной поддержкой авторизации через расширение) и применяют <code>AntidetectConfig</code>.</p>
+<p>Фабрика поддерживает передачу постоянного каталога профиля (<code>user_data_dir</code>) для сохранения сессий, авторизаций и прогретых куки, а также кастомного пути к бинарнику браузера (<code>browser_executable_path</code>):</p>
+<pre><code class="language-python">import asyncio
+from chutils.scraping import AntidetectConfig, nodriver_session
+
+
+async def main():
+    # Запуск браузера с нулевым вмешательством в Chromium и прогретым профилем
+    config = AntidetectConfig.preset_stealth_nodriver()
+
+    async with nodriver_session(
+        config=config,
+        user_data_dir=&quot;./chrome_profile&quot;,
+        headless=False,
+    ) as browser:
+        tab = await browser.get(&quot;https://nowecurity.com&quot;)
+        print(&quot;Заголовок страницы:&quot;, await tab.evaluate(&quot;document.title&quot;))
+
+
+if __name__ == &quot;__main__&quot;:
+    asyncio.run(main())
+</code></pre>
+<hr />
+<h2 id="10-cloudflare-turnstile-solve_cf_turnstile">10. Автоматическое решение Cloudflare Turnstile (<code>solve_cf_turnstile</code>)</h2>
+<p>Функция <code>solve_cf_turnstile</code> автоматически обнаруживает виджет Turnstile на странице (включая контейнеры внутри Shadow DOM), проверяет его интерактивность (отсутствие спиннеров/состояния проверки), центрирует в области вьюпорта (<code>scrollIntoView</code>), перемещает курсор по физической модели <code>windmouse</code> и производит клик с микропаузами удержания клавиши.</p>
+<pre><code class="language-python">import asyncio
+from chutils.scraping import nodriver_session, solve_cf_turnstile
+
+
+async def main():
+    async with nodriver_session(headless=False) as browser:
+        tab = await browser.get(&quot;https://peet.ws/turnstile-test/staging-turnstile.html&quot;)
+
+        # Автоматическое ожидание и решение капчи Turnstile
+        solved = await solve_cf_turnstile(
+            tab,
+            timeout=15.0,
+            natural_hover=True,  # Естественная траектория наведения курсора из случайной точки
+        )
+        if solved:
+            print(&quot;Turnstile успешно пройден!&quot;)
+        else:
+            print(&quot;Не удалось решить капчу Turnstile.&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    asyncio.run(main())
+</code></pre>
+<h3 id="solve_cf_turnstile">Ключевые возможности <code>solve_cf_turnstile</code>:</h3>
+<ul>
+<li><strong>Точные экранные координаты Viewport</strong>: Клик передается в координатах видимой области браузера без смещения при скролле.</li>
+<li><strong>Поддержка Shadow DOM</strong>: Рекурсивный поиск iframe и контейнеров капчи внутри открытых <code>shadowRoot</code>.</li>
+<li><strong>Адаптивная геометрия и <code>click_offset</code></strong>: Автоматическое определение компактного режима виджета (Compact mode) или возможность ручной передачи смещения клика <code>click_offset=(offset_x, offset_y)</code>.</li>
+<li><strong>Авто-повтор при Expired/Error</strong>: Автоматический сброс состояния клика при переходе виджета в <code>data-state="expired"</code>, что позволяет повторно обновить решение.</li>
+<li><strong>Естественное наведение (<code>natural_hover</code>)</strong>: Старт траектории WindMouse из случайной точки экрана вместо телепортации курсора в виджет.</li>
+<li><strong>Активация фокуса окна (<code>bring_to_front</code>)</strong>: Принудительный перевод вкладки на передний план для сохранения <code>document.hasFocus()</code> и валидной доставки системных событий.</li>
+<li><strong>Детекция Hard Challenge</strong>: Автоматическое распознавание интерактивных челленджей с предупреждением в лог и детализированной ошибкой при <code>raise_on_failure=True</code>.</li>
+<li><strong>Проверка интерактивности</strong>: Ожидание готовности виджета и пропуск неинтерактивных состояний (<code>opacity: 0</code>, <code>data-state="checking"</code>).</li>
+<li><strong>CDP Fallback</strong>: Автоматический резервный расчет границ через Box Model CDP при нулевых размерах DOM-прямоугольника.</li>
+</ul>
+<hr />
+<h2 id="11-chutilsscrapingfingerprint">11. Синтезатор цифровой личности и генератор отпечатков (<code>chutils.scraping.fingerprint</code>)</h2>
+<p>Модуль <code>chutils.scraping.fingerprint</code> обеспечивает генерацию физически согласованных и статистически достоверных цифровых личностей (Browser Fingerprints) для обхода систем антифрода и фингерпринтинга (CreepJS, Pixelscan, BrowserLeaks).</p>
+<h3 id="_6">Концепция архитектуры</h3>
+<ol>
+<li><strong>Физическая валидность параметров</strong>: Видеокарта, процессор, объем памяти, Client Hints и разрешение экрана строго взаимосвязаны (например, исключены аномалии вроде видеокарты Apple Metal на Windows или нечетного количества ядер).</li>
+<li><strong>Детерминизм по сиду</strong>: Один и тот же сид (<code>seed="session_123"</code>) генерирует абсолютно идентичный отпечаток цифровой личности в любое время.</li>
+<li><strong>Два независимых движка</strong>:</li>
+<li><strong><code>ProceduralFingerprintEngine</code> (Zero-Dependency)</strong>: Встроенный комбинаторный генератор с детерминированным расчетом геометрии дисплея, вычетом системной панели задач и валидными ANGLE WebGL строками. Не требует сторонних библиотек.</li>
+<li><strong><code>BrowserForgeProvider</code> (Байесовская сеть)</strong>: Опциональный провайдер на базе пакета <code>browserforge</code> (<code>pip install chutils[fingerprint]</code>), использующий генеративную байесовскую сеть, обученную на миллионах реальных пользовательских сессий.</li>
+<li><strong>Бесшовная интеграция с <code>nodriver</code> и <code>Playwright</code></strong>: Прямое применение параметров через методы профиля или <code>AntidetectConfig</code>.</li>
+</ol>
+<h3 id="_7">Быстрый старт</h3>
+<pre><code class="language-python">import asyncio
+from chutils.scraping import FingerprintSynthesizer, AntidetectConfig
+
+# 1. Детерминированный синтез по сиду
+synthesizer = FingerprintSynthesizer(os_target=&quot;windows&quot;)
+profile = synthesizer.synthesize(seed=&quot;user_account_42&quot;)
+
+print(f&quot;Платформа: {profile.platform}&quot;)
+print(f&quot;User-Agent: {profile.user_agent}&quot;)
+print(f&quot;Экран: {profile.screen.width}x{profile.screen.height} (доступно: {profile.screen.avail_width}x{profile.screen.avail_height})&quot;)
+print(f&quot;GPU: {profile.webgl.renderer}&quot;)
+print(f&quot;Ядра CPU: {profile.hardware_concurrency}, RAM: {profile.device_memory} GB&quot;)
+
+# 2. Быстрое создание AntidetectConfig через сид
+config = AntidetectConfig.from_seed(&quot;user_account_42&quot;)
+# или из готового профиля:
+config = AntidetectConfig.from_fingerprint(profile)
+
+# 3. Прямое применение профиля к вкладке nodriver или странице Playwright
+# await profile.apply_to_tab(tab)
+# await profile.apply_to_page(page)
+</code></pre>
+<h3 id="_8">Сохранение и сериализация профиля</h3>
+<p>Сгенерированные отпечатки можно сериализовать в JSON / Dict и восстанавливать для долгосрочного использования сессий:</p>
+<pre><code class="language-python"># Экспорт в словарь / JSON
+data = profile.to_dict()
+
+# Восстановление профиля
+from chutils.scraping import FingerprintProfile
+restored_profile = FingerprintProfile.from_dict(data)
+assert restored_profile.user_agent == profile.user_agent
+</code></pre>
+<hr />
+<h2 id="12-chutilsscrapingprofiles">12. Управление профилями браузеров и сессиями (<code>chutils.scraping.profiles</code>)</h2>
+<p>Модуль <code>chutils.scraping.profiles</code> предоставляет универсальную абстракцию профиля браузера (<code>BrowserProfile</code>) для сохранения, переноса и переиспользования сессий между различными браузерными движками (<code>nodriver</code>, <code>Playwright</code>, <code>Selenium</code>).</p>
+<h3 id="_9">Основные компоненты</h3>
+<ul>
+<li><strong><code>BrowserProfile</code></strong>: Унифицированный контейнер данных сессии, включающий куки (<code>cookies: list[CookieData]</code>), локальное хранилище (<code>storage: StorageData</code>) и заголовки с User-Agent (<code>headers: HeaderData</code>).</li>
+<li><strong><code>ProfileManager</code></strong>: Менеджер жизненного цикла сессий на диске с поддержкой автоматической ротации, проверки валидности и кэширования.</li>
+<li><strong>Адаптеры движков (<code>chutils.scraping.profiles.adapters</code>)</strong>:</li>
+<li><strong><code>nodriver</code></strong>: <code>export_nodriver_profile(tab)</code> и <code>import_nodriver_profile(tab, profile)</code>. Поддерживает полиморфное чтение кук из CDP (словари, прямой список, объекты <code>cdp.network.Cookie</code> с enum-полями <code>same_site</code>), а также каскадный вызов <code>Network.getAllCookies</code> / <code>network.get_all_cookies()</code> / <code>network.get_cookies()</code>.</li>
+<li><strong><code>Playwright</code></strong>: <code>export_playwright_profile(context)</code> и <code>import_playwright_profile(context, profile)</code>. Экспортирует состояние кук и localStorage через <code>context.storage_state()</code>.</li>
+<li><strong><code>Selenium</code></strong>: <code>export_selenium_profile(driver)</code> и <code>import_selenium_profile(driver, profile)</code>.</li>
+</ul>
+<h3 id="nodriver_1">Пример использования адаптера nodriver</h3>
+<pre><code class="language-python">import nodriver as uc
+from chutils.scraping.profiles.adapters.nodriver import export_nodriver_profile, import_nodriver_profile
+from chutils.scraping.profiles.storage import save_profile_to_file, load_profile_from_file
+
+async def main():
+    browser = await uc.start()
+    tab = await browser.get(&quot;https://example.com/login&quot;)
+    # ... авторизация на сайте ...
+
+    # Экспорт профиля сессии с куками и User-Agent
+    profile = await export_nodriver_profile(tab)
+    save_profile_to_file(profile, &quot;session_profile.json&quot;)
+
+    # В новой сессии — импорт сохраненного профиля
+    restored_profile = load_profile_from_file(&quot;session_profile.json&quot;)
+    new_tab = await browser.get(&quot;https://example.com&quot;)
+    await import_nodriver_profile(new_tab, restored_profile)
+</code></pre>
+<hr />
+<h2 id="13-smartproxyresolver">13. Умный резолвер и валидатор прокси (<code>SmartProxyResolver</code>)</h2>
+<p>При работе с пулами прокси от различных поставщиков строки подключения часто поступают в нестандартных форматах (<code>ip:port:user:pass</code>, <code>user:pass:ip:port</code>, <code>user:pass@ip:port</code>, без протокола или с неверно указанным протоколом <code>http://</code> вместо <code>socks5://</code>).</p>
+<p>Класс <code>SmartProxyResolver</code> (<code>chutils.scraping.proxy.SmartProxyResolver</code> или <code>chutils.SmartProxyResolver</code>) решает эту проблему:
+1. <strong>Эвристический разбор строк</strong>: Распознает любые вариации форматов <code>host:port:user:pass</code>, <code>user:pass:host:port</code>, <code>@</code> нотацию и формирует приоритизированный список кандидатов.
+2. <strong>Активный сетевой Handshake (Probe)</strong>:
+   - Для HTTP/HTTPS: проверяет поддержку туннелирования через <code>CONNECT</code> или легковесный <code>GET /generate_204</code>, корректно обрабатывая ошибки авторизации <code>407 Proxy Authentication Required</code>.
+   - Для SOCKS5: выполняет полноценное рукопожатие RFC 1928 и авторизацию RFC 1929 (<code>0x02 username/password</code>).
+   - Для SOCKS4: выполняет SOCKS4 connect handshake.
+3. <strong>Персистентный дисковый кэш (<code>FileCacheBackend</code>)</strong>: Валидированные канонические URL сохраняются на диск с TTL (по умолчанию 7 дней) и атомарной записью (<code>atomic_write</code>), избегая повторных сетевых задержек при последующих запусках.
+4. <strong>Live Health-Check и замер задержки</strong>: Метод <code>check_health</code> возвращает <code>ProxyHealthResult</code> со статусом доступности <code>is_alive</code>, задержкой <code>latency_ms</code> и текстом ошибки <code>error</code>.
+5. <strong>Синхронные обертки</strong>: Методы <code>resolve_sync</code> и <code>resolve_config_sync</code> корректно работают как в синхронных скриптах, так и внутри уже работающего цикла событий <code>asyncio</code> (например, в Jupyter Notebook, FastAPI или GUI).</p>
+<h3 id="_10">Пример использования</h3>
+<pre><code class="language-python">import asyncio
+from chutils import SmartProxyResolver
+
+async def main():
+    resolver = SmartProxyResolver()
+
+    # Автоматическое определение протокола и формата
+    # Строка вида &quot;ip:port:user:pass&quot; превращается в валидный рабочий URL
+    proxy_url = await resolver.resolve(&quot;185.199.229.156:8080:login:password&quot;)
+    print(f&quot;Рабочий URL прокси: {proxy_url}&quot;)
+    # Вывод: http://login:password@185.199.229.156:8080 (или socks5://...)
+
+    # Получение готовой типизированной конфигурации ProxyConfig
+    config = await resolver.resolve_config(&quot;185.199.229.156:8080:login:password&quot;)
+    if config:
+        print(f&quot;Хост: {config.host}, Порт: {config.port}, Протокол: {config.protocol}&quot;)
+
+    # Проверка задержки и живости прокси (Health Check)
+    health = await resolver.check_health(proxy_url)
+    print(f&quot;Живой: {health.is_alive}, Задержка: {health.latency_ms} ms&quot;)
+
+asyncio.run(main())
+</code></pre>
+<h3 id="_11">Синхронный вызов</h3>
+<pre><code class="language-python">from chutils import SmartProxyResolver
+
+resolver = SmartProxyResolver()
+# Работает без явного вызова asyncio.run(), безопасно внутри любого контекста
+proxy_url = resolver.resolve_sync(&quot;185.199.229.156:8080:login:password&quot;)
+proxy_cfg = resolver.resolve_config_sync(&quot;185.199.229.156:8080:login:password&quot;)
+</code></pre>
+<h3 id="-asyncproxytunnel_1">Локальный прокси-туннель (<code>AsyncProxyTunnel</code>)</h3>
+<p>Позволяет безопасно проксировать трафик браузеров (включая Chromium в headless-режиме) через локальный HTTP/CONNECT форвардер с прозрачной подстановкой заголовков <code>Proxy-Authorization</code> и логированием сбоев соединения:</p>
+<pre><code class="language-python">from chutils.scraping.proxy import AsyncProxyTunnel
+
+tunnel = AsyncProxyTunnel(&quot;http://user:pass@1.2.3.4:8000&quot;)
+await tunnel.start()
+print(&quot;Chrome flag:&quot;, tunnel.to_chrome_arg())  # --proxy-server=http://127.0.0.1:&lt;port&gt;
+...
+await tunnel.stop()
+</code></pre>
+<hr />
+<h2 id="14-pytest-chutilsscrapingtesting">14. Тестирование скраперов и Pytest-фикстуры (<code>chutils.scraping.testing</code>)</h2>
+<p>Модуль предоставляет готовый набор фикстур для автотестирования парсеров, эмуляции моков браузеров и сквозных live-тестов.</p>
+<h3 id="pytest">Авторегистрация плагина Pytest</h3>
+<p>Плагин автоматически регистрируется в Pytest через точку входа <code>pytest11</code>. При этом импорт плагина полностью изолирован и не имеет побочных эффектов (Zero Side-Effects): все серверы, браузерные сессии и утилиты снапшотов импортируются <strong>лениво</strong> только в момент запроса соответствующей фикстуры тестом.</p>
+<h3 id="_12">Доступные фикстуры</h3>
+<ul>
+<li><strong><code>local_test_server</code></strong>: Локальный HTTP-сервер песочницы для проверки отдачи статических HTML/JSON и перехватов запросов.</li>
+<li><strong><code>live_browser_session</code></strong>: Контекст реального браузера с гарантированным удалением zombie-процессов через <code>chutils.lifecycle</code>.</li>
+<li><strong><code>html_snapshot_recorder</code></strong>: Менеджер сохранения и сверки HTML-снапшотов для оффлайн регрессионного тестирования парсеров.</li>
+<li><strong><code>mock_nodriver_tab</code></strong>, <strong><code>mock_playwright_page</code></strong>, <strong><code>mock_selenium_driver</code></strong>: Быстрые фабрики моков вкладок и страниц без необходимости запуска реального браузера.</li>
+</ul>
+<h3 id="data-assertions">Утверждения качества данных (Data Assertions)</h3>
+<ul>
+<li><strong><code>assert_extraction_complete</code></strong>: Проверяет обязательные ключи и непустые значения в распарсенных словарях.</li>
+<li><strong><code>assert_price_valid</code></strong>: Валидирует числовые значения цен.</li>
+<li><strong><code>assert_pagination_valid</code></strong>: Проверяет корректность URL следующей страницы.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  К началу
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.tabs", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "search.result.more.one": "\u0415\u0449\u0451 1 \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.more.other": "\u0415\u0449\u0451 # \u043d\u0430 \u044d\u0442\u043e\u0439 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0435", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439: #", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.term.missing": "\u041e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442", "select.version": "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0432\u0435\u0440\u0441\u0438\u044e"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
