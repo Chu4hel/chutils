@@ -1,17 +1,39 @@
-"""Тесты для chutils.scraping.profiles.hygiene (sanitize_profile)."""
+"""Тесты для chutils.scraping.profiles.hygiene (sanitize_profile, sanitize_profile_crash_state, is_profile_locked)."""
+
+from __future__ import annotations
 
 import json
 from pathlib import Path
 
-from chutils.scraping import ProfileManager, sanitize_profile
+from pytest_mock import MockerFixture
+
+from chutils import (
+    is_profile_locked,
+    sanitize_profile,
+    sanitize_profile_crash_state,
+)
+from chutils.scraping import ProfileManager, nodriver, profiles
 
 
-def test_sanitize_profile_non_existent(tmp_path: Path):
+def test_hygiene_exports_and_aliases() -> None:
+    """Проверяет корректность экспорта и идентичность алиасов функций санитайзинга."""
+    assert sanitize_profile is profiles.sanitize_profile
+    assert sanitize_profile is nodriver.sanitize_profile
+    assert sanitize_profile_crash_state is profiles.sanitize_profile_crash_state
+    assert sanitize_profile_crash_state is nodriver.sanitize_profile_crash_state
+    assert is_profile_locked is profiles.is_profile_locked
+    assert is_profile_locked is nodriver.is_profile_locked
+
+
+def test_sanitize_profile_non_existent(tmp_path: Path) -> None:
+    """Проверяет обработку несуществующей директории профиля."""
     non_existent = tmp_path / "does_not_exist"
     assert sanitize_profile(non_existent) is False
+    assert sanitize_profile_crash_state(non_existent) is False
 
 
-def test_sanitize_profile_resets_crash_flags_and_sessions(tmp_path: Path):
+def test_sanitize_profile_resets_crash_flags_and_sessions(tmp_path: Path) -> None:
+    """Проверяет сброс флагов аварии в Preferences, Local State и удаление папок сессий."""
     profile_dir = tmp_path / "chrome_user_data"
     default_dir = profile_dir / "Default"
     default_dir.mkdir(parents=True)
@@ -25,10 +47,28 @@ def test_sanitize_profile_resets_crash_flags_and_sessions(tmp_path: Path):
         },
         "session": {
             "restore_on_startup": 4,
+            "restore_after_crash": True,
         },
     }
     with open(prefs_file, "w", encoding="utf-8") as f:
         json.dump(initial_prefs, f)
+
+    # Создаем Local State с флагом падения и перезапуска
+    local_state_file = profile_dir / "Local State"
+    local_state_data = {
+        "profile": {
+            "info_cache": {
+                "Default": {
+                    "exit_type": "Crashed",
+                    "exited_cleanly": False,
+                }
+            }
+        },
+        "was": {
+            "restarted": True,
+        },
+    }
+    local_state_file.write_text(json.dumps(local_state_data), encoding="utf-8")
 
     # Создаем папки и файлы сессий
     sessions_dir = default_dir / "Sessions"
@@ -47,7 +87,7 @@ def test_sanitize_profile_resets_crash_flags_and_sessions(tmp_path: Path):
     (default_dir / "History").write_text("history data")
 
     # Вызываем санитайзинг
-    result = sanitize_profile(profile_dir)
+    result = sanitize_profile_crash_state(profile_dir)
     assert result is True
 
     # Проверяем, что Preferences обновлены
@@ -57,6 +97,12 @@ def test_sanitize_profile_resets_crash_flags_and_sessions(tmp_path: Path):
     assert updated_prefs["profile"]["exit_type"] == "Normal"
     assert updated_prefs["profile"]["exited_cleanly"] is True
     assert updated_prefs["session"]["restore_on_startup"] == 1
+    assert updated_prefs["session"]["restore_after_crash"] is False
+
+    # Проверяем, что Local State очищен от маркеров падения
+    updated_local_state = json.loads(local_state_file.read_text(encoding="utf-8"))
+    assert updated_local_state["profile"]["info_cache"]["Default"]["exit_type"] == "Normal"
+    assert updated_local_state["was"]["restarted"] is False
 
     # Проверяем, что артефакты сессий удалены
     assert not sessions_dir.exists()
@@ -71,7 +117,8 @@ def test_sanitize_profile_resets_crash_flags_and_sessions(tmp_path: Path):
     assert (default_dir / "History").exists()
 
 
-def test_sanitize_profile_via_profile_manager(tmp_path: Path):
+def test_sanitize_profile_via_profile_manager(tmp_path: Path) -> None:
+    """Проверяет сброс флагов через ProfileManager."""
     profile_dir = tmp_path / "pm_profile"
     profile_dir.mkdir()
     prefs_file = profile_dir / "Preferences"
@@ -83,3 +130,21 @@ def test_sanitize_profile_via_profile_manager(tmp_path: Path):
     updated = json.loads(prefs_file.read_text(encoding="utf-8"))
     assert updated["profile"]["exit_type"] == "Normal"
     assert updated["profile"]["exited_cleanly"] is True
+
+
+def test_is_profile_locked(tmp_path: Path, mocker: MockerFixture) -> None:
+    """Проверяет детекцию блокировок профиля процессами Chromium."""
+    profile_dir = tmp_path / "test_locked_profile"
+    assert is_profile_locked(profile_dir) is False
+
+    profile_dir.mkdir()
+    assert is_profile_locked(profile_dir) is False
+
+    lock_file = profile_dir / "lockfile"
+    lock_file.write_text("1")
+    # Без удержания блокировки процессом
+    assert is_profile_locked(profile_dir) is False
+
+    # При удержании процесса другим инстансом Chromium (PermissionError/OSError)
+    mocker.patch("builtins.open", side_effect=PermissionError("Locked by another process"))
+    assert is_profile_locked(profile_dir) is True

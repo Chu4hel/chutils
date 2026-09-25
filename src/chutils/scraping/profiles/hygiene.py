@@ -157,6 +157,10 @@ def sanitize_profile(
                                 )
                             except Exception:
                                 pass
+                    try:
+                        s_dir.rmdir()
+                    except (PermissionError, OSError):
+                        pass
                     logger.debug("Очищены файлы сохраненных вкладок в %s", s_dir)
                 except Exception as exc:
                     logger.debug("Не удалось очистить каталог сессий %s: %s", s_dir, exc)
