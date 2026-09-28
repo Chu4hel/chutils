@@ -115,6 +115,7 @@ except OptionalDependencyError as e:
 | Распределённая трассировка (OpenTelemetry) | `pip install "chutils[otel]"`     |
 | Умный HTTP-клиент с ротацией proxy/UA      | `pip install "chutils[web]"`      |
 | Интеграция с решателями капчи              | `pip install "chutils[captcha]"`  |
+| Кроссбраузерный антидетект (WebDriver BiDi) | `pip install "chutils[bidi]"`     |
 | Автоматизация браузера / анти-детекция     | `pip install "chutils[scraping]"` |
 | Полная установка для разработки            | `pip install "chutils[full]"`     |
 

@@ -1754,7 +1754,7 @@
         "name": "captcha",
         "path": "chutils/captcha",
         "type": "package",
-        "layer": "internal",
+        "layer": "public",
         "summary": "",
         "docstring": "",
         "children": [
@@ -1830,7 +1830,7 @@
               {
                 "name": "GeeTestSolver",
                 "type": "class",
-                "layer": "internal",
+                "layer": "public",
                 "signature": "",
                 "summary": "Синхронный и асинхронный клиент для решения GeeTest v4 / v3.",
                 "docstring": "Синхронный и асинхронный клиент для решения GeeTest v4 / v3.\n\nПоддерживает провайдеры RuCaptcha, 2Captcha и CapMonster Cloud.",
@@ -2013,7 +2013,7 @@
               {
                 "name": "AsyncGeeTestSolver",
                 "type": "class",
-                "layer": "internal",
+                "layer": "public",
                 "signature": "",
                 "summary": "Асинхронный клиент для решения GeeTest v4 / v3.",
                 "docstring": "Асинхронный клиент для решения GeeTest v4 / v3.",
@@ -2107,7 +2107,7 @@
               {
                 "name": "GeeTestTaskConfig",
                 "type": "class",
-                "layer": "internal",
+                "layer": "public",
                 "signature": "",
                 "summary": "Конфигурация задачи для решения GeeTest v4 / v3.",
                 "docstring": "Конфигурация задачи для решения GeeTest v4 / v3.\n\nAttributes:\n    captcha_id: Идентификатор капчи GeeTest v4 (параметр captcha_id).\n    page_url: Полный URL страницы, на которой расположена капча.\n    challenge: Токен челленджа (обязателен для v3, опционален для v4).\n    risk_type: Подтип или тип риска проверки (например, 'slide', 'verify').\n    api_server: Домен сервера GeeTest (например, 'gcaptcha4.geetest.com').\n    user_agent: Пользовательский User-Agent для решения с эмуляцией заголовков.\n    proxy: Прокси-сервер в формате scheme://user:password@host:port.",
@@ -2129,7 +2129,7 @@
               {
                 "name": "GeeTestResult",
                 "type": "class",
-                "layer": "internal",
+                "layer": "public",
                 "signature": "",
                 "summary": "Результат успешного решения капчи GeeTest v4.",
                 "docstring": "Результат успешного решения капчи GeeTest v4.\n\nAttributes:\n    lot_number: Идентификатор лота (раунда верификации).\n    pass_token: Токен прохождения проверки.\n    gen_time: Временная метка генерации решения.\n    captcha_output: Подпись решения капчи (output).\n    captcha_id: Идентификатор капчи, для которой получено решение.",
@@ -2172,7 +2172,7 @@
               {
                 "name": "ReCaptchaEnterpriseConfig",
                 "type": "class",
-                "layer": "internal",
+                "layer": "public",
                 "signature": "",
                 "summary": "Конфигурация задачи для решения reCAPTCHA Enterprise.",
                 "docstring": "Конфигурация задачи для решения reCAPTCHA Enterprise.\n\nAttributes:\n    site_key: Публичный ключ сайта (sitekey) reCAPTCHA Enterprise.\n    page_url: Полный URL страницы, на которой расположена капча.\n    action: Название защищаемого действия (action).\n    enterprise_payload: Дополнительные параметры Enterprise payload.\n    s_token: Защитный токен s_token (если используется).\n    user_agent: Пользовательский User-Agent для соответствия браузерному окружению.\n    proxy: Прокси-сервер в формате scheme://user:password@host:port.\n    min_score: Минимальный требуемый score для скоринговых проверок (0.1 - 0.9).",
@@ -2245,7 +2245,7 @@
               {
                 "name": "ReCaptchaEnterpriseSolver",
                 "type": "class",
-                "layer": "internal",
+                "layer": "public",
                 "signature": "",
                 "summary": "Синхронный и асинхронный клиент для решения reCAPTCHA Enterprise.",
                 "docstring": "Синхронный и асинхронный клиент для решения reCAPTCHA Enterprise.\n\nПоддерживает провайдеры RuCaptcha, 2Captcha и CapMonster Cloud.",
@@ -2428,7 +2428,7 @@
               {
                 "name": "AsyncReCaptchaEnterpriseSolver",
                 "type": "class",
-                "layer": "internal",
+                "layer": "public",
                 "signature": "",
                 "summary": "Асинхронный клиент для решения reCAPTCHA Enterprise.",
                 "docstring": "Асинхронный клиент для решения reCAPTCHA Enterprise.",
@@ -28385,7 +28385,7 @@
                   {
                     "name": "apply_antidetect_bidi",
                     "type": "function",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "(session_or_client, config)",
                     "summary": "Применяет маскировку антидетекта через скрипты предзагрузки WebDriver BiDi.",
                     "docstring": "Применяет маскировку антидетекта через скрипты предзагрузки WebDriver BiDi.\n\nВ отличие от CDP (Chrome DevTools Protocol), WebDriver BiDi является W3C-стандартом\nи поддерживается кроссбраузерно как в движках на базе Chromium (Chrome, Edge), так и в\nGecko (Firefox), а также в Safari (WebKit).\n\nСкрипт предзагрузки внедряется в каждый новый контекст и документ до исполнения любого\nпользовательского кода на целевом сайте.\n\nArgs:\n    session_or_client: Активная сессия BiDiSession или клиент BiDiClient.\n    config: Конфигурация отпечатка AntidetectConfig (если None, используются дефолтные параметры).\n    contexts: Опциональный список идентификаторов контекстов, к которым применить скрипт.\n        Если None, скрипт применяется ко всем контекстам сессии.\n    sandbox: Опциональное имя песочницы JavaScript. По умолчанию None (глобальный контекст окна).\n\nReturns:\n    Идентификатор зарегистрированного скрипта предзагрузки (preload script ID).\n\nRaises:\n    BiDiCommandError: Если браузер вернул ошибку при регистрации скрипта.\n    BiDiConnectionError: Если соединение с браузером разорвано.",
@@ -28456,7 +28456,7 @@
                   {
                     "name": "BiDiClient",
                     "type": "class",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "",
                     "summary": "Асинхронный клиент для взаимодействия с браузером по протоколу WebDriver BiDi.",
                     "docstring": "Асинхронный клиент для взаимодействия с браузером по протоколу WebDriver BiDi.\n\nПозволяет отправлять JSON-RPC команды стандартизированного протокола WebDriver BiDi,\nполучать ответы и подписываться на асинхронные события браузера.",
@@ -28910,7 +28910,7 @@
                   {
                     "name": "BiDiError",
                     "type": "class",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "",
                     "summary": "Базовое исключение для всех ошибок протокола WebDriver BiDi.",
                     "docstring": "Базовое исключение для всех ошибок протокола WebDriver BiDi.",
@@ -28932,7 +28932,7 @@
                   {
                     "name": "BiDiConnectionError",
                     "type": "class",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "",
                     "summary": "Исключение, возникающее при ошибке сетевого подключения к BiDi WebSocket.",
                     "docstring": "Исключение, возникающее при ошибке сетевого подключения к BiDi WebSocket.",
@@ -28954,7 +28954,7 @@
                   {
                     "name": "BiDiTimeoutError",
                     "type": "class",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "",
                     "summary": "Исключение при превышении таймаута ожидания ответа от браузера.",
                     "docstring": "Исключение при превышении таймаута ожидания ответа от браузера.",
@@ -28976,7 +28976,7 @@
                   {
                     "name": "BiDiCommandError",
                     "type": "class",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "",
                     "summary": "Исключение при возврате ошибки выполнения команды браузером.",
                     "docstring": "Исключение при возврате ошибки выполнения команды браузером.\n\nAttributes:\n    error_code: Строковый код ошибки BiDi (например, 'invalid argument').\n    message: Сообщение об ошибке от браузера.\n    data: Дополнительные данные об ошибке (при наличии).",
@@ -29050,7 +29050,7 @@
                   {
                     "name": "extract_bidi_url",
                     "type": "function",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "(target)",
                     "summary": "Извлекает WebSocket URL для WebDriver BiDi из строки или объекта браузерного драйвера.",
                     "docstring": "Извлекает WebSocket URL для WebDriver BiDi из строки или объекта браузерного драйвера.\n\nПоддерживает:\n- Прямую строку WebSocket URL ('ws://...' или 'wss://...').\n- Экземпляр Selenium WebDriver со свойством capabilities['webSocketUrl'].\n- Объект соединения driver.bidi_connection.\n\nArgs:\n    target: URL в виде строки или объект драйвера Selenium/WebDriver.\n\nReturns:\n    WebSocket URL для подключения.\n\nRaises:\n    ValueError: Если URL не удалось извлечь или он имеет неверный формат.",
@@ -29070,7 +29070,7 @@
                   {
                     "name": "BiDiSession",
                     "type": "class",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "",
                     "summary": "Высокоуровневая сессия для управления браузером через WebDriver BiDi.",
                     "docstring": "Высокоуровневая сессия для управления браузером через WebDriver BiDi.\n\nОбеспечивает управление контекстами (вкладками), навигацию, выполнение\nJavaScript-скриптов и внедрение скриптов предзагрузки для антидетекта.",
@@ -29311,7 +29311,7 @@
                   {
                     "name": "bidi_session",
                     "type": "function",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "(endpoint_or_driver)",
                     "summary": "Асинхронный контекстный менеджер для работы с сессией WebDriver BiDi.",
                     "docstring": "Асинхронный контекстный менеджер для работы с сессией WebDriver BiDi.\n\nExample:\n    ```python\n    async with bidi_session(\"ws://localhost:9222/session/123\") as session:\n        await session.navigate(\"https://example.com\")\n        title = await session.evaluate_value(\"document.title\")\n    ```\n\nArgs:\n    endpoint_or_driver: WebSocket URL или Selenium WebDriver.\n    auto_create_session: Создавать ли новую сессию BiDi.\n\nYields:\n    Инициализированная сессия BiDiSession.",
@@ -29410,7 +29410,7 @@
             "name": "captcha",
             "path": "chutils/scraping/captcha",
             "type": "package",
-            "layer": "internal",
+            "layer": "public",
             "summary": "",
             "docstring": "",
             "children": [
@@ -35033,7 +35033,7 @@
                   {
                     "name": "TouchPoint",
                     "type": "class",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "",
                     "summary": "Точка сенсорного касания с физическими параметрами пятна контакта.",
                     "docstring": "Точка сенсорного касания с физическими параметрами пятна контакта.\n\nAttributes:\n    x: Координата X на экране.\n    y: Координата Y на экране.\n    radius_x: Радиус эллипса касания по оси X (в пикселях).\n    radius_y: Радиус эллипса касания по оси Y (в пикселях).\n    rotation_angle: Угол поворота эллипса касания в градусах.\n    force: Сила нажатия (давление) пальца в диапазоне 0.0 - 1.0.\n    delay: Задержка перед переходом к следующей точке (в секундах).",
@@ -35055,7 +35055,7 @@
                   {
                     "name": "TouchGestureGenerator",
                     "type": "class",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "",
                     "summary": "Генератор биомеханических сенсорных траекторий (касания, свайпы, зум).",
                     "docstring": "Генератор биомеханических сенсорных траекторий (касания, свайпы, зум).",
@@ -35156,7 +35156,7 @@
                   {
                     "name": "async_touch_tap",
                     "type": "function",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "(page, x, y)",
                     "summary": "Имитирует сенсорное касание (tap) на мобильном экране в Playwright или nodriver.",
                     "docstring": "Имитирует сенсорное касание (tap) на мобильном экране в Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    x: Координата X касания.\n    y: Координата Y касания.\n    hold_time: Время удержания пальца (в секундах).\n    timeout: Таймаут выполнения операции (в секундах).",
@@ -35176,7 +35176,7 @@
                   {
                     "name": "async_touch_swipe",
                     "type": "function",
-                    "layer": "internal",
+                    "layer": "public",
                     "signature": "(page, start, end)",
                     "summary": "Имитирует свайп пальцем по экрану в Playwright или nodriver.",
                     "docstring": "Имитирует свайп пальцем по экрану в Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    start: Начальные координаты (X, Y).\n    end: Конечные координаты (X, Y).\n    steps: Количество промежуточных шагов движения пальца.\n    timeout: Таймаут выполнения операции (в секундах).",
@@ -49588,7 +49588,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 392,
+        "line_number": 415,
         "bases": [],
         "children": []
       },
@@ -49608,7 +49608,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 425,
+        "line_number": 448,
         "bases": [],
         "children": []
       },
@@ -49628,7 +49628,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 445,
+        "line_number": 468,
         "bases": [],
         "children": []
       }
@@ -52350,8 +52350,8 @@
   "metadata": {
     "chutils_version": "4.0.0",
     "project_version": "4.0.0",
-    "git_commit": "f95192cb98e8d2e92ffb7f76a1de7feb92ee8dae (dirty)",
-    "generated_at": "2026-09-28T10:01:53.167179+00:00",
-    "project_hash": "c1f96aee5e54192ee483e65635902da1534da3aa015d8cabe0eff75709d42577"
+    "git_commit": "42711c2067aa0b65c745713e5f5bdbb4e94d1c9c (dirty)",
+    "generated_at": "2026-09-28T10:08:20.390889+00:00",
+    "project_hash": "355907bbb46492194ee76b2942a97a8b43f635c80ab2abaf64b5562601c331d3"
   }
 }

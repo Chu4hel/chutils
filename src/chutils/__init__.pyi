@@ -1382,3 +1382,310 @@ class FingerprintSynthesizer:
         os_target: str = "windows",
         seed: int | str | None = None,
     ) -> FingerprintProfile: ...
+
+# --- scraping touch humanize ---
+class TouchPoint:
+    x: float
+    y: float
+    delay: float
+    force: float
+    radius_x: float
+    radius_y: float
+    def __init__(
+        self,
+        x: float,
+        y: float,
+        delay: float = 0.0,
+        force: float = 1.0,
+        radius_x: float = 1.0,
+        radius_y: float = 1.0,
+    ) -> None: ...
+
+class TouchGestureGenerator:
+    def __init__(
+        self,
+        gravity: float = 9.0,
+        wind: float = 3.5,
+        max_step: float = 12.0,
+        target_area: float = 8.0,
+    ) -> None: ...
+    def generate_tap(
+        self,
+        x: float,
+        y: float,
+        press_duration: float = 0.08,
+        jitter_radius: float = 2.0,
+    ) -> list[TouchPoint]: ...
+    def generate_swipe(
+        self,
+        start_point: tuple[float, float],
+        end_point: tuple[float, float],
+        min_steps: int = 15,
+        max_steps: int = 35,
+    ) -> list[TouchPoint]: ...
+    def generate_pinch(
+        self,
+        center: tuple[float, float],
+        start_distance: float,
+        end_distance: float,
+        steps: int = 20,
+    ) -> tuple[list[TouchPoint], list[TouchPoint]]: ...
+
+async def async_touch_tap(
+    tab_or_page: Any,
+    x: float,
+    y: float,
+    press_duration: float = 0.08,
+) -> None: ...
+async def async_touch_swipe(
+    tab_or_page: Any,
+    start_point: tuple[float, float],
+    end_point: tuple[float, float],
+) -> None: ...
+
+# --- scraping bidi ---
+class BiDiError(Exception): ...
+class BiDiConnectionError(BiDiError): ...
+class BiDiTimeoutError(BiDiError): ...
+class BiDiCommandError(BiDiError):
+    error_code: str
+    message: str
+    data: dict[str, object]
+    def __init__(
+        self, error_code: str, message: str, data: dict[str, object] | None = None
+    ) -> None: ...
+
+class BiDiClient:
+    ws_url: str
+    def __init__(self, ws_url: str) -> None: ...
+    @property
+    def is_connected(self) -> bool: ...
+    async def connect(self) -> None: ...
+    async def close(self) -> None: ...
+    async def send_command(
+        self,
+        method: str,
+        params: dict[str, object] | None = None,
+        timeout: float = 30.0,
+    ) -> dict[str, object]: ...
+    def on(
+        self,
+        event_name: str,
+        handler: Callable[[dict[str, object]], Awaitable[None] | None],
+    ) -> None: ...
+    def remove_listener(
+        self,
+        event_name: str,
+        handler: Callable[[dict[str, object]], Awaitable[None] | None],
+    ) -> None: ...
+    async def session_new(
+        self, capabilities: dict[str, object] | None = None
+    ) -> dict[str, object]: ...
+    async def session_subscribe(
+        self, events: list[str], contexts: list[str] | None = None
+    ) -> dict[str, object]: ...
+    async def session_unsubscribe(
+        self, events: list[str], contexts: list[str] | None = None
+    ) -> dict[str, object]: ...
+    async def browsing_context_get_tree(
+        self, max_depth: int | None = None, root: str | None = None
+    ) -> list[dict[str, object]]: ...
+    async def browsing_context_navigate(
+        self, context: str, url: str, wait: str = "complete"
+    ) -> dict[str, object]: ...
+    async def browsing_context_create(
+        self, type: str = "tab", reference_context: str | None = None
+    ) -> dict[str, object]: ...
+    async def browsing_context_close(self, context: str) -> dict[str, object]: ...
+    async def script_evaluate(
+        self,
+        expression: str,
+        target: dict[str, object],
+        await_promise: bool = True,
+        result_ownership: str = "none",
+    ) -> dict[str, object]: ...
+    async def script_call_function(
+        self,
+        function_declaration: str,
+        target: dict[str, object],
+        arguments: list[dict[str, object]] | None = None,
+        await_promise: bool = True,
+        result_ownership: str = "none",
+    ) -> dict[str, object]: ...
+    async def script_add_preload_script(
+        self,
+        function_declaration: str,
+        arguments: list[dict[str, object]] | None = None,
+        contexts: list[str] | None = None,
+        sandbox: str | None = None,
+    ) -> str: ...
+    async def script_remove_preload_script(self, script: str) -> dict[str, object]: ...
+
+class BiDiSession:
+    ws_url: str
+    client: BiDiClient
+    session_id: str | None
+    active_context_id: str | None
+    def __init__(
+        self, endpoint_or_driver: str | object, *, auto_create_session: bool = False
+    ) -> None: ...
+    async def __aenter__(self) -> Self: ...
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: object,
+    ) -> None: ...
+    async def start(self) -> None: ...
+    async def close(self) -> None: ...
+    async def get_contexts(self) -> list[dict[str, object]]: ...
+    async def new_tab(self) -> str: ...
+    async def close_tab(self, context_id: str | None = None) -> None: ...
+    async def navigate(
+        self, url: str, context_id: str | None = None, wait: str = "complete"
+    ) -> dict[str, object]: ...
+    async def evaluate(
+        self, expression: str, context_id: str | None = None, await_promise: bool = True
+    ) -> dict[str, object]: ...
+    async def evaluate_value(
+        self, expression: str, context_id: str | None = None
+    ) -> object: ...
+    async def add_preload_script(
+        self,
+        function_declaration: str,
+        arguments: list[dict[str, object]] | None = None,
+        contexts: list[str] | None = None,
+        sandbox: str | None = None,
+    ) -> str: ...
+    async def remove_preload_script(self, script_id: str) -> dict[str, object]: ...
+
+def extract_bidi_url(target: str | object) -> str: ...
+def bidi_session(
+    endpoint_or_driver: str | object, *, auto_create_session: bool = False
+) -> AsyncIterator[BiDiSession]: ...
+async def apply_antidetect_bidi(
+    session_or_client: BiDiSession | BiDiClient,
+    config: AntidetectConfig | None = None,
+    *,
+    contexts: list[str] | None = None,
+    sandbox: str | None = None,
+) -> str: ...
+
+# --- captcha ---
+class GeeTestTaskConfig:
+    captcha_id: str
+    page_url: str
+    challenge: str | None
+    api_server: str | None
+    risk_type: str | None
+    def __init__(
+        self,
+        captcha_id: str,
+        page_url: str,
+        challenge: str | None = None,
+        api_server: str | None = None,
+        risk_type: str | None = None,
+    ) -> None: ...
+
+class GeeTestResult:
+    lot_number: str
+    pass_token: str
+    gen_time: str
+    captcha_output: str
+    def __init__(
+        self,
+        lot_number: str,
+        pass_token: str,
+        gen_time: str,
+        captcha_output: str,
+    ) -> None: ...
+
+class ReCaptchaEnterpriseConfig:
+    site_key: str
+    page_url: str
+    action: str | None
+    enterprise_payload: dict[str, object] | None
+    s_token: str | None
+    def __init__(
+        self,
+        site_key: str,
+        page_url: str,
+        action: str | None = None,
+        enterprise_payload: dict[str, object] | None = None,
+        s_token: str | None = None,
+    ) -> None: ...
+
+class GeeTestSolver:
+    def __init__(
+        self,
+        api_key: str | None = None,
+        provider: str = "rucaptcha",
+        timeout: float = 120.0,
+    ) -> None: ...
+    def solve(
+        self,
+        captcha_id: str,
+        page_url: str,
+        challenge: str | None = None,
+        api_server: str | None = None,
+        risk_type: str | None = None,
+        poll_interval: float = 2.0,
+    ) -> GeeTestResult: ...
+    async def asolve(
+        self,
+        captcha_id: str,
+        page_url: str,
+        challenge: str | None = None,
+        api_server: str | None = None,
+        risk_type: str | None = None,
+        poll_interval: float = 2.0,
+    ) -> GeeTestResult: ...
+
+class AsyncGeeTestSolver(GeeTestSolver):
+    async def solve(
+        self,
+        captcha_id: str,
+        page_url: str,
+        challenge: str | None = None,
+        api_server: str | None = None,
+        risk_type: str | None = None,
+        poll_interval: float = 2.0,
+    ) -> GeeTestResult: ...
+
+class ReCaptchaEnterpriseSolver:
+    def __init__(
+        self,
+        api_key: str | None = None,
+        provider: str = "rucaptcha",
+        timeout: float = 120.0,
+    ) -> None: ...
+    def solve(
+        self,
+        site_key: str,
+        page_url: str,
+        action: str | None = None,
+        enterprise_payload: dict[str, object] | None = None,
+        s_token: str | None = None,
+        poll_interval: float = 2.0,
+    ) -> str: ...
+    async def asolve(
+        self,
+        site_key: str,
+        page_url: str,
+        action: str | None = None,
+        enterprise_payload: dict[str, object] | None = None,
+        s_token: str | None = None,
+        poll_interval: float = 2.0,
+    ) -> str: ...
+
+class AsyncReCaptchaEnterpriseSolver(ReCaptchaEnterpriseSolver):
+    async def solve(
+        self,
+        site_key: str,
+        page_url: str,
+        action: str | None = None,
+        enterprise_payload: dict[str, object] | None = None,
+        s_token: str | None = None,
+        poll_interval: float = 2.0,
+    ) -> str: ...
+
