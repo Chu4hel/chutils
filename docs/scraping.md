@@ -1707,3 +1707,74 @@ await tunnel.stop()
 Подсистема решения капч поддерживает автоматическое распознавание современных типов защит, включая GeeTest v4 и reCAPTCHA Enterprise через провайдеры RuCaptcha, 2Captcha и CapMonster.
 Подробная документация и примеры доступны в [docs/captcha.md](captcha.md).
 
+---
+
+## 16. Протокол WebDriver BiDi и кроссбраузерный антидетект (`chutils.scraping.bidi`)
+
+WebDriver BiDi (Bidirectional) — современный стандартизированный W3C-протокол двунаправленного управления браузерами через WebSocket, являющийся кроссбраузерной альтернативой CDP (Chrome DevTools Protocol). В отличие от CDP, BiDi поддерживается в Chromium (Google Chrome, Microsoft Edge) и Gecko (Mozilla Firefox), а также в WebKit (Safari).
+
+Установка:
+```bash
+pip install "chutils[bidi]"
+```
+
+### Высокоуровневая сессия `bidi_session` и `BiDiSession`
+
+Контекстный менеджер `bidi_session` принимает прямую строку WebSocket URL либо экземпляр Selenium 4 WebDriver (с автоматическим извлечением `webSocketUrl` или `bidi_connection`):
+
+```python
+import asyncio
+from chutils.scraping.bidi import bidi_session, apply_antidetect_bidi
+from chutils.scraping.humanize import AntidetectConfig
+
+async def main():
+    # Подключение к браузеру по WebSocket URL или Selenium драйверу
+    async with bidi_session("ws://localhost:9222/session/default") as session:
+        # 1. Применяем скрипт предзагрузки антидетекта ко всем вкладкам сессии
+        await apply_antidetect_bidi(session, AntidetectConfig.preset_aggressive())
+
+        # 2. Навигация по странице
+        await session.navigate("https://bot.sannysoft.com")
+
+        # 3. Вычисление JS и чтение данных
+        title = await session.evaluate_value("document.title")
+        print("Page title:", title)
+
+        # 4. Управление вкладками
+        new_tab = await session.new_tab()
+        await session.navigate("https://example.com", context_id=new_tab)
+        await session.close_tab(new_tab)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+### Низкоуровневый клиент `BiDiClient`
+
+Класс `BiDiClient` позволяет напрямую отправлять W3C BiDi JSON-RPC команды и подписываться на асинхронные события браузера:
+
+```python
+from chutils.scraping.bidi import BiDiClient
+
+client = BiDiClient("ws://localhost:9222/session/default")
+await client.connect()
+
+# Подписка на событие готовности документа
+def on_load(params):
+    print("Page loaded:", params.get("url"))
+
+client.on("browsingContext.load", on_load)
+await client.session_subscribe(events=["browsingContext.load"])
+
+# Выполнение команды получения контекстов
+contexts = await client.browsing_context_get_tree()
+
+# Закрытие соединения
+await client.close()
+```
+
+### Скрипты предзагрузки антидетекта (`apply_antidetect_bidi`)
+
+Функция `apply_antidetect_bidi` регистрирует скрипт инициализации антидетекта через механизм `script.addPreloadScript`. Скрипт выполняется в контексте каждого нового документа до исполнения скриптов целевого сайта, гарантируя маскировку WebDriver-флагов, эмуляцию Canvas/WebGL, Screen Orientation и мобильных тач-интерфейсов.
+
+

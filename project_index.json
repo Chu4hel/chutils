@@ -28346,6 +28346,996 @@
         "docstring": "Модуль скрейпинга, автоматизации и утилиты антидетекта.",
         "children": [
           {
+            "name": "bidi",
+            "path": "chutils/scraping/bidi",
+            "type": "package",
+            "layer": "internal",
+            "summary": "Подсистема кроссбраузерного управления и антидетекта через WebDriver BiDi.",
+            "docstring": "Подсистема кроссбраузерного управления и антидетекта через WebDriver BiDi.",
+            "children": [
+              {
+                "name": "antidetect",
+                "path": "chutils/scraping/bidi/antidetect",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Кроссбраузерный антидетект на основе механизма предзагрузки WebDriver BiDi.",
+                "docstring": "Кроссбраузерный антидетект на основе механизма предзагрузки WebDriver BiDi.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 10,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "apply_antidetect_bidi",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(session_or_client, config)",
+                    "summary": "Применяет маскировку антидетекта через скрипты предзагрузки WebDriver BiDi.",
+                    "docstring": "Применяет маскировку антидетекта через скрипты предзагрузки WebDriver BiDi.\n\nВ отличие от CDP (Chrome DevTools Protocol), WebDriver BiDi является W3C-стандартом\nи поддерживается кроссбраузерно как в движках на базе Chromium (Chrome, Edge), так и в\nGecko (Firefox), а также в Safari (WebKit).\n\nСкрипт предзагрузки внедряется в каждый новый контекст и документ до исполнения любого\nпользовательского кода на целевом сайте.\n\nArgs:\n    session_or_client: Активная сессия BiDiSession или клиент BiDiClient.\n    config: Конфигурация отпечатка AntidetectConfig (если None, используются дефолтные параметры).\n    contexts: Опциональный список идентификаторов контекстов, к которым применить скрипт.\n        Если None, скрипт применяется ко всем контекстам сессии.\n    sandbox: Опциональное имя песочницы JavaScript. По умолчанию None (глобальный контекст окна).\n\nReturns:\n    Идентификатор зарегистрированного скрипта предзагрузки (preload script ID).\n\nRaises:\n    BiDiCommandError: Если браузер вернул ошибку при регистрации скрипта.\n    BiDiConnectionError: Если соединение с браузером разорвано.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 13,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "client",
+                "path": "chutils/scraping/bidi/client",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Клиент протокола WebDriver BiDi на основе WebSockets.",
+                "docstring": "Клиент протокола WebDriver BiDi на основе WebSockets.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 22,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "EventHandler",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 24,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "BiDiClient",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Асинхронный клиент для взаимодействия с браузером по протоколу WebDriver BiDi.",
+                    "docstring": "Асинхронный клиент для взаимодействия с браузером по протоколу WebDriver BiDi.\n\nПозволяет отправлять JSON-RPC команды стандартизированного протокола WebDriver BiDi,\nполучать ответы и подписываться на асинхронные события браузера.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 27,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, ws_url)",
+                        "summary": "Инициализирует BiDiClient.",
+                        "docstring": "Инициализирует BiDiClient.\n\nArgs:\n    ws_url: WebSocket URL конечной точки WebDriver BiDi.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 34,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "is_connected",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Проверяет, активно ли соединение с браузером.",
+                        "docstring": "Проверяет, активно ли соединение с браузером.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "property"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 49,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "connect",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Устанавливает соединение с WebSocket эндпоинтом WebDriver BiDi.",
+                        "docstring": "Устанавливает соединение с WebSocket эндпоинтом WebDriver BiDi.\n\nRaises:\n    BiDiConnectionError: Если не удалось установить соединение.\n    ImportError: Если библиотека websockets не установлена.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 53,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "close",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Закрывает соединение с WebDriver BiDi и останавливает фоновые задачи.",
+                        "docstring": "Закрывает соединение с WebDriver BiDi и останавливает фоновые задачи.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 76,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "send_command",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, method, params, timeout)",
+                        "summary": "Отправляет команду браузеру и ожидает ответ.",
+                        "docstring": "Отправляет команду браузеру и ожидает ответ.\n\nArgs:\n    method: Имя метода WebDriver BiDi (например, 'session.new', 'browsingContext.navigate').\n    params: Параметры команды.\n    timeout: Максимальное время ожидания ответа в секундах.\n\nReturns:\n    Словарь с результатом выполнения команды (содержимое поля 'result').\n\nRaises:\n    BiDiConnectionError: Если клиент не подключен к браузеру.\n    BiDiTimeoutError: При истечении таймаута ожидания ответа.\n    BiDiCommandError: Если браузер вернул ошибку выполнения команды.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 101,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "on",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, event_name, handler)",
+                        "summary": "Регистрирует обработчик события WebDriver BiDi.",
+                        "docstring": "Регистрирует обработчик события WebDriver BiDi.\n\nArgs:\n    event_name: Имя события (например, 'browsingContext.load') или '*' для всех событий.\n    handler: Синхронная или асинхронная функция-обработчик.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 147,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "remove_listener",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, event_name, handler)",
+                        "summary": "Удаляет зарегистрированный обработчик события.",
+                        "docstring": "Удаляет зарегистрированный обработчик события.\n\nArgs:\n    event_name: Имя события.\n    handler: Функция-обработчик для удаления.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 156,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_listen_loop",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "Фоновый цикл приема сообщений из WebSocket.",
+                        "docstring": "Фоновый цикл приема сообщений из WebSocket.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 167,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_dispatch_message",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, message)",
+                        "summary": "Диспетчеризирует полученное сообщение (ответ на команду или событие).",
+                        "docstring": "Диспетчеризирует полученное сообщение (ответ на команду или событие).\n\nArgs:\n    message: Распарсенное JSON-сообщение.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 184,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "_trigger_event",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, event_name, params)",
+                        "summary": "Вызывает подписчиков на указанное событие.",
+                        "docstring": "Вызывает подписчиков на указанное событие.\n\nArgs:\n    event_name: Имя события.\n    params: Параметры события.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 217,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "session_new",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, capabilities)",
+                        "summary": "Создает новую сессию WebDriver BiDi (метод session.new).",
+                        "docstring": "Создает новую сессию WebDriver BiDi (метод session.new).\n\nArgs:\n    capabilities: Словарь настроек capabilities.\n\nReturns:\n    Результат выполнения session.new (содержит sessionId и capabilities).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 237,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "session_subscribe",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, events, contexts)",
+                        "summary": "Подписывается на указанные события WebDriver BiDi.",
+                        "docstring": "Подписывается на указанные события WebDriver BiDi.\n\nArgs:\n    events: Список имен событий (например, ['browsingContext.load']).\n    contexts: Опциональный список идентификаторов контекстов.\n\nReturns:\n    Результат выполнения session.subscribe.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 254,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "session_unsubscribe",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, events, contexts)",
+                        "summary": "Отписывается от указанных событий WebDriver BiDi.",
+                        "docstring": "Отписывается от указанных событий WebDriver BiDi.\n\nArgs:\n    events: Список имен событий.\n    contexts: Опциональный список идентификаторов контекстов.\n\nReturns:\n    Результат выполнения session.unsubscribe.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 273,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "browsing_context_get_tree",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, max_depth, root)",
+                        "summary": "Возвращает дерево контекстов браузера (вкладок/фреймов).",
+                        "docstring": "Возвращает дерево контекстов браузера (вкладок/фреймов).\n\nArgs:\n    max_depth: Максимальная глубина обхода дерева.\n    root: Корневой контекст (если None, возвращаются все корневые контексты).\n\nReturns:\n    Список словарей с описанием контекстов браузера.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 292,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "browsing_context_navigate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, context, url, wait)",
+                        "summary": "Выполняет переход по указанному URL в заданном контексте.",
+                        "docstring": "Выполняет переход по указанному URL в заданном контексте.\n\nArgs:\n    context: Идентификатор контекста браузера.\n    url: Целевой URL.\n    wait: Стратегия ожидания готовности страницы ('none', 'interactive', 'complete').\n\nReturns:\n    Результат навигации (содержит navigationId и url).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 315,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "browsing_context_create",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, type, reference_context)",
+                        "summary": "Создает новый контекст браузера (вкладку или окно).",
+                        "docstring": "Создает новый контекст браузера (вкладку или окно).\n\nArgs:\n    type: Тип контекста ('tab' или 'window').\n    reference_context: Опциональный ссылочный контекст.\n\nReturns:\n    Результат создания контекста (содержит contextId).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 338,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "browsing_context_close",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, context)",
+                        "summary": "Закрывает указанный контекст браузера.",
+                        "docstring": "Закрывает указанный контекст браузера.\n\nArgs:\n    context: Идентификатор контекста для закрытия.\n\nReturns:\n    Результат выполнения browsingContext.close.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 357,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "script_evaluate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, expression, target, await_promise, result_ownership)",
+                        "summary": "Вычисляет JavaScript выражение в целевом контексте.",
+                        "docstring": "Вычисляет JavaScript выражение в целевом контексте.\n\nArgs:\n    expression: Строка JavaScript выражения.\n    target: Словарь целевого контекста (например, {'context': context_id}).\n    await_promise: Ожидать ли разрешение промиса (по умолчанию True).\n    result_ownership: Политика владения объектами ('none' или 'root').\n\nReturns:\n    Результат вычисления (содержит type, value и т.д.).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 372,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "script_call_function",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, function_declaration, target, arguments, await_promise, result_ownership)",
+                        "summary": "Вызывает JavaScript функцию в целевом контексте.",
+                        "docstring": "Вызывает JavaScript функцию в целевом контексте.\n\nArgs:\n    function_declaration: Определение функции (например, '() => window.innerWidth').\n    target: Словарь целевого контекста.\n    arguments: Список аргументов функции.\n    await_promise: Ожидать ли промис.\n    result_ownership: Политика владения объектами.\n\nReturns:\n    Результат вызова функции.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 398,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "script_add_preload_script",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, function_declaration, arguments, contexts, sandbox)",
+                        "summary": "Добавляет скрипт предварительной загрузки (Preload Script).",
+                        "docstring": "Добавляет скрипт предварительной загрузки (Preload Script).\n\nСкрипт предзагрузки выполняется до загрузки DOM во всех вновь создаваемых документах,\nчто является ключевым механизмом антидетекта в WebDriver BiDi.\n\nArgs:\n    function_declaration: Функция для вызова перед загрузкой страницы.\n    arguments: Аргументы функции.\n    contexts: Опциональный список контекстов.\n    sandbox: Имя изолированной песочницы (по умолчанию None — основной контекст окна).\n\nReturns:\n    Идентификатор зарегистрированного скрипта (script id).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 428,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "script_remove_preload_script",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, script)",
+                        "summary": "Удаляет ранее зарегистрированный скрипт предзагрузки.",
+                        "docstring": "Удаляет ранее зарегистрированный скрипт предзагрузки.\n\nArgs:\n    script: Идентификатор скрипта.\n\nReturns:\n    Результат удаления скрипта.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 462,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "exceptions",
+                "path": "chutils/scraping/bidi/exceptions",
+                "type": "module",
+                "layer": "public",
+                "summary": "Исключения подсистемы WebDriver BiDi.",
+                "docstring": "Исключения подсистемы WebDriver BiDi.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "BiDiError",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Базовое исключение для всех ошибок протокола WebDriver BiDi.",
+                    "docstring": "Базовое исключение для всех ошибок протокола WebDriver BiDi.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 6,
+                    "bases": [
+                      "Exception"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "BiDiConnectionError",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Исключение, возникающее при ошибке сетевого подключения к BiDi WebSocket.",
+                    "docstring": "Исключение, возникающее при ошибке сетевого подключения к BiDi WebSocket.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 10,
+                    "bases": [
+                      "BiDiError"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "BiDiTimeoutError",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Исключение при превышении таймаута ожидания ответа от браузера.",
+                    "docstring": "Исключение при превышении таймаута ожидания ответа от браузера.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 14,
+                    "bases": [
+                      "BiDiError"
+                    ],
+                    "children": []
+                  },
+                  {
+                    "name": "BiDiCommandError",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Исключение при возврате ошибки выполнения команды браузером.",
+                    "docstring": "Исключение при возврате ошибки выполнения команды браузером.\n\nAttributes:\n    error_code: Строковый код ошибки BiDi (например, 'invalid argument').\n    message: Сообщение об ошибке от браузера.\n    data: Дополнительные данные об ошибке (при наличии).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 18,
+                    "bases": [
+                      "BiDiError"
+                    ],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, error_code, message, data)",
+                        "summary": "Инициализирует ошибку команды BiDi.",
+                        "docstring": "Инициализирует ошибку команды BiDi.\n\nArgs:\n    error_code: Строковый код ошибки BiDi.\n    message: Описание ошибки.\n    data: Опциональные дополнительные данные.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 27,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "session",
+                "path": "chutils/scraping/bidi/session",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Высокоуровневая сессия WebDriver BiDi и контекстные менеджеры.",
+                "docstring": "Высокоуровневая сессия WebDriver BiDi и контекстные менеджеры.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 13,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "extract_bidi_url",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(target)",
+                    "summary": "Извлекает WebSocket URL для WebDriver BiDi из строки или объекта браузерного драйвера.",
+                    "docstring": "Извлекает WebSocket URL для WebDriver BiDi из строки или объекта браузерного драйвера.\n\nПоддерживает:\n- Прямую строку WebSocket URL ('ws://...' или 'wss://...').\n- Экземпляр Selenium WebDriver со свойством capabilities['webSocketUrl'].\n- Объект соединения driver.bidi_connection.\n\nArgs:\n    target: URL в виде строки или объект драйвера Selenium/WebDriver.\n\nReturns:\n    WebSocket URL для подключения.\n\nRaises:\n    ValueError: Если URL не удалось извлечь или он имеет неверный формат.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 16,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "BiDiSession",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Высокоуровневая сессия для управления браузером через WebDriver BiDi.",
+                    "docstring": "Высокоуровневая сессия для управления браузером через WebDriver BiDi.\n\nОбеспечивает управление контекстами (вкладками), навигацию, выполнение\nJavaScript-скриптов и внедрение скриптов предзагрузки для антидетекта.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 69,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self, endpoint_or_driver)",
+                        "summary": "Инициализирует сессию BiDi.",
+                        "docstring": "Инициализирует сессию BiDi.\n\nArgs:\n    endpoint_or_driver: WebSocket URL либо экземпляр Selenium WebDriver.\n    auto_create_session: Вызывать ли session.new при подключении (нужно при прямом\n        подключении к браузеру без предшествующего классического WebDriver).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 76,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "start",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Устанавливает соединение и определяет текущий активный контекст.",
+                        "docstring": "Устанавливает соединение и определяет текущий активный контекст.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 109,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "close",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Завершает сессию и закрывает WebSocket клиент.",
+                        "docstring": "Завершает сессию и закрывает WebSocket клиент.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 129,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "get_contexts",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Возвращает список всех активных контекстов верхнего уровня.",
+                        "docstring": "Возвращает список всех активных контекстов верхнего уровня.\n\nReturns:\n    Список контекстов браузера.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 133,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "new_tab",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self)",
+                        "summary": "Создает новую вкладку и переключает на нее active_context_id.",
+                        "docstring": "Создает новую вкладку и переключает на нее active_context_id.\n\nReturns:\n    Идентификатор созданного контекста (вкладки).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 141,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "close_tab",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, context_id)",
+                        "summary": "Закрывает вкладку браузера.",
+                        "docstring": "Закрывает вкладку браузера.\n\nArgs:\n    context_id: Идентификатор контекста. Если None, закрывается active_context_id.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 153,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "navigate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, url, context_id, wait)",
+                        "summary": "Осуществляет переход по адресу URL.",
+                        "docstring": "Осуществляет переход по адресу URL.\n\nArgs:\n    url: Целевой адрес.\n    context_id: Опциональный идентификатор контекста.\n    wait: Стратегия ожидания ('none', 'interactive', 'complete').\n\nReturns:\n    Словарь с данными навигации.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 168,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "evaluate",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, expression, context_id, await_promise)",
+                        "summary": "Выполняет JavaScript выражение в контексте страницы.",
+                        "docstring": "Выполняет JavaScript выражение в контексте страницы.\n\nArgs:\n    expression: Строка JavaScript кода.\n    context_id: Опциональный контекст (по умолчанию активный).\n    await_promise: Ожидать ли промис.\n\nReturns:\n    Полный ответ script.evaluate.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 196,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "evaluate_value",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, expression, context_id)",
+                        "summary": "Вычисляет выражение и извлекает распакованное примитивное значение.",
+                        "docstring": "Вычисляет выражение и извлекает распакованное примитивное значение.\n\nArgs:\n    expression: JavaScript выражение.\n    context_id: Идентификатор контекста.\n\nReturns:\n    Значение из поля 'value' дескриптора результата BiDi, либо None.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 221,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "add_preload_script",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, function_declaration, arguments, contexts, sandbox)",
+                        "summary": "Добавляет скрипт предзагрузки для всей сессии или выбранных контекстов.",
+                        "docstring": "Добавляет скрипт предзагрузки для всей сессии или выбранных контекстов.\n\nArgs:\n    function_declaration: Тело функции скрипта.\n    arguments: Аргументы.\n    contexts: Опциональный фильтр контекстов.\n    sandbox: Песочница.\n\nReturns:\n    Идентификатор зарегистрированного скрипта (script id).",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 241,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "remove_preload_script",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, script_id)",
+                        "summary": "Удаляет скрипт предзагрузки по идентификатору.",
+                        "docstring": "Удаляет скрипт предзагрузки по идентификатору.\n\nArgs:\n    script_id: Идентификатор скрипта.\n\nReturns:\n    Результат удаления.",
+                        "breadcrumbs": {
+                          "is_async": true,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 266,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "bidi_session",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(endpoint_or_driver)",
+                    "summary": "Асинхронный контекстный менеджер для работы с сессией WebDriver BiDi.",
+                    "docstring": "Асинхронный контекстный менеджер для работы с сессией WebDriver BiDi.\n\nExample:\n    ```python\n    async with bidi_session(\"ws://localhost:9222/session/123\") as session:\n        await session.navigate(\"https://example.com\")\n        title = await session.evaluate_value(\"document.title\")\n    ```\n\nArgs:\n    endpoint_or_driver: WebSocket URL или Selenium WebDriver.\n    auto_create_session: Создавать ли новую сессию BiDi.\n\nYields:\n    Инициализированная сессия BiDiSession.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "asynccontextmanager"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 279,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ],
+            "symbols": []
+          },
+          {
             "name": "camoufox",
             "path": "chutils/scraping/camoufox",
             "type": "module",
@@ -41052,7 +42042,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 152,
+            "line_number": 158,
             "bases": [],
             "children": []
           },
@@ -41072,7 +42062,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 206,
+            "line_number": 216,
             "bases": [],
             "children": []
           },
@@ -41092,7 +42082,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 214,
+            "line_number": 224,
             "bases": [],
             "children": []
           }
@@ -50101,6 +51091,71 @@
       "weight": 3
     },
     {
+      "source": "chutils/scraping/bidi",
+      "target": "chutils/scraping/bidi/antidetect",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/bidi",
+      "target": "chutils/scraping/bidi/client",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/bidi",
+      "target": "chutils/scraping/bidi/exceptions",
+      "weight": 4
+    },
+    {
+      "source": "chutils/scraping/bidi",
+      "target": "chutils/scraping/bidi/session",
+      "weight": 3
+    },
+    {
+      "source": "chutils/scraping/bidi/antidetect",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/bidi/antidetect",
+      "target": "chutils/scraping/bidi/client",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/bidi/antidetect",
+      "target": "chutils/scraping/bidi/session",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/bidi/antidetect",
+      "target": "chutils/scraping/humanize/config",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/bidi/client",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/bidi/client",
+      "target": "chutils/scraping/bidi/exceptions",
+      "weight": 3
+    },
+    {
+      "source": "chutils/scraping/bidi/session",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/bidi/session",
+      "target": "chutils/scraping/bidi/client",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/bidi/session",
+      "target": "chutils/scraping/bidi/exceptions",
+      "weight": 1
+    },
+    {
       "source": "chutils/scraping/camoufox",
       "target": "chutils/exceptions",
       "weight": 1
@@ -51295,8 +52350,8 @@
   "metadata": {
     "chutils_version": "4.0.0",
     "project_version": "4.0.0",
-    "git_commit": "fe888a5004df949477d45219fbcd2ff67af36490 (dirty)",
-    "generated_at": "2026-09-28T09:29:26.652877+00:00",
-    "project_hash": "5d6a8d041cbe946e8c8eddece0ab35f5af469ee578a3eec2309da69ef870404a"
+    "git_commit": "f95192cb98e8d2e92ffb7f76a1de7feb92ee8dae (dirty)",
+    "generated_at": "2026-09-28T10:01:53.167179+00:00",
+    "project_hash": "c1f96aee5e54192ee483e65635902da1534da3aa015d8cabe0eff75709d42577"
   }
 }

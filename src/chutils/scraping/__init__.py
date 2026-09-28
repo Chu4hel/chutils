@@ -4,6 +4,12 @@ import importlib
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from .bidi import (
+        BiDiClient as BiDiClient,
+        BiDiSession as BiDiSession,
+        apply_antidetect_bidi as apply_antidetect_bidi,
+        bidi_session as bidi_session,
+    )
     from .camoufox import (
         CAMOUFOX_AVAILABLE as CAMOUFOX_AVAILABLE,
     )
@@ -153,6 +159,8 @@ _LAZY_MAPPING = {
     "AntidetectConfig": (".humanize.config", "AntidetectConfig"),
     "AsyncProxyTunnel": (".proxy", "AsyncProxyTunnel"),
     "BehavioralProfile": (".humanize.behavior", "BehavioralProfile"),
+    "BiDiClient": (".bidi", "BiDiClient"),
+    "BiDiSession": (".bidi", "BiDiSession"),
     "BrowserProfile": (".profiles", "BrowserProfile"),
     "CAMOUFOX_AVAILABLE": (".camoufox", "CAMOUFOX_AVAILABLE"),
     "ChromeProxyExtension": (".proxy", "ChromeProxyExtension"),
@@ -179,11 +187,13 @@ _LAZY_MAPPING = {
     "is_profile_locked": (".profiles", "is_profile_locked"),
     "sanitize_profile": (".profiles", "sanitize_profile"),
     "sanitize_profile_crash_state": (".profiles", "sanitize_profile_crash_state"),
+    "apply_antidetect_bidi": (".bidi", "apply_antidetect_bidi"),
     "assert_extraction_complete": (".testing", "assert_extraction_complete"),
     "assert_schema_match": (".testing", "assert_schema_match"),
     "assert_valid_price": (".testing", "assert_valid_price"),
     "assert_valid_url": (".testing", "assert_valid_url"),
     "async_nodriver_proxy": (".proxy", "async_nodriver_proxy"),
+    "bidi_session": (".bidi", "bidi_session"),
     "check_proxy": (".proxy", "check_proxy"),
     "close_tab": (".nodriver", "close_tab"),
     "detect_cf_turnstile": (".humanize.turnstile", "detect_cf_turnstile"),
@@ -215,6 +225,7 @@ def __dir__() -> list[str]:
     return sorted(
         list(_LAZY_MAPPING.keys())
         + [
+            "bidi",
             "camoufox",
             "captcha",
             "concurrency",
@@ -233,6 +244,8 @@ __all__ = [
     "AntidetectConfig",
     "AsyncProxyTunnel",
     "BehavioralProfile",
+    "BiDiClient",
+    "BiDiSession",
     "BrowserProfile",
     "ChromeProxyExtension",
     "DOMActionRecorder",
@@ -255,11 +268,14 @@ __all__ = [
     "ProxyPool",
     "ProxySecretStorage",
     "SnapshotRecorder",
+    "apply_antidetect_bidi",
     "assert_extraction_complete",
     "assert_schema_match",
     "assert_valid_price",
     "assert_valid_url",
     "async_nodriver_proxy",
+    "bidi",
+    "bidi_session",
     "camoufox",
     "captcha",
     "check_proxy",
