@@ -25,6 +25,12 @@ try:
     _ensure_httpx()
     from .anticaptcha import AntiCaptchaSolver, AsyncAntiCaptchaSolver
     from .capmonster import AsyncCapMonsterSolver, CapMonsterSolver
+    from .geetest import AsyncGeeTestSolver, GeeTestSolver
+    from .models import GeeTestResult, GeeTestTaskConfig, ReCaptchaEnterpriseConfig
+    from .recaptcha_enterprise import (
+        AsyncReCaptchaEnterpriseSolver,
+        ReCaptchaEnterpriseSolver,
+    )
     from .rucaptcha import AsyncRuCaptchaSolver, RuCaptchaSolver
 except Exception:
 
@@ -45,16 +51,30 @@ except Exception:
     AsyncAntiCaptchaSolver = _create_fallback("AsyncAntiCaptchaSolver")  # type: ignore[misc]
     CapMonsterSolver = _create_fallback("CapMonsterSolver")  # type: ignore[misc]
     AsyncCapMonsterSolver = _create_fallback("AsyncCapMonsterSolver")  # type: ignore[misc]
+    GeeTestSolver = _create_fallback("GeeTestSolver")  # type: ignore[misc]
+    AsyncGeeTestSolver = _create_fallback("AsyncGeeTestSolver")  # type: ignore[misc]
+    ReCaptchaEnterpriseSolver = _create_fallback("ReCaptchaEnterpriseSolver")  # type: ignore[misc]
+    AsyncReCaptchaEnterpriseSolver = _create_fallback("AsyncReCaptchaEnterpriseSolver")  # type: ignore[misc]
+    GeeTestResult = None  # type: ignore[misc,assignment]
+    GeeTestTaskConfig = None  # type: ignore[misc,assignment]
+    ReCaptchaEnterpriseConfig = None  # type: ignore[misc,assignment]
 
 __all__ = [
     "AntiCaptchaSolver",
     "AsyncAntiCaptchaSolver",
     "AsyncCapMonsterSolver",
+    "AsyncGeeTestSolver",
+    "AsyncReCaptchaEnterpriseSolver",
     "AsyncRuCaptchaSolver",
     "CapMonsterSolver",
     "CaptchaBalanceError",
     "CaptchaError",
     "CaptchaServiceError",
     "CaptchaTimeoutError",
+    "GeeTestResult",
+    "GeeTestSolver",
+    "GeeTestTaskConfig",
+    "ReCaptchaEnterpriseConfig",
+    "ReCaptchaEnterpriseSolver",
     "RuCaptchaSolver",
 ]

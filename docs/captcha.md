@@ -112,4 +112,43 @@ asyncio.run(main())
 - `CaptchaBalanceError`: Нулевой или недостаточный баланс на аккаунте сервиса.
 - `CaptchaServiceError`: Сервис вернул ошибку API (неверный ключ, плохие параметры и т.д.).
 
+---
+
+## 6. Решение GeeTest v4 (`GeeTestSolver`)
+
+Класс `GeeTestSolver` (и его асинхронный аналог `AsyncGeeTestSolver`) предназначен для решения интерактивных капч GeeTest v4/v3 через RuCaptcha, 2Captcha или CapMonster:
+
+```python
+from chutils.captcha import GeeTestSolver, GeeTestTaskConfig
+
+solver = GeeTestSolver(provider="rucaptcha")
+result = solver.solve(
+    captcha_id="your_geetest_captcha_id",
+    page_url="https://example.com/login",
+    risk_type="slide",
+)
+
+# Результат содержит lot_number, pass_token, gen_time, captcha_output
+print(result.to_validation_payload())
+```
+
+---
+
+## 7. Решение reCAPTCHA Enterprise (`ReCaptchaEnterpriseSolver`)
+
+Для корпоративных версий reCAPTCHA Enterprise поддерживается передача кастомных `action`, `s_token` и `enterprise_payload`:
+
+```python
+from chutils.captcha import ReCaptchaEnterpriseSolver
+
+solver = ReCaptchaEnterpriseSolver(provider="capmonster")
+token = solver.solve(
+    site_key="6Lf_enterprise_site_key",
+    page_url="https://example.com/checkout",
+    action="checkout",
+)
+print(f"Token: {token}")
+```
+
+
 

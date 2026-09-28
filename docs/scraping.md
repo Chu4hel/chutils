@@ -1657,3 +1657,11 @@ await tunnel.stop()
 * **`assert_extraction_complete`**: Проверяет обязательные ключи и непустые значения в распарсенных словарях.
 * **`assert_price_valid`**: Валидирует числовые значения цен.
 * **`assert_pagination_valid`**: Проверяет корректность URL следующей страницы.
+
+---
+
+## 15. Решение капч в скрапинге (`chutils.scraping.captcha` / `chutils.captcha`)
+
+Подсистема решения капч поддерживает автоматическое распознавание современных типов защит, включая GeeTest v4 и reCAPTCHA Enterprise через провайдеры RuCaptcha, 2Captcha и CapMonster.
+Подробная документация и примеры доступны в [docs/captcha.md](captcha.md).
+

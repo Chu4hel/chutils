@@ -644,6 +644,10 @@ dependencies = [
 aws = [
     { name = "boto3" },
 ]
+bidi = [
+    { name = "websockets", version = "16.1.1", source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }, marker = "python_full_version < '3.11'" },
+    { name = "websockets", version = "17.1", source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }, marker = "python_full_version >= '3.11'" },
+]
 camoufox = [
     { name = "camoufox" },
 ]
@@ -825,10 +829,11 @@ requires-dist = [
     { name = "sqlalchemy", marker = "extra == 'db'", specifier = ">=2.0.0" },
     { name = "watchdog", marker = "extra == 'full'", specifier = ">=6.0.0" },
     { name = "watchdog", marker = "extra == 'watch'", specifier = ">=6.0.0" },
+    { name = "websockets", marker = "extra == 'bidi'", specifier = ">=14.0.0" },
     { name = "websockets", marker = "extra == 'full'", specifier = ">=14.0.0" },
     { name = "websockets", marker = "extra == 'websockets'", specifier = ">=14.0.0" },
 ]
-provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "websockets", "tls", "camoufox", "db", "captcha", "scraping", "fingerprint", "redis", "qt", "qt-pyside", "vk", "vkma", "testing", "otel", "full"]
+provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "websockets", "bidi", "tls", "camoufox", "db", "captcha", "scraping", "fingerprint", "redis", "qt", "qt-pyside", "vk", "vkma", "testing", "otel", "full"]
 
 [package.metadata.requires-dev]
 dev = [

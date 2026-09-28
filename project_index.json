@@ -1751,6 +1751,769 @@
         "symbols": []
       },
       {
+        "name": "captcha",
+        "path": "chutils/captcha",
+        "type": "package",
+        "layer": "internal",
+        "summary": "",
+        "docstring": "",
+        "children": [
+          {
+            "name": "geetest",
+            "path": "chutils/captcha/geetest",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_handle_rucaptcha_error",
+                "type": "function",
+                "layer": "private",
+                "signature": "(response_text)",
+                "summary": "Обрабатывает текстовые ошибки RuCaptcha / 2Captcha.",
+                "docstring": "Обрабатывает текстовые ошибки RuCaptcha / 2Captcha.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 20,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_handle_capmonster_error",
+                "type": "function",
+                "layer": "private",
+                "signature": "(data)",
+                "summary": "Обрабатывает JSON-ошибки CapMonster.",
+                "docstring": "Обрабатывает JSON-ошибки CapMonster.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 36,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_parse_geetest_result",
+                "type": "function",
+                "layer": "private",
+                "signature": "(raw_result, captcha_id)",
+                "summary": "Преобразует ответ провайдера в структурированный GeeTestResult.",
+                "docstring": "Преобразует ответ провайдера в структурированный GeeTestResult.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 54,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "GeeTestSolver",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Синхронный и асинхронный клиент для решения GeeTest v4 / v3.",
+                "docstring": "Синхронный и асинхронный клиент для решения GeeTest v4 / v3.\n\nПоддерживает провайдеры RuCaptcha, 2Captcha и CapMonster Cloud.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 79,
+                "bases": [
+                  "chutils.scraping.captcha.base.BaseCaptchaSolver"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key, provider, host)",
+                    "summary": "Инициализирует GeeTestSolver.",
+                    "docstring": "Инициализирует GeeTestSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ провайдера.\n    provider: Имя провайдера ('rucaptcha', '2captcha', 'capmonster').\n    host: Пользовательский базовый URL API провайдера.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 87,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_prepare_config",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, config, captcha_id, page_url, challenge, risk_type, api_server, user_agent, proxy)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 130,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, config)",
+                    "summary": "Синхронно решает капчу GeeTest v4 / v3.",
+                    "docstring": "Синхронно решает капчу GeeTest v4 / v3.\n\nArgs:\n    config: Конфигурация задачи GeeTestTaskConfig.\n    captcha_id: ID капчи (если не передан config).\n    page_url: URL страницы (если не передан config).\n    challenge: Токен челленджа для v3.\n    risk_type: Тип проверки/риска.\n    api_server: Домен сервера GeeTest.\n    user_agent: User-Agent.\n    proxy: Прокси для решения.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса (в секундах).\n\nReturns:\n    Структурированный результат решения GeeTestResult.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 155,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "asolve",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, config)",
+                    "summary": "Асинхронно решает капчу GeeTest v4 / v3.",
+                    "docstring": "Асинхронно решает капчу GeeTest v4 / v3.\n\nArgs:\n    config: Конфигурация задачи GeeTestTaskConfig.\n    captcha_id: ID капчи (если не передан config).\n    page_url: URL страницы (если не передан config).\n    challenge: Токен челленджа для v3.\n    risk_type: Тип проверки/риска.\n    api_server: Домен сервера GeeTest.\n    user_agent: User-Agent.\n    proxy: Прокси для решения.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса (в секундах).\n\nReturns:\n    Структурированный результат решения GeeTestResult.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 202,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_solve_rucaptcha",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, client, cfg, timeout, poll_interval)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 253,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_asolve_rucaptcha",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, client, cfg, timeout, poll_interval)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 302,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_solve_capmonster",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, client, cfg, timeout, poll_interval)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 351,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_asolve_capmonster",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, client, cfg, timeout, poll_interval)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 395,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "AsyncGeeTestSolver",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Асинхронный клиент для решения GeeTest v4 / v3.",
+                "docstring": "Асинхронный клиент для решения GeeTest v4 / v3.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 440,
+                "bases": [
+                  "chutils.scraping.captcha.base.BaseAsyncCaptchaSolver"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key, provider, host)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 443,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, config)",
+                    "summary": "Асинхронно решает капчу GeeTest.",
+                    "docstring": "Асинхронно решает капчу GeeTest.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 454,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "asolve",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, config)",
+                    "summary": "Алиас для solve.",
+                    "docstring": "Алиас для solve.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 482,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "models",
+            "path": "chutils/captcha/models",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "GeeTestTaskConfig",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Конфигурация задачи для решения GeeTest v4 / v3.",
+                "docstring": "Конфигурация задачи для решения GeeTest v4 / v3.\n\nAttributes:\n    captcha_id: Идентификатор капчи GeeTest v4 (параметр captcha_id).\n    page_url: Полный URL страницы, на которой расположена капча.\n    challenge: Токен челленджа (обязателен для v3, опционален для v4).\n    risk_type: Подтип или тип риска проверки (например, 'slide', 'verify').\n    api_server: Домен сервера GeeTest (например, 'gcaptcha4.geetest.com').\n    user_agent: Пользовательский User-Agent для решения с эмуляцией заголовков.\n    proxy: Прокси-сервер в формате scheme://user:password@host:port.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 6,
+                "bases": [
+                  "pydantic.BaseModel"
+                ],
+                "children": []
+              },
+              {
+                "name": "GeeTestResult",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Результат успешного решения капчи GeeTest v4.",
+                "docstring": "Результат успешного решения капчи GeeTest v4.\n\nAttributes:\n    lot_number: Идентификатор лота (раунда верификации).\n    pass_token: Токен прохождения проверки.\n    gen_time: Временная метка генерации решения.\n    captcha_output: Подпись решения капчи (output).\n    captcha_id: Идентификатор капчи, для которой получено решение.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 30,
+                "bases": [
+                  "pydantic.BaseModel"
+                ],
+                "children": [
+                  {
+                    "name": "to_validation_payload",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Формирует словарь параметров для отправки на целевой бэкенд проверки.",
+                    "docstring": "Формирует словарь параметров для отправки на целевой бэкенд проверки.\n\nReturns:\n    Словарь параметров с lot_number, pass_token, gen_time, captcha_output.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 49,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "ReCaptchaEnterpriseConfig",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Конфигурация задачи для решения reCAPTCHA Enterprise.",
+                "docstring": "Конфигурация задачи для решения reCAPTCHA Enterprise.\n\nAttributes:\n    site_key: Публичный ключ сайта (sitekey) reCAPTCHA Enterprise.\n    page_url: Полный URL страницы, на которой расположена капча.\n    action: Название защищаемого действия (action).\n    enterprise_payload: Дополнительные параметры Enterprise payload.\n    s_token: Защитный токен s_token (если используется).\n    user_agent: Пользовательский User-Agent для соответствия браузерному окружению.\n    proxy: Прокси-сервер в формате scheme://user:password@host:port.\n    min_score: Минимальный требуемый score для скоринговых проверок (0.1 - 0.9).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 66,
+                "bases": [
+                  "pydantic.BaseModel"
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "recaptcha_enterprise",
+            "path": "chutils/captcha/recaptcha_enterprise",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_handle_rucaptcha_error",
+                "type": "function",
+                "layer": "private",
+                "signature": "(response_text)",
+                "summary": "Обрабатывает текстовые ошибки RuCaptcha / 2Captcha.",
+                "docstring": "Обрабатывает текстовые ошибки RuCaptcha / 2Captcha.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 20,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "_handle_capmonster_error",
+                "type": "function",
+                "layer": "private",
+                "signature": "(data)",
+                "summary": "Обрабатывает JSON-ошибки CapMonster.",
+                "docstring": "Обрабатывает JSON-ошибки CapMonster.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 36,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "ReCaptchaEnterpriseSolver",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Синхронный и асинхронный клиент для решения reCAPTCHA Enterprise.",
+                "docstring": "Синхронный и асинхронный клиент для решения reCAPTCHA Enterprise.\n\nПоддерживает провайдеры RuCaptcha, 2Captcha и CapMonster Cloud.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 54,
+                "bases": [
+                  "chutils.scraping.captcha.base.BaseCaptchaSolver"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key, provider, host)",
+                    "summary": "Инициализирует ReCaptchaEnterpriseSolver.",
+                    "docstring": "Инициализирует ReCaptchaEnterpriseSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ провайдера.\n    provider: Имя провайдера ('rucaptcha', '2captcha', 'capmonster').\n    host: Пользовательский базовый URL API провайдера.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 62,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_prepare_config",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, config, site_key, page_url, action, enterprise_payload, s_token, user_agent, proxy, min_score)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 105,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, config)",
+                    "summary": "Синхронно решает капчу reCAPTCHA Enterprise и возвращает токен.",
+                    "docstring": "Синхронно решает капчу reCAPTCHA Enterprise и возвращает токен.\n\nArgs:\n    config: Конфигурация задачи ReCaptchaEnterpriseConfig.\n    site_key: Sitekey reCAPTCHA Enterprise.\n    page_url: URL страницы.\n    action: Действие (action).\n    enterprise_payload: Полезная нагрузка Enterprise.\n    s_token: Защитный токен s_token.\n    user_agent: User-Agent.\n    proxy: Прокси для решения.\n    min_score: Минимальный требуемый score.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса (в секундах).\n\nReturns:\n    Токен решения g-recaptcha-response.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 132,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "asolve",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, config)",
+                    "summary": "Асинхронно решает капчу reCAPTCHA Enterprise и возвращает токен.",
+                    "docstring": "Асинхронно решает капчу reCAPTCHA Enterprise и возвращает токен.\n\nArgs:\n    config: Конфигурация задачи ReCaptchaEnterpriseConfig.\n    site_key: Sitekey reCAPTCHA Enterprise.\n    page_url: URL страницы.\n    action: Действие (action).\n    enterprise_payload: Полезная нагрузка Enterprise.\n    s_token: Защитный токен s_token.\n    user_agent: User-Agent.\n    proxy: Прокси для решения.\n    min_score: Минимальный требуемый score.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса (в секундах).\n\nReturns:\n    Токен решения g-recaptcha-response.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 182,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_solve_rucaptcha",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, client, cfg, timeout, poll_interval)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 236,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_asolve_rucaptcha",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, client, cfg, timeout, poll_interval)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 288,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_solve_capmonster",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, client, cfg, timeout, poll_interval)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 340,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_asolve_capmonster",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, client, cfg, timeout, poll_interval)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 387,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "AsyncReCaptchaEnterpriseSolver",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Асинхронный клиент для решения reCAPTCHA Enterprise.",
+                "docstring": "Асинхронный клиент для решения reCAPTCHA Enterprise.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 435,
+                "bases": [
+                  "chutils.scraping.captcha.base.BaseAsyncCaptchaSolver"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key, provider, host)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 438,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, config)",
+                    "summary": "Асинхронно решает reCAPTCHA Enterprise.",
+                    "docstring": "Асинхронно решает reCAPTCHA Enterprise.\n\nArgs:\n    config: Конфигурация задачи ReCaptchaEnterpriseConfig.\n    site_key: Sitekey reCAPTCHA Enterprise.\n    page_url: URL страницы.\n    action: Действие (action).\n    enterprise_payload: Полезная нагрузка Enterprise.\n    s_token: Защитный токен s_token.\n    user_agent: User-Agent.\n    proxy: Прокси для решения.\n    min_score: Минимальный требуемый score.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса (в секундах).\n\nReturns:\n    Токен решения g-recaptcha-response.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 449,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "asolve",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, config)",
+                    "summary": "Алиас для solve.",
+                    "docstring": "Алиас для solve.\n\nArgs:\n    config: Конфигурация задачи ReCaptchaEnterpriseConfig.\n    site_key: Sitekey reCAPTCHA Enterprise.\n    page_url: URL страницы.\n    action: Действие (action).\n    enterprise_payload: Полезная нагрузка Enterprise.\n    s_token: Защитный токен s_token.\n    user_agent: User-Agent.\n    proxy: Прокси для решения.\n    min_score: Минимальный требуемый score.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса (в секундах).\n\nReturns:\n    Токен решения g-recaptcha-response.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 496,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "symbols": []
+      },
+      {
         "name": "cli",
         "path": "chutils/cli",
         "type": "module",
@@ -28308,6 +29071,36 @@
                 ]
               },
               {
+                "name": "geetest",
+                "path": "chutils/scraping/captcha/geetest",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": []
+              },
+              {
+                "name": "models",
+                "path": "chutils/scraping/captcha/models",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": []
+              },
+              {
+                "name": "recaptcha_enterprise",
+                "path": "chutils/scraping/captcha/recaptcha_enterprise",
+                "type": "module",
+                "layer": "internal",
+                "summary": "",
+                "docstring": "",
+                "children": [],
+                "symbols": []
+              },
+              {
                 "name": "rucaptcha",
                 "path": "chutils/scraping/captcha/rucaptcha",
                 "type": "module",
@@ -47654,6 +48447,61 @@
       "weight": 1
     },
     {
+      "source": "chutils/captcha",
+      "target": "chutils/scraping/captcha/base",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha",
+      "target": "chutils/scraping/captcha/exceptions",
+      "weight": 4
+    },
+    {
+      "source": "chutils/captcha",
+      "target": "/geetest",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha",
+      "target": "/models",
+      "weight": 3
+    },
+    {
+      "source": "chutils/captcha",
+      "target": "/recaptcha_enterprise",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha/geetest",
+      "target": "chutils/scraping/captcha/base",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha/geetest",
+      "target": "chutils/scraping/captcha/exceptions",
+      "weight": 3
+    },
+    {
+      "source": "chutils/captcha/geetest",
+      "target": "/models",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha/recaptcha_enterprise",
+      "target": "chutils/scraping/captcha/base",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha/recaptcha_enterprise",
+      "target": "chutils/scraping/captcha/exceptions",
+      "weight": 3
+    },
+    {
+      "source": "chutils/captcha/recaptcha_enterprise",
+      "target": "/models",
+      "weight": 1
+    },
+    {
       "source": "chutils/cli",
       "target": "chutils/commands",
       "weight": 1
@@ -48989,6 +49837,21 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/captcha/geetest",
+      "target": "chutils/captcha/geetest",
+      "weight": 2
+    },
+    {
+      "source": "chutils/scraping/captcha/models",
+      "target": "chutils/captcha/models",
+      "weight": 3
+    },
+    {
+      "source": "chutils/scraping/captcha/recaptcha_enterprise",
+      "target": "chutils/captcha/recaptcha_enterprise",
+      "weight": 2
+    },
+    {
       "source": "chutils/scraping/captcha/rucaptcha",
       "target": "/base",
       "weight": 2
@@ -50103,8 +50966,8 @@
   "metadata": {
     "chutils_version": "4.0.0",
     "project_version": "4.0.0",
-    "git_commit": "5d884f39c0cc2c828237a5b280d98334d5cebfbb (dirty)",
-    "generated_at": "2026-09-28T07:01:46.073219+00:00",
-    "project_hash": "bd483b09c4a4bd77ca48304aadc03da6b122fc072658ce507e68ccaca4da28f6"
+    "git_commit": "6812592cc8cbb2060c59b122f5537ccc51d06422 (dirty)",
+    "generated_at": "2026-09-28T09:00:35.031397+00:00",
+    "project_hash": "325f07a5af9707aeead306c0a71f4150a93b793e284bd5ababc1b80e77a5bc36"
   }
 }
