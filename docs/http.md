@@ -70,9 +70,18 @@ with TLSSession(impersonate="chrome120") as session:
     print(resp.json())
 ```
 
-### 3. Интеграция с ProxyPool и туннелированием
+### 3. Интеграция с прокси (`ProxyConfig`, `ProxyPoolProtocol`)
 
-Клиенты `TLSAsyncClient` и `TLSSession` прозрачно интегрированы с подсистемой `chutils.scraping.proxy`:
+Клиенты `TLSAsyncClient` и `TLSSession` поддерживают передачу как одиночного прокси (`ProxyConfig` или URL-строки), так и пулов прокси через интерфейс `ProxyPoolProtocol`:
+
+```python
+from chutils.http import TLSAsyncClient, ProxyConfig
+
+proxy = ProxyConfig(protocol="http", host="1.2.3.4", port=8080, username="user", password="pwd")
+client = TLSAsyncClient(proxy=proxy, impersonate="chrome120")
+```
+
+При работе с пулом `ProxyPool` из `chutils.scraping.proxy`:
 
 ```python
 from chutils.http import TLSAsyncClient

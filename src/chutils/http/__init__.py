@@ -32,6 +32,7 @@ from __future__ import annotations
 from .api import delete, get, patch, post, put
 from .client import AsyncHttpClient, HttpClient
 from .fallback import HttpResponse, UrllibFallbackClient
+from .models import ProxyConfig, ProxyHealthResult
 from .resilience import ResiliencePolicy
 from .streaming import (
     AsyncEventStreamClient,
@@ -43,6 +44,7 @@ from .streaming import (
 from .tls_client import (
     CURL_CFFI_AVAILABLE,
     DEFAULT_IMPERSONATE_PROFILE,
+    ProxyPoolProtocol,
     TLSAsyncClient,
     TLSSession,
     create_curl_async_session,
@@ -59,6 +61,9 @@ __all__ = [
     "EventStreamClient",
     "HttpClient",
     "HttpResponse",
+    "ProxyConfig",
+    "ProxyHealthResult",
+    "ProxyPoolProtocol",
     "ResiliencePolicy",
     "ServerSentEvent",
     "TLSAsyncClient",

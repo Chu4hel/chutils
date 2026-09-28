@@ -13,18 +13,29 @@ from __future__ import annotations
 import datetime
 import importlib.util
 import types
-from typing import TYPE_CHECKING, Any
+from typing import Any, Protocol, runtime_checkable
 
 from typing_extensions import Self
 
 from chutils.exceptions import OptionalDependencyError
 from chutils.http.client import AsyncHttpClient, HttpClient
 from chutils.http.fallback import HttpResponse
+from chutils.http.models import ProxyConfig
 from chutils.logger import setup_logger
 
-if TYPE_CHECKING:
-    from chutils.scraping.proxy.models import ProxyConfig
-    from chutils.scraping.proxy.pool import ProxyPool
+
+@runtime_checkable
+class ProxyPoolProtocol(Protocol):
+    """Протокол пула прокси для исключения жесткой связности между http и scraping."""
+
+    def get_next(self) -> ProxyConfig | str | None:
+        """Возвращает следующий прокси-сервер.
+
+        Returns:
+            Конфигурация прокси ProxyConfig, строковый URL или None при отсутствии доступных прокси.
+        """
+        ...
+
 
 logger = setup_logger(__name__)
 
@@ -37,7 +48,7 @@ CURL_CFFI_AVAILABLE: bool = importlib.util.find_spec("curl_cffi") is not None
 
 def _resolve_proxy_url(
     proxy: ProxyConfig | str | None,
-    proxy_pool: ProxyPool | None,
+    proxy_pool: ProxyPoolProtocol | None,
 ) -> str | None:
     """Извлекает URL прокси-сервера из переданных параметров или пула.
 
@@ -140,7 +151,7 @@ class TLSSession:
         self,
         impersonate: str = DEFAULT_IMPERSONATE_PROFILE,
         proxy: ProxyConfig | str | None = None,
-        proxy_pool: ProxyPool | None = None,
+        proxy_pool: ProxyPoolProtocol | None = None,
         fallback_to_standard: bool = False,
         timeout: float = 30.0,
         **kwargs: Any,
@@ -201,16 +212,26 @@ class TLSSession:
         """Создает сессию TLSSession, предзаполненную cookies и User-Agent из браузера.
 
         Args:
-            target: Экземпляр Selenium WebDriver.
+            target: Экземпляр Selenium WebDriver или словарь {'cookies': ..., 'user_agent': ...}.
             impersonate: Профиль маскировки браузера.
             **kwargs: Дополнительные параметры для TLSSession.
 
         Returns:
             Экземпляр TLSSession.
         """
-        from chutils.scraping.humanize.antidetect import extract_clearance_cookies
+        if isinstance(target, dict):
+            extracted = target
+        else:
+            try:
+                from chutils.scraping.humanize.antidetect import (
+                    extract_clearance_cookies,
+                )
 
-        extracted = extract_clearance_cookies(target)
+                extracted = extract_clearance_cookies(target)
+            except ImportError as err:
+                raise OptionalDependencyError(
+                    "Для автоматического извлечения cookies из браузера требуется модуль chutils.scraping."
+                ) from err
         # Если случайно передали асинхронный объект синхронно
         if hasattr(extracted, "__await__"):
             raise ValueError(
@@ -351,7 +372,7 @@ class TLSAsyncClient:
         self,
         impersonate: str = DEFAULT_IMPERSONATE_PROFILE,
         proxy: ProxyConfig | str | None = None,
-        proxy_pool: ProxyPool | None = None,
+        proxy_pool: ProxyPoolProtocol | None = None,
         fallback_to_standard: bool = False,
         timeout: float = 30.0,
         **kwargs: Any,
@@ -412,16 +433,27 @@ class TLSAsyncClient:
         """Создает асинхронный клиент TLSAsyncClient, предзаполненный cookies и User-Agent из браузера.
 
         Args:
-            target: Экземпляр Playwright (Page, Context), Nodriver Tab или Selenium WebDriver.
+            target: Экземпляр Playwright (Page, Context), Nodriver Tab, Selenium WebDriver или словарь {'cookies': ..., 'user_agent': ...}.
             impersonate: Профиль маскировки браузера.
             **kwargs: Дополнительные параметры для TLSAsyncClient.
 
         Returns:
             Экземпляр TLSAsyncClient.
         """
-        from chutils.scraping.humanize.antidetect import extract_clearance_cookies
+        if isinstance(target, dict):
+            extracted_or_coro = target
+        else:
+            try:
+                from chutils.scraping.humanize.antidetect import (
+                    extract_clearance_cookies,
+                )
 
-        extracted_or_coro = extract_clearance_cookies(target)
+                extracted_or_coro = extract_clearance_cookies(target)
+            except ImportError as err:
+                raise OptionalDependencyError(
+                    "Для автоматического извлечения cookies из браузера требуется модуль chutils.scraping."
+                ) from err
+
         if hasattr(extracted_or_coro, "__await__"):
             extracted = await extracted_or_coro
         else:

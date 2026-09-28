@@ -570,6 +570,9 @@ members:
 - AsyncHttpClient
 - TLSSession
 - TLSAsyncClient
+- ProxyConfig
+- ProxyHealthResult
+- ProxyPoolProtocol
 - create_curl_session
 - create_curl_async_session
 - HttpResponse

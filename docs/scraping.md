@@ -764,7 +764,7 @@ browser = await launch_nodriver(
 
 ## 7. Конфигурация и парсинг прокси (`ProxyConfig`, `parse_proxy`)
 
-Модуль `chutils.scraping.proxy` предоставляет Pydantic-модель `ProxyConfig` и функцию `parse_proxy` для гибкой работы с прокси-серверами, поддерживая аутентификацию и форматы аргументов для различных браузеров:
+Модель `ProxyConfig` входит в ядро сетевых моделей `chutils.http` и прозрачно реэкспортируется через `chutils.scraping.proxy` вместе с функцией `parse_proxy` для гибкой работы с прокси-серверами, поддержкой аутентификации и генерации аргументов для различных браузеров:
 
 ```python
 from chutils.scraping import ProxyConfig, parse_proxy
