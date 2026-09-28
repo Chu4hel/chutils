@@ -1,17 +1,17 @@
-from chutils.exceptions import ChutilsException
+"""Реэкспорт исключений капчи из chutils.captcha для обратной совместимости."""
 
+from __future__ import annotations
 
-class CaptchaError(ChutilsException):
-    """Базовая ошибка при решении капчи."""
+from chutils.captcha.exceptions import (
+    CaptchaBalanceError,
+    CaptchaError,
+    CaptchaServiceError,
+    CaptchaTimeoutError,
+)
 
-
-class CaptchaTimeoutError(CaptchaError):
-    """Ошибка: превышено время ожидания решения капчи."""
-
-
-class CaptchaBalanceError(CaptchaError):
-    """Ошибка: недостаточный баланс на аккаунте сервиса капчи."""
-
-
-class CaptchaServiceError(CaptchaError):
-    """Ошибка: сервис решения капчи вернул ошибку API (например, неверный ключ, плохие параметры)."""
+__all__ = [
+    "CaptchaBalanceError",
+    "CaptchaError",
+    "CaptchaServiceError",
+    "CaptchaTimeoutError",
+]

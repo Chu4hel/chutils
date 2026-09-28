@@ -1,11 +1,13 @@
-# Интеграция с решателями капчи (chutils.scraping.captcha)
+# Интеграция с решателями капчи (chutils.captcha / chutils.scraping.captcha)
 
-Модуль `chutils.scraping.captcha` предоставляет единый абстрактный интерфейс и набор клиентов для работы с внешними
+Модули `chutils.captcha` и `chutils.scraping.captcha` предоставляют единый абстрактный интерфейс и набор клиентов для работы с внешними
 сервисами распознавания капч:
 
 - **RuCaptcha / 2Captcha** (совместимы по API)
 - **Anti-Captcha**
 - **CapMonster Cloud**
+- **GeeTest v4** (`GeeTestSolver`, `AsyncGeeTestSolver`)
+- **reCAPTCHA Enterprise** (`ReCaptchaEnterpriseSolver`, `AsyncReCaptchaEnterpriseSolver`)
 
 Этот функционал поставляется как опциональный экстра-пакет `chutils[captcha]`.
 

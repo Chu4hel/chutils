@@ -7,13 +7,12 @@ from typing import Any
 
 import httpx  # chutils: ignore[ChutilsIntegrationRule]
 
-from chutils.scraping.captcha.base import BaseAsyncCaptchaSolver, BaseCaptchaSolver
-from chutils.scraping.captcha.exceptions import (
+from .base import BaseAsyncCaptchaSolver, BaseCaptchaSolver
+from .exceptions import (
     CaptchaBalanceError,
     CaptchaServiceError,
     CaptchaTimeoutError,
 )
-
 from .models import GeeTestResult, GeeTestTaskConfig
 
 
