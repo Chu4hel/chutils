@@ -26,8 +26,16 @@ from .math_utils import (
     KeyboardTypoGenerator,
     WindMouseGenerator,
 )
+from .touch import (
+    TouchGestureGenerator,
+    TouchPoint,
+    async_touch_swipe,
+    async_touch_tap,
+)
 
 __all__ = [
+    "TouchGestureGenerator",
+    "TouchPoint",
     "_build_selenium_key_map",
     "_ensure_nodriver",
     "_ensure_playwright",
@@ -40,6 +48,8 @@ __all__ = [
     "async_human_sleep",
     "async_move_mouse",
     "async_scroll_to",
+    "async_touch_swipe",
+    "async_touch_tap",
     "async_type_text",
     "click",
     "human_sleep",
@@ -545,4 +555,5 @@ async def async_click(
         await asyncio.sleep(random.uniform(0.03, 0.08))
 
     await _run_with_timeout(_click(), timeout)
+
 

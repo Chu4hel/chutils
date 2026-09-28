@@ -252,6 +252,39 @@ from chutils.scraping import close_tab
 await close_tab(tab, timeout=3.0)
 ```
 
+### Сенсорные действия и жесты (Touch Actions)
+
+Для мобильных окружений и эмуляции сенсорных дисплеев модуль предоставляет генератор жестов `TouchGestureGenerator` и асинхронные обертки для Playwright и nodriver:
+
+```python
+from chutils.scraping.humanize import (
+    TouchGestureGenerator,
+    TouchPoint,
+    async_touch_tap,
+    async_touch_swipe,
+)
+
+# 1. Одиночное касание с физиологическим удержанием пальца и микротремором
+await async_touch_tap(page_or_tab, x=200, y=450, hold_time=0.08)
+
+# 2. Плавный свайп пальцем по экрану (с реалистичной динамикой силы нажатия и пятна контакта)
+await async_touch_swipe(page_or_tab, start=(200, 700), end=(200, 200), steps=20)
+
+# 3. Низкоуровневая генерация жестов (tap, swipe, pinch/zoom)
+generator = TouchGestureGenerator()
+
+# Траектория свайпа со списком TouchPoint (x, y, radius_x, radius_y, force, delay)
+swipe_points: list[TouchPoint] = generator.generate_swipe((100, 600), (100, 100), steps=25)
+
+# Двухпальцевый жест сведения/разведения пальцев (pinch/zoom)
+pinch_pairs: list[tuple[TouchPoint, TouchPoint]] = generator.generate_pinch(
+    center=(250, 400),
+    start_distance=100.0,
+    end_distance=350.0,
+    steps=15,
+)
+```
+
 
 ### Обертки для Selenium (синхронные)
 
@@ -376,6 +409,15 @@ await apply_antidetect_nodriver(tab, config=custom_cfg)
 # FingerprintProfile.to_antidetect_config() полностью сохраняет согласованный user_agent, геометрию экрана и Client Hints
 seed_cfg = AntidetectConfig.from_seed("user_session_42")
 await seed_cfg.apply_to_nodriver(tab)
+
+# 5. Мобильные пресеты (Android Chrome / iOS Safari):
+# Включают Touch API (Touch, TouchEvent, maxTouchPoints=5, ontouchstart),
+# DeviceOrientationEvent, DeviceMotionEvent, Client Hints и реальные мобильные экраны:
+cfg_android = AntidetectConfig.preset_mobile_android(device="pixel_8")
+await cfg_android.apply_to_nodriver(tab)
+
+cfg_ios = AntidetectConfig.preset_mobile_ios(device="iphone_15")
+await cfg_ios.apply_to_playwright(browser_context)
 ```
 
 ### Синтезатор цифровой личности браузера (`FingerprintSynthesizer`)

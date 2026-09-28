@@ -32362,6 +32362,97 @@
                 ]
               },
               {
+                "name": "_mobile_scripts",
+                "path": "chutils/scraping/humanize/_mobile_scripts",
+                "type": "module",
+                "layer": "private",
+                "summary": "Генераторы JavaScript-скриптов для мобильных отпечатков, сенсорных и гироскопических событий.",
+                "docstring": "Генераторы JavaScript-скриптов для мобильных отпечатков, сенсорных и гироскопических событий.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "get_touch_js",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(max_touch_points_val)",
+                    "summary": "Возвращает JS-код для эмуляции Touch API.",
+                    "docstring": "Возвращает JS-код для эмуляции Touch API.\n\nArgs:\n    max_touch_points_val: Максимальное количество точек касания для navigator.maxTouchPoints.\n\nReturns:\n    Строка исполняемого JavaScript-кода эмуляции Touch API.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 6,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_motion_js",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "()",
+                    "summary": "Возвращает JS-код для эмуляции DeviceOrientationEvent и DeviceMotionEvent.",
+                    "docstring": "Возвращает JS-код для эмуляции DeviceOrientationEvent и DeviceMotionEvent.\n\nReturns:\n    Строка исполняемого JavaScript-кода эмуляции гироскопа и акселерометра.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 75,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_orientation_js",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(orientation_js, is_mobile_js)",
+                    "summary": "Возвращает JS-код для эмуляции Screen Orientation.",
+                    "docstring": "Возвращает JS-код для эмуляции Screen Orientation.\n\nArgs:\n    orientation_js: JSON-строка параметров ориентации экрана.\n    is_mobile_js: Строка 'true' или 'false' для флага мобильного режима.\n\nReturns:\n    Строка исполняемого JavaScript-кода эмуляции Screen Orientation.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 114,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_ios_js",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "()",
+                    "summary": "Возвращает JS-код для эмуляции объектов Safari на iOS (window.safari, window.ApplePaySession).",
+                    "docstring": "Возвращает JS-код для эмуляции объектов Safari на iOS (window.safari, window.ApplePaySession).\n\nReturns:\n    Строка исполняемого JavaScript-кода эмуляции специфичных объектов iOS Safari.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 148,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "actions",
                 "path": "chutils/scraping/humanize/actions",
                 "type": "module",
@@ -32386,7 +32477,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 52,
+                    "line_number": 62,
                     "bases": [],
                     "children": []
                   },
@@ -32406,7 +32497,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 146,
+                    "line_number": 156,
                     "bases": [],
                     "children": []
                   },
@@ -32426,7 +32517,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 210,
+                    "line_number": 220,
                     "bases": [],
                     "children": []
                   },
@@ -32446,7 +32537,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 289,
+                    "line_number": 299,
                     "bases": [],
                     "children": []
                   },
@@ -32466,7 +32557,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 342,
+                    "line_number": 352,
                     "bases": [],
                     "children": []
                   },
@@ -32486,7 +32577,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 376,
+                    "line_number": 386,
                     "bases": [],
                     "children": []
                   },
@@ -32506,7 +32597,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 462,
+                    "line_number": 472,
                     "bases": [],
                     "children": []
                   }
@@ -32657,7 +32748,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 173,
+                    "line_number": 171,
                     "bases": [],
                     "children": []
                   },
@@ -32677,7 +32768,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 250,
+                    "line_number": 259,
                     "bases": [],
                     "children": []
                   },
@@ -32697,7 +32788,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 341,
+                    "line_number": 362,
                     "bases": [],
                     "children": []
                   },
@@ -32717,7 +32808,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 386,
+                    "line_number": 407,
                     "bases": [],
                     "children": []
                   },
@@ -32737,7 +32828,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 448,
+                    "line_number": 469,
                     "bases": [],
                     "children": []
                   },
@@ -32757,7 +32848,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 468,
+                    "line_number": 489,
                     "bases": [],
                     "children": []
                   }
@@ -32788,7 +32879,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 8,
+                    "line_number": 10,
                     "bases": [],
                     "children": []
                   },
@@ -32808,7 +32899,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 9,
+                    "line_number": 11,
                     "bases": [],
                     "children": []
                   },
@@ -32828,7 +32919,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 12,
+                    "line_number": 14,
                     "bases": [],
                     "children": []
                   },
@@ -32848,7 +32939,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 13,
+                    "line_number": 15,
                     "bases": [],
                     "children": []
                   },
@@ -32856,7 +32947,7 @@
                     "name": "_get_antidetect_js",
                     "type": "function",
                     "layer": "private",
-                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal, session_seed, client_hints, screen_width, screen_height, screen_avail_height, device_pixel_ratio, media_devices)",
+                    "signature": "(webgl_vendor, webgl_renderer, hardware_concurrency, device_memory, stealth_minimal, session_seed, client_hints, screen_width, screen_height, screen_avail_height, device_pixel_ratio, media_devices, is_mobile, has_touch, max_touch_points, is_ios, orientation)",
                     "summary": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
                     "docstring": "Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами.",
                     "breadcrumbs": {
@@ -32868,7 +32959,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 16,
+                    "line_number": 18,
                     "bases": [],
                     "children": []
                   }
@@ -33142,7 +33233,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 86,
+                        "line_number": 108,
                         "bases": [],
                         "children": []
                       },
@@ -33164,7 +33255,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 111,
+                        "line_number": 133,
                         "bases": [],
                         "children": []
                       },
@@ -33186,7 +33277,51 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 148,
+                        "line_number": 170,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "preset_mobile_android",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls)",
+                        "summary": "Мобильный пресет для Android Chrome (Pixel 8, Pixel 7, Galaxy S24).",
+                        "docstring": "Мобильный пресет для Android Chrome (Pixel 8, Pixel 7, Galaxy S24).\n\nArgs:\n    device: Идентификатор устройства ('pixel_8', 'pixel_7', 'galaxy_s24').\n    session_seed: Сид для детерминированного шума и генератора поведения.\n    stealth_minimal: Режим маскировки.\n\nReturns:\n    Экземпляр AntidetectConfig для Android устройства.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 192,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "preset_mobile_ios",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(cls)",
+                        "summary": "Мобильный пресет для iOS Safari (iPhone 15, iPhone 14).",
+                        "docstring": "Мобильный пресет для iOS Safari (iPhone 15, iPhone 14).\n\nArgs:\n    device: Идентификатор устройства ('iphone_15', 'iphone_14').\n    session_seed: Сид для детерминированного шума и генератора поведения.\n    stealth_minimal: Режим маскировки.\n\nReturns:\n    Экземпляр AntidetectConfig для iOS Safari.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [
+                            "classmethod"
+                          ],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 269,
                         "bases": [],
                         "children": []
                       },
@@ -33208,7 +33343,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 170,
+                        "line_number": 329,
                         "bases": [],
                         "children": []
                       },
@@ -33230,7 +33365,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 189,
+                        "line_number": 348,
                         "bases": [],
                         "children": []
                       },
@@ -33252,7 +33387,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 219,
+                        "line_number": 378,
                         "bases": [],
                         "children": []
                       },
@@ -33274,7 +33409,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 244,
+                        "line_number": 403,
                         "bases": [],
                         "children": []
                       },
@@ -33294,7 +33429,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 270,
+                        "line_number": 429,
                         "bases": [],
                         "children": []
                       },
@@ -33314,7 +33449,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 280,
+                        "line_number": 439,
                         "bases": [],
                         "children": []
                       },
@@ -33334,7 +33469,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 303,
+                        "line_number": 467,
                         "bases": [],
                         "children": []
                       },
@@ -33354,7 +33489,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 313,
+                        "line_number": 477,
                         "bases": [],
                         "children": []
                       },
@@ -33374,7 +33509,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 323,
+                        "line_number": 487,
                         "bases": [],
                         "children": []
                       }
@@ -33891,6 +34026,180 @@
                       "custom_metadata": {}
                     },
                     "line_number": 144,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "touch",
+                "path": "chutils/scraping/humanize/touch",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Сенсорные взаимодействия, генератор жестов и эмуляция тач-событий.",
+                "docstring": "Сенсорные взаимодействия, генератор жестов и эмуляция тач-событий.",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "TouchPoint",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Точка сенсорного касания с физическими параметрами пятна контакта.",
+                    "docstring": "Точка сенсорного касания с физическими параметрами пятна контакта.\n\nAttributes:\n    x: Координата X на экране.\n    y: Координата Y на экране.\n    radius_x: Радиус эллипса касания по оси X (в пикселях).\n    radius_y: Радиус эллипса касания по оси Y (в пикселях).\n    rotation_angle: Угол поворота эллипса касания в градусах.\n    force: Сила нажатия (давление) пальца в диапазоне 0.0 - 1.0.\n    delay: Задержка перед переходом к следующей точке (в секундах).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "dataclass"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 28,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "TouchGestureGenerator",
+                    "type": "class",
+                    "layer": "internal",
+                    "signature": "",
+                    "summary": "Генератор биомеханических сенсорных траекторий (касания, свайпы, зум).",
+                    "docstring": "Генератор биомеханических сенсорных траекторий (касания, свайпы, зум).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 50,
+                    "bases": [],
+                    "children": [
+                      {
+                        "name": "__init__",
+                        "type": "method",
+                        "layer": "private",
+                        "signature": "(self)",
+                        "summary": "Инициализирует генератор сенсорных жестов.",
+                        "docstring": "Инициализирует генератор сенсорных жестов.\n\nArgs:\n    default_radius: Базовый радиус пятна касания пальца (в пикселях).\n    default_force: Базовая сила нажатия (0.0 - 1.0).\n    jitter: Амплитуда случайных микроколебаний.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 53,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate_tap",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, x, y)",
+                        "summary": "Генерирует последовательность точек для одиночного касания (tap).",
+                        "docstring": "Генерирует последовательность точек для одиночного касания (tap).\n\nArgs:\n    x: Координата X касания.\n    y: Координата Y касания.\n    hold_time: Время удержания пальца на экране в секундах.\n\nReturns:\n    Список точек TouchPoint (касание и микросдвиг).",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 71,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate_swipe",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, start, end)",
+                        "summary": "Генерирует траекторию свайпа пальцем с реалистичной физикой нажима и пятна контакта.",
+                        "docstring": "Генерирует траекторию свайпа пальцем с реалистичной физикой нажима и пятна контакта.\n\nArgs:\n    start: Начальные координаты (X, Y).\n    end: Конечные координаты (X, Y).\n    steps: Количество промежуточных точек.\n    curve: Алгоритм генерации траектории ('bezier').\n\nReturns:\n    Список точек TouchPoint вдоль пути свайпа.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 114,
+                        "bases": [],
+                        "children": []
+                      },
+                      {
+                        "name": "generate_pinch",
+                        "type": "method",
+                        "layer": "internal",
+                        "signature": "(self, center, start_distance, end_distance)",
+                        "summary": "Генерирует двухпальцевый жест сжатия / масштабирования (pinch/zoom).",
+                        "docstring": "Генерирует двухпальцевый жест сжатия / масштабирования (pinch/zoom).\n\nArgs:\n    center: Координаты центра жеста (X, Y).\n    start_distance: Начальное расстояние между пальцами.\n    end_distance: Конечное расстояние между пальцами.\n    steps: Количество промежуточных фаз.\n    angle: Угол наклона оси жеста в радианах.\n\nReturns:\n    Список пар TouchPoint (finger1, finger2) для каждого шага.",
+                        "breadcrumbs": {
+                          "is_async": false,
+                          "is_thread_safe": false,
+                          "is_heavy": false,
+                          "is_abstract": false,
+                          "decorators": [],
+                          "tags": [],
+                          "custom_metadata": {}
+                        },
+                        "line_number": 173,
+                        "bases": [],
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "name": "async_touch_tap",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(page, x, y)",
+                    "summary": "Имитирует сенсорное касание (tap) на мобильном экране в Playwright или nodriver.",
+                    "docstring": "Имитирует сенсорное касание (tap) на мобильном экране в Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    x: Координата X касания.\n    y: Координата Y касания.\n    hold_time: Время удержания пальца (в секундах).\n    timeout: Таймаут выполнения операции (в секундах).",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 228,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "async_touch_swipe",
+                    "type": "function",
+                    "layer": "internal",
+                    "signature": "(page, start, end)",
+                    "summary": "Имитирует свайп пальцем по экрану в Playwright или nodriver.",
+                    "docstring": "Имитирует свайп пальцем по экрану в Playwright или nodriver.\n\nArgs:\n    page: Объект страницы Playwright Page или вкладки nodriver Tab.\n    start: Начальные координаты (X, Y).\n    end: Конечные координаты (X, Y).\n    steps: Количество промежуточных шагов движения пальца.\n    timeout: Таймаут выполнения операции (в секундах).",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 286,
                     "bases": [],
                     "children": []
                   }
@@ -49979,7 +50288,7 @@
     {
       "source": "chutils/scraping/humanize",
       "target": "/actions",
-      "weight": 10
+      "weight": 14
     },
     {
       "source": "chutils/scraping/humanize",
@@ -50027,6 +50336,11 @@
       "weight": 4
     },
     {
+      "source": "chutils/scraping/humanize/actions",
+      "target": "/touch",
+      "weight": 4
+    },
+    {
       "source": "chutils/scraping/humanize/antidetect",
       "target": "chutils/exceptions",
       "weight": 1
@@ -50042,6 +50356,11 @@
       "weight": 1
     },
     {
+      "source": "chutils/scraping/humanize/antidetect_scripts",
+      "target": "/_mobile_scripts",
+      "weight": 4
+    },
+    {
       "source": "chutils/scraping/humanize/behavior",
       "target": "/actions",
       "weight": 4
@@ -50055,6 +50374,16 @@
       "source": "chutils/scraping/humanize/config",
       "target": "/antidetect_scripts",
       "weight": 4
+    },
+    {
+      "source": "chutils/scraping/humanize/touch",
+      "target": "/_actions_helpers",
+      "weight": 4
+    },
+    {
+      "source": "chutils/scraping/humanize/touch",
+      "target": "/math_utils",
+      "weight": 1
     },
     {
       "source": "chutils/scraping/humanize/turnstile",
@@ -50966,8 +51295,8 @@
   "metadata": {
     "chutils_version": "4.0.0",
     "project_version": "4.0.0",
-    "git_commit": "6812592cc8cbb2060c59b122f5537ccc51d06422 (dirty)",
-    "generated_at": "2026-09-28T09:00:35.031397+00:00",
-    "project_hash": "325f07a5af9707aeead306c0a71f4150a93b793e284bd5ababc1b80e77a5bc36"
+    "git_commit": "fe888a5004df949477d45219fbcd2ff67af36490 (dirty)",
+    "generated_at": "2026-09-28T09:29:26.652877+00:00",
+    "project_hash": "5d6a8d041cbe946e8c8eddece0ab35f5af469ee578a3eec2309da69ef870404a"
   }
 }

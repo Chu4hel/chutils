@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from ._mobile_scripts import get_ios_js, get_motion_js, get_orientation_js, get_touch_js
+
 DEFAULT_WEBGL_VENDOR = "Google Inc. (NVIDIA)"
 DEFAULT_WEBGL_RENDERER = (
     "ANGLE (NVIDIA, NVIDIA GeForce RTX 3060 Direct3D11 vs_5_0 ps_5_0, D3D11)"
@@ -26,6 +28,11 @@ def _get_antidetect_js(
     screen_avail_height: int | None = None,
     device_pixel_ratio: float | None = None,
     media_devices: list[dict[str, Any]] | None = None,
+    is_mobile: bool = False,
+    has_touch: bool = False,
+    max_touch_points: int = 0,
+    is_ios: bool = False,
+    orientation: dict[str, Any] | None = None,
 ) -> str:
     """Генерирует JavaScript-инъекцию для скрытия признаков автоматизации браузера с заданными параметрами."""
     vendor_js = json.dumps(webgl_vendor)
@@ -40,6 +47,14 @@ def _get_antidetect_js(
     screen_avail_h_js = json.dumps(screen_avail_height)
     dpr_js = json.dumps(device_pixel_ratio)
     devices_js = json.dumps(media_devices) if media_devices is not None else "null"
+    is_mobile_js = "true" if is_mobile else "false"
+    max_touch_points_val = int(max_touch_points if (max_touch_points > 0 or not is_mobile) else 5)
+    orientation_js = json.dumps(orientation) if orientation is not None else "null"
+
+    touch_block = get_touch_js(max_touch_points_val) if (has_touch or is_mobile) else ""
+    motion_block = get_motion_js() if (has_touch or is_mobile) else ""
+    orientation_block = get_orientation_js(orientation_js, is_mobile_js)
+    ios_block = get_ios_js() if is_ios else ""
 
     return f"""(function() {{
     // Утилита для маскировки функций под нативные [native code] с чистым V8 stack trace
@@ -570,4 +585,12 @@ def _get_antidetect_js(
             navigator.mediaDevices.enumerateDevices = makeNative(fakeEnumerateDevices, 'enumerateDevices');
         }}
     }} catch (e) {{}}
+
+    {touch_block}
+
+    {motion_block}
+
+    {orientation_block}
+
+    {ios_block}
 }})();"""

@@ -151,8 +151,6 @@ async def apply_antidetect_playwright(
         stealth_minimal = config.stealth_minimal
         session_seed = config.session_seed
         client_hints = config.client_hints
-        if config.user_agent is not None:
-            user_agent = config.user_agent
 
     script = (
         config.get_init_script()
@@ -238,7 +236,18 @@ def apply_antidetect_selenium(
                         "width": config.screen_width,
                         "height": config.screen_height,
                         "deviceScaleFactor": config.device_pixel_ratio or 1.0,
-                        "mobile": False,
+                        "mobile": bool(config.is_mobile),
+                    },
+                )
+            except Exception:
+                pass
+        if config is not None and (config.has_touch or config.is_mobile):
+            try:
+                driver.execute_cdp_cmd(
+                    "Emulation.setTouchEmulationEnabled",
+                    {
+                        "enabled": True,
+                        "maxTouchPoints": config.max_touch_points or 5,
                     },
                 )
             except Exception:
@@ -307,7 +316,19 @@ async def apply_antidetect_nodriver(
                     width=config.screen_width,
                     height=config.screen_height,
                     device_scale_factor=config.device_pixel_ratio or 1.0,
-                    mobile=False,
+                    mobile=bool(config.is_mobile),
+                )
+            )
+        except Exception:
+            pass
+
+    # 2.1. Эмуляция сенсорного экрана при наличии has_touch или is_mobile
+    if config is not None and (config.has_touch or config.is_mobile):
+        try:
+            await tab.send(
+                emulation.set_touch_emulation_enabled(
+                    enabled=True,
+                    max_touch_points=config.max_touch_points or 5,
                 )
             )
         except Exception:
