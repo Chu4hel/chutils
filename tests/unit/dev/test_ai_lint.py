@@ -630,6 +630,52 @@ def my_func():
     results = rule.check(str(tmp_path), [str(file_doc)])
     assert len(results) == 0  # 4 <= 5
 
+    # 8. Исключение imports и вес imports
+    import_code = '''import os
+import sys
+from typing import (
+    Any,
+    Callable,
+)
+
+def simple():
+    pass
+'''
+    file_import = tmp_path / "imports_test.py"
+    file_import.write_text(import_code, encoding="utf-8")
+
+    # Без исключения - 9 строк > 5
+    rule.config = {"max_file_lines": 5, "max_file_classes": 5}
+    results = rule.check(str(tmp_path), [str(file_import)])
+    assert len(results) == 1
+
+    # С decomposition_exclude_imports=True - 6 строк импортов исключаются, остается 3 <= 5
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5,
+        "decomposition_exclude_imports": True,
+    }
+    results = rule.check(str(tmp_path), [str(file_import)])
+    assert len(results) == 0
+
+    # С decomposition_imports_weight=0.5 - 6 * 0.5 = 3. 3 + 3 = 6. 6 > 5
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5,
+        "decomposition_imports_weight": 0.5,
+    }
+    results = rule.check(str(tmp_path), [str(file_import)])
+    assert len(results) == 1
+
+    # С decomposition_imports_weight=0.2 - 6 * 0.2 = 1.2. 1.2 + 3 = 4.2 -> int(4.2) = 4 <= 5
+    rule.config = {
+        "max_file_lines": 5,
+        "max_file_classes": 5,
+        "decomposition_imports_weight": 0.2,
+    }
+    results = rule.check(str(tmp_path), [str(file_import)])
+    assert len(results) == 0
+
 
 def test_api_map_hash_rule(tmp_path):
     """Тестирует APIMapHashRule."""
