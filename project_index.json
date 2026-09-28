@@ -1759,6 +1759,258 @@
         "docstring": "",
         "children": [
           {
+            "name": "base",
+            "path": "chutils/captcha/base",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Базовые классы для капча-солверов (chutils.captcha).",
+            "docstring": "Базовые классы для капча-солверов (chutils.captcha).",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_ensure_httpx",
+                "type": "function",
+                "layer": "private",
+                "signature": "()",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 10,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "BaseCaptchaSolver",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Базовый синхронный клиент для сервисов решения капч.",
+                "docstring": "Базовый синхронный клиент для сервисов решения капч.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 20,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key)",
+                    "summary": "Инициализирует BaseCaptchaSolver.",
+                    "docstring": "Инициализирует BaseCaptchaSolver.\n\nArgs:\n    api_key: Явно переданный API-ключ. Если не передан, запрашивается из SecretManager.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 25,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_get_secret_key",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 39,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "BaseAsyncCaptchaSolver",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Базовый асинхронный клиент для сервисов решения капч.",
+                "docstring": "Базовый асинхронный клиент для сервисов решения капч.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 51,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key)",
+                    "summary": "Инициализирует BaseAsyncCaptchaSolver.",
+                    "docstring": "Инициализирует BaseAsyncCaptchaSolver.\n\nArgs:\n    api_key: Явно переданный API-ключ. Если не передан, запрашивается из SecretManager.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 56,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_get_secret_key",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "",
+                    "docstring": "",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 70,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "exceptions",
+            "path": "chutils/captcha/exceptions",
+            "type": "module",
+            "layer": "public",
+            "summary": "Исключения подсистемы решения капч (chutils.captcha).",
+            "docstring": "Исключения подсистемы решения капч (chutils.captcha).",
+            "children": [],
+            "symbols": [
+              {
+                "name": "CaptchaError",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Базовая ошибка при решении капчи.",
+                "docstring": "Базовая ошибка при решении капчи.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 8,
+                "bases": [
+                  "chutils.exceptions.ChutilsException"
+                ],
+                "children": []
+              },
+              {
+                "name": "CaptchaTimeoutError",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Ошибка: превышено время ожидания решения капчи.",
+                "docstring": "Ошибка: превышено время ожидания решения капчи.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 12,
+                "bases": [
+                  "CaptchaError"
+                ],
+                "children": []
+              },
+              {
+                "name": "CaptchaBalanceError",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Ошибка: недостаточный баланс на аккаунте сервиса капчи.",
+                "docstring": "Ошибка: недостаточный баланс на аккаунте сервиса капчи.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 16,
+                "bases": [
+                  "CaptchaError"
+                ],
+                "children": []
+              },
+              {
+                "name": "CaptchaServiceError",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Ошибка: сервис решения капчи вернул ошибку API (например, неверный ключ, плохие параметры).",
+                "docstring": "Ошибка: сервис решения капчи вернул ошибку API (например, неверный ключ, плохие параметры).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 20,
+                "bases": [
+                  "CaptchaError"
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
             "name": "geetest",
             "path": "chutils/captcha/geetest",
             "type": "module",
@@ -1783,7 +2035,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 20,
+                "line_number": 19,
                 "bases": [],
                 "children": []
               },
@@ -1803,7 +2055,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 36,
+                "line_number": 35,
                 "bases": [],
                 "children": []
               },
@@ -1823,7 +2075,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 54,
+                "line_number": 53,
                 "bases": [],
                 "children": []
               },
@@ -1843,9 +2095,9 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 79,
+                "line_number": 78,
                 "bases": [
-                  "chutils.scraping.captcha.base.BaseCaptchaSolver"
+                  ".base.BaseCaptchaSolver"
                 ],
                 "children": [
                   {
@@ -1864,7 +2116,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 87,
+                    "line_number": 86,
                     "bases": [],
                     "children": []
                   },
@@ -1884,7 +2136,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 130,
+                    "line_number": 129,
                     "bases": [],
                     "children": []
                   },
@@ -1904,7 +2156,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 155,
+                    "line_number": 154,
                     "bases": [],
                     "children": []
                   },
@@ -1924,7 +2176,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 202,
+                    "line_number": 201,
                     "bases": [],
                     "children": []
                   },
@@ -1944,7 +2196,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 253,
+                    "line_number": 252,
                     "bases": [],
                     "children": []
                   },
@@ -1964,7 +2216,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 302,
+                    "line_number": 301,
                     "bases": [],
                     "children": []
                   },
@@ -1984,7 +2236,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 351,
+                    "line_number": 350,
                     "bases": [],
                     "children": []
                   },
@@ -2004,7 +2256,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 395,
+                    "line_number": 394,
                     "bases": [],
                     "children": []
                   }
@@ -2026,9 +2278,9 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 440,
+                "line_number": 439,
                 "bases": [
-                  "chutils.scraping.captcha.base.BaseAsyncCaptchaSolver"
+                  ".base.BaseAsyncCaptchaSolver"
                 ],
                 "children": [
                   {
@@ -2047,7 +2299,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 443,
+                    "line_number": 442,
                     "bases": [],
                     "children": []
                   },
@@ -2067,7 +2319,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 454,
+                    "line_number": 453,
                     "bases": [],
                     "children": []
                   },
@@ -2087,7 +2339,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 482,
+                    "line_number": 481,
                     "bases": [],
                     "children": []
                   }
@@ -2218,7 +2470,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 20,
+                "line_number": 19,
                 "bases": [],
                 "children": []
               },
@@ -2238,7 +2490,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 36,
+                "line_number": 35,
                 "bases": [],
                 "children": []
               },
@@ -2258,9 +2510,9 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 54,
+                "line_number": 53,
                 "bases": [
-                  "chutils.scraping.captcha.base.BaseCaptchaSolver"
+                  ".base.BaseCaptchaSolver"
                 ],
                 "children": [
                   {
@@ -2279,7 +2531,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 62,
+                    "line_number": 61,
                     "bases": [],
                     "children": []
                   },
@@ -2299,7 +2551,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 105,
+                    "line_number": 104,
                     "bases": [],
                     "children": []
                   },
@@ -2319,7 +2571,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 132,
+                    "line_number": 131,
                     "bases": [],
                     "children": []
                   },
@@ -2339,7 +2591,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 182,
+                    "line_number": 181,
                     "bases": [],
                     "children": []
                   },
@@ -2359,7 +2611,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 236,
+                    "line_number": 235,
                     "bases": [],
                     "children": []
                   },
@@ -2379,7 +2631,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 288,
+                    "line_number": 287,
                     "bases": [],
                     "children": []
                   },
@@ -2399,7 +2651,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 340,
+                    "line_number": 339,
                     "bases": [],
                     "children": []
                   },
@@ -2419,7 +2671,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 387,
+                    "line_number": 386,
                     "bases": [],
                     "children": []
                   }
@@ -2441,9 +2693,9 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 435,
+                "line_number": 434,
                 "bases": [
-                  "chutils.scraping.captcha.base.BaseAsyncCaptchaSolver"
+                  ".base.BaseAsyncCaptchaSolver"
                 ],
                 "children": [
                   {
@@ -2462,7 +2714,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 438,
+                    "line_number": 437,
                     "bases": [],
                     "children": []
                   },
@@ -2482,7 +2734,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 449,
+                    "line_number": 448,
                     "bases": [],
                     "children": []
                   },
@@ -2502,7 +2754,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 496,
+                    "line_number": 495,
                     "bases": [],
                     "children": []
                   }
@@ -22170,6 +22422,276 @@
             ]
           },
           {
+            "name": "models",
+            "path": "chutils/http/models",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Модели данных HTTP-клиента и сетевых конфигураций.",
+            "docstring": "Модели данных HTTP-клиента и сетевых конфигураций.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "ProxyConfig",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Конфигурация прокси-сервера с поддержкой аутентификации.",
+                "docstring": "Конфигурация прокси-сервера с поддержкой аутентификации.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 11,
+                "bases": [
+                  "pydantic.BaseModel"
+                ],
+                "children": [
+                  {
+                    "name": "has_auth",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Проверяет наличие учетных данных аутентификации.",
+                    "docstring": "Проверяет наличие учетных данных аутентификации.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 24,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "auth_str",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает строку аутентификации user:password или None.",
+                    "docstring": "Возвращает строку аутентификации user:password или None.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 29,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "server_url",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает базовый URL прокси-сервера без учетных данных.",
+                    "docstring": "Возвращает базовый URL прокси-сервера без учетных данных.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 36,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "url",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает полный URL прокси с учетными данными, если они есть.",
+                    "docstring": "Возвращает полный URL прокси с учетными данными, если они есть.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 41,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "masked_url",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает безопасный URL для логирования со скрытым паролем.",
+                    "docstring": "Возвращает безопасный URL для логирования со скрытым паролем.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 48,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "basic_auth_header",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает значение заголовка Proxy-Authorization Basic или None.",
+                    "docstring": "Возвращает значение заголовка Proxy-Authorization Basic или None.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [
+                        "property"
+                      ],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 55,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "to_playwright",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Преобразует конфигурацию в словарь параметров прокси для Playwright.",
+                    "docstring": "Преобразует конфигурацию в словарь параметров прокси для Playwright.\n\nReturns:\n    Словарь с ключами server, username и password для playwright.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 62,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "to_chrome_arg",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает CLI аргумент --proxy-server для Chromium.",
+                    "docstring": "Возвращает CLI аргумент --proxy-server для Chromium.\n\nReturns:\n    Строка флага командной строки для запуска Chromium.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 75,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "to_selenium",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Преобразует конфигурацию в словарь capabilities прокси для Selenium.",
+                    "docstring": "Преобразует конфигурацию в словарь capabilities прокси для Selenium.\n\nReturns:\n    Словарь параметров прокси для передачи в Selenium Capabilities.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 83,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "to_string",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, format)",
+                    "summary": "Форматирует прокси в строковое представление по заданному шаблону.",
+                    "docstring": "Форматирует прокси в строковое представление по заданному шаблону.\n\nArgs:\n    format: Шаблон формата ('url', 'host:port', 'host:port:user:pass', 'server').\n\nReturns:\n    Строковое представление прокси.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [
+                        "port"
+                      ],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 96,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "ProxyHealthResult",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Результат проверки работоспособности (Health Check) прокси-сервера.",
+                "docstring": "Результат проверки работоспособности (Health Check) прокси-сервера.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 120,
+                "bases": [
+                  "pydantic.BaseModel"
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
             "name": "resilience",
             "path": "chutils/http/resilience",
             "type": "module",
@@ -22976,6 +23498,51 @@
             "children": [],
             "symbols": [
               {
+                "name": "ProxyPoolProtocol",
+                "type": "class",
+                "layer": "internal",
+                "signature": "",
+                "summary": "Протокол пула прокси для исключения жесткой связности между http и scraping.",
+                "docstring": "Протокол пула прокси для исключения жесткой связности между http и scraping.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [
+                    "runtime_checkable"
+                  ],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 28,
+                "bases": [
+                  "typing.Protocol"
+                ],
+                "children": [
+                  {
+                    "name": "get_next",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает следующий прокси-сервер.",
+                    "docstring": "Возвращает следующий прокси-сервер.\n\nReturns:\n    Конфигурация прокси ProxyConfig, строковый URL или None при отсутствии доступных прокси.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 31,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "logger",
                 "type": "constant",
                 "layer": "public",
@@ -22991,7 +23558,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 29,
+                "line_number": 40,
                 "bases": [],
                 "children": []
               },
@@ -23011,7 +23578,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 38,
+                "line_number": 49,
                 "bases": [],
                 "children": []
               },
@@ -23031,7 +23598,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 62,
+                "line_number": 73,
                 "bases": [],
                 "children": []
               },
@@ -23051,7 +23618,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 85,
+                "line_number": 96,
                 "bases": [],
                 "children": []
               },
@@ -23071,7 +23638,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 108,
+                "line_number": 119,
                 "bases": [],
                 "children": []
               },
@@ -23091,7 +23658,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 136,
+                "line_number": 147,
                 "bases": [],
                 "children": [
                   {
@@ -23110,7 +23677,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 139,
+                    "line_number": 150,
                     "bases": [],
                     "children": []
                   },
@@ -23120,7 +23687,7 @@
                     "layer": "internal",
                     "signature": "(cls, target, impersonate)",
                     "summary": "Создает сессию TLSSession, предзаполненную cookies и User-Agent из браузера.",
-                    "docstring": "Создает сессию TLSSession, предзаполненную cookies и User-Agent из браузера.\n\nArgs:\n    target: Экземпляр Selenium WebDriver.\n    impersonate: Профиль маскировки браузера.\n    **kwargs: Дополнительные параметры для TLSSession.\n\nReturns:\n    Экземпляр TLSSession.",
+                    "docstring": "Создает сессию TLSSession, предзаполненную cookies и User-Agent из браузера.\n\nArgs:\n    target: Экземпляр Selenium WebDriver или словарь {'cookies': ..., 'user_agent': ...}.\n    impersonate: Профиль маскировки браузера.\n    **kwargs: Дополнительные параметры для TLSSession.\n\nReturns:\n    Экземпляр TLSSession.",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -23132,7 +23699,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 195,
+                    "line_number": 206,
                     "bases": [],
                     "children": []
                   },
@@ -23152,7 +23719,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 231,
+                    "line_number": 252,
                     "bases": [],
                     "children": []
                   },
@@ -23172,7 +23739,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 268,
+                    "line_number": 289,
                     "bases": [],
                     "children": []
                   },
@@ -23192,7 +23759,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 280,
+                    "line_number": 301,
                     "bases": [],
                     "children": []
                   },
@@ -23212,7 +23779,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 292,
+                    "line_number": 313,
                     "bases": [],
                     "children": []
                   },
@@ -23232,7 +23799,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 304,
+                    "line_number": 325,
                     "bases": [],
                     "children": []
                   },
@@ -23252,7 +23819,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 316,
+                    "line_number": 337,
                     "bases": [],
                     "children": []
                   },
@@ -23272,7 +23839,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 328,
+                    "line_number": 349,
                     "bases": [],
                     "children": []
                   }
@@ -23294,7 +23861,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 347,
+                "line_number": 368,
                 "bases": [],
                 "children": [
                   {
@@ -23313,7 +23880,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 350,
+                    "line_number": 371,
                     "bases": [],
                     "children": []
                   },
@@ -23323,7 +23890,7 @@
                     "layer": "internal",
                     "signature": "(cls, target, impersonate)",
                     "summary": "Создает асинхронный клиент TLSAsyncClient, предзаполненный cookies и User-Agent из браузера.",
-                    "docstring": "Создает асинхронный клиент TLSAsyncClient, предзаполненный cookies и User-Agent из браузера.\n\nArgs:\n    target: Экземпляр Playwright (Page, Context), Nodriver Tab или Selenium WebDriver.\n    impersonate: Профиль маскировки браузера.\n    **kwargs: Дополнительные параметры для TLSAsyncClient.\n\nReturns:\n    Экземпляр TLSAsyncClient.",
+                    "docstring": "Создает асинхронный клиент TLSAsyncClient, предзаполненный cookies и User-Agent из браузера.\n\nArgs:\n    target: Экземпляр Playwright (Page, Context), Nodriver Tab, Selenium WebDriver или словарь {'cookies': ..., 'user_agent': ...}.\n    impersonate: Профиль маскировки браузера.\n    **kwargs: Дополнительные параметры для TLSAsyncClient.\n\nReturns:\n    Экземпляр TLSAsyncClient.",
                     "breadcrumbs": {
                       "is_async": true,
                       "is_thread_safe": false,
@@ -23335,7 +23902,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 406,
+                    "line_number": 427,
                     "bases": [],
                     "children": []
                   },
@@ -23355,7 +23922,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 441,
+                    "line_number": 473,
                     "bases": [],
                     "children": []
                   },
@@ -23375,7 +23942,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 478,
+                    "line_number": 510,
                     "bases": [],
                     "children": []
                   },
@@ -23395,7 +23962,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 490,
+                    "line_number": 522,
                     "bases": [],
                     "children": []
                   },
@@ -23415,7 +23982,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 502,
+                    "line_number": 534,
                     "bases": [],
                     "children": []
                   },
@@ -23435,7 +24002,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 514,
+                    "line_number": 546,
                     "bases": [],
                     "children": []
                   },
@@ -23455,7 +24022,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 526,
+                    "line_number": 558,
                     "bases": [],
                     "children": []
                   },
@@ -23475,7 +24042,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 538,
+                    "line_number": 570,
                     "bases": [],
                     "children": []
                   },
@@ -23495,7 +24062,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 545,
+                    "line_number": 577,
                     "bases": [],
                     "children": []
                   }
@@ -29616,153 +30183,10 @@
                 "path": "chutils/scraping/captcha/base",
                 "type": "module",
                 "layer": "internal",
-                "summary": "",
-                "docstring": "",
+                "summary": "Реэкспорт базовых классов капчи из chutils.captcha для обратной совместимости.",
+                "docstring": "Реэкспорт базовых классов капчи из chutils.captcha для обратной совместимости.",
                 "children": [],
-                "symbols": [
-                  {
-                    "name": "_ensure_httpx",
-                    "type": "function",
-                    "layer": "private",
-                    "signature": "()",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 6,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "BaseCaptchaSolver",
-                    "type": "class",
-                    "layer": "internal",
-                    "signature": "",
-                    "summary": "Базовый синхронный клиент для сервисов решения капч.",
-                    "docstring": "Базовый синхронный клиент для сервисов решения капч.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 16,
-                    "bases": [],
-                    "children": [
-                      {
-                        "name": "__init__",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self, api_key)",
-                        "summary": "Инициализирует BaseCaptchaSolver.",
-                        "docstring": "Инициализирует BaseCaptchaSolver.\n\nArgs:\n    api_key: Явно переданный API-ключ. Если не передан, запрашивается из SecretManager.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 21,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "_get_secret_key",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self)",
-                        "summary": "",
-                        "docstring": "",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 35,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "name": "BaseAsyncCaptchaSolver",
-                    "type": "class",
-                    "layer": "internal",
-                    "signature": "",
-                    "summary": "Базовый асинхронный клиент для сервисов решения капч.",
-                    "docstring": "Базовый асинхронный клиент для сервисов решения капч.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 47,
-                    "bases": [],
-                    "children": [
-                      {
-                        "name": "__init__",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self, api_key)",
-                        "summary": "Инициализирует BaseAsyncCaptchaSolver.",
-                        "docstring": "Инициализирует BaseAsyncCaptchaSolver.\n\nArgs:\n    api_key: Явно переданный API-ключ. Если не передан, запрашивается из SecretManager.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 52,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "_get_secret_key",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self)",
-                        "summary": "",
-                        "docstring": "",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 66,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
+                "symbols": []
               },
               {
                 "name": "capmonster",
@@ -29966,99 +30390,10 @@
                 "path": "chutils/scraping/captcha/exceptions",
                 "type": "module",
                 "layer": "public",
-                "summary": "",
-                "docstring": "",
+                "summary": "Реэкспорт исключений капчи из chutils.captcha для обратной совместимости.",
+                "docstring": "Реэкспорт исключений капчи из chutils.captcha для обратной совместимости.",
                 "children": [],
-                "symbols": [
-                  {
-                    "name": "CaptchaError",
-                    "type": "class",
-                    "layer": "public",
-                    "signature": "",
-                    "summary": "Базовая ошибка при решении капчи.",
-                    "docstring": "Базовая ошибка при решении капчи.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 4,
-                    "bases": [
-                      "chutils.exceptions.ChutilsException"
-                    ],
-                    "children": []
-                  },
-                  {
-                    "name": "CaptchaTimeoutError",
-                    "type": "class",
-                    "layer": "public",
-                    "signature": "",
-                    "summary": "Ошибка: превышено время ожидания решения капчи.",
-                    "docstring": "Ошибка: превышено время ожидания решения капчи.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 8,
-                    "bases": [
-                      "CaptchaError"
-                    ],
-                    "children": []
-                  },
-                  {
-                    "name": "CaptchaBalanceError",
-                    "type": "class",
-                    "layer": "public",
-                    "signature": "",
-                    "summary": "Ошибка: недостаточный баланс на аккаунте сервиса капчи.",
-                    "docstring": "Ошибка: недостаточный баланс на аккаунте сервиса капчи.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 12,
-                    "bases": [
-                      "CaptchaError"
-                    ],
-                    "children": []
-                  },
-                  {
-                    "name": "CaptchaServiceError",
-                    "type": "class",
-                    "layer": "public",
-                    "signature": "",
-                    "summary": "Ошибка: сервис решения капчи вернул ошибку API (например, неверный ключ, плохие параметры).",
-                    "docstring": "Ошибка: сервис решения капчи вернул ошибку API (например, неверный ключ, плохие параметры).",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 16,
-                    "bases": [
-                      "CaptchaError"
-                    ],
-                    "children": []
-                  }
-                ]
+                "symbols": []
               },
               {
                 "name": "geetest",
@@ -37058,269 +37393,9 @@
                 "type": "module",
                 "layer": "internal",
                 "summary": "Модели данных конфигурации прокси-серверов.",
-                "docstring": "Модели данных конфигурации прокси-серверов.",
+                "docstring": "Модели данных конфигурации прокси-серверов.\n\nРеэкспортирует базовые модели ProxyConfig и ProxyHealthResult из ядра chutils.http.models.",
                 "children": [],
-                "symbols": [
-                  {
-                    "name": "ProxyConfig",
-                    "type": "class",
-                    "layer": "internal",
-                    "signature": "",
-                    "summary": "Конфигурация прокси-сервера с поддержкой аутентификации.",
-                    "docstring": "Конфигурация прокси-сервера с поддержкой аутентификации.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 9,
-                    "bases": [
-                      "pydantic.BaseModel"
-                    ],
-                    "children": [
-                      {
-                        "name": "has_auth",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Проверяет наличие учетных данных аутентификации.",
-                        "docstring": "Проверяет наличие учетных данных аутентификации.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [
-                            "property"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 22,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "auth_str",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Возвращает строку аутентификации user:password или None.",
-                        "docstring": "Возвращает строку аутентификации user:password или None.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [
-                            "property"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 27,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "server_url",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Возвращает базовый URL прокси-сервера без учетных данных.",
-                        "docstring": "Возвращает базовый URL прокси-сервера без учетных данных.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [
-                            "property"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 34,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "url",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Возвращает полный URL прокси с учетными данными, если они есть.",
-                        "docstring": "Возвращает полный URL прокси с учетными данными, если они есть.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [
-                            "property"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 39,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "masked_url",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Возвращает безопасный URL для логирования со скрытым паролем.",
-                        "docstring": "Возвращает безопасный URL для логирования со скрытым паролем.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [
-                            "property"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 46,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "basic_auth_header",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Возвращает значение заголовка Proxy-Authorization Basic или None.",
-                        "docstring": "Возвращает значение заголовка Proxy-Authorization Basic или None.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [
-                            "property"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 53,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "to_playwright",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Преобразует конфигурацию в словарь параметров прокси для Playwright.",
-                        "docstring": "Преобразует конфигурацию в словарь параметров прокси для Playwright.\n\nReturns:\n    Словарь с ключами server, username и password для playwright.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 60,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "to_chrome_arg",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Возвращает CLI аргумент --proxy-server для Chromium.",
-                        "docstring": "Возвращает CLI аргумент --proxy-server для Chromium.\n\nReturns:\n    Строка флага командной строки для запуска Chromium.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 73,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "to_selenium",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Преобразует конфигурацию в словарь capabilities прокси для Selenium.",
-                        "docstring": "Преобразует конфигурацию в словарь capabilities прокси для Selenium.\n\nReturns:\n    Словарь параметров прокси для передачи в Selenium Capabilities.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 81,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "to_string",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, format)",
-                        "summary": "Форматирует прокси в строковое представление по заданному шаблону.",
-                        "docstring": "Форматирует прокси в строковое представление по заданному шаблону.\n\nArgs:\n    format: Шаблон формата ('url', 'host:port', 'host:port:user:pass', 'server').\n\nReturns:\n    Строковое представление прокси.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [
-                            "port"
-                          ],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 94,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "name": "ProxyHealthResult",
-                    "type": "class",
-                    "layer": "internal",
-                    "signature": "",
-                    "summary": "Результат проверки работоспособности (Health Check) прокси-сервера.",
-                    "docstring": "Результат проверки работоспособности (Health Check) прокси-сервера.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 118,
-                    "bases": [
-                      "pydantic.BaseModel"
-                    ],
-                    "children": []
-                  }
-                ]
+                "symbols": []
               },
               {
                 "name": "parser",
@@ -49747,12 +49822,12 @@
     },
     {
       "source": "chutils/captcha",
-      "target": "chutils/scraping/captcha/base",
+      "target": "/base",
       "weight": 2
     },
     {
       "source": "chutils/captcha",
-      "target": "chutils/scraping/captcha/exceptions",
+      "target": "/exceptions",
       "weight": 4
     },
     {
@@ -49771,13 +49846,23 @@
       "weight": 2
     },
     {
+      "source": "chutils/captcha/base",
+      "target": "chutils/exceptions",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha/exceptions",
+      "target": "chutils/exceptions",
+      "weight": 1
+    },
+    {
       "source": "chutils/captcha/geetest",
-      "target": "chutils/scraping/captcha/base",
+      "target": "/base",
       "weight": 2
     },
     {
       "source": "chutils/captcha/geetest",
-      "target": "chutils/scraping/captcha/exceptions",
+      "target": "/exceptions",
       "weight": 3
     },
     {
@@ -49787,12 +49872,12 @@
     },
     {
       "source": "chutils/captcha/recaptcha_enterprise",
-      "target": "chutils/scraping/captcha/base",
+      "target": "/base",
       "weight": 2
     },
     {
       "source": "chutils/captcha/recaptcha_enterprise",
-      "target": "chutils/scraping/captcha/exceptions",
+      "target": "/exceptions",
       "weight": 3
     },
     {
@@ -50832,6 +50917,11 @@
     },
     {
       "source": "chutils/http",
+      "target": "/models",
+      "weight": 2
+    },
+    {
+      "source": "chutils/http",
       "target": "/resilience",
       "weight": 1
     },
@@ -50843,7 +50933,7 @@
     {
       "source": "chutils/http",
       "target": "/tls_client",
-      "weight": 6
+      "weight": 7
     },
     {
       "source": "chutils/http",
@@ -50903,6 +50993,11 @@
     {
       "source": "chutils/http/tls_client",
       "target": "chutils/http/fallback",
+      "weight": 1
+    },
+    {
+      "source": "chutils/http/tls_client",
+      "target": "chutils/http/models",
       "weight": 1
     },
     {
@@ -51182,8 +51277,8 @@
     },
     {
       "source": "chutils/scraping/captcha/base",
-      "target": "chutils/exceptions",
-      "weight": 2
+      "target": "chutils/captcha/base",
+      "weight": 3
     },
     {
       "source": "chutils/scraping/captcha/capmonster",
@@ -51197,8 +51292,8 @@
     },
     {
       "source": "chutils/scraping/captcha/exceptions",
-      "target": "chutils/exceptions",
-      "weight": 1
+      "target": "chutils/captcha/exceptions",
+      "weight": 4
     },
     {
       "source": "chutils/scraping/captcha/geetest",
@@ -51689,6 +51784,11 @@
       "source": "chutils/scraping/proxy/extension",
       "target": "chutils/scraping/proxy/parser",
       "weight": 1
+    },
+    {
+      "source": "chutils/scraping/proxy/models",
+      "target": "chutils/http/models",
+      "weight": 2
     },
     {
       "source": "chutils/scraping/proxy/parser",
@@ -52350,8 +52450,8 @@
   "metadata": {
     "chutils_version": "4.0.0",
     "project_version": "4.0.0",
-    "git_commit": "42711c2067aa0b65c745713e5f5bdbb4e94d1c9c (dirty)",
-    "generated_at": "2026-09-28T10:08:20.390889+00:00",
-    "project_hash": "355907bbb46492194ee76b2942a97a8b43f635c80ab2abaf64b5562601c331d3"
+    "git_commit": "fd2e808b4e0591b218d4c90e0f4e545ae1a066d8 (dirty)",
+    "generated_at": "2026-09-28T12:09:37.250679+00:00",
+    "project_hash": "9e2083fad865f2e87d50aef0d080e78dfabf6111728937b46b06a1a16070b16f"
   }
 }
