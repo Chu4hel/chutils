@@ -16,18 +16,23 @@ mock_cdp.input_ = mock_input
 
 
 @pytest.fixture(autouse=True)
-def mock_sys_modules(mocker: MockerFixture) -> None:
+def mock_sys_modules() -> Any:
     """Мокает библиотеки на уровне sys.modules только на время тестов в этом файле."""
-    mocker.patch.dict(
-        sys.modules,
-        {
-            "playwright": mock_playwright,
-            "selenium": mock_selenium,
-            "nodriver": mock_nodriver,
-            "nodriver.cdp": mock_cdp,
-            "nodriver.cdp.input_": mock_input,
-        },
-    )
+    keys = {
+        "playwright": mock_playwright,
+        "selenium": mock_selenium,
+        "nodriver": mock_nodriver,
+        "nodriver.cdp": mock_cdp,
+        "nodriver.cdp.input_": mock_input,
+    }
+    saved = {k: sys.modules.get(k) for k in keys}
+    sys.modules.update(keys)
+    yield
+    for k, v in saved.items():
+        if v is None:
+            sys.modules.pop(k, None)
+        else:
+            sys.modules[k] = v
 
 
 @pytest.fixture(autouse=True)
@@ -445,4 +450,111 @@ async def test_profile_warmer_nodriver_target_url() -> None:
 
         tab.get.assert_any_call("https://example.com")
         tab.get.assert_any_call("https://example.com/page2")
+
+
+@pytest.mark.asyncio
+async def test_iife_syntax_in_evaluates() -> None:
+    """Проверяет, что JS код в evaluate обёрнут в немедленно вызываемую функцию (IIFE)."""
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.get = AsyncMock()
+    tab.url = "https://www.google.com"
+
+    recorded_scripts: list[str] = []
+
+    async def mock_evaluate(script: str, *args: Any) -> Any:
+        recorded_scripts.append(script.strip())
+        if "querySelectorAll('a[href]')" in script:
+            return ["https://example.com/item1"]
+        return False
+
+    tab.evaluate = AsyncMock(side_effect=mock_evaluate)
+
+    with (
+        patch("chutils.scraping.humanize.warmer.async_type_text", AsyncMock()),
+        patch("chutils.scraping.humanize.warmer.async_move_mouse", AsyncMock()),
+        patch("chutils.scraping.humanize.warmer.async_scroll_to", AsyncMock()),
+        patch("chutils.scraping.humanize.warmer.async_human_sleep", AsyncMock()),
+    ):
+        ProfileWarmer, _ = get_warmers()
+        warmer = ProfileWarmer(tab)
+        await warmer.warm_up_search(
+            queries=["test query"],
+            search_engine="google",
+            click_result=True,
+            surf_result_duration=(0.01, 0.02),
+        )
+
+    # Проверяем скрипты: consent и сбор ссылок должны быть IIFE
+    link_scripts = [s for s in recorded_scripts if "querySelectorAll('a[href]')" in s]
+    assert len(link_scripts) > 0
+    for script in link_scripts:
+        assert script.startswith("(() => {")
+        assert script.endswith("})()")
+
+
+@pytest.mark.asyncio
+async def test_handle_consent_dialog_async() -> None:
+    """Тестирует функцию _handle_consent_dialog при успешном и неуспешном нажатии."""
+    from chutils.scraping.humanize.consent import _handle_consent_dialog
+
+    # 1. Объект с evaluate, возвращающим True
+    tab_success = AsyncMock()
+    tab_success.evaluate = AsyncMock(return_value=True)
+    with patch("chutils.scraping.humanize.consent.async_human_sleep", AsyncMock()) as mock_sleep:
+        res = await _handle_consent_dialog(tab_success)
+        assert res is True
+        mock_sleep.assert_awaited_once()
+
+    # 2. Объект с evaluate, возвращающим False
+    tab_fail = AsyncMock()
+    tab_fail.evaluate = AsyncMock(return_value=False)
+    res_fail = await _handle_consent_dialog(tab_fail)
+    assert res_fail is False
+
+    # 3. Объект без метода evaluate
+    assert await _handle_consent_dialog(object()) is False
+
+
+def test_handle_consent_dialog_sync() -> None:
+    """Тестирует синхронную функцию _handle_consent_dialog_sync."""
+    from chutils.scraping.humanize.consent import _handle_consent_dialog_sync
+
+    driver = MagicMock()
+    driver.execute_script.return_value = True
+    with patch("chutils.scraping.humanize.consent.human_sleep", MagicMock()) as mock_sleep:
+        res = _handle_consent_dialog_sync(driver)
+        assert res is True
+        mock_sleep.assert_called_once()
+
+    driver.execute_script.return_value = False
+    assert _handle_consent_dialog_sync(driver) is False
+    assert _handle_consent_dialog_sync(object()) is False
+
+
+@pytest.mark.asyncio
+async def test_warm_up_search_non_list_evaluate() -> None:
+    """Проверяет устойчивость warm_up_search, если evaluate возвращает не список (None или объект)."""
+    tab = AsyncMock()
+    tab._is_nodriver = True
+    tab.get = AsyncMock()
+    tab.url = "https://www.google.com"
+    tab.evaluate = AsyncMock(return_value=None)
+
+    with (
+        patch("chutils.scraping.humanize.warmer.async_type_text", AsyncMock()),
+        patch("chutils.scraping.humanize.warmer.async_move_mouse", AsyncMock()),
+        patch("chutils.scraping.humanize.warmer.async_scroll_to", AsyncMock()),
+        patch("chutils.scraping.humanize.warmer.async_human_sleep", AsyncMock()),
+    ):
+        ProfileWarmer, _ = get_warmers()
+        warmer = ProfileWarmer(tab)
+        # Не должно вызывать исключений
+        await warmer.warm_up_search(
+            queries=["test query"],
+            search_engine="google",
+            click_result=True,
+            surf_result_duration=(0.01, 0.02),
+        )
+
 

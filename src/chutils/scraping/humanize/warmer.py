@@ -21,6 +21,11 @@ from .actions import (
     scroll_to,
     type_text,
 )
+from .consent import (
+    CONSENT_CLICK_JS,
+    _handle_consent_dialog,
+    _handle_consent_dialog_sync,
+)
 from .search import (
     DEFAULT_SEARCH_QUERIES,
     _is_bot_detection,
@@ -134,13 +139,13 @@ class ProfileWarmer:
                         await async_human_sleep(1.0, 3.0)
                     elif action == "click_link":
                         curr_url = await _safe_get_async_url(self.browser_or_tab)
-                        links = await self.browser_or_tab.evaluate("""() => {
+                        links = await self.browser_or_tab.evaluate("""(() => {
                             return Array.from(document.querySelectorAll('a[href]'))
                                 .map(a => a.getAttribute('href'))
                                 .filter(href => href && (href.startsWith('/') || href.startsWith(window.location.origin)));
-                        }""")
+                        })()""")
 
-                        if links:
+                        if isinstance(links, list) and links:
                             link = random.choice(links)
                             target_url = urllib.parse.urljoin(curr_url, link)
                             try:
@@ -195,6 +200,7 @@ class ProfileWarmer:
                     )
 
                 await async_human_sleep(1.5, 3.0)
+                await _handle_consent_dialog(self.browser_or_tab)
 
                 curr_url = await _safe_get_async_url(self.browser_or_tab)
                 if _is_bot_detection(curr_url):
@@ -257,6 +263,7 @@ class ProfileWarmer:
                         await self.browser_or_tab.goto(search_url)
 
                 await async_human_sleep(2.0, 4.0)
+                await _handle_consent_dialog(self.browser_or_tab)
 
                 curr_url = await _safe_get_async_url(self.browser_or_tab)
                 if _is_bot_detection(curr_url):
@@ -284,11 +291,11 @@ class ProfileWarmer:
                 await async_human_sleep(1.5, 3.5)
 
                 if click_result:
-                    links = await self.browser_or_tab.evaluate("""() => {
+                    links = await self.browser_or_tab.evaluate("""(() => {
                         return Array.from(document.querySelectorAll('a[href]'))
                             .map(a => a.href)
                             .filter(Boolean);
-                    }""")
+                    })()""")
 
                     if isinstance(links, list):
                         organic_links = [
@@ -438,7 +445,7 @@ class SyncProfileWarmer:
                                 .filter(href => href && (href.startsWith('/') || href.startsWith(window.location.origin)));
                         """)
 
-                        if links:
+                        if isinstance(links, list) and links:
                             link = random.choice(links)
                             target_url = urllib.parse.urljoin(curr_url, link)
                             try:
@@ -482,6 +489,7 @@ class SyncProfileWarmer:
                 base_url = config["base_url"]
                 self.driver.get(base_url)
                 human_sleep(1.5, 3.0)
+                _handle_consent_dialog_sync(self.driver)
 
                 curr_url = getattr(self.driver, "current_url", "")
                 if _is_bot_detection(curr_url):
@@ -523,6 +531,7 @@ class SyncProfileWarmer:
                     self.driver.get(search_url)
 
                 human_sleep(2.0, 4.0)
+                _handle_consent_dialog_sync(self.driver)
 
                 curr_url = getattr(self.driver, "current_url", "")
                 if _is_bot_detection(curr_url):

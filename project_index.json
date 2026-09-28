@@ -34843,6 +34843,97 @@
                 ]
               },
               {
+                "name": "consent",
+                "path": "chutils/scraping/humanize/consent",
+                "type": "module",
+                "layer": "internal",
+                "summary": "Автоматическое обнаружение и принятие диалогов согласия (Google Consent / GDPR).",
+                "docstring": "Автоматическое обнаружение и принятие диалогов согласия (Google Consent / GDPR).",
+                "children": [],
+                "symbols": [
+                  {
+                    "name": "logger",
+                    "type": "constant",
+                    "layer": "public",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 12,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "CONSENT_CLICK_JS",
+                    "type": "constant",
+                    "layer": "internal",
+                    "signature": null,
+                    "summary": "",
+                    "docstring": null,
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 14,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_handle_consent_dialog",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(browser_or_tab)",
+                    "summary": "Обнаруживает и автоматически принимает модальные окна согласия (Google Consent).",
+                    "docstring": "Обнаруживает и автоматически принимает модальные окна согласия (Google Consent).\n\nArgs:\n    browser_or_tab: Объект страницы Playwright Page или вкладки nodriver Tab.\n\nReturns:\n    True, если окно согласия было обнаружено и кнопка нажата, иначе False.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 47,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_handle_consent_dialog_sync",
+                    "type": "function",
+                    "layer": "private",
+                    "signature": "(driver)",
+                    "summary": "Синхронно обнаруживает и автоматически принимает модальные окна согласия (Google Consent).",
+                    "docstring": "Синхронно обнаруживает и автоматически принимает модальные окна согласия (Google Consent).\n\nArgs:\n    driver: Экземпляр Selenium WebDriver.\n\nReturns:\n    True, если окно согласия было обнаружено и кнопка нажата, иначе False.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 70,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
                 "name": "math_utils",
                 "path": "chutils/scraping/humanize/math_utils",
                 "type": "module",
@@ -35726,7 +35817,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 32,
+                    "line_number": 37,
                     "bases": [],
                     "children": []
                   },
@@ -35746,7 +35837,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 34,
+                    "line_number": 39,
                     "bases": [],
                     "children": []
                   },
@@ -35766,7 +35857,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 44,
+                    "line_number": 49,
                     "bases": [],
                     "children": [
                       {
@@ -35785,7 +35876,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 52,
+                        "line_number": 57,
                         "bases": [],
                         "children": []
                       },
@@ -35805,7 +35896,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 60,
+                        "line_number": 65,
                         "bases": [],
                         "children": []
                       },
@@ -35825,7 +35916,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 157,
+                        "line_number": 162,
                         "bases": [],
                         "children": []
                       },
@@ -35845,7 +35936,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 332,
+                        "line_number": 339,
                         "bases": [],
                         "children": []
                       }
@@ -35867,7 +35958,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 360,
+                    "line_number": 367,
                     "bases": [],
                     "children": [
                       {
@@ -35886,7 +35977,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 365,
+                        "line_number": 372,
                         "bases": [],
                         "children": []
                       },
@@ -35906,7 +35997,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 373,
+                        "line_number": 380,
                         "bases": [],
                         "children": []
                       },
@@ -35926,7 +36017,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 452,
+                        "line_number": 459,
                         "bases": [],
                         "children": []
                       },
@@ -35946,7 +36037,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 585,
+                        "line_number": 594,
                         "bases": [],
                         "children": []
                       }
@@ -51526,6 +51617,16 @@
       "weight": 4
     },
     {
+      "source": "chutils/scraping/humanize/consent",
+      "target": "chutils/logger",
+      "weight": 1
+    },
+    {
+      "source": "chutils/scraping/humanize/consent",
+      "target": "/actions",
+      "weight": 2
+    },
+    {
       "source": "chutils/scraping/humanize/touch",
       "target": "/_actions_helpers",
       "weight": 4
@@ -51559,6 +51660,11 @@
       "source": "chutils/scraping/humanize/warmer",
       "target": "/actions",
       "weight": 12
+    },
+    {
+      "source": "chutils/scraping/humanize/warmer",
+      "target": "/consent",
+      "weight": 3
     },
     {
       "source": "chutils/scraping/humanize/warmer",
@@ -52450,8 +52556,8 @@
   "metadata": {
     "chutils_version": "4.0.0",
     "project_version": "4.0.0",
-    "git_commit": "fd2e808b4e0591b218d4c90e0f4e545ae1a066d8 (dirty)",
-    "generated_at": "2026-09-28T12:09:37.250679+00:00",
-    "project_hash": "9e2083fad865f2e87d50aef0d080e78dfabf6111728937b46b06a1a16070b16f"
+    "git_commit": "43b3c2f10ae5524b44027092b817fd46cefaebbe (dirty)",
+    "generated_at": "2026-09-28T20:07:03.157352+00:00",
+    "project_hash": "6abc60cca1dd06655557d13ed5261c2586b6daf61d57d29d7032186956bbd780"
   }
 }
