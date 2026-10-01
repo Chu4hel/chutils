@@ -8,7 +8,7 @@ import pytest
 from chutils.captcha.geetest import AsyncGeeTestSolver, GeeTestSolver
 from chutils.captcha.models import GeeTestResult, GeeTestTaskConfig
 from chutils.exceptions import ChutilsConfigurationError
-from chutils.scraping.captcha.exceptions import (
+from chutils.captcha.exceptions import (
     CaptchaBalanceError,
     CaptchaTimeoutError,
 )

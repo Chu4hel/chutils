@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from .anticaptcha import AntiCaptchaSolver, AsyncAntiCaptchaSolver
 from .base import BaseAsyncCaptchaSolver, BaseCaptchaSolver
+from .capmonster import AsyncCapMonsterSolver, CapMonsterSolver
 from .exceptions import (
     CaptchaBalanceError,
     CaptchaError,
@@ -13,12 +15,18 @@ from .recaptcha_enterprise import (
     AsyncReCaptchaEnterpriseSolver,
     ReCaptchaEnterpriseSolver,
 )
+from .rucaptcha import AsyncRuCaptchaSolver, RuCaptchaSolver
 
 __all__ = [
+    "AntiCaptchaSolver",
+    "AsyncAntiCaptchaSolver",
+    "AsyncCapMonsterSolver",
     "AsyncGeeTestSolver",
     "AsyncReCaptchaEnterpriseSolver",
+    "AsyncRuCaptchaSolver",
     "BaseAsyncCaptchaSolver",
     "BaseCaptchaSolver",
+    "CapMonsterSolver",
     "CaptchaBalanceError",
     "CaptchaError",
     "CaptchaServiceError",
@@ -28,4 +36,5 @@ __all__ = [
     "GeeTestTaskConfig",
     "ReCaptchaEnterpriseConfig",
     "ReCaptchaEnterpriseSolver",
+    "RuCaptchaSolver",
 ]

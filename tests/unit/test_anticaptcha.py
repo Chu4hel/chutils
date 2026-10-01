@@ -41,7 +41,7 @@ def mock_httpx_async_client():
 
 def test_anticaptcha_solve_image_success(mock_httpx_client) -> None:
     """Проверяет успешное решение текстовой капчи по картинке."""
-    from chutils.scraping.captcha.anticaptcha import AntiCaptchaSolver
+    from chutils.captcha.anticaptcha import AntiCaptchaSolver
 
     response_in = MagicMock()
     response_in.json.return_value = {"errorId": 0, "taskId": 12345}
@@ -67,7 +67,7 @@ async def test_async_anticaptcha_solve_recaptcha_success(
     mock_httpx_async_client,
 ) -> None:
     """Проверяет успешное асинхронное решение ReCaptcha."""
-    from chutils.scraping.captcha.anticaptcha import AsyncAntiCaptchaSolver
+    from chutils.captcha.anticaptcha import AsyncAntiCaptchaSolver
 
     response_in = MagicMock()
     response_in.json.return_value = {"errorId": 0, "taskId": 9999}
@@ -92,8 +92,8 @@ async def test_async_anticaptcha_solve_recaptcha_success(
 
 def test_anticaptcha_raises_balance_error(mock_httpx_client) -> None:
     """Проверяет выброс CaptchaBalanceError при ошибке баланса."""
-    from chutils.scraping.captcha.anticaptcha import AntiCaptchaSolver
-    from chutils.scraping.captcha.exceptions import CaptchaBalanceError
+    from chutils.captcha.anticaptcha import AntiCaptchaSolver
+    from chutils.captcha.exceptions import CaptchaBalanceError
 
     response_in = MagicMock()
     response_in.json.return_value = {
@@ -112,8 +112,8 @@ def test_anticaptcha_raises_balance_error(mock_httpx_client) -> None:
 
 def test_anticaptcha_raises_service_error(mock_httpx_client) -> None:
     """Проверяет выброс CaptchaServiceError при ошибке ключа API."""
-    from chutils.scraping.captcha.anticaptcha import AntiCaptchaSolver
-    from chutils.scraping.captcha.exceptions import CaptchaServiceError
+    from chutils.captcha.anticaptcha import AntiCaptchaSolver
+    from chutils.captcha.exceptions import CaptchaServiceError
 
     response_in = MagicMock()
     response_in.json.return_value = {

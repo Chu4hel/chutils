@@ -6,7 +6,7 @@ import pytest
 def test_captcha_imports_without_httpx() -> None:
     """Проверяет, что базовый модуль импортируется корректно без httpx."""
     with patch("importlib.util.find_spec", return_value=None):
-        from chutils.scraping import captcha
+        from chutils import captcha
 
         assert captcha is not None
 
@@ -16,7 +16,7 @@ def test_captcha_solver_raises_dependency_error_when_missing_httpx() -> None:
     from chutils.exceptions import OptionalDependencyError
 
     with patch("importlib.util.find_spec", return_value=None):
-        from chutils.scraping import captcha
+        from chutils import captcha
 
         with pytest.raises(OptionalDependencyError) as exc_info:
             captcha.RuCaptchaSolver(api_key="test")

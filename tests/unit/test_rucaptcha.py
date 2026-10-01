@@ -42,7 +42,7 @@ def mock_httpx_async_client():
 
 def test_rucaptcha_solve_image_success(mock_httpx_client) -> None:
     """Проверяет успешное решение текстовой капчи по картинке."""
-    from chutils.scraping.captcha.rucaptcha import RuCaptchaSolver
+    from chutils.captcha.rucaptcha import RuCaptchaSolver
 
     response_in = MagicMock()
     response_in.json.return_value = {"status": 1, "request": "12345"}
@@ -64,7 +64,7 @@ def test_rucaptcha_solve_image_success(mock_httpx_client) -> None:
 @pytest.mark.asyncio
 async def test_async_rucaptcha_solve_recaptcha_success(mock_httpx_async_client) -> None:
     """Проверяет успешное асинхронное решение ReCaptcha."""
-    from chutils.scraping.captcha.rucaptcha import AsyncRuCaptchaSolver
+    from chutils.captcha.rucaptcha import AsyncRuCaptchaSolver
 
     response_in = MagicMock()
     response_in.json.return_value = {"status": 1, "request": "9999"}
@@ -87,8 +87,8 @@ async def test_async_rucaptcha_solve_recaptcha_success(mock_httpx_async_client) 
 
 def test_rucaptcha_raises_balance_error(mock_httpx_client) -> None:
     """Проверяет выброс CaptchaBalanceError при нулевом балансе."""
-    from chutils.scraping.captcha.exceptions import CaptchaBalanceError
-    from chutils.scraping.captcha.rucaptcha import RuCaptchaSolver
+    from chutils.captcha.exceptions import CaptchaBalanceError
+    from chutils.captcha.rucaptcha import RuCaptchaSolver
 
     response_in = MagicMock()
     response_in.json.return_value = {"status": 0, "request": "ERROR_ZERO_BALANCE"}
@@ -103,8 +103,8 @@ def test_rucaptcha_raises_balance_error(mock_httpx_client) -> None:
 
 def test_rucaptcha_raises_service_error(mock_httpx_client) -> None:
     """Проверяет выброс CaptchaServiceError при неверном ключе."""
-    from chutils.scraping.captcha.exceptions import CaptchaServiceError
-    from chutils.scraping.captcha.rucaptcha import RuCaptchaSolver
+    from chutils.captcha.exceptions import CaptchaServiceError
+    from chutils.captcha.rucaptcha import RuCaptchaSolver
 
     response_in = MagicMock()
     response_in.json.return_value = {"status": 0, "request": "ERROR_WRONG_USER_KEY"}

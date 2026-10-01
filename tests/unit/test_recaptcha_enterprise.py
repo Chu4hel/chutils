@@ -10,7 +10,7 @@ from chutils.captcha.recaptcha_enterprise import (
     ReCaptchaEnterpriseSolver,
 )
 from chutils.exceptions import ChutilsConfigurationError
-from chutils.scraping.captcha.exceptions import CaptchaTimeoutError
+from chutils.captcha.exceptions import CaptchaTimeoutError
 
 
 def test_recaptcha_enterprise_solver_init_missing_key() -> None:

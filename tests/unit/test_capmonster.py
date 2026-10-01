@@ -41,7 +41,7 @@ def mock_httpx_async_client():
 
 def test_capmonster_solve_image_success(mock_httpx_client) -> None:
     """Проверяет успешное решение текстовой капчи по картинке."""
-    from chutils.scraping.captcha.capmonster import CapMonsterSolver
+    from chutils.captcha.capmonster import CapMonsterSolver
 
     response_in = MagicMock()
     response_in.json.return_value = {"errorId": 0, "taskId": 12345}
@@ -69,7 +69,7 @@ async def test_async_capmonster_solve_recaptcha_success(
     mock_httpx_async_client,
 ) -> None:
     """Проверяет успешное асинхронное решение ReCaptcha."""
-    from chutils.scraping.captcha.capmonster import AsyncCapMonsterSolver
+    from chutils.captcha.capmonster import AsyncCapMonsterSolver
 
     response_in = MagicMock()
     response_in.json.return_value = {"errorId": 0, "taskId": 9999}
