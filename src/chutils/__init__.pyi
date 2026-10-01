@@ -4,9 +4,7 @@ from abc import ABC
 from collections.abc import AsyncIterator, Callable, Iterable, Iterator
 from enum import Enum
 from pathlib import Path
-from typing import Any, Literal, TypeVar
-
-from typing_extensions import Self
+from typing import Any, Literal, Self, TypeVar
 
 # Тип для Pydantic моделей
 _T = TypeVar("_T")

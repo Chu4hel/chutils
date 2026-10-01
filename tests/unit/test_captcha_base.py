@@ -2,8 +2,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from chutils.exceptions import ChutilsConfigurationError
 from chutils.captcha.base import BaseAsyncCaptchaSolver, BaseCaptchaSolver
+from chutils.exceptions import ChutilsConfigurationError
 
 
 class DummySolver(BaseCaptchaSolver):

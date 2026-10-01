@@ -10,10 +10,9 @@ import time
 from collections.abc import AsyncIterator, Callable, Iterable, Iterator
 from dataclasses import dataclass
 from types import TracebackType
-from typing import Any
+from typing import Any, Self
 
 import httpx  # chutils: ignore[ChutilsIntegrationRule]
-from typing_extensions import Self
 
 from chutils.exceptions import OptionalDependencyError
 

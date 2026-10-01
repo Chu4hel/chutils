@@ -141,7 +141,7 @@ class TestAuditEventSchema:
 
         from chutils.audit.schema import AuditEvent
 
-        fixed_ts = datetime.datetime(2025, 1, 1, 0, 0, 0, tzinfo=datetime.timezone.utc)
+        fixed_ts = datetime.datetime(2025, 1, 1, 0, 0, 0, tzinfo=datetime.UTC)
         fixed_id = "00000000-0000-0000-0000-000000000001"
         e1 = AuditEvent(
             id=fixed_id,

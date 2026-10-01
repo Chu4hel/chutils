@@ -5,13 +5,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from chutils.captcha.geetest import AsyncGeeTestSolver, GeeTestSolver
-from chutils.captcha.models import GeeTestResult, GeeTestTaskConfig
-from chutils.exceptions import ChutilsConfigurationError
 from chutils.captcha.exceptions import (
     CaptchaBalanceError,
     CaptchaTimeoutError,
 )
+from chutils.captcha.geetest import AsyncGeeTestSolver, GeeTestSolver
+from chutils.captcha.models import GeeTestResult, GeeTestTaskConfig
+from chutils.exceptions import ChutilsConfigurationError
 
 
 def test_geetest_solver_init_missing_key() -> None:

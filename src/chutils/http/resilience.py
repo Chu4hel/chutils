@@ -379,7 +379,7 @@ class ResiliencePolicy:
                 if self.timeout is not None:
                     try:
                         result = await asyncio.wait_for(_call(), timeout=self.timeout)
-                    except asyncio.TimeoutError:
+                    except TimeoutError:
                         raise ChutilsTimeoutError(
                             f"Async-вызов превысил timeout={self.timeout}с.",
                             timeout=self.timeout,

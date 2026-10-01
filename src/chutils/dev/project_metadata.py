@@ -153,7 +153,7 @@ def collect_project_metadata(project_path: Path) -> dict[str, Any]:
         pass
 
     # 4. ISO 8601 timestamp
-    generated_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    generated_at = datetime.datetime.now(datetime.UTC).isoformat()
 
     # 5. Хэш проекта
     project_hash = calculate_project_hash(real_root)

@@ -15,9 +15,7 @@
 from __future__ import annotations
 
 import importlib.util
-from typing import TYPE_CHECKING, Any
-
-from typing_extensions import Self
+from typing import TYPE_CHECKING, Any, Self
 
 from .fallback import _SENSITIVE_HEADERS, HttpResponse, UrllibFallbackClient
 

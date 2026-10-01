@@ -1,5 +1,6 @@
+from typing import Self
+
 from pydantic import BaseModel
-from typing_extensions import Self
 
 class BaseEnvManifest(BaseModel):
     """Базовый манифест переменных окружения на базе Pydantic."""

@@ -9,9 +9,7 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 import threading
 import time
 from collections.abc import Callable
-from typing import Any, cast
-
-from typing_extensions import Self
+from typing import Any, Self, cast
 
 from chutils.typing import JSONDict
 

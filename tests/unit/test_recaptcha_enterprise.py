@@ -4,13 +4,13 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from chutils.captcha.exceptions import CaptchaTimeoutError
 from chutils.captcha.models import ReCaptchaEnterpriseConfig
 from chutils.captcha.recaptcha_enterprise import (
     AsyncReCaptchaEnterpriseSolver,
     ReCaptchaEnterpriseSolver,
 )
 from chutils.exceptions import ChutilsConfigurationError
-from chutils.captcha.exceptions import CaptchaTimeoutError
 
 
 def test_recaptcha_enterprise_solver_init_missing_key() -> None:
