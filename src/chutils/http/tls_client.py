@@ -13,9 +13,7 @@ from __future__ import annotations
 import datetime
 import importlib.util
 import types
-from typing import Any, Protocol, runtime_checkable
-
-from typing_extensions import Self
+from typing import Any, Protocol, Self, runtime_checkable
 
 from chutils.exceptions import OptionalDependencyError
 from chutils.http.client import AsyncHttpClient, HttpClient
@@ -223,14 +221,14 @@ class TLSSession:
             extracted = target
         else:
             try:
-                from chutils.scraping.humanize.antidetect import (
+                from browser_stealth.humanize.antidetect import (
                     extract_clearance_cookies,
                 )
 
                 extracted = extract_clearance_cookies(target)
             except ImportError as err:
                 raise OptionalDependencyError(
-                    "Для автоматического извлечения cookies из браузера требуется модуль chutils.scraping."
+                    "Для автоматического извлечения cookies из браузера требуется библиотека browser-stealth."
                 ) from err
         # Если случайно передали асинхронный объект синхронно
         if hasattr(extracted, "__await__"):
@@ -444,14 +442,14 @@ class TLSAsyncClient:
             extracted_or_coro = target
         else:
             try:
-                from chutils.scraping.humanize.antidetect import (
+                from browser_stealth.humanize.antidetect import (
                     extract_clearance_cookies,
                 )
 
                 extracted_or_coro = extract_clearance_cookies(target)
             except ImportError as err:
                 raise OptionalDependencyError(
-                    "Для автоматического извлечения cookies из браузера требуется модуль chutils.scraping."
+                    "Для автоматического извлечения cookies из браузера требуется библиотека browser-stealth."
                 ) from err
 
         if hasattr(extracted_or_coro, "__await__"):
