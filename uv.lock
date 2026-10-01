@@ -307,6 +307,42 @@ wheels = [
 ]
 
 [[package]]
+name = "browser-stealth"
+version = "0.1.0"
+source = { editable = "../browser-stealth" }
+dependencies = [
+    { name = "pydantic" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "browser-stealth", extras = ["playwright", "nodriver", "selenium", "camoufox", "bidi", "crypto"], marker = "extra == 'all'" },
+    { name = "camoufox", marker = "extra == 'camoufox'", specifier = ">=0.4.0" },
+    { name = "cryptography", marker = "extra == 'crypto'", specifier = ">=41.0.0" },
+    { name = "nodriver", marker = "extra == 'nodriver'", specifier = ">=0.38" },
+    { name = "playwright", marker = "extra == 'playwright'", specifier = ">=1.40.0" },
+    { name = "pydantic", specifier = ">=2.10.0" },
+    { name = "selenium", marker = "extra == 'selenium'", specifier = ">=4.15.0" },
+    { name = "websockets", marker = "extra == 'bidi'", specifier = ">=14.0.0" },
+]
+provides-extras = ["playwright", "nodriver", "selenium", "camoufox", "bidi", "crypto", "all"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "chutils", editable = "." },
+    { name = "cryptography", specifier = ">=50.0.2" },
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "mypy", specifier = ">=2.3.1" },
+    { name = "playwright", specifier = ">=1.62.0" },
+    { name = "pytest", specifier = ">=9.1.1" },
+    { name = "pytest-asyncio", specifier = ">=1.4.0" },
+    { name = "pytest-mock", specifier = ">=3.16.0" },
+    { name = "ruff", specifier = ">=0.16.9" },
+    { name = "selenium", specifier = ">=4.50.0" },
+    { name = "websockets", specifier = ">=17.1" },
+]
+
+[[package]]
 name = "browserforge"
 version = "1.2.4"
 source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
@@ -671,6 +707,7 @@ fingerprint = [
 ]
 full = [
     { name = "boto3" },
+    { name = "browser-stealth" },
     { name = "browserforge" },
     { name = "cryptography" },
     { name = "google-cloud-secret-manager" },
@@ -723,6 +760,7 @@ rich = [
     { name = "rich" },
 ]
 scraping = [
+    { name = "browser-stealth" },
     { name = "playwright" },
     { name = "selenium" },
 ]
@@ -758,6 +796,7 @@ websockets = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "browser-stealth" },
     { name = "fastapi" },
     { name = "mkdocs" },
     { name = "mkdocs-material" },
@@ -781,6 +820,8 @@ requires-dist = [
     { name = "asyncpg", marker = "extra == 'db'", specifier = ">=0.29.0" },
     { name = "boto3", marker = "extra == 'aws'", specifier = ">=1.34.0" },
     { name = "boto3", marker = "extra == 'full'", specifier = ">=1.34.0" },
+    { name = "browser-stealth", marker = "extra == 'full'", editable = "../browser-stealth" },
+    { name = "browser-stealth", marker = "extra == 'scraping'", editable = "../browser-stealth" },
     { name = "browserforge", marker = "extra == 'fingerprint'", specifier = ">=1.1.0" },
     { name = "browserforge", marker = "extra == 'full'", specifier = ">=1.1.0" },
     { name = "camoufox", marker = "extra == 'camoufox'", specifier = ">=0.4.0" },
@@ -837,6 +878,7 @@ provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich",
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "browser-stealth", editable = "../browser-stealth" },
     { name = "fastapi", specifier = ">=0.110.0" },
     { name = "mkdocs", specifier = ">=1.6.1" },
     { name = "mkdocs-material", specifier = ">=9.7.5" },
