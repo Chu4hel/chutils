@@ -1,81 +1,33 @@
-from .actions import (
-    TouchGestureGenerator,
-    TouchPoint,
-    async_click,
-    async_human_sleep,
-    async_move_mouse,
-    async_scroll_to,
-    async_touch_swipe,
-    async_touch_tap,
-    async_type_text,
-    click,
-    human_sleep,
-    move_mouse,
-    scroll_to,
-    type_text,
-)
-from .antidetect import (
-    apply_antidetect_nodriver,
-    apply_antidetect_playwright,
-    apply_antidetect_selenium,
-    get_browser_launch_args,
-    get_client_hints,
-)
-from .behavior import BehavioralProfile
-from .config import AntidetectConfig
-from .math_utils import (
-    BezierCurveGenerator,
-    JitterDelayGenerator,
-    KeyboardTypoGenerator,
-    WindMouseGenerator,
-)
-from .turnstile import (
-    detect_cf_turnstile,
-    is_cf_turnstile_solved,
-    solve_cf_turnstile,
-)
-from .warmer import (
-    DEFAULT_SEARCH_QUERIES,
-    ProfileWarmer,
-    SyncProfileWarmer,
-    get_random_search_queries,
-    get_search_engine_config,
-    is_organic_url,
-)
+"""Модуль-фасад для обратной совместимости. Реэкспортирует humanize и antidetect."""
+from __future__ import annotations
 
-__all__ = [
-    "DEFAULT_SEARCH_QUERIES",
-    "AntidetectConfig",
-    "BehavioralProfile",
-    "BezierCurveGenerator",
-    "JitterDelayGenerator",
-    "KeyboardTypoGenerator",
-    "ProfileWarmer",
-    "SyncProfileWarmer",
-    "TouchGestureGenerator",
-    "TouchPoint",
-    "WindMouseGenerator",
-    "apply_antidetect_nodriver",
-    "apply_antidetect_playwright",
-    "apply_antidetect_selenium",
-    "async_click",
-    "async_human_sleep",
-    "async_move_mouse",
-    "async_scroll_to",
-    "async_touch_swipe",
-    "async_touch_tap",
-    "async_type_text",
-    "click",
-    "detect_cf_turnstile",
-    "get_browser_launch_args",
-    "get_client_hints",
-    "get_random_search_queries",
-    "get_search_engine_config",
-    "human_sleep",
-    "is_cf_turnstile_solved",
-    "is_organic_url",
-    "move_mouse",
-    "scroll_to",
-    "solve_cf_turnstile",
-    "type_text",
-]
+import sys
+import types
+from typing import Any
+
+import browser_stealth.antidetect as _antidetect
+import browser_stealth.humanize as _humanize
+
+
+class _HumanizeProxy(types.ModuleType):
+    def __getattr__(self, name: str) -> Any:
+        if hasattr(_humanize, name):
+            return getattr(_humanize, name)
+        return getattr(_antidetect, name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ("__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__path__", "__dict__"):
+            super().__setattr__(name, value)
+        else:
+            if hasattr(_humanize, name):
+                setattr(_humanize, name, value)
+            if hasattr(_antidetect, name):
+                setattr(_antidetect, name, value)
+            super().__setattr__(name, value)
+
+    def __dir__(self) -> list[str]:
+        return sorted(set(dir(_humanize) | set(dir(_antidetect))))
+
+sys.modules[__name__].__class__ = _HumanizeProxy
+globals().update({k: getattr(_humanize, k) for k in dir(_humanize) if not k.startswith("__")})
+globals().update({k: getattr(_antidetect, k) for k in dir(_antidetect) if not k.startswith("__")})

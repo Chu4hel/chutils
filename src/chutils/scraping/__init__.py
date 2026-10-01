@@ -6,8 +6,14 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from .bidi import (
         BiDiClient as BiDiClient,
+    )
+    from .bidi import (
         BiDiSession as BiDiSession,
+    )
+    from .bidi import (
         apply_antidetect_bidi as apply_antidetect_bidi,
+    )
+    from .bidi import (
         bidi_session as bidi_session,
     )
     from .camoufox import (
@@ -86,10 +92,16 @@ if TYPE_CHECKING:
         ChromeProxyExtension as ChromeProxyExtension,
     )
     from .proxy import (
+        KeyringProxyStorage as KeyringProxyStorage,
+    )
+    from .proxy import (
         ProxyConfig as ProxyConfig,
     )
     from .proxy import (
         ProxyPool as ProxyPool,
+    )
+    from .proxy import (
+        ProxySecretStorage as ProxySecretStorage,
     )
     from .proxy import (
         async_nodriver_proxy as async_nodriver_proxy,
@@ -110,18 +122,18 @@ if TYPE_CHECKING:
         nodriver_proxy as nodriver_proxy,
     )
     from .proxy import (
-        KeyringProxyStorage as KeyringProxyStorage,
-    )
-    from .proxy import (
-        ProxySecretStorage as ProxySecretStorage,
-    )
-    from .proxy import (
         parse_proxy as parse_proxy,
     )
     from .testing import (
         DOMActionRecorder as DOMActionRecorder,
+    )
+    from .testing import (
         DOMActionRecorderHUD as DOMActionRecorderHUD,
+    )
+    from .testing import (
         DOMActionSessionReport as DOMActionSessionReport,
+    )
+    from .testing import (
         LiveBrowserSession as LiveBrowserSession,
     )
     from .testing import (

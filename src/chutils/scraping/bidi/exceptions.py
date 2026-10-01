@@ -1,43 +1,26 @@
-"""Исключения подсистемы WebDriver BiDi."""
-
+"""Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.exceptions."""
 from __future__ import annotations
 
+import sys
+import types
+from typing import Any
 
-class BiDiError(Exception):
-    """Базовое исключение для всех ошибок протокола WebDriver BiDi."""
-
-
-class BiDiConnectionError(BiDiError):
-    """Исключение, возникающее при ошибке сетевого подключения к BiDi WebSocket."""
+import browser_stealth.bidi.exceptions as _target_module
 
 
-class BiDiTimeoutError(BiDiError):
-    """Исключение при превышении таймаута ожидания ответа от браузера."""
+class _ModuleProxy(types.ModuleType):
+    def __getattr__(self, name: str) -> Any:
+        return getattr(_target_module, name)
 
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ("__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__path__", "__dict__"):
+            super().__setattr__(name, value)
+        else:
+            setattr(_target_module, name, value)
+            super().__setattr__(name, value)
 
-class BiDiCommandError(BiDiError):
-    """Исключение при возврате ошибки выполнения команды браузером.
+    def __dir__(self) -> list[str]:
+        return dir(_target_module)
 
-    Attributes:
-        error_code: Строковый код ошибки BiDi (например, 'invalid argument').
-        message: Сообщение об ошибке от браузера.
-        data: Дополнительные данные об ошибке (при наличии).
-    """
-
-    def __init__(
-        self,
-        error_code: str,
-        message: str,
-        data: dict[str, object] | None = None,
-    ) -> None:
-        """Инициализирует ошибку команды BiDi.
-
-        Args:
-            error_code: Строковый код ошибки BiDi.
-            message: Описание ошибки.
-            data: Опциональные дополнительные данные.
-        """
-        super().__init__(f"BiDi error [{error_code}]: {message}")
-        self.error_code = error_code
-        self.message = message
-        self.data = data or {}
+sys.modules[__name__].__class__ = _ModuleProxy
+globals().update({k: getattr(_target_module, k) for k in dir(_target_module) if not k.startswith("__")})

@@ -1,88 +1,26 @@
-"""Адаптер экспорта и импорта профилей для Selenium / undetected-chromedriver."""
+"""Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.adapters.selenium."""
+from __future__ import annotations
 
+import sys
+import types
 from typing import Any
 
-from chutils.logger import setup_logger
-from chutils.scraping.profiles.models import (
-    BrowserProfile,
-    CookieData,
-    HeaderData,
-    StorageData,
-)
-
-logger = setup_logger(__name__)
+import browser_stealth.profiles.adapters.selenium as _target_module
 
 
-def export_selenium_profile(driver: Any) -> BrowserProfile:
-    """Экспортировать профиль сессии из Selenium WebDriver.
+class _ModuleProxy(types.ModuleType):
+    def __getattr__(self, name: str) -> Any:
+        return getattr(_target_module, name)
 
-    Args:
-        driver: Объект selenium.webdriver.Chrome/Firefox.
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ("__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__path__", "__dict__"):
+            super().__setattr__(name, value)
+        else:
+            setattr(_target_module, name, value)
+            super().__setattr__(name, value)
 
-    Returns:
-        Экземпляр BrowserProfile.
-    """
-    raw_cookies = driver.get_cookies()
-    cookies_list: list[CookieData] = []
-    for c in raw_cookies:
-        same_site_val = c.get("sameSite")
-        same_site_normalized = None
-        if same_site_val in ("Strict", "Lax", "None"):
-            same_site_normalized = same_site_val
+    def __dir__(self) -> list[str]:
+        return dir(_target_module)
 
-        cookies_list.append(
-            CookieData(
-                name=c.get("name", ""),
-                value=c.get("value", ""),
-                domain=c.get("domain", ""),
-                path=c.get("path", "/"),
-                expires=c.get("expiry"),
-                http_only=c.get("httpOnly", False),
-                secure=c.get("secure", False),
-                same_site=same_site_normalized,
-            )
-        )
-
-    user_agent = None
-    try:
-        user_agent = driver.execute_script("return navigator.userAgent;")
-    except Exception as e:
-        logger.debug("Не удалось получить userAgent из Selenium: %s", e)
-
-    return BrowserProfile(
-        engine_origin="selenium",
-        cookies=cookies_list,
-        storage=StorageData(),
-        headers=HeaderData(
-            user_agent=user_agent if isinstance(user_agent, str) else None
-        ),
-    )
-
-
-def import_selenium_profile(driver: Any, profile: BrowserProfile) -> None:
-    """Импортировать профиль сессии в Selenium WebDriver.
-
-    Args:
-        driver: Объект selenium.webdriver.
-        profile: Экземпляр BrowserProfile.
-    """
-    for c in profile.cookies:
-        cookie_dict: dict[str, Any] = {
-            "name": c.name,
-            "value": c.value,
-            "domain": c.domain,
-            "path": c.path,
-        }
-        if c.expires is not None:
-            cookie_dict["expiry"] = int(c.expires)
-        if c.http_only:
-            cookie_dict["httpOnly"] = c.http_only
-        if c.secure:
-            cookie_dict["secure"] = c.secure
-        if c.same_site:
-            cookie_dict["sameSite"] = c.same_site
-
-        try:
-            driver.add_cookie(cookie_dict)
-        except Exception as e:
-            logger.warning("Не удалось добавить cookie '%s' в Selenium: %s", c.name, e)
+sys.modules[__name__].__class__ = _ModuleProxy
+globals().update({k: getattr(_target_module, k) for k in dir(_target_module) if not k.startswith("__")})

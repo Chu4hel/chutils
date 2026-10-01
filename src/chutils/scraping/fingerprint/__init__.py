@@ -1,23 +1,26 @@
-"""Подсистема комбинаторного синтеза цифровой личности браузера (Fingerprint Synthesizer)."""
-
+"""Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint."""
 from __future__ import annotations
 
-from .models import (
-    AudioFingerprint,
-    FingerprintProfile,
-    HardwareFingerprint,
-    MediaDeviceItem,
-    ScreenFingerprint,
-    WebGLFingerprint,
-)
-from .synthesizer import FingerprintSynthesizer
+import sys
+import types
+from typing import Any
 
-__all__ = [
-    "AudioFingerprint",
-    "FingerprintProfile",
-    "FingerprintSynthesizer",
-    "HardwareFingerprint",
-    "MediaDeviceItem",
-    "ScreenFingerprint",
-    "WebGLFingerprint",
-]
+import browser_stealth.fingerprint as _target_module
+
+
+class _ModuleProxy(types.ModuleType):
+    def __getattr__(self, name: str) -> Any:
+        return getattr(_target_module, name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ("__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__path__", "__dict__"):
+            super().__setattr__(name, value)
+        else:
+            setattr(_target_module, name, value)
+            super().__setattr__(name, value)
+
+    def __dir__(self) -> list[str]:
+        return dir(_target_module)
+
+sys.modules[__name__].__class__ = _ModuleProxy
+globals().update({k: getattr(_target_module, k) for k in dir(_target_module) if not k.startswith("__")})

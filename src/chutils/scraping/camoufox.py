@@ -1,61 +1,26 @@
-"""Интеграция с антидетект-браузером Camoufox (Playwright Firefox wrapper)."""
-
+"""Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.launchers.camoufox."""
 from __future__ import annotations
 
-import importlib.util
+import sys
+import types
 from typing import Any
 
-from chutils.exceptions import OptionalDependencyError
-
-CAMOUFOX_AVAILABLE = importlib.util.find_spec("camoufox") is not None
+import browser_stealth.launchers.camoufox as _target_module
 
 
-def get_async_camoufox_class() -> Any:
-    """Возвращает класс AsyncCamoufox из библиотеки camoufox.
+class _ModuleProxy(types.ModuleType):
+    def __getattr__(self, name: str) -> Any:
+        return getattr(_target_module, name)
 
-    Returns:
-        Класс AsyncCamoufox.
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ("__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__path__", "__dict__"):
+            super().__setattr__(name, value)
+        else:
+            setattr(_target_module, name, value)
+            super().__setattr__(name, value)
 
-    Raises:
-        OptionalDependencyError: Если библиотека camoufox не установлена.
-    """
-    if not CAMOUFOX_AVAILABLE:
-        raise OptionalDependencyError(
-            "Для использования Camoufox требуется библиотека 'camoufox'.\n"
-            "Установите её: pip install chutils[camoufox] или pip install camoufox",
-            dependency="camoufox",
-            hint="Выполните pip install camoufox",
-        )
-    from camoufox.async_api import AsyncCamoufox
+    def __dir__(self) -> list[str]:
+        return dir(_target_module)
 
-    return AsyncCamoufox
-
-
-async def launch_camoufox(
-    headless: bool = True,
-    os: str = "windows",
-    **kwargs: Any,
-) -> Any:
-    """Создает и возвращает контекстный менеджер / сессию браузера AsyncCamoufox.
-
-    Args:
-        headless: Режим запуска без GUI (True) или с окном (False).
-        os: Целевая ОС для подделки отпечатка ('windows', 'macos', 'linux').
-        **kwargs: Дополнительные аргументы, передаваемые в конструктор AsyncCamoufox.
-
-    Returns:
-        Экземпляр AsyncCamoufox, готовый к использованию через async with.
-
-    Raises:
-        OptionalDependencyError: Если библиотека camoufox не установлена.
-    """
-    if not CAMOUFOX_AVAILABLE:
-        raise OptionalDependencyError(
-            "Для использования Camoufox требуется библиотека 'camoufox'.\n"
-            "Установите её: pip install chutils[camoufox] или pip install camoufox",
-            dependency="camoufox",
-            hint="Выполните pip install camoufox",
-        )
-
-    camoufox_cls = get_async_camoufox_class()
-    return camoufox_cls(headless=headless, os=os, **kwargs)
+sys.modules[__name__].__class__ = _ModuleProxy
+globals().update({k: getattr(_target_module, k) for k in dir(_target_module) if not k.startswith("__")})

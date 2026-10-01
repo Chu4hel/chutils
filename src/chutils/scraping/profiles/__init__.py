@@ -1,31 +1,26 @@
-"""Инициализация пакета профилей браузеров."""
+"""Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles."""
+from __future__ import annotations
 
-from chutils.scraping.profiles.hygiene import (
-    is_profile_locked,
-    sanitize_profile,
-    sanitize_profile_crash_state,
-)
-from chutils.scraping.profiles.manager import ProfileManager
-from chutils.scraping.profiles.models import (
-    BrowserProfile,
-    CookieData,
-    HeaderData,
-    StorageData,
-)
-from chutils.scraping.profiles.storage import (
-    load_profile_from_file,
-    save_profile_to_file,
-)
+import sys
+import types
+from typing import Any
 
-__all__ = [
-    "BrowserProfile",
-    "CookieData",
-    "HeaderData",
-    "ProfileManager",
-    "StorageData",
-    "is_profile_locked",
-    "load_profile_from_file",
-    "sanitize_profile",
-    "sanitize_profile_crash_state",
-    "save_profile_to_file",
-]
+import browser_stealth.profiles as _target_module
+
+
+class _ModuleProxy(types.ModuleType):
+    def __getattr__(self, name: str) -> Any:
+        return getattr(_target_module, name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ("__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__path__", "__dict__"):
+            super().__setattr__(name, value)
+        else:
+            setattr(_target_module, name, value)
+            super().__setattr__(name, value)
+
+    def __dir__(self) -> list[str]:
+        return dir(_target_module)
+
+sys.modules[__name__].__class__ = _ModuleProxy
+globals().update({k: getattr(_target_module, k) for k in dir(_target_module) if not k.startswith("__")})

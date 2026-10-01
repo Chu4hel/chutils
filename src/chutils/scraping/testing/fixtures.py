@@ -1,126 +1,26 @@
-"""
-Pytest плагин и фикстуры для автотестирования парсеров и скраперов.
-
-Автоматически регистрируется pytest через entry_point `pytest11`
-и предоставляет готовые фикстуры для мок- и live-тестирования.
-Все тяжелые зависимости импортируются лениво внутри фикстур.
-"""
-
+"""Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.fixtures."""
 from __future__ import annotations
 
-from collections.abc import Callable, Generator
-from pathlib import Path
-from typing import TYPE_CHECKING, Any
+import sys
+import types
+from typing import Any
 
-import pytest
-
-if TYPE_CHECKING:
-    from chutils.scraping.testing.mocks import (
-        MockNodriverTab,
-        MockPlaywrightPage,
-        MockSeleniumDriver,
-    )
-    from chutils.scraping.testing.server import LocalTestServer
-    from chutils.scraping.testing.session import LiveBrowserSession
-    from chutils.scraping.testing.snapshot import SnapshotRecorder
+import browser_stealth.testing.fixtures as _target_module
 
 
-def pytest_configure(config: Any) -> None:
-    """Регистрирует кастомные маркеры chutils для pytest.
+class _ModuleProxy(types.ModuleType):
+    def __getattr__(self, name: str) -> Any:
+        return getattr(_target_module, name)
 
-    Args:
-        config: Объект конфигурации pytest.
-    """
-    config.addinivalue_line(
-        "markers",
-        "live_scraping: маркер для интеграционных тестов со сквозным запуском реального браузера",
-    )
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ("__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__path__", "__dict__"):
+            super().__setattr__(name, value)
+        else:
+            setattr(_target_module, name, value)
+            super().__setattr__(name, value)
 
+    def __dir__(self) -> list[str]:
+        return dir(_target_module)
 
-@pytest.fixture
-def local_test_server() -> Generator[LocalTestServer, None, None]:
-    """Предоставляет запущенный локальный тестовый HTTP-сервер песочницы.
-
-    Yields:
-        Запущенный экземпляр LocalTestServer.
-    """
-    from chutils.scraping.testing.server import LocalTestServer
-
-    with LocalTestServer() as server:
-        yield server
-
-
-@pytest.fixture
-def live_browser_session() -> Generator[LiveBrowserSession, None, None]:
-    """Предоставляет сессию реального браузера с гарантированным teardown зомби-процессов.
-
-    Yields:
-        Активный экземпляр LiveBrowserSession.
-    """
-    from chutils.scraping.testing.session import LiveBrowserSession
-
-    with LiveBrowserSession() as session:
-        yield session
-
-
-@pytest.fixture
-def html_snapshot_recorder(tmp_path: Path) -> SnapshotRecorder:
-    """Предоставляет менеджер снапшотов SnapshotRecorder во временном каталоге.
-
-    Args:
-        tmp_path: Временная папка теста от pytest.
-
-    Returns:
-        Экземпляр SnapshotRecorder.
-    """
-    from chutils.scraping.testing.snapshot import SnapshotRecorder
-
-    return SnapshotRecorder(snapshot_dir=tmp_path)
-
-
-@pytest.fixture
-def mock_nodriver_tab() -> Callable[..., MockNodriverTab]:
-    """Фабрика для создания легковесного мока вкладки nodriver.
-
-    Returns:
-        Функция, принимающая HTML строку и возвращающая MockNodriverTab.
-    """
-
-    def _factory(html: str = "") -> MockNodriverTab:
-        from chutils.scraping.testing.mocks import MockNodriverTab
-
-        return MockNodriverTab(html)
-
-    return _factory
-
-
-@pytest.fixture
-def mock_playwright_page() -> Callable[..., MockPlaywrightPage]:
-    """Фабрика для создания мока страницы Playwright.
-
-    Returns:
-        Функция, принимающая HTML строку и возвращающая MockPlaywrightPage.
-    """
-
-    def _factory(html: str = "") -> MockPlaywrightPage:
-        from chutils.scraping.testing.mocks import MockPlaywrightPage
-
-        return MockPlaywrightPage(html)
-
-    return _factory
-
-
-@pytest.fixture
-def mock_selenium_driver() -> Callable[..., MockSeleniumDriver]:
-    """Фабрика для создания мока драйвера Selenium.
-
-    Returns:
-        Функция, принимающая HTML строку и возвращающая MockSeleniumDriver.
-    """
-
-    def _factory(html: str = "") -> MockSeleniumDriver:
-        from chutils.scraping.testing.mocks import MockSeleniumDriver
-
-        return MockSeleniumDriver(html)
-
-    return _factory
+sys.modules[__name__].__class__ = _ModuleProxy
+globals().update({k: getattr(_target_module, k) for k in dir(_target_module) if not k.startswith("__")})

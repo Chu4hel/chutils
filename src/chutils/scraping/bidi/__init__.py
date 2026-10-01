@@ -1,25 +1,26 @@
-"""Подсистема кроссбраузерного управления и антидетекта через WebDriver BiDi."""
-
+"""Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi."""
 from __future__ import annotations
 
-from chutils.scraping.bidi.antidetect import apply_antidetect_bidi
-from chutils.scraping.bidi.client import BiDiClient
-from chutils.scraping.bidi.exceptions import (
-    BiDiCommandError,
-    BiDiConnectionError,
-    BiDiError,
-    BiDiTimeoutError,
-)
-from chutils.scraping.bidi.session import BiDiSession, bidi_session, extract_bidi_url
+import sys
+import types
+from typing import Any
 
-__all__ = [
-    "BiDiClient",
-    "BiDiCommandError",
-    "BiDiConnectionError",
-    "BiDiError",
-    "BiDiSession",
-    "BiDiTimeoutError",
-    "apply_antidetect_bidi",
-    "bidi_session",
-    "extract_bidi_url",
-]
+import browser_stealth.bidi as _target_module
+
+
+class _ModuleProxy(types.ModuleType):
+    def __getattr__(self, name: str) -> Any:
+        return getattr(_target_module, name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ("__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__path__", "__dict__"):
+            super().__setattr__(name, value)
+        else:
+            setattr(_target_module, name, value)
+            super().__setattr__(name, value)
+
+    def __dir__(self) -> list[str]:
+        return dir(_target_module)
+
+sys.modules[__name__].__class__ = _ModuleProxy
+globals().update({k: getattr(_target_module, k) for k in dir(_target_module) if not k.startswith("__")})

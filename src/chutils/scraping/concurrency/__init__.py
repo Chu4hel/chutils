@@ -1,30 +1,26 @@
-"""
-Модуль chutils.scraping.concurrency: Умная очередь задач, распределение нагрузки и воркеры.
-"""
+"""Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency."""
+from __future__ import annotations
 
-from .base import BaseTaskQueue
-from .limiter import DomainRateLimiter
-from .models import ScrapingTask
-from .pool import WorkerPool
-from .queues import InMemoryTaskQueue, PersistentTaskQueue, RedisTaskQueue
-from .reaper import (
-    IdleBrowserReaper,
-    IdleBrowserReaperConfig,
-    IdleReaper,
-    IdleReaperConfig,
-)
+import sys
+import types
+from typing import Any
 
-__all__ = [
-    "BaseTaskQueue",
-    "DomainRateLimiter",
-    "IdleBrowserReaper",
-    "IdleBrowserReaperConfig",
-    "IdleReaper",
-    "IdleReaperConfig",
-    "InMemoryTaskQueue",
-    "PersistentTaskQueue",
-    "RedisTaskQueue",
-    "ScrapingTask",
-    "WorkerPool",
-]
+import browser_stealth.concurrency as _target_module
 
+
+class _ModuleProxy(types.ModuleType):
+    def __getattr__(self, name: str) -> Any:
+        return getattr(_target_module, name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ("__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__path__", "__dict__"):
+            super().__setattr__(name, value)
+        else:
+            setattr(_target_module, name, value)
+            super().__setattr__(name, value)
+
+    def __dir__(self) -> list[str]:
+        return dir(_target_module)
+
+sys.modules[__name__].__class__ = _ModuleProxy
+globals().update({k: getattr(_target_module, k) for k in dir(_target_module) if not k.startswith("__")})

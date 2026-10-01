@@ -1,46 +1,26 @@
-"""Модели данных профилей и сессий браузеров."""
+"""Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.models."""
+from __future__ import annotations
 
-from typing import Literal
+import sys
+import types
+from typing import Any
 
-from pydantic import BaseModel, Field
-
-
-class CookieData(BaseModel):
-    """Данные Cookie записи."""
-
-    name: str
-    value: str
-    domain: str
-    path: str = "/"
-    expires: float | None = None
-    http_only: bool = False
-    secure: bool = False
-    same_site: Literal["Strict", "Lax", "None"] | None = None
+import browser_stealth.profiles.models as _target_module
 
 
-class StorageData(BaseModel):
-    """Данные хранилищ браузера (LocalStorage, SessionStorage, IndexedDB)."""
+class _ModuleProxy(types.ModuleType):
+    def __getattr__(self, name: str) -> Any:
+        return getattr(_target_module, name)
 
-    local_storage: dict[str, dict[str, str]] = Field(default_factory=dict)
-    session_storage: dict[str, dict[str, str]] = Field(default_factory=dict)
-    indexed_db: dict[str, dict[str, str]] = Field(default_factory=dict)
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in ("__name__", "__doc__", "__package__", "__loader__", "__spec__", "__file__", "__path__", "__dict__"):
+            super().__setattr__(name, value)
+        else:
+            setattr(_target_module, name, value)
+            super().__setattr__(name, value)
 
+    def __dir__(self) -> list[str]:
+        return dir(_target_module)
 
-class HeaderData(BaseModel):
-    """Метаданные заголовков и браузера."""
-
-    user_agent: str | None = None
-    accept_language: str | None = None
-    sec_ch_ua: str | None = None
-    custom_headers: dict[str, str] = Field(default_factory=dict)
-
-
-class BrowserProfile(BaseModel):
-    """Универсальная модель профиля браузера для экспорта/импорта."""
-
-    version: str = "1.0"
-    engine_origin: str | None = None
-    cookies: list[CookieData] = Field(default_factory=list)
-    storage: StorageData = Field(default_factory=StorageData)
-    headers: HeaderData = Field(default_factory=HeaderData)
-    metadata: dict[str, str] = Field(default_factory=dict)
+sys.modules[__name__].__class__ = _ModuleProxy
+globals().update({k: getattr(_target_module, k) for k in dir(_target_module) if not k.startswith("__")})
