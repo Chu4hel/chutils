@@ -1,4 +1,3 @@
-import sys
 import typing as t
 
 if t.TYPE_CHECKING:
@@ -6,10 +5,7 @@ if t.TYPE_CHECKING:
     class _BaseExceptionGroup(BaseException):
         exceptions: list[Exception]
 else:
-    if sys.version_info >= (3, 11):
-        _BaseExceptionGroup = ExceptionGroup  # noqa: F821
-    else:
-        from exceptiongroup import ExceptionGroup as _BaseExceptionGroup  # noqa: F401
+    _BaseExceptionGroup = ExceptionGroup
 
 
 class ChutilsException(Exception):
