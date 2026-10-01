@@ -1759,6 +1759,203 @@
         "docstring": "",
         "children": [
           {
+            "name": "anticaptcha",
+            "path": "chutils/captcha/anticaptcha",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_handle_error",
+                "type": "function",
+                "layer": "private",
+                "signature": "(data)",
+                "summary": "Обрабатывает JSON-ошибки Anti-Captcha и генерирует исключения.",
+                "docstring": "Обрабатывает JSON-ошибки Anti-Captcha и генерирует исключения.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 15,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "AntiCaptchaSolver",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Синхронный клиент для Anti-Captcha.",
+                "docstring": "Синхронный клиент для Anti-Captcha.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 34,
+                "bases": [
+                  ".base.BaseCaptchaSolver"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key, host)",
+                    "summary": "Инициализирует AntiCaptchaSolver.",
+                    "docstring": "Инициализирует AntiCaptchaSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса Anti-Captcha.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 39,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_image",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, image_data, timeout, poll_interval)",
+                    "summary": "Синхронно решает капчу-изображение.",
+                    "docstring": "Синхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 51,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_recaptcha",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, sitekey, page_url, timeout, poll_interval)",
+                    "summary": "Синхронно решает ReCaptcha v2/v3.",
+                    "docstring": "Синхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 108,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "AsyncAntiCaptchaSolver",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Асинхронный клиент для Anti-Captcha.",
+                "docstring": "Асинхронный клиент для Anti-Captcha.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 163,
+                "bases": [
+                  ".base.BaseAsyncCaptchaSolver"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key, host)",
+                    "summary": "Инициализирует AsyncAntiCaptchaSolver.",
+                    "docstring": "Инициализирует AsyncAntiCaptchaSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса Anti-Captcha.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 168,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_image",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, image_data, timeout, poll_interval)",
+                    "summary": "Асинхронно решает капчу-изображение.",
+                    "docstring": "Асинхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 180,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_recaptcha",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, sitekey, page_url, timeout, poll_interval)",
+                    "summary": "Асинхронно решает ReCaptcha v2/v3.",
+                    "docstring": "Асинхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 239,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "base",
             "path": "chutils/captcha/base",
             "type": "module",
@@ -1904,6 +2101,203 @@
                       "custom_metadata": {}
                     },
                     "line_number": 70,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "capmonster",
+            "path": "chutils/captcha/capmonster",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_handle_error",
+                "type": "function",
+                "layer": "private",
+                "signature": "(data)",
+                "summary": "Обрабатывает JSON-ошибки CapMonster и генерирует исключения.",
+                "docstring": "Обрабатывает JSON-ошибки CapMonster и генерирует исключения.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 15,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "CapMonsterSolver",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Синхронный клиент для CapMonster Cloud.",
+                "docstring": "Синхронный клиент для CapMonster Cloud.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 34,
+                "bases": [
+                  ".base.BaseCaptchaSolver"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key, host)",
+                    "summary": "Инициализирует CapMonsterSolver.",
+                    "docstring": "Инициализирует CapMonsterSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса CapMonster Cloud.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 39,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_image",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, image_data, timeout, poll_interval)",
+                    "summary": "Синхронно решает капчу-изображение.",
+                    "docstring": "Синхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 51,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_recaptcha",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, sitekey, page_url, timeout, poll_interval)",
+                    "summary": "Синхронно решает ReCaptcha v2/v3.",
+                    "docstring": "Синхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 108,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "AsyncCapMonsterSolver",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Асинхронный клиент для CapMonster Cloud.",
+                "docstring": "Асинхронный клиент для CapMonster Cloud.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 163,
+                "bases": [
+                  ".base.BaseAsyncCaptchaSolver"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key, host)",
+                    "summary": "Инициализирует AsyncCapMonsterSolver.",
+                    "docstring": "Инициализирует AsyncCapMonsterSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса CapMonster Cloud.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 168,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_image",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, image_data, timeout, poll_interval)",
+                    "summary": "Асинхронно решает капчу-изображение.",
+                    "docstring": "Асинхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 180,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_recaptcha",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, sitekey, page_url, timeout, poll_interval)",
+                    "summary": "Асинхронно решает ReCaptcha v2/v3.",
+                    "docstring": "Асинхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 239,
                     "bases": [],
                     "children": []
                   }
@@ -2755,6 +3149,203 @@
                       "custom_metadata": {}
                     },
                     "line_number": 495,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "rucaptcha",
+            "path": "chutils/captcha/rucaptcha",
+            "type": "module",
+            "layer": "internal",
+            "summary": "",
+            "docstring": "",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_handle_error",
+                "type": "function",
+                "layer": "private",
+                "signature": "(response_text)",
+                "summary": "Обрабатывает текстовые ошибки RuCaptcha и генерирует исключения.",
+                "docstring": "Обрабатывает текстовые ошибки RuCaptcha и генерирует исключения.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 15,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "RuCaptchaSolver",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Синхронный клиент для RuCaptcha / 2Captcha.",
+                "docstring": "Синхронный клиент для RuCaptcha / 2Captcha.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 32,
+                "bases": [
+                  ".base.BaseCaptchaSolver"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key, host)",
+                    "summary": "Инициализирует RuCaptchaSolver.",
+                    "docstring": "Инициализирует RuCaptchaSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса RuCaptcha.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 37,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_image",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, image_data, timeout, poll_interval)",
+                    "summary": "Синхронно решает капчу-изображение.",
+                    "docstring": "Синхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 58,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_recaptcha",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, sitekey, page_url, timeout, poll_interval)",
+                    "summary": "Синхронно решает ReCaptcha v2/v3.",
+                    "docstring": "Синхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 127,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "name": "AsyncRuCaptchaSolver",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Асинхронный клиент для RuCaptcha / 2Captcha.",
+                "docstring": "Асинхронный клиент для RuCaptcha / 2Captcha.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 192,
+                "bases": [
+                  ".base.BaseAsyncCaptchaSolver"
+                ],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, api_key, host)",
+                    "summary": "Инициализирует AsyncRuCaptchaSolver.",
+                    "docstring": "Инициализирует AsyncRuCaptchaSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса RuCaptcha.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 197,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_image",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, image_data, timeout, poll_interval)",
+                    "summary": "Асинхронно решает капчу-изображение.",
+                    "docstring": "Асинхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 217,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "solve_recaptcha",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, sitekey, page_url, timeout, poll_interval)",
+                    "summary": "Асинхронно решает ReCaptcha v2/v3.",
+                    "docstring": "Асинхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
+                    "breadcrumbs": {
+                      "is_async": true,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 286,
                     "bases": [],
                     "children": []
                   }
@@ -28905,3315 +29496,6 @@
         ]
       },
       {
-        "name": "scraping",
-        "path": "chutils/scraping",
-        "type": "package",
-        "layer": "public",
-        "summary": "Модуль скрейпинга, автоматизации и утилиты антидетекта.",
-        "docstring": "Модуль скрейпинга, автоматизации и утилиты антидетекта.",
-        "children": [
-          {
-            "name": "bidi",
-            "path": "chutils/scraping/bidi",
-            "type": "package",
-            "layer": "internal",
-            "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.",
-            "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.",
-            "children": [
-              {
-                "name": "antidetect",
-                "path": "chutils/scraping/bidi/antidetect",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.antidetect.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.antidetect.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "client",
-                "path": "chutils/scraping/bidi/client",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.client.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.client.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "exceptions",
-                "path": "chutils/scraping/bidi/exceptions",
-                "type": "module",
-                "layer": "public",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.exceptions.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.exceptions.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "session",
-                "path": "chutils/scraping/bidi/session",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.session.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.bidi.session.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              }
-            ],
-            "symbols": [
-              {
-                "name": "_ModuleProxy",
-                "type": "class",
-                "layer": "private",
-                "signature": "",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 11,
-                "bases": [
-                  "types.ModuleType"
-                ],
-                "children": []
-              }
-            ]
-          },
-          {
-            "name": "camoufox",
-            "path": "chutils/scraping/camoufox",
-            "type": "module",
-            "layer": "internal",
-            "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.launchers.camoufox.",
-            "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.launchers.camoufox.",
-            "children": [],
-            "symbols": [
-              {
-                "name": "_ModuleProxy",
-                "type": "class",
-                "layer": "private",
-                "signature": "",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 11,
-                "bases": [
-                  "types.ModuleType"
-                ],
-                "children": []
-              }
-            ]
-          },
-          {
-            "name": "captcha",
-            "path": "chutils/scraping/captcha",
-            "type": "package",
-            "layer": "public",
-            "summary": "",
-            "docstring": "",
-            "children": [
-              {
-                "name": "anticaptcha",
-                "path": "chutils/scraping/captcha/anticaptcha",
-                "type": "module",
-                "layer": "internal",
-                "summary": "",
-                "docstring": "",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_handle_error",
-                    "type": "function",
-                    "layer": "private",
-                    "signature": "(data)",
-                    "summary": "Обрабатывает JSON-ошибки Anti-Captcha и генерирует исключения.",
-                    "docstring": "Обрабатывает JSON-ошибки Anti-Captcha и генерирует исключения.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 15,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "AntiCaptchaSolver",
-                    "type": "class",
-                    "layer": "public",
-                    "signature": "",
-                    "summary": "Синхронный клиент для Anti-Captcha.",
-                    "docstring": "Синхронный клиент для Anti-Captcha.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 34,
-                    "bases": [
-                      ".base.BaseCaptchaSolver"
-                    ],
-                    "children": [
-                      {
-                        "name": "__init__",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self, api_key, host)",
-                        "summary": "Инициализирует AntiCaptchaSolver.",
-                        "docstring": "Инициализирует AntiCaptchaSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса Anti-Captcha.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 39,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_image",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, image_data, timeout, poll_interval)",
-                        "summary": "Синхронно решает капчу-изображение.",
-                        "docstring": "Синхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 51,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_recaptcha",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, sitekey, page_url, timeout, poll_interval)",
-                        "summary": "Синхронно решает ReCaptcha v2/v3.",
-                        "docstring": "Синхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 108,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "name": "AsyncAntiCaptchaSolver",
-                    "type": "class",
-                    "layer": "public",
-                    "signature": "",
-                    "summary": "Асинхронный клиент для Anti-Captcha.",
-                    "docstring": "Асинхронный клиент для Anti-Captcha.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 163,
-                    "bases": [
-                      ".base.BaseAsyncCaptchaSolver"
-                    ],
-                    "children": [
-                      {
-                        "name": "__init__",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self, api_key, host)",
-                        "summary": "Инициализирует AsyncAntiCaptchaSolver.",
-                        "docstring": "Инициализирует AsyncAntiCaptchaSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса Anti-Captcha.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 168,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_image",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, image_data, timeout, poll_interval)",
-                        "summary": "Асинхронно решает капчу-изображение.",
-                        "docstring": "Асинхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 180,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_recaptcha",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, sitekey, page_url, timeout, poll_interval)",
-                        "summary": "Асинхронно решает ReCaptcha v2/v3.",
-                        "docstring": "Асинхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 239,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "name": "base",
-                "path": "chutils/scraping/captcha/base",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Реэкспорт базовых классов капчи из chutils.captcha для обратной совместимости.",
-                "docstring": "Реэкспорт базовых классов капчи из chutils.captcha для обратной совместимости.",
-                "children": [],
-                "symbols": []
-              },
-              {
-                "name": "capmonster",
-                "path": "chutils/scraping/captcha/capmonster",
-                "type": "module",
-                "layer": "internal",
-                "summary": "",
-                "docstring": "",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_handle_error",
-                    "type": "function",
-                    "layer": "private",
-                    "signature": "(data)",
-                    "summary": "Обрабатывает JSON-ошибки CapMonster и генерирует исключения.",
-                    "docstring": "Обрабатывает JSON-ошибки CapMonster и генерирует исключения.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 15,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "CapMonsterSolver",
-                    "type": "class",
-                    "layer": "public",
-                    "signature": "",
-                    "summary": "Синхронный клиент для CapMonster Cloud.",
-                    "docstring": "Синхронный клиент для CapMonster Cloud.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 34,
-                    "bases": [
-                      ".base.BaseCaptchaSolver"
-                    ],
-                    "children": [
-                      {
-                        "name": "__init__",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self, api_key, host)",
-                        "summary": "Инициализирует CapMonsterSolver.",
-                        "docstring": "Инициализирует CapMonsterSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса CapMonster Cloud.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 39,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_image",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, image_data, timeout, poll_interval)",
-                        "summary": "Синхронно решает капчу-изображение.",
-                        "docstring": "Синхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 51,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_recaptcha",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, sitekey, page_url, timeout, poll_interval)",
-                        "summary": "Синхронно решает ReCaptcha v2/v3.",
-                        "docstring": "Синхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 108,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "name": "AsyncCapMonsterSolver",
-                    "type": "class",
-                    "layer": "public",
-                    "signature": "",
-                    "summary": "Асинхронный клиент для CapMonster Cloud.",
-                    "docstring": "Асинхронный клиент для CapMonster Cloud.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 163,
-                    "bases": [
-                      ".base.BaseAsyncCaptchaSolver"
-                    ],
-                    "children": [
-                      {
-                        "name": "__init__",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self, api_key, host)",
-                        "summary": "Инициализирует AsyncCapMonsterSolver.",
-                        "docstring": "Инициализирует AsyncCapMonsterSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса CapMonster Cloud.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 168,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_image",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, image_data, timeout, poll_interval)",
-                        "summary": "Асинхронно решает капчу-изображение.",
-                        "docstring": "Асинхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 180,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_recaptcha",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, sitekey, page_url, timeout, poll_interval)",
-                        "summary": "Асинхронно решает ReCaptcha v2/v3.",
-                        "docstring": "Асинхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 239,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "name": "exceptions",
-                "path": "chutils/scraping/captcha/exceptions",
-                "type": "module",
-                "layer": "public",
-                "summary": "Реэкспорт исключений капчи из chutils.captcha для обратной совместимости.",
-                "docstring": "Реэкспорт исключений капчи из chutils.captcha для обратной совместимости.",
-                "children": [],
-                "symbols": []
-              },
-              {
-                "name": "geetest",
-                "path": "chutils/scraping/captcha/geetest",
-                "type": "module",
-                "layer": "internal",
-                "summary": "",
-                "docstring": "",
-                "children": [],
-                "symbols": []
-              },
-              {
-                "name": "models",
-                "path": "chutils/scraping/captcha/models",
-                "type": "module",
-                "layer": "internal",
-                "summary": "",
-                "docstring": "",
-                "children": [],
-                "symbols": []
-              },
-              {
-                "name": "recaptcha_enterprise",
-                "path": "chutils/scraping/captcha/recaptcha_enterprise",
-                "type": "module",
-                "layer": "internal",
-                "summary": "",
-                "docstring": "",
-                "children": [],
-                "symbols": []
-              },
-              {
-                "name": "rucaptcha",
-                "path": "chutils/scraping/captcha/rucaptcha",
-                "type": "module",
-                "layer": "internal",
-                "summary": "",
-                "docstring": "",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_handle_error",
-                    "type": "function",
-                    "layer": "private",
-                    "signature": "(response_text)",
-                    "summary": "Обрабатывает текстовые ошибки RuCaptcha и генерирует исключения.",
-                    "docstring": "Обрабатывает текстовые ошибки RuCaptcha и генерирует исключения.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 15,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "RuCaptchaSolver",
-                    "type": "class",
-                    "layer": "public",
-                    "signature": "",
-                    "summary": "Синхронный клиент для RuCaptcha / 2Captcha.",
-                    "docstring": "Синхронный клиент для RuCaptcha / 2Captcha.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 32,
-                    "bases": [
-                      ".base.BaseCaptchaSolver"
-                    ],
-                    "children": [
-                      {
-                        "name": "__init__",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self, api_key, host)",
-                        "summary": "Инициализирует RuCaptchaSolver.",
-                        "docstring": "Инициализирует RuCaptchaSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса RuCaptcha.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 37,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_image",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, image_data, timeout, poll_interval)",
-                        "summary": "Синхронно решает капчу-изображение.",
-                        "docstring": "Синхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 58,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_recaptcha",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, sitekey, page_url, timeout, poll_interval)",
-                        "summary": "Синхронно решает ReCaptcha v2/v3.",
-                        "docstring": "Синхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 127,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "name": "AsyncRuCaptchaSolver",
-                    "type": "class",
-                    "layer": "public",
-                    "signature": "",
-                    "summary": "Асинхронный клиент для RuCaptcha / 2Captcha.",
-                    "docstring": "Асинхронный клиент для RuCaptcha / 2Captcha.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 192,
-                    "bases": [
-                      ".base.BaseAsyncCaptchaSolver"
-                    ],
-                    "children": [
-                      {
-                        "name": "__init__",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self, api_key, host)",
-                        "summary": "Инициализирует AsyncRuCaptchaSolver.",
-                        "docstring": "Инициализирует AsyncRuCaptchaSolver.\n\nArgs:\n    api_key: Явно заданный API-ключ.\n    host: Адрес API-сервиса RuCaptcha.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 197,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_image",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, image_data, timeout, poll_interval)",
-                        "summary": "Асинхронно решает капчу-изображение.",
-                        "docstring": "Асинхронно решает капчу-изображение.\n\nArgs:\n    image_data: Бинарные данные картинки или base64-строка.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Распознанный текст с изображения.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 217,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "solve_recaptcha",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, sitekey, page_url, timeout, poll_interval)",
-                        "summary": "Асинхронно решает ReCaptcha v2/v3.",
-                        "docstring": "Асинхронно решает ReCaptcha v2/v3.\n\nArgs:\n    sitekey: Ключ рекапчи на целевом сайте.\n    page_url: URL страницы, на которой расположена рекапча.\n    timeout: Максимальное время ожидания решения (в секундах).\n    poll_interval: Интервал опроса статуса решения (в секундах).\n    **kwargs: Дополнительные параметры задачи.\n\nReturns:\n    Токен ответа рекапчи.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 286,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
-              }
-            ],
-            "symbols": [
-              {
-                "name": "_ensure_httpx",
-                "type": "function",
-                "layer": "private",
-                "signature": "()",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 14,
-                "bases": [],
-                "children": []
-              }
-            ]
-          },
-          {
-            "name": "concurrency",
-            "path": "chutils/scraping/concurrency",
-            "type": "package",
-            "layer": "internal",
-            "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency.",
-            "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency.",
-            "children": [
-              {
-                "name": "base",
-                "path": "chutils/scraping/concurrency/base",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Базовый абстрактный класс очереди задач скрапинга.",
-                "docstring": "Базовый абстрактный класс очереди задач скрапинга.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "BaseTaskQueue",
-                    "type": "class",
-                    "layer": "internal",
-                    "signature": "",
-                    "summary": "Абстрактная очередь задач скрапинга.",
-                    "docstring": "Абстрактная очередь задач скрапинга.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": true,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 14,
-                    "bases": [
-                      "abc.ABC"
-                    ],
-                    "children": [
-                      {
-                        "name": "push",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, task)",
-                        "summary": "Добавляет задачу в очередь.",
-                        "docstring": "Добавляет задачу в очередь.\n\nArgs:\n    task: Задача для добавления.\n\nReturns:\n    True, если задача добавлена; False, если задача дедуплицирована.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": true,
-                          "decorators": [
-                            "abstractmethod"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 18,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "pop",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Извлекает задачу с наибольшим приоритетом из очереди.",
-                        "docstring": "Извлекает задачу с наибольшим приоритетом из очереди.\n\nReturns:\n    Экземпляр ScrapingTask или None, если очередь пуста.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": true,
-                          "decorators": [
-                            "abstractmethod"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 29,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "complete",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, task)",
-                        "summary": "Помечает задачу как успешно выполненную.",
-                        "docstring": "Помечает задачу как успешно выполненную.\n\nArgs:\n    task: Выполненная задача.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": true,
-                          "decorators": [
-                            "abstractmethod"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 37,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "fail",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, task, error)",
-                        "summary": "Обрабатывает ошибку выполнения задачи.",
-                        "docstring": "Обрабатывает ошибку выполнения задачи.\n\nArgs:\n    task: Сбойная задача.\n    error: Текст ошибки.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": true,
-                          "decorators": [
-                            "abstractmethod"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 45,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "size",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Возвращает количество элементов в очереди.",
-                        "docstring": "Возвращает количество элементов в очереди.\n\nReturns:\n    Размер очереди.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": true,
-                          "decorators": [
-                            "abstractmethod"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 54,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "clear",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self)",
-                        "summary": "Очищает очередь и сбрасывает историю дедупликации.",
-                        "docstring": "Очищает очередь и сбрасывает историю дедупликации.",
-                        "breadcrumbs": {
-                          "is_async": true,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": true,
-                          "decorators": [
-                            "abstractmethod"
-                          ],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 62,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "name": "limiter",
-                "path": "chutils/scraping/concurrency/limiter",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency.limiter.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency.limiter.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "metrics",
-                "path": "chutils/scraping/concurrency/metrics",
-                "type": "module",
-                "layer": "public",
-                "summary": "Модуль сбора Prometheus-метрических показателей для очередей задач и воркеров.",
-                "docstring": "Модуль сбора Prometheus-метрических показателей для очередей задач и воркеров.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "QueueMetricsCollector",
-                    "type": "class",
-                    "layer": "internal",
-                    "signature": "",
-                    "summary": "Коллектор метрик для очередей и воркеров.",
-                    "docstring": "Коллектор метрик для очередей и воркеров.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 6,
-                    "bases": [],
-                    "children": [
-                      {
-                        "name": "__init__",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self, queue_name, queue_type, enabled)",
-                        "summary": "",
-                        "docstring": "",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 9,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "set_pending_size",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, size)",
-                        "summary": "Установить текущий размер очереди.",
-                        "docstring": "Установить текущий размер очереди.\n\nArgs:\n    size: Размер очереди.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 14,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "inc_tasks_processed",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, status)",
-                        "summary": "Увеличить счетчик обработанных задач.",
-                        "docstring": "Увеличить счетчик обработанных задач.\n\nArgs:\n    status: Статус обработки (completed, failed, retried).",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 27,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "observe_execution_duration",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, duration_seconds, status)",
-                        "summary": "Записать время выполнения задачи.",
-                        "docstring": "Записать время выполнения задачи.\n\nArgs:\n    duration_seconds: Длительность выполнения в секундах.\n    status: Статус выполнения задачи.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 40,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "set_active_workers",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, active_count)",
-                        "summary": "Установить число активных воркеров.",
-                        "docstring": "Установить число активных воркеров.\n\nArgs:\n    active_count: Количество активных воркеров.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 56,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "name": "models",
-                "path": "chutils/scraping/concurrency/models",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модели данных для модуля chutils.scraping.concurrency.",
-                "docstring": "Модели данных для модуля chutils.scraping.concurrency.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "ScrapingTask",
-                    "type": "class",
-                    "layer": "internal",
-                    "signature": "",
-                    "summary": "Модель задачи скрапинга.",
-                    "docstring": "Модель задачи скрапинга.\n\nAttributes:\n    url: Целевой URL.\n    priority: Числовой приоритет (чем выше, тем раньше выполняется).\n    payload: Произвольный словарь пользовательских данных.\n    attempts: Количество предпринятых попыток выполнения.\n    max_attempts: Максимально допустимое количество попыток.\n    task_id: Уникальный идентификатор задачи.\n    dedup_key: Ключ для дедупликации (по умолчанию совпадает с url).\n    created_at: Временная метка создания задачи.\n    last_error: Сообщение о последней возникшей ошибке.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [
-                        "dataclass"
-                      ],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 14,
-                    "bases": [],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "pool",
-                "path": "chutils/scraping/concurrency/pool",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency.pool.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency.pool.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "queues",
-                "path": "chutils/scraping/concurrency/queues",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency.queues.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency.queues.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "reaper",
-                "path": "chutils/scraping/concurrency/reaper",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency.reaper.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.concurrency.reaper.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              }
-            ],
-            "symbols": [
-              {
-                "name": "_ModuleProxy",
-                "type": "class",
-                "layer": "private",
-                "signature": "",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 11,
-                "bases": [
-                  "types.ModuleType"
-                ],
-                "children": []
-              }
-            ]
-          },
-          {
-            "name": "fingerprint",
-            "path": "chutils/scraping/fingerprint",
-            "type": "package",
-            "layer": "internal",
-            "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint.",
-            "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint.",
-            "children": [
-              {
-                "name": "database",
-                "path": "chutils/scraping/fingerprint/database",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint.database.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint.database.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "external",
-                "path": "chutils/scraping/fingerprint/external",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Адаптеры для внешних генераторов отпечатков (browserforge, fpgen).",
-                "docstring": "Адаптеры для внешних генераторов отпечатков (browserforge, fpgen).",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ensure_browserforge",
-                    "type": "function",
-                    "layer": "private",
-                    "signature": "()",
-                    "summary": "Проверяет доступность библиотеки browserforge.",
-                    "docstring": "Проверяет доступность библиотеки browserforge.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 25,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "_ensure_fpgen",
-                    "type": "function",
-                    "layer": "private",
-                    "signature": "()",
-                    "summary": "Проверяет доступность библиотеки fpgen.",
-                    "docstring": "Проверяет доступность библиотеки fpgen.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 39,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "BrowserForgeProvider",
-                    "type": "class",
-                    "layer": "internal",
-                    "signature": "",
-                    "summary": "Провайдер генерации отпечатков через библиотеку browserforge (Apify).",
-                    "docstring": "Провайдер генерации отпечатков через библиотеку browserforge (Apify).",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 53,
-                    "bases": [],
-                    "children": [
-                      {
-                        "name": "__init__",
-                        "type": "method",
-                        "layer": "private",
-                        "signature": "(self, browser, os)",
-                        "summary": "Инициализирует провайдер browserforge.",
-                        "docstring": "Инициализирует провайдер browserforge.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 56,
-                        "bases": [],
-                        "children": []
-                      },
-                      {
-                        "name": "generate",
-                        "type": "method",
-                        "layer": "internal",
-                        "signature": "(self, seed)",
-                        "summary": "Генерирует профиль через обученную байесовскую сеть browserforge.",
-                        "docstring": "Генерирует профиль через обученную байесовскую сеть browserforge.\n\nПри передаче seed генерация полностью детерминизируется с изоляцией\nсостояния встроенного генератора случайных чисел (PRNG).\n\nArgs:\n    seed: Опциональный сид для воспроизводимой генерации.\n\nReturns:\n    Экземпляр FingerprintProfile.",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 61,
-                        "bases": [],
-                        "children": []
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "name": "models",
-                "path": "chutils/scraping/fingerprint/models",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint.models.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint.models.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "procedural",
-                "path": "chutils/scraping/fingerprint/procedural",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint.procedural.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint.procedural.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "synthesizer",
-                "path": "chutils/scraping/fingerprint/synthesizer",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint.synthesizer.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.fingerprint.synthesizer.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              }
-            ],
-            "symbols": [
-              {
-                "name": "_ModuleProxy",
-                "type": "class",
-                "layer": "private",
-                "signature": "",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 11,
-                "bases": [
-                  "types.ModuleType"
-                ],
-                "children": []
-              }
-            ]
-          },
-          {
-            "name": "humanize",
-            "path": "chutils/scraping/humanize",
-            "type": "package",
-            "layer": "internal",
-            "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует humanize и antidetect.",
-            "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует humanize и antidetect.",
-            "children": [
-              {
-                "name": "_actions_helpers",
-                "path": "chutils/scraping/humanize/_actions_helpers",
-                "type": "module",
-                "layer": "private",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize._actions_helpers.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize._actions_helpers.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "_mobile_scripts",
-                "path": "chutils/scraping/humanize/_mobile_scripts",
-                "type": "module",
-                "layer": "private",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.antidetect.mobile.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.antidetect.mobile.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "actions",
-                "path": "chutils/scraping/humanize/actions",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.actions.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.actions.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "antidetect",
-                "path": "chutils/scraping/humanize/antidetect",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.antidetect.core.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.antidetect.core.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "antidetect_scripts",
-                "path": "chutils/scraping/humanize/antidetect_scripts",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.antidetect.scripts.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.antidetect.scripts.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "behavior",
-                "path": "chutils/scraping/humanize/behavior",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.behavior.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.behavior.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "config",
-                "path": "chutils/scraping/humanize/config",
-                "type": "module",
-                "layer": "public",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.antidetect.config.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.antidetect.config.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "consent",
-                "path": "chutils/scraping/humanize/consent",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.consent.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.consent.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "math_utils",
-                "path": "chutils/scraping/humanize/math_utils",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.math_utils.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.math_utils.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "search",
-                "path": "chutils/scraping/humanize/search",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.search.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.search.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "touch",
-                "path": "chutils/scraping/humanize/touch",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.touch.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.touch.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "turnstile",
-                "path": "chutils/scraping/humanize/turnstile",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.turnstile.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.turnstile.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "warmer",
-                "path": "chutils/scraping/humanize/warmer",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.warmer.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.humanize.warmer.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              }
-            ],
-            "symbols": [
-              {
-                "name": "_HumanizeProxy",
-                "type": "class",
-                "layer": "private",
-                "signature": "",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 12,
-                "bases": [
-                  "types.ModuleType"
-                ],
-                "children": []
-              }
-            ]
-          },
-          {
-            "name": "nodriver",
-            "path": "chutils/scraping/nodriver",
-            "type": "module",
-            "layer": "internal",
-            "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.launchers.nodriver.",
-            "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.launchers.nodriver.",
-            "children": [],
-            "symbols": [
-              {
-                "name": "_ModuleProxy",
-                "type": "class",
-                "layer": "private",
-                "signature": "",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 11,
-                "bases": [
-                  "types.ModuleType"
-                ],
-                "children": []
-              }
-            ]
-          },
-          {
-            "name": "profiles",
-            "path": "chutils/scraping/profiles",
-            "type": "package",
-            "layer": "internal",
-            "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.",
-            "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.",
-            "children": [
-              {
-                "name": "adapters",
-                "path": "chutils/scraping/profiles/adapters",
-                "type": "package",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.adapters.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.adapters.",
-                "children": [
-                  {
-                    "name": "nodriver",
-                    "path": "chutils/scraping/profiles/adapters/nodriver",
-                    "type": "module",
-                    "layer": "internal",
-                    "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.adapters.nodriver.",
-                    "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.adapters.nodriver.",
-                    "children": [],
-                    "symbols": [
-                      {
-                        "name": "_ModuleProxy",
-                        "type": "class",
-                        "layer": "private",
-                        "signature": "",
-                        "summary": "",
-                        "docstring": "",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 11,
-                        "bases": [
-                          "types.ModuleType"
-                        ],
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "name": "playwright",
-                    "path": "chutils/scraping/profiles/adapters/playwright",
-                    "type": "module",
-                    "layer": "internal",
-                    "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.adapters.playwright.",
-                    "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.adapters.playwright.",
-                    "children": [],
-                    "symbols": [
-                      {
-                        "name": "_ModuleProxy",
-                        "type": "class",
-                        "layer": "private",
-                        "signature": "",
-                        "summary": "",
-                        "docstring": "",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 11,
-                        "bases": [
-                          "types.ModuleType"
-                        ],
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "name": "selenium",
-                    "path": "chutils/scraping/profiles/adapters/selenium",
-                    "type": "module",
-                    "layer": "internal",
-                    "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.adapters.selenium.",
-                    "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.adapters.selenium.",
-                    "children": [],
-                    "symbols": [
-                      {
-                        "name": "_ModuleProxy",
-                        "type": "class",
-                        "layer": "private",
-                        "signature": "",
-                        "summary": "",
-                        "docstring": "",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 11,
-                        "bases": [
-                          "types.ModuleType"
-                        ],
-                        "children": []
-                      }
-                    ]
-                  }
-                ],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "hygiene",
-                "path": "chutils/scraping/profiles/hygiene",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.hygiene.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.hygiene.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "manager",
-                "path": "chutils/scraping/profiles/manager",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.manager.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.manager.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "models",
-                "path": "chutils/scraping/profiles/models",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.models.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.models.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "storage",
-                "path": "chutils/scraping/profiles/storage",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.storage.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.profiles.storage.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              }
-            ],
-            "symbols": [
-              {
-                "name": "_ModuleProxy",
-                "type": "class",
-                "layer": "private",
-                "signature": "",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 11,
-                "bases": [
-                  "types.ModuleType"
-                ],
-                "children": []
-              }
-            ]
-          },
-          {
-            "name": "proxy",
-            "path": "chutils/scraping/proxy",
-            "type": "package",
-            "layer": "internal",
-            "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.",
-            "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.",
-            "children": [
-              {
-                "name": "adapters",
-                "path": "chutils/scraping/proxy/adapters",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.adapters.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.adapters.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "cache",
-                "path": "chutils/scraping/proxy/cache",
-                "type": "module",
-                "layer": "public",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.cache.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.cache.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "extension",
-                "path": "chutils/scraping/proxy/extension",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.extension.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.extension.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "models",
-                "path": "chutils/scraping/proxy/models",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.models.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.models.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "parser",
-                "path": "chutils/scraping/proxy/parser",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.parser.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.parser.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "pool",
-                "path": "chutils/scraping/proxy/pool",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.pool.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.pool.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "resolver",
-                "path": "chutils/scraping/proxy/resolver",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.resolver.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.resolver.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "storage",
-                "path": "chutils/scraping/proxy/storage",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.storage.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.storage.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "tunnel",
-                "path": "chutils/scraping/proxy/tunnel",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.tunnel.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.proxy.tunnel.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              }
-            ],
-            "symbols": [
-              {
-                "name": "_ModuleProxy",
-                "type": "class",
-                "layer": "private",
-                "signature": "",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 11,
-                "bases": [
-                  "types.ModuleType"
-                ],
-                "children": []
-              }
-            ]
-          },
-          {
-            "name": "testing",
-            "path": "chutils/scraping/testing",
-            "type": "package",
-            "layer": "public",
-            "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.",
-            "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.",
-            "children": [
-              {
-                "name": "assertions",
-                "path": "chutils/scraping/testing/assertions",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.assertions.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.assertions.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "dom_models",
-                "path": "chutils/scraping/testing/dom_models",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.dom_models.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.dom_models.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "dom_scripts",
-                "path": "chutils/scraping/testing/dom_scripts",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.dom_scripts.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.dom_scripts.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "fixtures",
-                "path": "chutils/scraping/testing/fixtures",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.fixtures.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.fixtures.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "mocks",
-                "path": "chutils/scraping/testing/mocks",
-                "type": "package",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.mocks.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.mocks.",
-                "children": [
-                  {
-                    "name": "dom",
-                    "path": "chutils/scraping/testing/mocks/dom",
-                    "type": "module",
-                    "layer": "internal",
-                    "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.mocks.dom.",
-                    "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.mocks.dom.",
-                    "children": [],
-                    "symbols": [
-                      {
-                        "name": "_ModuleProxy",
-                        "type": "class",
-                        "layer": "private",
-                        "signature": "",
-                        "summary": "",
-                        "docstring": "",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 11,
-                        "bases": [
-                          "types.ModuleType"
-                        ],
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "name": "nodriver",
-                    "path": "chutils/scraping/testing/mocks/nodriver",
-                    "type": "module",
-                    "layer": "internal",
-                    "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.mocks.nodriver.",
-                    "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.mocks.nodriver.",
-                    "children": [],
-                    "symbols": [
-                      {
-                        "name": "_ModuleProxy",
-                        "type": "class",
-                        "layer": "private",
-                        "signature": "",
-                        "summary": "",
-                        "docstring": "",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 11,
-                        "bases": [
-                          "types.ModuleType"
-                        ],
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "name": "playwright",
-                    "path": "chutils/scraping/testing/mocks/playwright",
-                    "type": "module",
-                    "layer": "internal",
-                    "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.mocks.playwright.",
-                    "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.mocks.playwright.",
-                    "children": [],
-                    "symbols": [
-                      {
-                        "name": "_ModuleProxy",
-                        "type": "class",
-                        "layer": "private",
-                        "signature": "",
-                        "summary": "",
-                        "docstring": "",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 11,
-                        "bases": [
-                          "types.ModuleType"
-                        ],
-                        "children": []
-                      }
-                    ]
-                  },
-                  {
-                    "name": "selenium",
-                    "path": "chutils/scraping/testing/mocks/selenium",
-                    "type": "module",
-                    "layer": "internal",
-                    "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.mocks.selenium.",
-                    "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.mocks.selenium.",
-                    "children": [],
-                    "symbols": [
-                      {
-                        "name": "_ModuleProxy",
-                        "type": "class",
-                        "layer": "private",
-                        "signature": "",
-                        "summary": "",
-                        "docstring": "",
-                        "breadcrumbs": {
-                          "is_async": false,
-                          "is_thread_safe": false,
-                          "is_heavy": false,
-                          "is_abstract": false,
-                          "decorators": [],
-                          "tags": [],
-                          "custom_metadata": {}
-                        },
-                        "line_number": 11,
-                        "bases": [
-                          "types.ModuleType"
-                        ],
-                        "children": []
-                      }
-                    ]
-                  }
-                ],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "recorder",
-                "path": "chutils/scraping/testing/recorder",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.recorder.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.recorder.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "server",
-                "path": "chutils/scraping/testing/server",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.server.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.server.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "session",
-                "path": "chutils/scraping/testing/session",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.session.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.session.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "snapshot",
-                "path": "chutils/scraping/testing/snapshot",
-                "type": "module",
-                "layer": "internal",
-                "summary": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.snapshot.",
-                "docstring": "Модуль-фасад для обратной совместимости. Реэкспортирует компоненты из browser_stealth.testing.snapshot.",
-                "children": [],
-                "symbols": [
-                  {
-                    "name": "_ModuleProxy",
-                    "type": "class",
-                    "layer": "private",
-                    "signature": "",
-                    "summary": "",
-                    "docstring": "",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 11,
-                    "bases": [
-                      "types.ModuleType"
-                    ],
-                    "children": []
-                  }
-                ]
-              }
-            ],
-            "symbols": [
-              {
-                "name": "_ModuleProxy",
-                "type": "class",
-                "layer": "private",
-                "signature": "",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 11,
-                "bases": [
-                  "types.ModuleType"
-                ],
-                "children": []
-              }
-            ]
-          }
-        ],
-        "symbols": [
-          {
-            "name": "_LAZY_MAPPING",
-            "type": "constant",
-            "layer": "private",
-            "signature": null,
-            "summary": "",
-            "docstring": null,
-            "breadcrumbs": {
-              "is_async": false,
-              "is_thread_safe": false,
-              "is_heavy": false,
-              "is_abstract": false,
-              "decorators": [],
-              "tags": [],
-              "custom_metadata": {}
-            },
-            "line_number": 170,
-            "bases": [],
-            "children": []
-          },
-          {
-            "name": "__getattr__",
-            "type": "function",
-            "layer": "private",
-            "signature": "(name)",
-            "summary": "",
-            "docstring": "",
-            "breadcrumbs": {
-              "is_async": false,
-              "is_thread_safe": false,
-              "is_heavy": false,
-              "is_abstract": false,
-              "decorators": [],
-              "tags": [],
-              "custom_metadata": {}
-            },
-            "line_number": 228,
-            "bases": [],
-            "children": []
-          },
-          {
-            "name": "__dir__",
-            "type": "function",
-            "layer": "private",
-            "signature": "()",
-            "summary": "",
-            "docstring": "",
-            "breadcrumbs": {
-              "is_async": false,
-              "is_thread_safe": false,
-              "is_heavy": false,
-              "is_abstract": false,
-              "decorators": [],
-              "tags": [],
-              "custom_metadata": {}
-            },
-            "line_number": 236,
-            "bases": [],
-            "children": []
-          }
-        ]
-      },
-      {
         "name": "secret_manager",
         "path": "chutils/secret_manager",
         "type": "package",
@@ -36064,7 +33346,7 @@
               {
                 "name": "PaginatorKeyboard",
                 "type": "class",
-                "layer": "public",
+                "layer": "internal",
                 "signature": "",
                 "summary": "Управляющий класс пагинации динамических Inline-клавиатур.",
                 "docstring": "Управляющий класс пагинации динамических Inline-клавиатур.",
@@ -39713,7 +36995,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 415,
+        "line_number": 344,
         "bases": [],
         "children": []
       },
@@ -39733,7 +37015,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 448,
+        "line_number": 377,
         "bases": [],
         "children": []
       },
@@ -39753,7 +37035,7 @@
           "tags": [],
           "custom_metadata": {}
         },
-        "line_number": 468,
+        "line_number": 397,
         "bases": [],
         "children": []
       }
@@ -39872,7 +37154,17 @@
     },
     {
       "source": "chutils/captcha",
+      "target": "/anticaptcha",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha",
       "target": "/base",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha",
+      "target": "/capmonster",
       "weight": 2
     },
     {
@@ -39896,9 +37188,34 @@
       "weight": 2
     },
     {
+      "source": "chutils/captcha",
+      "target": "/rucaptcha",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha/anticaptcha",
+      "target": "/base",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha/anticaptcha",
+      "target": "/exceptions",
+      "weight": 3
+    },
+    {
       "source": "chutils/captcha/base",
       "target": "chutils/exceptions",
       "weight": 2
+    },
+    {
+      "source": "chutils/captcha/capmonster",
+      "target": "/base",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha/capmonster",
+      "target": "/exceptions",
+      "weight": 3
     },
     {
       "source": "chutils/captcha/exceptions",
@@ -39934,6 +37251,16 @@
       "source": "chutils/captcha/recaptcha_enterprise",
       "target": "/models",
       "weight": 1
+    },
+    {
+      "source": "chutils/captcha/rucaptcha",
+      "target": "/base",
+      "weight": 2
+    },
+    {
+      "source": "chutils/captcha/rucaptcha",
+      "target": "/exceptions",
+      "weight": 3
     },
     {
       "source": "chutils/cli",
@@ -41236,86 +38563,6 @@
       "weight": 3
     },
     {
-      "source": "chutils/scraping/captcha",
-      "target": "chutils/exceptions",
-      "weight": 1
-    },
-    {
-      "source": "chutils/scraping/captcha",
-      "target": "/exceptions",
-      "weight": 4
-    },
-    {
-      "source": "chutils/scraping/captcha/anticaptcha",
-      "target": "/base",
-      "weight": 2
-    },
-    {
-      "source": "chutils/scraping/captcha/anticaptcha",
-      "target": "/exceptions",
-      "weight": 3
-    },
-    {
-      "source": "chutils/scraping/captcha/base",
-      "target": "chutils/captcha/base",
-      "weight": 3
-    },
-    {
-      "source": "chutils/scraping/captcha/capmonster",
-      "target": "/base",
-      "weight": 2
-    },
-    {
-      "source": "chutils/scraping/captcha/capmonster",
-      "target": "/exceptions",
-      "weight": 3
-    },
-    {
-      "source": "chutils/scraping/captcha/exceptions",
-      "target": "chutils/captcha/exceptions",
-      "weight": 4
-    },
-    {
-      "source": "chutils/scraping/captcha/geetest",
-      "target": "chutils/captcha/geetest",
-      "weight": 2
-    },
-    {
-      "source": "chutils/scraping/captcha/models",
-      "target": "chutils/captcha/models",
-      "weight": 3
-    },
-    {
-      "source": "chutils/scraping/captcha/recaptcha_enterprise",
-      "target": "chutils/captcha/recaptcha_enterprise",
-      "weight": 2
-    },
-    {
-      "source": "chutils/scraping/captcha/rucaptcha",
-      "target": "/base",
-      "weight": 2
-    },
-    {
-      "source": "chutils/scraping/captcha/rucaptcha",
-      "target": "/exceptions",
-      "weight": 3
-    },
-    {
-      "source": "chutils/scraping/concurrency/metrics",
-      "target": "chutils/metrics",
-      "weight": 1
-    },
-    {
-      "source": "chutils/scraping/fingerprint/external",
-      "target": "chutils/exceptions",
-      "weight": 1
-    },
-    {
-      "source": "chutils/scraping/fingerprint/external",
-      "target": "/models",
-      "weight": 5
-    },
-    {
       "source": "chutils/secret_manager",
       "target": "/core",
       "weight": 1
@@ -41830,8 +39077,8 @@
   "metadata": {
     "chutils_version": "4.0.0",
     "project_version": "4.0.0",
-    "git_commit": "2b2a5af8be3bcd4cf0c45d71c2b7cb2239ed8ecc (dirty)",
-    "generated_at": "2026-10-01T13:55:48.762343+00:00",
-    "project_hash": "9e1ff0899a4c55474e6ba046212cb17dff8bf90f50a69b267807c9544c818e10"
+    "git_commit": "e474206a43cbb104471d8a01af987ec6ce57192b (dirty)",
+    "generated_at": "2026-10-01T14:29:36.940085+00:00",
+    "project_hash": "703c8342f5f5db0c4d4e1ced2ffed743e114f90a5eb69f8b09fcce6ab5f82fb5"
   }
 }
