@@ -6,6 +6,14 @@ authors = [{ name = "Chu4hel", email = "sergeiivanov636@gmail.com" }]
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.11,<3.16"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+]
 dependencies = [
     "pyyaml (>=6.0.3)",
     "python-dotenv (>=1.2.2)",
@@ -32,7 +40,6 @@ db = [
     "aiosqlite (>=0.20.0)",
     "alembic (>=1.13.0)",
 ]
-captcha = ["httpx (>=0.27.0)"]
 redis = [
     "redis (>=5.0.0)"
 ]

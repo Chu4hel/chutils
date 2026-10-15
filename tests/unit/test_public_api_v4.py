@@ -2,30 +2,17 @@
 
 from __future__ import annotations
 
+import pytest
+
 import chutils
 
 
-def test_public_api_captcha_exports() -> None:
-    """Проверяет экспорт новых классов и моделей капч из корня chutils."""
-    from chutils import (
-        AsyncGeeTestSolver,
-        AsyncReCaptchaEnterpriseSolver,
-        GeeTestResult,
-        GeeTestSolver,
-        GeeTestTaskConfig,
-        ReCaptchaEnterpriseConfig,
-        ReCaptchaEnterpriseSolver,
-    )
+def test_public_api_captcha_removed() -> None:
+    """Проверяет, что решатели капч вынесены из chutils в pycaptcha-hub."""
+    assert "captcha" not in chutils.__all__
+    assert "GeeTestSolver" not in chutils.__all__
+    assert "ReCaptchaEnterpriseSolver" not in chutils.__all__
+    assert "RuCaptchaSolver" not in chutils.__all__
 
-    assert GeeTestSolver is not None
-    assert AsyncGeeTestSolver is not None
-    assert ReCaptchaEnterpriseSolver is not None
-    assert AsyncReCaptchaEnterpriseSolver is not None
-    assert GeeTestResult is not None
-    assert GeeTestTaskConfig is not None
-    assert ReCaptchaEnterpriseConfig is not None
-
-    assert "GeeTestSolver" in chutils.__all__
-    assert "ReCaptchaEnterpriseSolver" in chutils.__all__
-
-
+    with pytest.raises(AttributeError):
+        _ = chutils.GeeTestSolver

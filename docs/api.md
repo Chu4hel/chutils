@@ -341,27 +341,6 @@ members:
 - WebClient
 - AsyncWebClient
 
-## Модуль `captcha` (Решатели капчи)
-
-::: chutils.captcha
-options:
-members:
-
-- RuCaptchaSolver
-- AsyncRuCaptchaSolver
-- AntiCaptchaSolver
-- AsyncAntiCaptchaSolver
-- CapMonsterSolver
-- AsyncCapMonsterSolver
-- GeeTestSolver
-- AsyncGeeTestSolver
-- ReCaptchaEnterpriseSolver
-- AsyncReCaptchaEnterpriseSolver
-- CaptchaError
-- CaptchaTimeoutError
-- CaptchaBalanceError
-- CaptchaServiceError
-
 ## Модуль `plugins` (Система плагинов)
 
 ::: chutils.plugins

@@ -52,6 +52,7 @@ Every time you start a new project, you have to solve the same tasks:
 - **🩺 Diagnostics API (chutils.diagnostics):** An asynchronous, thread-safe health checking framework with built-in
   checks (keyring, config) and integrations for popular web frameworks (FastAPI, Flask).
 - **🎭 Browser Stealth & Antidetect:** Advanced browser antidetect, human-like behavior (WindMouse), profiles and proxy pooling are moved to a dedicated library [browser-stealth](https://github.com/Chu4hel/browser-stealth) starting from v4.0.0.
+- **🧩 Captcha Solvers:** Captcha solving integrations (RuCaptcha, Anti-Captcha, CapMonster, GeeTest, reCAPTCHA Enterprise) have been extracted to a standalone library [pycaptcha-hub](https://github.com/Chu4hel/pycaptcha-hub).
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.
 - **🚀 Ready to Use:** Just install and use.
 

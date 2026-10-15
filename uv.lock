@@ -509,9 +509,6 @@ dependencies = [
 aws = [
     { name = "boto3" },
 ]
-captcha = [
-    { name = "httpx" },
-]
 crypto = [
     { name = "cryptography" },
 ]
@@ -629,7 +626,6 @@ requires-dist = [
     { name = "curl-cffi", marker = "extra == 'tls'", specifier = ">=0.7.0" },
     { name = "google-cloud-secret-manager", marker = "extra == 'full'", specifier = ">=2.20.0" },
     { name = "google-cloud-secret-manager", marker = "extra == 'gcp'", specifier = ">=2.20.0" },
-    { name = "httpx", marker = "extra == 'captcha'", specifier = ">=0.27.0" },
     { name = "httpx", marker = "extra == 'full'", specifier = ">=0.27.0" },
     { name = "httpx", marker = "extra == 'web'", specifier = ">=0.27.0" },
     { name = "keyring", marker = "extra == 'full'", specifier = ">=25.7.0" },
@@ -667,7 +663,7 @@ requires-dist = [
     { name = "websockets", marker = "extra == 'full'", specifier = ">=14.0.0" },
     { name = "websockets", marker = "extra == 'websockets'", specifier = ">=14.0.0" },
 ]
-provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "websockets", "tls", "db", "captcha", "redis", "qt", "qt-pyside", "vk", "vkma", "testing", "otel", "full"]
+provides-extras = ["secrets", "aws", "gcp", "pydantic", "json", "watch", "rich", "date", "metrics", "text", "crypto", "web", "websockets", "tls", "db", "redis", "qt", "qt-pyside", "vk", "vkma", "testing", "otel", "full"]
 
 [package.metadata.requires-dev]
 dev = [
