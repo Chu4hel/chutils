@@ -1582,16 +1582,15 @@ chutils env validate
 
 При успешной валидации команда вернет код `0`, при сбое — выведет подробную таблицу ошибок и вернет код `1`.
 
-## 25. Синтез цифровой личности браузера и кэширование профилей (chutils.scraping.fingerprint)
+## 25. Синтез цифровой личности браузера и кэширование профилей (browser-stealth)
 
-Для долгосрочной автоматизации и обхода WAF (Cloudflare, DataDome, Akamai) важно, чтобы каждый аккаунт или профиль сессии обладал **физически непротиворечивым** и **постоянным** цифровым отпечатком (видеокарта, процессор, память, геометрия экрана, панель задач, периферия).
+> Начиная с версии `chutils` v4.0.0, функционал синтеза отпечатков, процедурной генерации и антидетекта вынесен в специализированную библиотеку [`browser-stealth`](https://github.com/Chu4hel/browser-stealth).
 
-### Воспроизводимый профиль по сиду (Zero-Dependency)
-
-Встроенный процедурный генератор не требует сторонних библиотек и гарантирует, что для одного и того же сида характеристики оборудования останутся идентичными при любых перезапусках:
+Для долгосрочной автоматизации и обхода WAF (Cloudflare, DataDome, Akamai) используйте `browser-stealth`:
 
 ```python
-from chutils.scraping import FingerprintSynthesizer
+from browser_stealth.fingerprint import FingerprintSynthesizer
+from browser_stealth.antidetect import AntidetectConfig
 
 # Генерация согласованного отпечатка ПК/ноутбука
 profile = FingerprintSynthesizer.create_procedural(seed="user_account_42")
@@ -1601,32 +1600,5 @@ print(profile.hardware.concurrency, profile.hardware.memory_gb)  # 12 ядер, 
 print(profile.screen.width, profile.screen.avail_height)  # 1920x1040 (с учетом панели задач)
 ```
 
-### Автоматическое сохранение и кэширование на диске (`get_or_create`)
-
-Метод `get_or_create` позволяет автоматически сохранять сгенерированные профили в JSON-файлы и мгновенно загружать их при повторных запусках:
-
-```python
-from chutils.scraping import FingerprintSynthesizer
-
-synthesizer = FingerprintSynthesizer(mode="auto")
-
-# 1. При первом запуске: синтезирует отпечаток и сохраняет в ./profiles/acc_1.json
-# 2. При всех последующих: мгновенно загружает существующий отпечаток из файла
-profile = synthesizer.get_or_create(seed="acc_1", storage_dir="./profiles")
-
-# Прямое применение к nodriver Tab или Playwright Page
-await profile.apply_to_tab(tab)
-```
-
-### Байесовская ML-генерация с детерминизацией (`browserforge`)
-
-Если в системе установлен пакет `browserforge` (`pip install browserforge`), `chutils` позволяет использовать обученную байесовскую сеть с поддержкой `seed` и безопасной изоляцией PRNG:
-
-```python
-from chutils.scraping.humanize import AntidetectConfig
-
-# Генерация статистически безупречного отпечатка по сиду:
-cfg = AntidetectConfig.from_browserforge(seed="acc_1")
-await cfg.apply_to_nodriver(tab)
-```
+Подробнее см. в документации [browser-stealth](https://github.com/Chu4hel/browser-stealth).
 

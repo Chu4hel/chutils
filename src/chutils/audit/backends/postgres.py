@@ -15,9 +15,7 @@ from chutils.audit._hash import compute_record_hash
 from chutils.audit.backends.base import BaseAuditBackend
 
 if TYPE_CHECKING:
-    from typing import Any, Protocol
-
-    from typing_extensions import Self
+    from typing import Any, Protocol, Self
 
     class _DBAPICursor(Protocol):
         def execute(

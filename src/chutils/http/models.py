@@ -1,4 +1,6 @@
-"""Модели данных конфигурации прокси-серверов."""
+"""Модели данных HTTP-клиента и сетевых конфигураций."""
+
+from __future__ import annotations
 
 import base64
 from typing import Literal

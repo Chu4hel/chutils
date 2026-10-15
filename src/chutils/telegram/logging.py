@@ -6,9 +6,7 @@ import logging  # chutils: ignore[ChutilsIntegrationRule]
 import time
 from collections.abc import Callable
 from types import TracebackType
-from typing import Any, TypeVar
-
-from typing_extensions import Self
+from typing import Any, Self, TypeVar
 
 from chutils.telegram.access import _extract_user_info
 from chutils.telegram.rate_limit import _extract_chat_id

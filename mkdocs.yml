@@ -26,7 +26,6 @@ nav:
   - Рецепты: recipes.md
   - Модули и интеграции:
       - HTTP-клиент и стриминг: http.md
-      - Веб-утилиты (web): web.md
       - Интеграция с Telegram: telegram.md
       - ВКонтакте Бот (Callback API): vk_bot.md
       - VK Mini Apps (VKMA): vkma.md
@@ -34,8 +33,6 @@ nav:
       - Журнал аудита: audit.md
       - Key-Value хранилище (Store): store.md
       - Интеграция с Qt: qt.md
-      - Имитация поведения (scraping): scraping.md
-      - Решение капчи (captcha): captcha.md
       - Система плагинов: plugins.md
       - Кастомные провайдеры конфигов: custom_config_providers.md
   - Справочник API: api.md

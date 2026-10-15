@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 
 import pytest
 
@@ -7,20 +7,20 @@ from chutils.time import _ensure_aware_utc, humanize_timedelta, parse_datetime, 
 
 def test_utc_now():
     now = utc_now()
-    assert now.tzinfo == timezone.utc
+    assert now.tzinfo == UTC
     # Проверяем, что время актуальное (разница меньше секунды)
-    assert abs((datetime.now(timezone.utc) - now).total_seconds()) < 1.0
+    assert abs((datetime.now(UTC) - now).total_seconds()) < 1.0
 
 
 def test_ensure_aware_utc_already_aware():
     # Уже в UTC
-    dt_utc = datetime(2023, 1, 1, 12, 0, tzinfo=timezone.utc)
+    dt_utc = datetime(2023, 1, 1, 12, 0, tzinfo=UTC)
     assert _ensure_aware_utc(dt_utc) == dt_utc
 
     # В другом часовом поясе
     dt_ny = datetime(2023, 1, 1, 12, 0, tzinfo=timezone(timedelta(hours=-5)))
     aware_utc = _ensure_aware_utc(dt_ny)
-    assert aware_utc.tzinfo == timezone.utc
+    assert aware_utc.tzinfo == UTC
     assert aware_utc.hour == 17  # 12 + 5
 
 
@@ -29,32 +29,32 @@ def test_ensure_aware_utc_naive():
     dt_naive = datetime(2023, 1, 1, 12, 0)  # noqa: DTZ001
     aware_utc = _ensure_aware_utc(dt_naive)
 
-    assert aware_utc.tzinfo == timezone.utc
+    assert aware_utc.tzinfo == UTC
     # Проверяем корректность конвертации из локального времени
-    assert aware_utc == dt_naive.astimezone(timezone.utc)
+    assert aware_utc == dt_naive.astimezone(UTC)
 
 
 def test_parse_datetime_timestamps():
     # Секунды
     ts = 1672574400  # 2023-01-01 12:00:00 UTC
     dt = parse_datetime(ts)
-    assert dt == datetime(2023, 1, 1, 12, 0, tzinfo=timezone.utc)
+    assert dt == datetime(2023, 1, 1, 12, 0, tzinfo=UTC)
 
     # Миллисекунды
     ts_ms = 1672574400000
     dt_ms = parse_datetime(ts_ms)
-    assert dt_ms == datetime(2023, 1, 1, 12, 0, tzinfo=timezone.utc)
+    assert dt_ms == datetime(2023, 1, 1, 12, 0, tzinfo=UTC)
 
 
 def test_parse_datetime_iso_strings():
     # ISO без зоны
     s = "2023-01-01T12:00:00"
     dt = parse_datetime(s)
-    assert dt.tzinfo == timezone.utc
+    assert dt.tzinfo == UTC
     # ISO с зоной
     s_zone = "2023-01-01T12:00:00+03:00"
     dt_zone = parse_datetime(s_zone)
-    assert dt_zone == datetime(2023, 1, 1, 9, 0, tzinfo=timezone.utc)
+    assert dt_zone == datetime(2023, 1, 1, 9, 0, tzinfo=UTC)
 
 
 def test_parse_datetime_invalid():

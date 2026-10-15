@@ -1,6 +1,5 @@
 import typing as t
-
-from typing_extensions import Self
+from typing import Self
 
 from .base import ChutilsException, _BaseExceptionGroup
 

@@ -75,7 +75,6 @@ class LoggerBuilder:
         json_format: bool | None = None,
         log_file_name: str | None = None,
         file_logging: bool | None = None,
-        no_file: bool | None = None,
         rotation_type: str | None = None,
         max_bytes: int | None = None,
         compress: bool | None = None,
@@ -101,7 +100,6 @@ class LoggerBuilder:
             json_format: Использовать ли JSON формат.
             log_file_name: Имя файла лога.
             file_logging: Включить или отключить запись в файл.
-            no_file: Отключить запись в файл (эквивалент file_logging=False).
             rotation_type: Тип ротации файлов.
             max_bytes: Максимальный размер файла в байтах.
             compress: Сжимать ли ротированные файлы.
@@ -122,7 +120,6 @@ class LoggerBuilder:
         overrides: dict[str, Any] = {
             "log_file_name": log_file_name,
             "file_logging": file_logging,
-            "no_file": no_file,
             "rotation_type": rotation_type,
             "max_bytes": max_bytes,
             "compress": compress,
@@ -407,15 +404,6 @@ class LoggerBuilder:
         file_logging = params.get("file_logging")
         if file_logging is None:
             file_logging = params.get("enable_file_logging")
-        if file_logging is None:
-            no_file = params.get("no_file")
-            if no_file is not None:
-                no_file_val = (
-                    no_file.lower() in ["true", "1", "yes", "y"]
-                    if isinstance(no_file, str)
-                    else bool(no_file)
-                )
-                file_logging = not no_file_val
 
         if file_logging is not None:
             file_logging_val = (
@@ -430,7 +418,6 @@ class LoggerBuilder:
             is_test_module = (
                 self.name.startswith(
                     (
-                        "chutils.scraping.testing",
                         "chutils.testing",
                         "chutils.vk.testing",
                     )

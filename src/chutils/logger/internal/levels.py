@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 import logging  # chutils: ignore[ChutilsIntegrationRule]
-from enum import Enum
+from enum import StrEnum
 from typing import Any, cast
 
 # --- Пользовательские уровни логирования ---
@@ -23,7 +21,7 @@ def init_custom_levels() -> None:
         logging.addLevelName(DEVDEBUG_LEVEL_NUM, DEVDEBUG_LEVEL_NAME)
 
 
-class LogLevel(str, Enum):
+class LogLevel(StrEnum):
     """
     Перечисление для поддерживаемых уровней логирования.
     """

@@ -1,6 +1,6 @@
 import pytest
 
-from chutils.web.user_agent import UserAgentRotator
+from chutils.http.user_agent import UserAgentRotator
 
 
 def test_user_agent_rotator_default_list() -> None:

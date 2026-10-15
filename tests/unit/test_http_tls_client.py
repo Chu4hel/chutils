@@ -8,9 +8,8 @@ import pytest
 
 from chutils.exceptions import OptionalDependencyError
 from chutils.http.fallback import HttpResponse
+from chutils.http.models import ProxyConfig
 from chutils.http.tls_client import TLSAsyncClient, TLSSession
-from chutils.scraping.proxy.models import ProxyConfig
-from chutils.scraping.proxy.pool import ProxyPool
 
 
 def test_tls_session_raises_when_curl_cffi_missing():
@@ -150,7 +149,15 @@ async def test_tls_client_proxy_integration():
     p1 = ProxyConfig(
         protocol="http", host="10.0.0.1", port=8080, username="user", password="pass"
     )
-    pool = ProxyPool([p1])
+
+    class DummyProxyPool:
+        def __init__(self, proxies: list[ProxyConfig]) -> None:
+            self.proxies = proxies
+
+        def get_next(self) -> ProxyConfig | None:
+            return self.proxies[0]
+
+    pool = DummyProxyPool([p1])
 
     mock_async_session = MagicMock()
     mock_curl_resp = MagicMock()
@@ -179,13 +186,8 @@ async def test_tls_client_proxy_integration():
 
 @pytest.mark.asyncio
 async def test_tls_client_proxy_tunnel_integration():
-    """TLSAsyncClient успешно работает с локальным туннелем аутентификации AsyncProxyTunnel."""
-    from chutils.scraping.proxy.tunnel import AsyncProxyTunnel
-
-    upstream_proxy = ProxyConfig(
-        protocol="http", host="proxy.example.com", port=8000, username="u", password="p"
-    )
-    tunnel = AsyncProxyTunnel(upstream_proxy, local_host="127.0.0.1", local_port=0)
+    """TLSAsyncClient успешно работает с локальным URL прокси-туннеля."""
+    local_tunnel_url = "http://127.0.0.1:18888"
 
     mock_async_session = MagicMock()
     mock_curl_resp = MagicMock()
@@ -204,13 +206,13 @@ async def test_tls_client_proxy_tunnel_integration():
             return_value=mock_async_session,
         ) as mock_create,
     ):
-        async with tunnel:
-            async with TLSAsyncClient(
-                impersonate="chrome120", proxy=tunnel.local_url
-            ) as client:
-                resp = await client.get("https://target.com")
-                assert resp.status_code == 200
-                assert resp.text == "tunnel-ok"
-                mock_create.assert_called_once()
-                _, kwargs = mock_create.call_args
-                assert kwargs["proxy"] == tunnel.local_url
+        async with TLSAsyncClient(
+            impersonate="chrome120", proxy=local_tunnel_url
+        ) as client:
+            resp = await client.get("https://target.com")
+            assert resp.status_code == 200
+            assert resp.text == "tunnel-ok"
+            mock_create.assert_called_once()
+            _, kwargs = mock_create.call_args
+            assert kwargs["proxy"] == local_tunnel_url
+

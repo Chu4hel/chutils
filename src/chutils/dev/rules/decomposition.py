@@ -33,6 +33,8 @@ class CodeDecompositionRule(Rule):
         max_file_classes = config.get("max_file_classes", 5)
         exclude_docstrings = bool(config.get("decomposition_exclude_docstrings", False))
         docstrings_weight = float(config.get("decomposition_docstrings_weight", 1.0))
+        exclude_imports = bool(config.get("decomposition_exclude_imports", False))
+        imports_weight = float(config.get("decomposition_imports_weight", 1.0))
 
         for file_path in files:
             if not file_path.endswith(".py"):
@@ -57,9 +59,10 @@ class CodeDecompositionRule(Rule):
             if should_skip:
                 continue
 
-            # 2. Парсим AST для подсчета классов и определения диапазонов docstrings
+            # 2. Парсим AST для подсчета классов и определения диапазонов docstrings и imports
             class_count = 0
             docstring_ranges: list[tuple[int, int]] = []
+            import_ranges: list[tuple[int, int]] = []
 
             def _is_string_constant(n: ast.AST) -> bool:
                 if isinstance(n, ast.Constant):
@@ -102,19 +105,29 @@ class CodeDecompositionRule(Rule):
                                 end = getattr(first, "end_lineno", None)
                                 if start is not None and end is not None:
                                     docstring_ranges.append((start, end))
+                    elif isinstance(node, (ast.Import, ast.ImportFrom)):
+                        start = getattr(node, "lineno", None)
+                        end = getattr(node, "end_lineno", None)
+                        if start is not None:
+                            import_ranges.append((start, end if end is not None else start))
             except Exception:
-                # Если синтаксическая ошибка, пропускаем AST-анализ, но классы и docstring-фильтрацию пропускаем
+                # Если синтаксическая ошибка, пропускаем AST-анализ, но классы и docstring/import фильтрацию пропускаем
                 pass
 
-            # 3. Подсчет строк кода с учетом веса docstrings
+            # 3. Подсчет строк кода с учетом веса docstrings и imports
             lines = content.splitlines()
             total_lines = len(lines)
 
-            # Определяем, какие строки относятся к docstrings (1-indexed)
+            # Определяем, какие строки относятся к docstrings и imports (1-indexed)
             docstring_lines_set = set()
             for start, end in docstring_ranges:
                 for idx in range(start, end + 1):
                     docstring_lines_set.add(idx)
+
+            import_lines_set = set()
+            for start, end in import_ranges:
+                for idx in range(start, end + 1):
+                    import_lines_set.add(idx)
 
             # Вычисляем взвешенное количество строк
             weighted_line_count = 0.0
@@ -123,6 +136,10 @@ class CodeDecompositionRule(Rule):
                     if exclude_docstrings:
                         continue
                     weighted_line_count += docstrings_weight
+                elif idx in import_lines_set:
+                    if exclude_imports:
+                        continue
+                    weighted_line_count += imports_weight
                 else:
                     weighted_line_count += 1.0
 

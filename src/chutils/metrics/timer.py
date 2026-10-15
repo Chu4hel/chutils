@@ -3,9 +3,7 @@ import inspect
 import time
 from collections.abc import Callable
 from types import TracebackType
-from typing import Any, TypeVar
-
-from typing_extensions import Self
+from typing import Any, Self, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
 

@@ -291,7 +291,7 @@ class InitCommand(BaseCommand):
 
                 ensure_dir(ci_path.parent)
                 yaml_content = generate_workflow_yaml(
-                    python_versions=["3.10", "3.11", "3.12", "3.13"],
+                    python_versions=["3.11", "3.12", "3.13"],
                     with_pytest=True,
                     with_mypy=True,
                     with_ruff=True,

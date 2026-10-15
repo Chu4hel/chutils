@@ -3,8 +3,7 @@ from __future__ import annotations
 import importlib.util
 import os
 import typing as t
-
-from typing_extensions import Self
+from typing import Self
 
 T = t.TypeVar("T", bound="BaseEnvManifest")
 

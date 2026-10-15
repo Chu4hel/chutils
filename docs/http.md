@@ -70,13 +70,22 @@ with TLSSession(impersonate="chrome120") as session:
     print(resp.json())
 ```
 
-### 3. Интеграция с ProxyPool и туннелированием
+### 3. Интеграция с прокси (`ProxyConfig`, `ProxyPoolProtocol`)
 
-Клиенты `TLSAsyncClient` и `TLSSession` прозрачно интегрированы с подсистемой `chutils.scraping.proxy`:
+Клиенты `TLSAsyncClient` и `TLSSession` поддерживают передачу как одиночного прокси (`ProxyConfig` или URL-строки), так и пулов прокси через интерфейс `ProxyPoolProtocol`:
+
+```python
+from chutils.http import TLSAsyncClient, ProxyConfig
+
+proxy = ProxyConfig(protocol="http", host="1.2.3.4", port=8080, username="user", password="pwd")
+client = TLSAsyncClient(proxy=proxy, impersonate="chrome120")
+```
+
+При работе с пулом `ProxyPool` из `browser_stealth.proxy`:
 
 ```python
 from chutils.http import TLSAsyncClient
-from chutils.scraping.proxy import ProxyPool
+from browser_stealth.proxy import ProxyPool
 
 pool = ProxyPool.from_urls(["http://user:pass@1.2.3.4:8080"])
 client = TLSAsyncClient(proxy_pool=pool, impersonate="chrome120")
@@ -219,3 +228,35 @@ from chutils.http.streaming import AsyncWebSocketClient
 # После 3 попыток (0.1с, 0.5с, 1.0с) клиент пробросит ошибку соединения дальше.
 client = AsyncWebSocketClient("ws://example.com/ws", reconnect_strategy=[0.1, 0.5, 1.0])
 ```
+
+---
+
+## Управление пулом прокси (ProxyPool)
+
+Модуль `chutils.http` включает класс `ProxyPool` для управления списком прокси-серверов с поддержкой ротации (Round-Robin или Random), системных прокси из переменных окружения и периодического обновления по URL:
+
+```python
+from chutils.http import ProxyPool
+
+# Статический пул со стратегией Round-Robin
+pool = ProxyPool(
+    proxies=["http://proxy1:8080", "http://proxy2:8080"],
+    strategy="round_robin",
+)
+
+proxy_url = pool.get_next()
+```
+
+---
+
+## Ротация User-Agent (UserAgentRotator)
+
+Класс `UserAgentRotator` обеспечивает подмену HTTP-заголовка `User-Agent` из готовой базы популярных браузеров:
+
+```python
+from chutils.http import UserAgentRotator
+
+rotator = UserAgentRotator()
+ua = rotator.get(strategy="random")
+```
+

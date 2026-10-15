@@ -15,9 +15,7 @@ import sys
 import time
 from collections.abc import Awaitable, Callable
 from types import TracebackType
-from typing import TYPE_CHECKING, Any, cast
-
-from typing_extensions import Self
+from typing import TYPE_CHECKING, Any, Self, cast
 
 from chutils.config import get_config_int
 

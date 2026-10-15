@@ -160,14 +160,14 @@ Logging:
         mock_safe_handler.assert_not_called()
 
 
-def test_disable_file_logging_via_config_no_file(
+def test_disable_file_logging_via_config_file_logging_false(
     project_with_marker, reset_chutils_state
 ):
-    """Тест: отключение файлового логирования через no_file: true в config.yml."""
+    """Тест: отключение файлового логирования через file_logging: false в config.yml."""
     fs, project_root = project_with_marker
     config_content = """
 Logging:
-  no_file: true
+  file_logging: false
 """
     fs.create_file(project_root / "config.yml", contents=config_content)
 
@@ -193,20 +193,14 @@ def test_disable_file_logging_via_argument(project_with_marker, reset_chutils_st
         mock_safe_handler.assert_not_called()
 
 
-def test_disable_file_logging_via_no_file_argument(
+def test_no_file_argument_raises_type_error(
     project_with_marker, reset_chutils_state
 ):
-    """Тест: отключение файлового логирования через аргумент no_file=True."""
-    fs, project_root = project_with_marker
+    """Тест: передача удаленного аргумента no_file=True вызывает TypeError в v4.0.0."""
+    import pytest
 
-    with patch(
-        "chutils.logger.internal.builder.SafeTimedRotatingFileHandler"
-    ) as mock_safe_handler:
-        logger = setup_logger(
-            "test_disable_no_file_arg", no_file=True, force_reconfigure=True
-        )
-        assert not any(isinstance(h, logging.FileHandler) for h in logger.handlers)
-        mock_safe_handler.assert_not_called()
+    with pytest.raises(TypeError, match="unexpected keyword argument 'no_file'"):
+        setup_logger("test_disable_no_file_arg", no_file=True)
 
 
 def test_null_log_file_name_disables_file_handler(

@@ -93,8 +93,10 @@ class TestRemoteConfig(unittest.TestCase):
         mock_urlopen.return_value = mock_response
 
         # We need some local config to merge with
-        with patch("chutils.config.core._cm.get_config_paths") as mock_paths:
-            mock_paths.return_value = (None, None, None)
+        from chutils.config import ConfigPaths
+
+        with patch("chutils.config.core._cm.get_all_config_paths") as mock_paths:
+            mock_paths.return_value = ConfigPaths()
 
             config = get_config(remote_url="http://example.com/remote.yml")
 

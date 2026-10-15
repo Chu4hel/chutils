@@ -5,8 +5,7 @@
 from __future__ import annotations
 
 import sys
-
-from typing_extensions import Self
+from typing import Self
 
 
 class RawTerminalUnix:

@@ -48,13 +48,13 @@ class ShowPathsCommand(BaseCommand):
             config.get_base_dir()
 
         base_dir = config.get_base_dir()
-        main_path, env_path, local_path = config.get_all_config_paths()
+        paths = config.get_config_paths()
 
         paths_data = {
             "base_dir": base_dir,
-            "main_config": main_path,
-            "env_config": env_path,
-            "local_config": local_path,
+            "main_config": paths.main,
+            "env_config": paths.env,
+            "local_config": paths.local,
             "search_markers": _cm.CONFIG_MARKERS,
         }
 
@@ -75,9 +75,9 @@ class ShowPathsCommand(BaseCommand):
                 table.add_column("Значение", style="green")
 
                 table.add_row("Корень проекта", base_dir or "[red]Не найден[/red]")
-                table.add_row("Основной конфиг", main_path or "[red]Не найден[/red]")
-                table.add_row("Конфиг окружения", env_path or "[red]Не найден[/red]")
-                table.add_row("Локальный конфиг", local_path or "[red]Не найден[/red]")
+                table.add_row("Основной конфиг", paths.main or "[red]Не найден[/red]")
+                table.add_row("Конфиг окружения", paths.env or "[red]Не найден[/red]")
+                table.add_row("Локальный конфиг", paths.local or "[red]Не найден[/red]")
 
                 self.console.print(table)
 
@@ -88,9 +88,9 @@ class ShowPathsCommand(BaseCommand):
                     self.console.print(f" • [yellow]{marker}[/yellow]")
             else:
                 print(f"Корень проекта: {base_dir or 'Не найден'}")
-                print(f"Основной конфиг: {main_path or 'Не найден'}")
-                print(f"Конфиг окружения: {env_path or 'Не найден'}")
-                print(f"Локальный конфиг: {local_path or 'Не найден'}")
+                print(f"Основной конфиг: {paths.main or 'Не найден'}")
+                print(f"Конфиг окружения: {paths.env or 'Не найден'}")
+                print(f"Локальный конфиг: {paths.local or 'Не найден'}")
                 print("\nСписок маркеров для поиска (в порядке приоритета):")
                 for marker in _cm.CONFIG_MARKERS:
                     print(f" - {marker}")

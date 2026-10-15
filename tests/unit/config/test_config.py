@@ -526,3 +526,27 @@ user = local_user
     assert cfg["Database"]["host"] == "localhost"
     assert cfg["Database"]["port"] == "6000"  # INI парсит все как строки
     assert cfg["Database"]["user"] == "local_user"
+
+
+def test_get_config_paths_returns_config_paths_dataclass(config_fs):
+    """Проверяет возврат ConfigPaths и распаковку в кортеж."""
+    fs, project_root = config_fs
+    fs.create_file(project_root / "config.yml", contents="key: val\n")
+    fs.create_file(project_root / "config.local.yml", contents="key: local\n")
+
+    config._cm._reset()
+
+    paths = config.get_config_paths()
+    assert isinstance(paths, config.ConfigPaths)
+    assert paths.main is not None and paths.main.endswith("config.yml")
+    assert paths.local is not None and paths.local.endswith("config.local.yml")
+    assert paths.env is None
+
+    # Проверка распаковки кортежа
+    main, env, local = paths
+    assert main == paths.main
+    assert env == paths.env
+    assert local == paths.local
+
+    # Проверка as_tuple()
+    assert paths.as_tuple() == (main, env, local)

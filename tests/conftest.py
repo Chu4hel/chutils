@@ -3,8 +3,7 @@ import os
 from concurrent.futures.process import ProcessPoolExecutor as _ProcessPoolExecutor
 from concurrent.futures.thread import ThreadPoolExecutor as _ThreadPoolExecutor
 
-# Предотвращаем маршрутизацию локального трафика через внешние прокси в тестах
-os.environ.setdefault("NO_PROXY", "127.0.0.1,localhost")
+os.environ["NO_PROXY"] = "127.0.0.1,localhost"
 
 import keyring
 import pytest

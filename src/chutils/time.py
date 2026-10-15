@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 import logging  # chutils: ignore[ChutilsIntegrationRule]
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 # Настраиваем логгер
@@ -21,7 +21,7 @@ def utc_now() -> datetime:
     Returns:
         Объект datetime, представляющий текущее время в UTC.
     """
-    return datetime.now(timezone.utc)  # chutils: ignore[ChutilsIntegrationRule]
+    return datetime.now(UTC)  # chutils: ignore[ChutilsIntegrationRule]
 
 
 def _ensure_aware_utc(dt: datetime) -> datetime:
@@ -39,10 +39,10 @@ def _ensure_aware_utc(dt: datetime) -> datetime:
     """
     if dt.tzinfo is None:
         # Наивный объект -> считаем локальным и переводим в UTC
-        return dt.astimezone(timezone.utc)
+        return dt.astimezone(UTC)
 
     # Осведомленный объект -> просто переводим в UTC
-    return dt.astimezone(timezone.utc)
+    return dt.astimezone(UTC)
 
 
 def parse_datetime(value: str | float) -> datetime:
@@ -71,7 +71,7 @@ def parse_datetime(value: str | float) -> datetime:
         # Эвристика: если число слишком большое, считаем это миллисекундами
         if value > 1e11:  # Примерно после 2286 года в секундах
             value = value / 1000.0
-        return datetime.fromtimestamp(value, timezone.utc)
+        return datetime.fromtimestamp(value, UTC)
 
     # 2. Попытка парсинга строки
     # Сначала пробуем стандартный ISO формат

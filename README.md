@@ -3,7 +3,7 @@
 # chutils: Stop the Routine!
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![PyPI version](https://badge.fury.io/py/chutils.svg)](https://badge.fury.io/py/chutils)
 [![Documentation](https://img.shields.io/badge/documentation-read-brightgreen)](https://Chu4hel.github.io/chutils/)
 
@@ -51,7 +51,8 @@ Every time you start a new project, you have to solve the same tasks:
   `@validate_call` decorator for function argument checks and rich exception formatting.
 - **🩺 Diagnostics API (chutils.diagnostics):** An asynchronous, thread-safe health checking framework with built-in
   checks (keyring, config) and integrations for popular web frameworks (FastAPI, Flask).
-- **🎭 Fingerprint Synthesizer (chutils.scraping.fingerprint):** Synthesis of physically consistent browser hardware identities (GPU Tiers, ANGLE D3D11 driver strings, screens with Windows taskbar awareness, audio jitter, and MediaDevices). Features strict seed determinism, on-disk caching (`get_or_create`), and Bayesian ML network support (`browserforge`).
+- **🎭 Browser Stealth & Antidetect:** Advanced browser antidetect, human-like behavior (WindMouse), profiles and proxy pooling are moved to a dedicated library [browser-stealth](https://github.com/Chu4hel/browser-stealth) starting from v4.0.0.
+- **🧩 Captcha Solvers:** Captcha solving integrations (RuCaptcha, Anti-Captcha, CapMonster, GeeTest, reCAPTCHA Enterprise) have been extracted to a standalone library [pycaptcha-hub](https://github.com/Chu4hel/pycaptcha-hub).
 - **⚡ Async Ready:** Most core functions have asynchronous versions (prefixed with `a`) for non-blocking execution.
 - **🚀 Ready to Use:** Just install and use.
 

@@ -32,6 +32,8 @@ from __future__ import annotations
 from .api import delete, get, patch, post, put
 from .client import AsyncHttpClient, HttpClient
 from .fallback import HttpResponse, UrllibFallbackClient
+from .models import ProxyConfig, ProxyHealthResult
+from .proxy_pool import ProxyPool
 from .resilience import ResiliencePolicy
 from .streaming import (
     AsyncEventStreamClient,
@@ -40,9 +42,11 @@ from .streaming import (
     ServerSentEvent,
     WebSocketClient,
 )
+from .user_agent import DEFAULT_USER_AGENTS, UserAgentRotator
 from .tls_client import (
     CURL_CFFI_AVAILABLE,
     DEFAULT_IMPERSONATE_PROFILE,
+    ProxyPoolProtocol,
     TLSAsyncClient,
     TLSSession,
     create_curl_async_session,
@@ -53,17 +57,23 @@ from .tracing import create_http_span, inject_trace_headers
 __all__ = [
     "CURL_CFFI_AVAILABLE",
     "DEFAULT_IMPERSONATE_PROFILE",
+    "DEFAULT_USER_AGENTS",
     "AsyncEventStreamClient",
     "AsyncHttpClient",
     "AsyncWebSocketClient",
     "EventStreamClient",
     "HttpClient",
     "HttpResponse",
+    "ProxyConfig",
+    "ProxyHealthResult",
+    "ProxyPool",
+    "ProxyPoolProtocol",
     "ResiliencePolicy",
     "ServerSentEvent",
     "TLSAsyncClient",
     "TLSSession",
     "UrllibFallbackClient",
+    "UserAgentRotator",
     "WebSocketClient",
     "create_curl_async_session",
     "create_curl_session",

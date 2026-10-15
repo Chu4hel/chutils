@@ -1,7 +1,7 @@
 # chutils: Рутина — в прошлом!
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![PyPI version](https://badge.fury.io/py/chutils.svg)](https://badge.fury.io/py/chutils)
 [![Documentation](https://img.shields.io/badge/документация-читать-brightgreen)](https://Chu4hel.github.io/chutils/)
 
@@ -51,7 +51,8 @@
   Pydantic с возможностью декорации функций `@validate_call` и выводом детальных красивых таблиц ошибок.
 - **🩺 Diagnostics API (chutils.diagnostics):** Асинхронный и потокобезопасный мониторинг жизнедеятельности системы с
   контролем таймаутов, встроенными проверками (keyring, config) и хелперами для веб-фреймворков (FastAPI, Flask).
-- **🎭 Синтезатор цифровой личности (chutils.scraping.fingerprint):** Генерация физически непротиворечивых отпечатков оборудования (GPU Tiers, ANGLE D3D11 драйверы, экраны с учетом панели задач Windows, субпиксельный джиттер аудио и MediaDevices). Поддержка детерминированной генерации по сиду, кэширования на диск (`get_or_create`) и интеграции с байесовской ML-сетью `browserforge`.
+- **🎭 Браузерный антидетект и биомеханика:** Продвинутая маскировка браузеров, биомеханика мыши (WindMouse), профили и умные прокси вынесены в отдельную специализированную библиотеку [browser-stealth](https://github.com/Chu4hel/browser-stealth) начиная с v4.0.0.
+- **🧩 Решение капч:** Клиенты и алгоритмы решения капчи (RuCaptcha, Anti-Captcha, CapMonster, GeeTest, reCAPTCHA Enterprise) вынесены в отдельную специализированную библиотеку [pycaptcha-hub](https://github.com/Chu4hel/pycaptcha-hub).
 - **⚡ Поддержка Async:** Большинство функций имеют асинхронные версии (с префиксом `a`) для работы в неблокирующем
   режиме.
 - **🚀 Готовность к работе:** Просто установите и используйте.

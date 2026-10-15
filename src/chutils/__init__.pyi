@@ -1,13 +1,12 @@
 import datetime
 import logging
 from abc import ABC
-from collections.abc import AsyncIterator, Awaitable, Callable, Iterable, Iterator
+from collections.abc import AsyncIterator, Callable, Iterable, Iterator, Sequence
 from enum import Enum
 from pathlib import Path
-from types import TracebackType
-from typing import Any, Generic, Literal, TypeVar, overload
+from typing import Any, Literal, Self, TypeVar
 
-from typing_extensions import Self
+from chutils.http.models import ProxyConfig
 
 # Тип для Pydantic моделей
 _T = TypeVar("_T")
@@ -79,11 +78,15 @@ def generate_json_schema(model_class: type[_T]) -> str: ...
 def get_base_dir() -> str | None: ...
 def get_config_file_path() -> str | None: ...
 def is_config_loaded() -> bool: ...
-def are_paths_initialized() -> bool: ...
-def get_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None]: ...
-def get_all_config_paths(
-    cfg_file: str | None = None,
-) -> tuple[str | None, str | None, str | None]: ...
+class ConfigPaths:
+    main: str | None
+    env: str | None
+    local: str | None
+    def __iter__(self) -> Iterator[str | None]: ...
+    def as_tuple(self) -> tuple[str | None, str | None, str | None]: ...
+
+def get_config_paths(cfg_file: str | None = None) -> ConfigPaths: ...
+def get_all_config_paths(cfg_file: str | None = None) -> ConfigPaths: ...
 def export_schema(
     model: type[_T] | str, output_path: str | Any | None = None
 ) -> str: ...
@@ -421,317 +424,30 @@ def zip_folder(
     exclude: list[str] | None = None,
 ) -> Path: ...
 
-# --- web ---
-class WebClient: ...
-class AsyncWebClient: ...
-
-# --- scraping ---
-class BezierCurveGenerator:
-    def generate(
-        self,
-        start: tuple[int, int],
-        end: tuple[int, int],
-        steps: int = 30,
-        deviation: float = 0.2,
-    ) -> list[tuple[int, int]]: ...
-
-class WindMouseGenerator:
+# --- proxy_pool & user_agent ---
+class ProxyPool:
     def __init__(
         self,
-        gravity: float = 9.0,
-        wind: float = 3.0,
-        min_wait: float = 0.002,
-        max_wait: float = 0.005,
-        max_step: float = 15.0,
-        target_area: float = 8.0,
+        proxies: Sequence[str | ProxyConfig] | None = None,
+        url: str | None = None,
+        update_interval: float | None = None,
+        use_env: bool = False,
+        strategy: str = "random",
     ) -> None: ...
-    @overload
-    def generate(
-        self,
-        start: tuple[int, int],
-        end: tuple[int, int],
-        gravity: float | None = None,
-        wind: float | None = None,
-        min_wait: float | None = None,
-        max_wait: float | None = None,
-        max_step: float | None = None,
-        target_area: float | None = None,
-        *,
-        with_delays: Literal[True] = ...,
-    ) -> list[tuple[int, int, float]]: ...
-    @overload
-    def generate(
-        self,
-        start: tuple[int, int],
-        end: tuple[int, int],
-        gravity: float | None = None,
-        wind: float | None = None,
-        min_wait: float | None = None,
-        max_wait: float | None = None,
-        max_step: float | None = None,
-        target_area: float | None = None,
-        *,
-        with_delays: Literal[False],
-    ) -> list[tuple[int, int]]: ...
-    @overload
-    def generate(
-        self,
-        start: tuple[int, int],
-        end: tuple[int, int],
-        gravity: float | None = None,
-        wind: float | None = None,
-        min_wait: float | None = None,
-        max_wait: float | None = None,
-        max_step: float | None = None,
-        target_area: float | None = None,
-        *,
-        with_delays: bool,
-    ) -> list[tuple[int, int, float]] | list[tuple[int, int]]: ...
-    def generate_points(
-        self,
-        start: tuple[int, int],
-        end: tuple[int, int],
-        gravity: float | None = None,
-        wind: float | None = None,
-        max_step: float | None = None,
-        target_area: float | None = None,
-    ) -> list[tuple[int, int]]: ...
+    def get_next_proxy(self) -> str | None: ...
+    def get_next(self) -> str | None: ...
+    def get_all_proxies(self) -> list[str]: ...
+    def update_from_url(self) -> None: ...
+    def start_background_update(self) -> None: ...
+    def stop_background_update(self) -> None: ...
 
-
-class JitterDelayGenerator:
-    def __init__(self, strategy: str = "lognormal", jitter: float = 0.15) -> None: ...
-    def generate(self, base_delay: float) -> float: ...
-
-class KeyboardTypoGenerator:
+class UserAgentRotator:
+    user_agents: list[str]
+    fallback: str
     def __init__(
-        self, layout_error_rate: float = 0.0, delayed_fix_rate: float = 0.0
+        self, user_agents: list[str] | None = None, fallback: str | None = None
     ) -> None: ...
-    def generate_sequence(
-        self,
-        text: str,
-        error_rate: float = 0.05,
-        layout_error_rate: float | None = None,
-        delayed_fix_rate: float | None = None,
-    ) -> list[Any]: ...
-
-def human_sleep(min_seconds: float, max_seconds: float) -> None: ...
-async def async_human_sleep(min_seconds: float, max_seconds: float) -> None: ...
-async def async_move_mouse(
-    page: Any,
-    x: int,
-    y: int,
-    start: tuple[int, int] | None = None,
-    steps: int = 30,
-    delay_between_steps: float = 0.01,
-    algorithm: str = "bezier",
-) -> None: ...
-async def async_click(
-    page: Any,
-    selector: str | None = None,
-    x: int | None = None,
-    y: int | None = None,
-    start: tuple[int, int] | None = None,
-    algorithm: str = "windmouse",
-    button: str = "left",
-) -> None: ...
-async def async_scroll_to(
-    page: Any,
-    x: int,
-    y: int,
-    selector: str | None = None,
-    steps: int = 10,
-    delay_between_steps: float = 0.01,
-) -> None: ...
-async def async_type_text(
-    page: Any,
-    selector: str,
-    text: str,
-    error_rate: float = 0.05,
-    speed_wpm: float = 40.0,
-) -> None: ...
-def move_mouse(
-    driver: Any,
-    x: int,
-    y: int,
-    start: tuple[int, int] | None = None,
-    steps: int = 30,
-    delay_between_steps: float = 0.01,
-    algorithm: str = "bezier",
-) -> None: ...
-def click(
-    driver: Any,
-    selector: str | None = None,
-    x: int | None = None,
-    y: int | None = None,
-    start: tuple[int, int] | None = None,
-    algorithm: str = "windmouse",
-) -> None: ...
-def scroll_to(
-    driver: Any,
-    x: int,
-    y: int,
-    selector: str | None = None,
-    steps: int = 10,
-    delay_between_steps: float = 0.01,
-) -> None: ...
-def type_text(
-    driver: Any,
-    selector: str,
-    text: str,
-    error_rate: float = 0.05,
-    speed_wpm: float = 40.0,
-) -> None: ...
-async def apply_antidetect_playwright(
-    context: Any,
-    *,
-    webgl_vendor: str = ...,
-    webgl_renderer: str = ...,
-    hardware_concurrency: int = ...,
-    device_memory: int = ...,
-) -> None: ...
-def apply_antidetect_selenium(
-    driver: Any,
-    *,
-    webgl_vendor: str = ...,
-    webgl_renderer: str = ...,
-    hardware_concurrency: int = ...,
-    device_memory: int = ...,
-) -> None: ...
-async def apply_antidetect_nodriver(
-    tab: Any,
-    *,
-    webgl_vendor: str = ...,
-    webgl_renderer: str = ...,
-    hardware_concurrency: int = ...,
-    device_memory: int = ...,
-) -> None: ...
-def get_browser_launch_args(*, no_sandbox: bool = ...) -> list[str]: ...
-
-# --- scraping captcha ---
-class RuCaptchaSolver:
-    def __init__(
-        self, api_key: str | None = None, host: str = "https://rucaptcha.com"
-    ) -> None: ...
-    def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class AsyncRuCaptchaSolver:
-    def __init__(
-        self, api_key: str | None = None, host: str = "https://rucaptcha.com"
-    ) -> None: ...
-    async def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    async def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class AntiCaptchaSolver:
-    def __init__(
-        self, api_key: str | None = None, host: str = "https://api.anti-captcha.com"
-    ) -> None: ...
-    def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class AsyncAntiCaptchaSolver:
-    def __init__(
-        self, api_key: str | None = None, host: str = "https://api.anti-captcha.com"
-    ) -> None: ...
-    async def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    async def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class CapMonsterSolver:
-    def __init__(
-        self, api_key: str | None = None, host: str = "https://api.capmonster.cloud"
-    ) -> None: ...
-    def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class AsyncCapMonsterSolver:
-    def __init__(
-        self, api_key: str | None = None, host: str = "https://api.capmonster.cloud"
-    ) -> None: ...
-    async def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    async def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class CaptchaError(ChutilsException): ...
-class CaptchaTimeoutError(CaptchaError): ...
-class CaptchaBalanceError(CaptchaError): ...
-class CaptchaServiceError(CaptchaError): ...
+    def get(self, strategy: str = "random") -> str: ...
 
 # --- Submodules ---
 from sqlalchemy import Engine
@@ -755,42 +471,17 @@ from . import fs as fs
 from . import lifecycle as lifecycle
 from . import logger as logger
 from . import metrics as metrics
-from . import scraping as scraping
 from . import secret_manager as secret_manager
 from . import tasks as tasks
 from . import text as text
 from . import time as time
 from . import tracing as tracing
 from . import validation as validation
-from . import web as web
+from . import http as http
 from .diagnostics import DiagnosticsManager as DiagnosticsManager
 from .env import BaseEnvManifest as BaseEnvManifest
 from .exceptions import ChutilsValidationError as ChutilsValidationError
 from .exceptions import EnvValidationError as EnvValidationError
-from .scraping.concurrency.reaper import (
-    IdleBrowserReaper as IdleBrowserReaper,
-    IdleBrowserReaperConfig as IdleBrowserReaperConfig,
-    IdleReaper as IdleReaper,
-    IdleReaperConfig as IdleReaperConfig,
-)
-from .scraping.profiles.hygiene import (
-    is_profile_locked as is_profile_locked,
-    sanitize_profile as sanitize_profile,
-    sanitize_profile_crash_state as sanitize_profile_crash_state,
-)
-from .scraping.proxy.storage import (
-    KeyringProxyStorage as KeyringProxyStorage,
-    ProxySecretStorage as ProxySecretStorage,
-)
-from .scraping.testing.dom_models import (
-    DOMActionSessionReport as DOMActionSessionReport,
-    RecordedAction as RecordedAction,
-    RecordedChecklistItem as RecordedChecklistItem,
-)
-from .scraping.testing.recorder import (
-    DOMActionRecorder as DOMActionRecorder,
-    DOMActionRecorderHUD as DOMActionRecorderHUD,
-)
 from .validation import validate_call as validate_call
 from .validation import validate_data as validate_data
 
@@ -1286,99 +977,3 @@ def store_cache(
     store: StoreManager | None = None, ttl: float = 60, key_prefix: str = "cache:"
 ) -> Callable[..., Any]: ...
 
-# --- scraping & fingerprinting ---
-class AntidetectConfig:
-    user_agent: str | None
-    platform: str
-    hardware_concurrency: int
-    device_memory: int
-    webgl_vendor: str
-    webgl_renderer: str
-    locale: str
-    timezone: str
-    screen_width: int | None
-    screen_height: int | None
-    screen_avail_height: int | None
-    device_pixel_ratio: float | None
-    apply_webrtc_leak_protection: bool
-    apply_audio_fingerprint: bool
-    apply_client_hints: bool
-    def __init__(self, **kwargs: Any) -> None: ...
-    @classmethod
-    def from_seed(
-        cls, seed: int | str, os_target: str = "windows"
-    ) -> AntidetectConfig: ...
-    @classmethod
-    def from_fingerprint(cls, profile: FingerprintProfile) -> AntidetectConfig: ...
-    @classmethod
-    def from_browserforge(
-        cls,
-        seed: int | str | None = None,
-        *,
-        browser: str = "chrome",
-        os: str = "windows",
-        stealth_minimal: bool = True,
-    ) -> AntidetectConfig: ...
-    @classmethod
-    def from_procedural(
-        cls, seed: int | str | None = None, os_target: str = "windows"
-    ) -> AntidetectConfig: ...
-    def get_init_script(self) -> str: ...
-    def apply_to_playwright_context(self, context: Any) -> None: ...
-    async def apply_to_playwright_context_async(self, context: Any) -> None: ...
-    def apply_to_selenium_options(self, options: Any) -> None: ...
-    async def apply_to_nodriver_tab(self, tab: Any) -> None: ...
-
-class FingerprintProfile:
-    seed: int | str | None
-    os: str
-    browser: str
-    user_agent: str
-    webgl: Any
-    screen: Any
-    hardware: Any
-    audio: Any
-    media_devices: list[Any]
-    client_hints: dict[str, Any]
-    source: str
-    def to_antidetect_config(self) -> AntidetectConfig: ...
-    def to_dict(self) -> dict[str, Any]: ...
-    def to_json(self, indent: int = 2) -> str: ...
-    def save_to_file(self, path: str | Path) -> None: ...
-    @classmethod
-    def from_file(cls, path: str | Path) -> FingerprintProfile: ...
-    async def apply_to_tab(self, tab: Any) -> None: ...
-    async def apply_to_page(self, page: Any) -> None: ...
-
-class FingerprintSynthesizer:
-    mode: str
-    os_target: str
-    locale: str
-    def __init__(
-        self,
-        mode: Literal["auto", "procedural", "browserforge", "fpgen"] = "auto",
-        os_target: str = "windows",
-        locale: str = "ru-RU",
-    ) -> None: ...
-    def synthesize(self, seed: int | str | None = None) -> FingerprintProfile: ...
-    def get_or_create(
-        self, seed: int | str, storage_dir: str | Path
-    ) -> FingerprintProfile: ...
-    @staticmethod
-    def is_browserforge_available() -> bool: ...
-    @staticmethod
-    def is_fpgen_available() -> bool: ...
-    @classmethod
-    def create_procedural(
-        cls,
-        seed: int | str | None = None,
-        os_target: str = "windows",
-        locale: str = "ru-RU",
-    ) -> FingerprintProfile: ...
-    @classmethod
-    def create_from_browserforge(
-        cls,
-        browser: str = "chrome",
-        os_target: str = "windows",
-        seed: int | str | None = None,
-    ) -> FingerprintProfile: ...

@@ -124,12 +124,10 @@
 "src/chutils/exceptions/**/*.py" = ["docs/api.md"]
 
 # ---------------------------------------------------------------------------
-# Модули скрейпинга и капчи
+# Модуль капчи
 # ---------------------------------------------------------------------------
 
-"src/chutils/scraping/**/*.py" = ["docs/scraping.md"]
-"new:src/chutils/scraping/nodriver.py" = ["docs/scraping.md"]
-"src/chutils/scraping/captcha/**/*.py" = ["docs/captcha.md"]
+"src/chutils/captcha/**/*.py" = ["docs/captcha.md"]
 
 
 # ---------------------------------------------------------------------------

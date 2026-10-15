@@ -332,53 +332,6 @@ members:
 - validate_data
 - validate_call
 
-## Модуль `web` (Умный HTTP-клиент)
-
-::: chutils.web
-options:
-members:
-
-- WebClient
-- AsyncWebClient
-
-## Модуль `scraping.humanize` (Имитация поведения человека)
-
-::: chutils.scraping.humanize
-options:
-members:
-
-- BezierCurveGenerator
-- JitterDelayGenerator
-- KeyboardTypoGenerator
-- human_sleep
-- async_human_sleep
-- move_mouse
-- async_move_mouse
-- scroll_to
-- async_scroll_to
-- type_text
-- async_type_text
-- apply_antidetect_playwright
-- apply_antidetect_selenium
-- get_browser_launch_args
-
-## Модуль `scraping.captcha` (Решатели капчи)
-
-::: chutils.scraping.captcha
-options:
-members:
-
-- RuCaptchaSolver
-- AsyncRuCaptchaSolver
-- AntiCaptchaSolver
-- AsyncAntiCaptchaSolver
-- CapMonsterSolver
-- AsyncCapMonsterSolver
-- CaptchaError
-- CaptchaTimeoutError
-- CaptchaBalanceError
-- CaptchaServiceError
-
 ## Модуль `plugins` (Система плагинов)
 
 ::: chutils.plugins
@@ -425,23 +378,6 @@ members:
 - LinterEngine
 - MockServerRunner
 
-## Модуль `scraping.concurrency` (Умная очередь задач и воркеры)
-
-::: chutils.scraping.concurrency
-options:
-members:
-
-- ScrapingTask
-- BaseTaskQueue
-- InMemoryTaskQueue
-- PersistentTaskQueue
-- RedisTaskQueue
-- DomainRateLimiter
-- WorkerPool
-- IdleBrowserReaper
-- IdleBrowserReaperConfig
-- IdleReaper
-- IdleReaperConfig
 
 ## Модуль `qt` (Интеграция PyQt6 / PySide6)
 
@@ -570,6 +506,9 @@ members:
 - AsyncHttpClient
 - TLSSession
 - TLSAsyncClient
+- ProxyConfig
+- ProxyHealthResult
+- ProxyPoolProtocol
 - create_curl_session
 - create_curl_async_session
 - HttpResponse
@@ -586,47 +525,6 @@ members:
 - delete
 - patch
 
-## Модуль `scraping.fingerprint` (Синтезатор цифровой личности)
-
-::: chutils.scraping.fingerprint
-options:
-  members:
-    - FingerprintSynthesizer
-    - FingerprintProfile
-    - WebGLFingerprint
-    - ScreenFingerprint
-    - HardwareFingerprint
-    - AudioFingerprint
-    - MediaDeviceItem
-    - BrowserForgeProvider
-
-## Модуль `scraping.humanize` (Имитация поведения и антидетект)
-
-::: chutils.scraping.humanize
-options:
-  members:
-    - AntidetectConfig
-    - BehavioralProfile
-    - WindMouseGenerator
-    - BezierCurveGenerator
-    - JitterDelayGenerator
-    - KeyboardTypoGenerator
-    - apply_antidetect_nodriver
-    - apply_antidetect_playwright
-    - apply_antidetect_selenium
-    - solve_cf_turnstile
-    - detect_cf_turnstile
-    - is_cf_turnstile_solved
-    - async_move_mouse
-    - async_click
-    - async_type_text
-    - async_scroll_to
-    - async_human_sleep
-    - move_mouse
-    - click
-    - type_text
-    - scroll_to
-    - human_sleep
 
 ## Модуль `telegram`
 
@@ -653,67 +551,7 @@ options:
     - CompressingRotatingFileHandler
     - CompressingTimedRotatingFileHandler
 
-## Модуль `scraping.testing` (Интерактивная разметка DOM, автотестирование и моки)
 
-::: chutils.scraping.testing
-options:
-  members:
-    - DOMActionRecorder
-    - DOMActionRecorderHUD
-    - DOMActionSessionReport
-    - RecordedAction
-    - RecordedChecklistItem
-    - DOMMutationDiff
-    - ViewportInfo
-    - CORE_DOM_HELPERS_JS
-    - PAGE_META_SCRIPT
-    - POLL_RECORDED_ACTIONS_SCRIPT
-    - build_inject_recorder_hud_script
-    - build_scan_selectors_script
-    - get_recorder_hud_ui_js
-    - LiveBrowserSession
-    - LocalTestServer
-    - SnapshotRecorder
-    - MockNodriverTab
-    - MockPlaywrightPage
-    - MockSeleniumDriver
-    - assert_extraction_complete
-    - assert_schema_match
-    - assert_valid_price
-    - assert_valid_url
-
-## Модуль `scraping.proxy` (Управление прокси и защищенное хранилище)
-
-::: chutils.scraping.proxy
-options:
-  members:
-    - KeyringProxyStorage
-    - ProxySecretStorage
-    - ProxyConfig
-    - ProxyPool
-    - SmartProxyResolver
-    - AsyncProxyTunnel
-    - ChromeProxyExtension
-    - parse_proxy
-    - check_proxy
-    - check_proxy_async
-    - async_nodriver_proxy
-    - nodriver_proxy
-    - get_nodriver_proxy_args
-    - get_playwright_proxy
-    - get_selenium_proxy
-
-## Модуль `scraping.profiles` (Управление профилями браузеров и гигиена)
-
-::: chutils.scraping.profiles
-options:
-  members:
-    - ProfileManager
-    - ProfileHygieneService
-    - sanitize_profile_crash_state
-    - sanitize_profile
-    - is_profile_locked
-    - clean_profile_cache
 
 
 

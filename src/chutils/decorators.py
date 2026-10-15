@@ -210,7 +210,7 @@ def timeout(
                             cast(Awaitable[R], func(*args, **kwargs)), timeout=seconds
                         ),
                     )
-                except (asyncio.TimeoutError, TimeoutError):
+                except TimeoutError:
                     if fallback is _NO_FALLBACK:
                         raise ChutilsTimeoutError(
                             f"Function {func.__name__} timed out after {seconds} seconds",
@@ -839,7 +839,7 @@ def bulkhead(
                                         state.condition.wait(), timeout=timeout
                                     )
                                     slot_acquired = True
-                                except asyncio.TimeoutError:
+                                except TimeoutError:
                                     slot_acquired = False
                             else:
                                 await state.condition.wait()
