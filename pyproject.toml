@@ -113,7 +113,7 @@ pythonpath = [
     "src"
 ]
 markers = [
-    "e2e: End-to-end integration and antidetect tests",
+    "e2e: End-to-end integration tests",
 ]
 filterwarnings = [
     "ignore:Using `httpx` with `starlette.testclient` is deprecated"

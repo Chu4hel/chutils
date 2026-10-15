@@ -24093,8 +24093,8 @@
                 "type": "class",
                 "layer": "internal",
                 "signature": "",
-                "summary": "Протокол пула прокси для исключения жесткой связности между http и scraping.",
-                "docstring": "Протокол пула прокси для исключения жесткой связности между http и scraping.",
+                "summary": "Протокол пула прокси для исключения жесткой связности между http и внешними библиотеками (например, browser-stealth).",
+                "docstring": "Протокол пула прокси для исключения жесткой связности между http и внешними библиотеками (например, browser-stealth).",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -26332,7 +26332,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 496,
+                        "line_number": 495,
                         "bases": [],
                         "children": []
                       },
@@ -26352,7 +26352,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 574,
+                        "line_number": 573,
                         "bases": [],
                         "children": []
                       },
@@ -26372,7 +26372,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 592,
+                        "line_number": 591,
                         "bases": [],
                         "children": []
                       },
@@ -26392,7 +26392,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 631,
+                        "line_number": 630,
                         "bases": [],
                         "children": []
                       }
@@ -28069,7 +28069,7 @@
                 "layer": "internal",
                 "signature": "(name)",
                 "summary": "Возвращает зарегистрированный плагин очереди задач по имени.",
-                "docstring": "Возвращает зарегистрированный плагин очереди задач по имени.\n\nВыполняет автообнаружение из группы `chutils.plugins.scraping`.\n\nArgs:\n    name: Имя плагина.\n\nReturns:\n    Экземпляр плагина или None.",
+                "docstring": "Возвращает зарегистрированный плагин очереди задач по имени.\n\nВыполняет автообнаружение из группы `chutils.plugins.tasks`.\n\nArgs:\n    name: Имя плагина.\n\nReturns:\n    Экземпляр плагина или None.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -39077,8 +39077,8 @@
   "metadata": {
     "chutils_version": "4.0.0",
     "project_version": "4.0.0",
-    "git_commit": "c61b514d38eff7a40ced6e7bca18d4ae0b7dfacc (dirty)",
-    "generated_at": "2026-10-01T15:43:35.793432+00:00",
-    "project_hash": "c27dd755dee9694e0c94ce1c847586b242375f8c2d8cf36d09ac69bfa5b176d9"
+    "git_commit": "d12d41f62811171ef93b42126a680fc20c4fa699 (dirty)",
+    "generated_at": "2026-10-15T21:30:03.418286+00:00",
+    "project_hash": "7612e2dbb2c6e5eeb1e6c873a449c609ac02fd86a629d3a350eddc5eb3eaf1ff"
   }
 }

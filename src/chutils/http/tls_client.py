@@ -24,7 +24,7 @@ from chutils.logger import setup_logger
 
 @runtime_checkable
 class ProxyPoolProtocol(Protocol):
-    """Протокол пула прокси для исключения жесткой связности между http и scraping."""
+    """Протокол пула прокси для исключения жесткой связности между http и внешними библиотеками (например, browser-stealth)."""
 
     def get_next(self) -> ProxyConfig | str | None:
         """Возвращает следующий прокси-сервер.
@@ -221,7 +221,7 @@ class TLSSession:
             extracted = target
         else:
             try:
-                from browser_stealth.humanize.antidetect import (
+                from browser_stealth.antidetect import (
                     extract_clearance_cookies,
                 )
 
@@ -442,7 +442,7 @@ class TLSAsyncClient:
             extracted_or_coro = target
         else:
             try:
-                from browser_stealth.humanize.antidetect import (
+                from browser_stealth.antidetect import (
                     extract_clearance_cookies,
                 )
 

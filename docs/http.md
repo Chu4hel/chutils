@@ -81,11 +81,11 @@ proxy = ProxyConfig(protocol="http", host="1.2.3.4", port=8080, username="user",
 client = TLSAsyncClient(proxy=proxy, impersonate="chrome120")
 ```
 
-При работе с пулом `ProxyPool` из `chutils.scraping.proxy`:
+При работе с пулом `ProxyPool` из `browser_stealth.proxy`:
 
 ```python
 from chutils.http import TLSAsyncClient
-from chutils.scraping.proxy import ProxyPool
+from browser_stealth.proxy import ProxyPool
 
 pool = ProxyPool.from_urls(["http://user:pass@1.2.3.4:8080"])
 client = TLSAsyncClient(proxy_pool=pool, impersonate="chrome120")

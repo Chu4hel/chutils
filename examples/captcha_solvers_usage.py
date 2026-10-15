@@ -1,4 +1,4 @@
-"""Пример использования модуля chutils.scraping.captcha для интеграции с решателями капчи.
+"""Пример использования модуля chutils.captcha для интеграции с решателями капчи.
 
 Демонстрирует:
 1. Синхронное и асинхронное решение текстовых капч по картинке.
@@ -8,7 +8,7 @@
 
 import asyncio
 
-from chutils.scraping.captcha import (
+from chutils.captcha import (
     AsyncAntiCaptchaSolver,
     CaptchaError,
     RuCaptchaSolver,

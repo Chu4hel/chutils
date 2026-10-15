@@ -171,7 +171,7 @@ def get_captcha_solver_plugin(name: str) -> Any | None:
 def get_task_queue_plugin(name: str) -> Any | None:
     """Возвращает зарегистрированный плагин очереди задач по имени.
 
-    Выполняет автообнаружение из группы `chutils.plugins.scraping`.
+    Выполняет автообнаружение из группы `chutils.plugins.tasks`.
 
     Args:
         name: Имя плагина.
@@ -179,7 +179,7 @@ def get_task_queue_plugin(name: str) -> Any | None:
     Returns:
         Экземпляр плагина или None.
     """
-    registry.discover_plugins(group="chutils.plugins.scraping")
+    registry.discover_plugins(group="chutils.plugins.tasks")
     registry.discover_plugins(group="chutils.plugins")
     plugin = registry.get_plugin(name)
     if plugin is not None:

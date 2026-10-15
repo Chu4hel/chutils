@@ -430,7 +430,6 @@ class LoggerBuilder:
             is_test_module = (
                 self.name.startswith(
                     (
-                        "chutils.scraping.testing",
                         "chutils.testing",
                         "chutils.vk.testing",
                     )

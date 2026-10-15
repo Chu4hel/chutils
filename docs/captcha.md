@@ -1,6 +1,6 @@
-# Интеграция с решателями капчи (chutils.captcha / chutils.scraping.captcha)
+# Интеграция с решателями капчи (chutils.captcha)
 
-Модули `chutils.captcha` и `chutils.scraping.captcha` предоставляют единый абстрактный интерфейс и набор клиентов для работы с внешними
+Модуль `chutils.captcha` предоставляет единый абстрактный интерфейс и набор клиентов для работы с внешними
 сервисами распознавания капч:
 
 - **RuCaptcha / 2Captcha** (совместимы по API)
@@ -50,12 +50,12 @@ pip install "chutils[captcha]"
 Синхронные клиенты автоматически опрашивают готовность капчи с заданным интервалом до истечения таймаута.
 
 ```python
-from chutils.scraping.captcha import (
+from chutils.captcha import (
     RuCaptchaSolver,
     AntiCaptchaSolver,
     CapMonsterSolver,
 )
-from chutils.scraping.captcha import CaptchaError
+from chutils.captcha import CaptchaError
 
 try:
     # Инициализация (ключ автоматически подгрузится из SecretManager)
@@ -86,7 +86,7 @@ except CaptchaError as e:
 
 ```python
 import asyncio
-from chutils.scraping.captcha import AsyncAntiCaptchaSolver, AsyncCapMonsterSolver
+from chutils.captcha import AsyncAntiCaptchaSolver, AsyncCapMonsterSolver
 
 
 async def main():

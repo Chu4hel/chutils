@@ -87,7 +87,7 @@ except OptionalDependencyError as e:
 ## Ключевой совет для ИИ
 
 > [!IMPORTANT]
-> В v3.0.0+ все опциональные зависимости `chutils` (crypto, text, web, scraping, otel,
+> В v3.0.0+ все опциональные зависимости `chutils` (crypto, text, web, otel,
 > metrics) при отсутствии бросают `OptionalDependencyError`, а не `RuntimeError`.
 > Перехватывайте именно `OptionalDependencyError` и используйте `e.hint` для вывода
 > пользователю команды установки.
