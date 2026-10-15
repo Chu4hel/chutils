@@ -1,3 +1,7 @@
+"""Модуль для ротации HTTP-заголовков User-Agent."""
+
+from __future__ import annotations
+
 import random
 
 DEFAULT_USER_AGENTS: list[str] = [

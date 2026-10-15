@@ -37,6 +37,7 @@ from .getters import (
     validate_required_keys,
 )
 from .manager import _cm
+from .paths import ConfigPaths
 from .utils import find_project_root
 from .watcher import (
     on_config_change,
@@ -68,6 +69,7 @@ logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
 
 __all__ = [
     "BaseConfigProvider",
+    "ConfigPaths",
     "DictConfigProvider",
     "SseConfigClient",
     "SseEvent",
@@ -205,27 +207,7 @@ def are_paths_initialized() -> bool:
     return _cm.paths_initialized
 
 
-def get_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None]:
-    """
-    Возвращает пути к основному и локальному файлам конфигурации.
-
-    Legacy API для обратной совместимости. Возвращает кортеж из 2 элементов.
-    Для получения всех путей (включая env) используйте get_all_config_paths().
-
-    Args:
-        cfg_file: Опциональный путь к основному файлу.
-
-    Returns:
-        Кортеж (путь_к_основному, путь_к_локальному).
-    """
-    if not _cm.paths_initialized:
-        _cm.initialize_paths(find_project_root)
-    return _cm.get_config_paths(cfg_file)
-
-
-def get_all_config_paths(
-    cfg_file: str | None = None,
-) -> tuple[str | None, str | None, str | None]:
+def get_config_paths(cfg_file: str | None = None) -> ConfigPaths:
     """
     Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
 
@@ -233,7 +215,22 @@ def get_all_config_paths(
         cfg_file: Опциональный путь к основному файлу.
 
     Returns:
-        Кортеж (путь_к_основному, путь_к_окружению, путь_к_локальному).
+        Экземпляр ConfigPaths (с полями .main, .env, .local и поддержкой распаковки кортежа).
+    """
+    if not _cm.paths_initialized:
+        _cm.initialize_paths(find_project_root)
+    return _cm.get_config_paths(cfg_file)
+
+
+def get_all_config_paths(cfg_file: str | None = None) -> ConfigPaths:
+    """
+    Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
+
+    Args:
+        cfg_file: Опциональный путь к основному файлу.
+
+    Returns:
+        Экземпляр ConfigPaths (main, env, local).
     """
     if not _cm.paths_initialized:
         _cm.initialize_paths(find_project_root)

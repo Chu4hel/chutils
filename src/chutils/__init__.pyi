@@ -1,10 +1,12 @@
 import datetime
 import logging
 from abc import ABC
-from collections.abc import AsyncIterator, Callable, Iterable, Iterator
+from collections.abc import AsyncIterator, Callable, Iterable, Iterator, Sequence
 from enum import Enum
 from pathlib import Path
 from typing import Any, Literal, Self, TypeVar
+
+from chutils.http.models import ProxyConfig
 
 # Тип для Pydantic моделей
 _T = TypeVar("_T")
@@ -76,11 +78,15 @@ def generate_json_schema(model_class: type[_T]) -> str: ...
 def get_base_dir() -> str | None: ...
 def get_config_file_path() -> str | None: ...
 def is_config_loaded() -> bool: ...
-def are_paths_initialized() -> bool: ...
-def get_config_paths(cfg_file: str | None = None) -> tuple[str | None, str | None]: ...
-def get_all_config_paths(
-    cfg_file: str | None = None,
-) -> tuple[str | None, str | None, str | None]: ...
+class ConfigPaths:
+    main: str | None
+    env: str | None
+    local: str | None
+    def __iter__(self) -> Iterator[str | None]: ...
+    def as_tuple(self) -> tuple[str | None, str | None, str | None]: ...
+
+def get_config_paths(cfg_file: str | None = None) -> ConfigPaths: ...
+def get_all_config_paths(cfg_file: str | None = None) -> ConfigPaths: ...
 def export_schema(
     model: type[_T] | str, output_path: str | Any | None = None
 ) -> str: ...
@@ -418,136 +424,30 @@ def zip_folder(
     exclude: list[str] | None = None,
 ) -> Path: ...
 
-# --- web ---
-class WebClient: ...
-class AsyncWebClient: ...
-
-# --- captcha ---
-
-class RuCaptchaSolver:
+# --- proxy_pool & user_agent ---
+class ProxyPool:
     def __init__(
-        self, api_key: str | None = None, host: str = "https://rucaptcha.com"
+        self,
+        proxies: Sequence[str | ProxyConfig] | None = None,
+        url: str | None = None,
+        update_interval: float | None = None,
+        use_env: bool = False,
+        strategy: str = "random",
     ) -> None: ...
-    def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
+    def get_next_proxy(self) -> str | None: ...
+    def get_next(self) -> str | None: ...
+    def get_all_proxies(self) -> list[str]: ...
+    def update_from_url(self) -> None: ...
+    def start_background_update(self) -> None: ...
+    def stop_background_update(self) -> None: ...
 
-class AsyncRuCaptchaSolver:
+class UserAgentRotator:
+    user_agents: list[str]
+    fallback: str
     def __init__(
-        self, api_key: str | None = None, host: str = "https://rucaptcha.com"
+        self, user_agents: list[str] | None = None, fallback: str | None = None
     ) -> None: ...
-    async def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    async def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class AntiCaptchaSolver:
-    def __init__(
-        self, api_key: str | None = None, host: str = "https://api.anti-captcha.com"
-    ) -> None: ...
-    def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class AsyncAntiCaptchaSolver:
-    def __init__(
-        self, api_key: str | None = None, host: str = "https://api.anti-captcha.com"
-    ) -> None: ...
-    async def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    async def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class CapMonsterSolver:
-    def __init__(
-        self, api_key: str | None = None, host: str = "https://api.capmonster.cloud"
-    ) -> None: ...
-    def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class AsyncCapMonsterSolver:
-    def __init__(
-        self, api_key: str | None = None, host: str = "https://api.capmonster.cloud"
-    ) -> None: ...
-    async def solve_image(
-        self,
-        image_data: bytes | str,
-        timeout: float = 60.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-    async def solve_recaptcha(
-        self,
-        sitekey: str,
-        page_url: str,
-        timeout: float = 120.0,
-        poll_interval: float = 5.0,
-        **kwargs: Any,
-    ) -> str: ...
-
-class CaptchaError(ChutilsException): ...
-class CaptchaTimeoutError(CaptchaError): ...
-class CaptchaBalanceError(CaptchaError): ...
-class CaptchaServiceError(CaptchaError): ...
+    def get(self, strategy: str = "random") -> str: ...
 
 # --- Submodules ---
 from sqlalchemy import Engine
@@ -577,7 +477,7 @@ from . import text as text
 from . import time as time
 from . import tracing as tracing
 from . import validation as validation
-from . import web as web
+from . import http as http
 from .diagnostics import DiagnosticsManager as DiagnosticsManager
 from .env import BaseEnvManifest as BaseEnvManifest
 from .exceptions import ChutilsValidationError as ChutilsValidationError

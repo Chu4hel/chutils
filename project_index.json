@@ -7668,9 +7668,52 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 14,
+                "line_number": 15,
                 "bases": [],
                 "children": []
+              },
+              {
+                "name": "ConfigPaths",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Контейнер путей к файлам конфигурации проекта (основной, окружение, локальный).",
+                "docstring": "Контейнер путей к файлам конфигурации проекта (основной, окружение, локальный).",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [
+                    "dataclass"
+                  ],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 19,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "as_tuple",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает кортеж путей (main, env, local).",
+                    "docstring": "Возвращает кортеж путей (main, env, local).\n\nReturns:\n    Кортеж (main, env, local).",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 26,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
               },
               {
                 "name": "_ConfigPathsMixin",
@@ -7688,7 +7731,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 17,
+                "line_number": 39,
                 "bases": [],
                 "children": [
                   {
@@ -7707,7 +7750,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 52,
+                    "line_number": 74,
                     "bases": [],
                     "children": []
                   },
@@ -7729,7 +7772,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 60,
+                    "line_number": 82,
                     "bases": [],
                     "children": []
                   },
@@ -7751,7 +7794,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 66,
+                    "line_number": 88,
                     "bases": [],
                     "children": []
                   },
@@ -7773,7 +7816,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 71,
+                    "line_number": 93,
                     "bases": [],
                     "children": []
                   },
@@ -7795,7 +7838,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 77,
+                    "line_number": 99,
                     "bases": [],
                     "children": []
                   },
@@ -7817,7 +7860,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 82,
+                    "line_number": 104,
                     "bases": [],
                     "children": []
                   },
@@ -7839,7 +7882,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 88,
+                    "line_number": 110,
                     "bases": [],
                     "children": []
                   },
@@ -7861,7 +7904,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 93,
+                    "line_number": 115,
                     "bases": [],
                     "children": []
                   },
@@ -7883,7 +7926,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 99,
+                    "line_number": 121,
                     "bases": [],
                     "children": []
                   },
@@ -7903,7 +7946,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 103,
+                    "line_number": 125,
                     "bases": [],
                     "children": []
                   },
@@ -7912,8 +7955,8 @@
                     "type": "method",
                     "layer": "public",
                     "signature": "(self, cfg_file)",
-                    "summary": "Возвращает пути к основному и локальному файлам конфигурации (Legacy API).",
-                    "docstring": "Возвращает пути к основному и локальному файлам конфигурации (Legacy API).\n\nДля получения всех путей (включая env) используйте get_all_config_paths().\n\nArgs:\n    cfg_file: Явно указанный путь к основному файлу конфигурации.\n\nReturns:\n    Кортеж путей (основной, локальный).",
+                    "summary": "Возвращает пути к файлам конфигурации в виде структурированного объекта ConfigPaths.",
+                    "docstring": "Возвращает пути к файлам конфигурации в виде структурированного объекта ConfigPaths.\n\nArgs:\n    cfg_file: Явно указанный путь к основному файлу конфигурации.\n\nReturns:\n    Экземпляр ConfigPaths (с полями .main, .env, .local).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7923,7 +7966,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 151,
+                    "line_number": 173,
                     "bases": [],
                     "children": []
                   },
@@ -7933,7 +7976,7 @@
                     "layer": "public",
                     "signature": "(self, cfg_file)",
                     "summary": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.",
-                    "docstring": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.\n\nArgs:\n    cfg_file: Явно указанный путь к файлу конфигурации.\n\nReturns:\n    Кортеж (main_path, env_path, local_path).",
+                    "docstring": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.\n\nArgs:\n    cfg_file: Явно указанный путь к файлу конфигурации.\n\nReturns:\n    Экземпляр ConfigPaths (main, env, local).",
                     "breadcrumbs": {
                       "is_async": false,
                       "is_thread_safe": false,
@@ -7943,7 +7986,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 167,
+                    "line_number": 184,
                     "bases": [],
                     "children": []
                   }
@@ -9703,7 +9746,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 64,
+            "line_number": 65,
             "bases": [],
             "children": []
           },
@@ -9723,7 +9766,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 67,
+            "line_number": 68,
             "bases": [],
             "children": []
           },
@@ -9743,7 +9786,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 116,
+            "line_number": 118,
             "bases": [],
             "children": []
           },
@@ -9763,7 +9806,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 128,
+            "line_number": 130,
             "bases": [],
             "children": []
           },
@@ -9783,7 +9826,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 162,
+            "line_number": 164,
             "bases": [],
             "children": []
           },
@@ -9803,7 +9846,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 176,
+            "line_number": 178,
             "bases": [],
             "children": []
           },
@@ -9823,7 +9866,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 188,
+            "line_number": 190,
             "bases": [],
             "children": []
           },
@@ -9843,7 +9886,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 198,
+            "line_number": 200,
             "bases": [],
             "children": []
           },
@@ -9852,8 +9895,8 @@
             "type": "function",
             "layer": "public",
             "signature": "(cfg_file)",
-            "summary": "Возвращает пути к основному и локальному файлам конфигурации.",
-            "docstring": "Возвращает пути к основному и локальному файлам конфигурации.\n\nLegacy API для обратной совместимости. Возвращает кортеж из 2 элементов.\nДля получения всех путей (включая env) используйте get_all_config_paths().\n\nArgs:\n    cfg_file: Опциональный путь к основному файлу.\n\nReturns:\n    Кортеж (путь_к_основному, путь_к_локальному).",
+            "summary": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.",
+            "docstring": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.\n\nArgs:\n    cfg_file: Опциональный путь к основному файлу.\n\nReturns:\n    Экземпляр ConfigPaths (с полями .main, .env, .local и поддержкой распаковки кортежа).",
             "breadcrumbs": {
               "is_async": false,
               "is_thread_safe": false,
@@ -9863,7 +9906,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 208,
+            "line_number": 210,
             "bases": [],
             "children": []
           },
@@ -9873,7 +9916,7 @@
             "layer": "public",
             "signature": "(cfg_file)",
             "summary": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.",
-            "docstring": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.\n\nArgs:\n    cfg_file: Опциональный путь к основному файлу.\n\nReturns:\n    Кортеж (путь_к_основному, путь_к_окружению, путь_к_локальному).",
+            "docstring": "Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.\n\nArgs:\n    cfg_file: Опциональный путь к основному файлу.\n\nReturns:\n    Экземпляр ConfigPaths (main, env, local).",
             "breadcrumbs": {
               "is_async": false,
               "is_thread_safe": false,
@@ -9883,7 +9926,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 226,
+            "line_number": 225,
             "bases": [],
             "children": []
           },
@@ -9905,7 +9948,7 @@
               ],
               "custom_metadata": {}
             },
-            "line_number": 243,
+            "line_number": 240,
             "bases": [],
             "children": []
           },
@@ -9925,7 +9968,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 267,
+            "line_number": 264,
             "bases": [],
             "children": []
           },
@@ -9945,7 +9988,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 284,
+            "line_number": 281,
             "bases": [],
             "children": []
           },
@@ -9965,7 +10008,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 289,
+            "line_number": 286,
             "bases": [],
             "children": []
           },
@@ -9985,7 +10028,7 @@
               "tags": [],
               "custom_metadata": {}
             },
-            "line_number": 318,
+            "line_number": 315,
             "bases": [],
             "children": []
           }
@@ -18229,7 +18272,7 @@
             "name": "web",
             "path": "chutils/diagnostics/web",
             "type": "module",
-            "layer": "public",
+            "layer": "internal",
             "summary": "",
             "docstring": "",
             "children": [],
@@ -21677,6 +21720,238 @@
             ]
           },
           {
+            "name": "proxy_pool",
+            "path": "chutils/http/proxy_pool",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Модуль для управления пулом прокси-серверов.",
+            "docstring": "Модуль для управления пулом прокси-серверов.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "_get_logger",
+                "type": "function",
+                "layer": "private",
+                "signature": "()",
+                "summary": "",
+                "docstring": "",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 20,
+                "bases": [],
+                "children": []
+              },
+              {
+                "name": "ProxyPool",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Класс для управления пулом прокси-серверов.",
+                "docstring": "Класс для управления пулом прокси-серверов.\n\nПоддерживает статический список, получение прокси из системных переменных окружения,\nзагрузку списка по URL и фоновое обновление по таймеру.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 29,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, proxies, url, update_interval, use_env, strategy)",
+                    "summary": "Инициализирует пул прокси.",
+                    "docstring": "Инициализирует пул прокси.\n\nArgs:\n    proxies: Статический список прокси-серверов (строк или ProxyConfig).\n    url: URL для загрузки прокси-листа в формате плейн-текст (один прокси на строку).\n    update_interval: Интервал обновления списка по URL в секундах.\n    use_env: Использовать ли системные прокси из переменных окружения.\n    strategy: Стратегия ротации ('random' или 'round_robin').",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 36,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_load_env_proxies",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Загружает прокси из системных переменных окружения.",
+                    "docstring": "Загружает прокси из системных переменных окружения.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 78,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "update_from_url",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Загружает список прокси с указанного URL.",
+                    "docstring": "Загружает список прокси с указанного URL.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 96,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "start_background_update",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Запускает фоновый поток для периодического обновления прокси.",
+                    "docstring": "Запускает фоновый поток для периодического обновления прокси.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 127,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "stop_background_update",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Останавливает фоновый поток обновления прокси.",
+                    "docstring": "Останавливает фоновый поток обновления прокси.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 141,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "_run_updater",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self)",
+                    "summary": "Внутренний цикл фонового обновления.",
+                    "docstring": "Внутренний цикл фонового обновления.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 148,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_next_proxy",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает следующий прокси-сервер согласно выбранной стратегии.",
+                    "docstring": "Возвращает следующий прокси-сервер согласно выбранной стратегии.\n\nReturns:\n    Строка прокси или None, если пул пуст.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 160,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_next",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Совместимость с ProxyPoolProtocol. Возвращает следующий прокси.",
+                    "docstring": "Совместимость с ProxyPoolProtocol. Возвращает следующий прокси.\n\nReturns:\n    Строка прокси или None, если пул пуст.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 181,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get_all_proxies",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self)",
+                    "summary": "Возвращает копию текущего списка прокси.",
+                    "docstring": "Возвращает копию текущего списка прокси.\n\nReturns:\n    Список строк прокси.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 189,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "name": "resilience",
             "path": "chutils/http/resilience",
             "type": "module",
@@ -22583,7 +22858,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 71,
+                "line_number": 73,
                 "bases": [],
                 "children": []
               },
@@ -22603,7 +22878,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 94,
+                "line_number": 96,
                 "bases": [],
                 "children": []
               },
@@ -22623,7 +22898,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 117,
+                "line_number": 119,
                 "bases": [],
                 "children": []
               },
@@ -22643,7 +22918,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 145,
+                "line_number": 147,
                 "bases": [],
                 "children": [
                   {
@@ -22662,7 +22937,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 148,
+                    "line_number": 150,
                     "bases": [],
                     "children": []
                   },
@@ -22684,7 +22959,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 204,
+                    "line_number": 206,
                     "bases": [],
                     "children": []
                   },
@@ -22704,7 +22979,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 250,
+                    "line_number": 252,
                     "bases": [],
                     "children": []
                   },
@@ -22724,7 +22999,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 287,
+                    "line_number": 289,
                     "bases": [],
                     "children": []
                   },
@@ -22744,7 +23019,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 299,
+                    "line_number": 301,
                     "bases": [],
                     "children": []
                   },
@@ -22764,7 +23039,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 311,
+                    "line_number": 313,
                     "bases": [],
                     "children": []
                   },
@@ -22784,7 +23059,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 323,
+                    "line_number": 325,
                     "bases": [],
                     "children": []
                   },
@@ -22804,7 +23079,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 335,
+                    "line_number": 337,
                     "bases": [],
                     "children": []
                   },
@@ -22824,7 +23099,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 347,
+                    "line_number": 349,
                     "bases": [],
                     "children": []
                   }
@@ -22846,7 +23121,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 366,
+                "line_number": 368,
                 "bases": [],
                 "children": [
                   {
@@ -22865,7 +23140,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 369,
+                    "line_number": 371,
                     "bases": [],
                     "children": []
                   },
@@ -22887,7 +23162,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 425,
+                    "line_number": 427,
                     "bases": [],
                     "children": []
                   },
@@ -22907,7 +23182,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 471,
+                    "line_number": 473,
                     "bases": [],
                     "children": []
                   },
@@ -22927,7 +23202,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 508,
+                    "line_number": 510,
                     "bases": [],
                     "children": []
                   },
@@ -22947,7 +23222,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 520,
+                    "line_number": 522,
                     "bases": [],
                     "children": []
                   },
@@ -22967,7 +23242,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 532,
+                    "line_number": 534,
                     "bases": [],
                     "children": []
                   },
@@ -22987,7 +23262,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 544,
+                    "line_number": 546,
                     "bases": [],
                     "children": []
                   },
@@ -23007,7 +23282,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 556,
+                    "line_number": 558,
                     "bases": [],
                     "children": []
                   },
@@ -23027,7 +23302,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 568,
+                    "line_number": 570,
                     "bases": [],
                     "children": []
                   },
@@ -23047,7 +23322,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 575,
+                    "line_number": 577,
                     "bases": [],
                     "children": []
                   }
@@ -23123,6 +23398,78 @@
                 "line_number": 117,
                 "bases": [],
                 "children": []
+              }
+            ]
+          },
+          {
+            "name": "user_agent",
+            "path": "chutils/http/user_agent",
+            "type": "module",
+            "layer": "internal",
+            "summary": "Модуль для ротации HTTP-заголовков User-Agent.",
+            "docstring": "Модуль для ротации HTTP-заголовков User-Agent.",
+            "children": [],
+            "symbols": [
+              {
+                "name": "UserAgentRotator",
+                "type": "class",
+                "layer": "public",
+                "signature": "",
+                "summary": "Класс для ротации HTTP-заголовков User-Agent.",
+                "docstring": "Класс для ротации HTTP-заголовков User-Agent.\n\nПоддерживает случайный выбор или Round-Robin обход списка заголовков.",
+                "breadcrumbs": {
+                  "is_async": false,
+                  "is_thread_safe": false,
+                  "is_heavy": false,
+                  "is_abstract": false,
+                  "decorators": [],
+                  "tags": [],
+                  "custom_metadata": {}
+                },
+                "line_number": 16,
+                "bases": [],
+                "children": [
+                  {
+                    "name": "__init__",
+                    "type": "method",
+                    "layer": "private",
+                    "signature": "(self, user_agents, fallback)",
+                    "summary": "Инициализирует ротатор User-Agent.",
+                    "docstring": "Инициализирует ротатор User-Agent.\n\nArgs:\n    user_agents: Список строк User-Agent. Если None, используется список по умолчанию.\n    fallback: Резервный User-Agent, если список пуст.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 22,
+                    "bases": [],
+                    "children": []
+                  },
+                  {
+                    "name": "get",
+                    "type": "method",
+                    "layer": "internal",
+                    "signature": "(self, strategy)",
+                    "summary": "Возвращает следующий User-Agent согласно выбранной стратегии.",
+                    "docstring": "Возвращает следующий User-Agent согласно выбранной стратегии.\n\nArgs:\n    strategy: Стратегия ротации ('random' или 'round_robin').\n\nReturns:\n    Строка User-Agent.\n\nRaises:\n    ValueError: Если передан неизвестный тип стратегии.",
+                    "breadcrumbs": {
+                      "is_async": false,
+                      "is_thread_safe": false,
+                      "is_heavy": false,
+                      "is_abstract": false,
+                      "decorators": [],
+                      "tags": [],
+                      "custom_metadata": {}
+                    },
+                    "line_number": 39,
+                    "bases": [],
+                    "children": []
+                  }
+                ]
               }
             ]
           }
@@ -23827,9 +24174,9 @@
                 "name": "setup_logger",
                 "type": "function",
                 "layer": "public",
-                "signature": "(name, config_section_name, log_level, log_file_name, file_logging, no_file, force_reconfigure, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, json_format, use_async, custom_patterns, use_predefined_patterns, propagate)",
+                "signature": "(name, config_section_name, log_level, log_file_name, file_logging, force_reconfigure, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, json_format, use_async, custom_patterns, use_predefined_patterns, propagate)",
                 "summary": "Настраивает и возвращает экземпляр логгера.",
-                "docstring": "Настраивает и возвращает экземпляр логгера.\n\nФункция предлагает гибкую настройку, включая управление уровнями, ротацией и сжатием.\nПри каждом вызове для существующего логгера его уровень **всегда обновляется**.\n\n### Приоритет настроек:\n0. Переменные окружения `CH_LOG_NO_TIME` и `CH_LOG_NO_FILE` (высший приоритет).\n1. Явные аргументы, переданные в эту функцию (например, `log_level=...`).\n2. Секция, указанная в `config_section_name` (например, `[AuditLogger]`).\n3. Общая секция `[Logging]` в `config.yml`.\n4. Значения по умолчанию, зашитые в коде.\n\n### Ротация и сжатие:\n- **По времени (`rotation_type='time'`)**: Ротация ежедневно или по интервалу (параметры `when`, `interval`).\n- **По размеру (`rotation_type='size'`)**: Ротация при достижении `max_bytes`.\n- **Сжатие**: Если `compress=True`, старые логи сжимаются в `.gz`.\n\n### Асинхронность:\n- Если `use_async=True`, логи записываются в очередь и обрабатываются в отдельном потоке.\n- Очередь блокирующая, что предотвращает потерю сообщений при переполнении.\n\n### Маскирование:\n- Автоматическая замена секретов и паттернов на `[MASKED]`.\n- Поддержка предустановленных паттернов PII (`email`, `phone`, `credit_card`, `ssn`).\n\nWarning:\n    Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings`\n    для чтения конфигурации из внешних источников (например, `.env` или переменных окружения),\n    рекомендуется явно передавать уровень логирования через параметр `log_level` для исключения\n    рассинхронизации настроек с файлом `config.yml`.\n\nArgs:\n    name: Имя логгера. `app_logger` по умолчанию.\n    config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').\n        Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.\n        Если не указана, используется только общая секция `[Logging]`.\n    log_level: Уровень логирования (строка или LogLevel). Поддерживается псевдоним `level`.\n    log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.\n    file_logging: Включить или отключить запись в файл (True/False). По умолчанию True.\n    no_file: Псевдоним для отключения файлового логирования (no_file=True эквивалентно file_logging=False).\n    force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).\n    rotation_type: Тип ротации ('time' или 'size').\n    max_bytes: Макс. размер файла (для 'size'). По умолчанию 5 МБ.\n    compress: Сжимать ли старые логи в `.gz`. По умолчанию False.\n    backup_count: Количество хранимых ротированных файлов. По умолчанию 3.\n    encoding: Кодировка файла. По умолчанию 'utf-8'.\n    when: Интервал ротации для 'time' (например, 'S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').\n    interval: Для 'time'. Кратность интервала.\n    utc: Для 'time'. Использовать ли UTC время для имен файлов.\n    at_time: Для 'time'. Время ротации (для when='midnight').\n    json_format: Использовать ли JSON формат для логов.\n    use_async: Использовать ли асинхронное логирование.\n    custom_patterns: Список регулярных выражений для маскирования.\n    use_predefined_patterns: Список имен предустановленных паттернов для маскирования.\n    propagate: Передавать ли логи вверх по иерархии родительским логгерам (по умолчанию False).\n\n    **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`). Также поддерживает `level` как псевдоним `log_level`.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
+                "docstring": "Настраивает и возвращает экземпляр логгера.\n\nФункция предлагает гибкую настройку, включая управление уровнями, ротацией и сжатием.\nПри каждом вызове для существующего логгера его уровень **всегда обновляется**.\n\n### Приоритет настроек:\n0. Переменные окружения `CH_LOG_NO_TIME` и `CH_LOG_NO_FILE` (высший приоритет).\n1. Явные аргументы, переданные в эту функцию (например, `log_level=...`).\n2. Секция, указанная в `config_section_name` (например, `[AuditLogger]`).\n3. Общая секция `[Logging]` в `config.yml`.\n4. Значения по умолчанию, зашитые в коде.\n\n### Ротация и сжатие:\n- **По времени (`rotation_type='time'`)**: Ротация ежедневно или по интервалу (параметры `when`, `interval`).\n- **По размеру (`rotation_type='size'`)**: Ротация при достижении `max_bytes`.\n- **Сжатие**: Если `compress=True`, старые логи сжимаются в `.gz`.\n\n### Асинхронность:\n- Если `use_async=True`, логи записываются в очередь и обрабатываются в отдельном потоке.\n- Очередь блокирующая, что предотвращает потерю сообщений при переполнении.\n\n### Маскирование:\n- Автоматическая замена секретов и паттернов на `[MASKED]`.\n- Поддержка предустановленных паттернов PII (`email`, `phone`, `credit_card`, `ssn`).\n\nWarning:\n    Если ваше приложение использует Pydantic-модели или библиотеки вроде `pydantic-settings`\n    для чтения конфигурации из внешних источников (например, `.env` или переменных окружения),\n    рекомендуется явно передавать уровень логирования через параметр `log_level` для исключения\n    рассинхронизации настроек с файлом `config.yml`.\n\nArgs:\n    name: Имя логгера. `app_logger` по умолчанию.\n    config_section_name: Имя секции в конфиге (например, 'MyAuditLogger').\n        Если указана, настройки из этой секции переопределяют настройки из общей секции `[Logging]`.\n        Если не указана, используется только общая секция `[Logging]`.\n    log_level: Уровень логирования (строка или LogLevel). Поддерживается псевдоним `level`.\n    log_file_name: Имя файла лога. Если не указано, берется из конфига или 'app.log'.\n    file_logging: Включить или отключить запись в файл (True/False). По умолчанию True.\n    force_reconfigure: Если True, пересоздает обработчики (обычно они идемпотентны).\n    rotation_type: Тип ротации ('time' или 'size').\n    max_bytes: Макс. размер файла (для 'size'). По умолчанию 5 МБ.\n    compress: Сжимать ли старые логи в `.gz`. По умолчанию False.\n    backup_count: Количество хранимых ротированных файлов. По умолчанию 3.\n    encoding: Кодировка файла. По умолчанию 'utf-8'.\n    when: Интервал ротации для 'time' (например, 'S', 'M', 'H', 'D', 'midnight', 'W0'-'W6').\n    interval: Для 'time'. Кратность интервала.\n    utc: Для 'time'. Использовать ли UTC время для имен файлов.\n    at_time: Для 'time'. Время ротации (для when='midnight').\n    json_format: Использовать ли JSON формат для логов.\n    use_async: Использовать ли асинхронное логирование.\n    custom_patterns: Список регулярных выражений для маскирования.\n    use_predefined_patterns: Список имен предустановленных паттернов для маскирования.\n    propagate: Передавать ли логи вверх по иерархии родительским логгерам (по умолчанию False).\n\n    **kwargs: Дополнительные параметры для FileHandler (например, `delay=True`, `errors='ignore'`, `mode='a'`). Также поддерживает `level` как псевдоним `log_level`.\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
                 "breadcrumbs": {
                   "is_async": false,
                   "is_thread_safe": false,
@@ -23859,7 +24206,7 @@
                   "tags": [],
                   "custom_metadata": {}
                 },
-                "line_number": 281,
+                "line_number": 278,
                 "bases": [],
                 "children": []
               }
@@ -24514,9 +24861,9 @@
                         "name": "build",
                         "type": "method",
                         "layer": "internal",
-                        "signature": "(self, log_level, force_reconfigure, use_async, json_format, log_file_name, file_logging, no_file, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, custom_patterns, use_predefined_patterns, propagate)",
+                        "signature": "(self, log_level, force_reconfigure, use_async, json_format, log_file_name, file_logging, rotation_type, max_bytes, compress, backup_count, encoding, when, interval, utc, at_time, custom_patterns, use_predefined_patterns, propagate)",
                         "summary": "Основной метод сборки и настройки логгера.",
-                        "docstring": "Основной метод сборки и настройки логгера.\n\nВыполняет все этапы конфигурации: определение уровня, настройку консоли,\nсоздание файловых обработчиков, применение асинхронности и маскирование.\n\nArgs:\n    log_level: Уровень логирования.\n    force_reconfigure: Принудительная повторная конфигурация.\n    use_async: Использовать ли асинхронную запись.\n    json_format: Использовать ли JSON формат.\n    log_file_name: Имя файла лога.\n    file_logging: Включить или отключить запись в файл.\n    no_file: Отключить запись в файл (эквивалент file_logging=False).\n    rotation_type: Тип ротации файлов.\n    max_bytes: Максимальный размер файла в байтах.\n    compress: Сжимать ли ротированные файлы.\n    backup_count: Количество сохраняемых бэкапов.\n    encoding: Кодировка файла логов.\n    when: Интервал временной ротации.\n    interval: Шаг интервала ротации.\n    utc: Использовать ли UTC время.\n    at_time: Точное время ротации.\n    custom_patterns: Пользовательские паттерны маскирования.\n    use_predefined_patterns: Предопределенные паттерны маскирования.\n    propagate: Передавать ли логи вверх по иерархии (по умолчанию False).\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
+                        "docstring": "Основной метод сборки и настройки логгера.\n\nВыполняет все этапы конфигурации: определение уровня, настройку консоли,\nсоздание файловых обработчиков, применение асинхронности и маскирование.\n\nArgs:\n    log_level: Уровень логирования.\n    force_reconfigure: Принудительная повторная конфигурация.\n    use_async: Использовать ли асинхронную запись.\n    json_format: Использовать ли JSON формат.\n    log_file_name: Имя файла лога.\n    file_logging: Включить или отключить запись в файл.\n    rotation_type: Тип ротации файлов.\n    max_bytes: Максимальный размер файла в байтах.\n    compress: Сжимать ли ротированные файлы.\n    backup_count: Количество сохраняемых бэкапов.\n    encoding: Кодировка файла логов.\n    when: Интервал временной ротации.\n    interval: Шаг интервала ротации.\n    utc: Использовать ли UTC время.\n    at_time: Точное время ротации.\n    custom_patterns: Пользовательские паттерны маскирования.\n    use_predefined_patterns: Предопределенные паттерны маскирования.\n    propagate: Передавать ли логи вверх по иерархии (по умолчанию False).\n\nReturns:\n    Настроенный экземпляр ChutilsLogger.",
                         "breadcrumbs": {
                           "is_async": false,
                           "is_thread_safe": false,
@@ -24546,7 +24893,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 196,
+                        "line_number": 193,
                         "bases": [],
                         "children": []
                       },
@@ -24566,7 +24913,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 221,
+                        "line_number": 218,
                         "bases": [],
                         "children": []
                       },
@@ -24586,7 +24933,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 233,
+                        "line_number": 230,
                         "bases": [],
                         "children": []
                       },
@@ -24606,7 +24953,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 253,
+                        "line_number": 250,
                         "bases": [],
                         "children": []
                       },
@@ -24626,7 +24973,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 262,
+                        "line_number": 259,
                         "bases": [],
                         "children": []
                       },
@@ -24646,7 +24993,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 310,
+                        "line_number": 307,
                         "bases": [],
                         "children": []
                       },
@@ -24666,7 +25013,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 336,
+                        "line_number": 333,
                         "bases": [],
                         "children": []
                       },
@@ -24686,7 +25033,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 351,
+                        "line_number": 348,
                         "bases": [],
                         "children": []
                       },
@@ -24706,7 +25053,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 387,
+                        "line_number": 384,
                         "bases": [],
                         "children": []
                       },
@@ -24726,7 +25073,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 495,
+                        "line_number": 483,
                         "bases": [],
                         "children": []
                       },
@@ -24746,7 +25093,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 573,
+                        "line_number": 561,
                         "bases": [],
                         "children": []
                       },
@@ -24766,7 +25113,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 591,
+                        "line_number": 579,
                         "bases": [],
                         "children": []
                       },
@@ -24786,7 +25133,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 630,
+                        "line_number": 618,
                         "bases": [],
                         "children": []
                       }
@@ -24819,7 +25166,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 9,
+                    "line_number": 7,
                     "bases": [],
                     "children": []
                   },
@@ -24839,7 +25186,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 10,
+                    "line_number": 8,
                     "bases": [],
                     "children": []
                   },
@@ -24859,7 +25206,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 11,
+                    "line_number": 9,
                     "bases": [],
                     "children": []
                   },
@@ -24879,7 +25226,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 12,
+                    "line_number": 10,
                     "bases": [],
                     "children": []
                   },
@@ -24899,7 +25246,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 15,
+                    "line_number": 13,
                     "bases": [],
                     "children": []
                   },
@@ -24919,10 +25266,9 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 26,
+                    "line_number": 24,
                     "bases": [
-                      "str",
-                      "enum.Enum"
+                      "enum.StrEnum"
                     ],
                     "children": []
                   },
@@ -24942,7 +25288,7 @@
                       "tags": [],
                       "custom_metadata": {}
                     },
-                    "line_number": 40,
+                    "line_number": 38,
                     "bases": [],
                     "children": [
                       {
@@ -24961,7 +25307,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 45,
+                        "line_number": 43,
                         "bases": [],
                         "children": []
                       },
@@ -24981,7 +25327,7 @@
                           "tags": [],
                           "custom_metadata": {}
                         },
-                        "line_number": 57,
+                        "line_number": 55,
                         "bases": [],
                         "children": []
                       }
@@ -34842,514 +35188,11 @@
         "name": "web",
         "path": "chutils/web",
         "type": "package",
-        "layer": "public",
+        "layer": "internal",
         "summary": "",
         "docstring": "",
-        "children": [
-          {
-            "name": "client",
-            "path": "chutils/web/client",
-            "type": "module",
-            "layer": "internal",
-            "summary": "",
-            "docstring": "",
-            "children": [],
-            "symbols": [
-              {
-                "name": "_get_logger",
-                "type": "function",
-                "layer": "private",
-                "signature": "()",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 21,
-                "bases": [],
-                "children": []
-              },
-              {
-                "name": "WebClient",
-                "type": "class",
-                "layer": "public",
-                "signature": "",
-                "summary": "Синхронный HTTP-клиент с поддержкой ротации User-Agent, прокси-пулов,",
-                "docstring": "Синхронный HTTP-клиент с поддержкой ротации User-Agent, прокси-пулов,\n\nлимитирования частоты и кэширования GET-запросов.",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 30,
-                "bases": [
-                  "httpx.Client"
-                ],
-                "children": [
-                  {
-                    "name": "__init__",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self)",
-                    "summary": "Инициализирует WebClient.",
-                    "docstring": "Инициализирует WebClient.\n\nArgs:\n    *args: Позиционные аргументы для родительского класса httpx.Client.\n    user_agent_rotator: Ротатор User-Agent.\n    proxy_pool: Менеджер пула прокси.\n    rotate_ua: Включить ли ротацию User-Agent.\n    rotate_proxy: Включить ли смену прокси при ошибках.\n    retries: Количество повторов при ошибках.\n    retry_delay: Базовая задержка между попытками в секундах.\n    retry_backoff: Множитель задержки.\n    retry_on_5xx: Считать ли 5xx ошибки сбоем для повтора.\n    rate_limit_calls: Ограничение количества запросов к хосту.\n    rate_limit_period: Период ограничения в секундах.\n    rate_limit_strategy: Стратегия лимитирования ('token_bucket' или 'leaky_bucket').\n    rate_limit_wait: Ждать ли освобождения токена (или вызывать исключение).\n    cache_ttl: Время жизни кэша GET-запросов в секундах.\n    cache_backend: Бэкенд кэша.\n    **kwargs: Именованные аргументы для родительского класса httpx.Client.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 36,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "rotate_proxy",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "Переключает текущий клиент на следующий прокси из пула.",
-                    "docstring": "Переключает текущий клиент на следующий прокси из пула.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 115,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "send",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, request)",
-                    "summary": "Перехватывает отправку запроса для ротации, лимитов и кэширования.",
-                    "docstring": "Перехватывает отправку запроса для ротации, лимитов и кэширования.\n\nArgs:\n    request: Объект отправляемого запроса httpx.Request.\n    *args: Произвольные позиционные аргументы.\n    **kwargs: Произвольные именованные аргументы.\n\nReturns:\n    Ответ сервера httpx.Response.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 139,
-                    "bases": [],
-                    "children": []
-                  }
-                ]
-              },
-              {
-                "name": "AsyncWebClient",
-                "type": "class",
-                "layer": "public",
-                "signature": "",
-                "summary": "Асинхронный HTTP-клиент с поддержкой ротации User-Agent, прокси-пулов,",
-                "docstring": "Асинхронный HTTP-клиент с поддержкой ротации User-Agent, прокси-пулов,\n\nлимитирования частоты и кэширования GET-запросов.",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 223,
-                "bases": [
-                  "httpx.AsyncClient"
-                ],
-                "children": [
-                  {
-                    "name": "__init__",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self)",
-                    "summary": "Инициализирует AsyncWebClient.",
-                    "docstring": "Инициализирует AsyncWebClient.\n\nArgs:\n    *args: Позиционные аргументы для родительского класса httpx.AsyncClient.\n    user_agent_rotator: Ротатор User-Agent.\n    proxy_pool: Менеджер пула прокси.\n    rotate_ua: Включить ли ротацию User-Agent.\n    rotate_proxy: Включить ли смену прокси при ошибках.\n    retries: Количество повторов при ошибках.\n    retry_delay: Базовая задержка между попытками в секундах.\n    retry_backoff: Множитель задержки.\n    retry_on_5xx: Считать ли 5xx ошибки сбоем для повтора.\n    rate_limit_calls: Ограничение количества запросов к хосту.\n    rate_limit_period: Период ограничения в секундах.\n    rate_limit_strategy: Стратегия лимитирования ('token_bucket' или 'leaky_bucket').\n    rate_limit_wait: Ждать ли освобождения токена (или вызывать исключение).\n    cache_ttl: Время жизни кэша GET-запросов в секундах.\n    cache_backend: Бэкенд кэша.\n    **kwargs: Именованные аргументы для родительского класса httpx.AsyncClient.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 229,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "rotate_proxy",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "Асинхронно переключает текущий клиент на следующий прокси из пула.",
-                    "docstring": "Асинхронно переключает текущий клиент на следующий прокси из пула.",
-                    "breadcrumbs": {
-                      "is_async": true,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 306,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "send",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, request)",
-                    "summary": "Перехватывает отправку запроса для ротации, лимитов и кэширования.",
-                    "docstring": "Перехватывает отправку запроса для ротации, лимитов и кэширования.\n\nArgs:\n    request: Объект отправляемого запроса httpx.Request.\n    *args: Произвольные позиционные аргументы.\n    **kwargs: Произвольные именованные аргументы.\n\nReturns:\n    Ответ сервера httpx.Response.",
-                    "breadcrumbs": {
-                      "is_async": true,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 329,
-                    "bases": [],
-                    "children": []
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "name": "proxy_pool",
-            "path": "chutils/web/proxy_pool",
-            "type": "module",
-            "layer": "internal",
-            "summary": "",
-            "docstring": "",
-            "children": [],
-            "symbols": [
-              {
-                "name": "_get_logger",
-                "type": "function",
-                "layer": "private",
-                "signature": "()",
-                "summary": "",
-                "docstring": "",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 14,
-                "bases": [],
-                "children": []
-              },
-              {
-                "name": "ProxyPool",
-                "type": "class",
-                "layer": "internal",
-                "signature": "",
-                "summary": "Класс для управления пулом прокси-серверов.",
-                "docstring": "Класс для управления пулом прокси-серверов.\n\nПоддерживает статический список, получение прокси из системных переменных окружения,\nзагрузку списка по URL и фоновое обновление по таймеру.",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 23,
-                "bases": [],
-                "children": [
-                  {
-                    "name": "__init__",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self, proxies, url, update_interval, use_env, strategy)",
-                    "summary": "Инициализирует пул прокси.",
-                    "docstring": "Инициализирует пул прокси.\n\nArgs:\n    proxies: Статический список прокси-серверов.\n    url: URL для загрузки прокси-листа в формате плейн-текст (один прокси на строку).\n    update_interval: Интервал обновления списка по URL в секундах.\n    use_env: Использовать ли системные прокси из переменных окружения.\n    strategy: Стратегия ротации ('random' или 'round_robin').",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 30,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "_load_env_proxies",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self)",
-                    "summary": "Загружает прокси из системных переменных окружения.",
-                    "docstring": "Загружает прокси из системных переменных окружения.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 66,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "update_from_url",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "Загружает список прокси с указанного URL.",
-                    "docstring": "Загружает список прокси с указанного URL.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 84,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "start_background_update",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "Запускает фоновый поток для периодического обновления прокси.",
-                    "docstring": "Запускает фоновый поток для периодического обновления прокси.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 115,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "stop_background_update",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "Останавливает фоновый поток обновления прокси.",
-                    "docstring": "Останавливает фоновый поток обновления прокси.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 129,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "_run_updater",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self)",
-                    "summary": "Внутренний цикл фонового обновления.",
-                    "docstring": "Внутренний цикл фонового обновления.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 136,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "get_next_proxy",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "Возвращает следующий прокси-сервер согласно выбранной стратегии.",
-                    "docstring": "Возвращает следующий прокси-сервер согласно выбранной стратегии.\n\nReturns:\n    Строка прокси или None, если пул пуст.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 149,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "get_all_proxies",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self)",
-                    "summary": "Возвращает копию текущего списка прокси.",
-                    "docstring": "Возвращает копию текущего списка прокси.\n\nReturns:\n    Список строк прокси.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 171,
-                    "bases": [],
-                    "children": []
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "name": "user_agent",
-            "path": "chutils/web/user_agent",
-            "type": "module",
-            "layer": "internal",
-            "summary": "",
-            "docstring": "",
-            "children": [],
-            "symbols": [
-              {
-                "name": "UserAgentRotator",
-                "type": "class",
-                "layer": "internal",
-                "signature": "",
-                "summary": "Класс для ротации HTTP-заголовков User-Agent.",
-                "docstring": "Класс для ротации HTTP-заголовков User-Agent.\n\nПоддерживает случайный выбор или Round-Robin обход списка заголовков.",
-                "breadcrumbs": {
-                  "is_async": false,
-                  "is_thread_safe": false,
-                  "is_heavy": false,
-                  "is_abstract": false,
-                  "decorators": [],
-                  "tags": [],
-                  "custom_metadata": {}
-                },
-                "line_number": 12,
-                "bases": [],
-                "children": [
-                  {
-                    "name": "__init__",
-                    "type": "method",
-                    "layer": "private",
-                    "signature": "(self, user_agents, fallback)",
-                    "summary": "Инициализирует ротатор User-Agent.",
-                    "docstring": "Инициализирует ротатор User-Agent.\n\nArgs:\n    user_agents: Список строк User-Agent. Если None, используется список по умолчанию.\n    fallback: Резервный User-Agent, если список пуст.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 18,
-                    "bases": [],
-                    "children": []
-                  },
-                  {
-                    "name": "get",
-                    "type": "method",
-                    "layer": "internal",
-                    "signature": "(self, strategy)",
-                    "summary": "Возвращает следующий User-Agent согласно выбранной стратегии.",
-                    "docstring": "Возвращает следующий User-Agent согласно выбранной стратегии.\n\nArgs:\n    strategy: Стратегия ротации ('random' или 'round_robin').\n\nReturns:\n    Строка User-Agent.\n\nRaises:\n    ValueError: Если передан неизвестный тип стратегии.",
-                    "breadcrumbs": {
-                      "is_async": false,
-                      "is_thread_safe": false,
-                      "is_heavy": false,
-                      "is_abstract": false,
-                      "decorators": [],
-                      "tags": [],
-                      "custom_metadata": {}
-                    },
-                    "line_number": 35,
-                    "bases": [],
-                    "children": []
-                  }
-                ]
-              }
-            ]
-          }
-        ],
-        "symbols": [
-          {
-            "name": "_HAS_HTTPX",
-            "type": "constant",
-            "layer": "private",
-            "signature": null,
-            "summary": "",
-            "docstring": null,
-            "breadcrumbs": {
-              "is_async": false,
-              "is_thread_safe": false,
-              "is_heavy": false,
-              "is_abstract": false,
-              "decorators": [],
-              "tags": [],
-              "custom_metadata": {}
-            },
-            "line_number": 5,
-            "bases": [],
-            "children": []
-          }
-        ]
+        "children": [],
+        "symbols": []
       }
     ],
     "symbols": [
@@ -35819,6 +35662,11 @@
     {
       "source": "chutils/config",
       "target": "/manager",
+      "weight": 1
+    },
+    {
+      "source": "chutils/config",
+      "target": "/paths",
       "weight": 1
     },
     {
@@ -36583,6 +36431,11 @@
     },
     {
       "source": "chutils/http",
+      "target": "/proxy_pool",
+      "weight": 1
+    },
+    {
+      "source": "chutils/http",
       "target": "/resilience",
       "weight": 1
     },
@@ -36590,6 +36443,11 @@
       "source": "chutils/http",
       "target": "/streaming",
       "weight": 5
+    },
+    {
+      "source": "chutils/http",
+      "target": "/user_agent",
+      "weight": 2
     },
     {
       "source": "chutils/http",
@@ -36634,6 +36492,11 @@
     {
       "source": "chutils/http/client",
       "target": "/async_client",
+      "weight": 1
+    },
+    {
+      "source": "chutils/http/proxy_pool",
+      "target": "/models",
       "weight": 1
     },
     {
@@ -37320,49 +37183,14 @@
       "source": "chutils/vkma/validator",
       "target": "chutils/vkma/models",
       "weight": 1
-    },
-    {
-      "source": "chutils/web",
-      "target": "chutils/exceptions",
-      "weight": 1
-    },
-    {
-      "source": "chutils/web",
-      "target": "/client",
-      "weight": 2
-    },
-    {
-      "source": "chutils/web/client",
-      "target": "chutils/cache",
-      "weight": 1
-    },
-    {
-      "source": "chutils/web/client",
-      "target": "chutils/decorators",
-      "weight": 1
-    },
-    {
-      "source": "chutils/web/client",
-      "target": "chutils/exceptions",
-      "weight": 1
-    },
-    {
-      "source": "chutils/web/client",
-      "target": "/proxy_pool",
-      "weight": 1
-    },
-    {
-      "source": "chutils/web/client",
-      "target": "/user_agent",
-      "weight": 1
     }
   ],
   "examples": [],
   "metadata": {
     "chutils_version": "4.0.0",
     "project_version": "4.0.0",
-    "git_commit": "4c54f65bebeb8689ba0ebe26b00d531433694a3b (dirty)",
-    "generated_at": "2026-10-15T21:47:42.123226+00:00",
-    "project_hash": "206d4ea145e2172df08fc491525ff4628f324c8637de411c3d95f9e45c05cab8"
+    "git_commit": "47f3a76f4156c850b76b80d1498a6f85b83fd49b (dirty)",
+    "generated_at": "2026-10-15T22:43:52.522496+00:00",
+    "project_hash": "53322e58125e2883840a2d6dc61c61d2e3b1130210854c7e88855f571b32a8e7"
   }
 }

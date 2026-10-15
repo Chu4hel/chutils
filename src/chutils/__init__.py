@@ -109,6 +109,9 @@ _LAZY_MAPPING = {
     "TLSAsyncClient": (".http", "TLSAsyncClient"),
     "create_curl_session": (".http", "create_curl_session"),
     "create_curl_async_session": (".http", "create_curl_async_session"),
+    "ProxyPool": (".http", "ProxyPool"),
+    "UserAgentRotator": (".http", "UserAgentRotator"),
+    "DEFAULT_USER_AGENTS": (".http", "DEFAULT_USER_AGENTS"),
     # config
     "get_config": (".config", "get_config"),
     "get_config_value": (".config", "get_config_value"),
@@ -131,6 +134,7 @@ _LAZY_MAPPING = {
     "get_config_file_path": (".config", "get_config_file_path"),
     "is_config_loaded": (".config", "is_config_loaded"),
     "are_paths_initialized": (".config", "are_paths_initialized"),
+    "ConfigPaths": (".config", "ConfigPaths"),
     "get_config_paths": (".config", "get_config_paths"),
     "get_all_config_paths": (".config", "get_all_config_paths"),
     "export_schema": (".config", "export_schema"),
@@ -276,10 +280,6 @@ _LAZY_MAPPING = {
     # validation
     "validate_data": (".validation", "validate_data"),
     "validate_call": (".validation", "validate_call"),
-    # web
-    "web": (".web", None),
-    "WebClient": (".web", "WebClient"),
-    "AsyncWebClient": (".web", "AsyncWebClient"),
     # telegram
     "telegram": (".telegram", None),
     "is_admin": (".telegram", "is_admin"),

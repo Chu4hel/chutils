@@ -26,7 +26,6 @@ nav:
   - Рецепты: recipes.md
   - Модули и интеграции:
       - HTTP-клиент и стриминг: http.md
-      - Веб-утилиты (web): web.md
       - Интеграция с Telegram: telegram.md
       - ВКонтакте Бот (Callback API): vk_bot.md
       - VK Mini Apps (VKMA): vkma.md

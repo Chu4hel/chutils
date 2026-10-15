@@ -332,15 +332,6 @@ members:
 - validate_data
 - validate_call
 
-## Модуль `web` (Умный HTTP-клиент)
-
-::: chutils.web
-options:
-members:
-
-- WebClient
-- AsyncWebClient
-
 ## Модуль `plugins` (Система плагинов)
 
 ::: chutils.plugins

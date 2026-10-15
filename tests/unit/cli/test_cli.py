@@ -139,15 +139,15 @@ def test_cli_show_paths(mocker, capsys, monkeypatch):
     # Мокаем конфиг, чтобы не зависеть от окружения
     mocker.patch("chutils.config.are_paths_initialized", return_value=True)
     mocker.patch("chutils.config.get_base_dir", return_value="/abs/path/project")
-    # Обновляем мок на новую функцию get_all_config_paths
-    mocker.patch(
-        "chutils.config.get_all_config_paths",
-        return_value=("/abs/path/project/config.yml", None, None),
-    )
-    # Для обратной совместимости мокаем и старую
+    from chutils.config import ConfigPaths
+
     mocker.patch(
         "chutils.config.get_config_paths",
-        return_value=("/abs/path/project/config.yml", None),
+        return_value=ConfigPaths(main="/abs/path/project/config.yml"),
+    )
+    mocker.patch(
+        "chutils.config.get_all_config_paths",
+        return_value=ConfigPaths(main="/abs/path/project/config.yml"),
     )
 
     test_args = ["chutils", "show-paths"]
@@ -166,13 +166,14 @@ def test_cli_show_paths_json(mocker, capsys):
     """Проверяет работу команды 'show-paths --json'."""
     mocker.patch("chutils.config.are_paths_initialized", return_value=True)
     mocker.patch("chutils.config.get_base_dir", return_value="/abs/path/project")
-    # Обновляем мок на новую функцию get_all_config_paths
+    from chutils.config import ConfigPaths
+
     mocker.patch(
-        "chutils.config.get_all_config_paths",
-        return_value=(
-            "/abs/path/project/config.yml",
-            None,
-            "/abs/path/project/config.local.yml",
+        "chutils.config.get_config_paths",
+        return_value=ConfigPaths(
+            main="/abs/path/project/config.yml",
+            env=None,
+            local="/abs/path/project/config.local.yml",
         ),
     )
 

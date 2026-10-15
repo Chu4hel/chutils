@@ -64,7 +64,9 @@ def _resolve_proxy_url(
     if proxy_pool is not None:
         p = proxy_pool.get_next()
         if p is not None:
-            return str(p.url)
+            if hasattr(p, "url"):
+                return str(p.url)
+            return str(p)
     return None
 
 

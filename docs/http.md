@@ -228,3 +228,35 @@ from chutils.http.streaming import AsyncWebSocketClient
 # После 3 попыток (0.1с, 0.5с, 1.0с) клиент пробросит ошибку соединения дальше.
 client = AsyncWebSocketClient("ws://example.com/ws", reconnect_strategy=[0.1, 0.5, 1.0])
 ```
+
+---
+
+## Управление пулом прокси (ProxyPool)
+
+Модуль `chutils.http` включает класс `ProxyPool` для управления списком прокси-серверов с поддержкой ротации (Round-Robin или Random), системных прокси из переменных окружения и периодического обновления по URL:
+
+```python
+from chutils.http import ProxyPool
+
+# Статический пул со стратегией Round-Robin
+pool = ProxyPool(
+    proxies=["http://proxy1:8080", "http://proxy2:8080"],
+    strategy="round_robin",
+)
+
+proxy_url = pool.get_next()
+```
+
+---
+
+## Ротация User-Agent (UserAgentRotator)
+
+Класс `UserAgentRotator` обеспечивает подмену HTTP-заголовка `User-Agent` из готовой базы популярных браузеров:
+
+```python
+from chutils.http import UserAgentRotator
+
+rotator = UserAgentRotator()
+ua = rotator.get(strategy="random")
+```
+

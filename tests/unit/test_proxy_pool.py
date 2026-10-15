@@ -1,7 +1,7 @@
 import time
 from unittest.mock import MagicMock, patch
 
-from chutils.web.proxy_pool import ProxyPool
+from chutils.http.proxy_pool import ProxyPool
 
 
 def test_proxy_pool_static_list() -> None:

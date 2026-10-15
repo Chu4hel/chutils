@@ -1,3 +1,7 @@
+"""Модуль для управления пулом прокси-серверов."""
+
+from __future__ import annotations
+
 import random
 import threading
 import time
@@ -5,13 +9,15 @@ import urllib.request
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
+from .models import ProxyConfig
+
 if TYPE_CHECKING:
     from chutils.logger import ChutilsLogger
 
-_module_logger: "ChutilsLogger | None" = None
+_module_logger: ChutilsLogger | None = None
 
 
-def _get_logger() -> "ChutilsLogger":
+def _get_logger() -> ChutilsLogger:
     global _module_logger
     if _module_logger is None:
         from chutils.logger import setup_logger
@@ -29,7 +35,7 @@ class ProxyPool:
 
     def __init__(
         self,
-        proxies: Sequence[str] | None = None,
+        proxies: Sequence[str | ProxyConfig] | None = None,
         url: str | None = None,
         update_interval: float | None = None,
         use_env: bool = False,
@@ -38,7 +44,7 @@ class ProxyPool:
         """Инициализирует пул прокси.
 
         Args:
-            proxies: Статический список прокси-серверов.
+            proxies: Статический список прокси-серверов (строк или ProxyConfig).
             url: URL для загрузки прокси-листа в формате плейн-текст (один прокси на строку).
             update_interval: Интервал обновления списка по URL в секундах.
             use_env: Использовать ли системные прокси из переменных окружения.
@@ -49,14 +55,20 @@ class ProxyPool:
         self.use_env: bool = use_env
         self.strategy: str = strategy
 
-        self._proxies: list[str] = list(proxies) if proxies is not None else []
+        self._proxies: list[str] = []
+        if proxies is not None:
+            for p in proxies:
+                if isinstance(p, ProxyConfig):
+                    self._proxies.append(p.url)
+                else:
+                    self._proxies.append(str(p))
+
         self._lock: threading.Lock = threading.Lock()
         self._index: int = 0
 
         self._stop_event: threading.Event = threading.Event()
         self._update_thread: threading.Thread | None = None
 
-        # Инициализируем прокси
         if self.use_env:
             self._load_env_proxies()
 
@@ -89,7 +101,7 @@ class ProxyPool:
         try:
             req = urllib.request.Request(
                 self.url,
-                headers={"User-Agent": "Mozilla/5.0 chutils.web ProxyPool Updater"},
+                headers={"User-Agent": "Mozilla/5.0 chutils.http ProxyPool Updater"},
             )
             with urllib.request.urlopen(req, timeout=10) as response:
                 content: str = response.read().decode("utf-8")
@@ -137,7 +149,6 @@ class ProxyPool:
         """Внутренний цикл фонового обновления."""
         interval = self.update_interval or 300.0
         while not self._stop_event.is_set():
-            # Спим частями по 0.1 секунды, чтобы быстро реагировать на stop_event
             elapsed = 0.0
             while elapsed < interval and not self._stop_event.is_set():
                 time.sleep(0.1)
@@ -165,8 +176,15 @@ class ProxyPool:
                 self._index = (self._index + 1) % len(self._proxies)
                 return proxy
             else:
-                # Если стратегия невалидна, возвращаем случайный прокси
                 return random.choice(self._proxies)
+
+    def get_next(self) -> str | None:
+        """Совместимость с ProxyPoolProtocol. Возвращает следующий прокси.
+
+        Returns:
+            Строка прокси или None, если пул пуст.
+        """
+        return self.get_next_proxy()
 
     def get_all_proxies(self) -> list[str]:
         """Возвращает копию текущего списка прокси.

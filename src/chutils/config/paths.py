@@ -7,11 +7,33 @@ from __future__ import annotations
 import logging  # chutils: ignore[ChutilsIntegrationRule]
 import os
 import threading
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar
 
 logger = logging.getLogger(__name__)  # chutils: ignore[ChutilsIntegrationRule]
+
+
+@dataclass(frozen=True, slots=True)
+class ConfigPaths:
+    """Контейнер путей к файлам конфигурации проекта (основной, окружение, локальный)."""
+
+    main: str | None = None
+    env: str | None = None
+    local: str | None = None
+
+    def as_tuple(self) -> tuple[str | None, str | None, str | None]:
+        """Возвращает кортеж путей (main, env, local).
+
+        Returns:
+            Кортеж (main, env, local).
+        """
+        return self.main, self.env, self.local
+
+    def __iter__(self) -> Iterator[str | None]:
+        """Позволяет распаковывать ConfigPaths как кортеж (main, env, local)."""
+        return iter((self.main, self.env, self.local))
 
 
 class _ConfigPathsMixin:
@@ -148,32 +170,25 @@ class _ConfigPathsMixin:
 
             self.paths_initialized = True
 
-    def get_config_paths(
-        self, cfg_file: str | None = None
-    ) -> tuple[str | None, str | None]:
-        """Возвращает пути к основному и локальному файлам конфигурации (Legacy API).
-
-        Для получения всех путей (включая env) используйте get_all_config_paths().
+    def get_config_paths(self, cfg_file: str | None = None) -> ConfigPaths:
+        """Возвращает пути к файлам конфигурации в виде структурированного объекта ConfigPaths.
 
         Args:
             cfg_file: Явно указанный путь к основному файлу конфигурации.
 
         Returns:
-            Кортеж путей (основной, локальный).
+            Экземпляр ConfigPaths (с полями .main, .env, .local).
         """
-        main, _, local = self.get_all_config_paths(cfg_file)
-        return main, local
+        return self.get_all_config_paths(cfg_file)
 
-    def get_all_config_paths(
-        self, cfg_file: str | None = None
-    ) -> tuple[str | None, str | None, str | None]:
+    def get_all_config_paths(self, cfg_file: str | None = None) -> ConfigPaths:
         """Возвращает пути к основному, специфичному для окружения и локальному файлам конфигурации.
 
         Args:
             cfg_file: Явно указанный путь к файлу конфигурации.
 
         Returns:
-            Кортеж (main_path, env_path, local_path).
+            Экземпляр ConfigPaths (main, env, local).
         """
         with self._lock:
             main_config_path: str | None = None
@@ -209,4 +224,8 @@ class _ConfigPathsMixin:
                         "Найден локальный файл конфигурации: %s", local_config_path
                     )
 
-            return main_config_path, env_config_path, local_config_path
+            return ConfigPaths(
+                main=main_config_path,
+                env=env_config_path,
+                local=local_config_path,
+            )
